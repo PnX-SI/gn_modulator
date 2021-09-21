@@ -1,0 +1,10 @@
+<div *ngIf="componentInitialized; else loadingBlock">
+  <h4>{{ tableTitle }}</h4>
+
+  <div id="my-tabular-table"></div>
+
+</div>
+
+<ng-template #loadingBlock>
+  <div>Chargement en cours</div>
+</ng-template>

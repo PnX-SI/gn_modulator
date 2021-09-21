@@ -1,0 +1,98 @@
+import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { ActivatedRoute, Router, ParamMap } from "@angular/router";
+import { AppConfig } from "@geonature_config/app.config";
+import Tabulator from "tabulator-tables";
+
+@Component({
+  selector: "modules-test",
+  templateUrl: "test.component.html",
+  styleUrls: ["test.component.css"],
+})
+export class TestComponent implements OnInit {
+  public columnNames: any[] = [
+    { title: "ID", field: "id_example", headerFilter: true },
+    { title: "Nom", field: "example_name", headerFilter: true },
+    { title: "Code", field: "example_code", headerFilter: true },
+  ];
+
+  public testJsonSchema = {
+    "$id":"/schemas/test/example",
+    "type": "object",
+    "$meta": {
+      "schema_name": "example",
+      "module_code": "test",
+      "label": "exemple"
+    },
+    "properties" : {
+        "id_example" : {"type": "integer", "label": "ID", "primary_key": true},
+        "example_name" : {"type" : "string", "label": "nom"},
+        "example_code" : {"type" : "string", "label": "code"}
+    }
+  }
+
+  public table;
+  public height: string = "311px";
+
+  tab = document.createElement("div");
+
+  constructor(
+    private _api: HttpClient,
+    private _router: Router,
+    private _route: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    this.drawTable();
+    // api pour récupérer les données test
+  }
+
+  // dataRequest() {
+  //   const url = ;
+  //   console.log(url)
+  //   this._api.get(url).subscribe((data) => {
+  //     this.table.setData(data.res)
+  //   });
+  // }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.drawTable();
+  }
+
+  drawTable(): void {
+    this.table = new Tabulator(this.tab, {
+      height: "311px",
+      layout: "fitColumns",
+      placeholder: "No Data Set",
+      ajaxFiltering: true,
+      columns: this.columnNames,
+      ajaxURL: AppConfig["API_ENDPOINT"] + "/modules/rest/test/examples/",
+      // ajaxResponse: function (url, params, response) {
+      //   return response.data;
+      // },
+      ajaxURLGenerator: function (url, config, params) {
+        //url - the url from the ajaxURL property or setData function
+        //config - the request config object from the ajaxConfig property
+        //params - the params object from the ajaxParams property, this will also include any pagination, filter and sorting properties based on table setup
+
+        //return request url
+        return url + "?params=" + encodeURI(JSON.stringify(params)); //encode parameters as a json object
+      },
+      paginationSize: 5,
+      pagination: "remote",
+      ajaxSorting: true,
+    });
+    document.getElementById("my-tabular-table").appendChild(this.tab);
+    // this.dataRequest();
+  }
+
+  onSubmit($event) {
+    const hasId = !!$event['id_example'];
+    const method = hasId ? 'patch' : 'post';
+    const url = `${AppConfig["API_ENDPOINT"]}/modules/test/examples/${hasId ? $event['id_example'] : ''}`;
+    console.log(`request ${method} ${url} sent`, $event)
+    this._api[method](url, $event).subscribe(data => {
+      console.log(`request ${method} ${url} ok`, data)
+    });
+  }
+}

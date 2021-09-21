@@ -1,0 +1,18 @@
+{
+  "name": "gn_modules",
+  "version": "0.0.1",
+  "description": "Module de modules",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "PNX",
+  "license": "ISC",
+  "dependencies": {
+    "angular6-json-schema-form": "^8.0.0",
+    "angular7-json-schema-form": "^1.0.4",
+    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
+    "tabulator-tables": "^4.9.3"
+  }
+}

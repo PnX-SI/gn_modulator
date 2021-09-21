@@ -1,0 +1,52 @@
+<h1>Test</h1>
+
+<h2>Paramètres</h2>
+
+<div class='test-base-components'>
+  <ul>
+    <li>module_code : {{ moduleCode }}</li>
+    <li>schema_name : {{ schemaName }}</li>
+    <li>value : {{ value }}</li>
+  </ul>
+</div>
+
+<div *ngIf='componentInitialized; else loadingBlock'>
+
+  <h2>Propriétés</h2>
+
+  <div class='test-base-components'>
+    <modules-base-properties
+    [moduleCode]="moduleCode"
+    [schemaName]="schemaName"
+    [value]="value"
+    ></modules-base-properties>
+  </div>
+
+  <h2>Formulaire</h2>
+
+  <div class='test-base-components'>
+    <modules-base-form
+    [moduleCode]="moduleCode"
+    [schemaName]="schemaName"
+    [value]="value"
+    ></modules-base-form>
+  </div>
+
+
+  <h2>Tableau</h2>
+
+  <div class='test-base-components'>
+    <modules-base-table
+    [moduleCode]="moduleCode"
+    [schemaName]="schemaName"
+    [value]="value"
+    ></modules-base-form>
+  </div>
+
+</div>
+
+<ng-template #loadingBlock>
+  <div>
+      Chargement en cours...
+  </div>
+</ng-template>

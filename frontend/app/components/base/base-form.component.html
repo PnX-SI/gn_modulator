@@ -1,0 +1,16 @@
+<div *ngIf="componentInitialized; else loadingBlock">
+  <h4>{{formTitle}}</h4>
+
+  <json-schema-form
+    loadExternalAssets="true"
+    [schema]="schemaConfig.schema"
+    framework="material-design"
+    [(ngModel)]="data"
+    (onSubmit)="onSubmit($event)"
+  >
+  </json-schema-form>
+</div>
+
+<ng-template #loadingBlock>
+  <div>Chargement en cours</div>
+</ng-template>

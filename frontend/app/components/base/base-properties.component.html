@@ -1,0 +1,26 @@
+
+
+<div *ngIf='componentInitialized; else loadingBlock'>
+    <h4>Propriétés {{schemaConfig.display.prep_label}} {{id()}}</h4>
+    <table>
+        <tr>
+            <th>Key</th>
+            <th>Label</th>
+            <th>Type</th>
+            <th>Value</th>
+        </tr>
+        <tr *ngFor="let prop of schemaConfig.utils.properties_array">
+           <th>{{ prop.name }}</th>
+           <td>{{ prop.label }}</td>
+           <td>{{ prop.type }}</td> 
+           <td>{{ data[prop.name] }}</td> 
+        </tr>
+    </table>
+</div>
+
+
+<ng-template #loadingBlock>
+    <div>
+        Chargement en cours
+    </div>
+  </ng-template>

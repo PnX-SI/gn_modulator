@@ -1,0 +1,5 @@
+conf_gn_module.toml
+egg.info
+node_modules
+**/*.egg-info
+**/__pycache__

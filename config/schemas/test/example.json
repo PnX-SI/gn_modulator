@@ -1,0 +1,15 @@
+{
+  "$id":"/schemas/test/example",
+  "type": "object",
+  "$meta": {
+    "schema_name": "example",
+    "module_code": "test",
+    "label": "exemple",
+    "genre": "M"
+  },
+  "properties" : {  
+      "id_example" : {"type": "integer", "label": "ID", "primary_key": true},
+      "example_name" : {"type" : "string", "label": "nom"},
+      "example_code" : {"type" : "string", "label": "code"}
+  }
+}

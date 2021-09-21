@@ -1,0 +1,15 @@
+Module de modules
+
+
+Installer le module 
+-------------------
+
+Se placer dans le répertoire backend de GeoNature et activer le virtualenv
+
+``source venv/bin/activate``
+
+Lancer la commande d'installation
+
+``geonature install_packaged_gn_module <MON_CHEMIN_ABSOLUE_VERS_LE_MODULE /modules``
+
+
