@@ -10,6 +10,7 @@ from .queries import (
 
 from geonature.utils.env import DB
 
+
 class SchemaRepositories():
     '''
         class for sqlalchemy query processing

@@ -1,6 +1,8 @@
 '''
     sqla query functions
 '''
+from sqlalchemy import func, cast, orm, and_
+from geonature.utils.env import DB
 
 def custom_getattr(Model, field_name, query):
     '''

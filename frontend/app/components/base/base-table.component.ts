@@ -5,6 +5,7 @@ import { ModulesConfigService } from "../../services/config.service"
 import { ModulesDataService } from "../../services/data.service"
 import { mergeMap, concatMap } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
+import Tabulator from "tabulator-tables";
 
 @Component({
   selector: "modules-base-table",
@@ -22,6 +23,13 @@ export class BaseTableComponent implements OnInit {
   schemaConfig = null;
   tableTitle = null;
   data = null;
+
+  columnNames: any[] = [
+    { title: "ID", field: "id_example", headerFilter: true },
+    { title: "Nom", field: "example_name", headerFilter: true },
+    { title: "Code", field: "example_code", headerFilter: true },
+  ];
+;
 
   public table;
   public height: string = "311px";
@@ -54,11 +62,36 @@ export class BaseTableComponent implements OnInit {
         mergeMap((data) => {
           this.data = data;
           this.setTableTitle();
+
           return of(true)
         })
       ).subscribe(() => {
         this.componentInitialized = true;
+        this.drawTable()
       });
+  }
+
+  columns() {
+    return this.schemaConfig.utils.properties_array
+      .map(p => ({title: p.label, field: p.name, headerFilter: true}))
+  }
+
+  drawTable(): void {
+    this.table = new Tabulator(this.tab, {
+      height: "311px",
+      layout: "fitColumns",
+      placeholder: "No Data Set",
+      ajaxFiltering: true,
+      columns: this.columns(),
+      ajaxURL: this.schemaConfig.utils.urls.rest,
+      ajaxURLGenerator: function (url, config, params) {
+        return url + "?params=" + encodeURI(JSON.stringify(params)); //encode parameters as a json object
+      },
+      paginationSize: 5,
+      pagination: "remote",
+      ajaxSorting: true,
+    });
+    document.getElementById("my-tabular-table").appendChild(this.tab);
   }
 
   id() {
@@ -66,7 +99,7 @@ export class BaseTableComponent implements OnInit {
   }
 
   setTableTitle() {
-      this.tableTitle = this.schemaName.display.undef_labels;
+      this.tableTitle = this.schemaConfig.display.undef_labels;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
