@@ -1,0 +1,27 @@
+{
+    "$id": "/schemas/test/machin",
+    "type": "object",
+    "$meta": {
+        "object_name": "machin",
+        "group_name": "test",
+        "genre": "None",
+        "label": "machin"
+    },
+    "properties": {
+        "machin_id": { 
+            "type": "integer",
+            "label": "ID machin",
+            "primary_key": true 
+        },
+        "machin_name":
+            { 
+                "type": "string",
+                "label": "Nom machin"
+            },
+        "machin_code": 
+            {
+                "type": "string",
+                "label": "Code machin"
+            }
+    }
+}

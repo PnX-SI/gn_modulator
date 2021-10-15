@@ -1,0 +1,17 @@
+{
+    "$id": "/schemas/test/parent",
+    "type": "object",
+    "$meta": {
+        "object_name": "parent",
+        "group_name": "test",
+        "sql_processing": true,
+        "genre": "M",
+        "label": "parent",
+        "label_field_name": "parent_name"
+    },
+    "properties": {
+        "parent_id": { "type": "integer", "label": "ID parent", "primary_key": true },
+        "parent_name": { "type" : "string", "label": "Nom parent" },
+        "parent_code": { "type" : "string", "label": "Code parent" }
+    }
+}

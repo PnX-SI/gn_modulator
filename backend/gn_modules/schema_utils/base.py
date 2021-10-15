@@ -7,13 +7,18 @@
     - load / save
 
 '''
-from jsonschema import validate
+import gc
+
+from jsonschema import validate, RefResolver
 
 from .reference import schema_ref
 
 processed_types = [
     'integer',
-    'string'
+    'string',
+    'geom',
+    'date',
+    'uuid'
 ]
 
 
@@ -35,37 +40,21 @@ class SchemaBase():
 
     # utils - schema parser
 
-    def module_code(self):
-        '''
-            returns module_code from self._schema['$meta']
-        '''
-        return self._schema['$meta']['module_code']
+    def id(self):
+        return self._schema['$id']
 
-    def schema_name(self):
+    def group_name(self):
         '''
-            returns schema_name from self._schema['$meta']
+            returns group_name from self._schema['$meta']
         '''
-        return self._schema['$meta']['schema_name']
+        return self._schema['$meta']['group_name']
 
-    def sql_schema_name(self):
+    def object_name(self):
         '''
-            returns sql_schema_name from self._schema['$meta']
-            can be 
-              - defined in self._schema['$meta']['sql_schema_name'] 
-              - or retrieved from module_code : 'm_{module_code}' 
+            returns object_name from self._schema['$meta']
         '''
-        return self._schema['$meta'].get('sql_module_name', 'm_{}'.format(self.module_code()))
+        return self._schema['$meta']['object_name']
 
-    def sql_table_name(self):
-        '''
-            !! can be confused with schema_name
-            returns sql_table_name from self._schema['$meta']
-            can be 
-              - defined in self._schema['$meta']['sql_table_name'] 
-              - or retrieved from module_code : 't_{schema_name}' 
-        '''
-        return self._schema['$meta'].get('sql_table_name', 't_{}'.format(self.schema_name()))
-    
     def full_name(self, letter_case=None):
         '''
             return name
@@ -77,10 +66,14 @@ class SchemaBase():
             .title()
             .replace(' ', '')
         )
-        if letter_case == 'snake_case':
-            return '{}_{}'.format(self.module_code(), self.schema_name())
+        if letter_case in ['snake_case', '_']:
+            return '{}_{}'.format(self.group_name(), self.object_name())
+        if letter_case == '/':
+            return '{}/{}'.format(self.group_name(), self.object_name())
         else:
-            return '{}.{}'.format(self.module_code(), self.schema_name())
+            return '{}.{}'.format(self.group_name(), self.object_name())
+
+
 
     def pk_field_names(self):
         '''
@@ -103,6 +96,13 @@ class SchemaBase():
             else None
         )
 
+    def code_field_name(self):
+        return self._schema['$meta'].get('code_field_name', '{}_code'.format(self.object_name()))
+
+    def name_field_name(self):
+        return self._schema['$meta'].get('name_field_name', '{}_name'.format(self.object_name()))
+
+
     def properties(self, processed_properties_only=False):
         '''
             returns a list of schema properties from self._schema['properties']
@@ -117,7 +117,7 @@ class SchemaBase():
             return {
                 k: v
                 for k,v in self.properties().items()
-                if v['type'] in processed_types
+                if v.get('type') in processed_types
             }
 
     def properties_array(self, processed_properties_only=False):
@@ -135,6 +135,30 @@ class SchemaBase():
             properties_array.append(v)
 
         return properties_array
+
+    def get_property(self, key):
+        '''
+        '''
+        return self._schema['properties'][key]
+
+    def get_relation(self, key):
+        '''
+        '''
+        relation_reference =  self._schema['properties'][key]['$ref']
+        return self.__class__().load_from_reference(relation_reference)
+
+
+    def relationships(self):
+        '''
+            return dict of relationship (from _schema['$meta']['properties'])
+        '''
+        return {
+            k: v
+            for k,v in self.properties().items()
+            if v.get('type') == 'object'
+        }
+
+
 
     def processed_types(self):
         '''
@@ -168,6 +192,19 @@ class SchemaBase():
         '''
             returns True if data is valid according to self._schema
         '''
-        return validate(instance=data, schema=self._schema)
+        resolver = RefResolver('file://%s/' % self.schemas_dir(), None)
 
+        return validate(instance=data, schema=self._schema, resolver=resolver)
 
+    def get_class_from_cache(self, name, Base):
+        '''
+            return class from ''cache''
+
+            for Models, MarshMallowSchemas, etc...
+        '''
+        all_refs = gc.get_referrers(Base)
+        results = []
+        for obj in all_refs:
+            if (isinstance(obj, tuple)) and obj[0].__name__ ==  name:
+                return obj[0]
+        return None

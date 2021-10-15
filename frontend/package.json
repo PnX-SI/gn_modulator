@@ -11,8 +11,7 @@
   "dependencies": {
     "angular6-json-schema-form": "^8.0.0",
     "angular7-json-schema-form": "^1.0.4",
-    "lodash": "^4.17.21",
-    "lodash-es": "^4.17.21",
+    "ng2-select": "^2.0.0",
     "tabulator-tables": "^4.9.3"
   }
 }

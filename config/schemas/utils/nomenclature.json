@@ -1,0 +1,25 @@
+{
+    "$id": "utils/nomenclature",
+    "type": "object",
+    "$meta": {
+        "object_name": "nomenclature",
+        "group_name": "utils",
+        "sql_schema_name": "ref_nomenclatures",
+        "sql_table_name": "t_nomenclatures",
+        "genre": "F",
+        "label": "nomenclature",
+        "table": {
+            "columns": ["cd_nomenclature", "mnemonique", "label_fr", "type.mnemonique", "type.label_fr"]
+        },
+        "label_field_name": "label_fr"
+    },
+    "properties": {
+        "id_nomenclature": { "type": "integer", "label": "ID nomenclature", "primary_key": true },
+        "id_type": { "type": "integer", "label": "ID type", "foreign_key": "#/utils/nomenclature_type"},
+        "label_default": { "type": "string", "label": "Label par defaut"},
+        "label_fr": { "type": "string", "label": "Label (fr)"},
+        "cd_nomenclature": { "type": "string", "label": "Code nomenclature"},
+        "mnemonique": { "type": "string", "label": "Mnémonique"},
+        "type": { "type": "object", "foreign_key": "id_type", "$ref": "../utils/nomenclature_type.json"}
+    }
+}

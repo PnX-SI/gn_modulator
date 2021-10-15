@@ -1,9 +1,27 @@
 <h1>Module gn_modules</h1>
 
+
+<div *ngFor='let group of groups'>
+    <h2>{{group.title}}</h2>
+    <ul>
+        <li *ngFor="let elem of group.items">
+            <a href="#/modules/test_schema/{{group.name}}/{{elem}}/2">
+                <i>{{group.name}}.{{elem}}</i>
+            </a>
+        </li>
+    </ul>
+</div>
 <h2>Tests</h2>
 
-<ul>
-    <li>
-        <a href='#/modules/test_schema/test/example/2'>Test schema <i>test.example</i></a>
-    </li>
+<!-- <ul>
+    <li><a href='#/modules/test_schema/test/example/2'><i>test.example</i></a></li>
+    <li><a href='#/modules/test_schema/test/parent/2'><i>test.parent</i></a></li>
+    <li><a href='#/modules/test_schema/test/child/2'><i>test.child</i></a></li>
 </ul>
+
+<h2>Utils</h2>
+
+<ul>
+    <li><a href='#/modules/test_schema/utils/nomenclature/2'><i>utils.nomenclature</i></a></li>
+    <li><a href='#/modules/test_schema/utils/nomenclature_type/2'><i>utils.nomenclature_type</i></a></li>
+</ul> -->

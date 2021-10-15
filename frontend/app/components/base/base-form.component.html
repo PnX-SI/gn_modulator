@@ -1,15 +1,28 @@
 <div *ngIf="componentInitialized; else loadingBlock">
   <h4>{{formTitle}}</h4>
 
-  <json-schema-form
-    loadExternalAssets="true"
-    [schema]="schemaConfig.schema"
-    framework="material-design"
-    [(ngModel)]="data"
-    (onSubmit)="onSubmit($event)"
-  >
-  </json-schema-form>
+  <div style="display: flex; flex-direction: row;">
+    <div>
+      <json-schema-form
+      [schema]="schemaConfig.form.schema"
+      framework="material-design"
+      [(ngModel)]="data"
+      (onSubmit)="onSubmit($event)"
+      [layout]="schemaConfig.form.layout"
+      language=fr
+    >
+    </json-schema-form>
+    </div>
+    <!-- <div>
+      <pre>
+        {{data | json}}
+      </pre>
+    </div> -->
+  </div>
+
+
 </div>
+
 
 <ng-template #loadingBlock>
   <div>Chargement en cours</div>

@@ -1,0 +1,17 @@
+{
+    "$id": "/schemas/utils/organisme",
+    "type": "object",
+    "$meta": {
+        "object_name": "organisme",
+        "group_name": "utils",
+        "sql_schema_name": "utilisateurs",
+        "sql_table_name": "bib_organismes",
+        "genre": "M",
+        "label": "organisme",
+        "label_field_name": "nom_organisme"
+    },
+    "properties": {
+        "id_organisme": { "type": "string", "label": "ID organisme", "primary_key": true},
+        "nom_organisme": { "type": "string", "label": "Nom organisme"}
+    }
+}

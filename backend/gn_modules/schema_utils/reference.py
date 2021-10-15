@@ -14,5 +14,4 @@ path_schema_ref = Path(GN_EXTERNAL_MODULE / MODULE_CODE.lower() / 'config/schema
 
 # chargement du fichier de reference
 with open(path_schema_ref, 'r') as f:
-    print('loading schema ref')
     schema_ref = json.load(f)

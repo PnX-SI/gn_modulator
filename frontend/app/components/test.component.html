@@ -1,46 +1,48 @@
 <h1>Test</h1>
 
-<h2>Paramètres</h2>
-
-<div class='test-base-components'>
-  <ul>
-    <li>module_code : {{ moduleCode }}</li>
-    <li>schema_name : {{ schemaName }}</li>
-    <li>value : {{ value }}</li>
-  </ul>
-</div>
 
 <div *ngIf='componentInitialized; else loadingBlock'>
 
-  <h2>Propriétés</h2>
 
-  <div class='test-base-components'>
-    <modules-base-properties
-    [moduleCode]="moduleCode"
-    [schemaName]="schemaName"
-    [value]="value"
-    ></modules-base-properties>
+  <div class='flex-container'>
+
+    <div>
+      <h2>Propriétés</h2>
+      <div class='test-base-components'>
+        <modules-base-properties
+        [groupName]="groupName"
+        [objectName]="objectName"
+        [value]="value"
+        ></modules-base-properties>
+      </div>
+    </div>
+
+    <div>
+      <h2>Formulaire</h2>
+      <div class='test-base-components'>
+        <modules-base-form
+        [groupName]="groupName"
+        [objectName]="objectName"
+        [value]="value"
+        ></modules-base-form>
+      </div>
+    </div>
+
   </div>
 
-  <h2>Formulaire</h2>
+  <div class='flex-container'>
 
-  <div class='test-base-components'>
-    <modules-base-form
-    [moduleCode]="moduleCode"
-    [schemaName]="schemaName"
-    [value]="value"
-    ></modules-base-form>
-  </div>
+    <div>
+      <h2>Tableau</h2>
+      <div class='test-base-components'>
+        <modules-base-table
+        [groupName]="groupName"
+        [objectName]="objectName"
+        [value]="value"
+        ></modules-base-table>
+      </div>
+    </div>
 
-
-  <h2>Tableau</h2>
-
-  <div class='test-base-components'>
-    <modules-base-table
-    [moduleCode]="moduleCode"
-    [schemaName]="schemaName"
-    [value]="value"
-    ></modules-base-table>
   </div>
 
 </div>

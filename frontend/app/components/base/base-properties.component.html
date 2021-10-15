@@ -2,7 +2,43 @@
 
 <div *ngIf='componentInitialized; else loadingBlock'>
     <h4>Propriétés {{schemaConfig.display.prep_label}} {{id()}}</h4>
-    <table>
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Key Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Nom </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="label">
+          <th mat-header-cell *matHeaderCellDef> Label </th>
+          <td mat-cell *matCellDef="let element"> {{element.label}} </td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef> Type </th>
+          <td mat-cell *matCellDef="let element"> {{element.type}} </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef> Valeur </th>
+          <td mat-cell *matCellDef="let element"> {{element.value |json}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+
+
+    <!-- <table mat-table>
         <tr>
             <th>Key</th>
             <th>Label</th>
@@ -12,10 +48,10 @@
         <tr *ngFor="let prop of schemaConfig.utils.properties_array">
            <th>{{ prop.name }}</th>
            <td>{{ prop.label }}</td>
-           <td>{{ prop.type }}</td> 
-           <td>{{ data[prop.name] }}</td> 
+           <td>{{ prop.type }}</td>
+           <td>{{ data[prop.name] }}</td>
         </tr>
-    </table>
+    </table> -->
 </div>
 
 

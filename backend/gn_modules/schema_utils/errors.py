@@ -15,14 +15,44 @@ class SchemaValidationError(Exception):
     '''
     pass
 
+
 class SchemaSqlError(Exception):
     '''
         Error in schema sql text processing
     '''
     pass
 
+
+class SchemaUnautorizedSqlError(Exception):
+    '''
+        Error when we try to exec an sql code on an unautorized schema
+    '''
+pass
+
+
 class SchemaProcessedPropertyError(Exception):
     '''
         Error when a property marked as processed has no processing instruction
     '''
     pass
+
+
+class SchemaRepositoryFilterError(Exception):
+    '''
+        Error when a filter is not correctly defined
+    '''
+pass
+
+
+class SchemaRepositoryFilterTypeError(Exception):
+    '''
+        Error when a filter is not correctly defined
+    '''
+pass
+
+class SchemaProcessConfigError(Exception):
+    '''
+        Error when a filter is not correctly defined
+    '''
+pass
+

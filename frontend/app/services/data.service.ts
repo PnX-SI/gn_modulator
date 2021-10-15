@@ -1,64 +1,103 @@
 import { Injectable } from "@angular/core";
 
-import { HttpClient } from "@angular/common/http";
+import {  } from "@angular/common/http";
 
 import { of } from "@librairies/rxjs";
 import { mergeMap } from "@librairies/rxjs/operators";
 import { ModulesConfigService } from "./config.service";
+import { ModulesRequestService } from "./request.service";
 
 @Injectable()
 export class ModulesDataService {
 
   constructor(
-      private _http: HttpClient,
-      private _config: ModulesConfigService) {}
+    private _requestService: ModulesRequestService,
+    private _config: ModulesConfigService
+  ) {}
 
   init() {
   }
 
-// TODO params get
-
   /**
-   * request get one row
-   * 
-   * @param moduleCode 
-   * @param schemaName 
-   * @param value 
-   * @param fieldName 
+   * On souhaite s'assurer que la config est bien chargée
+   * pour l'élément demandé
    */
-  getOne(moduleCode, schemaName, value, fieldName=null) {
-    const schemaConfig = this._config.schemaConfig(moduleCode, schemaName);
-    const queryParams = fieldName 
-        ? `?field_name=${fieldName}`
-        : ''
-    ;
-    const url = `${schemaConfig.utils.urls.rest}${value}${queryParams}`
-    return this._http.get(url)
+  dataRequest(groupName, objectName, method, options: any) {
+    return this._config
+      .loadConfig(groupName, objectName)
+      .pipe(
+        mergeMap((schemaConfig) => {
+          const url = `${schemaConfig.utils.urls.rest}${options.value || ''}`
+          return this._requestService.request(
+            method,
+            url,
+            {
+              params: options.params,
+              data: options.data
+            }
+          );
+        })
+      );
   }
 
-  post(moduleCode, schemaName, data) {
-    const schemaConfig = this._config.schemaConfig(moduleCode, schemaName);
-    const url = `${schemaConfig.utils.urls.rest}`
-    return this._http.post(url, data)
+  getList(groupName, objectName, params = {}) {
+    return this.dataRequest(
+      groupName,
+      objectName,
+      'get',
+      {
+        params: {params}
+      }
+    );
   }
 
-  patch(moduleCode, schemaName, value, data, fieldName=null) {
-    const schemaConfig = this._config.schemaConfig(moduleCode, schemaName);
-    const queryParams = fieldName 
-        ? `?field_name=${fieldName}`
-        : ''
-    ;
-    const url = `${schemaConfig.utils.urls.rest}${value}${queryParams}`
-    return this._http.patch(url, data)
+
+  getOne(groupName, objectName, value, fieldName=null) {
+    return this.dataRequest(
+      groupName,
+      objectName,
+      'get',
+      {
+        value,
+        params: { fieldName }
+      }
+    );
+  }
+
+  post(groupName, objectName, data) {
+    return this.dataRequest(
+      groupName,
+      objectName,
+      'post',
+      {
+        data
+      }
+    );
+  }
+
+  patch(groupName, objectName, value, data, fieldName=null) {
+    return this.dataRequest(
+      groupName,
+      objectName,
+      'patch',
+      {
+        value,
+        params: { fieldName },
+        data
+      }
+    );
   };
 
-  delete(moduleCode, schemaName, value, fieldName=null) {
-    const schemaConfig = this._config.schemaConfig(moduleCode, schemaName);
-    const queryParams = fieldName 
-        ? `?field_name=${fieldName}`
-        : ''
-    ;
-    const url = `${schemaConfig.utils.urls.rest}${value}${queryParams}`
-    return this._http.delete(url)
+  delete(groupName, objectName, value, fieldName=null) {
+    return this.dataRequest(
+      groupName,
+      objectName,
+      'delete',
+      {
+        value,
+        params: { fieldName }
+      }
+    );
+ 
   };
 }

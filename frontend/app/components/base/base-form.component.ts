@@ -1,10 +1,14 @@
 import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute, Router, ParamMap } from "@angular/router";
-import { ModulesConfigService } from "../../services/config.service"
-import { ModulesDataService } from "../../services/data.service"
 import { mergeMap, concatMap } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
+
+import { HttpClient } from "@angular/common/http";
+import { WidgetLibraryService } from 'angular7-json-schema-form';
+import { ModulesConfigService } from "../../services/config.service"
+import { ModulesDataService } from "../../services/data.service"
+
+import { additionalWidgets } from './form-additional-widgets'
 
 @Component({
   selector: "modules-base-form",
@@ -14,8 +18,8 @@ import { Observable, of, forkJoin } from "@librairies/rxjs";
 export class BaseFormComponent implements OnInit {
 
 
-  @Input() moduleCode = null;
-  @Input() schemaName = null;
+  @Input() groupName = null;
+  @Input() objectName = null;
   @Input() value = null;
 
   componentInitialized = false;
@@ -23,29 +27,37 @@ export class BaseFormComponent implements OnInit {
   formTitle = null;
   data = null;
 
+  additionalWidgets = additionalWidgets;
+
   constructor(
     private _route: ActivatedRoute,
     private _mConfig: ModulesConfigService,
-    private _mData: ModulesDataService
+    private _mData: ModulesDataService,
+    private _widgetLibraryService: WidgetLibraryService
   ) {}
 
 
   ngOnInit() {
 
-    // load_config
+    // charge les widget additionels
+    for (const [key, AdditionalWidget] of Object.entries(additionalWidgets)) {
+      this._widgetLibraryService.registerWidget(key, AdditionalWidget);
+    }
+
     this.process();
-  }
+
+}
 
   process() {
     // load_config
-    this._mConfig.loadConfig(this.moduleCode, this.schemaName)
+    this._mConfig.loadConfig(this.groupName, this.objectName)
       .pipe(
         mergeMap((schemaConfig) => {
-          this.schemaConfig = schemaConfig; 
+          this.schemaConfig = schemaConfig;
           return of(true)
         }),
         mergeMap(() => {
-          return this._mData.getOne(this.moduleCode, this.schemaName, this.value)
+          return this._mData.getOne(this.groupName, this.objectName, this.value)
         }),
         mergeMap((data) => {
           this.data = data;
@@ -62,7 +74,7 @@ export class BaseFormComponent implements OnInit {
   }
 
   setFormTitle() {
-      this.formTitle = this.id() 
+      this.formTitle = this.id()
         ? `Modification ${this.schemaConfig.display.def_label} ${this.id()}`
         : `Creation ${this.schemaConfig.display.undef_label_new}`
   }
@@ -72,15 +84,13 @@ export class BaseFormComponent implements OnInit {
   }
 
   onSubmit($event) {
-    console.log($event, this.data)
     let request = null;
     if (this.id()) {
-        request = this._mData.patch(this.moduleCode, this.schemaName, this.id(), this.data)
+        request = this._mData.patch(this.groupName, this.objectName, this.id(), this.data)
     } else {
-        request = this._mData.post(this.moduleCode, this.schemaName, this.data)
+        request = this._mData.post(this.groupName, this.objectName, this.data)
     }
     request.subscribe((data) => {
-        console.log('request done', data)
         this.data=data;
     });
   }

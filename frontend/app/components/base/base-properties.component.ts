@@ -12,14 +12,15 @@ import { Observable, of, forkJoin } from "@librairies/rxjs";
   styleUrls: ["base-properties.component.scss"],
 })
 export class BasePropertiesComponent implements OnInit {
-  @Input() moduleCode = null;
-  @Input() schemaName = null;
+  @Input() groupName = null;
+  @Input() objectName = null;
   @Input() value = null;
 
   componentInitialized = false;
   schemaConfig = null;
   data = null;
-
+  dataSource = null;
+  displayedColumns = null;
   constructor(
     private _route: ActivatedRoute,
     private _mConfig: ModulesConfigService,
@@ -38,7 +39,7 @@ export class BasePropertiesComponent implements OnInit {
   process() {
     // load_config
     this._mConfig
-      .loadConfig(this.moduleCode, this.schemaName)
+      .loadConfig(this.groupName, this.objectName)
       .pipe(
         mergeMap((schemaConfig) => {
           this.schemaConfig = schemaConfig;
@@ -46,13 +47,29 @@ export class BasePropertiesComponent implements OnInit {
         }),
         mergeMap(() => {
           return this._mData.getOne(
-            this.moduleCode,
-            this.schemaName,
+            this.groupName,
+            this.objectName,
             this.value
           );
         }),
+    //     <tr *ngFor="let prop of schemaConfig.utils.properties_array">
+    //     <th>{{ prop.name }}</th>
+    //     <td>{{ prop.label }}</td>
+    //     <td>{{ prop.type }}</td>
+    //     <td>{{ data[prop.name] }}</td>
+    //  </tr>
+
         mergeMap((data) => {
           this.data = data;
+          this.dataSource = this.schemaConfig.utils.properties_array.map(
+            p => ({
+              name: p.name,
+              label: p.label,
+              type: p.type,
+              value: data[p.name]
+            })
+          );
+          this.displayedColumns = ['name', 'label', 'type', 'value']
           return of(true);
         })
       )

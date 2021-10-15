@@ -1,0 +1,66 @@
+{
+    "$id": "test/child",
+    "type": "object",
+    "$meta": {
+        "object_name": "child",
+        "group_name": "test",
+        "sql_processing": true,
+        "genre": "M",
+        "label": "enfant",
+        "table": {
+            "columns": ["child_name", "parent.parent_name"]
+        },
+        "form": {
+            "layout": [
+                { "type": "text", "key": "child_name"},
+                { "type": "text", "key": "child_code"},
+                {
+                    "key": "parent_id",
+                    "type": "list-form",
+                    "options": {
+                        "data_reload_on_search": true,
+                        "label": "Parent",
+                        "value_field_name": "parent_id",
+                        "label_field_name": "parent_name",
+                        "params": {
+                            "size": 7
+                        },
+                        "api": "http://localhost:8000/modules/test/parent/rest/",
+                        "refs": "#/definitions/parent"
+                    }
+                },
+                {
+                    "key": "parent",
+                    "type": "list-form",
+                    "options": {
+                        "data_reload_on_search": true,
+                        "return_object": true,
+                        "label": "Parent",
+                        "value_field_name": "parent_id",
+                        "label_field_name": "parent_name",
+                        "params": {
+                            "size": 7
+                        },
+                        "api": "http://localhost:8000/modules/test/parent/rest/",
+                        "refs": "#/definitions/parent"
+                    }
+                }
+            ]
+        }
+    },
+    "properties": {
+        "child_id": { "type": "integer", "label": "ID enfant", "primary_key": true },
+        "child_name": { "type"  : "string", "label": "Nom enfant" },
+        "child_code": { "type" : "string", "label": "Code enfant" },
+        "parent_id": {
+            "type": "integer",
+            "label": "ID parent",
+            "foreign_key": "/schemas/test/parent"
+        },
+        "parent": {
+            "type": "object",
+            "foreign_key": "parent_id",
+            "$ref": "../test/parent.json"
+        }
+    }
+}

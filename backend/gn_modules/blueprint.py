@@ -18,26 +18,45 @@ blueprint.cli.short_help = 'Commandes pour l''administration du module MODULES'
 for cmd in commands:
     blueprint.cli.add_command(cmd)
 
-#insert route de test
+schemas = {
+    'test' : [
+        'parent',
+        'child',
+        'example'
+    ],
+    'utils': [
+        'nomenclature',
+        'nomenclature_type',
+        'taxref',
+        'organisme',
+        'utilisateur',
+        'synthese'
+    ]
+}
+
+#insert routes
 try:
-    sm = SchemaMethods('test', 'example')
-    sm.register_api(blueprint)
+    for group_name, object_names in schemas.items():
+        for object_name in object_names:
+            SchemaMethods(group_name, object_name).register_api(blueprint)
+
 except Exception as e:
     print('Erreur durant la création des routes test : {}'.format(str(e)))
     raise(e)
 
 # TODO dans register api
-@blueprint.route('/schema/<module_code>/<schema_name>', methods=['GET'])
-def api_schema(module_code, schema_name):
-    '''
-        api schema
-    '''
-    try:
-        sm = SchemaMethods(module_code, schema_name)
-        return sm.schema()
-    except Exception as e:
-        return 'erreur {}'.format(e), 500
-@blueprint.route('/test', methods=['GET', 'POST'])
-def api_test():
-    return 'It works (ça marche !)'
+# @blueprint.route('/schema/<group_name>/<object_name>', methods=['GET'])
+# def api_schema(group_name, object_name):
+#     '''
+#         api schema
+#     '''
+#     try:
+#         sm = SchemaMethods(group_name, object_name)
+#         return sm.schema()
+#     except Exception as e:
+#         return 'erreur {}'.format(e), 500
+    
+# @blueprint.route('/test', methods=['GET', 'POST'])
+# def api_test():
+#     return 'It works (ça marche !)'
 

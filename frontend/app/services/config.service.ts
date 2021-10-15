@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
 
-import { HttpClient } from "@angular/common/http";
 import { AppConfig } from "@geonature_config/app.config";
 import { ModuleConfig } from "../module.config";
 
 import { of } from "@librairies/rxjs";
 import { mergeMap } from "@librairies/rxjs/operators";
+import { ModulesRequestService } from "./request.service";
 
 @Injectable()
 export class ModulesConfigService {
   private _config;
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _requestService: ModulesRequestService) {}
 
   /** Configuration */
 
@@ -20,19 +20,19 @@ export class ModulesConfigService {
 
 /**
  * attempts to get config from cache (this._config) and fetch schemaConfig from backend
- * 
- * @param moduleCode 
- * @param schemaName 
+ *
+ * @param groupName
+ * @param objectName
  * @param forceLoad : fetch even if schemaConfig already in cache (this._config)
  * @returns schemaConfig
  */
-  loadConfig(moduleCode, schemaName, forceLoad=false) {
+  loadConfig(groupName, objectName, forceLoad=false) {
 
     // 1 - attempts to get config from cache (this._config)
-    
-    const schemaConfig = this._config 
-        && this._config[moduleCode]
-        && this._config[moduleCode][schemaName];
+
+    const schemaConfig = this._config
+        && this._config[groupName]
+        && this._config[groupName][objectName];
 
     //   - if forceLoad is True : fetch config
     if(schemaConfig && !forceLoad) {
@@ -40,17 +40,17 @@ export class ModulesConfigService {
     }
 
     // 2 - Fetch config from backend
-    
-    const urlConfig =`${this.backendModuleUrl()}/config/${moduleCode}/${schemaName}`
+
+    const urlConfig =`${this.backendModuleUrl()}/${groupName}/${objectName}/config/`
 
     /**
-     * Fetch schemaConfig and store in _config[moduleCode][schemaName] 
+     * Fetch schemaConfig and store in _config[groupName][objectName]
      */
-    return this._http.get<any>(urlConfig).pipe(
+    return this._requestService.request('get', urlConfig).pipe(
       mergeMap((schemaConfig) => {
         this._config = this._config || {};
-        this._config[moduleCode] = this._config[moduleCode] || {};
-        this._config[moduleCode][schemaName] = schemaConfig;
+        this._config[groupName] = this._config[groupName] || {};
+        this._config[groupName][objectName] = schemaConfig;
         return of(schemaConfig);
       })
     );
@@ -58,15 +58,15 @@ export class ModulesConfigService {
 
   /**
    * Returns schemaConfig
-   * 
-   * @param moduleCode 
-   * @param schemaName 
-   * @returns 
+   *
+   * @param groupName
+   * @param objectName
+   * @returns
    */
-  schemaConfig(moduleCode, schemaName) {
+  schemaConfig(groupName, objectName) {
     return this._config
-        && this._config[moduleCode]
-        && this._config[moduleCode][schemaName];
+        && this._config[groupName]
+        && this._config[groupName][objectName];
   }
 
   /** Backend Url et static dir ??*/
@@ -80,7 +80,7 @@ export class ModulesConfigService {
 
   /** Backend Module Url */
   backendModuleUrl() {
-    return `${AppConfig.API_ENDPOINT}/${ModuleConfig.MODULE_URL}`;
+    return `${AppConfig.API_ENDPOINT}${ModuleConfig.MODULE_URL}`;
   }
 
   /** Frontend Module Monitoring Url */

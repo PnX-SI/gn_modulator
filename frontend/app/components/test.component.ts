@@ -14,8 +14,8 @@ export class TestComponent implements OnInit {
   componentInitialized = false;
 
   // route parameters
-  moduleCode = null;
-  schemaName = null;
+  groupName = null;
+  objectName = null;
   value = null;
 
   schemaConfig = null;
@@ -34,10 +34,10 @@ export class TestComponent implements OnInit {
     this._route.paramMap
     .pipe(
       mergeMap((params) => {
-        this.moduleCode = params.get('moduleCode');
-        this.schemaName = params.get('schemaName');
+        this.groupName = params.get('groupName');
+        this.objectName = params.get('objectName');
         this.value = params.get('value');
-        return this._mConfig.loadConfig(this.moduleCode, this.schemaName)
+        return this._mConfig.loadConfig(this.groupName, this.objectName)
       }),
       mergeMap((schemaConfig) => {
         this.schemaConfig = schemaConfig; 

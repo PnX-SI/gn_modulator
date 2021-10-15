@@ -12,13 +12,14 @@ from .schema_utils.models import SchemaModel
 from .schema_utils.repositories import SchemaRepositories
 from .schema_utils.serializers import SchemaSerializers
 from .schema_utils.sql import SchemaSql
-
+from .schema_utils.commands import SchemaCommands
 
 class SchemaMethods(
     SchemaApi,
     SchemaBase,
+    SchemaCommands,
     SchemaConfig,
-    SchemaFiles, 
+    SchemaFiles,
     SchemaModel,
     SchemaRepositories,
     SchemaSerializers,
@@ -26,6 +27,10 @@ class SchemaMethods(
 ):
 
     _schema = {} # dict containing schema
-    
-    def __init__(self, module_code, schema_name):
-        self.load(module_code, schema_name)
+
+    def __init__(self, group_name=None, object_name=None):
+        if group_name and object_name:
+            self.load(group_name, object_name)
+
+    def __str__(self):
+        return "< SchemaMethods : '{}'>".format(self.full_name())

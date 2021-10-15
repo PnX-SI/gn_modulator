@@ -1,0 +1,20 @@
+{
+    "$id": "/schemas/utils/taxref",
+    "type": "object",
+    "$meta": {
+        "object_name": "taxref",
+        "group_name": "utils",
+        "sql_schema_name": "taxonomie",
+        "sql_table_name": "taxref",
+        "genre": "F",
+        "label": "taxonomie",
+        "label_field_name": "lb_nom"
+    },
+    "properties": {
+        "cd_nom": { "type": "integer", "label": "cd_nom", "primary_key": true },
+        "nom_complet": { "type": "string", "label": "Nom complet"},
+        "lb_nom": { "type": "string", "label": "Nom latin"},
+        "nom_vern": { "type": "string", "label": "Nom vernaculaire"},
+        "regne": { "type": "string", "label": "Règne"}
+    }
+}
