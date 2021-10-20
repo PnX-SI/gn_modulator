@@ -66,7 +66,7 @@ csvsql ${source_csv} --no-constraints --tables public.tmp_import_sipaf | sed \
     -e 's/BOOLEAN/VARCHAR/g' \
     -e 's/, /,/g' \
     -e 's/"//g' >> ${source_sql}
-echo "COPY public.tmp_import_sipaf FROM '/tmp/source.csv' CSV HEADER DELIMITER ';';" >> ${source_sql};
+echo "COPY public.tmp_import_sipaf FROM STDIN CSV HEADER DELIMITER ';';" >> ${source_sql};
 
 cp ${source_csv} /tmp/source.csv
 
@@ -75,4 +75,4 @@ cp ${source_csv} /tmp/source.csv
 psqla -c 'DROP SCHEMA IF EXISTS sipaf CASCADE;'
 psqla -f ${source_sql}
 psqla -f ${data_dir}/schema_sipaf.sql
-psqla -f ${data_dir}/import_sipaf.sql
+cat ${source_csv} | psqla -f ${data_dir}/import_sipaf.sql
