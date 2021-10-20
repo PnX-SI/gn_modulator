@@ -130,5 +130,3 @@ SELECT
 	comment
     FROM public.tmp_import_sipaf
     WHERE id_pf IS NOT NULL;
-
-	SELECT geom from sipaf.t_passages_faune;
