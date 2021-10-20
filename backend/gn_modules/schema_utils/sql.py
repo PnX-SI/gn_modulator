@@ -102,20 +102,22 @@ CREATE TABLE  {sql_schema_name}.{sql_table_name} (
                 sql_table_name=self.sql_table_name()
             )
         )
-        
+
         # liste des champs
         for key, value in self.properties(processed_properties_only=True).items():
             field_type = value['type']
             if field_type == 'integer':
                 txt+='    {} {},\n'.format(key, 'SERIAL NOT NULL' if value.get('primary_key') else 'INTEGER')
-            elif field_type == 'string':
-                txt+='    {} VARCHAR,\n'.format(key) 
+            elif field_type =='text':
+                txt+='    {} VARCHAR,\n'.format(key)
+            elif field_type == 'number':
+                txt+='    {} FLOAT,\n'.format(key)
             else:
                 raise SchemaProcessedPropertyError(
                     'Property type {} in processed_properties but not managed yet for SQL processing'
                     .format(field_type)
                 )
-        
+
 
     
         # TODO relations et clés étrangères

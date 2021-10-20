@@ -8,6 +8,7 @@ import { ListFormComponent } from "./components/base/form-additional-widgets"
 import { BasePropertiesComponent } from "./components/base/base-properties.component";
 import { BaseFormComponent } from "./components/base/base-form.component";
 import { BaseTableComponent } from "./components/base/base-table.component";
+import { BaseMapComponent } from "./components/base/base-map.component";
 import { MaterialDesignFrameworkModule } from 'angular7-json-schema-form';
 import { ModulesConfigService } from "./services/config.service";
 import { ModulesDataService } from "./services/data.service";
@@ -22,7 +23,7 @@ import {
 // my mo7ule routing
 const routes: Routes = [
   { path: "", component: ModulesIndexComponent },
-  { path: "test_schema/:groupName/:objectName/:value", component: TestComponent },
+  { path: "test_schema/:groupName/:objectName", component: TestComponent },
 ];
 
 @NgModule({
@@ -30,6 +31,7 @@ const routes: Routes = [
     BaseFormComponent,
     BasePropertiesComponent,
     BaseTableComponent,
+    BaseMapComponent,
     ModulesIndexComponent,
     TestComponent,
     ListFormComponent

@@ -18,34 +18,55 @@ export class TestComponent implements OnInit {
   objectName = null;
   value = null;
 
+  listTab=['map', 'table', 'detail', 'edit'];
+  tabIndex = 0;
+
   schemaConfig = null;
 
 
   constructor(
     private _route: ActivatedRoute,
-    private _mConfig: ModulesConfigService,    
+    private _mConfig: ModulesConfigService,
   ) {}
 
   ngOnInit() {
     this.process();
   }
 
+  /**
+   * Chargement de la configuration
+   */
   process() {
     this._route.paramMap
     .pipe(
       mergeMap((params) => {
         this.groupName = params.get('groupName');
         this.objectName = params.get('objectName');
-        this.value = params.get('value');
+        // this.value = params.get('value');
         return this._mConfig.loadConfig(this.groupName, this.objectName)
       }),
       mergeMap((schemaConfig) => {
-        this.schemaConfig = schemaConfig; 
+        this.schemaConfig = schemaConfig;
         return of(true)
       }),
     ).subscribe(() => {
       this.componentInitialized = true;
     });
+  }
+
+  onRowSelected(event) {
+    console.log('on_row_selected', event);
+    this.value = event.value;
+    if (event.action == 'detail') {
+      //tab detail
+      this.tabIndex = this.listTab.indexOf('detail');
+
+    }
+    if (event.action == 'edit') {
+      //tab edit
+      this.tabIndex = this.listTab.indexOf('edit');
+
+    }
   }
 
 }

@@ -6,5 +6,8 @@ node_modules
 !config/schemas/utils/*
 !config/schemas/test/*
 
+data/sources/*
+!data/sources/.gitkeep
+
 **/*.egg-info
 **/__pycache__

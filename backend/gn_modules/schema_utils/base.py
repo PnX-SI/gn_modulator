@@ -15,7 +15,8 @@ from .reference import schema_ref
 
 processed_types = [
     'integer',
-    'string',
+    'number',
+    'text',
     'geom',
     'date',
     'uuid'

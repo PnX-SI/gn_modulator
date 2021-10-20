@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
+import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter } from "@angular/core";
 import { ActivatedRoute, Router, ParamMap } from "@angular/router";
 import { ModulesConfigService } from "../../services/config.service"
 import { ModulesDataService } from "../../services/data.service"
@@ -6,7 +6,6 @@ import { mergeMap, concatMap } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
 import tabulatorLangs  from './utils-table/tabulator-langs'
 import Tabulator from "tabulator-tables";
-
 
 @Component({
   selector: "modules-base-table",
@@ -21,6 +20,9 @@ export class BaseTableComponent implements OnInit {
   @Input() groupName = null;
   @Input() objectName = null;
   @Input() value = null;
+
+  @Output() onRowSelected: EventEmitter<any> = new EventEmitter<any>();
+
 
   componentInitialized = false;
   schemaConfig = null;
@@ -87,6 +89,42 @@ export class BaseTableComponent implements OnInit {
     });
   }
 
+  /**
+   * Definition des colonnes
+   *
+   * ajout des bouttons voir / éditer (selon les droits ?)
+   */
+  columns() {
+    var columnIcon = (icon) => function(cell, formatterParams, onRendered){ //plain text value
+      return `<i class='${icon}'></i>`;
+    };
+
+    const pkFieldName = this.schemaConfig.utils.pk_field_name;
+
+    //column definition in the columns array
+    return [
+      {
+        formatter:columnIcon('fa fa-eye'),
+        width:40,
+        hozAlign:"center",
+        cellClick: (e, cell) => {
+          const value = cell._cell.row.data[pkFieldName]
+          this.onRowSelected.emit({value, action:"detail"})
+        }
+      },
+      {
+        formatter:columnIcon('fa fa-pencil'),
+        width:40,
+        hozAlign:"center",
+        cellClick: (e, cell) => {
+          const value = cell._cell.row.data[pkFieldName]
+          console.log('emit', {value, action:"edit"})
+          this.onRowSelected.emit({value, action:"edit"})
+        }
+      },
+      ...this.schemaConfig.table.columns
+      ];
+  }
 
   /**
    * fonction por gérer les paramètres de route des requêtes de liste
@@ -111,15 +149,14 @@ export class BaseTableComponent implements OnInit {
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
       locale: 'fr',
-      height: "311px",
       layout: "fitColumns",
       placeholder: "No Data Set",
       ajaxFiltering: true,
       ajaxRequestFunc: this.ajaxRequestFunc,
-      columns: this.schemaConfig.table.columns,
+      columns: this.columns(),
       ajaxURL: this.schemaConfig.table.url,
       // ajaxURLGenerator: this.ajaxURLGenerator,
-      paginationSize: 5,
+      paginationSize: this.schemaConfig.utils.size,
       pagination: "remote",
       ajaxSorting: true,
     });

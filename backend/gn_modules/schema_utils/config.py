@@ -107,7 +107,11 @@ class SchemaConfig():
             'full_name': self.full_name(),
             'sql_schema_name': self.sql_schema_name(),
             'sql_table_name': self.sql_table_name(),
+            'size': self.size()
         }
+
+    def size(self):
+        return self._schema['$meta'].get('size', 10)
 
     def definition_ref(self):
         return '#/definitions/{}'.format(self.full_name('/'))
@@ -170,7 +174,6 @@ class SchemaConfig():
         layout = []
         for k, v in self.properties(processed_properties_only=True).items():
             # cle primaires non affichées
-            print(k)
             if v.get('primary_key'):
                 continue
 

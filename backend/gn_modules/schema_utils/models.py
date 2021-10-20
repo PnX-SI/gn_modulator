@@ -80,12 +80,13 @@ class SchemaModel():
             # process type
             if field_type == 'integer':
                 dict_model[key] = DB.Column(DB.Integer, *field_args, **field_kwargs)
-            elif field_type == 'string':
+            elif field_type == 'number':
+                dict_model[key] = DB.Column(DB.Float, *field_args, **field_kwargs)
+            elif field_type == 'text':
                 dict_model[key] = DB.Column(DB.Unicode, *field_args, **field_kwargs)
             elif field_type == 'date':
                 dict_model[key] = DB.Column(DB.DateTime, *field_args, **field_kwargs)
             elif field_type == 'uuid':
-                print('a', key, 'a')
                 field_kwargs['as_uuid']= True
                 dict_model[key] = DB.Column(UUID, *field_args, **field_kwargs)
             elif field_type == 'geom':

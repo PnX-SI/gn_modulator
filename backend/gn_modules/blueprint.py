@@ -18,27 +18,40 @@ blueprint.cli.short_help = 'Commandes pour l''administration du module MODULES'
 for cmd in commands:
     blueprint.cli.add_command(cmd)
 
-schemas = {
-    'test' : [
-        'parent',
-        'child',
-        'example'
-    ],
-    'utils': [
-        'nomenclature',
-        'nomenclature_type',
-        'taxref',
-        'organisme',
-        'utilisateur',
-        'synthese'
-    ]
-}
+schema_groups = [
+    {
+        'name': 'test',
+        'label': "Test",
+        'items': [
+            'parent',
+            'child',
+            'example'
+        ],
+    },
+    {
+        'name': 'utils',
+        'label': 'Utils',
+        'items': [
+            'nomenclature',
+            'nomenclature_type',
+            'taxref',
+            'organisme',
+            'utilisateur',
+            'synthese'
+        ],
+    },
+    {
+        'name': 'sipaf',
+        'label': 'Sipaf',
+        'items': [ 'pf' ]
+    }
+]
 
 #insert routes
 try:
-    for group_name, object_names in schemas.items():
-        for object_name in object_names:
-            SchemaMethods(group_name, object_name).register_api(blueprint)
+    for group in schema_groups:
+        for object_name in group['items']:
+            SchemaMethods(group['name'], object_name).register_api(blueprint)
 
 except Exception as e:
     print('Erreur durant la création des routes test : {}'.format(str(e)))
@@ -55,8 +68,11 @@ except Exception as e:
 #         return sm.schema()
 #     except Exception as e:
 #         return 'erreur {}'.format(e), 500
-    
-# @blueprint.route('/test', methods=['GET', 'POST'])
-# def api_test():
-#     return 'It works (ça marche !)'
+
+@blueprint.route('/groups', methods=['GET'])
+def api_groups():
+    '''
+        renvoi les groupes de schemas
+    '''
+    return jsonify(schema_groups)
 

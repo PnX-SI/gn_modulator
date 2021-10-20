@@ -3,7 +3,51 @@
 
 <div *ngIf='componentInitialized; else loadingBlock'>
 
-
+  <mat-tab-group dynamicHeight [(selectedIndex)]="tabIndex">
+    <mat-tab label="Carte">
+      <modules-base-map
+      [groupName]="groupName"
+      [objectName]="objectName"
+      [value]="value"
+      (onLayerClick)="onLayerClick($event)"
+      ></modules-base-map>
+    </mat-tab>
+    <mat-tab label="Tableau">
+      <ng-template matTabContent>
+      <div class='test-base-components'>
+        <modules-base-table
+          [groupName]="groupName"
+          [objectName]="objectName"
+          [value]="value"
+          (onRowSelected)="onRowSelected($event)"
+        ></modules-base-table>
+      </div>
+      </ng-template>
+    </mat-tab>
+    <mat-tab
+      [disabled]="!value"
+      label="Details"
+      >
+      <div class='test-base-components'>
+        <modules-base-properties
+          [groupName]="groupName"
+          [objectName]="objectName"
+          [value]="value"
+        ></modules-base-properties>
+      </div>
+    </mat-tab>
+    <mat-tab
+      [disabled]="!value"
+      label="Formulaire"
+    >
+      <modules-base-form
+      [groupName]="groupName"
+      [objectName]="objectName"
+      [value]="value"
+      ></modules-base-form>
+    </mat-tab>
+  </mat-tab-group>
+<!--
   <div class='flex-container'>
 
     <div>
@@ -46,6 +90,7 @@
   </div>
 
 </div>
+-->
 
 <ng-template #loadingBlock>
   <div>

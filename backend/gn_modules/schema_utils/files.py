@@ -81,7 +81,7 @@ class SchemaFiles():
                 continue
             if p_type == 'integer':
                 rand_sample[k] = random.randint(0, 1e6)
-            if p_type == 'string':
+            if p_type == 'text':
                 rand_sample[k] = ''.join(random.choice(string.ascii_lowercase) for i in range(10))
 
         return rand_sample

@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { AppConfig } from "@geonature_config/app.config";
 import { ModuleConfig } from "../module.config";
 
-import { of } from "@librairies/rxjs";
+import { of, Observable } from "@librairies/rxjs";
 import { mergeMap } from "@librairies/rxjs/operators";
 import { ModulesRequestService } from "./request.service";
 
@@ -17,6 +17,16 @@ export class ModulesConfigService {
 
   init() {
   }
+
+
+  /**
+   * Renvoie l'ensemble des groupes de schema
+   */
+  getSchemaGroups() {
+    return this._requestService
+      .request('get', `${this.backendModuleUrl()}/groups`)
+  }
+
 
 /**
  * attempts to get config from cache (this._config) and fetch schemaConfig from backend

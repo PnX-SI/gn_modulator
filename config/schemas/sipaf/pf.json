@@ -1,0 +1,62 @@
+{
+    "$id": "/schemas/sipaf/pf",
+    "type": "object",
+    "$meta": {
+        "object_name": "pf",
+        "group_name": "sipaf",
+        "sql_schema_name": "sipaf",
+        "sql_table_name": "t_passages_faune",
+        "genre": "M",
+        "label": "passage à faune",
+        "labels": "passages à faune",
+        "label_field_name": "uuid",
+        "size": 10,
+        "table": {
+            "columns": [
+                "id_pf",
+                "nom_pf",
+                "cd_com",
+                "date_creat",
+                "larg_ouvrag",
+                "haut_ouvrag",
+                "larg_disp",
+                "haut_disp",
+                "long_franch",
+                "diam",
+                "comment",
+                "x",
+                "y"
+            ]
+        }
+    },
+    "properties": {
+        "id_pf": { "type": "integer", "label": "ID PAF", "primary_key": true },
+        "uuid_pf": { "type": "text", "format": "uuid", "label": "UUID PF" },
+        "pi_ou_ps": { "type": "text", "label": "UUID PF" },
+        "pk": { "type": "number", "label": "PK" },
+        "pr": { "type": "number", "label": "PR" },
+        "pr_abs": { "type": "number", "label": "PR_abs" },
+        "x": { "type": "number", "label": "X" },
+        "y": { "type": "number", "label": "Y" },
+        "nom_pf": { "type": "text", "label": "Nom PF" },
+        "cd_com": { "type": "text", "label": "Code commune" },
+        "date_creat": { "type": "text", "label": "Date de creation" },
+        "date_requal": { "type": "text", "label": "Date de requalification" },
+        "larg_ouvrag": { "type": "number", "label": "Largeur ouvrage" },
+        "haut_ouvrag": { "type": "number", "label": "Hauteur ouvrage" },
+        "long_franch": { "type": "number", "label": "Longueur" },
+        "diam": { "type": "number", "label": "Diamètre" },
+        "larg_disp": { "type": "number", "label": "Largeur disponible" },
+        "haut_disp": { "type": "number", "label": "Hauteur disponible" },
+        "specificit": {"type": "text", "label": "Spécificité"},
+        "lb_typ_ouv": {"type": "text", "label": "Type d'ouvrage"},
+        "lb_materiaux": {"type": "text", "label": "Matériaux"},
+        "oh": { "type": "text", "label": "Ouvrage hydrolique"},
+
+        "id_corr": { "type": "text", "label": "ID Corridor"},
+        "nom_corr": { "type": "text", "label": "Nom Corridor"},
+        "id_resv": { "type": "text", "label": "ID resv"},
+        "nom_resv": { "type": "text", "label": "Nom resv"},
+        "comment": { "type": "text", "label": "Commentaire"}
+    }
+}

@@ -1,11 +1,7 @@
 '''
     SchemaMethods : serializers
 
-    ?? que faire
-      - SchemaMarshmallow
-      - as_dict, from_dict sqlalchemy
-      - custom
-
+    Utilisation de marshmallow
 '''
 
 import json
@@ -103,7 +99,6 @@ class SchemaSerializers:
 
         print('MarshmallowShema create  ', self.full_name())
 
-
         marshmallow_meta_dict = {
             'model': self.Model(),
             'load_instance': True,
@@ -132,14 +127,14 @@ class SchemaSerializers:
                 marshmallow_schema_dict[key] = MA.auto_field()
             elif value['type'] == 'integer':
                 marshmallow_schema_dict[key] = fields.Integer()
-            elif value['type'] == 'string':
+            elif value['type'] == 'number':
+                marshmallow_schema_dict[key] = fields.Number()
+            elif value['type'] == 'text':
                 marshmallow_schema_dict[key] = fields.String()
             elif value['type'] == 'date':
                 marshmallow_schema_dict[key] = fields.Date(format="%Y-%m-%d")
             elif value['type'] == 'geom':
                 marshmallow_schema_dict[key] = GeojsonSerializationField()
-            elif value['type'] == 'uuid':
-                marshmallow_schema_dict[key] = fields.UUID()
 
             else:
                  raise SchemaProcessedPropertyError('type {} non traité'.format(value['type']))
