@@ -78,5 +78,5 @@ log_process() {
 
 psqla() {
     . ${geonature_dir}/config/settings.ini
-    psql -d ${db_name} -h ${db_host} -U ${user_pg} -p ${db_port} -v ON_ERROR_STOP=1 "${@}"
+    export PGPASSWORD=${user_pg_pass}; psql -d ${db_name} -h ${db_host} -U ${user_pg} -p ${db_port} -v ON_ERROR_STOP=1 "${@}"
 }
