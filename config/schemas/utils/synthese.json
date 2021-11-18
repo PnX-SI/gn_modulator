@@ -1,27 +1,61 @@
 {
-    "$id": "/schemas/utils/synthese",
+    "$id": "schemas/utils/synthese",
     "type": "object",
     "$meta": {
-        "object_name": "synthese",
-        "group_name": "utils",
         "sql_schema_name": "gn_synthese",
         "sql_table_name": "synthese",
         "genre": "M",
         "label": "element de la synthese",
+        "label_field_name": "cd_nom",
+        "geometry_field_name": "the_geom_4326",
         "labels": "elements de la synthese",
         "table": {
-            "columns": ["id_synthese", "cd_nom", "taxon.lb_nom"]
+            "columns": [
+                "id_synthese",
+                "cd_nom",
+                "taxon.lb_nom"
+            ]
         }
     },
     "properties": {
-        "id_synthese": { "type": "string", "label": "ID synthese", "primary_key": true},
-        "cd_nom": { "type": "string", "label": "cd_nom", "foreign_key": "#/schemas/utils/taxref"},
-        "taxon": { "type": "object", "label": "taxon", "foreign_key": "cd_nom", "$ref": "../utils/taxref.json"},
-        "date_min": { "type": "date", "label": "date (min)"},
-        "unique_id_sinp": { "type": "string", "format":  "uuid", "label": "UUID (SINP)"},
-        "the_geom_4326": { "type": "geom", "label": "geom (4326)", "geom_type": "GEOMETRY", "srid": "4326", "$ref": "https://geojson.org/schema/Geometry.json"},
-        "the_geom_local": { "type": "geom", "label": "geom locale (__CONFIG.LOCAL_SRID__)", "geom_type": "GEOMETRY", "srid": "__CONFIG.LOCAL_SRID__"},
-        "the_geom_point": { "type": "geom", "label": "geom point (4326)", "geom_type": "POINT", "srid": "4326"}
+        "id_synthese": {
+            "type": "integer",
+            "label": "ID synthese",
+            "primary_key": true
+        },
+        "cd_nom": {
+            "type": "integer",
+            "label": "cd_nom",
+            "foreign_key": "schemas/utils/taxref.cd_nom"
+        },
+        "taxon": {
+            "label": "taxon",
+            "local_key": "cd_nom",
+            "rel": "schemas.utils.taxref"
+        },
+        "date_min": {
+            "type": "date",
+            "label": "date (min)"
+        },
+        "unique_id_sinp": {
+            "type": "string",
+            "format": "uuid",
+            "label": "UUID (SINP)"
+        },
+        "the_geom_4326": {
+            "label": "geom (4326)",
+            "srid": 4326,
+            "geometry_type": "geometry"
+        },
+        "the_geom_local": {
+            "label": "geom locale (__CONFIG.LOCAL_SRID__)",
+            "srid": "__CONFIG.LOCAL_SRID__",
+            "geometry_type": "geometry"
+        },
+        "the_geom_point": {
+            "label": "geom point (4326)",
+            "srid": 4326,
+            "geometry_type": "point"
+        }
     }
 }
-

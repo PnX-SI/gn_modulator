@@ -6,12 +6,9 @@
 '''
 
 from gn_modules.utils import unaccent
-import copy
 
 
-import json
-
-class SchemaConfig():
+class SchemaConfigBase():
     '''
     config used by frontend
     '''
@@ -23,13 +20,19 @@ class SchemaConfig():
         self.reload()
 
         return {
-            'schema_raw': self.schema(),
+            'schema': self.schema(),
             'form': self.config_form(),
             'display': self.config_display(),
             'utils': self.config_utils(),
-            'table': self.config_table()
+            'table': self.config_table(),
+            'map': self.config_map(),
         }
 
+    def config_map(self):
+        '''
+            configmap
+        '''
+        return self.meta('map', {})
 
     def columns_table(self):
         """
@@ -39,10 +42,10 @@ class SchemaConfig():
         columns = []
 
         column_keys = (
-            self._schema['$meta']
-                .get('table',{})
+            self.meta('table', {})
                 .get('columns')
-            or self.properties(processed_properties_only=True).keys()
+            or
+            self.columns()
         )
 
         for key in column_keys:
@@ -52,13 +55,14 @@ class SchemaConfig():
             '''
             column_def = {}
             if '.' in key:
-                (key_rel, key_prop) = key.split('.')
-                rel = self.get_relation(key_rel)
-                prop = rel.get_property(key_prop)
-                column_def = {'title': prop['label'], 'field': key, 'headerFilter': True}
+                (key_relationship, key_column) = key.split('.')
+                relation_schema_name = self.relationship(key_relationship)['rel']
+                relation = self.cls()(relation_schema_name)
+                relation_column = relation.column(key_column)
+                column_def = {'title': relation_column['label'], 'field': key, 'headerFilter': True}
             else:
-                prop = self.get_property(key)
-                column_def = {'title': prop['label'], 'field': key, 'headerFilter': True}
+                column = self.column(key)
+                column_def = {'title': column['label'], 'field': key, 'headerFilter': True}
 
             columns.append(column_def)
 
@@ -73,7 +77,6 @@ class SchemaConfig():
             'columns': self.columns_table(),
             'url': self.url('/rest/', full_url=True)
         }
-
 
     def config_display(self):
         '''
@@ -98,35 +101,22 @@ class SchemaConfig():
         '''
 
         return {
-            'properties_array': self.properties_array(processed_properties_only=True),
+            'columns_array': self.columns_array(columns_only=True),
             'urls': {
                 'rest': self.url('/rest/', full_url=True)
             },
             'pk_field_name': self.pk_field_name(),
+            'label_field_name': self.label_field_name(),
+            'geometry_field_name': self.geometry_field_name(),
             'model_name': self.model_name(),
-            'full_name': self.full_name(),
+            'schema_name': self.schema_name(),
             'sql_schema_name': self.sql_schema_name(),
             'sql_table_name': self.sql_table_name(),
             'size': self.size()
         }
 
     def size(self):
-        return self._schema['$meta'].get('size', 10)
-
-    def definition_ref(self):
-        return '#/definitions/{}'.format(self.full_name('/'))
-        #return '#/definitions/{}/{}'.format(self.self.object_name())
-
-    def definition(self):
-        '''
-            definition pour les schema ajsf
-        '''
-        definition = {
-            'type': 'object',
-            'properties': self.properties(processed_properties_only=True)
-        }
-
-        return definition
+        return self.meta('size', 10)
 
     def config_form(self):
         '''
@@ -135,26 +125,20 @@ class SchemaConfig():
         '''
 
         return {
-            "schema": self.schema_ajsf(),
-            "layout": self.layout_form()
+            "schema": self.processed_schema(),
+            "layout": self.form_layout()
         }
-
-    def layout_form(self):
-        '''
-            layout destiné au composant formulaire du frontend
-        '''
-
-        return self._schema['$meta'].get('form', {}).get('layout', self.auto_layout())
-
 
 
 
     def value_field_name(self):
-        return self._schema['$meta'].get('value_field_name', self.pk_field_name())
+        return self.meta('value_field_name', self.pk_field_name())
 
     def label_field_name(self):
-        return self._schema['$meta']['label_field_name']
+        return self.meta('label_field_name')
 
+    def geometry_field_name(self):
+        return self.meta('geometry_field_name')
 
     def list_form_options(self):
         '''
@@ -163,6 +147,7 @@ class SchemaConfig():
             'api': self.url('/rest/', full_url=True),
             'value_field_name': self.value_field_name(),
             'label_field_name': self.label_field_name(),
+            'geometry_field_name': self.geometry_field_name(),
             "data_reload_on_search": True,
             "params": {
                 "size": 7
@@ -170,79 +155,11 @@ class SchemaConfig():
             "label": self.label(),
         }
 
-    def auto_layout(self):
-        layout = []
-        for k, v in self.properties(processed_properties_only=True).items():
-            # cle primaires non affichées
-            if v.get('primary_key'):
-                continue
-
-            elif v.get('foreign_key'):
-                relation = self.__class__().load_from_reference(v.get('foreign_key'))
-                layout.append({
-                    'key': k,
-                    'type': 'list-form',
-                    'options': {
-                        **relation.list_form_options(),
-                        'label': v['label']
-                    }
-                })
-
-            else:
-                layout.append({ 'key': k, 'type': v['type'] })
-
-        return layout
-
-
-    def schema_ajsf(self):
-        '''
-            schema pour le composant angulat json form
-            https://github.com/hamzahamidi/ajsf
-        '''
-
-        properties = self.properties(processed_properties_only=True)
-
-        # definitions pour les références
-
-        definitions = {}
-        for k,v in properties.items():
-            if v['type'] == 'geom':
-
-                geojson_geometry = {}
-                geom_file_name = self.__class__.cls_schema_file_path('geom', 'Geometry')
-                with open(geom_file_name) as f:
-                    geojson_geometry = json.load(f)
-                definitions['geom'] = {
-                    **geojson_geometry,
-                    "$id": "geom"
-                }
-                properties[k]['$ref']="#/definitions/geom"
-
-        for k,v in self.relationships().items():
-            relation_reference = v['$ref']
-            sm_relation = self.__class__().load_from_reference(relation_reference)
-
-            #definitions[sm_relation.object_name()] = sm_relation.definition()
-
-            definitions[sm_relation.group_name()] = definitions.get(sm_relation.group_name(), {})
-            definitions[sm_relation.group_name()][sm_relation.object_name()] = sm_relation.definition()
-
-            properties[k] = {
-                '$ref': sm_relation.definition_ref()
-            }
-
-
-        return {
-            'definitions': definitions,
-            'type': 'object',
-            'properties': properties,
-        }
-
     def genre(self):
         '''
             returns schema genre
         '''
-        return self._schema['$meta']['genre']
+        return self.meta('genre')
 
     def new(self):
         return (
@@ -262,10 +179,10 @@ class SchemaConfig():
         '''
             returns schema label in lowercase
         '''
-        return self._schema['$meta']['label'].lower()
+        return self.meta('label').lower()
 
     def labels(self):
-        return self._schema['$meta'].get('labels', '{}s'.format(self.label()))
+        return self.meta('labels', '{}s'.format(self.label()))
 
     def is_first_letter_vowel(self, string):
         '''
@@ -347,4 +264,4 @@ class SchemaConfig():
         return 'des {}'.format(self.labels())
 
     def description(self):
-        return self._schema['$meta'].get('description', "Schéma '{}' pour le module '{}'".format(self.object_name(), self.group_name()))
+        return self.meta('description', "Schéma '{}'".format(self.schema_name()))

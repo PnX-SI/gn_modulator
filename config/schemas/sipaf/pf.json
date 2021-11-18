@@ -1,21 +1,120 @@
 {
-    "$id": "/schemas/sipaf/pf",
+    "$id": "schemas/sipaf/pf",
     "type": "object",
     "$meta": {
-        "object_name": "pf",
-        "group_name": "sipaf",
+        "sql_processing": true,
         "sql_schema_name": "sipaf",
         "sql_table_name": "t_passages_faune",
         "genre": "M",
         "label": "passage à faune",
         "labels": "passages à faune",
-        "label_field_name": "uuid",
+        "label_field_name": "nom_pf",
+        "geometry_field_name": "geom",
         "size": 10,
+        "map": {
+            "fields": [
+                "id_pf",
+                "nom_pf"
+            ],
+            "popup_fields": [
+                "id_pf",
+                "nom_pf",
+                "pi_ou_ps",
+                "lb_materiaux"
+            ]
+        },
+        "form": {
+            "layout": [
+                {
+                   "title": "Informations",
+                   "items": [
+                        {
+                            "direction": "row",
+                            "items": [ "nom_pf", "id_op"]
+                        },
+                        {
+                           "direction": "row",
+                           "items": [
+                            { "items": ["date_creat", "date_requal"] },
+                            { "items": ["id_corr", "nom_corr"] },
+                            { "items": ["id_obst", "nom_obst"] },
+                            { "items": ["id_resv", "nom_resv"] }
+                           ]
+                        }
+                   ]
+                },
+                {
+                    "title": "Type",
+                    "direction": "row",
+                    "items": [
+                        "lb_typ_ouv",
+                        "pi_ou_ps",
+                        "oh",
+                        "specificit"
+                    ]
+                },
+                {
+                    "direction": "row",
+                    "items": [
+                        {
+                            "title": "Dimensions",
+                            "items": [
+                                { "direction": "row", "items": ["diam", "long_franch"]},
+                                { "direction": "row", "items": ["larg_ouvrag", "haut_ouvrag"]},
+                                { "direction": "row", "items": ["larg_disp", "haut_disp"]}
+                            ]
+                        },
+                        {
+                            "title": "Localisation",
+                            "direction": "row",
+                            "items": [
+                                { "items": ["cd_com", "pk", "pr", "pr_abs"] }
+                            ]
+                        },
+                        {
+                            "items": "geom"
+                        }
+
+                    ]
+                }
+                // {
+                //     "title":
+                //     "items":
+                // }
+                // {
+                //     "key": "geom",
+                //     "type": "div",
+                //     "fxLayoutGap": "5px",
+                //     "items": [
+                //         "geom.type",
+                //         {
+                //             "fxLayoutGap": "5px",
+                //             "listItems": 2,
+                //             "maxItems": 2,
+                //             "minItems": 2,
+                //             "add": null,
+                //             "key": "geom.coordinates",
+                //             "type": "array",
+                //             "displayFlex": true,
+                //             "flex-direction": "row",
+                //             "items": [
+                //                 {
+                //                     "key": "geom.coordinates[]",
+                //                     "type": "number"
+                //                 }
+                //             ]
+                //         }
+                //     ]
+                // }
+            ]
+        },
         "table": {
             "columns": [
                 "id_pf",
+                "uuid_pf",
                 "nom_pf",
                 "cd_com",
+                // "nomenclature_materiaux.label_fr",
                 "date_creat",
                 "larg_ouvrag",
                 "haut_ouvrag",
@@ -30,33 +129,189 @@
         }
     },
     "properties": {
-        "id_pf": { "type": "integer", "label": "ID PAF", "primary_key": true },
-        "uuid_pf": { "type": "text", "format": "uuid", "label": "UUID PF" },
-        "pi_ou_ps": { "type": "text", "label": "UUID PF" },
-        "pk": { "type": "number", "label": "PK" },
-        "pr": { "type": "number", "label": "PR" },
-        "pr_abs": { "type": "number", "label": "PR_abs" },
-        "x": { "type": "number", "label": "X" },
-        "y": { "type": "number", "label": "Y" },
-        "nom_pf": { "type": "text", "label": "Nom PF" },
-        "cd_com": { "type": "text", "label": "Code commune" },
-        "date_creat": { "type": "text", "label": "Date de creation" },
-        "date_requal": { "type": "text", "label": "Date de requalification" },
-        "larg_ouvrag": { "type": "number", "label": "Largeur ouvrage" },
-        "haut_ouvrag": { "type": "number", "label": "Hauteur ouvrage" },
-        "long_franch": { "type": "number", "label": "Longueur" },
-        "diam": { "type": "number", "label": "Diamètre" },
-        "larg_disp": { "type": "number", "label": "Largeur disponible" },
-        "haut_disp": { "type": "number", "label": "Hauteur disponible" },
-        "specificit": {"type": "text", "label": "Spécificité"},
-        "lb_typ_ouv": {"type": "text", "label": "Type d'ouvrage"},
-        "lb_materiaux": {"type": "text", "label": "Matériaux"},
-        "oh": { "type": "text", "label": "Ouvrage hydrolique"},
-
-        "id_corr": { "type": "text", "label": "ID Corridor"},
-        "nom_corr": { "type": "text", "label": "Nom Corridor"},
-        "id_resv": { "type": "text", "label": "ID resv"},
-        "nom_resv": { "type": "text", "label": "Nom resv"},
-        "comment": { "type": "text", "label": "Commentaire"}
+        "id_pf": {
+            "type": "integer",
+            "label": "ID PAF",
+            "primary_key": true
+        },
+        "id_op": {
+            "type": "string",
+            "label": "Code de l'ouvrage pour le gestionnaire"
+        },
+        "an_ref_com": {
+            "type": "string",
+            "label": "Année de référence commune"
+        },
+        "issu_requa": {
+            "type": "string",
+            "label": "Issu d'une requalification ?"
+        },
+        "id_nomenclature_materiaux": {
+            "type": "integer",
+            "label": "Matériaux",
+            "nomenclature_type": "PF_MATERIAUX"
+        },
+        // "nomenclature_materiaux": {
+        //     "rel": "schemas.utils.nomenclature",
+        //     "label": "Matériaux",
+        //     "local_key": "id_nomenclature_materiaux"
+        // },
+        "id_nomenclature_oh_position": {
+            "type": "integer",
+            "label": "OH Position",
+            "nomenclature_type": "PF_OH_POSITION"
+        },
+        "id_nomenclature_oh_banq_caract": {
+            "type": "integer",
+            "label": "OH Caractrisation banquette",
+            "nomenclature_type": "PF_OH_BANQ_CARACT"
+        },
+        "id_nomenclature_oh_banq_type": {
+            "type": "integer",
+            "label": "OH type de banquette",
+            "nomenclature_type": "PF_OH_BANQ_TYPE"
+        },
+        "uuid_pf": {
+            "type": "string",
+            "format": "uuid",
+            "label": "UUID PF"
+        },
+        "pi_ou_ps": {
+            "type": "string",
+            "label": "PI ou PF"
+        },
+        "pk": {
+            "type": "number",
+            "label": "PK"
+        },
+        "pr": {
+            "type": "number",
+            "label": "PR"
+        },
+        "pr_abs": {
+            "type": "number",
+            "label": "PR_abs"
+        },
+        "x": {
+            "type": "number",
+            "label": "X"
+        },
+        "y": {
+            "type": "number",
+            "label": "Y"
+        },
+        "nom_pf": {
+            "type": "string",
+            "label": "Nom Passage Faune"
+        },
+        "cd_com": {
+            "type": "string",
+            "label": "Code commune"
+        },
+        "date_creat": {
+            "type": "string",
+            "label": "Date de creation"
+        },
+        "date_requal": {
+            "type": "string",
+            "label": "Date de requalification"
+        },
+        "larg_ouvrag": {
+            "type": "number",
+            "label": "Largeur ouvrage"
+        },
+        "haut_ouvrag": {
+            "type": "number",
+            "label": "Hauteur ouvrage"
+        },
+        "long_franch": {
+            "type": "number",
+            "label": "Longueur"
+        },
+        "diam": {
+            "type": "number",
+            "label": "Diamètre"
+        },
+        "larg_disp": {
+            "type": "number",
+            "label": "Largeur disponible"
+        },
+        "haut_disp": {
+            "type": "number",
+            "label": "Hauteur disponible"
+        },
+        "specificit": {
+            "type": "string",
+            "label": "Spécificité"
+        },
+        "lb_typ_ouv": {
+            "type": "string",
+            "label": "Type d'ouvrage"
+        },
+        "lb_materiaux": {
+            "type": "string",
+            "label": "Matériaux"
+        },
+        "ep_materiaux": {
+            "type": "number",
+            "label": "Epaisseur matériaux"
+        },
+        "oh": {
+            "type": "string",
+            "label": "Ouvrage hydrolique"
+        },
+        "oh_position": {
+            "type": "string",
+            "label": "OH position"
+        },
+        "oh_caract": {
+            "type": "string",
+            "label": "OH caract"
+        },
+        "oh_banqu": {
+            "type": "string",
+            "label": "OH caract"
+        },
+        "oh_tirant": {
+            "type": "string",
+            "label": "OH tirat"
+        },
+        "id_cer": {
+            "type": "string",
+            "label": "Reprend id unique du cer"
+        },
+        "id_corr": {
+            "type": "string",
+            "label": "ID Corridor"
+        },
+        "nom_corr": {
+            "type": "string",
+            "label": "Nom Corridor"
+        },
+        "id_resv": {
+            "type": "string",
+            "label": "ID resv"
+        },
+        "nom_resv": {
+            "type": "string",
+            "label": "Nom resv"
+        },
+        "id_obst": {
+            "type": "string",
+            "label": "ID obst"
+        },
+        "nom_obst": {
+            "type": "string",
+            "label": "Nom obst"
+        },
+        "comment": {
+            "type": "string",
+            "label": "Commentaire"
+        },
+        "geom": {
+            "geometry_type": "point",
+            "srid": 4326,
+            "label": "Geométrie"
+        }
     }
 }

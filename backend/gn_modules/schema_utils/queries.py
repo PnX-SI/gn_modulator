@@ -1,8 +1,11 @@
 '''
     sqla query functions
 '''
-from sqlalchemy import func, cast, orm, and_, or_, not_
+
+from sqlalchemy import cast, orm, and_, or_, not_
+
 from geonature.utils.env import DB
+
 from .errors import (
     SchemaRepositoryFilterError,
     SchemaRepositoryFilterTypeError,
@@ -11,7 +14,12 @@ from .errors import (
 '''
     pour ne pas faire 2 alias sur le même
 '''
-cache_custom_get_attr = {}
+cache_custom_getattr = {}
+
+
+def reset_cache_custom_getattr():
+    print('reset_cache')
+    cache_custom_getattr = {}
 
 
 def custom_getattr(Model, field_name, query=None):
@@ -26,17 +34,17 @@ def custom_getattr(Model, field_name, query=None):
             et l'on souhaite filtrer la requête par rapport aux deux
     '''
 
-    if model_attribute :=cache_custom_get_attr.get(field_name):
+    if model_attribute := cache_custom_getattr.get(field_name):
         return model_attribute, query
 
-    if not '.' in field_name:
+    if '.' not in field_name:
 
         # cas simple
         model_attribute = getattr(Model, field_name)
 
         # mise en cache
-        cache_custom_get_attr['field_name'] = model_attribute
-        return  model_attribute, query
+        cache_custom_getattr['field_name'] = model_attribute
+        return model_attribute, query
 
     else:
 
@@ -47,7 +55,7 @@ def custom_getattr(Model, field_name, query=None):
 
         relationship = getattr(Model, rel)
 
-        alias = orm.aliased(relationship.mapper.entity) # Model ?????
+        alias = orm.aliased(relationship.mapper.entity)  # Model ?????
 
         if query:
             query = query.join(alias, relationship)
@@ -55,10 +63,9 @@ def custom_getattr(Model, field_name, query=None):
         model_attribute = getattr(alias, col)
 
         # mise en cache
-        cache_custom_get_attr['field_name'] = model_attribute
+        cache_custom_getattr['field_name'] = model_attribute
 
-        return  model_attribute, query
-
+        return model_attribute, query
 
 
 def process_filters(Model, filters, query):
@@ -132,18 +139,16 @@ def process_filter_array(Model, filter_array, query):
         else:
             raise SchemaRepositoryFilterError("L'élément de liste de filtre {} est mal défini.".format(elem))
 
-
-        print(cur_ops, elem, f)
         if f is not None:
 
             # on prend le dernier opérateur de la liste ou bien '*' par défaut
-            op = ( len(cur_ops) and cur_ops.pop() ) or "*"
+            op = (len(cur_ops) and cur_ops.pop()) or "*"
 
             # traitement de la négation '!'
             if op == '!':
                 f = not_(f)
                 # on prend le dernier opérateur de la liste ou bien '*' par défaut
-                op = ( len(cur_ops) and cur_ops.pop() ) or "*"
+                op = (len(cur_ops) and cur_ops.pop()) or "*"
 
             # s'il y un filtre courant, on applique l'opération en cours
             if cur_filter is not None:
@@ -154,7 +159,7 @@ def process_filter_array(Model, filter_array, query):
 
             # s'il n'y a pas de filtre courant, on initialise la variable cur_filter
             else:
-              cur_filter = f
+                cur_filter = f
 
     return cur_filter, query
 
@@ -162,7 +167,6 @@ def process_filter_array(Model, filter_array, query):
 def get_filter(Model, f, query):
 
     filter_out = None
-
 
     f_field = f['field']
     f_type = f['type']
@@ -197,15 +201,14 @@ def get_filter(Model, f, query):
                 map(
                     lambda x: str(x),
                     f_value
+                )
             )
         )
-    )
 
     else:
         raise SchemaRepositoryFilterTypeError("Le type de filtre {} n'est pas géré".format(f_type))
 
     return filter_out, query
-
 
 
 def process_sorters(Model, sorters, query):
@@ -244,6 +247,6 @@ def process_page_size(page, size, query):
     if size and int(size) > 0:
         query = query.limit(size)
         if page and int(page) > 1:
-            query = query.offset((int(page)-1) * int(size) )
+            query = query.offset((int(page) - 1) * int(size))
 
     return query

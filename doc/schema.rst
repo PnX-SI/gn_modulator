@@ -3,7 +3,7 @@ Schemas
 =======
 
 Réflexion sur l'organisation et l'utilisation des schémas
-=========
+===============================================================
 
 Structure du schéma pour un objet contenant les champs suivants:
 ----------------------------------------------------------------
@@ -14,20 +14,20 @@ Structure du schéma pour un objet contenant les champs suivants:
   - voir comment gérer les champs additionels (``$meta``)
 
 
-.. code-block:: json
+::
 
     {
-        "$id": "/schemas/test/example",
-        "type": "object",
+      "$id": "/schemas/test/example",
+      "type": "object",
         "$meta": {
-            "name": "nom qui référence l'objet",
-            "module": "pour référencer le module",
-            "sql_schema_name": "optionel",
-            "sql_table_name": "optionel",
-            "label": "label qui servira pour les titres, les bouttons, les messages, etc...",
-            "description": "pour décrire l'objet",
-            "labels": "quand le pluriel du label ne se limite pas à rajouter un nom à la fin",
-            "genre": "'M' ou 'F' (masculin féminin)",
+          "name": "nom qui référence l'objet",
+          "module": "pour référencer le module",
+          "sql_schema_name": "optionel",
+          "sql_table_name": "optionel",
+          "label": "label qui servira pour les titres, les bouttons, les messages, etc...",
+          "description": "pour décrire l'objet",
+          "labels": "quand le pluriel du label ne se limite pas à rajouter un nom à la fin",
+          "genre": "'M' ou 'F' (masculin féminin)",
         },
         "$properties": {
             "key": "# ... ensemble des propriétés qui peuvent être
@@ -57,7 +57,7 @@ de ce schéma, on doit être en mesure de tirer les information suivantes:
 - affichage
     - ``label`` avec article défini/indéfini au singulier/pluriel
 
-Un exemple 
+Un exemple
 ==========
 
 .. code-block:: json
@@ -68,7 +68,7 @@ Un exemple
             "module": "test",
             "description": "Objet Example pour le sous module Test, permet de démontrer la viabilité de gn_modules",
             "label": "exemple",
-            "genre" : "M"     
+            "genre" : "M"
         },
 
         "$properties" : {
@@ -89,7 +89,7 @@ donnera les informations suivantes :
         "pk_field_names": ["id_example"],
 
         "model_name": "TTestExample",
-        "model_view_name": "MVTestExample", 
+        "model_view_name": "MVTestExample",
         "base_url": "/test/examples/",
         "schema_path": "test/example.json",
 

@@ -2,6 +2,15 @@
     "child_name": "A",
     "child_code": "B",
     "parent": {
-        "parent_id": 10
-    }
+        "parent_id": 10,
+        "parent_name": "10",
+        "parent_code": "10"
+    },
+    "examples": [
+        {
+            "example_id": 1,
+            "example_name": "11",
+            "example_code": "11"
+        }
+    ]
 }

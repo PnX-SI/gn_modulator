@@ -1,38 +1,171 @@
 '''
-    SchemaMethods : sqlalchemy models processing
+    SchemaMethods : sqlalchemy existing_Models processing
 '''
 
 from geoalchemy2 import Geometry
-from sqlalchemy.orm import column_property
-from sqlalchemy.orm import object_session
-from sqlalchemy import select, func, cast, text
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.dialects.postgresql import UUID
 
 from geonature.utils.env import DB
 
 from .errors import SchemaProcessedPropertyError
 
-# store the sqla models
+from geonature.core.taxonomie.models import Taxref # noqa
+from geonature.core.gn_synthese.models import Synthese # noqa
+
+
+# store the sqla Models
 cache_model = {}
+cache_cor_table = {}
+
 
 class SchemaModel():
     '''
-        sqlalchemy models processing
+        sqlalchemy Models processing
     '''
+
+    def existing_Models(self):
+
+        existing_Models = {}
+
+        for cls in DB.Model._decl_class_registry.values():
+            if isinstance(cls, type) and issubclass(cls, DB.Model):
+                d = cls.__table_args__
+                if type(cls.__table_args__) is tuple:
+                    for elem in d:
+                        if 'schema' in elem:
+                            schema = elem['schema']
+                else:
+                    schema = cls.__table_args__['schema']
+
+                key = '{}.{}'.format(schema, cls.__tablename__)
+                existing_Models[key] = cls
+
+        return existing_Models
 
     def model_name(self):
         '''
-            returns model_name
-            can be
-              - defined in self._schema['$meta']['model_name']
-              - or retrieved from group_name and object_name 'T{full_name('pascal_case')}'
         '''
 
-        return self._schema['$meta'].get('model_name', 'T{}'.format(self.full_name('pascal_case')))
+        return self.meta('model_name', 'T{}'.format(self.schema_name('pascal_case')))
 
     def clear_cache_model(self):
-        if cache_model.get(self.full_name()):
-            del cache_model[self.full_name()]
+        if cache_model.get(self.schema_name()):
+            del cache_model[self.schema_name()]
+
+    def get_db_type(self, column):
+
+        field_type = column.get('type')
+
+        if field_type == 'integer':
+            db_type = DB.Integer
+        elif field_type == 'number':
+            db_type = DB.Float
+        elif field_type == 'string':
+            if column.get('format') == 'uuid':
+                db_type = UUID
+            else:
+                db_type = DB.Unicode
+        elif field_type == 'date':
+            db_type = DB.DateTime
+        elif self.is_geometry(column):
+            db_type = Geometry(column['geometry_type'], column['srid'])
+
+        if not db_type:
+            raise(
+                SchemaProcessedPropertyError(
+                    'db_type is None for prop {}'
+                    .format(column)
+                )
+            )
+
+        return db_type
+
+    def process_column_model(self, column):
+        '''
+        '''
+
+        # get field_options
+        field_args = []
+        field_kwargs = {}
+        db_type = None
+
+        # primary key
+        if column.get('primary_key'):
+            field_kwargs['primary_key'] = True
+
+        # foreign_key
+        if self.get_foreign_key(column):
+            relation_name, foreign_key_field_name = self.parse_foreign_key(self.get_foreign_key(column))
+            relation = self.cls()(relation_name)
+            foreign_key = '{}.{}'.format(relation.schema_dot_table(), foreign_key_field_name)
+            field_args.append(DB.ForeignKey(foreign_key))
+
+        # process type
+        db_type = self.get_db_type(column)
+
+        return DB.Column(db_type, *field_args, **field_kwargs)
+
+    def process_relation_model(self, relationship_def, Model):
+
+        relation = self.cls()(relationship_def['rel'])
+
+        kwargs = {}
+        if self.relation_type(relationship_def) == 'n-1':
+            kwargs['foreign_keys'] = getattr(Model, relationship_def['local_key'])
+        if self.relation_type(relationship_def) == 'n-n':
+            kwargs['secondary'] = self.CorTable(relationship_def)
+
+        return DB.relationship(relation.Model(), **kwargs)
+
+    def CorTable(self, relation_def):
+
+        cor_schema_dot_table = self.cor_schema_dot_table(relation_def)
+        cor_schema_name = self.cor_schema_name(relation_def)
+        cor_table_name = self.cor_table_name(relation_def)
+
+        if cache_cor_table.get(cor_schema_dot_table):
+            return cache_cor_table[cor_schema_dot_table]
+
+        relation = self.cls()(relation_def['rel'])
+
+        CorTable = DB.Table(
+            cor_table_name,
+            DB.metadata,
+            DB.Column(
+                relation_def['local_key'],
+                DB.ForeignKey('{}.{}'.format(self.schema_dot_table(), relation_def['local_key']))
+            ),
+            DB.Column(
+                relation_def['foreign_key'],
+                DB.ForeignKey('{}.{}'.format(relation.schema_dot_table(), relation_def['foreign_key']))
+            ),
+            schema=cor_schema_name
+        )
+
+        cache_cor_table[cor_schema_dot_table] = CorTable
+
+        return CorTable
+
+    def get_existing_model(self):
+        '''
+        '''
+
+        Model = self.existing_Models()[self.schema_dot_table()]
+
+        for key, column_def in self.columns().items():
+            if hasattr(Model, key):
+                continue
+            setattr(Model, key, self.process_column_model(column_def))
+
+        # store in cache before relation (avoid circular dependancies)
+        cache_model[self.schema_name()] = Model
+
+        for key, relation_def in self.relationships().items():
+            if hasattr(Model, key):
+                continue
+            setattr(Model, key, self.process_relation_model(relation_def, Model))
+
+        return Model
 
     def Model(self):
         '''
@@ -44,92 +177,33 @@ class SchemaModel():
         TODO store in global variable and create only if missing
         - avoid to create the model twice
         '''
-
         # get Model from cache
-        if Model:= cache_model.get(self.full_name()):
+        if Model := cache_model.get(self.schema_name()):
             return Model
 
-        # dict_model used with type() to list properties and methods for class creation
-        dict_model = {
-            '__tablename__': self.sql_table_name(),
-            '__table_args__': {
-                'schema': self.sql_schema_name(),
-                'extend_existing': True # TODO remove and storage for class
+        if self.schema_dot_table() in self.existing_Models():
+            Model = self.get_existing_model()
+
+        else:
+            # dict_model used with type() to list properties and methods for class creation
+            dict_model = {
+                '__tablename__': self.sql_table_name(),
+                '__table_args__': {
+                    'schema': self.sql_schema_name(),
+                }
             }
-        }
 
-        # process properties
-        for key, value in self.properties(processed_properties_only=True).items():
+            # process properties
+            for key, column_def in self.columns().items():
+                dict_model[key] = self.process_column_model(column_def)
 
-            # get field_options
-            field_args = []
-            field_kwargs = {}
-            field_type = value['type']
+            Model = type(self.model_name(), (DB.Model,), dict_model)
 
-            # primary key
-            if value.get('primary_key'):
-                field_kwargs['primary_key'] = True
-                pk_key = key
-            # foreign_key
-            if value.get('foreign_key'):
-                relation_reference = value['foreign_key']
-                sm_relation = self.__class__().load_from_reference(relation_reference)
-                foreign_key = '{}.{}'.format(sm_relation.sql_schema_dot_table(), sm_relation.pk_field_name())
-                field_args.append(DB.ForeignKey(foreign_key))
+            # store in cache before relations (avoid circular dependancies)
+            cache_model[self.schema_name()] = Model
 
-            # process type
-            if field_type == 'integer':
-                dict_model[key] = DB.Column(DB.Integer, *field_args, **field_kwargs)
-            elif field_type == 'number':
-                dict_model[key] = DB.Column(DB.Float, *field_args, **field_kwargs)
-            elif field_type == 'text':
-                dict_model[key] = DB.Column(DB.Unicode, *field_args, **field_kwargs)
-            elif field_type == 'date':
-                dict_model[key] = DB.Column(DB.DateTime, *field_args, **field_kwargs)
-            elif field_type == 'uuid':
-                field_kwargs['as_uuid']= True
-                dict_model[key] = DB.Column(UUID, *field_args, **field_kwargs)
-            elif field_type == 'geom':
-                dict_model[key] = DB.Column(Geometry(value['geom_type'], value['srid']), *field_args, **field_kwargs)
-            else:
-                raise(
-                    SchemaProcessedPropertyError(
-                    'Property type {} in processed_properties but not managed yet for Models processing'
-                    .format(field_type)
-                )
-            )
-
-        # process relations
-
-        for key, value in self.relationships().items():
-            # get ref from foreign_key
-            foreign_key = value['foreign_key']
-            relation_reference = self.properties()[foreign_key]['foreign_key']
-            sm_relation = self.__class__().load_from_reference(relation_reference)
-
-            dict_model[key] = DB.relationship(sm_relation.Model())
-
-        # create class for Model
-        Model = type(self.model_name(), (DB.Model,), dict_model)
-
-        # for key, value in self.properties(processed_properties_only=True).items():
-        #     if field_type == 'geom':
-
-        #         def geom_as_geojson(self_model):
-        #             return object_session(self_model).\
-        #             scalar(
-        #                 select([
-        #                     func.st_asgeojson(getattr(Model, key))
-        #                 ]).where(
-        #                         getattr(Model, self.pk_field_name())
-        #                         ==
-        #                         getattr(self_model, self.pk_field_name())
-        #                 )
-        #             )
-
-        #         setattr(Model, key + '_as_geojson', property(geom_as_geojson))
-
-        # store in cache
-        cache_model[self.full_name()] = Model
+            # process relations
+            for key, value in self.relationships().items():
+                setattr(Model, key, self.process_relation_model(value, Model))
 
         return Model

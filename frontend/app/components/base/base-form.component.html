@@ -1,23 +1,48 @@
 <div *ngIf="componentInitialized; else loadingBlock">
+
   <h4>{{formTitle}}</h4>
 
-  <div style="display: flex; flex-direction: row;">
-    <div>
+  <div class="form-container">
+
+    <!-- Formulaire -->
+    <div class='base-form'>
       <json-schema-form
-      [schema]="schemaConfig.form.schema"
-      framework="material-design"
-      [(ngModel)]="data"
-      (onSubmit)="onSubmit($event)"
-      [layout]="schemaConfig.form.layout"
-      language=fr
-    >
-    </json-schema-form>
+        [schema]="schemaConfig.form.schema"
+        framework="material-design"
+        [(data)]="data"
+        (onSubmit)="onSubmit($event)"
+        (onChanges)="onFormChanges($event)"
+        [layout]="schemaConfig.form.layout"
+        language=fr
+        (isValid)="onIsValid($event)"
+        (validationErrors)="onValidationErrors($event)"
+      >
+      </json-schema-form>
     </div>
-    <!-- <div>
-      <pre>
-        {{data | json}}
-      </pre>
-    </div> -->
+
+    <!-- Carte avec saisie geoman -->
+    <div
+      class='map-form'
+      *ngIf="schemaConfig.utils.geometry_field_name"
+    >
+      <div>
+        <modules-map
+          [mapId]="mapId"
+          [height]="heightMap"
+          [bEdit]="true"
+          [zoom]="zoom"
+          [center]="center"
+          [layersData]="layersData"
+        ></modules-map>
+      </div>
+    </div>
+
+    <!-- Debug : valide, erreur et valeurs -->
+    <div *ngIf='debug != undefined'>
+      <div>Valide : {{isValid}}</div>
+      <pre>{{validationErrors | json }}</pre>
+      <pre>{{data | json}}</pre>
+    </div>
   </div>
 
 

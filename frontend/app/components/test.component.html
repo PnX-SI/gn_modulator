@@ -1,96 +1,77 @@
-<h1>Test</h1>
-
-
 <div *ngIf='componentInitialized; else loadingBlock'>
 
-  <mat-tab-group dynamicHeight [(selectedIndex)]="tabIndex">
-    <mat-tab label="Carte">
-      <modules-base-map
-      [groupName]="groupName"
-      [objectName]="objectName"
-      [value]="value"
-      (onLayerClick)="onLayerClick($event)"
-      ></modules-base-map>
-    </mat-tab>
-    <mat-tab label="Tableau">
-      <ng-template matTabContent>
-      <div class='test-base-components'>
-        <modules-base-table
-          [groupName]="groupName"
-          [objectName]="objectName"
+  <mat-tab-group
+    dynamicHeight
+    [(selectedIndex)]="tabIndex"
+    (selectedTabChange)="onTabChange($event)"
+  >
+    <mat-tab
+      label="Carte"
+      *ngIf="listTab.includes('map')"
+    >
+      <!-- <ng-template matTabContent> -->
+        <modules-base-map
+          [schemaName]="schemaName"
           [value]="value"
-          (onRowSelected)="onRowSelected($event)"
-        ></modules-base-table>
-      </div>
-      </ng-template>
+          [center]="center"
+          [zoom]="zoom"
+          [compress]="true"
+          [mapId]="mapListId"
+          [heightMap]="heightMap"
+          (onLayerClick)="onLayerClick($event)"
+        ></modules-base-map>
+      <!-- </ng-template> -->
+    </mat-tab>
+    <mat-tab
+      label="Tableau"
+      *ngIf="listTab.includes('table')"
+    >
+      <!-- <ng-template matTabContent> -->
+        <div class='test-base-components'>
+          <modules-base-table
+            [schemaName]="schemaName"
+            [value]="value"
+            (onRowSelected)="onRowSelected($event)"
+          ></modules-base-table>
+        </div>
+      <!-- </ng-template> -->
     </mat-tab>
     <mat-tab
       [disabled]="!value"
       label="Details"
+      *ngIf="listTab.includes('detail')"
       >
-      <div class='test-base-components'>
-        <modules-base-properties
-          [groupName]="groupName"
-          [objectName]="objectName"
-          [value]="value"
-        ></modules-base-properties>
-      </div>
+      <!-- <ng-template matTabContent> -->
+        <div class='test-base-components'>
+          <modules-base-properties
+            [schemaName]="schemaName"
+            [value]="value"
+            [mapId]="mapDetailId"
+            [center]="center"
+            [zoom]="zoom"
+            [heightMap]="heightMap"
+          ></modules-base-properties>
+        </div>
+      <!-- </ng-template> -->
     </mat-tab>
     <mat-tab
       [disabled]="!value"
       label="Formulaire"
+      *ngIf="listTab.includes('edit')"
     >
-      <modules-base-form
-      [groupName]="groupName"
-      [objectName]="objectName"
-      [value]="value"
-      ></modules-base-form>
+      <!-- <ng-template matTabContent> -->
+        <modules-base-form
+          [schemaName]="schemaName"
+          [value]="value"
+          [mapId]="mapEditId"
+          [center]="center"
+          [zoom]="zoom"
+          [heightMap]="heightMap"
+          [debug]="debug"
+        ></modules-base-form>
+      <!-- </ng-template> -->
     </mat-tab>
   </mat-tab-group>
-<!--
-  <div class='flex-container'>
-
-    <div>
-      <h2>Propriétés</h2>
-      <div class='test-base-components'>
-        <modules-base-properties
-        [groupName]="groupName"
-        [objectName]="objectName"
-        [value]="value"
-        ></modules-base-properties>
-      </div>
-    </div>
-
-    <div>
-      <h2>Formulaire</h2>
-      <div class='test-base-components'>
-        <modules-base-form
-        [groupName]="groupName"
-        [objectName]="objectName"
-        [value]="value"
-        ></modules-base-form>
-      </div>
-    </div>
-
-  </div>
-
-  <div class='flex-container'>
-
-    <div>
-      <h2>Tableau</h2>
-      <div class='test-base-components'>
-        <modules-base-table
-        [groupName]="groupName"
-        [objectName]="objectName"
-        [value]="value"
-        ></modules-base-table>
-      </div>
-    </div>
-
-  </div>
-
-</div>
--->
 
 <ng-template #loadingBlock>
   <div>

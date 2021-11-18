@@ -1,0 +1,59 @@
+{
+  "$id:": "references/schema/schema",
+  "type": "object",
+  "properties": {
+    "$meta": {
+      "$ref": "references/schema/meta.json"
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "title": "usual property",
+            "type": "object",
+            "properties": {
+              "type": {"oneof": ["string", "boolean", "number"]},
+              "label": { "type": "string" }
+            },
+            "required": ["label", "type"]
+          },
+          {
+            "title": "relationship N-1",
+            "type": "object",
+            "properties": {
+              "type": { "const": "string" },
+              "foreign_key": { "type": "string" },
+              "label": {"type": "string"}
+            },
+            "additionalProperties": false,
+            "required": ["foreign_key", "label", "type"]
+          },
+          {
+            "title": "foreign_key",
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "const": "integer" },
+              "foreign_key": { "type": "string" },
+              "label": {"type": "string"}
+            },
+            "additionalProperties": false,
+            "required": ["foreign_key", "label", "type"]
+          },
+          {
+            "title": "geometry",
+            "type": "object",
+            "properties": {
+              "$ref": { "type": "string" },
+              "label": { "type": "string" },
+              "srid": {"type": "number"}
+            },
+            "additionalProperties": false,
+            "required": ["$ref", "label", "srid"]
+          }
+
+        ]
+      }
+    }
+  }
+}

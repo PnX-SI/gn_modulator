@@ -2,6 +2,7 @@
     Exceptions for schemas
 '''
 
+
 class SchemaLoadError(Exception):
     '''
         Error when loading a schema
@@ -27,7 +28,7 @@ class SchemaUnautorizedSqlError(Exception):
     '''
         Error when we try to exec an sql code on an unautorized schema
     '''
-pass
+    pass
 
 
 class SchemaProcessedPropertyError(Exception):
@@ -37,22 +38,56 @@ class SchemaProcessedPropertyError(Exception):
     pass
 
 
+class SchemaRelationError(Exception):
+    '''
+        Error when a property marked as processed has no processing instruction
+    '''
+    pass
+
+
+class SchemaRepositoryError(Exception):
+    '''
+        Error in a repositroy process
+    '''
+    pass
+
+
 class SchemaRepositoryFilterError(Exception):
     '''
         Error when a filter is not correctly defined
     '''
-pass
+    pass
 
 
 class SchemaRepositoryFilterTypeError(Exception):
     '''
         Error when a filter is not correctly defined
     '''
-pass
+    pass
+
 
 class SchemaProcessConfigError(Exception):
     '''
         Error when a filter is not correctly defined
     '''
-pass
+    pass
 
+
+class SchemaDataTypeError(Exception):
+    '''
+        process_data : data_type is not valid
+    '''
+    pass
+
+
+class SchemaDataPathError(Exception):
+    '''
+        process_data : data_path is not correct
+    '''
+    pass
+
+class SchemaLayoutError(Exception):
+    '''
+        process_config layout
+    '''
+    pass

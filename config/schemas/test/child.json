@@ -1,66 +1,69 @@
 {
-    "$id": "test/child",
+    "$id": "schemas/test/child",
     "type": "object",
     "$meta": {
-        "object_name": "child",
-        "group_name": "test",
         "sql_processing": true,
         "genre": "M",
         "label": "enfant",
+        "label_field_name": "child_name",
         "table": {
-            "columns": ["child_name", "parent.parent_name"]
+            "columns": [
+                "child_id",
+                "child_name",
+                "parent.parent_name"
+            ]
         },
         "form": {
             "layout": [
-                { "type": "text", "key": "child_name"},
-                { "type": "text", "key": "child_code"},
                 {
-                    "key": "parent_id",
-                    "type": "list-form",
-                    "options": {
-                        "data_reload_on_search": true,
-                        "label": "Parent",
-                        "value_field_name": "parent_id",
-                        "label_field_name": "parent_name",
-                        "params": {
-                            "size": 7
-                        },
-                        "api": "http://localhost:8000/modules/test/parent/rest/",
-                        "refs": "#/definitions/parent"
-                    }
+                    "type": "string",
+                    "key": "child_name"
                 },
                 {
-                    "key": "parent",
-                    "type": "list-form",
-                    "options": {
-                        "data_reload_on_search": true,
-                        "return_object": true,
-                        "label": "Parent",
-                        "value_field_name": "parent_id",
-                        "label_field_name": "parent_name",
-                        "params": {
-                            "size": 7
-                        },
-                        "api": "http://localhost:8000/modules/test/parent/rest/",
-                        "refs": "#/definitions/parent"
-                    }
+                    "type": "string",
+                    "key": "child_code"
+                },
+                {
+                    "type": "div",
+                    "items": [
+                        "parent.parent_id",
+                        "parent.parent_name",
+                        "parent.parent_code"
+                    ]
                 }
             ]
         }
     },
     "properties": {
-        "child_id": { "type": "integer", "label": "ID enfant", "primary_key": true },
-        "child_name": { "type"  : "string", "label": "Nom enfant" },
-        "child_code": { "type" : "string", "label": "Code enfant" },
+        "child_id": {
+            "type": "integer",
+            "label": "ID enfant",
+            "primary_key": true
+        },
+        "child_name": {
+            "type": "string",
+            "label": "Nom enfant"
+        },
+        "child_code": {
+            "type": "string",
+            "label": "Code enfant"
+        },
         "parent_id": {
             "type": "integer",
             "label": "ID parent",
-            "foreign_key": "/schemas/test/parent"
+            "foreign_key": "schemas/test/parent.parent_id"
         },
         "parent": {
-            "type": "object",
-            "foreign_key": "parent_id",
-            "$ref": "../test/parent.json"
+            "label": "Parent",
+            "local_key": "parent_id",
+            "rel": "schemas.test.parent"
+        },
+        "examples": {
+            "label" : "Examples",
+            "rel": "schemas.test.example",
+            "local_key": "child_id",
+            "foreign_key": "example_id",
+            "first": "schemas.test.child"
         }
     }
 }

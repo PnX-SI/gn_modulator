@@ -32,14 +32,22 @@ export class ModulesRequestService {
           const pendingSubject = new Subject();
           this.pendingRequests[url_request] = pendingSubject;
         this._http[method](url_request, data)
-          .subscribe((value) => {
-            pendingSubject.next(value);
-            pendingSubject.complete();
-            observer.next(value);
-            // delete this.pendingRequests[url_request];
-            this.pendingRequests[url_request] = undefined;
-        return observer.complete();
-          });
+          .subscribe(
+            (value) => {
+              pendingSubject.next(value);
+              pendingSubject.complete();
+              observer.next(value);
+              // delete this.pendingRequests[url_request];
+              this.pendingRequests[url_request] = undefined;
+              return observer.complete();
+            },
+            (error) => {
+              const errorOut = error.error && error.error.description || error.error;
+              pendingSubject.error(errorOut);
+              this.pendingRequests[url_request] = undefined;
+              return observer.error(errorOut);
+            }
+          );
         } else {
           pendingSubject
           .asObservable()

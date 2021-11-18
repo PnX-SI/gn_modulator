@@ -1,0 +1,123 @@
+{
+  "$id:": "references/schema/schema",
+  "type": "object",
+  "definitions": {
+    "ref": { "$id": "/ref", "type": "string" }
+  },
+  "properties": {
+    "$meta": {
+      "$ref": "references/schema/meta.json"
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "title": "propriété commune",
+            "properties": {
+              "type": { "enum": [ "integer", "string", "date", "number", "date" ] },
+              "label": { "type": "string"},
+              "title": { "type": "string"},
+              "format": { "type": "string"},
+              "description": { "type": "string"}
+            },
+            "required": [ "type", "label" ],
+            "additionalProperties": false
+          },
+          {
+            "title": "foreign_key",
+            "properties": {
+              "type": { "enum": [ "integer" ] },
+              "label": { "type": "string"},
+              "title": { "type": "string"},
+              "description": { "type": "string"},
+              "foreign_key": { "type": "string" }
+            },
+            "required": [ "type", "foreign_key", "label" ],
+            "additionalProperties": false
+          },
+          {
+            "title": "primary_key",
+            "properties": {
+              "type": { "enum": [ "integer" ] },
+              "label": { "type": "string"},
+              "title": { "type": "string"},
+              "description": { "type": "string"},
+              "primary_key": { "type": "boolean" }
+            },
+            "required": [ "type", "primary_key", "label" ],
+            "additionalProperties": false
+          },
+
+          {
+            "title": "relation n-1",
+            "properties": {
+              "label": { "type": "string"},
+              "title": { "type": "string"},
+              "description": { "type": "string"},
+              "rel": { "type": "string" },
+              "local_key": { "type": "string" }
+            },
+            "required": [ "label", "rel", "local_key"],
+            "additionalProperties": false
+          },
+          {
+            "title": "relation 1-n",
+            "properties": {
+              "label": { "type": "string"},
+              "title": { "type": "string"},
+              "description": { "type": "string"},
+              "rel": { "type": "string" },
+              "foreign_key": { "type": "string" }
+            },
+            "required": [ "label", "rel", "foreign_key"],
+            "additionalProperties": false
+          },
+
+          {
+            "title": "relation n-n",
+            "properties": {
+              "label": { "type": "string"},
+              "title": { "type": "string"},
+              "description": { "type": "string"},
+              "rel": { "type": "string" },
+              "first": { "type": "string" },
+              "cor_suffix": { "type": "string" },
+              "cor_schema_name": { "type": "string" },
+              "cor_table_name": { "type": "string" },
+              "foreign_key": { "type": "string" },
+              "local_key": { "type": "string" }
+            },
+            "required": [ "label", "rel", "local_key", "foreign_key", "first"],
+            "additionalProperties": false
+          },
+
+          {
+            "title": "id_nomenclature",
+            "properties": {
+              "type": { "enum": [ "integer"] },
+              "nomenclature_type": { "type": "string" },
+              "label": { "type": "string"},
+              "title": { "type": "string"},
+              "description": { "type": "string"}
+            },
+            "required": [ "type", "nomenclature_type" ],
+            "additionalProperties": false
+          },
+          {
+            "title": "geometry",
+            "properties": {
+              "srid": { "type": "integer" },
+              "geometry_type": { "enum": [ "geometry", "point" ] },
+              "label": { "type": "string"},
+              "title": { "type": "string"},
+              "description": { "type": "string"}
+            },
+            "required": [ "srid", "geometry_type", "label" ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  }
+}

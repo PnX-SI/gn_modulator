@@ -1,22 +1,43 @@
 {
-    "$id": "/schemas/utils/utilisateur",
+    "$id": "schemas/utils/utilisateur",
     "type": "object",
     "$meta": {
-        "object_name": "utilisateur",
-        "group_name": "utils",
         "sql_schema_name": "utilisateurs",
         "sql_table_name": "t_roles",
-        "genre": "M",
         "label": "utilisateur",
+        "label_field_name": "nom_role",
+        "genre": "M",
         "table": {
-            "columns": ["nom_role", "prenom_role", "organisme.nom_organisme"]
+            "columns": [
+                "nom_role",
+                "prenom_role",
+                "organisme.nom_organisme"
+            ]
         }
     },
     "properties": {
-        "id_role": { "type": "integer", "label": "ID utilisateur", "primary_key": true },
-        "id_organisme": { "type": "string", "label": "ID organisme", "foreign_key": "#/schemas/utils/organisme"},
-        "nom_role": { "type": "string", "label": "Nom"},
-        "prenom_role": { "type": "string", "label": "Prénom"},
-        "organisme": { "type": "object", "label": "Organisme", "foreign_key": "id_organisme", "$ref": "../utils/organisme.json" }
+        "id_role": {
+            "type": "integer",
+            "label": "ID utilisateur",
+            "primary_key": true
+        },
+        "id_organisme": {
+            "type": "integer",
+            "label": "ID organisme",
+            "foreign_key": "schemas/utils/organisme.id_organisme"
+        },
+        "nom_role": {
+            "type": "string",
+            "label": "Nom"
+        },
+        "prenom_role": {
+            "type": "string",
+            "label": "Prénom"
+        },
+        "organisme": {
+            "label": "Organisme",
+            "foreign_key": "id_organisme",
+            "rel": "schemas.utils.organisme"
+        }
     }
 }

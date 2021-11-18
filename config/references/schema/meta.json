@@ -1,0 +1,16 @@
+{
+  "$id": "references/schema/meta",
+  "type": "object",
+  "properties": {
+    "label": { "type": "string"},
+    "label_field_name": { "type": "string"},
+    "genre": { "type": "string"},
+    "sql_table_name": { "type": "string"},
+    "sql_schema_name": { "type": "string"}
+  },
+  "required": [
+    "label",
+    "label_field_name",
+    "genre"
+  ]
+}

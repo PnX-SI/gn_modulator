@@ -1,9 +1,7 @@
 {
-    "$id": "/schemas/utils/nomenclature_type",
+    "$id": "schemas/utils/nomenclature_type",
     "type": "object",
     "$meta": {
-        "object_name": "nomenclature_type",
-        "group_name": "utils",
         "sql_schema_name": "ref_nomenclatures",
         "sql_table_name": "bib_nomenclatures_types",
         "genre": "F",

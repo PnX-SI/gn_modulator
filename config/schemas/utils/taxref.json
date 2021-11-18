@@ -1,9 +1,7 @@
 {
-    "$id": "/schemas/utils/taxref",
+    "$id": "schemas/utils/taxref",
     "type": "object",
     "$meta": {
-        "object_name": "taxref",
-        "group_name": "utils",
         "sql_schema_name": "taxonomie",
         "sql_table_name": "taxref",
         "genre": "F",

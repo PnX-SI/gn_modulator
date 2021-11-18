@@ -18,61 +18,32 @@ blueprint.cli.short_help = 'Commandes pour l''administration du module MODULES'
 for cmd in commands:
     blueprint.cli.add_command(cmd)
 
-schema_groups = [
-    {
-        'name': 'test',
-        'label': "Test",
-        'items': [
-            'parent',
-            'child',
-            'example'
-        ],
-    },
-    {
-        'name': 'utils',
-        'label': 'Utils',
-        'items': [
-            'nomenclature',
-            'nomenclature_type',
-            'taxref',
-            'organisme',
-            'utilisateur',
-            'synthese'
-        ],
-    },
-    {
-        'name': 'sipaf',
-        'label': 'Sipaf',
-        'items': [ 'pf' ]
-    }
-]
-
 #insert routes
 try:
-    for group in schema_groups:
-        for object_name in group['items']:
-            SchemaMethods(group['name'], object_name).register_api(blueprint)
+    for schema_name in SchemaMethods.schema_names('schemas'):
+        SchemaMethods(schema_name).register_api(blueprint)
 
 except Exception as e:
-    print('Erreur durant la création des routes test : {}'.format(str(e)))
+    print('Erreur durant la création des routes pour {} : {}'.format(schema_name, str(e)))
     raise(e)
 
-# TODO dans register api
-# @blueprint.route('/schema/<group_name>/<object_name>', methods=['GET'])
-# def api_schema(group_name, object_name):
-#     '''
-#         api schema
-#     '''
-#     try:
-#         sm = SchemaMethods(group_name, object_name)
-#         return sm.schema()
-#     except Exception as e:
-#         return 'erreur {}'.format(e), 500
 
 @blueprint.route('/groups', methods=['GET'])
 def api_groups():
     '''
         renvoi les groupes de schemas
     '''
-    return jsonify(schema_groups)
 
+    schema_names = SchemaMethods.schema_names('schemas')
+
+    groups = {}
+
+    for schema_name in schema_names:
+
+        group_name = schema_name.split('.')[-2]
+        object_name = schema_name.split('.')[-1]
+
+        groups[group_name] = groups.get(group_name) or []
+        groups[group_name].append(object_name)
+
+    return groups

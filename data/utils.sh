@@ -79,3 +79,7 @@ log_process() {
 psqla() {
     psql -d ${db_name} -h ${db_host} -U ${user_pg} -p ${db_port} -v ON_ERROR_STOP=1 "${@}"
 }
+
+gn_venv() {
+  source $geonature_dir/backend/venv/bin/activate
+}

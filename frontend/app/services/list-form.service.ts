@@ -21,7 +21,7 @@ export class ListFormService {
    *  getSelectList(options, value)
    *
    * recupère une liste depuis options
-   * 
+   *
    * si options.api est defini
    * - get api
    * - params
@@ -31,9 +31,9 @@ export class ListFormService {
    *    // ne pas redemander les valeurs selectionées
    *    - '!', { field: options.label_field_name, type: 'ilike', value: options.search}
    *  ]
-   * 
+   *
    * TODO process all cases
-   * 
+   *
    */
   getSelectList(options, value) {
     if(options.items) {
@@ -73,7 +73,7 @@ export class ListFormService {
         ]
       )
 
-      return this._requestService.request('get', options.api, { params: { params } })
+      return this._requestService.request('get', options.api, { params })
         .pipe(
           mergeMap( (res: any) => {
             return of([
@@ -113,21 +113,21 @@ export class ListFormService {
             : [value]
           : []
         ;
-
+        const filters = values
+          ? [
+              {
+                field: options.value_field_name,
+                type: 'in',
+                value: values
+              }
+            ]
+          : []
         return this._requestService.request(
           'get',
           options.api,
           {
             params: {
-              params: {
-                filters : [
-                  {
-                    field: options.value_field_name,
-                    type: 'in',
-                    value: values
-                  }
-                ]
-              }
+              filters
             }
           }
         ).pipe(

@@ -1,14 +1,14 @@
 {
-  "$id":"/schemas/test/example",
+  "$id":"schemas/test/example",
   "type": "object",
   "$meta": {
-    "object_name": "example",
-    "group_name": "test",
     "label": "exemple",
-    "genre": "M"
+    "label_field_name": "example_name",
+    "genre": "M",
+    "sql_processing": true
   },
-  "properties" : {  
-      "id_example" : {"type": "integer", "label": "ID", "primary_key": true},
+  "properties" : {
+      "example_id" : {"type": "integer", "label": "ID", "primary_key": true},
       "example_name" : {"type" : "string", "label": "nom"},
       "example_code" : {"type" : "string", "label": "code"}
   }

@@ -8,12 +8,18 @@ import { ModulesConfigService } from "../services/config.service";
 })
 export class ModulesIndexComponent implements OnInit {
 
-  schemaGroups = [];
+  schemaGroups = {};
+  groups = [];
 
   constructor(
     private _mConfig: ModulesConfigService,
   ) {
-    this._mConfig.getSchemaGroups().subscribe((schemaGroups:Array<any>) => { this.schemaGroups=schemaGroups})
+    this._mConfig.getSchemaGroups()
+      .subscribe((schemaGroups:Array<any>) => {
+        this.schemaGroups=schemaGroups
+        this.groups=Object.keys(schemaGroups)
+      })
+
   }
 
   ngOnInit() {

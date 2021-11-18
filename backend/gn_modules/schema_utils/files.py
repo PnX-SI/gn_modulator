@@ -3,134 +3,185 @@
 '''
 
 from pathlib import Path
+import os
 import json
-import re
 
-import string
-import random
 from geonature.utils.env import GN_EXTERNAL_MODULE
-from geonature.utils.config import config
 
 from gn_modules import MODULE_CODE
 
 from .errors import (
-    SchemaValidationError,
     SchemaLoadError,
-    SchemaProcessConfigError
+    SchemaDataPathError
 )
 
-GN_MODULES_SCHEMAS_DIR = GN_EXTERNAL_MODULE / MODULE_CODE.lower() / 'config/schemas/'
+GN_MODULES_CONFIG_DIR = GN_EXTERNAL_MODULE / MODULE_CODE.lower() / 'config/'
+
 
 class SchemaFiles():
     '''
-        file_path load save
+        - config_directory          [classmethod]
+        - schema_name_from_path     [classmethod] : schema_path -> schema_name
+        - schema_path_from_name     [classmethod] : schema_name -> schema_path
+        - schema_names              [classmethod] : list all schemas in a directory
+        - load_json_file            [classmethod] : file_path -> data from json file
+
     '''
 
-    def schema_file_path(self, group_name=None, object_name=None, post_name=""):
-        return self.cls_schema_file_path(
-            group_name or self.group_name(),
-            object_name or self.object_name(),
-            post_name
-        )
-
-    def schemas_dir(self):
-        return GN_MODULES_SCHEMAS_DIR
+    @classmethod
+    def config_directory(self):
+        return GN_MODULES_CONFIG_DIR
 
     @classmethod
-    def cls_schema_file_path(cls, group_name=None, object_name=None, post_name=""):
+    def schema_name_from_path(cls, schema_path):
         '''
-            returns schema file_path <GN_MODULES_SCHEMAS_DIR>/<group_name>/<object_name>
+            Renvoie name à partir de schema_path et base_dir
         '''
-        return (
-            Path(
-                GN_MODULES_SCHEMAS_DIR / '{}/{}{}.json'
-                .format(
-                    group_name,
-                    object_name,
-                    post_name
-                )
+        base_dir = cls.config_directory()
+
+        # on retire base_dir
+        schema_path_short = str(schema_path).replace(str(base_dir), '')
+
+        # on retire le '/' du début s'il existe
+        if schema_path_short[0] == '/':
+            schema_path_short = schema_path_short[1:]
+
+        # on retire .json
+        schema_path_short = schema_path_short.replace('.json', '')
+
+        schema_name = ".".join(schema_path_short.split('/'))
+
+        return schema_name
+
+    @classmethod
+    def schema_path_from_name(cls, schema_name):
+        '''
+            Renvoie le chemin d'un schema à partir de son nom
+        '''
+        base_dir = cls.config_directory()
+        schema_path = base_dir / (
+            "{}.json"
+            .format(
+                "/".join(schema_name.split("."))
             )
         )
 
-    # load / save
+        return schema_path
 
-    def load_from_file(self, file_path):
+    @classmethod
+    def schema_names(cls, base_name=None):
         '''
-        loads schema from file
+            Retourne tous les nom de schémas d'un repertoire
         '''
-        self._schema = self.load_json_file(file_path)
-        return self
 
-    def sample(self):
-        return self.load_json_file(
-            self.schema_file_path(post_name='-sample')
-        )
+        schema_names = []
+        search_dir = cls.config_directory()
+        if base_name:
+            search_dir = search_dir / "/".join(base_name.split('.'))
+        for root, dirs, files in os.walk(search_dir, followlinks=True):
+            for f in filter(
+                lambda f: f.endswith('.json') and 'sample'not in f,
+                files
+            ):
+                schema_names.append(cls.schema_name_from_path(Path(root) / f))
+        return schema_names
 
-    def random_sample(self):
+    @classmethod
+    def load_json_file_from_name(cls, schema_name):
         '''
-            return random data for schema (test purpose)
+            load json file from name
         '''
-        rand_sample = {}
-        random.seed()
-        for k,v in self.properties(processed_properties_only=True).items():
-            p_type = v['type']
-            if v.get('primary_key'):
-                continue
-            if v.get('foreign_key'):
-                rand_sample[k] = random.randint(10, 99)
-                continue
-            if p_type == 'integer':
-                rand_sample[k] = random.randint(0, 1e6)
-            if p_type == 'text':
-                rand_sample[k] = ''.join(random.choice(string.ascii_lowercase) for i in range(10))
 
-        return rand_sample
+        file_path = cls.schema_path_from_name(schema_name)
+        return cls.load_json_file_from_path(file_path)
 
-    def load_json_file(self, file_path):
+    @classmethod
+    def file_path(cls, schema_name, post_name=None):
+        file_path = cls.schema_path_from_name(schema_name)
+        if post_name:
+            file_path = Path(str(file_path).replace('.json', '-{}.json'.format(post_name)))
+        return file_path
+
+    @classmethod
+    def c_sample(cls, schema_name):
+        try:
+            return cls.load_json_file_from_path(cls.file_path(schema_name, 'sample'))
+        except Exception as e:
+            print(e)
+        return None
+
+    @classmethod
+    def load_json_file_from_path(cls, file_path):
         '''
-            load json file
-            return dict
+            Read json file and return data
+
+            TODO process error
         '''
         try:
-            with open(file_path, 'r') as f:
-                data = json.load(f)
-                # on remplace les valeurs commençant par __CONFIG. par les valeur de la config de l'appli
-                # par exemple pour LOCAL_SRID pour les geometries
-                data = self.process_schema_config(data)
-                return data
-        except FileNotFoundError as e:
+            with open(file_path) as f:
+                # remove comments ()
+                s = ''
+                for line in f:
+                    if line.strip().startswith('//') or line.strip().startswith('#'):
+                        continue
+                    s += line
+
+                schema = json.loads(s)
+                schema = cls.process_schema_config(schema)
+                return schema
+        except FileNotFoundError:
             raise SchemaLoadError("File not found : {}".format(file_path))
         except json.JSONDecodeError as e:
-            raise SchemaLoadError(
-                "Json : error in file {} : {}"
-                .format(file_path, str(e))
-            )
+            raise SchemaLoadError("Json : error in file {} : {}".format(str(file_path).replace(str(cls.config_directory()), ''), str(e)))
 
-    def process_schema_config(self, data):
-        if type(data) is dict:
-            return {
-                k: self.process_schema_config(v)
-                for k,v in data.items()
-            }
+    def load(self, schema_name):
+        '''
+            loads schema from file <...>/gn_modules/schemas/<schem_path_from_name>
+        '''
+        self._schema_name = schema_name
+        self._raw_schema = self.cls().load_json_file_from_name(schema_name)
+        self._processed_schema = self.process_raw_schema()
 
-        if type(data) is list:
-            return [ self.process_schema_config(v)  for v in data]
+        return self
 
-        if type(data) is str and '__CONFIG.' in data:
-            config_key_str = re.search(r'__CONFIG\.(.*?)__', data)
-            config_key_str = config_key_str and config_key_str.group(1)
-            if config_key_str:
-                config_keys = config_key_str.split('.')
-                config_value = None
-                try:
-                    for config_key in config_keys:
-                        config_value = config[config_key]
-                except Exception as e:
-                    raise SchemaProcessConfigError("La clé {} n'est pas dans la config de geonature".format(config_key_str))
+    #################################################
+    # methodes en cours
+    #################################################
 
-                return data.replace(data, str(config_value) or '')
+    #################################################
+    # methodes non validées
+    #################################################
 
-        return data
+    @classmethod
+    def data_path(self, data_name):
+        '''
+            retourne le chemin du fichier de données associé à data_name
+            data_name:
+                - 'test' => <gn_module>/config/data/test.json
+                - 'test.exemple' => <gn_module>/config/data/test/exemple.json
+            ou du dossier le cas écheant
+        '''
+
+        data_path = self.config_directory() / 'data'
+
+        if not data_name:
+            return data_path
+
+        for path_data_name in data_name.split('.'):
+            data_path = data_path / path_data_name
+
+        if data_path.is_dir():
+            return data_path
+
+        file_path = Path(str(data_path) + '.json')
+        if file_path.is_file():
+            return file_path
+
+        raise SchemaDataPathError(
+            'Le paramètre data_name={}, ne correspond à aucun fichier ou répertoire existant {}(.json)'
+            .format(data_name, data_path)
+        )
+        return False
 
     def reload(self):
         '''
@@ -140,46 +191,4 @@ class SchemaFiles():
         self.clear_cache_model()
         self.clear_cache_marshmallow()
         # reinit
-        return self.load()
-
-
-    def load(self, group_name=None, object_name=None):
-        '''
-            loads schema from file <...>/gn_modules/schemas/<group_name>/<object_name>
-        '''
-
-        return self.load_from_file(
-            self.schema_file_path(
-                group_name or self.group_name(),
-                object_name or self.object_name()
-            )
-        )
-
-    def load_from_reference(self, ref):
-        '''
-            load from ref '../<group_name>/<object_name>'
-        '''
-
-
-        ref_array = ref.replace('.json', '').split('/')
-
-        group_name = ref_array[-2]
-        object_name = ref_array[-1]
-
-        return self.load(group_name, object_name)
-
-    def save(self, file_path):
-        '''
-            save schema in file given by file_path
-
-            TODO add test if file exists ? option force ??
-        '''
-        with open(file_path, 'w') as f:
-            json.dump(self._schema, f)
-
-    def save(self):
-        '''
-            save schema in file given by self.file_path()
-
-        '''
-        return self.save(self.schema_file_path())
+        return self.load(self._schema_name)

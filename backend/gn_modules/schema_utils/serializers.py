@@ -4,24 +4,21 @@
     Utilisation de marshmallow
 '''
 
-import json
-from marshmallow import pre_load, post_load, pre_dump, fields, ValidationError
+from geoalchemy2.shape import to_shape, from_shape
+from geojson import Feature
+from marshmallow import pre_load, fields, ValidationError
+from shapely.geometry import asShape
 from sqlalchemy.orm import ColumnProperty
 
-from shapely.geometry import asShape
-from geoalchemy2.shape import to_shape, from_shape
-from geoalchemy2.types import Geometry as GeometryType
-from geojson import Feature, FeatureCollection
-
-from .queries import custom_getattr 
-
-
-from geonature.utils.env import (MA, DB)
+from utils_flask_sqla_geo.utilsgeometry import remove_third_dimension
+from geonature.utils.env import MA
 
 from .errors import SchemaProcessedPropertyError
-from sqlalchemy import func
+from geoalchemy2.types import Geometry as GeometryType
+
 # store the marshmallow schema
 cache_marshmallow = {}
+
 
 class GeojsonSerializationField(fields.Field):
     def _serialize(self, value, attr, obj):
@@ -51,58 +48,99 @@ class SchemaSerializers:
         TODO
     '''
 
-    def marshmallow_object_name(self):
+    def marshmallow_schema_name(self):
         '''
-            returns marshmallow_object_name
-            can be
-            - defined in self._schema['$meta']['marshmallow_object_name']
-            - or retrieved from group_name and object_name 'T{full_name('pascal_case')}'
         '''
 
-        return self._schema['$meta'].get('marshmallow_object_name', 'MA{}'.format(self.full_name('pascal_case')))
+        return self.meta('marshmallow_schema_name', 'MA{}'.format(self.schema_name('pascal_case')))
 
     def marshmallow_meta_name(self):
-        return 'Meta{}'.format(self.marshmallow_object_name())
+        return 'Meta{}'.format(self.marshmallow_schema_name())
 
     def clear_cache_marshmallow(self):
-        if cache_marshmallow.get(self.full_name()):
-            del cache_marshmallow[self.full_name()]
+        if cache_marshmallow.get(self.schema_name()):
+            del cache_marshmallow[self.schema_name()]
 
+    def process_column_marshmallow(self, column_def):
+        field_type = column_def.get('type')
+        kwargs = {
+            'allow_none': True
+        }
 
-    def excluded_fields(self):
+        if column_def.get('primary_key'):
+            return MA.auto_field(**kwargs)
+
+        elif field_type == 'integer':
+            return fields.Integer(**kwargs)
+
+        elif field_type == 'number':
+            return fields.Number(**kwargs)
+
+        elif field_type == 'string':
+            return fields.String(**kwargs)
+
+        elif field_type == 'date':
+            return fields.Date(format="%Y-%m-%d", **kwargs)
+
+        elif self.is_geometry(column_def):
+            return GeojsonSerializationField(**kwargs)
+
+        else:
+            raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
+
+    def opposite_relation_def(self, relation_def):
+        return {
+            'rel': self.schema_name(),
+            'local_key': relation_def.get('foreign_key'),
+            'foreign_key': relation_def.get('local_key'),
+        }
+
+    def is_relation_excluded(self, relation_def_test, relation_def):
+        return (
+            relation_def.get('rel') == relation_def_test.get('rel')
+            and relation_def.get('local_key') == relation_def_test.get('local_key')
+            and relation_def.get('foreign_key') == relation_def_test.get('foreign_key')
+        )
+
+    def excluded_realions(self, relation_def_test):
+        return [
+            key
+            for key, relation_def in self.relationships().items()
+            if self.is_relation_excluded(relation_def_test, relation_def)
+        ]
+
+    def process_relation_marshmallow(self, relation_def):
+        # kwargs = {}
+        # kwargs['exclude_relations'] = [self.opposite_relation_def(relation_def)]
+
+        # avoid circular dependencies
+
+        relation = self.cls()(relation_def['rel'])
+        exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
+        relation_serializer = None
+
+        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), exclude=exclude)
+
+        if self.relation_type(relation_def) == 'n-1':
+            relation_serializer = relation_serializer
+        if self.relation_type(relation_def) in ['1-n', 'n-n']:
+            relation_serializer = fields.List(relation_serializer)
+
+        if relation_serializer is None:
+            raise Exception('relation_serializer is None for {}'.format(relation_def))
+
+        return relation_serializer
+
+    def MarshmallowSchema(self):
         '''
-            pour exclure la geometrie à traiter plus tard
-        '''
-        excluded_fields = []
-        # boucle sur les champs de Models
-        schema_properties_keys = self.properties(processed_properties_only=True).keys()
-        for prop in self.Model().__mapper__.column_attrs:
-            if isinstance(prop, ColumnProperty):  # and len(prop.columns) == 1:
-                # -1 : si on est dans le cas d'un heritage on recupere le dernier element de prop
-                # qui correspond à la derniere redefinition de cette colonne
-                db_col = prop.columns[-1]
-                # HACK
-                #  -> Récupération du nom de l'attribut sans la classe
-                name = str(prop).split('.', 1)[1]
-                if db_col.type.__class__.__name__ == 'Geometry' and (name not in schema_properties_keys):
-                    excluded_fields.append(name)
-
-        return excluded_fields
-
-
-    def MarshmallowShema(self):
-        '''
         '''
 
-        if MarshmallowShema := cache_marshmallow.get(self.full_name()):
-            return MarshmallowShema
-
-        print('MarshmallowShema create  ', self.full_name())
+        if MarshmallowSchema := cache_marshmallow.get(self.schema_name()):
+            return MarshmallowSchema
 
         marshmallow_meta_dict = {
             'model': self.Model(),
             'load_instance': True,
-            'exclude': self.excluded_fields()
         }
 
         Meta = type(self.marshmallow_meta_name(), (), marshmallow_meta_dict)
@@ -119,93 +157,105 @@ class SchemaSerializers:
 
         marshmallow_schema_dict = {
             'Meta': Meta,
-            'pre_load_make_object': pre_load_make_object
+            'pre_load_make_object': pre_load_make_object,
+            'load_fk': True
         }
 
-        for key, value in self.properties(processed_properties_only=True).items():
-            if value.get('primary_key'):
-                marshmallow_schema_dict[key] = MA.auto_field()
-            elif value['type'] == 'integer':
-                marshmallow_schema_dict[key] = fields.Integer()
-            elif value['type'] == 'number':
-                marshmallow_schema_dict[key] = fields.Number()
-            elif value['type'] == 'text':
-                marshmallow_schema_dict[key] = fields.String()
-            elif value['type'] == 'date':
-                marshmallow_schema_dict[key] = fields.Date(format="%Y-%m-%d")
-            elif value['type'] == 'geom':
-                marshmallow_schema_dict[key] = GeojsonSerializationField()
+        # cache_marshmallow_schema_dict[self.schema_name()] = marshmallow_schema_dict
 
-            else:
-                 raise SchemaProcessedPropertyError('type {} non traité'.format(value['type']))
+        for key, column_def in self.columns().items():
+            marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
 
-        for key, value in self.relationships().items():
-            foreign_key = value['foreign_key']
-            relation_reference = self.properties()[foreign_key]['foreign_key']
-            sm_relation = self.__class__().load_from_reference(relation_reference)
+        # store in cache before realtion(avoid circular dependancies)
+        for key, relation_def in self.relationships().items():
+            # if self.is_relation_excluded(exclude_relations, relation_def):
+            #     print(self.schema_name(), 'exclude', key)
+            #     continue
+            marshmallow_schema_dict[key] = self.process_relation_marshmallow(relation_def)
 
-            marshmallow_schema_dict[key] = MA.Nested(sm_relation.MarshmallowShema())
+            # MarshmallowSchema._declared_fields[key] = self.process_relation_marshmallow(relation_def)
+        MarshmallowSchema = type(self.marshmallow_schema_name(), (MA.SQLAlchemyAutoSchema,), marshmallow_schema_dict)
 
-        # create Class for MarshmallowShema
-        MarshmallowShema = type(self.marshmallow_object_name(), (MA.SQLAlchemyAutoSchema,), marshmallow_schema_dict)
+        cache_marshmallow[self.schema_name()] = MarshmallowSchema
 
-        # store in cache
-        cache_marshmallow[self.full_name()] = MarshmallowShema
+        # load dependancies
+        for dep in self.dependencies():
+            sm = self.cls()(dep)
+            sm.MarshmallowSchema()
 
-        return MarshmallowShema
+        return MarshmallowSchema
 
-    def serialize(self, m, fields = None):
+    def serialize(self, m, fields=None, as_geojson=False, geometry_field_name=None):
         '''
             serialize using marshmallow
 
             fields = None => on renvoie tous les champs
         '''
 
-        kwargs = { 'only': fields } if fields else {}
+        kwargs = {'only': fields} if fields else {}
 
-        return ( self.MarshmallowShema()
+        if as_geojson:
+            geometry_field_name = geometry_field_name or self.meta('geometry_field_name')
+            if fields and geometry_field_name not in fields:
+                fields.append(geometry_field_name)
+
+        data = (
+            self.MarshmallowSchema()
             (**kwargs)
             .dump(m)
         )
 
+        if as_geojson:
+            return self.as_geojson(data, geometry_field_name)
+        else:
+            return data
 
-    def serialize2(self, m, fields = None):
-        '''
-            serialize alamano
-
-            fields = None => on renvoie tous les champs
-        '''
-
-        d = {
-
-        }
-
-        for f in fields:
-            d[f], _ = custom_getattr(m, f)
-
-        return d
-
-
-    def serialize_list(self, m_list, fields = None):
+    def serialize_list(self, m_list, fields=None, as_geojson=True, geometry_field_name=False):
         '''
             serialize using marshmallow
 
             fields = None => on renvoie tous les champs
         '''
 
-        kwargs = { 'only': fields } if fields else {}
+        kwargs = {'only': fields} if fields else {}
 
-        marshmallowSchema = self.MarshmallowShema()(**kwargs)
+        if as_geojson:
 
+            geometry_field_name = geometry_field_name or self.meta('geometry_field_name')
+            if fields and geometry_field_name not in fields:
+                fields.append(geometry_field_name)
 
-        return marshmallowSchema.dump(m_list, many=True)
-        # return [marshmallowSchema.dump(m) for m in m_list]
+        marshmallowSchema = self.MarshmallowSchema()(**kwargs)
 
+        data_list = marshmallowSchema.dump(m_list, many=True)
+
+        if as_geojson:
+
+            features = []
+            for data in data_list:
+                features.append(self.as_geojson(data, geometry_field_name))
+            return {
+                "type": "FeatureCollection",
+                "features": features
+            }
+
+        else:
+            return data_list
+
+    def as_geojson(self, data, geometry_field_name=None):
+        geometry_field_name = geometry_field_name or self.meta('geometry_field_name')
+        geometry = data.pop(geometry_field_name)
+        return {
+            "type": "Feature",
+            "geometry": geometry,
+            "properties": data
+        }
 
     def unserialize(self, m, data):
         '''
             unserialize using marshmallow
         '''
-        MS = self.MarshmallowShema()
+
+        MS = self.MarshmallowSchema()
         ms = MS()
         return ms.load(data, instance=m)

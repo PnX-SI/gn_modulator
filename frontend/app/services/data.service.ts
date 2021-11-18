@@ -22,9 +22,9 @@ export class ModulesDataService {
    * On souhaite s'assurer que la config est bien chargée
    * pour l'élément demandé
    */
-  dataRequest(groupName, objectName, method, options: any) {
+  dataRequest(schemaName, method, options: any) {
     return this._config
-      .loadConfig(groupName, objectName)
+      .loadConfig(schemaName)
       .pipe(
         mergeMap((schemaConfig) => {
           const url = `${schemaConfig.utils.urls.rest}${options.value || ''}`
@@ -40,34 +40,31 @@ export class ModulesDataService {
       );
   }
 
-  getList(groupName, objectName, params = {}) {
+  getList(schemaName, params = {}) {
     return this.dataRequest(
-      groupName,
-      objectName,
+      schemaName,
       'get',
       {
-        params: {params}
+        params
       }
     );
   }
 
 
-  getOne(groupName, objectName, value, fieldName=null) {
+  getOne(schemaName, value, field_name=null, as_geojson=null) {
     return this.dataRequest(
-      groupName,
-      objectName,
+      schemaName,
       'get',
       {
         value,
-        params: { fieldName }
+        params: { field_name, as_geojson }
       }
     );
   }
 
-  post(groupName, objectName, data) {
+  post(schemaName, data) {
     return this.dataRequest(
-      groupName,
-      objectName,
+      schemaName,
       'post',
       {
         data
@@ -75,29 +72,27 @@ export class ModulesDataService {
     );
   }
 
-  patch(groupName, objectName, value, data, fieldName=null) {
+  patch(schemaName, value, data, field_name=null) {
     return this.dataRequest(
-      groupName,
-      objectName,
+      schemaName,
       'patch',
       {
         value,
-        params: { fieldName },
+        params: { field_name },
         data
       }
     );
   };
 
-  delete(groupName, objectName, value, fieldName=null) {
+  delete(schemaName, value, field_name=null) {
     return this.dataRequest(
-      groupName,
-      objectName,
+      schemaName,
       'delete',
       {
         value,
-        params: { fieldName }
+        params: { field_name }
       }
     );
- 
+
   };
 }

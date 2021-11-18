@@ -44,7 +44,6 @@ INSERT INTO sipaf.t_passages_faune(
     id_pf,
     uuid_pf,
     pi_ou_ps,
-	geom_wkt,
 	geom,
 	PK,
 	PR,
@@ -54,7 +53,7 @@ INSERT INTO sipaf.t_passages_faune(
 	id_op,
 	nom_pf,
 	Cd_Com,
-	anRefCom,
+	an_ref_com,
 	issu_requa,
 	date_creat,
 	date_requal,
@@ -80,13 +79,22 @@ INSERT INTO sipaf.t_passages_faune(
 	nom_resv,
 	id_obst,
 	nom_obst,
-	comment
+	comment,
+	id_nomenclature_materiaux,
+	id_nomenclature_oh_position,
+	id_nomenclature_oh_banq_caract,
+	id_nomenclature_oh_banq_type
+)
+WITH non_doublons AS (
+	SELECT id_pf
+	FROM tmp_import_sipaf tis
+	GROUP BY id_pf
+	HAVING COUNT(*) = 1
 )
 SELECT
-    id_pf::INT,
+    i.id_pf::INT,
     COALESCE(uuid_pf::UUID, uuid_generate_v4()),
     pi_ou_ps,
-	geom_wkt,
 	CASE
 		WHEN (sipaf.correct_number(X) IS NOT NULL) AND (sipaf.correct_number(Y) IS NOT NULL)
 			THEN ST_SetSRID(ST_Point(sipaf.correct_number(X), sipaf.correct_number(Y)), 4326)
@@ -114,7 +122,7 @@ SELECT
 	specificit,
 	lb_typ_ouv,
 	lb_materiaux,
-	ep_materiaux,
+	sipaf.correct_number(ep_materiaux),
 	OH,
 	OH_position,
 	OH_caract,
@@ -127,6 +135,16 @@ SELECT
 	nom_resv,
 	id_obst,
 	nom_obst,
-	comment
-    FROM public.tmp_import_sipaf
-    WHERE id_pf IS NOT NULL;
+	comment,
+	CASE
+		WHEN TRIM(lb_materiaux) = 'Béton' THEN ref_nomenclatures.get_id_nomenclature('PF_MATERIAUX', 'BET')
+		WHEN TRIM(lb_materiaux) = 'Métal' THEN ref_nomenclatures.get_id_nomenclature('PF_MATERIAUX', 'MET')
+		ELSE NULL
+	END,
+
+	NULL,
+	NULL,
+	NULL
+    FROM public.tmp_import_sipaf i
+	JOIN non_doublons nd on nd.id_pf = i.id_pf
+    WHERE i.id_pf IS NOT NULL;

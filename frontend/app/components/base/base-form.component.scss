@@ -1,0 +1,18 @@
+.form-container {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+}
+
+.base-form {
+    flex: auto;
+    padding: 5px;
+    max-width: 50%;
+}
+
+.map-form {
+    flex: auto;
+    max-width: 50%;
+    height: 1000px;
+    padding: 5px;
+}

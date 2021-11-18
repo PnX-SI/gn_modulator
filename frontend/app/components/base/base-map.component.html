@@ -1,19 +1,14 @@
-
-
-
 <div *ngIf="componentInitialized; else loadingBlock">
-  <h4>{{ tableTitle }}</h4>
-  {{geoms && geoms.length}}
-    <pnx-map [height]="heightMap">
-        <pnx-geojson
-          *ngIf="geoms"
-          [geojson]="geoms"
-          [zoomOnLayer]="true"
-          [onEachFeature]="onEachFeature"
-        ></pnx-geojson>
-      </pnx-map>
+    <h4>{{ tableTitle }}</h4>
+    <modules-map
+      [mapId]="mapId"
+      height="800px"
+      [zoom]="zoom"
+      [center]="center"
+      [layersData]=layersData
+    ></modules-map>
 </div>
 
 <ng-template #loadingBlock>
-  <div>Chargement en cours</div>
+    <div>Chargement en cours</div>
 </ng-template>

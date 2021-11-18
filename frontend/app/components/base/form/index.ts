@@ -5,7 +5,8 @@
 import { ListFormComponent } from './list-form.component'
 
 const additionalWidgets = {
-    'list-form': ListFormComponent
+    'list-form': ListFormComponent,
+    'string': 'text'
   }
 
 export { ListFormComponent, additionalWidgets };

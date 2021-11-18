@@ -8,7 +8,6 @@
 #   -g : geonature_dir
 #
 # stop on error
-
 set -eo pipefail
 
 
@@ -56,6 +55,7 @@ log_process 'ODS -> CSV'
 # --infilter pour gérer les accents
 # https://unix.stackexchange.com/questions/259361/specify-encoding-with-libreoffice-convert-to-csv
 # libreoffice --convert-to csv:"59" --infilter=CSV:44,34,76,1 --outdir ${data_dir}/sources ${source_ods}
+gn_venv && deactivate
 unoconv -f csv -e FilterOptions="59,34,0,0" ${source_ods}
 
 # 2) csv -> sql
@@ -76,6 +76,9 @@ cp ${source_csv} /tmp/source.csv
 psqla -c 'DROP SCHEMA IF EXISTS sipaf CASCADE;'
 psqla -f ${source_sql}
 cat ${source_csv} | psqla -c "COPY public.tmp_import_sipaf FROM STDIN CSV HEADER DELIMITER ';';"
+# psqla -f ${data_dir}/schema_sipaf.sql
+gn_venv
+geonature modules sql_process -n schemas.sipaf.pf > ${data_dir}/schema_sipaf.sql
 psqla -f ${data_dir}/schema_sipaf.sql
 psqla -f ${data_dir}/import_sipaf.sql
 
