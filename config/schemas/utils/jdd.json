@@ -1,0 +1,25 @@
+{
+  "$id": "schemas/utils/jdd",
+  "type": "object",
+  "$meta": {
+    "import": {
+      "test_keys": ["dataset_name", "id_acquisition_framework"],
+      "get_foreign_key": {
+        "id_acquisition_framework": ["acquisition_framework_name"]
+      }
+    },
+    "sql_schema_name": "gn_meta",
+    "sql_table_name": "t_datasets",
+    "model_name": "TDatasets",
+    "label": "jeu de données",
+    "labels": "jeux de données",
+    "label_field_name": "dataset_shortname",
+    "genre": "M",
+    "autoschema": true
+  },
+  "properties": {
+    "dataset_name": {
+      "label": "Non du jeu de données"
+    }
+  }
+}
