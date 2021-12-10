@@ -1,0 +1,35 @@
+
+<div *ngIf="debug" class="debug"> {{ _name }} elementType {{elementType}} value {{ value }} filters {{ filters | json }}</div>
+
+<div [ngSwitch]="elementType">
+
+    <modules-map-list
+        *ngSwitchCase="'map_list'"
+        [debug]="debug"
+        [height]="height"
+        [schemaName]="schemaName"
+        [value]="value"
+        (onEvent)="processEvent($event)"
+    ></modules-map-list>
+
+    <modules-base-form
+        *ngSwitchCase="'form'"
+        [debug]="debug"
+        [height]="height"
+        [schemaName]="schemaName"
+        [value]="value"
+        (onEvent)="processEvent($event)"
+
+    ></modules-base-form>
+
+    <modules-base-properties
+        *ngSwitchCase="'properties'"
+        [debug]="debug"
+        [height]="height"
+        [schemaName]="schemaName"
+        [value]="value"
+        (onEvent)="processEvent($event)"
+    ></modules-base-properties>
+
+</div>
+

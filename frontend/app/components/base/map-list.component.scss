@@ -1,0 +1,23 @@
+.map-list-container {
+    display: flex;
+    width: 100%;
+    // background-color: red;
+}
+
+.map-list-container > div {
+    flex:auto;
+    // background-color: green;
+}
+
+
+.map-list-container > .map-list-filter {
+    max-width: 20%;
+}
+
+.map-list-container > .map-list-map {
+    width: 50%;
+}
+
+.map-list-container > .map-list-list {
+    max-width: 30%;
+}

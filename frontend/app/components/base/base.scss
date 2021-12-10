@@ -1,0 +1,25 @@
+.debug {
+    background-color: black;
+    color:lightgreen;
+    margin: 2px;
+    padding: 2px;
+}
+
+.layout {
+    width: 100%;
+    margin: 1px;
+    padding: 1px;
+}
+
+.layout > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.layout > div.layout-row {
+    flex-direction: row;
+}
+
+.layout > div.layout-row > div {
+    flex: auto;
+}

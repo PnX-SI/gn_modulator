@@ -1,0 +1,41 @@
+<div *ngIf="debug" class="debug"> {{ _name }} value {{ value }} filters {{ filters | json }}</div>
+
+<div class="map-list-container">
+    <div class="map-list-filters">
+
+        <modules-base-filters
+            [debug]="debug"
+            [schemaName]="schemaName"
+            (onEvent)="processEvent($event)"
+        ></modules-base-filters>
+    </div>
+
+    <div class="map-list-map">
+
+        <modules-base-map
+            [compress]="true"
+            [debug]="debug"
+            [filters]="filters"
+            [height]="height"
+            [mapId]="mapId"
+            [schemaName]="schemaName"
+            [value]="value"
+            (onEvent)="processEvent($event)"
+        ></modules-base-map>
+    </div>
+
+    <div class="map-list-list">
+
+        <modules-base-table
+            [displayFilters]="false"
+            [debug]="debug"
+            [filters]="filters"
+            [short]="true"
+            [schemaName]="schemaName"
+            [value]="value"
+            (onEvent)="processEvent($event)"
+        ></modules-base-table>
+    </div>
+
+
+</div>

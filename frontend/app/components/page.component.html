@@ -1,0 +1,23 @@
+<!-- <div *ngIf="debug" class="debug">
+    routeData <pre>{{ routeData |json }}</pre>
+    pageConfig <pre>{{  pageConfig?.elements|json }}</pre>
+    value {{value}}
+</div> -->
+
+
+<!-- Elements -->
+<div *ngIf="pageConfig">
+
+<div *ngFor="let element of pageConfig.elements">
+
+    <modules-page-element
+        [elementType]="element.type"
+        [schemaName]="element.schema_name"
+        [moduleName]="routeData.moduleName"
+        [actions]="element.actions"
+        [value]="value"
+        [debug]="debug"
+    ></modules-page-element>
+</div>
+
+</div>

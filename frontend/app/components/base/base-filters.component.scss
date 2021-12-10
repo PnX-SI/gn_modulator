@@ -1,0 +1,16 @@
+.form-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.form-container > div {
+    padding: 5px;
+    flex: auto;
+}
+
+.base-form {
+}
+
+.map-form {
+    height: 600px;
+}

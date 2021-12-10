@@ -1,0 +1,45 @@
+{
+  "code": "SIPAF",
+  "schemas": {
+    "pf": "schemas.sipaf.pf"
+  },
+  "pages": {
+    "map_list": {
+      "url": "",
+      "elements": [
+        {
+          "schema_name": "schemas.sipaf.pf",
+          "type": "map_list",
+          "actions": {
+            "edit": {
+              "type": "link",
+              "pageName": "edit"
+            },
+            "details": {
+              "type": "link",
+              "pageName": "details"
+            }
+          }
+        }
+      ]
+    },
+    "edit": {
+      "url": "edit/:value",
+      "elements": [
+        {
+          "type": "form",
+          "schema_name": "schemas.sipaf.pf"
+        }
+      ]
+    },
+    "details": {
+      "url": "details/:value",
+      "elements": [
+        {
+          "type": "properties",
+          "schema_name": "schemas.sipaf.pf"
+        }
+      ]
+    }
+  }
+}

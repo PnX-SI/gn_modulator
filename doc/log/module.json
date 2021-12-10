@@ -1,0 +1,34 @@
+{
+  "schemas": {
+    "site": {
+      "schema_name": "schemas.monitoring.site"
+    },
+    "visit": {
+      "schema_name": "schemas.monitoring.visit"
+    },
+    "observation": {
+      "schema_name": "schemas.monitoring.observation"
+    }
+  },
+  "tree": {
+    "site": {
+      "visit": {}
+    }
+  },
+  "pages": {
+    "module": {},
+    "site": {
+      "url": "<module_code>/site/<id>", #  ??
+      "widgets": [
+        { "widget": "site.map", "position": "G", "value": "<id>"  },
+        { "widget": "site.properties", "postion": "DH" },
+        { "widget": "visit.table", "postion": "DH", "pre_filters": "id_site=<id>" }
+      ]
+    },
+    "visit": {
+      "widgets": [
+        { "widget": "visit.properties"}
+      ]
+    }
+  }
+}

@@ -1,0 +1,44 @@
+<div class=layout>
+    <div *ngIf="debug" class="debug">
+        {{_name}} {{layoutType}} {{layout | json}}
+    </div>
+
+    <h4 *ngIf='layout && layout.title'>{{layout.title}}</h4>
+
+    <div [ngClass]="{'layout-row': layoutType == 'obj' && layout.direction == 'row'}">
+
+        <ng-template [ngIf]="layoutType == 'array'">
+
+            <modules-base-layout
+                *ngFor="let item of layout"
+                [layout]="item"
+                [layoutData]="layoutData"
+                [debug]=debug
+            ></modules-base-layout>
+
+        </ng-template>
+
+        <ng-template [ngIf]="layoutType == 'obj'">
+
+            <div *ngFor="let item of layout.items">
+                <modules-base-layout
+                    [layout]="item"
+                    [layoutData]="layoutData"
+                    [debug]=debug
+                ></modules-base-layout>
+            </div>
+
+        </ng-template>
+
+        <ng-template [ngIf]="layoutType == 'key'">
+            <!-- {{layoutTxt}} -->
+            <p><b>{{data.label}}</b> : {{ data.value || ''}}</p>
+        </ng-template>
+
+        <ng-template [ngIf]="layoutType == null">
+            layout null
+        </ng-template>
+
+
+    </div>
+</div>
