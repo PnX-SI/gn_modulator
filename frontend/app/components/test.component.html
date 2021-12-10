@@ -1,32 +1,42 @@
 <div *ngIf='componentInitialized; else loadingBlock'>
 
+  <div *ngIf="debug">
+    Debug Test : filters {{filters| json}}
+  </div>
   <mat-tab-group
     dynamicHeight
     [(selectedIndex)]="tabIndex"
     (selectedTabChange)="onTabChange($event)"
   >
-    <mat-tab
+
+
+  <!-- Carte-->
+
+  <mat-tab
       label="Carte"
       *ngIf="listTab.includes('map')"
     >
-      <!-- <ng-template matTabContent> -->
         <modules-base-map
+          [filters]="filters"
           [schemaName]="schemaName"
           [value]="value"
           [center]="center"
+          [debug]="debug"
           [zoom]="zoom"
           [compress]="true"
           [mapId]="mapListId"
-          [heightMap]="heightMap"
+          [height]="height"
           (onLayerClick)="onLayerClick($event)"
         ></modules-base-map>
-      <!-- </ng-template> -->
-    </mat-tab>
+  </mat-tab>
+
+
+    <!-- Tableau -->
+
     <mat-tab
       label="Tableau"
       *ngIf="listTab.includes('table')"
     >
-      <!-- <ng-template matTabContent> -->
         <div class='test-base-components'>
           <modules-base-table
             [schemaName]="schemaName"
@@ -34,14 +44,15 @@
             (onRowSelected)="onRowSelected($event)"
           ></modules-base-table>
         </div>
-      <!-- </ng-template> -->
     </mat-tab>
+
+    <!-- Details -->>
+
     <mat-tab
       [disabled]="!value"
       label="Details"
       *ngIf="listTab.includes('detail')"
       >
-      <!-- <ng-template matTabContent> -->
         <div class='test-base-components'>
           <modules-base-properties
             [schemaName]="schemaName"
@@ -49,29 +60,46 @@
             [mapId]="mapDetailId"
             [center]="center"
             [zoom]="zoom"
-            [heightMap]="heightMap"
+            [height]="height"
           ></modules-base-properties>
         </div>
-      <!-- </ng-template> -->
     </mat-tab>
+
+
+    <!-- Form -->
+
     <mat-tab
       [disabled]="!value"
       label="Formulaire"
       *ngIf="listTab.includes('edit')"
     >
-      <!-- <ng-template matTabContent> -->
         <modules-base-form
           [schemaName]="schemaName"
           [value]="value"
           [mapId]="mapEditId"
           [center]="center"
           [zoom]="zoom"
-          [heightMap]="heightMap"
+          [height]="height"
           [debug]="debug"
         ></modules-base-form>
-      <!-- </ng-template> -->
     </mat-tab>
-  </mat-tab-group>
+
+
+    <!-- Filtre -->
+
+  <mat-tab
+  label="Filtres"
+  *ngIf="listTab.includes('filters')"
+>
+    <modules-base-filters
+      [schemaName]="schemaName"
+      [filters]="filters"
+      [debug]="debug"
+    ></modules-base-filters>
+</mat-tab>
+
+
+</mat-tab-group>
 
 <ng-template #loadingBlock>
   <div>

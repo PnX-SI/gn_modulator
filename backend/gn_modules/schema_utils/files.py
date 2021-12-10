@@ -76,11 +76,15 @@ class SchemaFiles():
 
         schema_names = []
         search_dir = cls.config_directory()
+
+        if (search_dir / Path("/".join(base_name.split('.')) + '.json')).is_file():
+            return [base_name]
+
         if base_name:
             search_dir = search_dir / "/".join(base_name.split('.'))
         for root, dirs, files in os.walk(search_dir, followlinks=True):
             for f in filter(
-                lambda f: f.endswith('.json') and 'sample'not in f,
+                lambda f: f.endswith('.json') and '-' not in f,
                 files
             ):
                 schema_names.append(cls.schema_name_from_path(Path(root) / f))
@@ -138,9 +142,14 @@ class SchemaFiles():
         '''
             loads schema from file <...>/gn_modules/schemas/<schem_path_from_name>
         '''
+
         self._schema_name = schema_name
-        self._raw_schema = self.cls().load_json_file_from_name(schema_name)
-        self._processed_schema = self.process_raw_schema()
+        self._schemas = {}
+        self._schemas['raw'] = self.cls().load_json_file_from_name(schema_name)
+        if self.autoschema():
+            self._schemas['raw'] = self.get_autoschema()
+        self._schemas['validation'] = self.process_raw_schema(True)
+        self._schemas['form'] = self.process_raw_schema(False)
 
         return self
 

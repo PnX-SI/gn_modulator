@@ -57,12 +57,14 @@ class SchemaValidation():
             return [self.validation_schema(elem) for elem in schema]
 
         if type(schema) is dict:
-            if schema.get('type') in ['number', 'string', 'integer', 'boolean']:
-                schema['type'] = [schema['type'], 'null']
-                return schema
-            if schema.get('type') == 'date':
+
+            if schema.get('type') in ['date', 'datetime', 'uuid']:
+                schema['format'] = schema.get('type')
                 schema['type'] = ['string', 'null']
-                schema['format'] = 'date'
+
+            if schema.get('type') in ['number', 'string', 'integer', 'boolean', ]:
+                schema['type'] = [schema['type'], 'null']
+
             else:
                 return {key: self.validation_schema(elem) for key, elem in schema.items()}
 
@@ -75,10 +77,10 @@ class SchemaValidation():
 
         error = None
 
-        resolver = RefResolver(base_uri='file://{}/'.format(self.cls().config_directory()), referrer=self.processed_schema())
+        schema = self.schema('validation')
 
         try:
-            validate(instance=data, schema=self.processed_schema(), resolver=resolver)
+            validate(instance=data, schema=schema)
         except ValidationError as e:
             error = e
         return error

@@ -2,56 +2,32 @@
 
 <div *ngIf='componentInitialized; else loadingBlock'>
 
-  <h4>Propriétés {{schemaConfig.display.prep_label}} {{id()}}</h4>
-
   <div style="display: flex; flex-direction: row;">
 
-    <div style="width: 50%;">
+      <div style="width: 50%;" *ngIf="hasGeometry()">
+        <modules-map
+          [mapId]="mapId"
+          [height]="height"
+          [zoom]="zoom"
+          [center]="center"
+          [layersData]="layersData"
+        ></modules-map>
+      </div>
 
-      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <div style="min-width: 50%;">
+        <h4 *ngIf="displayTitle">{{componentTitle}}</h4>
 
-        <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
+        <div class="properties">
+          <modules-base-layout
+            [layout]="layout"
+            [layoutData]="layoutData"
+            [debug]="debug"
+          ></modules-base-layout>
+        </div>
+      </div>
 
-          <!-- Key Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> Nom </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-          </ng-container>
-
-          <!-- Name Column -->
-          <ng-container matColumnDef="label">
-            <th mat-header-cell *matHeaderCellDef> Label </th>
-            <td mat-cell *matCellDef="let element"> {{element.label}} </td>
-          </ng-container>
-
-          <!-- Weight Column -->
-          <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef> Type </th>
-            <td mat-cell *matCellDef="let element"> {{element.type}} </td>
-          </ng-container>
-
-          <!-- Symbol Column -->
-          <ng-container matColumnDef="value">
-            <th mat-header-cell *matHeaderCellDef> Valeur </th>
-            <td mat-cell *matCellDef="let element"> {{element.value |json}} </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
     </div>
 
-    <div div style="width: 50%;">
-      <modules-map
-        [mapId]="mapId"
-        [height]="heightMap"
-        [zoom]="zoom"
-        [center]="center"
-        [layersData]="layersData"
-      ></modules-map>
-    </div>
-  </div>
 </div>
 
 <ng-template #loadingBlock>

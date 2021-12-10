@@ -15,7 +15,7 @@
           {
             "title": "propriété commune",
             "properties": {
-              "type": { "enum": [ "integer", "string", "date", "number", "date" ] },
+              "type": { "enum": [ "integer", "string", "date", "number", "date", "uuid", "datetime", "boolean" ] },
               "label": { "type": "string"},
               "title": { "type": "string"},
               "format": { "type": "string"},
@@ -101,19 +101,20 @@
               "title": { "type": "string"},
               "description": { "type": "string"}
             },
-            "required": [ "type", "nomenclature_type" ],
+            "required": [ "type", "nomenclature_type", "label" ],
             "additionalProperties": false
           },
           {
             "title": "geometry",
             "properties": {
+              "type": { "enum": [ "geometry" ]},
               "srid": { "type": "integer" },
               "geometry_type": { "enum": [ "geometry", "point" ] },
               "label": { "type": "string"},
               "title": { "type": "string"},
               "description": { "type": "string"}
             },
-            "required": [ "srid", "geometry_type", "label" ],
+            "required": [ "type", "srid", "geometry_type", "label" ],
             "additionalProperties": false
           }
         ]

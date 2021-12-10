@@ -21,6 +21,27 @@ schema_names = SchemaMethods.schema_names('schemas')
 #     return [k for k in schema_names if incomplete in k]
 
 
+@click.command('model2schema')
+@click.argument('schema_dot_table')
+@click.argument('schema_name')
+@click.option('-w', '--write', default=False, is_flag=True, help="Ecrirre le fichier")
+@click.option('-f', '--force-write', default=False, is_flag=True, help="Forcer l'écriture du fichier")
+@with_appcontext
+def cmd_model_to_schema(schema_dot_table, schema_name, write=False, force_write=False):
+    '''
+        model2schema <schema_dot_table> <schema_name>
+
+        crée une prémisse de schéma à partir d'une table
+        - selon le type de variable
+        - relations ?
+        - commentaires ?
+        - not null -> required
+    '''
+
+    schema = SchemaMethods.c_get_autoschema(schema_dot_table)
+
+    SchemaMethods.pprint(schema)
+
 @click.command('schema')
 @click.argument('schema_name')
 @click.option('-p', '--schema_path', default=None, help="chemin vers les elements du schema: '$meta', 'properties[<key>]'")
@@ -32,7 +53,7 @@ def cmd_schema(schema_name, schema_path=None, raw=False):
           - par exemple:
             - schemas.test.example
     '''
-    schema = SchemaMethods(schema_name).schema(processed=(not raw))
+    schema = SchemaMethods(schema_name).schema(schema_type=('raw' if raw else 'validation'))
 
     if schema_path:
         for p in schema_path.split('.'):
@@ -50,12 +71,13 @@ def cmd_check(_schema_name=None):
           - le schéma est valide
           - la table sql existe pour ce schéma
     '''
+
     for schema_name in filter(lambda n: (not _schema_name) or n == _schema_name, schema_names):
 
+        print('check {}'.format(schema_name))
         sm = SchemaMethods(schema_name)
 
-        error_raw = SchemaMethods.validate_schema(schema_name, sm.raw_schema())
-        # error_processed = SchemaMethods.validate_schema(schema_name, sm.processed_schema())
+        error_raw = SchemaMethods.validate_schema(schema_name, sm.schema())
         has_sample = SchemaMethods.file_path(schema_name, 'sample').is_file()
 
         schema_infos = {
@@ -63,10 +85,19 @@ def cmd_check(_schema_name=None):
             "raw_schema_valid": not error_raw,
         }
 
-        schema_infos["sample_valid"] = None
+        schema_infos["error_sample_jsonschema"] = None
+        schema_infos['valid_sample_jsonschema'] = False
+        schema_infos["error_sample_marshmallow"] = None
+        schema_infos['valid_sample_marshmallow'] = False
+        schema_infos["has_sample"] = has_sample
+
         if has_sample:
-            error_sample = sm.validate_data(SchemaMethods.c_sample(schema_name))
-            schema_infos["sample_valid"] = not error_sample
+
+            schema_infos['error_sample_jsonschema'] = sm.validate_data(SchemaMethods.c_sample(schema_name))
+            schema_infos['valid_sample_jsonschema'] = not schema_infos['error_sample_jsonschema']
+
+            schema_infos['error_sample_marshmallow'] = sm.unserialize(sm.Model()(), SchemaMethods.c_sample(schema_name))
+            schema_infos['valid_sample_marshmallow'] = not schema_infos['error_sample_marshmallow']
 
         for key in filter(lambda k: k != 'schema_name', schema_infos.keys()):
             schema_infos[key] = (
@@ -76,15 +107,18 @@ def cmd_check(_schema_name=None):
             )
 
         print(
-            '{schema_name:40s} raw: {raw_schema_valid}, sample valid: {sample_valid}'
+            '{schema_name:40s} raw: {raw_schema_valid}, sample (json_schema): {valid_sample_jsonschema}, sample (marshmallow): {valid_sample_marshmallow}'
             .format(**schema_infos)
         )
 
         if error_raw:
             print('  - Erreur schema\n', error_raw)
 
-        if error_sample:
-            print('  - Erreur data\n', error_sample)
+        if schema_infos['error_sample_marshmallow']:
+            print('  - Erreur data (marshmallow)\n', schema_infos['error_sample_marshmallow'])
+
+        if schema_infos['error_sample_jsonschema']:
+            print('  - Erreur data (jsonschema)\n', schema_infos['error_sample_jsonschema'])
 
 
 @click.command('sample')
@@ -263,5 +297,6 @@ commands = [
     cmd_sample,
     cmd_check,
     cmd_schema,
-    cmd_explore_data
+    cmd_explore_data,
+    cmd_model_to_schema
 ]

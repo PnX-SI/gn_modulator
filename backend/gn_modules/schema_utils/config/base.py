@@ -17,15 +17,18 @@ class SchemaConfigBase():
         frontend config
         '''
 
-        self.reload()
+        # self.reload()
 
         return {
             'schema': self.schema(),
+            'validation': self.schema('validation'),
             'form': self.config_form(),
             'display': self.config_display(),
             'utils': self.config_utils(),
             'table': self.config_table(),
             'map': self.config_map(),
+            'filters': self.config_filters(),
+            'details': self.config_details(),
         }
 
     def config_map(self):
@@ -34,16 +37,16 @@ class SchemaConfigBase():
         '''
         return self.meta('map', {})
 
-    def columns_table(self):
+    def columns_table(self, short=False):
         """
             config table pour tabulator : columns
         """
 
         columns = []
 
+        meta_field = 'table.columns{}'.format('_short' if short else '')
         column_keys = (
-            self.meta('table', {})
-                .get('columns')
+            self.meta(meta_field)
             or
             self.columns()
         )
@@ -56,10 +59,11 @@ class SchemaConfigBase():
             column_def = {}
             if '.' in key:
                 (key_relationship, key_column) = key.split('.')
-                relation_schema_name = self.relationship(key_relationship)['rel']
+                relation_def = self.relationship(key_relationship)
+                relation_schema_name = relation_def['rel']
                 relation = self.cls()(relation_schema_name)
                 relation_column = relation.column(key_column)
-                column_def = {'title': relation_column['label'], 'field': key, 'headerFilter': True}
+                column_def = {'title': relation_def['label'], 'field': key, 'headerFilter': True}
             else:
                 column = self.column(key)
                 column_def = {'title': column['label'], 'field': key, 'headerFilter': True}
@@ -68,6 +72,11 @@ class SchemaConfigBase():
 
         return columns
 
+    def config_details(self):
+        return {
+            'layout': self.meta('details.layout')
+        }
+
     def config_table(self):
         """
             config table pour tabulator
@@ -75,6 +84,7 @@ class SchemaConfigBase():
 
         return {
             'columns': self.columns_table(),
+            'columns_short': self.columns_table(short=True),
             'url': self.url('/rest/', full_url=True)
         }
 
@@ -103,10 +113,12 @@ class SchemaConfigBase():
         return {
             'columns_array': self.columns_array(columns_only=True),
             'urls': {
-                'rest': self.url('/rest/', full_url=True)
+                'rest': self.url('/rest/', full_url=True),
+                'page_number': self.url('/page_number/', full_url=True)
             },
             'pk_field_name': self.pk_field_name(),
             'label_field_name': self.label_field_name(),
+            'value_field_name': self.value_field_name(),
             'geometry_field_name': self.geometry_field_name(),
             'model_name': self.model_name(),
             'schema_name': self.schema_name(),
@@ -125,11 +137,9 @@ class SchemaConfigBase():
         '''
 
         return {
-            "schema": self.processed_schema(),
+            "schema": self.schema('form'),
             "layout": self.form_layout()
         }
-
-
 
     def value_field_name(self):
         return self.meta('value_field_name', self.pk_field_name())

@@ -40,8 +40,10 @@ CREATE OR REPLACE FUNCTION sipaf.correct_number(number_in varchar)
 
 TRUNCATE sipaf.t_passages_faune;
 
+
 INSERT INTO sipaf.t_passages_faune(
     id_pf,
+	id_dataset,
     uuid_pf,
     pi_ou_ps,
 	geom,
@@ -93,6 +95,7 @@ WITH non_doublons AS (
 )
 SELECT
     i.id_pf::INT,
+	d.id_dataset,
     COALESCE(uuid_pf::UUID, uuid_generate_v4()),
     pi_ou_ps,
 	CASE
@@ -147,4 +150,5 @@ SELECT
 	NULL
     FROM public.tmp_import_sipaf i
 	JOIN non_doublons nd on nd.id_pf = i.id_pf
+	JOIN gn_meta.t_datasets d on d.dataset_name = 'test jdd passage faune'
     WHERE i.id_pf IS NOT NULL;

@@ -47,3 +47,17 @@ def api_groups():
         groups[group_name].append(object_name)
 
     return groups
+
+
+@blueprint.route('/modules_config', methods=['GET'])
+def api_modules():
+
+    module_names = SchemaMethods.schema_names('modules')
+
+    modules = {}
+
+    for module_name in module_names:
+        modules[module_name] = SchemaMethods.load_json_file_from_name(module_name)
+
+
+    return modules

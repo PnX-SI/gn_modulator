@@ -2,6 +2,18 @@
     "$id": "schemas/utils/nomenclature",
     "type": "object",
     "$meta": {
+        "autoschema": true,
+        "import": {
+            "test_keys": ["id_type", "cd_nomenclature"],
+            "get_foreign_key": {
+                "id_type": ["type"]
+            },
+            "copy": {
+                "label": ["label_fr", "label_default"],
+                "definition": ["definition_fr", "definition_default"]
+            }
+        },
+        "model_name": "TNomenclatures",
         "sql_schema_name": "ref_nomenclatures",
         "sql_table_name": "t_nomenclatures",
         "genre": "F",
@@ -12,12 +24,12 @@
         "label_field_name": "label_fr"
     },
     "properties": {
-        "id_nomenclature": { "type": "integer", "label": "ID nomenclature", "primary_key": true },
-        "id_type": { "type": "integer", "label": "ID type", "foreign_key": "schemas/utils/nomenclature_type.id_type"},
-        "label_default": { "type": "string", "label": "Label par defaut"},
-        "label_fr": { "type": "string", "label": "Label (fr)"},
-        "cd_nomenclature": { "type": "string", "label": "Code nomenclature"},
-        "mnemonique": { "type": "string", "label": "Mnémonique"},
+        // "id_nomenclature": { "type": "integer", "label": "ID nomenclature", "primary_key": true },
+        // "id_type": { "type": "integer", "label": "ID type", "foreign_key": "schemas/utils/nomenclature_type.id_type"},
+        // "label_default": { "type": "string", "label": "Label par defaut"},
+        // "label_fr": { "type": "string", "label": "Label (fr)"},
+        // "cd_nomenclature": { "type": "string", "label": "Code nomenclature"},
+        // "mnemonique": { "type": "string", "label": "Mnémonique"},
         "type": { "local_key": "id_type", "label": "Type", "rel": "schemas.utils.nomenclature_type" }
     }
 }

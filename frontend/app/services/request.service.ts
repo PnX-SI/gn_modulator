@@ -3,15 +3,19 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
 import { Observable, Subject } from '@librairies/rxjs';
+import { CommonService } from "@geonature_common/service/common.service";
 
 @Injectable()
 export class ModulesRequestService {
 
   // requêtes en cours
-  pendingRequests = {};
+  private _pendingRequests = {};
+
+  private _cacheRequests = {};
 
   constructor(
-      private _http: HttpClient
+      private _http: HttpClient,
+      private _commonService: CommonService,
   ) {}
 
   init() {
@@ -20,35 +24,53 @@ export class ModulesRequestService {
   /**
    *
    */
-  request(method, url, {params={}, data={}} = {}) {
+  request(method, url, {params={}, data={}, useCache=false} = {}): Observable<any> {
+    return new Observable<any>(observer => {
+      const urlRequest = `${url}${this.sQueryParams(params)}`
+      if ( useCache && this._cacheRequests[urlRequest]) {
+        console.log('request : from cache', urlRequest)
+        observer.next(this._cacheRequests[urlRequest]);
+        return observer.complete();
+        // return Observable.of(this._cacheRequests[urlRequest] as any);
+      }
 
-    return new Observable(observer => {
-      const url_request = `${url}${this.sQueryParams(params)}`
-        let pendingSubject = method == 'get'
-          ? this.pendingRequests[url_request]
+      let pendingSubject = method == 'get'
+          ? this._pendingRequests[urlRequest]
           : null;
 
         if (!pendingSubject) {
+
           const pendingSubject = new Subject();
-          this.pendingRequests[url_request] = pendingSubject;
-        this._http[method](url_request, data)
-          .subscribe(
-            (value) => {
-              pendingSubject.next(value);
-              pendingSubject.complete();
-              observer.next(value);
-              // delete this.pendingRequests[url_request];
-              this.pendingRequests[url_request] = undefined;
-              return observer.complete();
-            },
-            (error) => {
-              const errorOut = error.error && error.error.description || error.error;
-              pendingSubject.error(errorOut);
-              this.pendingRequests[url_request] = undefined;
-              return observer.error(errorOut);
-            }
-          );
+          this._pendingRequests[urlRequest] = pendingSubject;
+          this._http[method](urlRequest, data)
+            .subscribe(
+              (value) => {
+                if(useCache) {
+                  this._cacheRequests[urlRequest] = value;
+                }
+                pendingSubject.next(value);
+                pendingSubject.complete();
+                observer.next(value);
+                // delete this._pendingRequests[urlRequest];
+                this._pendingRequests[urlRequest] = undefined;
+                return observer.complete();
+              },
+              (error) => {
+                var errorOut = error.error && error.error.description || error.error;
+                var errorOutHTML = `method: ${method}<br> url: ${url}<br>error: ${errorOut}`
+                errorOut = `method: ${method}, url: ${url}, error: ${errorOut}`
+                pendingSubject.error(errorOut);
+                this._pendingRequests[urlRequest] = undefined;
+                this._commonService.regularToaster(
+                  'error',
+                  errorOutHTML,
+                );
+                return observer.error(errorOut);
+              }
+            );
+
         } else {
+
           pendingSubject
           .asObservable()
           .subscribe((value) => {

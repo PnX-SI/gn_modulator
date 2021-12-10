@@ -13,9 +13,29 @@ from .errors import (
     SchemaProcessedPropertyError,
     SchemaUnautorizedSqlError
 )
-
-
 class SchemaSql():
+
+    def get_sql_type(self, column_def, cor_table=False):
+        field_type = column_def.get('type')
+
+        sql_type = self.cls().c_get_type(field_type, "definition", 'sql')
+
+        if column_def.get('primary_key') and not cor_table:
+            sql_type = 'SERIAL NOT NULL'
+
+        if field_type == 'geometry':
+            sql_type = 'GEOMETRY({}, {})'.format(
+                column_def.get('geometry_type', 'GEOMETRY').upper(),
+                column_def['srid']
+            )
+
+        if not sql_type:
+            raise SchemaProcessedPropertyError(
+                'Property type {} in processed_properties but not managed yet for SQL processing'
+                .format(field_type)
+            )
+
+        return sql_type
 
     def sql_schema_name(self):
         '''
@@ -31,6 +51,24 @@ class SchemaSql():
 
     def schema_dot_table(self):
         return '{}.{}'.format(self.sql_schema_name(), self.sql_table_name())
+
+    @classmethod
+    def c_get_schema_name_from_schema_dot_table(cls, schema_dot_table):
+        for schema_name in cls.schema_names('schemas'):
+
+            schema = cls.load_json_file_from_name(schema_name)
+            sql_schema_name = schema.get('$meta', {}).get('sql_schema_name')
+            sql_table_name = schema.get('$meta', {}).get('sql_table_name')
+
+            if '{}.{}'.format(sql_schema_name, sql_table_name) == schema_dot_table:
+                return schema_name
+
+    @classmethod
+    def c_sql_schema_dot_table_exists(cls, sql_schema_dot_table):
+        sql_schema_name = sql_schema_dot_table.split('.')[0]
+        sql_table_name = sql_schema_dot_table.split('.')[1]
+        return cls.c_sql_table_exists(sql_schema_name, sql_table_name)
+
 
     @classmethod
     def c_sql_table_exists(cls, sql_schema_name, sql_table_name):
@@ -56,7 +94,7 @@ class SchemaSql():
         '''
             Create schema sql schema
         '''
-        txt = 'CREATE SCHEMA {};'.format(self.sql_schema_name())
+        txt = 'CREATE SCHEMA  IF NOT EXISTS {};'.format(self.sql_schema_name())
         return txt
 
     def sql_txt_drop_schema(self):
@@ -82,7 +120,7 @@ class SchemaSql():
             raise SchemaSqlError('Il n''y a pas de clé primaire définie pour le schema {sql_schema} {sql_table}')
 
         return ("""---- {sql_schema_name}.{sql_table_name} primary key constraint
-
+ALTER TABLE {sql_schema_name}.{sql_table_name} DROP CONSTRAINT IF EXISTS pk_{sql_schema_name}_{sql_table_name}_{pk_keys_dash};
 ALTER TABLE {sql_schema_name}.{sql_table_name}
     ADD CONSTRAINT pk_{sql_schema_name}_{sql_table_name}_{pk_keys_dash} PRIMARY KEY ({pk_keys_commas});
 """.format(
@@ -111,7 +149,7 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
 
             txt += (
                 """---- {sql_schema_name}.{sql_table_name} foreign key constraint
-
+ALTER TABLE {sql_schema_name}.{sql_table_name} DROP CONSTRAINT IF EXISTS fk_{sql_schema_name}_{sql_table_name_short}_{rel_sql_table_name_short}_{fk_key_field_name};
 ALTER TABLE {sql_schema_name}.{sql_table_name}
     ADD CONSTRAINT fk_{sql_schema_name}_{sql_table_name_short}_{rel_sql_table_name_short}_{fk_key_field_name} FOREIGN KEY ({fk_key_field_name})
     REFERENCES {rel_sql_schema_name}.{rel_sql_table_name}({rel_pk_key_field_name})
@@ -145,8 +183,9 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
 
             txt += (
                 """
+ALTER TABLE {sql_schema_name}.{sql_table_name} DROP CONSTRAINT IF EXISTS check_nom_type_{sql_schema_name}_{sql_table_name}_{nomenclature_type};
 ALTER TABLE {sql_schema_name}.{sql_table_name}
-        ADD CONSTRAINT check_{sql_schema_name}_{sql_table_name}_{nomenclature_type}
+        ADD CONSTRAINT check_nom_type_{sql_schema_name}_{sql_table_name}_{nomenclature_type}
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique({nomenclature_field_name},'{NOMENCLATURE_TYPE}'))
         NOT VALID;
 """).format(
@@ -241,18 +280,19 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
         txt += (
             """-- cor {cor_schema_dot_table}
 
-CREATE TABLE {cor_schema_dot_table} (
+CREATE TABLE  IF NOT EXISTS {cor_schema_dot_table} (
     {local_key} {local_key_type} NOT NULL,
     {foreign_key} {foreign_key_type} NOT NULL
 );
 
 -- {cor_schema_dot_table} foreign keys contraints
-
+ALTER TABLE {cor_schema_dot_table} DROP CONSTRAINT IF EXISTS fk_{cor_schema_name}_{cor_table_name}_{local_key};
 ALTER TABLE {cor_schema_dot_table}
     ADD CONSTRAINT fk_{cor_schema_name}_{cor_table_name}_{local_key} FOREIGN KEY ({local_key})
     REFERENCES {local_schema_name}.{local_table_name} ({local_key})
     ON UPDATE CASCADE ON DELETE NO ACTION;
 
+ALTER TABLE {cor_schema_dot_table} DROP CONSTRAINT IF EXISTS fk_{cor_schema_name}_{cor_table_name}_{foreign_key};
 ALTER TABLE {cor_schema_dot_table}
     ADD CONSTRAINT fk_{cor_schema_name}_{cor_table_name}_{foreign_key} FOREIGN KEY ({foreign_key})
     REFERENCES {foreign_schema_name}.{foreign_table_name} ({foreign_key})
@@ -283,7 +323,7 @@ ALTER TABLE {cor_schema_dot_table}
         txt = (
             """---- table {sql_schema_name}.{sql_table_name}
 
-CREATE TABLE  {sql_schema_name}.{sql_table_name} (""".format(
+CREATE TABLE IF NOT EXISTS {sql_schema_name}.{sql_table_name} (""".format(
                 sql_schema_name=self.sql_schema_name(),
                 sql_table_name=self.sql_table_name()
             )
@@ -300,36 +340,11 @@ CREATE TABLE  {sql_schema_name}.{sql_table_name} (""".format(
         #  - suppresion de la dernière virgule
         #  - fermeture de la parenthèse
         #  - point virgule final
-        txt = txt[:-3] + '\n);\n'
+        txt = txt[:-1] + '\n);\n'
 
         return txt
 
-    def get_sql_type(self, column_def, cor_table=False):
-        field_type = column_def.get('type')
 
-        if field_type == 'integer':
-            return (
-                'SERIAL NOT NULL' if (column_def.get('primary_key') and not cor_table)
-                else 'INTEGER'
-            )
-
-        elif field_type == 'string':
-            return 'VARCHAR'
-
-        elif field_type == 'number':
-            return 'FLOAT'
-
-        elif self.is_geometry(column_def):
-            return 'GEOMETRY({}, {}),\n'.format(
-                column_def['geometry_type'].upper(),
-                column_def['srid']
-            )
-
-        else:
-            raise SchemaProcessedPropertyError(
-                'Property type {} in processed_properties but not managed yet for SQL processing'
-                .format(field_type)
-            )
 
     def sql_processing(self):
         '''
@@ -398,7 +413,7 @@ CREATE TABLE  {sql_schema_name}.{sql_table_name} (""".format(
         processed_schema_names = []
         for name in self.dependencies():
             sm = self.cls()(name)
-            if sm.sql_processing() and not sm.sql_table_exists():
+            if sm.sql_processing():  # and not sm.sql_table_exists():
                 processed_schema_names.append(name)
 
         txt = "-- process schema : {}\n".format(self.schema_name())
@@ -412,11 +427,11 @@ CREATE TABLE  {sql_schema_name}.{sql_table_name} (""".format(
         sql_schema_names = []
         for name in processed_schema_names:
             sm = self.cls()(name)
-            if sm.sql_schema_name() not in sql_schema_names and not sm.sql_schema_exists():
+            if sm.sql_schema_name() not in sql_schema_names: # and not sm.sql_schema_exists():
                 sql_schema_names.append(sm.sql_schema_name())
 
         for sql_schema_name in sql_schema_names:
-            txt += '---- sql schema {sql_schema_name}\n\nCREATE SCHEMA {sql_schema_name};\n\n'.format(sql_schema_name=sql_schema_name)
+            txt += '---- sql schema {sql_schema_name}\n\nCREATE SCHEMA IF NOT EXISTS {sql_schema_name};\n\n'.format(sql_schema_name=sql_schema_name)
 
         # actions
         for action in [

@@ -91,3 +91,17 @@ class SchemaLayoutError(Exception):
         process_config layout
     '''
     pass
+
+
+class SchemaAutoError(Exception):
+    '''
+        Schema Auto Generation Error
+    '''
+    pass
+
+
+class SchemaUnsufficientCruvedRigth(Exception):
+    '''
+        When cruved is not enougth
+    '''
+    pass

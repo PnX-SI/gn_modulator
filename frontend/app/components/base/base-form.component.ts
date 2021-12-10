@@ -4,12 +4,13 @@ import { mergeMap, concatMap } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 
-import { HttpClient } from "@angular/common/http";
 import { WidgetLibraryService } from 'angular7-json-schema-form';
 import { ModulesConfigService } from "../../services/config.service"
 import { ModulesDataService } from "../../services/data.service"
 import { ModulesMapService } from "../../services/map.service"
+import { ModulesFormService } from "../../services/form.service"
 import { CommonService } from "@geonature_common/service/common.service";
+import { ModulesRouteService } from "../../services/route.service"
 
 import { additionalWidgets } from './form'
 import utils from '../../utils';
@@ -18,7 +19,7 @@ import { BaseComponent } from "./base.component";
 @Component({
   selector: "modules-base-form",
   templateUrl: "base-form.component.html",
-  styleUrls: ["base-form.component.scss"],
+  styleUrls: ["base.scss", "base-form.component.scss"],
 })
 export class BaseFormComponent extends BaseComponent implements OnInit {
 
@@ -31,7 +32,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   dataSave= null;
 
   geometryFormGroup;
-
+  processedLayout = {};
   additionalWidgets = additionalWidgets;
 
   constructor(
@@ -40,11 +41,13 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     _mapService: ModulesMapService,
     _mConfig: ModulesConfigService,
     _mData: ModulesDataService,
+    _mForm: ModulesFormService,
     _router: Router,
+    _mRoute: ModulesRouteService,
     private _widgetLibraryService: WidgetLibraryService,
     private _formBuilder: FormBuilder,
   ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _router)
+    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute)
     this.mapId = 'base-form';
     this._name = 'BaseForm';
 
@@ -60,7 +63,13 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     setTimeout(() => {this.bDraw = true}, 3000)
   }
 
+
+  processConfig(): void {
+      this.processedLayout = this._mForm.processLayout(this.schemaConfig.form.layout)
+  }
+
   getData() {
+
     if(!this.value) {
       return of(null)
     }
@@ -131,12 +140,6 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       }
     }
   }
-
-  // onLayerDrawChanged(event) {
-  //   this.data[this.schemaConfig.utils.geometry_field_name] = event.geometry;
-  // };
-  // onGPSChanged(event) {};
-  // onFileLayerChanged(event) {};
 
   onSubmit($event) {
     let request = null;

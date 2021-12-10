@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
 import { ModulesConfigService } from "../services/config.service";
+import { ModulesRouteService } from "../services/route.service";
 
 @Component({
   selector: "modules-index",
@@ -13,6 +14,7 @@ export class ModulesIndexComponent implements OnInit {
 
   constructor(
     private _mConfig: ModulesConfigService,
+    private _mRoute: ModulesRouteService,
   ) {
     this._mConfig.getSchemaGroups()
       .subscribe((schemaGroups:Array<any>) => {

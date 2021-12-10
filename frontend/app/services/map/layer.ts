@@ -56,11 +56,14 @@ export default {
     return Object.values(map._layers);
   },
 
-  findLayer(mapId, key, id) {
+  findLayer(mapId, filters) {
     const map = this.getMap(mapId);
     if(!map) return;
-    return this.layers(mapId)
-      .find((layer) => layer.key == key && layer.id == id);
+    const layers = this.filterLayers(mapId, filters)
+    return layers.length == 1
+      ? layers[0]
+      : null
+    ;
   },
 
   removeLayers(mapId, filters = {}) {
@@ -72,14 +75,18 @@ export default {
     };
   },
 
+  layerValue(layer, key) {
+    return layer[key]
+    || layer.feature && layer.feature.properties && layer.feature.properties[key]
+  },
+
   filterLayers(mapId, filters = {}) {
     const map = this.getMap(mapId);
     if (!map) return;
     var layers = this.layers(mapId)
     return this.layers(mapId).filter((layer) => {
       return Object.entries(filters).every(([key, value]) => {
-        const layerValue = layer[key]
-          || layer.feature && layer.feature.properties && layer.feature.properties[key];
+        const layerValue = this.layerValue(layer, key);
         return Array.isArray(value)
           ? value.includes(layerValue)
           : value == layerValue

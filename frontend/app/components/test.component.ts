@@ -24,14 +24,15 @@ export class TestComponent implements OnInit {
   activeTab=null;
   tabIndex = 0;
 
-  schemaConfig = null;
 
   mapListId='mapList';
   mapEditId='mapEdit';
   mapDetailId='mapDetail';
-  heightMap='600px';
+  height='600px';
   zoom = null;
   center = null;
+
+  filters = {}
 
   constructor(
     private _route: ActivatedRoute,
@@ -66,8 +67,9 @@ export class TestComponent implements OnInit {
         this.schemaName = params.schemaName;
         this.value = params.value;
         this.tab = params.tab;
-        this.debug = params.debug;
-        // pour eviter d'avoir des strings
+        this.debug = ![undefined, false, 'false'].includes(params.debug);
+        this.filters = JSON.parse(params.filters || 'null');
+          // pour eviter d'avoir des strings
         this.zoom = params.zoom && Number(params.zoom);
         this.center = params.center
           ? params.center.map(c => Number(c))
@@ -75,11 +77,10 @@ export class TestComponent implements OnInit {
         ;
         return this._mConfig.loadConfig(this.schemaName)
       }),
-      mergeMap((schemaConfig) => {
-        this.schemaConfig = schemaConfig;
-        this.listTab = this.schemaConfig.utils.geometry_field_name
-          ? ['map', 'table', 'detail', 'edit']
-          : ['table', 'detail', 'edit']
+      mergeMap(() => {
+        this.listTab = this._mConfig.schemaConfig(this.schemaName).utils.geometry_field_name
+          ? ['map', 'table', 'detail', 'edit', 'filters', ]
+          : ['table', 'detail', 'edit', 'filters']
         ;
         return of(true)
       }),

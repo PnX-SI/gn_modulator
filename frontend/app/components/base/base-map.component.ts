@@ -3,6 +3,9 @@ import { ActivatedRoute, Router, ParamMap } from "@angular/router";
 import { ModulesConfigService } from "../../services/config.service"
 import { ModulesMapService } from "../../services/map.service"
 import { ModulesDataService } from "../../services/data.service"
+import { ModulesFormService } from "../../services/form.service"
+import { ModulesRouteService } from "../../services/route.service"
+
 import { CommonService } from "@geonature_common/service/common.service";
 import { mergeMap, concatMap } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
@@ -11,13 +14,13 @@ import { BaseComponent } from "./base.component";
 @Component({
   selector: "modules-base-map",
   templateUrl: "base-map.component.html",
-  styleUrls: [ "base-map.component.scss", ],
+  styleUrls: [ "base.scss", "base-map.component.scss", ],
 })
 export class BaseMapComponent extends BaseComponent implements OnInit {
 
   @Input() compress = null;
 
-  @Output() onLayerClick: EventEmitter<any> = new EventEmitter<any>();
+  // @Output() onLayerClick: EventEmitter<any> = new EventEmitter<any>();
 
   mapTitle = null;
 
@@ -25,17 +28,19 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
 
   tooltipDisplayZoomTreshold=12;
 
-  constructor(
-    _route: ActivatedRoute,
-    _commonService: CommonService,
-    _mapService: ModulesMapService,
-    _mConfig: ModulesConfigService,
-    _mData: ModulesDataService,
-    _router: Router,
-  ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _router)
-    this._name = 'BaseMap'
-  }
+    constructor(
+      _route: ActivatedRoute,
+      _commonService: CommonService,
+      _mapService: ModulesMapService,
+      _mConfig: ModulesConfigService,
+      _mData: ModulesDataService,
+      _mForm: ModulesFormService,
+      _router: Router,
+      _mRoute: ModulesRouteService,
+    ) {
+      super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute)
+      this._name = 'BaseMap'
+    }
 
   ngOnInit() {
   }
@@ -63,6 +68,41 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
       };
       return this._mData.getList(this.schemaName, extendedParams)
     }
+  }
+
+  processValue(value) {
+    if (!value) {
+      //close popUp ???
+      return;
+    }
+    const layerSearcghFilters = {};
+    layerSearcghFilters[this.pkFieldName()] = value;
+    const layer = this._mapService.findLayer(this.mapId, layerSearcghFilters)
+    if (! layer) {
+      console.error(`le layer (${this.pkFieldName()}==${value}) n'est pas présent`)
+      return;
+    }
+    console.log(layer)
+    layer.openPopup();
+  };
+
+  onPopupOpen(layer) {
+    const value = layer.feature.properties[this.pkFieldName()];
+    this._mData.getOne(this.schemaName, value)
+    .subscribe((data) => {
+      layer.setPopupContent(this.popupHTML(data));
+    });
+    this._mapService.L.DomEvent
+    .on(layer.getPopup().getElement(), 'click', (e) => {
+      const action =  e && e.target && e.target.attributes.getNamedItem('action').nodeValue;
+      if(action) {
+        this.setQueryParams({
+          tab: action,
+          value: value
+        })
+      }
+    });
+
   }
 
   processData(response) {
@@ -100,7 +140,13 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
               /** click */
               layer.on('click', (event) => {
                 const value = event.target.feature.properties[pk_field_name];
-                this.onLayerClick.emit({value});
+                // this.onLayerClick.emit({value});
+                this.emitEvent({
+                  action: 'selected',
+                  params: {
+                    value
+                  }
+                });
               });
 
               /** tooltip */
@@ -129,21 +175,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
               }
               layer.bindPopup(this.popupHTML(feature.properties))
                 .on('popupopen', (event) => {
-                  const id = layer.feature.properties[this.pkFieldName()];
-                  this._mData.getOne(this.schemaName, id)
-                    .subscribe((data) => {
-                      layer.setPopupContent(this.popupHTML(data));
-                    });
-                    this._mapService.L.DomEvent
-                    .on(layer.getPopup().getElement(), 'click', (e) => {
-                      const action =  e && e.target && e.target.attributes.getNamedItem('action').nodeValue;
-                      if(action) {
-                        this.setQueryParams({
-                          tab: action,
-                          value: id
-                        })
-                      }
-                    });
+                  this.onPopupOpen(layer);
                 });
             }
           }
@@ -191,12 +223,13 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     for (const [key, change] of Object.entries(changes)) {
       if(
-        ['schemaName'].includes(key)
+        ['schemaName', 'filters'].includes(key)
       ) {
         this.process();
       }
       if(key == 'value') {
         // TODO
+        this.processValue(this.value)
       }
     }
   }

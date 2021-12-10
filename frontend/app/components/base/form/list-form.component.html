@@ -22,6 +22,10 @@
     [ngModel]="search"
     [clearSearchInput]="false"
   ></ngx-mat-select-search>
+  <mat-option
+    [value]="null">
+    <span [innerHTML]="''"></span>
+  </mat-option>
   <ng-template ngFor let-selectItem [ngForOf]="selectList">
     <mat-option *ngIf="!isArray(selectItem?.items)"
       [value]="selectItem">
@@ -48,6 +52,10 @@
   [value]="controlValue"
   (blur)="options.showErrors = true"
   (change)="updateValue($event)">
+  <mat-option
+      [value]="null">
+      <span [innerHTML]="'Choisissez une valeur'"></span>
+    </mat-option>
   <ng-template ngFor let-selectItem [ngForOf]="selectList">
     <mat-option *ngIf="!isArray(selectItem?.items)"
       [attr.selected]="selectItem[options.value_field_name] === controlValue"

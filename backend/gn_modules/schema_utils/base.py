@@ -18,8 +18,11 @@ column_types = [
     'integer',
     'number',
     'string',
-    'geom',
+    'geometry',
     'date',
+    'date_time',
+    'boolean',
+    'uuid'
 ]
 
 
@@ -52,49 +55,62 @@ class SchemaBase():
     def pprint(cls, d, indent=2):
         print(json.dumps(d, indent=indent, sort_keys=True, ensure_ascii=False))
 
-    def processed_schema(self, columns_only=False):
+    def schema(self, schema_type='raw', columns_only=False):
+
+        if 'raw' not in self._schemas:
+            self.reload()
+        schema = self._schemas[schema_type]
 
         if columns_only:
-            processed_schema = copy.copy(self._processed_schema)
-            processed_schema['properties'] = {
+            schema = copy.copy(schema)
+            schema['properties'] = {
                 key: column_def
-                for key, column_def in processed_schema['properties'].items()
+                for key, column_def in schema['properties'].items()
                 if key in self.column_keys()
             }
-            return processed_schema
-        return self._processed_schema
+            return schema
 
-    def raw_schema(self):
-        return self._raw_schema
-
-    def schema(self, processed=False):
-        return (
-            self._processed_schema if processed
-            else self._raw_schema
-        )
+        return schema
 
     # utils - schema parser
 
     def id(self):
-        return self._raw_schema['$id']
+        return self.schema()['$id']
 
     def required(self):
-        return self._raw_schema.get('required', [])
+        return self.schema().get('required', [])
+
+    def is_required(self, key):
+        return self.properties()[key].get('required') or key in self.required()
 
     def meta(self, prop=None, default=None):
         '''
-            renvoie la variable $meta
+            renvoie
+            - $meta si prop est null
+            - $meta['prop1']['prop2']['prop3'] si prop = 'prop1.prop2.prop3'
+
+            ou $meta.prop
         '''
 
+        elem = self.schema()['$meta']
+
         if not prop:
-            return self._raw_schema['$meta']
-        else:
-            return self._raw_schema['$meta'].get(prop, default)
+            return elem
+
+        for prop_path in prop.split('.'):
+            if not isinstance(elem, dict):
+                return default
+            elem = elem.get(prop_path, None)
+            if elem is None:
+                return default
+
+        return elem or default
 
     def schema_name(self, letter_case=None):
         '''
             return name
         '''
+
         if letter_case == 'pascal_case':
             return (
                 self._schema_name
@@ -143,7 +159,7 @@ class SchemaBase():
         return self.meta('name_field_name', '{}_name'.format(self.object_name()))
 
     def is_column(self, property):
-        return property.get('type') in column_types or self.is_geometry(property)
+        return property.get('type') in column_types
 
     def is_relationship(self, property):
         return 'rel' in property
@@ -157,11 +173,11 @@ class SchemaBase():
     def relationship_keys(self):
         return [k for k, v in self.properties().items() if self.is_relationship(v)]
 
-    def properties(self, processed=False):
-        return self.schema(processed=processed)['properties']
+    def properties(self, schema_type='raw'):
+        return self.schema(schema_type=schema_type)['properties']
 
     def get_property(self, key):
-        schema = self.schema(processed=True)
+        schema = self.schema(schemea_type='validation')
 
         elem = schema['properties']
 
@@ -191,28 +207,28 @@ class SchemaBase():
 
         return elem
 
-    def columns(self, processed=False, sort=False):
+    def columns(self, schema_type='raw', sort=False):
 
         column = {}
 
         for key in self.column_keys(sort=sort):
-            column[key] = self.properties(processed)[key]
+            column[key] = self.properties(schema_type)[key]
 
         return column
 
-    def relationships(self, processed=False):
+    def relationships(self, schema_type='raw'):
 
         relationship = {}
         for key in self.relationship_keys():
-            relationship[key] = self.properties(processed)[key]
+            relationship[key] = self.properties(schema_type)[key]
 
         return relationship
 
-    def column(self, key, processed=False):
-        return self.columns(processed)[key]
+    def column(self, key, schema_type='raw'):
+        return self.columns(schema_type)[key]
 
-    def relationship(self, key, processed=False):
-        return self.relationships(processed)[key]
+    def relationship(self, key, schema_type='raw'):
+        return self.relationships(schema_type)[key]
 
     def relation_type(self, relation_def):
         relation_type = (
@@ -242,12 +258,6 @@ class SchemaBase():
 
         return columns_array
 
-    def is_geometry(self, property):
-        """
-            renvoie true si la propriété est une geometrie
-        """
-        return "geometry_type" in property
-
     def parse_foreign_key(self, foreign_key):
         '''
             renvoie la reference de l'object de la clé étrangère ainsi que le nom du champs de clé étrangère
@@ -270,6 +280,7 @@ class SchemaBase():
     def get_relation_from_foreign_key(self, foreign_key):
         relation_name, _ = self .parse_foreign_key(foreign_key)
         return self.cls()(relation_name)
+
 
     @classmethod
     def process_schema_config(cls, data, key=None):

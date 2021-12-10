@@ -6,22 +6,42 @@ import { ModuleConfig } from "../module.config";
 import { of, Observable } from "@librairies/rxjs";
 import { mergeMap, catchError } from "@librairies/rxjs/operators";
 import { ModulesRequestService } from "./request.service";
-import { CommonService } from "@geonature_common/service/common.service";
-
+import utils from '../utils';
 @Injectable()
 export class ModulesConfigService {
-  private _config;
+
+  private _config: any = {
+    schemas: {},
+    modules: {}
+  };
 
   constructor(
     private _requestService: ModulesRequestService,
-    private _commonService: CommonService
-  ) {}
+  ) {
+  }
 
   /** Configuration */
 
   init() {
+    console.log('config service init');
   }
 
+  getModules() {
+    const modulesConfig = utils.getAttr(this._config, 'modules');
+
+    if(Object.keys(this._config.modules).length) {
+      return of(this._config.modules);
+    }
+
+    return this._requestService
+      .request('get', `${this.backendModuleUrl()}/modules_config`)
+      .pipe(
+        mergeMap((modulesConfig)=> {
+          this._config.modules = modulesConfig;
+          return of(modulesConfig);
+        })
+      );
+  }
 
   /**
    * Renvoie l'ensemble des groupes de schema
@@ -39,12 +59,13 @@ export class ModulesConfigService {
  * @param forceLoad : fetch even if schemaConfig already in cache (this._config)
  * @returns schemaConfig
  */
-  loadConfig(schemaName, forceLoad=false) {
+  loadConfig(schemaName, forceLoad=false): Observable<any> {
 
     // 1 - attempts to get config from cache (this._config)
 
-    const schemaConfig = this._config
-        && this._config[schemaName]
+    const schemaConfig = this._config['schemas'][schemaName];
+        // && this._config['schemas']
+        // && this._config['schemas'][schemaName]
 
     //   - if forceLoad is True : fetch config
     if(schemaConfig && !forceLoad) {
@@ -58,21 +79,20 @@ export class ModulesConfigService {
     /**
      * Fetch schemaConfig and store in _config[schemaName]
      */
-    return this._requestService.request('get', urlConfig).pipe(
+    return this._requestService.request('get', urlConfig, {params: {reload: true}}).pipe(
       mergeMap(
         (schemaConfig) => {
-          this._config = this._config || {};
-          this._config[schemaName] = schemaConfig;
+          this._config['schemas'][schemaName] = schemaConfig;
         return of(schemaConfig);
       }),
-      catchError( (error:any) => {
-        console.log('config error', error)
-        this._commonService.regularToaster(
-          "error",
-          error
-        );
-        return Observable.throw(error)
-      }),
+      // catchError( (error:any) => {
+      //   console.log('config error', error)
+      //   this._commonService.regularToaster(
+      //     "error",
+      //     error
+      //   );
+      //   return Observable.throw(error)
+      // }),
     );
   }
 
@@ -83,12 +103,17 @@ export class ModulesConfigService {
    * @returns
    */
   schemaConfig(schemaName) {
-    return this._config
-        && this._config[schemaName]
+    return this._config['schemas'][schemaName];
   }
 
+  moduleConfig(moduleName) {
+    return this._config['modules'][moduleName];
+  }
+
+
+
   /** Backend Url et static dir ??*/
-  backendUrl() {
+    backendUrl() {
     return `${AppConfig.API_ENDPOINT}`;
   }
 

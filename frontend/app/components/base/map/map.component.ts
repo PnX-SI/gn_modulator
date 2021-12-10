@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { isInputRequired } from 'angular7-json-schema-form';
 import { ModulesMapService } from "../../../services/map.service";
 import utils from "../../../utils"
 @Component({
@@ -10,7 +11,7 @@ import utils from "../../../utils"
 })
 export class ModulesMapComponent implements OnInit {
 
-  @Input() height: string;
+  @Input() height: string="600px";
 
   @Input() center: Array<number>;
   @Input() zoom: number;

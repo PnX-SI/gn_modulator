@@ -1,33 +1,16 @@
 {
-    "type": "object",
-    "properties": {
-
-        "nomenclature_type": {
-            "type": "array",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "schema_name": {
+                "type": "string"
+            },
             "items": {
-                "type": "object",
-                "properties": {
-                    "label": {"type": "string"},
-                    "definition": {"type": "string"},
-                    "mnemonique": {"type": "string"},
-                    "source": {"type": "string"}
-                },
-                "required": ["label" , "definition", "mnemonique", "source"]
-            }
-        },
-
-        "nomenclature": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "type": {"type": "string"},
-                    "label": {"type": "string"},
-                    "definition": {"type": "string"},
-                    "mnemonique": {"type": "string"},
-                    "source": {"type": "string"}
-                },
-                "required": ["type", "label" , "definition", "mnemonique", "source"]
+                "type": "array",
+                "items": {
+                    "type": "object"
+                }
             }
         }
     }

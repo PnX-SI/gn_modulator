@@ -63,6 +63,7 @@ class SchemaSerializers:
 
     def process_column_marshmallow(self, column_def):
         field_type = column_def.get('type')
+
         kwargs = {
             'allow_none': True
         }
@@ -70,23 +71,28 @@ class SchemaSerializers:
         if column_def.get('primary_key'):
             return MA.auto_field(**kwargs)
 
-        elif field_type == 'integer':
+        if field_type == 'integer':
             return fields.Integer(**kwargs)
 
-        elif field_type == 'number':
+        if field_type == 'number':
             return fields.Number(**kwargs)
 
-        elif field_type == 'string':
+        if field_type == 'string':
             return fields.String(**kwargs)
 
-        elif field_type == 'date':
+        if field_type == 'date':
             return fields.Date(format="%Y-%m-%d", **kwargs)
 
-        elif self.is_geometry(column_def):
+        if field_type == 'uuid':
+            return fields.UUID(**kwargs)
+
+        if field_type == 'boolean':
+            return fields.Boolean(**kwargs)
+
+        if field_type == 'geometry':
             return GeojsonSerializationField(**kwargs)
 
-        else:
-            raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
+        raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
 
     def opposite_relation_def(self, relation_def):
         return {
@@ -119,7 +125,7 @@ class SchemaSerializers:
         exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
         relation_serializer = None
 
-        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), exclude=exclude)
+        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), exclude=exclude, default=None)
 
         if self.relation_type(relation_def) == 'n-1':
             relation_serializer = relation_serializer
@@ -153,6 +159,17 @@ class SchemaSerializers:
             for key in self.pk_field_names():
                 if key in data and data[key] is None:
                     data.pop(key, None)
+
+            # pour les nested non required
+            for relation_key, relation_def in self.relationships().items():
+                # TODO test required
+                if (
+                    relation_key in data
+                    and data[relation_key] is None
+                    and not self.is_required(key)
+                ):
+                    data.pop(relation_key)
+
             return data
 
         marshmallow_schema_dict = {
@@ -168,9 +185,6 @@ class SchemaSerializers:
 
         # store in cache before realtion(avoid circular dependancies)
         for key, relation_def in self.relationships().items():
-            # if self.is_relation_excluded(exclude_relations, relation_def):
-            #     print(self.schema_name(), 'exclude', key)
-            #     continue
             marshmallow_schema_dict[key] = self.process_relation_marshmallow(relation_def)
 
             # MarshmallowSchema._declared_fields[key] = self.process_relation_marshmallow(relation_def)
@@ -258,4 +272,8 @@ class SchemaSerializers:
 
         MS = self.MarshmallowSchema()
         ms = MS()
-        return ms.load(data, instance=m)
+        try:
+            ms.load(data, instance=m)
+        except Exception as e:
+            print(e)
+            return e

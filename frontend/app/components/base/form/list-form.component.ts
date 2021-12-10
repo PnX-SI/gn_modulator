@@ -5,6 +5,7 @@ import { JsonSchemaFormService } from 'angular7-json-schema-form';
 import { HttpClient } from "@angular/common/http";
 import { ListFormService } from '../../../services/list-form.service';
 import { mergeMap } from "@librairies/rxjs/operators";
+import { of } from "@librairies/rxjs";
 
 @Component({
   selector: 'list-form',
@@ -56,21 +57,35 @@ export class ListFormComponent implements OnInit {
      * ici set time out pour temporiser après l'initialisation de jsf
      * et être sûr d'avoir une valeur pour controlValue (ou formControl.value0)
      */
-    setTimeout( () => {
-      this._listFormService
-        .formToModel(this.options, this.formControl.value)
-        .pipe(
-          mergeMap( (model) => {
-            this.model = model;
-            return this._listFormService
-              .getSelectList(this.options, this.model)
-          })
-        ).subscribe((selectList)=>{
-          this.selectList = selectList;
-          // pour s'assurer du bon affichage
-          this.formControl.patchValue(this.formControl.value)
-        })
+
+    setTimeout(()=>{
+    this._listFormService.initListForm(this.options, this.formControl.value)
+      .subscribe(({selectList, model}) => {
+        this.selectList = (selectList as any[]);
+        this.model = model;
+        // pour s'assurer du bon affichage
+        setTimeout(() => {
+          this.formControl.patchValue(this.formControl.value);
+        });
     });
+    });
+//
+        //   of(true)
+    //   // this._listFormService
+    //     // .formToModel(this.options, this.formControl.value)
+    //     .pipe(
+    //       // init list form config
+    //       mergeMap(() => { return this._listFormService()}),
+    //       mergeMap( (model) => {
+    //         this.model = model;
+    //         return this._listFormService
+    //           .getSelectList(this.options, this.model)
+    //       })
+    //     ).subscribe((selectList)=>{
+    //       this.selectList = selectList;
+    //       // pour s'assurer du bon affichage
+    //       this.formControl.patchValue(this.formControl.value)
+    //     })
   }
 
   searchChanged(event) {

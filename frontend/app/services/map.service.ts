@@ -71,7 +71,7 @@ export class ModulesMapService {
   processLayersData = mapMethods.layer.processLayersData;
   layerZoomMoveEndListener = mapMethods.layer.layerZoomMoveEndListener;
   actionTooltipDisplayZoomThreshold = mapMethods.layer.actionTooltipDisplayZoomThreshold;
-
+  findLayer = mapMethods.layer.findLayer;
 
   /** ./map/draw */
 

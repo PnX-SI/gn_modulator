@@ -10,7 +10,44 @@
         "labels": "passages à faune",
         "label_field_name": "nom_pf",
         "geometry_field_name": "geom",
-        "size": 10,
+        "check_cruved": true,
+        "filters": {
+            "defs":{
+                "haut_ouvrag_min": { "title": "Hauteur ouvrage min", "field": "haut_ouvrag", "type": "number", "filter_type": ">="},
+                "haut_ouvrag_max":{ "title": "Hauteur ouvrage max", "field": "haut_ouvrag", "type": "number", "filter_type": "<="},
+                "larg_ouvrag_min":{ "title": "Largeur ouvrage min", "field": "larg_ouvrag", "type": "number", "filter_type": ">="},
+                "larg_ouvrag_max":{ "title": "Largeur ouvrage max", "field": "larg_ouvrag", "type": "number", "filter_type": "<="},
+                "materiaux":{
+                    "title": "Matériaux",
+                    "field": "id_nomenclature_materiaux",
+                    "filter_type": "=",
+                    "type": "integer"
+                },
+                "nom_pf": { "title": "Nom pf", "field": "nom_pf", "filter_type": "ilike"}
+            },
+            "layout": [
+                "nom_pf",
+                {
+                    "key": "materiaux",
+                    "type": "list-form",
+                    "nomenclature_type": "PF_MATERIAUX"
+                },
+                {
+                    "title": "dimensions",
+                    "items": [
+                        {
+                            "direction": "row",
+                            "items": ["larg_ouvrag_min", "larg_ouvrag_max"]
+                        },
+                        {
+                            "direction": "row",
+                            "items": ["haut_ouvrag_min", "haut_ouvrag_max"]
+                        }
+
+                    ]
+                }
+            ]
+        },
         "map": {
             "fields": [
                 "id_pf",
@@ -53,6 +90,7 @@
                         "specificit"
                     ]
                 },
+                { "key": "id_nomenclature_materiaux", "type": "list-form", "nomenclature_type": "PF_MATERIAUX"},
                 {
                     "direction": "row",
                     "items": [
@@ -70,42 +108,88 @@
                             "items": [
                                 { "items": ["cd_com", "pk", "pr", "pr_abs"] }
                             ]
-                        },
-                        {
-                            "items": "geom"
                         }
-
+                        // {
+                        //     "items": "geom"
+                        // }
+                    ]
+                },
+                {
+                    "title": "Banquette (OH)",
+                    "direction": "row",
+                    "items": [
+                        { "key": "id_nomenclature_oh_position", "type": "list-form", "nomenclature_type": "PF_OH_POSITION"},
+                        { "key": "id_nomenclature_oh_banq_type", "type": "list-form", "nomenclature_type": "PF_OH_BANQ_TYPE"},
+                        { "key": "id_nomenclature_oh_banq_caract", "type": "list-form", "nomenclature_type": "PF_OH_BANQ_CARACT"},
+                        "oh_tirant"
                     ]
                 }
-                // {
-                //     "title":
-                //     "items":
-                // }
-                // {
-                //     "key": "geom",
-                //     "type": "div",
-                //     "fxLayoutGap": "5px",
-                //     "items": [
-                //         "geom.type",
-                //         {
-                //             "fxLayoutGap": "5px",
-                //             "listItems": 2,
-                //             "maxItems": 2,
-                //             "minItems": 2,
-                //             "add": null,
-                //             "key": "geom.coordinates",
-                //             "type": "array",
-                //             "displayFlex": true,
-                //             "flex-direction": "row",
-                //             "items": [
-                //                 {
-                //                     "key": "geom.coordinates[]",
-                //                     "type": "number"
-                //                 }
-                //             ]
-                //         }
-                //     ]
-                // }
+            ]
+        },
+        "details": {
+            "layout": [
+                {
+                   "title": "Informations",
+                   "items": [
+                        {
+                            "direction": "row",
+                            "items": [ "nom_pf", "id_op"]
+                        },
+                        {
+                           "direction": "row",
+                           "items": [
+                            { "items": ["date_creat", "date_requal"] },
+                            { "items": ["id_corr", "nom_corr"] },
+                            { "items": ["id_obst", "nom_obst"] },
+                            { "items": ["id_resv", "nom_resv"] }
+                           ]
+                        }
+                   ]
+                },
+                {
+                    "title": "Type",
+                    "direction": "row",
+                    "items": [
+                        "lb_typ_ouv",
+                        "pi_ou_ps",
+                        "oh",
+                        "specificit"
+                    ]
+                },
+                // { "key": "id_nomenclature_materiaux", "type": "list-form", "nomenclature_type": "PF_MATERIAUX"},
+                {
+                    "direction": "row",
+                    "items": [
+                        {
+                            "title": "Dimensions",
+                            "items": [
+                                { "direction": "row", "items": ["diam", "long_franch"]},
+                                { "direction": "row", "items": ["larg_ouvrag", "haut_ouvrag"]},
+                                { "direction": "row", "items": ["larg_disp", "haut_disp"]}
+                            ]
+                        },
+                        {
+                            "title": "Localisation",
+                            "direction": "row",
+                            "items": [
+                                { "items": ["cd_com", "pk", "pr", "pr_abs"] }
+                            ]
+                        }
+                        // {
+                        //     "items": "geom"
+                        // }
+                    ]
+                },
+                {
+                    "title": "Banquette (OH)",
+                    "direction": "row",
+                    "items": [
+                        // { "key": "id_nomenclature_oh_position", "type": "list-form", "nomenclature_type": "PF_OH_POSITION"},
+                        // { "key": "id_nomenclature_oh_banq_type", "type": "list-form", "nomenclature_type": "PF_OH_BANQ_TYPE"},
+                        // { "key": "id_nomenclature_oh_banq_caract", "type": "list-form", "nomenclature_type": "PF_OH_BANQ_CARACT"},
+                        "oh_tirant"
+                    ]
+                }
             ]
         },
         "table": {
@@ -114,7 +198,8 @@
                 "uuid_pf",
                 "nom_pf",
                 "cd_com",
-                // "nomenclature_materiaux.label_fr",
+                "nom_corr",
+                "nomenclature_materiaux.label_fr",
                 "date_creat",
                 "larg_ouvrag",
                 "haut_ouvrag",
@@ -125,6 +210,10 @@
                 "comment",
                 "x",
                 "y"
+            ],
+            "columns_short": [
+                "id_pf",
+                "nom_pf"
             ]
         }
     },
@@ -133,6 +222,12 @@
             "type": "integer",
             "label": "ID PAF",
             "primary_key": true
+        },
+        "id_dataset": {
+            "type": "integer",
+            "label": "id_dataset",
+            "foreign_key": "schemas/utils/jdd.id_dataset",
+            "required": true
         },
         "id_op": {
             "type": "string",
@@ -150,16 +245,24 @@
             "type": "integer",
             "label": "Matériaux",
             "nomenclature_type": "PF_MATERIAUX"
+            // "relation_key": "nomenclature_materiaux"
         },
-        // "nomenclature_materiaux": {
-        //     "rel": "schemas.utils.nomenclature",
-        //     "label": "Matériaux",
-        //     "local_key": "id_nomenclature_materiaux"
-        // },
+        "nomenclature_materiaux": {
+            "rel": "schemas.utils.nomenclature",
+            "label": "Matériaux",
+            "local_key": "id_nomenclature_materiaux"
+        },
         "id_nomenclature_oh_position": {
             "type": "integer",
             "label": "OH Position",
             "nomenclature_type": "PF_OH_POSITION"
+        },
+        "nomenclature_oh_position": {
+            // "type": "string",
+            // "label": "OH Position"
+            "rel": "schemas.utils.nomenclature",
+            "label": "Position banquette",
+            "local_key": "id_nomenclature_oh_position"
         },
         "id_nomenclature_oh_banq_caract": {
             "type": "integer",
@@ -172,8 +275,7 @@
             "nomenclature_type": "PF_OH_BANQ_TYPE"
         },
         "uuid_pf": {
-            "type": "string",
-            "format": "uuid",
+            "type": "uuid",
             "label": "UUID PF"
         },
         "pi_ou_ps": {
@@ -309,6 +411,7 @@
             "label": "Commentaire"
         },
         "geom": {
+            "type": "geometry",
             "geometry_type": "point",
             "srid": 4326,
             "label": "Geométrie"

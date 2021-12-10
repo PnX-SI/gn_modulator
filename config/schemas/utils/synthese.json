@@ -4,6 +4,7 @@
     "$meta": {
         "sql_schema_name": "gn_synthese",
         "sql_table_name": "synthese",
+        "model_name": "Synthese",
         "genre": "M",
         "label": "element de la synthese",
         "label_field_name": "cd_nom",
@@ -38,21 +39,23 @@
             "label": "date (min)"
         },
         "unique_id_sinp": {
-            "type": "string",
-            "format": "uuid",
+            "type": "uuid",
             "label": "UUID (SINP)"
         },
         "the_geom_4326": {
+            "type": "geometry",
             "label": "geom (4326)",
             "srid": 4326,
             "geometry_type": "geometry"
         },
         "the_geom_local": {
+            "type": "geometry",
             "label": "geom locale (__CONFIG.LOCAL_SRID__)",
             "srid": "__CONFIG.LOCAL_SRID__",
             "geometry_type": "geometry"
         },
         "the_geom_point": {
+            "type": "geometry",
             "label": "geom point (4326)",
             "srid": 4326,
             "geometry_type": "point"
