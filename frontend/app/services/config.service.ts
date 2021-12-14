@@ -23,7 +23,6 @@ export class ModulesConfigService {
   /** Configuration */
 
   init() {
-    console.log('config service init');
   }
 
   getModules() {
@@ -85,14 +84,6 @@ export class ModulesConfigService {
           this._config['schemas'][schemaName] = schemaConfig;
         return of(schemaConfig);
       }),
-      // catchError( (error:any) => {
-      //   console.log('config error', error)
-      //   this._commonService.regularToaster(
-      //     "error",
-      //     error
-      //   );
-      //   return Observable.throw(error)
-      // }),
     );
   }
 

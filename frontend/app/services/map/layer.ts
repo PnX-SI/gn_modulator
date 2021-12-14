@@ -8,7 +8,7 @@ import utils from '../../utils';
 const defaultLayerOptions = {
   bZoom: false,
   bCluster: false,
-  onEachFeature: () => {console.log('uu')},
+  onEachFeature: () => {},
   style: null
 }
 

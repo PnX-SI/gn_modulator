@@ -17,7 +17,7 @@ from geonature.core.taxonomie.models import Taxref  # noqa
 from geonature.core.gn_synthese.models import Synthese  # noqa
 from geonature.core.gn_meta.models import TDatasets  # noqa
 from pypnnomenclature.models import TNomenclatures, BibNomenclaturesTypes # noqa
-
+from geonature.core.ref_geo.models import LAreas, BibAreasTypes
 
 # store the sqla Models
 cache_model = {}

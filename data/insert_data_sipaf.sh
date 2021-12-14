@@ -40,14 +40,10 @@ date >> $log_file
 
 parseScriptOptions "${@}"
 
-
-
 if [ ! -d "${geonature_dir}" ]; then
     log_process "Erreur : le dossier de geonature ${geonature_dir} n'est pas correctement défini"
     exit 1;
 fi
-
-
 
 # 1) ods -> csv
 
@@ -80,5 +76,10 @@ cat ${source_csv} | psqla -c "COPY public.tmp_import_sipaf FROM STDIN CSV HEADER
 gn_venv
 geonature modules sql_process -n schemas.sipaf.pf > ${data_dir}/schema_sipaf.sql
 psqla -f ${data_dir}/schema_sipaf.sql
+
+# insert routes
+${data_dir}/insert_routes.sh -g "${geonature_dir}"
+
 psqla -f ${data_dir}/import_sipaf.sql
+
 

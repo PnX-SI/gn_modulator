@@ -41,4 +41,20 @@ class SchemaTypes():
 
     @classmethod
     def c_get_type(cls, type_in, field_name_in, field_name_out):
-            return  next((item[field_name_out] for item in cor_type if item[field_name_in] == type_in), None)
+
+        if field_name_in == 'sql' and "geometry" in type_in.lower():
+            inter = type_in.lower().replace('geometry(', '').replace(')', '')
+            inter = inter.split(',')
+            geometry_type = inter[0]
+            srid = int(inter[1])
+            return {
+                "type": "geometry",
+                "srid": srid,
+                "geometry_type": geometry_type
+            }
+
+        # autres
+        type_out = next((item[field_name_out] for item in cor_type if item[field_name_in] == type_in), None)
+        return {
+            "type": type_out
+        }

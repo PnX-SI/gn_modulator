@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION sipaf.correct_number(number_in varchar)
     $$
     LANGUAGE plpgsql;
 
-TRUNCATE sipaf.t_passages_faune;
+DELETE FROM sipaf.t_passages_faune;
 
 
 INSERT INTO sipaf.t_passages_faune(
@@ -152,3 +152,38 @@ SELECT
 	JOIN non_doublons nd on nd.id_pf = i.id_pf
 	JOIN gn_meta.t_datasets d on d.dataset_name = 'test jdd passage faune'
     WHERE i.id_pf IS NOT NULL;
+
+-- cor area_sipaf
+
+WITH areas AS (
+	SELECT *
+	FROM ref_geo.l_areas
+	JOIN ref_geo.bib_areas_types bat
+		ON bat.id_type = l_areas.id_type
+	WHERE bat.type_code IN ('REG', 'DEP', 'COM')
+	AND enable IS TRUE
+	)
+INSERT INTO sipaf.cor_area_pf (id_pf, id_area)
+SELECT id_pf, id_area--, area_name
+FROM sipaf.t_passages_faune tpf
+JOIN areas
+	ON ST_INTERSECTS(st_transform(tpf.geom, 2154), areas.geom)
+ORDER BY id_pf
+;
+
+-- cor cor_route_pf
+
+DELETE FROM sipaf.cor_route_pf;
+
+INSERT INTO sipaf.cor_route_pf(
+	id_pf,
+	id_route
+)
+SELECT
+	id_pf,
+	id_route
+FROM sipaf.t_passages_faune tpf
+JOIN sipaf.l_routes r
+    ON ST_DISTANCE(r.geom, tpf.geom) < 0.01
+		AND ST_DISTANCESPHERE(r.geom, tpf.geom) < 1000
+;

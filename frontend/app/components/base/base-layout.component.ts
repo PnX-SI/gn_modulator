@@ -41,7 +41,7 @@ constructor(
   checkLayout(layout) {
     this.layoutType = this.getLayoutType(layout)
     if(this.layoutType == 'key') {
-      this.data = this.layoutData[this.layout];
+      this.data = this.layoutData[this.layout.key || this.layout];
       // const data = this.layoutData[this.layout];
       this.layoutTxt = `${this.data.label} : ${this.data.value}`
     }

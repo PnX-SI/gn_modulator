@@ -23,6 +23,7 @@ export class ModulesMapComponent implements OnInit {
   @Input() bEdit: boolean = false;
   @Input() drawOptions;
 
+  isInitialized=false;
 
   constructor(
     private _mapService: ModulesMapService
@@ -38,6 +39,7 @@ export class ModulesMapComponent implements OnInit {
         drawOptions: this.drawOptions,
       }
     );
+
   }
 
   processLayersData() {
@@ -48,6 +50,9 @@ export class ModulesMapComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+
+    // attendre le chargement de la carte ?
+
     for (const [key, change] of Object.entries(changes)) {
 
       if(utils.fastDeepEqual(change['currentValue'], change['previousValue'])) {
@@ -55,7 +60,7 @@ export class ModulesMapComponent implements OnInit {
       }
 
       if(['zoom', 'center'].includes(key)) {
-        this._mapService.setView(this.mapId, this.center, this.zoom)
+       this._mapService.setView(this.mapId, this.center, this.zoom);
       }
 
       if(['layersData'].includes(key)) {

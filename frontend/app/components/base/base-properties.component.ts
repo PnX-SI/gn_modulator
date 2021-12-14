@@ -12,6 +12,8 @@ import { ModulesRouteService } from "../../services/route.service"
 import { mergeMap, concatMap } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
 import { BaseComponent } from "./base.component";
+
+import utils from "../../utils"
 @Component({
   selector: "modules-base-properties",
   templateUrl: "base-properties.component.html",
@@ -69,10 +71,12 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     this.data = data;
     this.layoutData = {};
     for (const field of this.getLayoutFields(this.layout)) {
-      const property = this.schemaConfig.schema.properties[field];
-      this.layoutData[field] = {
+      var key = field.key || field;
+      var keyProp = field.split('.')[0];
+      const property = this.schemaConfig.schema.properties[keyProp];
+      this.layoutData[key] = {
         label: property.label,
-        value: this.data[field]
+        value: utils.getAttr(this.data, key)
       }
     }
     // this.dataSource = this.schemaConfig.utils.columns_array.map(

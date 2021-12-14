@@ -43,6 +43,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     }
 
   ngOnInit() {
+
   }
 
   getData() {
@@ -75,6 +76,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
       //close popUp ???
       return;
     }
+
     const layerSearcghFilters = {};
     layerSearcghFilters[this.pkFieldName()] = value;
     const layer = this._mapService.findLayer(this.mapId, layerSearcghFilters)
@@ -82,7 +84,6 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
       console.error(`le layer (${this.pkFieldName()}==${value}) n'est pas présent`)
       return;
     }
-    console.log(layer)
     layer.openPopup();
   };
 
@@ -229,7 +230,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
       }
       if(key == 'value') {
         // TODO
-        this.processValue(this.value)
+          this.processValue(this.value)
       }
     }
   }

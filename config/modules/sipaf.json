@@ -24,6 +24,9 @@
       ]
     },
     "edit": {
+      "parent": {
+        "pageName": "map_list"
+      },
       "url": "edit/:value",
       "elements": [
         {
@@ -33,6 +36,9 @@
       ]
     },
     "details": {
+      "parent": {
+        "pageName": "map_list"
+      },
       "url": "details/:value",
       "elements": [
         {

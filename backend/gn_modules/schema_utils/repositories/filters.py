@@ -123,6 +123,10 @@ class SchemaRepositoriesFilters():
     def get_filter(self, Model, f, query):
         '''
             get filter
+
+            à voir ce qu'il y a pour les relations de type array(Object)
+              - oneOf
+              - allOf ??????
         '''
 
         filter_out = None

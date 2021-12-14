@@ -1,0 +1,30 @@
+{
+  "$id": "schemas/utils/nomenclature",
+  "type": "object",
+  "$meta": {
+    "sql_processing": true,
+    "sql_schema_name": "sipaf",
+    "sql_table_name": "l_routes",
+    "genre": "F",
+    "label": "route",
+    "geometry_field_name": "geom",
+    "label_field_name": "nom_route"
+  },
+  "properties": {
+    "id_route": {
+      "type": "integer",
+      "label": "ID enfant",
+      "primary_key": true
+    },
+    "nom_route": {
+      "label": "Code route",
+      "type": "string"
+    },
+    "geom": {
+      "label": "géometrie",
+      "type": "geometry",
+      "geometry_type": "geometry",
+      "srid": 4326
+    }
+  }
+}

@@ -28,7 +28,6 @@ export class ModulesRequestService {
     return new Observable<any>(observer => {
       const urlRequest = `${url}${this.sQueryParams(params)}`
       if ( useCache && this._cacheRequests[urlRequest]) {
-        console.log('request : from cache', urlRequest)
         observer.next(this._cacheRequests[urlRequest]);
         return observer.complete();
         // return Observable.of(this._cacheRequests[urlRequest] as any);

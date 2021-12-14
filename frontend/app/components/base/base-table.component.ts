@@ -241,7 +241,6 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
     if (!row) {
       return;
     }
-    console.log(row)
     this.table.selectRow(row);
     return true;
   }

@@ -1,0 +1,16 @@
+{
+  "$id": "schemas/utils/area",
+  "type": "object",
+  "$meta": {
+    "sql_schema_name": "ref_geo",
+    "sql_table_name": "l_areas",
+    "model_name": "LAreas",
+    "label": "geométrie",
+    "label_field_name": "area_name",
+    "genre": "F",
+    "autoschema": true
+  },
+  "properties": {
+      "area_type": { "local_key": "id_type", "label": "Type", "rel": "schemas.utils.area_type"}
+  }
+}

@@ -138,13 +138,9 @@ export class ModulesRouteService {
 
   navigateToPage(moduleName, pageName, params) {
     const url = this.modulePageUrl(moduleName, pageName, params);
-    console.log(url)
-    console.log(this._router.url)
-    console.log(this._router)
+
     // patch sinon navigateByUrl met des plombes...
     const baseUrl = window.location.href.replace(this._router.url, '')
-    console.log(baseUrl, url)
     window.location.href = baseUrl +url;
-      // this._router.navigateByUrl(url, { replaceUrl: true, skipLocationChange: true}).then((a) => {console.log('url prom', a)});
   }
 }

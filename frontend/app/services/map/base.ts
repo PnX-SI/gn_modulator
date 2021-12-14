@@ -24,10 +24,10 @@ export default {
   },
 
   setMap(mapId, map) {
-    if(this._maps[mapId]) {
-      console.error(`ModuleMapServices, setMap : La carte ${mapId} existe déjà`)
-      return;
-    }
+    // if(this._maps[mapId]) {
+      // console.error(`ModuleMapServices, setMap : La carte ${mapId} existe déjà`)
+      // return;
+    // }
     this._maps[mapId] = map;
   },
 

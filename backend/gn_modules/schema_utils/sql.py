@@ -18,7 +18,7 @@ class SchemaSql():
     def get_sql_type(self, column_def, cor_table=False):
         field_type = column_def.get('type')
 
-        sql_type = self.cls().c_get_type(field_type, "definition", 'sql')
+        sql_type = self.cls().c_get_type(field_type, "definition", 'sql')['type']
 
         if column_def.get('primary_key') and not cor_table:
             sql_type = 'SERIAL NOT NULL'

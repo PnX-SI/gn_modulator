@@ -48,7 +48,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     private _formBuilder: FormBuilder,
   ) {
     super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute)
-    this.mapId = 'base-form';
+    this.mapId = `base-form_${Math.random()}`;
     this._name = 'BaseForm';
 
   }
@@ -63,28 +63,43 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     setTimeout(() => {this.bDraw = true}, 3000)
   }
 
+  setComponentTitle(): void {
+    this.componentTitle = this.id()
+      ? `Modification ${this.schemaConfig.display.prep_label} ${this.id()}`
+      : `Creation ${this.schemaConfig.display.undef_label_new}`
+    ;
+  }
 
   processConfig(): void {
-      this.processedLayout = this._mForm.processLayout(this.schemaConfig.form.layout)
+      this.layout = this.schemaConfig.form.layout
+      this.processedLayout = this._mForm.processLayout(this.layout)
   }
 
   getData() {
+
+    const fields = this.getLayoutFields(this.layout)
+    if (this.hasGeometry) {
+      fields.push(this.geometryFieldName());
+    }
+
+    if(!fields.includes(this.pkFieldName())) {
+      fields.push(this.pkFieldName());
+    }
 
     if(!this.value) {
       return of(null)
     }
     return this._mData.getOne(
       this.schemaName,
-      this.value
+      this.value,
+      {
+        fields
+      }
     );
   }
 
   processData(data) {
     this.data = data
-    this.formTitle = this.id()
-      ? `Modification ${this.schemaConfig.display.prep_label} ${this.id()}`
-      : `Creation ${this.schemaConfig.display.undef_label_new}`
-    ;
     this.setLayersData(true);
   }
 

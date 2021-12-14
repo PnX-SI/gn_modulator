@@ -125,7 +125,7 @@ class SchemaSerializers:
         exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
         relation_serializer = None
 
-        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), exclude=exclude, default=None)
+        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), exclude=exclude, dump_default=None)
 
         if self.relation_type(relation_def) == 'n-1':
             relation_serializer = relation_serializer

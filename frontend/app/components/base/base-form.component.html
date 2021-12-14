@@ -1,11 +1,31 @@
 <div *ngIf="componentInitialized; else loadingBlock">
 
-  <h4>{{formTitle}}</h4>
-
   <div class="form-container">
+
+    <!-- Carte avec saisie geoman -->
+    <div
+      class='map-form'
+      *ngIf="schemaConfig.utils.geometry_field_name"
+    >
+
+      <div>
+        <modules-map
+          [mapId]="mapId"
+          [height]="height"
+          [bEdit]="true"
+          [zoom]="zoom"
+          [center]="center"
+          [layersData]="layersData"
+        ></modules-map>
+      </div>
+
+    </div>
 
     <!-- Formulaire -->
     <div class='base-form'>
+
+      <h4 *ngIf="displayTitle"> {{ componentTitle }} </h4>
+
       <json-schema-form
         [schema]="schemaConfig.form.schema"
         framework="material-design"
@@ -18,23 +38,7 @@
         (validationErrors)="onValidationErrors($event)"
       >
       </json-schema-form>
-    </div>
 
-    <!-- Carte avec saisie geoman -->
-    <div
-      class='map-form'
-      *ngIf="schemaConfig.utils.geometry_field_name"
-    >
-      <div>
-        <modules-map
-          [mapId]="mapId"
-          [height]="height"
-          [bEdit]="true"
-          [zoom]="zoom"
-          [center]="center"
-          [layersData]="layersData"
-        ></modules-map>
-      </div>
     </div>
 
     <!-- Debug : valide, erreur et valeurs -->

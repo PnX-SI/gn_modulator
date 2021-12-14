@@ -8,6 +8,10 @@
 <!-- Elements -->
 <div *ngIf="pageConfig">
 
+<div>
+    <a class="breadcrumb" *ngFor="let breadcrumb of breadcrumbs" [href]="breadcrumb.url"> {{ breadcrumb.txt }} </a>
+</div>
+
 <div *ngFor="let element of pageConfig.elements">
 
     <modules-page-element

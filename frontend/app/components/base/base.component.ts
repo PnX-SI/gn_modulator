@@ -83,7 +83,6 @@ export class BaseComponent implements OnInit {
   }
 
   emitEvent(event) {
-    this.log(event)
     this.onEvent.emit(event);
     setTimeout(()=> {});
   }
@@ -95,7 +94,7 @@ export class BaseComponent implements OnInit {
     if (this.getLayoutType(layout) == 'obj') {
       return utils.flat(layout.items.map(l => this.getLayoutFields(l)))
     }
-    return layout;
+    return layout.key || layout;
   };
 
   getLayoutType(layout) {
@@ -162,7 +161,6 @@ export class BaseComponent implements OnInit {
         catchError((error) => {
           this.isProcessing=false;
           this.componentInitialized = true;
-          console.log(error);
           return of(false)
         })
       ).subscribe((response) => {

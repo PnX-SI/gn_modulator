@@ -23,6 +23,25 @@
                     "filter_type": "=",
                     "type": "integer"
                 },
+                "departement": {
+                    "title": "Département",
+                    "field": "areas.id_area",
+                    "filter_type": "=",
+                    "type": "integer"
+                },
+                "commune": {
+                    "title": "Commune",
+                    "field": "areas.id_area",
+                    "filter_type": "=",
+                    "type": "integer"
+                },
+                "route": {
+                    "title": "Route",
+                    "field": "routes.id_route",
+                    "filter_type": "=",
+                    "type": "integer"
+                },
+
                 "nom_pf": { "title": "Nom pf", "field": "nom_pf", "filter_type": "ilike"}
             },
             "layout": [
@@ -44,6 +63,31 @@
                             "items": ["haut_ouvrag_min", "haut_ouvrag_max"]
                         }
 
+                    ]
+                },
+                {
+                    "title": "Localisation",
+                    "items": [
+                        {
+                            "search": true,
+                            "key": "departement",
+                            "type": "list-form",
+                            "area_type": "DEP"
+                        },
+                        {
+                            "search": true,
+                            "key": "commune",
+                            "type": "list-form",
+                            "area_type": "COM"
+                        },
+                        {
+                            "search": true,
+                            "key": "route",
+                            "type": "list-form",
+                            "schema_name": "schemas.sipaf.route",
+                            "data_reload_on_search": true,
+                            "size": 10
+                        }
                     ]
                 }
             ]
@@ -77,6 +121,19 @@
                             { "items": ["id_obst", "nom_obst"] },
                             { "items": ["id_resv", "nom_resv"] }
                            ]
+                        },
+                        {
+                            "direction": "row",
+                            "items": [
+                                {
+                                    "key": "id_dataset",
+                                    "type": "list-form",
+                                    "schema_name": "schemas.utils.jdd",
+                                    "label": "Jeu de données",
+                                    "data_reload_on_search": true,
+                                    "size": 10
+                                }
+                            ]
                         }
                    ]
                 },
@@ -156,6 +213,7 @@
                         "specificit"
                     ]
                 },
+                "nomenclature_materiaux.label_fr",
                 // { "key": "id_nomenclature_materiaux", "type": "list-form", "nomenclature_type": "PF_MATERIAUX"},
                 {
                     "direction": "row",
@@ -184,9 +242,9 @@
                     "title": "Banquette (OH)",
                     "direction": "row",
                     "items": [
-                        // { "key": "id_nomenclature_oh_position", "type": "list-form", "nomenclature_type": "PF_OH_POSITION"},
-                        // { "key": "id_nomenclature_oh_banq_type", "type": "list-form", "nomenclature_type": "PF_OH_BANQ_TYPE"},
-                        // { "key": "id_nomenclature_oh_banq_caract", "type": "list-form", "nomenclature_type": "PF_OH_BANQ_CARACT"},
+                        "nomenclature_oh_position.label_fr",
+                        "nomenclature_oh_banq_type.label_fr",
+                        "nomenclature_oh_banq_caract.label_fr",
                         "oh_tirant"
                     ]
                 }
@@ -226,8 +284,7 @@
         "id_dataset": {
             "type": "integer",
             "label": "id_dataset",
-            "foreign_key": "schemas/utils/jdd.id_dataset",
-            "required": true
+            "foreign_key": "schemas/utils/jdd.id_dataset"
         },
         "id_op": {
             "type": "string",
@@ -258,8 +315,6 @@
             "nomenclature_type": "PF_OH_POSITION"
         },
         "nomenclature_oh_position": {
-            // "type": "string",
-            // "label": "OH Position"
             "rel": "schemas.utils.nomenclature",
             "label": "Position banquette",
             "local_key": "id_nomenclature_oh_position"
@@ -269,11 +324,22 @@
             "label": "OH Caractrisation banquette",
             "nomenclature_type": "PF_OH_BANQ_CARACT"
         },
+        "nomenclature_oh_banq_caract": {
+            "rel": "schemas.utils.nomenclature",
+            "label": "OH Caractrisation banquette",
+            "local_key": "id_nomenclature_oh_banq_caract"
+        },
         "id_nomenclature_oh_banq_type": {
             "type": "integer",
             "label": "OH type de banquette",
             "nomenclature_type": "PF_OH_BANQ_TYPE"
         },
+        "nomenclature_oh_banq_type": {
+            "rel": "schemas.utils.nomenclature",
+            "label": "OH type de banquette",
+            "local_key": "id_nomenclature_oh_banq_type"
+        },
+
         "uuid_pf": {
             "type": "uuid",
             "label": "UUID PF"
@@ -409,6 +475,24 @@
         "comment": {
             "type": "string",
             "label": "Commentaire"
+        },
+        "areas": {
+            "label" : "Areas",
+            "rel": "schemas.utils.area",
+            "local_key": "id_pf",
+            "foreign_key": "id_area",
+            "first": "schemas.sipaf.pf",
+            "cor_schema_name": "sipaf",
+            "cor_table_name": "cor_area_pf"
+        },
+        "routes": {
+            "label": "Routes",
+            "rel": "schemas.sipaf.route",
+            "local_key": "id_pf",
+            "foreign_key": "id_route",
+            "first": "schemas.sipaf.pf",
+            "cor_schema_name": "sipaf",
+            "cor_table_name": "cor_route_pf"
         },
         "geom": {
             "type": "geometry",

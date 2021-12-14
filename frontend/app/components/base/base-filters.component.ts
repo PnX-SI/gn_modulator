@@ -87,24 +87,10 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
         filters: this.getFilters()
       }
     })
-    // this.setQueryParams(
-    //   {
-    //     filters:this.getFilters()
-    //   }
-    // );
+
   }
 
   onFormChanges(event) {
-    // setTimeout(()=>{
-    //   if(utils.fastDeepEqual(this.filterValues, this.dataSave)) {
-    //     // console.log('u')
-    //     return
-    //   }
-
-    //   console.log("change", event,  this.filterValues,  this.dataSave)
-    //   this.dataSave = this.filterValues;
-    //   this.setQueryParams({filters:this.getFilters()});
-    // })
   }
 
   onIsValid(event) {

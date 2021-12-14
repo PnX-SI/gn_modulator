@@ -57,7 +57,6 @@ export class ListFormService {
    *  - labelFieldName
    */
   initConfig(options) {
-
     // gestion des nomenclatures pour simplifier la config du layout
     if (options.nomenclature_type) {
       options.schema_name = options.schema_name || 'schemas.utils.nomenclature';
@@ -67,6 +66,14 @@ export class ListFormService {
       options.useCache = true;
     }
 
+    if (options.area_type) {
+      options.schema_name = options.schema_name || 'schemas.utils.area';
+      options.params = options.params || {}
+      options.params.filters = options.params.filters || [];
+      options.params.filters.push({field: 'area_type.type_code', type: '=', value: options.area_type})
+      options.data_reload_on_search = true;
+    }
+
     if (options.schema_name) {
       return this._mConfig.loadConfig(options.schema_name)
         .pipe(
@@ -74,7 +81,11 @@ export class ListFormService {
             options.api = options.api || this._mConfig.schemaConfig(options.schema_name).utils.urls.rest;
             options.value_field_name =  options.value_field_name ||this._mConfig.schemaConfig(options.schema_name).utils.value_field_name;
             options.label_field_name = options.label_field_name || this._mConfig.schemaConfig(options.schema_name).utils.label_field_name;
-            // size
+            // size ??
+            options.size = options.useCache
+              ? null
+              : 10
+            ;
             return of(true)
           }),
         )
@@ -117,9 +128,11 @@ export class ListFormService {
       };
       params.filters = (params.filters || []);
       if (options.search || true) {
+        params.filters = params.filters.filter(f => f.label_field_name != options.label_field_name);
         params.filters.push(
           { field: options.label_field_name, type: 'ilike', value: options.search }
         )
+        params.size = options.size;
       };
 
       const values = options.multiple

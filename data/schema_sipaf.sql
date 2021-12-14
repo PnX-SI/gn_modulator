@@ -1,5 +1,7 @@
 
 -- process schema : schemas.sipaf.pf
+--
+-- and dependancies : schemas.sipaf.routes
 
 
 ---- sql schema sipaf
@@ -55,10 +57,23 @@ CREATE TABLE IF NOT EXISTS sipaf.t_passages_faune (
     geom GEOMETRY(POINT, 4326)
 );
 
+---- table sipaf.l_routes
+
+CREATE TABLE IF NOT EXISTS sipaf.l_routes (
+    id_route SERIAL NOT NULL,
+    nom_route VARCHAR,
+    geom GEOMETRY(GEOMETRY, 4326)
+);
+
 ---- sipaf.t_passages_faune primary key constraint
 ALTER TABLE sipaf.t_passages_faune DROP CONSTRAINT IF EXISTS pk_sipaf_t_passages_faune_id_pf;
 ALTER TABLE sipaf.t_passages_faune
     ADD CONSTRAINT pk_sipaf_t_passages_faune_id_pf PRIMARY KEY (id_pf);
+
+---- sipaf.l_routes primary key constraint
+ALTER TABLE sipaf.l_routes DROP CONSTRAINT IF EXISTS pk_sipaf_l_routes_id_route;
+ALTER TABLE sipaf.l_routes
+    ADD CONSTRAINT pk_sipaf_l_routes_id_route PRIMARY KEY (id_route);
 
 ---- sipaf.t_passages_faune foreign key constraint
 ALTER TABLE sipaf.t_passages_faune DROP CONSTRAINT IF EXISTS fk_sipaf_t_pas_t_dat_id_dataset;
@@ -117,6 +132,45 @@ ALTER TABLE sipaf.t_passages_faune
         ADD CONSTRAINT check_nom_type_sipaf_t_passages_faune_pf_oh_banq_type
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_oh_banq_type,'PF_OH_BANQ_TYPE'))
         NOT VALID;
+
+-- cor sipaf.cor_area_pf
+
+CREATE TABLE  IF NOT EXISTS sipaf.cor_area_pf (
+    id_pf INTEGER NOT NULL,
+    id_area INTEGER NOT NULL
+);
+
+-- sipaf.cor_area_pf foreign keys contraints
+ALTER TABLE sipaf.cor_area_pf DROP CONSTRAINT IF EXISTS fk_sipaf_cor_area_pf_id_pf;
+ALTER TABLE sipaf.cor_area_pf
+    ADD CONSTRAINT fk_sipaf_cor_area_pf_id_pf FOREIGN KEY (id_pf)
+    REFERENCES sipaf.t_passages_faune (id_pf)
+    ON UPDATE CASCADE ON DELETE NO ACTION;
+
+ALTER TABLE sipaf.cor_area_pf DROP CONSTRAINT IF EXISTS fk_sipaf_cor_area_pf_id_area;
+ALTER TABLE sipaf.cor_area_pf
+    ADD CONSTRAINT fk_sipaf_cor_area_pf_id_area FOREIGN KEY (id_area)
+    REFERENCES ref_geo.l_areas (id_area)
+    ON UPDATE CASCADE ON DELETE NO ACTION;
+-- cor sipaf.cor_route_pf
+
+CREATE TABLE  IF NOT EXISTS sipaf.cor_route_pf (
+    id_pf INTEGER NOT NULL,
+    id_route INTEGER NOT NULL
+);
+
+-- sipaf.cor_route_pf foreign keys contraints
+ALTER TABLE sipaf.cor_route_pf DROP CONSTRAINT IF EXISTS fk_sipaf_cor_route_pf_id_pf;
+ALTER TABLE sipaf.cor_route_pf
+    ADD CONSTRAINT fk_sipaf_cor_route_pf_id_pf FOREIGN KEY (id_pf)
+    REFERENCES sipaf.t_passages_faune (id_pf)
+    ON UPDATE CASCADE ON DELETE NO ACTION;
+
+ALTER TABLE sipaf.cor_route_pf DROP CONSTRAINT IF EXISTS fk_sipaf_cor_route_pf_id_route;
+ALTER TABLE sipaf.cor_route_pf
+    ADD CONSTRAINT fk_sipaf_cor_route_pf_id_route FOREIGN KEY (id_route)
+    REFERENCES sipaf.l_routes (id_route)
+    ON UPDATE CASCADE ON DELETE NO ACTION;
 
 
 
