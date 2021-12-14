@@ -29,6 +29,8 @@ if [ ! -f "${data_dir}/sources/routes/autoroutes.shp" ]; then
     7z e ./routes-nationales.shp
 fi
 
+cd ${data_dir}/
+
 . ${geonature_dir}/config/settings.ini
 export PGPASSWORD=${user_pg_pass};
 
