@@ -25,8 +25,8 @@ fi
 
 if [ ! -f "${data_dir}/sources/routes/autoroutes.shp" ]; then
     cd ${data_dir}/sources/routes
-    7z x autoroutes.shp
-    7z x routes-nationales.shp
+    7z e ./autoroutes.shp
+    7z e ./routes-nationales.shp
 fi
 
 . ${geonature_dir}/config/settings.ini
