@@ -1,5 +1,5 @@
 {
-  "$id": "schemas/utils/nomenclature",
+  "$id": "schemas/pf/route",
   "type": "object",
   "$meta": {
     "sql_processing": true,

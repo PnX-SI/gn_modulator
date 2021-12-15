@@ -55,9 +55,9 @@ class SchemaBase():
     def pprint(cls, d, indent=2):
         print(json.dumps(d, indent=indent, sort_keys=True, ensure_ascii=False))
 
-    def schema(self, schema_type='raw', columns_only=False):
+    def schema(self, schema_type='definition', columns_only=False):
 
-        if 'raw' not in self._schemas:
+        if 'definition' not in self._schemas:
             self.reload()
         schema = self._schemas[schema_type]
 
@@ -127,7 +127,7 @@ class SchemaBase():
 
     def pk_field_names(self):
         '''
-            returns list of primary keys from self._raw_schema['properties']
+            returns list of primary keys from self._definition_schema['properties']
         '''
 
         pk_field_names = []
@@ -173,7 +173,7 @@ class SchemaBase():
     def relationship_keys(self):
         return [k for k, v in self.properties().items() if self.is_relationship(v)]
 
-    def properties(self, schema_type='raw'):
+    def properties(self, schema_type='definition'):
         return self.schema(schema_type=schema_type)['properties']
 
     def get_property(self, key):
@@ -207,7 +207,7 @@ class SchemaBase():
 
         return elem
 
-    def columns(self, schema_type='raw', sort=False):
+    def columns(self, schema_type='definition', sort=False):
 
         column = {}
 
@@ -216,7 +216,7 @@ class SchemaBase():
 
         return column
 
-    def relationships(self, schema_type='raw'):
+    def relationships(self, schema_type='definition'):
 
         relationship = {}
         for key in self.relationship_keys():
@@ -224,10 +224,10 @@ class SchemaBase():
 
         return relationship
 
-    def column(self, key, schema_type='raw'):
+    def column(self, key, schema_type='definition'):
         return self.columns(schema_type)[key]
 
-    def relationship(self, key, schema_type='raw'):
+    def relationship(self, key, schema_type='definition'):
         return self.relationships(schema_type)[key]
 
     def relation_type(self, relation_def):

@@ -9,20 +9,20 @@ from . import app, temporary_transaction  # noqa
 
 class TestSchemas:
 
-    def test_raw_schema_load_and_validate(self):
+    def test_definition_schema_load_and_validate(self):
         '''
             test des schemas présents dans le répertoire <gn_modules>/config/schemas
         '''
 
         for schema_name in SchemaMethods.schema_names('schemas'):
 
-            raw_schema = SchemaMethods.load_json_file_from_name(schema_name)
-            print('raw', schema_name, raw_schema['$id'])
+            definition_schema = SchemaMethods.load_json_file_from_name(schema_name)
+            print('definition', schema_name, definition_schema['$id'])
 
             # test 1 - le fichier json est bien chargé
-            assert (type(raw_schema) is dict)
+            assert (type(definition_schema) is dict)
 
-            error = SchemaMethods.validate_schema(schema_name, raw_schema)
+            error = SchemaMethods.validate_schema(schema_name, definition_schema)
             if error:
                 print('validation', schema_name)
                 print("erreur", error)

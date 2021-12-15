@@ -29,20 +29,20 @@ class SchemaAuto():
 
     def get_autoschema(self):
         '''
-            combine raw schema & autoschema
+            combine definition schema & autoschema
         '''
-        schema_raw = self.schema()
+        schema_definition = self.schema()
         autoschema = self.cls().c_get_autoschema(self.schema_dot_table())
 
-        for key, property in schema_raw.get('properties', {}).items():
+        for key, property in schema_definition.get('properties', {}).items():
             if key in autoschema['properties']:
                 autoschema['properties'][key].update(property)
             else:
                 autoschema['properties'][key] = property
 
-        schema_raw['properties'] = autoschema['properties']
+        schema_definition['properties'] = autoschema['properties']
 
-        return schema_raw
+        return schema_definition
 
     @classmethod
     def c_get_autoschema(cls, schema_dot_table):

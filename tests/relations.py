@@ -15,18 +15,18 @@ from . import app, temporary_transaction  # noqa
 
 
 class TestSchemas:
-    def test_raw_schema(self):
+    def test_definition_schema(self):
         '''
-            test si les schemas raw sont valides
+            test si les schemas definition sont valides
         '''
 
         schema_names = ['schemas.test.child', 'schemas.test.parent']
 
         for schema_name in schema_names:
-            print('raw', schema_name)
+            print('definition', schema_name)
             sm = SchemaMethods(schema_name)
 
-            error = sm.validate_raw_schema()
+            error = sm.validate_definition_schema()
 
             if error:
                 print(error)

@@ -1,5 +1,5 @@
 '''
-    process raw_schema for
+    process definition_schema for
     - validation
     - schema ajsf
 '''
@@ -97,7 +97,7 @@ class SchemaProcess():
         self.set_definition(definitions, schema_name, schema, is_validation_schema)
 
 
-    def process_raw_schema(self, is_validation_schema):
+    def process_definition_schema(self, is_validation_schema):
         '''
             - put references into definitions
         '''

@@ -45,15 +45,15 @@ def cmd_model_to_schema(schema_dot_table, schema_name, write=False, force_write=
 @click.command('schema')
 @click.argument('schema_name')
 @click.option('-p', '--schema_path', default=None, help="chemin vers les elements du schema: '$meta', 'properties[<key>]'")
-@click.option('-r', '--raw', is_flag=True)
-def cmd_schema(schema_name, schema_path=None, raw=False):
+@click.option('-d', '--definition', is_flag=True)
+def cmd_schema(schema_name, schema_path=None, definition=False):
     '''
         Affiche le schema depuis <schema_name>
 
           - par exemple:
             - schemas.test.example
     '''
-    schema = SchemaMethods(schema_name).schema(schema_type=('raw' if raw else 'validation'))
+    schema = SchemaMethods(schema_name).schema(schema_type=('definition' if definition else 'validation'))
 
     if schema_path:
         for p in schema_path.split('.'):
@@ -77,12 +77,12 @@ def cmd_check(_schema_name=None):
         print('check {}'.format(schema_name))
         sm = SchemaMethods(schema_name)
 
-        error_raw = SchemaMethods.validate_schema(schema_name, sm.schema())
+        error_definition = SchemaMethods.validate_schema(schema_name, sm.schema())
         has_sample = SchemaMethods.file_path(schema_name, 'sample').is_file()
 
         schema_infos = {
             "schema_name": schema_name,
-            "raw_schema_valid": not error_raw,
+            "definition_schema_valid": not error_definition,
         }
 
         schema_infos["error_sample_jsonschema"] = None
@@ -107,12 +107,12 @@ def cmd_check(_schema_name=None):
             )
 
         print(
-            '{schema_name:40s} raw: {raw_schema_valid}, sample (json_schema): {valid_sample_jsonschema}, sample (marshmallow): {valid_sample_marshmallow}'
+            '{schema_name:40s} definition: {definition_schema_valid}, sample (json_schema): {valid_sample_jsonschema}, sample (marshmallow): {valid_sample_marshmallow}'
             .format(**schema_infos)
         )
 
-        if error_raw:
-            print('  - Erreur schema\n', error_raw)
+        if error_definition:
+            print('  - Erreur schema\n', error_definition)
 
         if schema_infos['error_sample_marshmallow']:
             print('  - Erreur data (marshmallow)\n', schema_infos['error_sample_marshmallow'])

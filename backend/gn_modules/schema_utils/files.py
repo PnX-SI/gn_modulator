@@ -145,11 +145,11 @@ class SchemaFiles():
 
         self._schema_name = schema_name
         self._schemas = {}
-        self._schemas['raw'] = self.cls().load_json_file_from_name(schema_name)
+        self._schemas['definition'] = self.cls().load_json_file_from_name(schema_name)
         if self.autoschema():
-            self._schemas['raw'] = self.get_autoschema()
-        self._schemas['validation'] = self.process_raw_schema(True)
-        self._schemas['form'] = self.process_raw_schema(False)
+            self._schemas['definition'] = self.get_autoschema()
+        self._schemas['validation'] = self.process_definition_schema(True)
+        self._schemas['form'] = self.process_definition_schema(False)
 
         return self
 

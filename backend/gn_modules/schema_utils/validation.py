@@ -41,8 +41,8 @@ class SchemaValidation():
 
         return error
 
-    def validate_raw_schema(self):
-        return self.cls().validate_schema(self.schema_name(), self.raw_schema())
+    def validate_definition_schema(self):
+        return self.cls().validate_schema(self.schema_name(), self.definition_schema())
 
     def validation_schema(self, schema):
         '''
