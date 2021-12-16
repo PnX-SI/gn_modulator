@@ -75,9 +75,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       this.processedLayout = this._mForm.processLayout(this.layout)
   }
 
-  getData() {
-
-    const fields = this.getLayoutFields(this.layout)
+  getFields() {
+    const fields = this.getLayoutFields(this.layout, true)
     if (this.hasGeometry) {
       fields.push(this.geometryFieldName());
     }
@@ -85,6 +84,12 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     if(!fields.includes(this.pkFieldName())) {
       fields.push(this.pkFieldName());
     }
+    return fields;
+  }
+
+  getData() {
+
+    const fields = this.getFields()
 
     if(!this.value) {
       return of(null)
@@ -163,10 +168,12 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       : 'post'
     ;
 
+    const fields = this.getFields();
+
     if (this.id()) {
-        request = this._mData.patch(this.schemaName, this.id(), this.data)
+        request = this._mData.patch(this.schemaName, this.id(), this.data, { fields })
     } else {
-        request = this._mData.post(this.schemaName, this.data)
+        request = this._mData.post(this.schemaName, this.data, { fields })
     }
 
     request.subscribe(

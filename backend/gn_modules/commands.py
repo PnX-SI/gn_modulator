@@ -42,6 +42,7 @@ def cmd_model_to_schema(schema_dot_table, schema_name, write=False, force_write=
 
     SchemaMethods.pprint(schema)
 
+
 @click.command('schema')
 @click.argument('schema_name')
 @click.option('-p', '--schema_path', default=None, help="chemin vers les elements du schema: '$meta', 'properties[<key>]'")
@@ -106,10 +107,9 @@ def cmd_check(_schema_name=None):
                 else '?'
             )
 
-        print(
-            '{schema_name:40s} definition: {definition_schema_valid}, sample (json_schema): {valid_sample_jsonschema}, sample (marshmallow): {valid_sample_marshmallow}'
-            .format(**schema_infos)
-        )
+        txt = '{schema_name:40s} definition: {definition_schema_valid}, '.format(**schema_infos)
+        txt += 'sample (json_schema): {valid_sample_jsonschema}, sample (marshmallow): {valid_sample_marshmallow}'.format(**schema_infos)
+        print(txt)
 
         if error_definition:
             print('  - Erreur schema\n', error_definition)
@@ -211,7 +211,12 @@ def cmd_explore_data(schema_name, attr_name=None, limit=10, print_txt=False):
     '{column_key}' AS field_name,
     (SELECT COUNT(*) FROM {schema_dot_table} WHERE {column_key} IS NOT NULL) AS nb_not_null,
     (SELECT COUNT(*) FROM {schema_dot_table}) AS nb_total,
-    (SELECT ARRAY_AGG(DISTINCT {column_key}::varchar) FROM (SELECT DISTINCT {column_key} FROM {schema_dot_table} WHERE {column_key} IS NOT NULL LIMIT {limit})a) AS sample
+    (SELECT ARRAY_AGG(DISTINCT {column_key}::varchar)
+        FROM (SELECT
+            DISTINCT {column_key}
+            FROM {schema_dot_table}
+            WHERE {column_key} IS NOT NULL LIMIT {limit}
+        )a) AS sample
 """
             .format(
                 column_key=column_key,

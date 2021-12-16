@@ -14,6 +14,7 @@
         ></modules-map>
       </div>
 
+
       <div style="min-width: 50%;">
         <h4 *ngIf="displayTitle">{{componentTitle}}</h4>
 
@@ -26,7 +27,14 @@
         </div>
       </div>
 
+      <div>
+        <pre>
+          {{layoutData.commune|json}}
+        </pre>
+      </div>
+
     </div>
+
 
 </div>
 

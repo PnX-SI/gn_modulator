@@ -123,7 +123,6 @@
                            ]
                         },
                         {
-                            "direction": "row",
                             "items": [
                                 {
                                     "key": "id_dataset",
@@ -230,7 +229,14 @@
                             "title": "Localisation",
                             "direction": "row",
                             "items": [
-                                { "items": ["cd_com", "pk", "pr", "pr_abs"] }
+                                { "items": ["cd_com", "pk", "pr", "pr_abs"] },
+                                { "items":
+                                    [
+                                        { "key": "commune", "label": "Commune", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "COM"}] },
+                                        { "key": "departement", "label": "Département", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "DEP"}] },
+                                        { "label": "Axe routier", "key_value": "routes.route_name" }
+                                    ]
+                                }
                             ]
                         }
                         // {
@@ -483,7 +489,9 @@
             "foreign_key": "id_area",
             "first": "schemas.sipaf.pf",
             "cor_schema_name": "sipaf",
-            "cor_table_name": "cor_area_pf"
+            "cor_table_name": "cor_area_pf",
+            // "area_types": ["REG", "DEP", "COM"]
+            "trigger": "intersect_ref_geo"
         },
         "routes": {
             "label": "Routes",

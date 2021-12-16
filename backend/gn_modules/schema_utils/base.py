@@ -281,7 +281,6 @@ class SchemaBase():
         relation_name, _ = self .parse_foreign_key(foreign_key)
         return self.cls()(relation_name)
 
-
     @classmethod
     def process_schema_config(cls, data, key=None):
         '''
@@ -330,3 +329,22 @@ class SchemaBase():
                 data = int(data)
 
         return data
+
+    def dependencies(self, exclude_deps=[]):
+        deps = [self.schema_name()]
+        for key, relation_def in self.relationships().items():
+            rel = relation_def['rel']
+
+            if rel in deps + exclude_deps:
+                continue
+
+            deps.append(rel)
+            deps += (
+                self.cls()(relation_def['rel'])
+                .dependencies(exclude_deps=deps + exclude_deps)
+            )
+
+        if self.schema_name() in deps:
+            deps.remove(self.schema_name())
+
+        return list(dict.fromkeys(deps))

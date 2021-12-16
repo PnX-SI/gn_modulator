@@ -62,38 +62,38 @@ export class ModulesDataService {
     );
   }
 
-  post(schemaName, data) {
+  post(schemaName, data, params = {}) {
     return this.dataRequest(
       schemaName,
       'post',
       'rest',
       {
-        data
+        params
       }
     );
   }
 
-  patch(schemaName, value, data, field_name=null) {
+  patch(schemaName, value, data, params = {}) {
     return this.dataRequest(
       schemaName,
       'patch',
       'rest',
       {
         value,
-        params: { field_name },
+        params,
         data
       }
     );
   };
 
-  delete(schemaName, value, field_name=null) {
+  delete(schemaName, value, params = {}) {
     return this.dataRequest(
       schemaName,
       'delete',
       'rest',
       {
         value,
-        params: { field_name }
+        params
       }
     );
   };

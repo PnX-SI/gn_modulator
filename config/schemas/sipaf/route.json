@@ -8,7 +8,7 @@
     "genre": "F",
     "label": "route",
     "geometry_field_name": "geom",
-    "label_field_name": "nom_route"
+    "label_field_name": "route_name"
   },
   "properties": {
     "id_route": {
@@ -16,7 +16,7 @@
       "label": "ID enfant",
       "primary_key": true
     },
-    "nom_route": {
+    "route_name": {
       "label": "Code route",
       "type": "string"
     },

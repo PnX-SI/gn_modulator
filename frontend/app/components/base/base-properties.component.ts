@@ -49,7 +49,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
       return of(null)
     }
 
-    const fields = this.getLayoutFields(this.layout)
+    const fields = this.getLayoutFields(this.layout, true)
     if (this.hasGeometry) {
       fields.push(this.geometryFieldName());
     }
@@ -72,11 +72,18 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     this.layoutData = {};
     for (const field of this.getLayoutFields(this.layout)) {
       var key = field.key || field;
-      var keyProp = field.split('.')[0];
+      var keyValue = field.key_value || field.key || field;
+      console.log(key, keyValue)
+      var keyProp = keyValue.split('.')[0];
       const property = this.schemaConfig.schema.properties[keyProp];
+      var label = field.label || property.label;
+      const value =
+        field.filters
+          ? utils.getAttr(utils.filtersAttr(this.data, field.filters), keyValue)
+          : utils.getAttr(this.data, keyValue)
       this.layoutData[key] = {
-        label: property.label,
-        value: utils.getAttr(this.data, key)
+        label,
+        value
       }
     }
     // this.dataSource = this.schemaConfig.utils.columns_array.map(

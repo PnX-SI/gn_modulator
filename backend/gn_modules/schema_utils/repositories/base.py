@@ -80,45 +80,44 @@ class SchemaRepositoriesBase():
             test if data different from model
         '''
 
-        for key, data_value in data.items():
+        if isinstance(data, dict) and not isinstance(model, dict):
+            for key, data_value in data.items():
+                m = self.serialize(model, fields=[key])[key]
+                if self.is_new_data(m, data_value):
+                    return True
+            return False
 
-            if isinstance(data_value, dict):
-                print(self, 'dict', data)
+        if isinstance(data, list):
+            print('list', model, data)
 
-                m = getattr(model, key)
-                return self.is_new_data(m, data_value)
-
-            if isinstance(data_value, list):
-
-                # test list
-                if not isinstance(getattr(model, key), list):
-                    # raise error ?
-                    return False
-
-                # test taille
-                if len(data_value) != len(getattr(model, key)):
-                    return False
-
-                # test s'il y a une correspondance pour chaque element
-                for data_elem in data_value:
-                    is_new_data = True
-                    for model_elem in getattr(model, key):
-                        if not is_new_data:
-                            break
-                        is_new_data = is_new_data and self.is_new_data(model_elem, data_elem)
-
-                    if is_new_data:
-                        return True
-
+            # test list
+            if not isinstance(model, list):
+                # raise error ?
                 return False
 
-            # element à element
-            model_value, _ = self.custom_getattr(model, key)
+            # test taille
+            if len(data) != len(model):
+                return False
 
-            # pour les uuid la comparaison directe donne non egal en cas d'égalité
-            # (pourquoi??) d'ou transformation en string pour la comparaison
-            if str(model_value) != str(data_value):
-                return True
+            # test s'il y a une correspondance pour chaque element
+            for data_elem in data:
+                is_new_data = True
+                for model_elem in model:
+                    if not is_new_data:
+                        break
+                    is_new_data = is_new_data and self.is_new_data(model_elem, data_elem)
+
+                if is_new_data:
+                    return True
+
+            return False
+
+        # element à element
+        # pour les uuid la comparaison directe donne non egal en cas d'égalité
+        # (pourquoi??) d'ou transformation en string pour la comparaison
+        if not (model == data or str(model) == str(data)):
+            print('elem diff', data, model)
+            return True
 
         return False
 
@@ -131,6 +130,7 @@ class SchemaRepositoriesBase():
         self.validate_data(data)
         m = self.get_row(value, field_name=field_name)
         if not self.is_new_data(m, data):
+            print('not new')
             return m, False
         self.unserialize(m, data)
         DB.session.commit()

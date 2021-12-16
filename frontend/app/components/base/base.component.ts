@@ -87,14 +87,21 @@ export class BaseComponent implements OnInit {
     setTimeout(()=> {});
   }
 
-  getLayoutFields(layout) {
+  getLayoutFields(layout, keysOnly=false) {
     if (this.getLayoutType(layout) == 'array') {
-      return utils.flat(layout.map(l => this.getLayoutFields(l)))
+      return utils.flatAndRemoveDoublons(layout.map(l => this.getLayoutFields(l, keysOnly)))
     }
     if (this.getLayoutType(layout) == 'obj') {
-      return utils.flat(layout.items.map(l => this.getLayoutFields(l)))
+      return utils.flatAndRemoveDoublons(layout.items.map(l => this.getLayoutFields(l, keysOnly)))
     }
-    return layout.key || layout;
+    if (! keysOnly) {
+      return layout
+    }
+    var keys = [layout.key_value || layout.key || layout];
+    if (layout.filters) {
+      keys = [ ...keys, ...layout.filters.map(f => f.key) ];
+    }
+    return utils.flatAndRemoveDoublons(keys);
   };
 
   getLayoutType(layout) {

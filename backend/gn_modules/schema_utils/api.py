@@ -193,6 +193,7 @@ class SchemaApi():
         def post_rest(self_mv, info_role):
 
             data = request.get_json()
+            params = self.parse_request_args(request)
 
             try:
                 m = self.insert_row(data, info_role=info_role)
@@ -200,11 +201,16 @@ class SchemaApi():
             except SchemaUnsufficientCruvedRigth as e:
                 return 'Erreur Cruved : {}'.format(str(e)), 403
 
-            return self.serialize(m)
+            return self.serialize(
+                m,
+                fields=params.get('fields'),
+                as_geojson=params.get('as_geojson')
+            )
 
         def patch_rest(self_mv, info_role, value):
 
             data = request.get_json()
+            params = self.parse_request_args(request)
             field_name = request.args.get('field_name')
 
             try:
@@ -213,14 +219,23 @@ class SchemaApi():
             except SchemaUnsufficientCruvedRigth as e:
                 return 'Erreur Cruved : {}'.format(str(e)), 403
 
-            return self.serialize(m)
+            return self.serialize(
+                m,
+                fields=params.get('fields'),
+                as_geojson=params.get('as_geojson')
+            )
 
         def delete_rest(self_mv, info_role, value):
 
             field_name = request.args.get('field_name')
+            params = self.parse_request_args(request)
 
             m = self.get_row(value, field_name=field_name, info_role=info_role)
-            dict_out = self.serialize(m)
+            dict_out = self.serialize(
+                m,
+                fields=params.get('fields'),
+                as_geojson=params.get('as_geojson')
+            )
 
             try:
                 self.delete_row(info_role, value, field_name=field_name)
@@ -310,4 +325,3 @@ class SchemaApi():
                     return txt_error, 500
 
         return jsonify(out)
-

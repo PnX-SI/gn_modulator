@@ -1,6 +1,6 @@
 from .base import SchemaConfigBase
 from .filters import SchemaConfigFilters
-from .layout import  SchemaConfigLayout
+from .layout import SchemaConfigLayout
 
 
 class SchemaConfig(

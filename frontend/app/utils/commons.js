@@ -1,5 +1,4 @@
 import * as fastDeepEqual from '@librairies/fast-deep-equal/es6';
-import { RadiosComponent } from 'angular7-json-schema-form';
 
 const isObject = (obj) => {
   return (
@@ -17,16 +16,84 @@ const copy = (obj) => {
 }
 
 const getAttr = (obj, paths) => {
-  var inter = obj;
-  for (const path of paths.split('.')) {
-    try {
-      inter = inter[path];
-    }
-    catch {
-      return null;
-    }
+
+  if (!paths) {
+    return obj
   }
-  return inter;
+
+  if (!obj) {
+    return obj
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(elem => getAttr(elem, paths))
+  }
+
+  const vPaths = paths.split('.');
+  const path = vPaths.shift();
+  const nextPaths = vPaths.join('.')
+  const inter = obj[path];
+
+  return getAttr(inter, nextPaths);
+
+}
+
+
+const condAttr = (obj, paths, value) => {
+
+
+  // on est au bout du chemin -> test sur les valeurs
+  if(!paths) {
+    return obj == value;
+  }
+
+  if (Array.isArray(obj)) {
+    const cond = obj.some(elem => condAttr(elem, paths, value));
+    // console.log('condAttr array', {cond, paths, value}, obj)
+
+    return cond
+  }
+
+  const vPaths = paths.split('.');
+  const path = vPaths.shift();
+  const nextPaths = vPaths.join('.')
+  const inter = obj[path];
+
+  const cond = condAttr(inter, nextPaths, value);
+  // console.log('condAttr obj', {cond, paths, value}, obj)
+
+  return cond
+}
+
+const filtersAttr = (obj, filters) => {
+  var obj_ = copy(obj)
+  for (const filter of filters) {
+    obj_ = filterAttr(obj_, filter.key, filter.value)
+  }
+  return obj_;
+}
+
+const filterAttr = (obj, paths, value) => {
+  if (!condAttr(obj, paths, value)) {
+    return
+  }
+
+  if(!paths) {
+    return obj
+  }
+
+  if( Array.isArray(obj) ) {
+    return obj.filter(elem => condAttr(elem, paths, value))
+  }
+
+  const vPaths = paths.split('.');
+  const path = vPaths.shift();
+  const nextPaths = vPaths.join('.')
+  const inter = obj[path];
+
+  obj[path] = filterAttr(inter, nextPaths, value)
+
+  return obj;
 }
 
 const setAttr = (obj, paths, value) => {
@@ -49,11 +116,23 @@ const flat = (array) => {
   return [].concat.apply([], array);
 }
 
+const removeDoublons = (array) => {
+  return [... new Set(array)]
+}
+
+const flatAndRemoveDoublons = (array) => {
+  return removeDoublons(flat(array));
+}
+
 export default {
   fastDeepEqual,
   copy,
-  isObject,
+  filterAttr,
+  filtersAttr,
+  flat,
+  flatAndRemoveDoublons,
   getAttr,
+  isObject,
+  removeDoublons,
   setAttr,
-  flat
 }

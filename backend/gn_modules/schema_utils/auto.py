@@ -65,8 +65,6 @@ class SchemaAuto():
 
         properties = cls.c_autoproperties(Model)
 
-
-
         return {
             '$meta': {
                 "sql_table_name": sql_table_name,
@@ -107,8 +105,8 @@ class SchemaAuto():
             }
 
             if(schema_type['type'] == 'geometry'):
-                property['srid']=schema_type['srid']
-                property['geometry_type']=schema_type['geometry_type']
+                property['srid'] = schema_type['srid']
+                property['geometry_type'] = schema_type['geometry_type']
 
             # primary_key
 

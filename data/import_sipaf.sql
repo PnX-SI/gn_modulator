@@ -155,21 +155,21 @@ SELECT
 
 -- cor area_sipaf
 
-WITH areas AS (
-	SELECT *
-	FROM ref_geo.l_areas
-	JOIN ref_geo.bib_areas_types bat
-		ON bat.id_type = l_areas.id_type
-	WHERE bat.type_code IN ('REG', 'DEP', 'COM')
-	AND enable IS TRUE
-	)
-INSERT INTO sipaf.cor_area_pf (id_pf, id_area)
-SELECT id_pf, id_area--, area_name
-FROM sipaf.t_passages_faune tpf
-JOIN areas
-	ON ST_INTERSECTS(st_transform(tpf.geom, 2154), areas.geom)
-ORDER BY id_pf
-;
+-- WITH areas AS (
+-- 	SELECT *
+-- 	FROM ref_geo.l_areas
+-- 	JOIN ref_geo.bib_areas_types bat
+-- 		ON bat.id_type = l_areas.id_type
+-- 	WHERE bat.type_code IN ('REG', 'DEP', 'COM')
+-- 	AND enable IS TRUE
+-- 	)
+-- INSERT INTO sipaf.cor_area_pf (id_pf, id_area)
+-- SELECT id_pf, id_area--, area_name
+-- FROM sipaf.t_passages_faune tpf
+-- JOIN areas
+-- 	ON ST_INTERSECTS(st_transform(tpf.geom, 2154), areas.geom)
+-- ORDER BY id_pf
+-- ;
 
 -- cor cor_route_pf
 

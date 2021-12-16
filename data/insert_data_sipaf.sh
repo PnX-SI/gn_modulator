@@ -45,18 +45,23 @@ if [ ! -d "${geonature_dir}" ]; then
     exit 1;
 fi
 
+
+. ${geonature_dir}/config/settings.ini
+export PGPASSWORD=${user_pg_pass};
+
 # 1) ods -> csv
+
+if [ ! -f "${source_csv}" ]; then
 
 log_process 'ODS -> CSV'
 # --infilter pour gérer les accents
 # https://unix.stackexchange.com/questions/259361/specify-encoding-with-libreoffice-convert-to-csv
 # libreoffice --convert-to csv:"59" --infilter=CSV:44,34,76,1 --outdir ${data_dir}/sources ${source_ods}
-gn_venv && deactivate
 unoconv -f csv -e FilterOptions="59,34,0,0" ${source_ods}
 
+fi
+
 # 2) csv -> sql
-. ${geonature_dir}/config/settings.ini
-export PGPASSWORD=${user_pg_pass};
 
 echo "DROP TABLE IF EXISTS public.tmp_import_sipaf;" > ${source_sql}
 csvsql ${source_csv} --no-constraints --tables public.tmp_import_sipaf | sed \
@@ -64,6 +69,7 @@ csvsql ${source_csv} --no-constraints --tables public.tmp_import_sipaf | sed \
     -e 's/BOOLEAN/VARCHAR/g' \
     -e 's/, /,/g' \
     -e 's/"//g' >> ${source_sql}
+
 
 cp ${source_csv} /tmp/source.csv
 
