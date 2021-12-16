@@ -1,7 +1,6 @@
 
 
-<div class="element-container" *ngIf='componentInitialized; else loadingBlock'>
-
+<div class="element-container" *ngIf='componentInitialized; else loadingBlock' [attr.id]="elemId">
   <div style="display: flex; flex-direction: row;">
 
       <div style="width: 50%;" *ngIf="hasGeometry()">
@@ -15,7 +14,7 @@
       </div>
 
 
-      <div style="min-width: 50%;">
+      <div [ngStyle]="{'min-width': '50%', 'overflow-y': 'scroll', 'height': height}">
         <h4 *ngIf="displayTitle">{{componentTitle}}</h4>
 
         <div class="properties">

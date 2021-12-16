@@ -39,7 +39,6 @@ export class ModulesMapComponent implements OnInit {
         drawOptions: this.drawOptions,
       }
     );
-
   }
 
   processLayersData() {
@@ -66,6 +65,11 @@ export class ModulesMapComponent implements OnInit {
       if(['layersData'].includes(key)) {
         this.processLayersData()
       }
+
+      if(key == 'height') {
+        setTimeout(() => {this._mapService.getMap(this.mapId).invalidateSize()}, 500);
+      }
+
     }
   }
 }

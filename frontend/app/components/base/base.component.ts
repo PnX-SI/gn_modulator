@@ -40,7 +40,6 @@ export class BaseComponent implements OnInit {
 
   @Output() onEvent: EventEmitter<any> = new EventEmitter<any>();
 
-
   processedEntries = ['moduleName', 'schemaName', 'value', 'filters'];
 
   componentInitialized = false;
@@ -51,6 +50,8 @@ export class BaseComponent implements OnInit {
   layersData = null;
 
   fields;
+
+  elemId;
 
   schemaConfig = null;
   moduleConfig = null;
@@ -72,11 +73,28 @@ export class BaseComponent implements OnInit {
     protected _mRoute: ModulesRouteService,
   ) {
     this._name = 'BaseComponent';
+    this.elemId = `elem_${Math.random()}`.replace('.', '')
   }
 
   ngOnInit() {
     this.process();
   }
+
+  setFullHeight() {
+    // this.height = '800px'
+    // this.height = '100%'
+    console.log(this.elemId);
+    utils.waitForElement(this.elemId).then((elem) => {
+      const height = document.body.clientHeight - document.getElementById(this.elemId).offsetTop;
+      this.height = height -20 + "px";
+      console.log("aa",  this.height)
+    })
+    // document.getElementById("object").style.height = height - 20 + "px";
+
+
+  // this.heightMap = height - 60 + "px";
+  }
+
 
   id() {
     return this.data[this.schemaConfig.utils.pk_field_name];

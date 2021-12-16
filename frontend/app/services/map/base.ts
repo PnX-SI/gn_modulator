@@ -82,7 +82,6 @@ export default {
     return this.getMap(mapId) && this.getMap(mapId).getBounds()
   },
 
-
   initMap(
     mapId,
     {
