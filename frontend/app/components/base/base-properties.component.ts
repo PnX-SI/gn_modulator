@@ -73,7 +73,6 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     for (const field of this.getLayoutFields(this.layout)) {
       var key = field.key || field;
       var keyValue = field.key_value || field.key || field;
-      console.log(key, keyValue)
       var keyProp = keyValue.split('.')[0];
       const property = this.schemaConfig.schema.properties[keyProp];
       var label = field.label || property.label;

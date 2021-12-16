@@ -20,6 +20,8 @@ export class BaseLayoutComponent extends BaseComponent implements OnInit {
   layoutType;
   layoutTxt;
 
+  @Input() direction;
+
 constructor(
   _route: ActivatedRoute,
   _commonService: CommonService,

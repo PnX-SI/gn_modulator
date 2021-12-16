@@ -1,3 +1,7 @@
+.element-container {
+    background-color: white;
+}
+
 .debug {
     background-color: black;
     color:lightgreen;
@@ -11,15 +15,44 @@
     padding: 1px;
 }
 
-.layout > div {
+div.layout-array {
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
-.layout > div.layout-row {
+div.layout-row {
     flex-direction: row;
 }
 
-.layout > div.layout-row > div {
+div.layout-array > div {
     flex: auto;
+}
+
+fieldset {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px
+}
+
+
+
+fieldset > legend {
+    width: auto;
+    margin-left: 20px;
+    padding: 0 5px;
+}
+
+.layout-key {
+    padding: 5px
+}
+
+.layout-key-label {
+    color: rgb(100, 100, 100);
+    font-style: italic;
+}
+
+.layout-key-value {
+    padding-left: 10px
 }

@@ -1,44 +1,108 @@
-<div class=layout>
-    <div *ngIf="debug" class="debug">
-        {{_name}} {{layoutType}} {{layout | json}}
-    </div>
 
-    <h4 *ngIf='layout && layout.title'>{{layout.title}}</h4>
+<!--
+    base layout : pour la disposition des élément
+        - de propriété
+        - de page ??
+ -->
 
-    <div [ngClass]="{'layout-row': layoutType == 'obj' && layout.direction == 'row'}">
 
-        <ng-template [ngIf]="layoutType == 'array'">
+ <!-- Debug -->
 
-            <modules-base-layout
-                *ngFor="let item of layout"
-                [layout]="item"
-                [layoutData]="layoutData"
-                [debug]=debug
-            ></modules-base-layout>
+ <div *ngIf="debug" class="debug">
+    {{_name}} {{layoutType}} {{layout.type}} {{layout | json}}
+</div>
 
-        </ng-template>
 
-        <ng-template [ngIf]="layoutType == 'obj'">
+<!-- Switch sur layoutType-->
 
-            <div *ngFor="let item of layout.items">
+<ng-container [ngSwitch]="layoutType">
+
+    <!-- Array -->
+
+    <ng-container *ngSwitchCase="'array'">
+
+        <div [ngClass]="{'layout-row': direction == 'row', 'layout-array': true }">
+            <div *ngFor="let item of layout">
                 <modules-base-layout
                     [layout]="item"
                     [layoutData]="layoutData"
                     [debug]=debug
                 ></modules-base-layout>
             </div>
+        </div>
 
-        </ng-template>
-
-        <ng-template [ngIf]="layoutType == 'key'">
-            <!-- {{layoutTxt}} -->
-            <p><b>{{data.label}}</b> : {{ data.value || ''}}</p>
-        </ng-template>
-
-        <ng-template [ngIf]="layoutType == null">
-            layout null
-        </ng-template>
+    </ng-container>
 
 
-    </div>
-</div>
+    <!-- Object -->
+
+    <ng-container *ngSwitchCase="'obj'">
+
+        <!-- obj - fieldset -->
+
+        <ng-container *ngIf="layout.type == 'fieldset'">
+
+            <fieldset>
+
+                <legend *ngIf="layout.title" > {{ layout.title }} </legend>
+
+                <modules-base-layout
+                    [layout]="layout.items"
+                    [direction]="layout.direction"
+                    [layoutData]="layoutData"
+                    [debug]=debug
+                ></modules-base-layout>
+
+            </fieldset>
+
+        </ng-container>
+
+
+        <!-- obj - default -->
+        <ng-container *ngIf="[null, undefined].includes(layout.type)">
+
+            <h4 *ngIf="layout.title"> {{ layout.title }} </h4>
+
+            <modules-base-layout
+                [layout]="layout.items"
+                [direction]="layout.direction"
+                [layoutData]="layoutData"
+                [debug]=debug
+            ></modules-base-layout>
+
+        </ng-container>
+    </ng-container>
+
+
+    <!-- Element -->
+
+    <ng-container *ngSwitchCase="'key'">
+        <!-- {{layoutTxt}} -->
+        <!-- <div><b>{{data.label}}</b> : {{ data.value || ''}}</div> -->
+        <div class="layout-key">
+            <div class="layout-key-label">{{data.label}}</div>
+            <div class="layout-key-value">{{ data.value || 'Non renseigné'}}</div>
+        </div>
+
+    </ng-container>
+
+
+    <!-- Null (erreur) TODO -->
+
+    <ng-container *ngSwitchCase="null">
+        layout null
+    </ng-container>
+
+</ng-container>
+
+
+
+
+
+
+
+
+
+
+
+

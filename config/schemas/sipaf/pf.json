@@ -186,6 +186,7 @@
             "layout": [
                 {
                    "title": "Informations",
+                   "type": "fieldset",
                    "items": [
                         {
                             "direction": "row",
@@ -204,21 +205,26 @@
                 },
                 {
                     "title": "Type",
-                    "direction": "row",
+                    "type": "fieldset",
                     "items": [
-                        "lb_typ_ouv",
-                        "pi_ou_ps",
-                        "oh",
-                        "specificit"
+                        {
+                            "direction": "row",
+                            "items": [
+                                "lb_typ_ouv",
+                                "pi_ou_ps",
+                                "oh",
+                                "specificit"
+                            ]
+                        },
+                        "nomenclature_materiaux.label_fr"
                     ]
                 },
-                "nomenclature_materiaux.label_fr",
-                // { "key": "id_nomenclature_materiaux", "type": "list-form", "nomenclature_type": "PF_MATERIAUX"},
                 {
                     "direction": "row",
                     "items": [
                         {
                             "title": "Dimensions",
+                            "type": "fieldset",
                             "items": [
                                 { "direction": "row", "items": ["diam", "long_franch"]},
                                 { "direction": "row", "items": ["larg_ouvrag", "haut_ouvrag"]},
@@ -228,6 +234,7 @@
                         {
                             "title": "Localisation",
                             "direction": "row",
+                            "type": "fieldset",
                             "items": [
                                 { "items": ["cd_com", "pk", "pr", "pr_abs"] },
                                 { "items":
@@ -246,6 +253,7 @@
                 },
                 {
                     "title": "Banquette (OH)",
+                    "type": "fieldset",
                     "direction": "row",
                     "items": [
                         "nomenclature_oh_position.label_fr",
