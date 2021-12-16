@@ -100,7 +100,16 @@ SELECT
     pi_ou_ps,
 	CASE
 		WHEN (sipaf.correct_number(X) IS NOT NULL) AND (sipaf.correct_number(Y) IS NOT NULL)
-			THEN ST_SetSRID(ST_Point(sipaf.correct_number(X), sipaf.correct_number(Y)), 4326)
+			THEN ST_TRANSFORM(
+					ST_SetSRID(
+						ST_Point(
+							sipaf.correct_number(X),
+							sipaf.correct_number(Y)
+						)
+						, 4326
+					),
+					4326
+				)
 		ELSE
 			NULL
 	END as geom,
@@ -153,25 +162,8 @@ SELECT
 	JOIN gn_meta.t_datasets d on d.dataset_name = 'test jdd passage faune'
     WHERE i.id_pf IS NOT NULL;
 
--- cor area_sipaf
 
--- WITH areas AS (
--- 	SELECT *
--- 	FROM ref_geo.l_areas
--- 	JOIN ref_geo.bib_areas_types bat
--- 		ON bat.id_type = l_areas.id_type
--- 	WHERE bat.type_code IN ('REG', 'DEP', 'COM')
--- 	AND enable IS TRUE
--- 	)
--- INSERT INTO sipaf.cor_area_pf (id_pf, id_area)
--- SELECT id_pf, id_area--, area_name
--- FROM sipaf.t_passages_faune tpf
--- JOIN areas
--- 	ON ST_INTERSECTS(st_transform(tpf.geom, 2154), areas.geom)
--- ORDER BY id_pf
--- ;
-
--- cor cor_route_pf
+-- TODO TRIGGER ??
 
 DELETE FROM sipaf.cor_route_pf;
 
@@ -182,8 +174,7 @@ INSERT INTO sipaf.cor_route_pf(
 SELECT
 	id_pf,
 	id_route
-FROM sipaf.t_passages_faune tpf
-JOIN sipaf.l_routes r
-    ON ST_DISTANCE(r.geom, tpf.geom) < 0.01
-		AND ST_DISTANCESPHERE(r.geom, tpf.geom) < 1000
+FROM sipaf.l_routes r
+JOIN sipaf.t_passages_faune tpf
+    ON ST_DWITHIN(r.geom, st_transform(tpf.geom, 2154), 100)
 ;

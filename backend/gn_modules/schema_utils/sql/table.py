@@ -93,6 +93,11 @@ CREATE TABLE IF NOT EXISTS {cor_schema_dot_table} (
 );
 
 
+---- {cor_schema_dot_table} primary keys contraints
+
+ALTER TABLE {cor_schema_dot_table}
+    ADD CONSTRAINT pk_{cor_schema_name}_{cor_table_name}_{local_key}_{foreign_key} PRIMARY KEY ({local_key}, {foreign_key});
+
 ---- {cor_schema_dot_table} foreign keys contraints
 
 ALTER TABLE {cor_schema_dot_table}

@@ -63,7 +63,8 @@ CREATE TABLE sipaf.t_passages_faune (
 CREATE TABLE sipaf.l_routes (
     id_route SERIAL NOT NULL,
     route_name VARCHAR,
-    geom GEOMETRY(GEOMETRY, 4326)
+    geom GEOMETRY(GEOMETRY, 2154),
+    geom_simple GEOMETRY(GEOMETRY, 2154)
 );
 
 
@@ -146,6 +147,11 @@ CREATE TABLE IF NOT EXISTS sipaf.cor_area_pf (
 );
 
 
+---- sipaf.cor_area_pf primary keys contraints
+
+ALTER TABLE sipaf.cor_area_pf
+    ADD CONSTRAINT pk_sipaf_cor_area_pf_id_pf_id_area PRIMARY KEY (id_pf, id_area);
+
 ---- sipaf.cor_area_pf foreign keys contraints
 
 ALTER TABLE sipaf.cor_area_pf
@@ -164,6 +170,11 @@ CREATE TABLE IF NOT EXISTS sipaf.cor_route_pf (
     id_route INTEGER NOT NULL
 );
 
+
+---- sipaf.cor_route_pf primary keys contraints
+
+ALTER TABLE sipaf.cor_route_pf
+    ADD CONSTRAINT pk_sipaf_cor_route_pf_id_pf_id_route PRIMARY KEY (id_pf, id_route);
 
 ---- sipaf.cor_route_pf foreign keys contraints
 

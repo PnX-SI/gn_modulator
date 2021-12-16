@@ -24,7 +24,13 @@
       "label": "géometrie",
       "type": "geometry",
       "geometry_type": "geometry",
-      "srid": 4326
+      "srid": 2154
+    },
+    "geom_simple": {
+      "label": "géometrie (simplifiée)",
+      "type": "geometry",
+      "geometry_type": "geometry",
+      "srid": 2154
     }
   }
 }

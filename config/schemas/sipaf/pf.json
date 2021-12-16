@@ -241,7 +241,7 @@
                                     [
                                         { "key": "commune", "label": "Commune", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "COM"}] },
                                         { "key": "departement", "label": "Département", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "DEP"}] },
-                                        { "label": "Axe routier", "key_value": "routes.route_name" }
+                                        { "label": "Axe routier", "key": "routes.route_name" }
                                     ]
                                 }
                             ]

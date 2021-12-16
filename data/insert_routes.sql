@@ -11,16 +11,19 @@ WITH raw_routes AS (
 ), routes AS (
     SELECT
 	    num_route,
-	    st_multi(ST_UNION(st_force2d(ST_TRANSFORM(geom, 4326)))) AS geom
+	    st_multi(ST_UNION(st_force2d(geom))) AS geom
+
 	    FROM raw_routes
 	    GROUP BY num_route
 )
 INSERT INTO sipaf.l_routes (
 	route_name,
-	geom
+	geom,
+	geom_simple
 )
 SELECT
 	r.num_route AS area_code,
-	geom
+	geom,
+	ST_SIMPLIFY(geom, 500) AS geom_simple
 FROM routes r
 
