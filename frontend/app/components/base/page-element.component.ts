@@ -41,7 +41,7 @@ export class PageElementComponent extends BaseComponent implements OnInit  {
 
     processEvent(event) {
 
-
+      console.log('processEvent', event)
       const action = this.actions[event.action]
 
       if (!action) {

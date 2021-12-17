@@ -15,9 +15,9 @@
     <modules-base-form
         *ngSwitchCase="'form'"
         [debug]="debug"
+        [displayTitle]="true"
         [height]="height"
         [schemaName]="schemaName"
-        [displayTitle]="true"
         [value]="value"
         (onEvent)="processEvent($event)"
 
@@ -26,6 +26,7 @@
     <modules-base-properties
         *ngSwitchCase="'properties'"
         [debug]="debug"
+        [displayTitle]="true"
         [height]="height"
         [schemaName]="schemaName"
         [value]="value"

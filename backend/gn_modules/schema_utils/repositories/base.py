@@ -88,7 +88,6 @@ class SchemaRepositoriesBase():
             return False
 
         if isinstance(data, list):
-            print('list', model, data)
 
             # test list
             if not isinstance(model, list):
@@ -162,7 +161,6 @@ class SchemaRepositoriesBase():
 
         # query row number
         field_name = self.pk_field_name()
-        print(value, field_name)
         sub_query = query.subquery()
         res = DB.session.query(sub_query).filter(getattr(sub_query.c, field_name) == value).one()
 

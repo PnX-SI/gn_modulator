@@ -143,10 +143,6 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
           tooltip: (cell) =>
             `Afficher les détail ${this.schemaConfig.display.prep_label} ${this.getCellValue(cell)}`
 
-          // cellClick: (e, cell) => {
-          //   const value = cell._cell.row.data[pkFieldName]
-          //   this.onRowSelected.emit({value, action:"detail"})
-          // }
         },
         {
           headerSort: false,
@@ -160,7 +156,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
           tooltip: (cell) => `Éditer ${this.schemaConfig.display.def_label} ${this.getCellValue(cell)}`
           // cellClick: (e, cell) => {
           //   const value = cell._cell.row.data[pkFieldName]
-          //   this.onRowSelected.emit({value, action:"detail"})
+          //   this.onRowSelected.emit({value, action:"details"})
           // }
         },
 
@@ -170,7 +166,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
       //   hozAlign:"center",
       //   cellClick: (e, cell) => {
       //     const value = cell._cell.row.data[pkFieldName]
-      //     this.onRowSelected.emit({value, action:"detail"})
+      //     this.onRowSelected.emit({value, action:"details"})
       //   }
       // },
       // {
@@ -187,6 +183,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   }
 
   drawTable(): void {
+    console.log(this.size, this.schemaConfig.utils.size)
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
       locale: 'fr',
@@ -256,6 +253,11 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
         // TODO
         this.processValue(this.value)
       }
+      if(key == 'height') {
+        // TODO
+        this.drawTable()
+      }
+
     }
   }
 

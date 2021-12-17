@@ -97,10 +97,15 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     .on(layer.getPopup().getElement(), 'click', (e) => {
       const action =  e && e.target && e.target.attributes.getNamedItem('action').nodeValue;
       if(action) {
-        this.setQueryParams({
-          tab: action,
-          value: value
-        })
+        const event = {
+          action: action,
+          params: {
+            value
+          },
+          component: this._name
+        }
+        console.log('map', event)
+        this.emitEvent(event);
       }
     });
 
@@ -195,7 +200,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     propertiesHTML += '<ul>\n'
     propertiesHTML += popupFields
       .map( fieldKey => {
-        const fieldLabel = this.schemaConfig.schema.properties[fieldKey].label;
+        const fieldLabel = this.schemaConfig.schema.properties[fieldKey].title;
         const fieldValue = properties[fieldKey]
         return `<li>${fieldLabel} : ${fieldValue}</li>`
       })
@@ -205,7 +210,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     const html = `
     <h4>${label || ''}</h4>
     <div>
-      <button action="detail">Detail</button>
+      <button action="details">Detail</button>
       <button action="edit">Edition</button>
     </div>
     ${propertiesHTML}

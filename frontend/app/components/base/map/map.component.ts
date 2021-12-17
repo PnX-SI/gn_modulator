@@ -66,10 +66,16 @@ export class ModulesMapComponent implements OnInit {
         this.processLayersData()
       }
 
-      if(key == 'height') {
-        setTimeout(() => {this._mapService.getMap(this.mapId).invalidateSize()}, 500);
+      if (key == 'drawOptions') {
+        this._mapService.waitForMap((map) => { this._mapService.setDrawOptions(this.mapId, this.drawOptions)} );
       }
 
+      if(key == 'height') {
+        setTimeout(() => {
+          this._mapService.waitForMap(this.mapId)
+            .then((map) => { map.invalidateSize() });
+        }, 500);
+      }
     }
   }
 }

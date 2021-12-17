@@ -63,10 +63,10 @@ class SchemaConfigBase():
                 relation_schema_name = relation_def['rel']
                 relation = self.cls()(relation_schema_name)
                 relation_column = relation.column(key_column)
-                column_def = {'title': relation_def['label'], 'field': key, 'headerFilter': True}
+                column_def = {'title': relation_def['title'], 'field': key, 'headerFilter': True}
             else:
                 column = self.column(key)
-                column_def = {'title': column['label'], 'field': key, 'headerFilter': True}
+                column_def = {'title': column['title'], 'field': key, 'headerFilter': True}
 
             columns.append(column_def)
 

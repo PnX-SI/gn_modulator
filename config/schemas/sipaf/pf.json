@@ -108,6 +108,7 @@
             "layout": [
                 {
                    "title": "Informations",
+                   "type": "fieldset",
                    "items": [
                         {
                             "direction": "row",
@@ -138,20 +139,26 @@
                 },
                 {
                     "title": "Type",
-                    "direction": "row",
+                    "type": "fieldset",
                     "items": [
-                        "lb_typ_ouv",
-                        "pi_ou_ps",
-                        "oh",
-                        "specificit"
+                        {
+                            "direction": "row",
+                            "items": [
+                                "lb_typ_ouv",
+                                "pi_ou_ps",
+                                "oh",
+                                "specificit"
+                            ]
+                        },
+                        { "key": "id_nomenclature_materiaux", "type": "list-form", "nomenclature_type": "PF_MATERIAUX"}
                     ]
                 },
-                { "key": "id_nomenclature_materiaux", "type": "list-form", "nomenclature_type": "PF_MATERIAUX"},
                 {
                     "direction": "row",
                     "items": [
                         {
                             "title": "Dimensions",
+                            "type": "fieldset",
                             "items": [
                                 { "direction": "row", "items": ["diam", "long_franch"]},
                                 { "direction": "row", "items": ["larg_ouvrag", "haut_ouvrag"]},
@@ -160,6 +167,7 @@
                         },
                         {
                             "title": "Localisation",
+                            "type": "fieldset",
                             "direction": "row",
                             "items": [
                                 { "items": ["cd_com", "pk", "pr", "pr_abs"] }
@@ -172,6 +180,7 @@
                 },
                 {
                     "title": "Banquette (OH)",
+                    "type": "fieldset",
                     "direction": "row",
                     "items": [
                         { "key": "id_nomenclature_oh_position", "type": "list-form", "nomenclature_type": "PF_OH_POSITION"},
@@ -292,206 +301,206 @@
     "properties": {
         "id_pf": {
             "type": "integer",
-            "label": "ID PAF",
+            "title": "ID PAF",
             "primary_key": true
         },
         "id_dataset": {
             "type": "integer",
-            "label": "id_dataset",
+            "title": "id_dataset",
             "foreign_key": "schemas/utils/jdd.id_dataset"
         },
         "id_op": {
             "type": "string",
-            "label": "Code de l'ouvrage pour le gestionnaire"
+            "title": "Code de l'ouvrage pour le gestionnaire"
         },
         "an_ref_com": {
             "type": "string",
-            "label": "Année de référence commune"
+            "title": "Année de référence commune"
         },
         "issu_requa": {
             "type": "string",
-            "label": "Issu d'une requalification ?"
+            "title": "Issu d'une requalification ?"
         },
         "id_nomenclature_materiaux": {
             "type": "integer",
-            "label": "Matériaux",
+            "title": "Matériaux",
             "nomenclature_type": "PF_MATERIAUX"
             // "relation_key": "nomenclature_materiaux"
         },
         "nomenclature_materiaux": {
             "rel": "schemas.utils.nomenclature",
-            "label": "Matériaux",
+            "title": "Matériaux",
             "local_key": "id_nomenclature_materiaux"
         },
         "id_nomenclature_oh_position": {
             "type": "integer",
-            "label": "OH Position",
+            "title": "OH Position",
             "nomenclature_type": "PF_OH_POSITION"
         },
         "nomenclature_oh_position": {
             "rel": "schemas.utils.nomenclature",
-            "label": "Position banquette",
+            "title": "Position banquette",
             "local_key": "id_nomenclature_oh_position"
         },
         "id_nomenclature_oh_banq_caract": {
             "type": "integer",
-            "label": "OH Caractrisation banquette",
+            "title": "OH Caractrisation banquette",
             "nomenclature_type": "PF_OH_BANQ_CARACT"
         },
         "nomenclature_oh_banq_caract": {
             "rel": "schemas.utils.nomenclature",
-            "label": "OH Caractrisation banquette",
+            "title": "OH Caractrisation banquette",
             "local_key": "id_nomenclature_oh_banq_caract"
         },
         "id_nomenclature_oh_banq_type": {
             "type": "integer",
-            "label": "OH type de banquette",
+            "title": "OH type de banquette",
             "nomenclature_type": "PF_OH_BANQ_TYPE"
         },
         "nomenclature_oh_banq_type": {
             "rel": "schemas.utils.nomenclature",
-            "label": "OH type de banquette",
+            "title": "OH type de banquette",
             "local_key": "id_nomenclature_oh_banq_type"
         },
 
         "uuid_pf": {
             "type": "uuid",
-            "label": "UUID PF"
+            "title": "UUID PF"
         },
         "pi_ou_ps": {
             "type": "string",
-            "label": "PI ou PF"
+            "title": "PI ou PF"
         },
         "pk": {
             "type": "number",
-            "label": "PK"
+            "title": "PK"
         },
         "pr": {
             "type": "number",
-            "label": "PR"
+            "title": "PR"
         },
         "pr_abs": {
             "type": "number",
-            "label": "PR_abs"
+            "title": "PR_abs"
         },
         "x": {
             "type": "number",
-            "label": "X"
+            "title": "X"
         },
         "y": {
             "type": "number",
-            "label": "Y"
+            "title": "Y"
         },
         "nom_pf": {
             "type": "string",
-            "label": "Nom Passage Faune"
+            "title": "Nom Passage Faune"
         },
         "cd_com": {
             "type": "string",
-            "label": "Code commune"
+            "title": "Code commune"
         },
         "date_creat": {
             "type": "string",
-            "label": "Date de creation"
+            "title": "Date de creation"
         },
         "date_requal": {
             "type": "string",
-            "label": "Date de requalification"
+            "title": "Date de requalification"
         },
         "larg_ouvrag": {
             "type": "number",
-            "label": "Largeur ouvrage"
+            "title": "Largeur ouvrage"
         },
         "haut_ouvrag": {
             "type": "number",
-            "label": "Hauteur ouvrage"
+            "title": "Hauteur ouvrage"
         },
         "long_franch": {
             "type": "number",
-            "label": "Longueur"
+            "title": "Longueur"
         },
         "diam": {
             "type": "number",
-            "label": "Diamètre"
+            "title": "Diamètre"
         },
         "larg_disp": {
             "type": "number",
-            "label": "Largeur disponible"
+            "title": "Largeur disponible"
         },
         "haut_disp": {
             "type": "number",
-            "label": "Hauteur disponible"
+            "title": "Hauteur disponible"
         },
         "specificit": {
             "type": "string",
-            "label": "Spécificité"
+            "title": "Spécificité"
         },
         "lb_typ_ouv": {
             "type": "string",
-            "label": "Type d'ouvrage"
+            "title": "Type d'ouvrage"
         },
         "lb_materiaux": {
             "type": "string",
-            "label": "Matériaux"
+            "title": "Matériaux"
         },
         "ep_materiaux": {
             "type": "number",
-            "label": "Epaisseur matériaux"
+            "title": "Epaisseur matériaux"
         },
         "oh": {
             "type": "string",
-            "label": "Ouvrage hydrolique"
+            "title": "Ouvrage hydrolique"
         },
         "oh_position": {
             "type": "string",
-            "label": "OH position"
+            "title": "OH position"
         },
         "oh_caract": {
             "type": "string",
-            "label": "OH caract"
+            "title": "OH caract"
         },
         "oh_banqu": {
             "type": "string",
-            "label": "OH caract"
+            "title": "OH caract"
         },
         "oh_tirant": {
             "type": "string",
-            "label": "OH tirat"
+            "title": "OH tirat"
         },
         "id_cer": {
             "type": "string",
-            "label": "Reprend id unique du cer"
+            "title": "Reprend id unique du cer"
         },
         "id_corr": {
             "type": "string",
-            "label": "ID Corridor"
+            "title": "ID Corridor"
         },
         "nom_corr": {
             "type": "string",
-            "label": "Nom Corridor"
+            "title": "Nom Corridor"
         },
         "id_resv": {
             "type": "string",
-            "label": "ID resv"
+            "title": "ID resv"
         },
         "nom_resv": {
             "type": "string",
-            "label": "Nom resv"
+            "title": "Nom resv"
         },
         "id_obst": {
             "type": "string",
-            "label": "ID obst"
+            "title": "ID obst"
         },
         "nom_obst": {
             "type": "string",
-            "label": "Nom obst"
+            "title": "Nom obst"
         },
         "comment": {
             "type": "string",
-            "label": "Commentaire"
+            "title": "Commentaire"
         },
         "areas": {
-            "label" : "Areas",
+            "title": "Areas",
             "rel": "schemas.utils.area",
             "local_key": "id_pf",
             "foreign_key": "id_area",
@@ -502,7 +511,7 @@
             "trigger": "intersect_ref_geo"
         },
         "routes": {
-            "label": "Routes",
+            "title": "Routes",
             "rel": "schemas.sipaf.route",
             "local_key": "id_pf",
             "foreign_key": "id_route",
@@ -514,7 +523,7 @@
             "type": "geometry",
             "geometry_type": "point",
             "srid": 4326,
-            "label": "Geométrie"
+            "title": "Geométrie"
         }
     }
 }

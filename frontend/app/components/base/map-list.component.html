@@ -1,10 +1,17 @@
 <div *ngIf="debug" class="debug"> {{ _name }} value {{ value }} filters {{ filters | json }}</div>
 
+<div
+  *ngIf="componentInitialized; else loadingBlock"
+  [attr.id]="elemId"
+  class="element-container"
+>
+
 <div class="map-list-container">
     <div class="map-list-filters">
         <h3> Filtres</h3>
         <modules-base-filters
             [debug]="debug"
+            [height]="height"
             [schemaName]="schemaName"
             (onEvent)="processEvent($event)"
         ></modules-base-filters>
@@ -30,12 +37,16 @@
             [displayFilters]="false"
             [debug]="debug"
             [filters]="filters"
+            [height]="height"
             [short]="true"
+            [size]="13"
             [schemaName]="schemaName"
             [value]="value"
             (onEvent)="processEvent($event)"
         ></modules-base-table>
     </div>
 
+
+</div>
 
 </div>

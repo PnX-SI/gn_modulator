@@ -19,7 +19,7 @@
   },
   "properties": {
     "dataset_name": {
-      "label": "Non du jeu de données"
+      "title": "Nom du jeu de données"
     }
   }
 }

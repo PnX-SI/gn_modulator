@@ -28,8 +28,14 @@ export class ModulesFormService {
     else if ( utils.isObject(layout) ) {
       layout.fxLayoutGap = '5px';
 
+      if (layout.type == 'fieldset') {
+        console.log('fieldset', layout.title)
+        layout.htmlClass='fieldset';
+      }
+
       if ( layout.direction == 'row') {
-        layout.type = 'flex';
+        // layout.type = 'flex';
+        layout.displayFlex = true;
         layout.fxLayoutGap = '5px';
         layout['flex-direction'] = 'row';
       }
@@ -40,6 +46,7 @@ export class ModulesFormService {
     }
 
     else {
+      // layout['title'] = layout['title'] || layout['label'];
       return layout;
     }
 

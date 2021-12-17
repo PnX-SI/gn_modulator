@@ -101,7 +101,7 @@ class SchemaAuto():
 
             property = {
                 'type': schema_type['type'],
-                'label': column.key
+                'title': column.key
             }
 
             if(schema_type['type'] == 'geometry'):

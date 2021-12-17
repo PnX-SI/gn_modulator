@@ -79,8 +79,8 @@ export class TestComponent implements OnInit {
       }),
       mergeMap(() => {
         this.listTab = this._mConfig.schemaConfig(this.schemaName).utils.geometry_field_name
-          ? ['map', 'table', 'detail', 'edit', 'filters', ]
-          : ['table', 'detail', 'edit', 'filters']
+          ? ['map', 'table', 'details', 'edit', 'filters', ]
+          : ['table', 'details', 'edit', 'filters']
         ;
         return of(true)
       }),

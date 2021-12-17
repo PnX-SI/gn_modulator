@@ -1,43 +1,61 @@
-<div *ngIf="componentInitialized; else loadingBlock">
+<div
+  *ngIf="componentInitialized; else loadingBlock"
+  [attr.id]="elemId"
+  class="element-container"
+>
 
-  <div class="form-container">
+  <div class="flex-row-container">
 
     <!-- Carte avec saisie geoman -->
     <div
-      class='map-form'
+      class='map-row-container'
       *ngIf="schemaConfig.utils.geometry_field_name"
     >
-
-      <div>
         <modules-map
           [mapId]="mapId"
           [height]="height"
           [bEdit]="true"
+          [drawOptions]=drawOptions
           [zoom]="zoom"
           [center]="center"
           [layersData]="layersData"
         ></modules-map>
-      </div>
-
     </div>
 
     <!-- Formulaire -->
-    <div class='base-form'>
+      <div class="content-container" [ngStyle]="{'height': height}">
 
       <h4 *ngIf="displayTitle"> {{ componentTitle }} </h4>
 
-      <json-schema-form
-        [schema]="schemaConfig.form.schema"
-        framework="material-design"
-        [(data)]="data"
-        (onSubmit)="onSubmit($event)"
-        (onChanges)="onFormChanges($event)"
-        [layout]="processedLayout"
-        language=fr
-        (isValid)="onIsValid($event)"
-        (validationErrors)="onValidationErrors($event)"
+      <div class="content">
+        <json-schema-form
+          [schema]="schemaConfig.form.schema"
+          framework="material-design"
+          [(data)]="data"
+          (onSubmit)="onSubmit($event)"
+          (onChanges)="onFormChanges($event)"
+          [layout]="processedLayout"
+          language=fr
+          (isValid)="onIsValid($event)"
+          (validationErrors)="onValidationErrors($event)"
+        >
+        </json-schema-form>
+      </div>
+
+      <div class="button-container">
+        <button class="btn btn-success mr-2" (click)="onSubmitClick()"
       >
-      </json-schema-form>
+        Valider
+      </button>
+
+      <button class="btn btn-primary mr-2" (click)="onCancelClick()"
+      >
+        Annuler
+      </button>
+
+
+      </div>
+
 
     </div>
 
@@ -48,7 +66,6 @@
       <pre>{{data | json}}</pre>
     </div>
   </div>
-
 
 </div>
 

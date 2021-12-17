@@ -46,14 +46,21 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
   }
 
   getData() {
+    console.log('getDaa', this.value)
     if(!this.value) {
       return of(null)
     }
 
     const fields = this.getLayoutFields(this.layout, true)
-    if (this.hasGeometry) {
+
+    if(!fields.includes(this.pkFieldName())) {
+      fields.push(this.pkFieldName());
+    }
+
+    if (this.hasGeometry() && !fields.includes(this.geometryFieldName())) {
       fields.push(this.geometryFieldName());
     }
+
     return this._mData.getOne(
       this.schemaName,
       this.value,
@@ -76,25 +83,16 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
       var keyValue = field.key_value || field.key || field;
       var keyProp = keyValue.split('.')[0];
       const property = this.schemaConfig.schema.properties[keyProp];
-      var label = field.label || property.label;
+      var title = field.title || property.title;
       const value =
         field.filters
           ? utils.getAttr(utils.filtersAttr(this.data, field.filters), keyValue)
           : utils.getAttr(this.data, keyValue)
       this.layoutData[key] = {
-        label,
+        title,
         value
       }
     }
-    // this.dataSource = this.schemaConfig.utils.columns_array.map(
-    //   p => ({
-    //     name: p.name,
-    //     label: p.label,
-    //     type: p.type,
-    //     value: this.data[p.name]
-    //   })
-    // );
-    // this.displayedColumns = ['name', 'label', 'type', 'value']
     this.setLayersData(true);
   }
 
@@ -126,5 +124,13 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     }
   }
 
+  onEditClick() {
+    this.emitEvent({
+      action: 'edit',
+      params: {
+        value: this.id()
+      }
+    });
+  }
 
 }

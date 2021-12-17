@@ -9,7 +9,12 @@
 <div *ngIf="pageConfig">
 
 <div>
-    <a class="breadcrumb" *ngFor="let breadcrumb of breadcrumbs" [href]="breadcrumb.url"> {{ breadcrumb.txt }} </a>
+    <ng-container *ngFor="let breadcrumb of breadcrumbs; last as isLast;">
+        <a *ngIf="!!breadcrumb.url" [href]="breadcrumb.url"> {{ breadcrumb.txt }} </a>
+        <a *ngIf="!breadcrumb.url"> {{ breadcrumb.txt }} </a>
+        <ng-container *ngIf="!isLast">/</ng-container>
+    </ng-container>
+
 </div>
 
 <div *ngFor="let element of pageConfig.elements">
@@ -18,7 +23,7 @@
         [elementType]="element.type"
         [schemaName]="element.schema_name"
         [moduleName]="routeData.moduleName"
-        [actions]="element.actions"
+        [actions]="element.actions || actions"
         [value]="value"
         [debug]="debug"
     ></modules-page-element>

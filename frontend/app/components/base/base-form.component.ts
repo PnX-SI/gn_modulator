@@ -31,6 +31,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
   dataSave= null;
 
+  drawOptions=null;
   geometryFormGroup;
   processedLayout = {};
   additionalWidgets = additionalWidgets;
@@ -53,6 +54,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
   }
 
+;
 
   ngOnInit() {
     // charge les widget additionels
@@ -61,6 +63,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       this._widgetLibraryService.registerWidget(key, AdditionalWidget);
     }
     setTimeout(() => {this.bDraw = true}, 3000)
+    this.setFullHeight();
   }
 
   setComponentTitle(): void {
@@ -72,7 +75,34 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
   processConfig(): void {
       this.layout = this.schemaConfig.form.layout
-      this.processedLayout = this._mForm.processLayout(this.layout)
+      this.processedLayout = this._mForm.processLayout(this.layout);
+      console.log(this.processedLayout);
+      if(Array.isArray(this.processedLayout)) {
+        this.processedLayout.push({
+          type: 'submit',
+          classHtml: 'hidden form-submit-button'
+        })
+      }
+  }
+
+  getDrawOptions() {
+    const geometryType = this.geometryType();
+    if (!geometryType) {
+      return
+    }
+    const drawOptions = {
+      drawCircle: false,
+      drawCircleMarker: false,
+      drawRectangle: false,
+      drawMarker: !this.id() && ['geometry', 'point'].includes(geometryType),
+      drawPolygon: !this.id() && ['geometry', 'polygon'].includes(geometryType),
+      drawPolyline: !this.id() && ['geometry', 'polyline'].includes(geometryType),
+      dragMode: geometryType != 'point',
+      cutPolygon: false,
+      removalMode: false,
+      rotateMode: false,
+    }
+    return drawOptions;
   }
 
   getFields() {
@@ -104,7 +134,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   }
 
   processData(data) {
-    this.data = data
+    this.data = data;
+    this.drawOptions = this.getDrawOptions();
     this.setLayersData(true);
   }
 
@@ -187,7 +218,13 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           "success",
           `La requete ${requestType} pour l'object ${this.schemaName} d'id ${this.id()} a bien été effectué`
         );
-
+        // redirect ??
+        this.emitEvent({
+          action: 'details',
+          params: {
+            value: this.id()
+          }
+        })
       },
       (error) => {
         this._commonService.regularToaster(
@@ -197,5 +234,21 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
       });
   }
+
+  onSubmitClick() {
+    // const elems = document.getElementsByClassName('form-submit-button');
+    // elems[0].click();
+    this.onSubmit(null);
+  }
+
+  onCancelClick() {
+    this.emitEvent({
+      action: 'details',
+      params: {
+        value: this.id()
+      }
+    });
+  }
+
 }
 

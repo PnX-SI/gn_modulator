@@ -33,7 +33,9 @@ export class ModulesMapListComponent extends BaseComponent implements OnInit {
     this._name = 'MapList'
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.setFullHeight();
+  }
 
   processEvent(event) {
 

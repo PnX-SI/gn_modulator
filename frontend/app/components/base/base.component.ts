@@ -83,18 +83,15 @@ export class BaseComponent implements OnInit {
   setFullHeight() {
     // this.height = '800px'
     // this.height = '100%'
-    console.log(this.elemId);
     utils.waitForElement(this.elemId).then((elem) => {
       const height = document.body.clientHeight - document.getElementById(this.elemId).offsetTop;
       this.height = height -20 + "px";
-      console.log("aa",  this.height)
     })
     // document.getElementById("object").style.height = height - 20 + "px";
 
 
   // this.heightMap = height - 60 + "px";
   }
-
 
   id() {
     return this.data[this.schemaConfig.utils.pk_field_name];
@@ -134,6 +131,13 @@ export class BaseComponent implements OnInit {
 
   geometryFieldName() {
     return this.schemaConfig.utils.geometry_field_name;
+  }
+
+  geometryType() {
+    if (! this.hasGeometry()) {
+      return;
+    }
+    return this.schemaConfig.schema.properties[this.geometryFieldName()].geometry_type;
   }
 
   hasGeometry() {

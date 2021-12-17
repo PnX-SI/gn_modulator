@@ -3,6 +3,16 @@
   "schemas": {
     "pf": "schemas.sipaf.pf"
   },
+  "actions": {
+      "edit": {
+        "type": "link",
+        "pageName": "edit"
+      },
+      "details": {
+        "type": "link",
+        "pageName": "details"
+      }
+  },
   "pages": {
     "map_list": {
       "label": "SIPAF",
@@ -10,21 +20,12 @@
       "elements": [
         {
           "schema_name": "schemas.sipaf.pf",
-          "type": "map_list",
-          "actions": {
-            "edit": {
-              "type": "link",
-              "pageName": "edit"
-            },
-            "details": {
-              "type": "link",
-              "pageName": "details"
-            }
-          }
+          "type": "map_list"
         }
       ]
     },
     "edit": {
+      "label": "Édition",
       "parent": {
         "pageName": "map_list"
       },
@@ -37,6 +38,7 @@
       ]
     },
     "details": {
+      "label": "Propriétés",
       "parent": {
         "pageName": "map_list"
       },

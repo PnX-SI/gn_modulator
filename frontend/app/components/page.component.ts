@@ -26,7 +26,7 @@ export class PageComponent implements OnInit {
   pageConfig;
   pageName;
   moduleName;
-
+  actions;
   breadcrumbs = [];
 
   ngOnInit() {
@@ -35,10 +35,12 @@ export class PageComponent implements OnInit {
       this.pageName = this.routeData.pageName;
       this.moduleName = this.routeData.moduleName;
       this.pageConfig = this._mConfig.moduleConfig(this.moduleName).pages[this.pageName]
+      this.actions = this._mConfig.moduleConfig(this.moduleName).actions
       this.setBreadcrumbs();
     })
     this._route.params.subscribe((params) => {
       this.value = params.value;
+      this.setBreadcrumbs();
   });
 
     this._route.queryParams.subscribe((params) => {
@@ -47,13 +49,20 @@ export class PageComponent implements OnInit {
   }
 
   setBreadcrumbs() {
+    this.breadcrumbs = []
+    console.log(this.pageConfig)
     if(this.pageConfig.parent) {
-
-      this.breadcrumbs = [{
-        txt: this.pageConfig.parent.pageName,
+      const parentPageConfig = this._mConfig.moduleConfig(this.moduleName).pages[this.pageConfig.parent.pageName]
+      this.breadcrumbs.push({
+        txt: parentPageConfig.label,
         url: this.modulePageUrl(this.moduleName, this.pageConfig.parent.pageName, {})
-      }]
+      });
     }
+
+    this.breadcrumbs.push({
+      txt: `${this.pageConfig.label} ${this.value || ''}`
+    })
+    console.log('uutuutu')
   }
 
   modulePageUrl(moduleName, pageName, params) {

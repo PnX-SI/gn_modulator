@@ -42,7 +42,7 @@
 
         <ng-container *ngIf="layout.type == 'fieldset'">
 
-            <fieldset>
+            <fieldset class="fieldset">
 
                 <legend *ngIf="layout.title" > {{ layout.title }} </legend>
 
@@ -77,10 +77,8 @@
     <!-- Element -->
 
     <ng-container *ngSwitchCase="'key'">
-        <!-- {{layoutTxt}} -->
-        <!-- <div><b>{{data.label}}</b> : {{ data.value || ''}}</div> -->
         <div class="layout-key">
-            <div class="layout-key-label">{{data.label}}</div>
+            <div class="layout-key-title">{{data.title}}</div>
             <div class="layout-key-value">{{ data.value || 'Non renseigné'}}</div>
         </div>
 

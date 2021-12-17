@@ -76,5 +76,6 @@ export class ModulesMapService {
   /** ./map/draw */
 
   initDraw = mapMethods.draw.initDraw;
+  setDrawOptions = mapMethods.draw.setDrawOptions;
 
 }

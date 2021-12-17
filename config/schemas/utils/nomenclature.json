@@ -24,12 +24,6 @@
         "label_field_name": "label_fr"
     },
     "properties": {
-        // "id_nomenclature": { "type": "integer", "label": "ID nomenclature", "primary_key": true },
-        // "id_type": { "type": "integer", "label": "ID type", "foreign_key": "schemas/utils/nomenclature_type.id_type"},
-        // "label_default": { "type": "string", "label": "Label par defaut"},
-        // "label_fr": { "type": "string", "label": "Label (fr)"},
-        // "cd_nomenclature": { "type": "string", "label": "Code nomenclature"},
-        // "mnemonique": { "type": "string", "label": "Mnémonique"},
-        "type": { "local_key": "id_type", "label": "Type", "rel": "schemas.utils.nomenclature_type" }
+        "type": { "local_key": "id_type", "title": "Type", "rel": "schemas.utils.nomenclature_type" }
     }
 }

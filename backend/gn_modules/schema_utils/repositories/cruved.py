@@ -24,14 +24,12 @@ class SchemaRepositoriesCruved():
 
         id_dataset_field_name = self.meta('check_cruved.id_dataset_field_name', 'id_dataset')
 
-        print('cruved info role', info_role, info_role.value_filter)
         # dataset
         allowed_datasets = [
             d.id_dataset for d in TDatasets.query.filter_by_scope(int(info_role.value_filter)).all()
         ]
 
         # TODO add cond for dataset test
-        print(id_dataset_field_name)
         query = query.filter(getattr(Model, id_dataset_field_name).in_(allowed_datasets))
 
 

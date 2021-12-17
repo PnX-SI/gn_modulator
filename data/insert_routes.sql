@@ -18,12 +18,10 @@ WITH raw_routes AS (
 )
 INSERT INTO sipaf.l_routes (
 	route_name,
-	geom,
-	geom_simple
+	geom
 )
 SELECT
 	r.num_route AS area_code,
-	geom,
-	ST_SIMPLIFY(geom, 500) AS geom_simple
+	geom
 FROM routes r
 

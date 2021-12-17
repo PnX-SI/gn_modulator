@@ -105,7 +105,6 @@ class SchemaRepositoriesUtil():
 
             if page and int(page) > 1:
                 offset = (int(page) - 1) * int(size)
-                print('offset', offset)
                 query = query.offset(offset)
 
         return query

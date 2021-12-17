@@ -1,9 +1,13 @@
 
 
 <div class="element-container" *ngIf='componentInitialized; else loadingBlock' [attr.id]="elemId">
-  <div style="display: flex; flex-direction: row;">
 
-      <div style="width: 50%;" *ngIf="hasGeometry()">
+  <div class="flex-row-container">
+
+      <div
+        class='map-row-container'
+        *ngIf="hasGeometry()"
+      >
         <modules-map
           [mapId]="mapId"
           [height]="height"
@@ -14,16 +18,26 @@
       </div>
 
 
-      <div [ngStyle]="{'min-width': '50%', 'overflow-y': 'scroll', 'height': height}">
+      <div class="content-container" [ngStyle]="{'height': height}">
+
         <h4 *ngIf="displayTitle">{{componentTitle}}</h4>
 
-        <div class="properties">
+        <div class="content">
           <modules-base-layout
             [layout]="layout"
             [layoutData]="layoutData"
             [debug]="debug"
           ></modules-base-layout>
         </div>
+
+        <div class="button-container">
+          <button class="btn btn-success small mr-2" (click)="onEditClick()"
+        >
+          Éditer
+        </button>
+
+        </div>
+
       </div>
 
     </div>

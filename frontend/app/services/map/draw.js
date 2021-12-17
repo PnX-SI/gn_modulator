@@ -10,5 +10,9 @@ export default {
     if (!map) return;
     drawOptions = drawOptions || defautDrawOptions;
     map.pm.addControls(drawOptions);
+  },
+
+  setDrawOptions(mapId, drawOptions) {
+    map.pm.setDrawOptions(drawOptions)
   }
 }
