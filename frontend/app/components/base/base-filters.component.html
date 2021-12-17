@@ -1,6 +1,6 @@
 <!-- <div *ngIf="debug" class="debug"> {{ _name }} value {{ value }} filters {{ filters | json }}</div> -->
 
-<div *ngIf="componentInitialized; else loadingBlock">
+<div *ngIf="componentInitialized; else loadingBlock" [ngStyle]="{'height': height, 'overflow-y': 'scroll'}">
     <div class="form-container">
 
         <!-- Formulaire -->
