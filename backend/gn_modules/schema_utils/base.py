@@ -162,7 +162,7 @@ class SchemaBase():
         return property.get('type') in column_types
 
     def is_relationship(self, property):
-        return 'rel' in property
+        return property['type'] == 'relation'
 
     def column_keys(self, sort=False):
         column_keys = [k for k, v in self.properties().items() if self.is_column(v)]
@@ -258,28 +258,6 @@ class SchemaBase():
 
         return columns_array
 
-    def parse_foreign_key(self, foreign_key):
-        '''
-            renvoie la reference de l'object de la clé étrangère ainsi que le nom du champs de clé étrangère
-        '''
-
-        schema_ref, fk_field_name = tuple(foreign_key.split('.'))
-        schema_name = schema_ref.replace('/', '.')
-        return schema_name, fk_field_name
-
-    def get_foreign_key(self, prop):
-        '''
-            renvoie la référence de la clé étrangère
-        '''
-
-        if prop.get('nomenclature_type'):
-            return 'schemas/utils/nomenclature.id_nomenclature'
-
-        return prop.get('foreign_key')
-
-    def get_relation_from_foreign_key(self, foreign_key):
-        relation_name, _ = self .parse_foreign_key(foreign_key)
-        return self.cls()(relation_name)
 
     @classmethod
     def process_schema_config(cls, data, key=None):
@@ -333,14 +311,14 @@ class SchemaBase():
     def dependencies(self, exclude_deps=[]):
         deps = [self.schema_name()]
         for key, relation_def in self.relationships().items():
-            rel = relation_def['rel']
+            schema_name = relation_def['schema_name']
 
-            if rel in deps + exclude_deps:
+            if schema_name in deps + exclude_deps:
                 continue
 
-            deps.append(rel)
+            deps.append(schema_name)
             deps += (
-                self.cls()(relation_def['rel'])
+                self.cls()(relation_def['schema_name'])
                 .dependencies(exclude_deps=deps + exclude_deps)
             )
 

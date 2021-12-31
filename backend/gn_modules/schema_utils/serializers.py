@@ -96,14 +96,20 @@ class SchemaSerializers:
 
     def opposite_relation_def(self, relation_def):
         return {
-            'rel': self.schema_name(),
+            'relation_type': (
+                'n-1' if relation_def['relation_type'] == '1-n'
+                else '1-n' if relation_def['relation_type'] == 'n-1'
+                else 'n-n'
+            ),
+            'schema_name': self.schema_name(),
             'local_key': relation_def.get('foreign_key'),
             'foreign_key': relation_def.get('local_key'),
         }
 
     def is_relation_excluded(self, relation_def_test, relation_def):
         return (
-            relation_def.get('rel') == relation_def_test.get('rel')
+            relation_def.get('relation_type') == relation_def_test.get('relation_type')
+            and relation_def.get('schema_name') == relation_def_test.get('schema_name')
             and relation_def.get('local_key') == relation_def_test.get('local_key')
             and relation_def.get('foreign_key') == relation_def_test.get('foreign_key')
         )
@@ -121,15 +127,15 @@ class SchemaSerializers:
 
         # avoid circular dependencies
 
-        relation = self.cls()(relation_def['rel'])
+        relation = self.cls()(relation_def['schema_name'])
         exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
         relation_serializer = None
 
         relation_serializer = fields.Nested(relation.marshmallow_schema_name(), exclude=exclude, dump_default=None)
 
-        if self.relation_type(relation_def) == 'n-1':
+        if relation_def['relation_type'] == 'n-1':
             relation_serializer = relation_serializer
-        if self.relation_type(relation_def) in ['1-n', 'n-n']:
+        if relation_def['relation_type'] in ['1-n', 'n-n']:
             relation_serializer = fields.List(relation_serializer)
 
         if relation_serializer is None:
@@ -275,5 +281,4 @@ class SchemaSerializers:
         try:
             ms.load(data, instance=m)
         except Exception as e:
-            print(e)
             return e

@@ -12,14 +12,9 @@ CREATE SCHEMA IF NOT EXISTS sipaf;
 
 CREATE TABLE sipaf.t_passages_faune (
     id_pf SERIAL NOT NULL,
-    id_dataset INTEGER,
     id_op VARCHAR,
     an_ref_com VARCHAR,
     issu_requa VARCHAR,
-    id_nomenclature_materiaux INTEGER,
-    id_nomenclature_oh_position INTEGER,
-    id_nomenclature_oh_banq_caract INTEGER,
-    id_nomenclature_oh_banq_type INTEGER,
     uuid_pf UUID,
     pi_ou_ps VARCHAR,
     pk FLOAT,
@@ -54,7 +49,12 @@ CREATE TABLE sipaf.t_passages_faune (
     id_obst VARCHAR,
     nom_obst VARCHAR,
     comment VARCHAR,
-    geom GEOMETRY(POINT, 4326)
+    geom GEOMETRY(POINT, 4326),
+    id_dataset INTEGER,
+    id_nomenclature_materiaux INTEGER,
+    id_nomenclature_oh_position INTEGER,
+    id_nomenclature_oh_banq_caract INTEGER,
+    id_nomenclature_oh_banq_type INTEGER
 );
 
 
@@ -63,8 +63,7 @@ CREATE TABLE sipaf.t_passages_faune (
 CREATE TABLE sipaf.l_routes (
     id_route SERIAL NOT NULL,
     route_name VARCHAR,
-    geom GEOMETRY(GEOMETRY, 2154),
-    geom_simple GEOMETRY(GEOMETRY, 2154)
+    geom GEOMETRY(GEOMETRY, 4326)
 );
 
 
@@ -226,6 +225,7 @@ CREATE OR REPLACE FUNCTION sipaf.fct_trig_insert_cor_area_pf_on_each_statement()
         $BODY$
     LANGUAGE plpgsql VOLATILE
     COST 100;
+
 CREATE OR REPLACE FUNCTION sipaf.fct_trig_update_cor_area_pf_on_row()
     RETURNS trigger AS
         $BODY$
@@ -266,6 +266,81 @@ CREATE TRIGGER trg_update_sipaf_cor_area_pf
     FOR EACH ROW
         EXECUTE PROCEDURE sipaf.fct_trig_update_cor_area_pf_on_row();
 
+---- Trigger sipaf.t_passages_faune.geom avec une distance de 0.001 avec sipaf.l_routes.id_route
+
+CREATE OR REPLACE FUNCTION sipaf.fct_trig_insert_cor_route_pf_on_each_statement()
+    RETURNS trigger AS
+        $BODY$
+            DECLARE
+            BEGIN
+                INSERT INTO sipaf.cor_route_pf (
+                    id_route,
+                    id_pf
+                )
+                SELECT
+                    a.id_route,
+                    t.id_pf
+                    FROM sipaf.t_passages_faune t
+                    JOIN sipaf.l_routes a
+                        ON ST_DWITHIN(t.geom, a.geom, 0.001)
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE OR REPLACE FUNCTION sipaf.fct_trig_update_cor_route_pf_on_row()
+    RETURNS trigger AS
+        $BODY$
+            BEGIN
+                DELETE FROM sipaf.cor_route_pf WHERE id_pf = NEW.id_pf;
+                INSERT INTO sipaf.cor_route_pf (
+                    a.id_route,
+                    t.id_pf
+                )
+                SELECT
+                    a.id_route,
+                    t.id_pf
+                FROM sipaf.l_routes a
+                JOIN sipaf.t_passages_faune t
+                    ON ST_DWITHIN(t.geom, a.geom, 0.001)
+                WHERE
+                    t.id_pf = NEW.id_pf
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE TRIGGER trg_insert_sipaf_cor_route_pf
+    AFTER INSERT ON sipaf.t_passages_faune
+    REFERENCING NEW TABLE AS NEW
+    FOR EACH STATEMENT
+        EXECUTE PROCEDURE sipaf.fct_trig_insert_cor_route_pf_on_each_statement();
+
+CREATE TRIGGER trg_update_sipaf_cor_route_pf
+    AFTER UPDATE OF geom ON sipaf.t_passages_faune
+    FOR EACH ROW
+        EXECUTE PROCEDURE sipaf.fct_trig_update_cor_route_pf_on_row();
+
+
+
+-- Indexes
+
+
+CREATE INDEX sipaf_t_passages_faune_geom_idx
+    ON sipaf.t_passages_faune
+    USING GIST (geom);
+
+
+-- Indexes
+
+
+CREATE INDEX sipaf_l_routes_geom_idx
+    ON sipaf.l_routes
+    USING GIST (geom);
 
 
 

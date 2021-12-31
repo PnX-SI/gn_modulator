@@ -5,12 +5,17 @@
     "sql_schema_name": "ref_geo",
     "sql_table_name": "l_areas",
     "model_name": "LAreas",
-    "label": "geométrie",
+    "title": "geométrie",
     "label_field_name": "area_name",
     "genre": "F",
     "autoschema": true
   },
   "properties": {
-      "area_type": { "local_key": "id_type", "label": "Type", "rel": "schemas.utils.area_type"}
+    "area_type": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "title": "Type",
+      "schema_name": "schemas.utils.area_type"
+    }
   }
 }

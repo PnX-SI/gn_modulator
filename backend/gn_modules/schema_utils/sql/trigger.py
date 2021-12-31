@@ -26,12 +26,15 @@ class SchemaSqlTrigger():
             fonction qui cree les trigger associé à un élément d'un schema
         '''
 
-        trigger_name = property_def.get('trigger')
+        trigger_name = property_def.get('trigger', {}).get('name')
         if not trigger_name:
             return ''
 
         if trigger_name == 'intersect_ref_geo':
             return self.sql_txt_trigger_intersect_ref_geo(property_key, property_def)
+
+        if trigger_name == 'd_within':
+            return self.sql_txt_trigger_d_within(property_key, property_def)
 
     def sql_txt_trigger_intersect_ref_geo(self, property_key, property_def):
         '''
@@ -45,19 +48,22 @@ class SchemaSqlTrigger():
 
         txt = ''
 
+        cor_schema_name = property_def['schema_dot_table'].split('.')[0]
+        cor_table_name = property_def['schema_dot_table'].split('.')[1]
+
         txt_data = {
             'sql_schema_name': self.sql_schema_name(),
             'sql_table_name': self.sql_table_name(),
-            'cor_schema_name': property_def['cor_schema_name'],
-            'cor_table_name': property_def['cor_table_name'],
-            'local_key': property_def['local_key'],
+            'cor_schema_name':cor_schema_name,
+            'cor_table_name': cor_table_name,
+            'local_key': self.pk_field_name(),
             'trigger_function_insert_name': (
                 '{}.fct_trig_insert_{}_on_each_statement'
-                .format(property_def['cor_schema_name'], property_def['cor_table_name'])
+                .format(cor_schema_name, cor_table_name)
             ),
             'trigger_function_update_name': (
                 '{}.fct_trig_update_{}_on_row'
-                .format(property_def['cor_schema_name'], property_def['cor_table_name'])
+                .format(cor_schema_name, cor_table_name)
             ),
 
             'area_types': area_types,
@@ -102,6 +108,7 @@ class SchemaSqlTrigger():
         $BODY$
     LANGUAGE plpgsql VOLATILE
     COST 100;
+
 '''.format(**txt_data)
 
         txt += '''CREATE OR REPLACE FUNCTION {trigger_function_update_name}()
@@ -126,6 +133,110 @@ class SchemaSqlTrigger():
                         ST_GeometryType(t.{geometry_field_name}) = 'ST_Point'
                         OR NOT public.ST_TOUCHES(ST_TRANSFORM(t.{geometry_field_name}, 2154), a.geom)
                     )
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+'''.format(**txt_data)
+
+        txt += '''CREATE TRIGGER trg_insert_{cor_schema_name}_{cor_table_name}
+    AFTER INSERT ON {sql_schema_name}.{sql_table_name}
+    REFERENCING NEW TABLE AS NEW
+    FOR EACH STATEMENT
+        EXECUTE PROCEDURE {trigger_function_insert_name}();
+
+'''.format(**txt_data)
+
+        txt += '''CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
+    AFTER UPDATE OF {geometry_field_name} ON {sql_schema_name}.{sql_table_name}
+    FOR EACH ROW
+        EXECUTE PROCEDURE {trigger_function_update_name}();
+
+'''.format(**txt_data)
+
+        return txt
+
+    def sql_txt_trigger_d_within(self, property_key, property_def):
+        """
+
+        """
+
+        cor_schema_name = property_def['schema_dot_table'].split('.')[0]
+        cor_table_name = property_def['schema_dot_table'].split('.')[1]
+        relation = self.cls()(property_def['schema_name'])
+
+        txt_data = {
+            'distance': property_def['trigger']['distance'],
+            'sql_schema_name': self.sql_schema_name(),
+            'sql_table_name': self.sql_table_name(),
+            'relation_schema_name': relation.sql_schema_name(),
+            'relation_table_name': relation.sql_table_name(),
+            'relation_geometry_field_name': relation.geometry_field_name(),
+            'cor_schema_name': cor_schema_name,
+            'cor_table_name': cor_table_name,
+            'local_key': self.pk_field_name(),
+            'foreign_key': relation.pk_field_name(),
+            'trigger_function_insert_name': (
+                '{}.fct_trig_insert_{}_on_each_statement'
+                .format(cor_schema_name, cor_table_name)
+            ),
+            'trigger_function_update_name': (
+                '{}.fct_trig_update_{}_on_row'
+                .format(cor_schema_name, cor_table_name)
+            ),
+            'geometry_field_name': self.geometry_field_name(),
+        }
+
+        txt = ''
+        txt += (
+            '---- Trigger {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec une distance de {distance} avec {relation_schema_name}.{relation_table_name}.{foreign_key}\n\n'
+            .format(**txt_data)
+        )
+
+        txt += '''CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
+    RETURNS trigger AS
+        $BODY$
+            DECLARE
+            BEGIN
+                INSERT INTO {cor_schema_name}.{cor_table_name} (
+                    {foreign_key},
+                    {local_key}
+                )
+                SELECT
+                    a.{foreign_key},
+                    t.{local_key}
+                    FROM {sql_schema_name}.{sql_table_name} t
+                    JOIN {relation_schema_name}.{relation_table_name} a
+                        ON ST_DWITHIN(t.{geometry_field_name}, a.{relation_geometry_field_name}, {distance})
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+'''.format(**txt_data)
+
+        txt += '''CREATE OR REPLACE FUNCTION {trigger_function_update_name}()
+    RETURNS trigger AS
+        $BODY$
+            BEGIN
+                DELETE FROM {cor_schema_name}.{cor_table_name} WHERE {local_key} = NEW.{local_key};
+                INSERT INTO {cor_schema_name}.{cor_table_name} (
+                    a.{foreign_key},
+                    t.{local_key}
+                )
+                SELECT
+                    a.{foreign_key},
+                    t.{local_key}
+                FROM {relation_schema_name}.{relation_table_name} a
+                JOIN {sql_schema_name}.{sql_table_name} t
+                    ON ST_DWITHIN(t.{geometry_field_name}, a.{relation_geometry_field_name}, {distance})
+                WHERE
+                    t.{local_key} = NEW.{local_key}
                 ;
                 RETURN NULL;
             END;

@@ -304,11 +304,6 @@
             "title": "ID PAF",
             "primary_key": true
         },
-        "id_dataset": {
-            "type": "integer",
-            "title": "id_dataset",
-            "foreign_key": "schemas/utils/jdd.id_dataset"
-        },
         "id_op": {
             "type": "string",
             "title": "Code de l'ouvrage pour le gestionnaire"
@@ -321,48 +316,6 @@
             "type": "string",
             "title": "Issu d'une requalification ?"
         },
-        "id_nomenclature_materiaux": {
-            "type": "integer",
-            "title": "Matériaux",
-            "nomenclature_type": "PF_MATERIAUX"
-            // "relation_key": "nomenclature_materiaux"
-        },
-        "nomenclature_materiaux": {
-            "rel": "schemas.utils.nomenclature",
-            "title": "Matériaux",
-            "local_key": "id_nomenclature_materiaux"
-        },
-        "id_nomenclature_oh_position": {
-            "type": "integer",
-            "title": "OH Position",
-            "nomenclature_type": "PF_OH_POSITION"
-        },
-        "nomenclature_oh_position": {
-            "rel": "schemas.utils.nomenclature",
-            "title": "Position banquette",
-            "local_key": "id_nomenclature_oh_position"
-        },
-        "id_nomenclature_oh_banq_caract": {
-            "type": "integer",
-            "title": "OH Caractrisation banquette",
-            "nomenclature_type": "PF_OH_BANQ_CARACT"
-        },
-        "nomenclature_oh_banq_caract": {
-            "rel": "schemas.utils.nomenclature",
-            "title": "OH Caractrisation banquette",
-            "local_key": "id_nomenclature_oh_banq_caract"
-        },
-        "id_nomenclature_oh_banq_type": {
-            "type": "integer",
-            "title": "OH type de banquette",
-            "nomenclature_type": "PF_OH_BANQ_TYPE"
-        },
-        "nomenclature_oh_banq_type": {
-            "rel": "schemas.utils.nomenclature",
-            "title": "OH type de banquette",
-            "local_key": "id_nomenclature_oh_banq_type"
-        },
-
         "uuid_pf": {
             "type": "uuid",
             "title": "UUID PF"
@@ -489,41 +442,111 @@
         },
         "id_obst": {
             "type": "string",
-            "title": "ID obst"
+            "title": "ID obstacle"
         },
         "nom_obst": {
             "type": "string",
-            "title": "Nom obst"
+            "title": "Nom obstacle"
         },
         "comment": {
             "type": "string",
             "title": "Commentaire"
         },
-        "areas": {
-            "title": "Areas",
-            "rel": "schemas.utils.area",
-            "local_key": "id_pf",
-            "foreign_key": "id_area",
-            "first": "schemas.sipaf.pf",
-            "cor_schema_name": "sipaf",
-            "cor_table_name": "cor_area_pf",
-            // "area_types": ["REG", "DEP", "COM"]
-            "trigger": "intersect_ref_geo"
-        },
-        "routes": {
-            "title": "Routes",
-            "rel": "schemas.sipaf.route",
-            "local_key": "id_pf",
-            "foreign_key": "id_route",
-            "first": "schemas.sipaf.pf",
-            "cor_schema_name": "sipaf",
-            "cor_table_name": "cor_route_pf"
-        },
         "geom": {
             "type": "geometry",
             "geometry_type": "point",
             "srid": 4326,
-            "title": "Geométrie"
+            "title": "Geométrie",
+            "index": true
+        },
+
+
+        // fk
+        "id_dataset": {
+            "type": "integer",
+            "title": "id_dataset",
+            "foreign_key": true,
+            "schema_name": "schemas.utils.jdd"
+        },
+        "id_nomenclature_materiaux": {
+            "type": "integer",
+            "title": "Matériaux",
+            "foreign_key": true,
+            "schema_name": "schemas.utils.nomenclature",
+            "nomenclature_type": "PF_MATERIAUX"
+        },
+        "id_nomenclature_oh_position": {
+            "type": "integer",
+            "title": "OH Position",
+            "foreign_key": true,
+            "schema_name": "schemas.utils.nomenclature",
+            "nomenclature_type": "PF_OH_POSITION"
+        },
+        "id_nomenclature_oh_banq_caract": {
+            "type": "integer",
+            "title": "OH Caractrisation banquette",
+            "nomenclature_type": "PF_OH_BANQ_CARACT",
+            "foreign_key": true,
+            "schema_name": "schemas.utils.nomenclature"
+        },
+        "id_nomenclature_oh_banq_type": {
+            "type": "integer",
+            "title": "OH type de banquette",
+            "foreign_key": true,
+            "schema_name": "schemas.utils.nomenclature",
+            "nomenclature_type": "PF_OH_BANQ_TYPE"
+        },
+
+
+        // relations
+        "nomenclature_materiaux": {
+            "type": "relation",
+            "relation_type": "n-1",
+            "schema_name": "schemas.utils.nomenclature",
+            "title": "Matériaux",
+            "local_key": "id_nomenclature_materiaux"
+        },
+        "nomenclature_oh_position": {
+            "type": "relation",
+            "relation_type": "n-1",
+            "schema_name": "schemas.utils.nomenclature",
+            "title": "Position banquette",
+            "local_key": "id_nomenclature_oh_position"
+        },
+        "nomenclature_oh_banq_caract": {
+            "type": "relation",
+            "relation_type": "n-1",
+            "schema_name": "schemas.utils.nomenclature",
+            "title": "OH Caractrisation banquette",
+            "local_key": "id_nomenclature_oh_banq_caract"
+        },
+        "nomenclature_oh_banq_type": {
+            "type": "relation",
+            "relation_type": "n-1",
+            "schema_name": "schemas.utils.nomenclature",
+            "title": "OH type de banquette",
+            "local_key": "id_nomenclature_oh_banq_type"
+        },
+        "areas": {
+            "type": "relation",
+            "title": "Areas",
+            "relation_type": "n-n",
+            "schema_name": "schemas.utils.area",
+            "schema_dot_table": "sipaf.cor_area_pf",
+            "trigger": {
+                "name": "intersect_ref_geo"
+            }
+        },
+        "routes": {
+            "type": "relation",
+            "title": "Routes",
+            "relation_type": "n-n",
+            "schema_name": "schemas.sipaf.route",
+            "schema_dot_table": "sipaf.cor_route_pf",
+            "trigger": {
+                "name": "d_within",
+                "distance": 0.001
+            }
         }
     }
 }

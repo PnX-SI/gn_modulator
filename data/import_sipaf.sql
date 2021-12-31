@@ -163,18 +163,15 @@ SELECT
     WHERE i.id_pf IS NOT NULL;
 
 
--- TODO TRIGGER ??
+-- INSERT INTO sipaf.cor_route_pf(
+-- 	id_pf,
+-- 	id_route
+-- )
+-- SELECT
+-- 	id_pf,
+-- 	id_route
+-- FROM sipaf.l_routes r
+-- JOIN sipaf.t_passages_faune tpf
+-- 	ON ST_DWITHIN(r.geom, tpf.geom, 0.001)
+-- ;
 
-DELETE FROM sipaf.cor_route_pf;
-
-INSERT INTO sipaf.cor_route_pf(
-	id_pf,
-	id_route
-)
-SELECT
-	id_pf,
-	id_route
-FROM sipaf.l_routes r
-JOIN sipaf.t_passages_faune tpf
-    ON ST_DWITHIN(r.geom, st_transform(tpf.geom, 2154), 100)
-;

@@ -23,9 +23,11 @@ class SchemaValidation():
      TODO
         '''
         error = None
+        reference_schema = cls.load_json_file_from_name('references.schema.schema')
+        resolver = RefResolver(base_uri='file://{}/'.format(cls.config_directory()), referrer=reference_schema)
+        validate(instance=schema, schema=reference_schema, resolver=resolver)
+
         try:
-            reference_schema = cls.load_json_file_from_name('references.schema.schema')
-            resolver = RefResolver(base_uri='file://{}/'.format(cls.config_directory()), referrer=reference_schema)
 
             validate(instance=schema, schema=reference_schema, resolver=resolver)
 

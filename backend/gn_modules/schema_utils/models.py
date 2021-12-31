@@ -100,19 +100,7 @@ class SchemaModel():
         )
 
     def process_existing_column_model(self, key, column_def, column_model):
-        if self.get_foreign_key(column_def) and not column_model.foreign_keys:
-            # print(dir(column_model.parent))
-            # print(column_model.parent)
-            # relation_name, foreign_key_field_name = self.parse_foreign_key(self.get_foreign_key(column_def))
-            # relation = self.cls()(relation_name)
-            # foreign_key = '{}.{}'.format(relation.schema_dot_table(), foreign_key_field_name)
-            # # column_model.foreign_keys = DB.ForeignKey(foreign_key)
-            # column_model.parent.c.ForeignKeyConstraint((key,), ['{}.{}'.format(relation.schema_dot_table(), foreign_key)])
-
-            # print(column_model.foreign_keys)
-
-            # TODO how to dynamically set a foreign key constraint
-            pass
+        pass
 
     def process_column_model(self, column_def):
         '''
@@ -128,10 +116,9 @@ class SchemaModel():
             field_kwargs['primary_key'] = True
 
         # foreign_key
-        if self.get_foreign_key(column_def):
-            relation_name, foreign_key_field_name = self.parse_foreign_key(self.get_foreign_key(column_def))
-            relation = self.cls()(relation_name)
-            foreign_key = '{}.{}'.format(relation.schema_dot_table(), foreign_key_field_name)
+        if column_def.get('foreign_key'):
+            relation = self.cls()(column_def['schema_name'])
+            foreign_key = '{}.{}'.format(relation.schema_dot_table(), relation.pk_field_name())
             field_args.append(DB.ForeignKey(foreign_key))
 
         # process type
@@ -141,53 +128,55 @@ class SchemaModel():
 
     def process_relation_model(self, key, relationship_def, Model):
 
-        relation = self.cls()(relationship_def['rel'])
+        relation = self.cls()(relationship_def['scehma_name'])
 
         kwargs = {}
-        if self.relation_type(relationship_def) == 'n-1':
+        if relationship_def.get('relation_type') == 'n-1':
             kwargs['foreign_keys'] = getattr(Model, relationship_def['local_key'])
 
             # patch si la cle n'est pas definie
             column_def = self.column(relationship_def['local_key'])
-            relation_name, foreign_key_field_name = self.parse_foreign_key(self.get_foreign_key(column_def))
+            relation = self.cls()(column_def['schema_name'])
 
             kwargs['primaryjoin'] = (
                 getattr(self.Model(), relationship_def['local_key'])
                 ==
-                getattr(self.cls()(relation_name).Model(), foreign_key_field_name)
+                getattr(relation.Model(), relation.pk_field_name())
             )
 
-        if self.relation_type(relationship_def) == 'n-n':
+        if relationship_def.get('relation_type') == 'n-n':
             kwargs['secondary'] = self.CorTable(relationship_def)
 
         return DB.relationship(relation.Model(), **kwargs)
 
     def CorTable(self, relation_def):
 
-        cor_schema_dot_table = self.cor_schema_dot_table(relation_def)
-        cor_schema_name = self.cor_schema_name(relation_def)
-        cor_table_name = self.cor_table_name(relation_def)
+        schema_dot_table = relation_def.get('schema_dot_table')
+        cor_schema_name = self.cor_schema_name(relation_def).split('.')[0]
+        cor_table_name = self.cor_table_name(relation_def).split('.')[1]
 
-        if cache_cor_table.get(cor_schema_dot_table):
-            return cache_cor_table[cor_schema_dot_table]
+        if cache_cor_table.get(schema_dot_table):
+            return cache_cor_table[schema_dot_table]
 
-        relation = self.cls()(relation_def['rel'])
+        relation = self.cls()(relation_def['schema_name'])
+        local_key = self.pk_field_name()
+        foreign_key = relation.pk_field_name()
 
         CorTable = DB.Table(
             cor_table_name,
             DB.metadata,
             DB.Column(
-                relation_def['local_key'],
-                DB.ForeignKey('{}.{}'.format(self.schema_dot_table(), relation_def['local_key']))
+                local_key,
+                DB.ForeignKey('{}.{}'.format(self.schema_dot_table(), local_key))
             ),
             DB.Column(
-                relation_def['foreign_key'],
-                DB.ForeignKey('{}.{}'.format(relation.schema_dot_table(), relation_def['foreign_key']))
+                foreign_key,
+                DB.ForeignKey('{}.{}'.format(relation.schema_dot_table(), foreign_key))
             ),
             schema=cor_schema_name
         )
 
-        cache_cor_table[cor_schema_dot_table] = CorTable
+        cache_cor_table[schema_dot_table] = CorTable
 
         return CorTable
 

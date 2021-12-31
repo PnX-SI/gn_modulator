@@ -88,8 +88,7 @@ class SchemaImports:
 
     def pre_process_data(self, d):
         for key_process, keys in self.meta('import.get_foreign_key', {}).items():
-            rel_schema_name, _ = self.parse_foreign_key(self.column(key_process)['foreign_key'])
-            sm_rel = self.cls()(rel_schema_name)
+            sm_rel = self.cls()(self.column(key_process)['schema_name'])
             rel_test_keys = sm_rel.meta('import.test_keys')
             rel_test_values = [d[test_key] for test_key in keys]
             m = sm_rel.get_row(rel_test_values, rel_test_keys)
@@ -104,7 +103,6 @@ class SchemaImports:
                 d[k] = d.get(k, d[key])
             if key not in self.columns():
                 d.pop(key)
-
 
     @classmethod
     def process_data_item(cls, data_item):

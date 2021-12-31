@@ -131,15 +131,15 @@ class SchemaProcess():
         # - relations
         for key, _relation_def in self.relationships().items():
             relation_def = copy.deepcopy(_relation_def)
-            self.set_definition_from_schema_name(definitions, relation_def['rel'], is_validation_schema)
+            self.set_definition_from_schema_name(definitions, relation_def['schema_name'], is_validation_schema)
             properties[key] = self.validation_schema({
                 **relation_def,
             })
 
-            ref = '#/definitions/{}'.format(self.cls().defs_id(relation_def['rel']))
+            ref = '#/definitions/{}'.format(self.cls().defs_id(relation_def['schema_name']))
 
             # relation 1 n
-            if self.relation_type(relation_def) == 'n-1':
+            if relation_def['relation_type'] == 'n-1':
                 if is_validation_schema:
                     # properties[key]['anyOf'] = [
                         # {'type': 'object'},
@@ -153,11 +153,11 @@ class SchemaProcess():
                     # properties[key]['type'] = ['object', 'null']
                 # properties[key]['nullable'] = True
 
-            if self.relation_type(relation_def) == '1-n':
+            if relation_def['relation_type'] == '1-n':
                 properties[key]['type'] = 'array'
                 properties[key]['items'] = {'$ref': ref}
 
-            if self.relation_type(relation_def) == 'n-n':
+            if relation_def['relation_type'] == 'n-n':
                 properties[key]['type'] = 'array'
                 properties[key]['items'] = {'$ref': ref}
 

@@ -185,7 +185,8 @@ class SchemaSqlBase():
             'sql_txt_foreign_key_constraints',
             'sql_txt_nomenclature_type_constraints',
             'sql_txt_process_correlations',
-            'sql_txt_process_triggers'
+            'sql_txt_process_triggers',
+            'sql_txt_process_index',
         ]:
             for name in processed_schema_names:
                 sm = self.cls()(name)

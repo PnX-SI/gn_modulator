@@ -29,6 +29,8 @@ class SchemaRepositoriesCruved():
             d.id_dataset for d in TDatasets.query.filter_by_scope(int(info_role.value_filter)).all()
         ]
 
+        print('allowed_datasets', allowed_datasets)
+
         # TODO add cond for dataset test
         query = query.filter(getattr(Model, id_dataset_field_name).in_(allowed_datasets))
 

@@ -4,7 +4,7 @@
     "$meta": {
         "sql_processing": true,
         "genre": "M",
-        "label": "parent",
+        "title": "parent",
         "label_field_name": "parent_name",
         "form": {
             "layout": [
@@ -31,7 +31,7 @@
                 //     "key": "children",
                 //     "type": "array",
                 //     "fxLayoutGap": "5px",
-                //     "label": "aa",
+                //     "title": "aa",
                 //     "title": "Enfant",
                 //     "items": [
                 //         {
@@ -51,22 +51,24 @@
     "properties": {
         "parent_id": {
             "type": "integer",
-            "label": "ID parent",
+            "title": "ID parent",
             "primary_key": true
         },
         "parent_name": {
             "type": "string",
-            "label": "Nom parent"
+            "title": "Nom parent"
         },
         "parent_code": {
             "type": "string",
-            "label": "Code parent"
+            "title": "Code parent"
         },
         "children": {
-            "label": "Enfants",
-            "rel": "schemas.test.child",
+            "title": "Enfants",
+            "schema_name": "schemas.test.child",
             "foreign_key": "parent_id",
-            "add": "Ajouter enfant"
+            "add": "Ajouter enfant",
+            "type": "relation",
+            "relation_type": "1-n"
         }
     }
 }

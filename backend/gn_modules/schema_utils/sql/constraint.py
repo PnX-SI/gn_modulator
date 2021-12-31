@@ -45,13 +45,11 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
 
         for key, column_def in self.columns().items():
 
-            foreign_key = self.get_foreign_key(column_def)
 
-            if not foreign_key:
+            if not column_def.get('foreign_key'):
                 continue
 
-            relation_name, fk_field_name = self.parse_foreign_key(foreign_key)
-            relation = self.cls()(relation_name)
+            relation = self.cls()(column_def['schema_name'])
 
             txt += (
                 """---- {sql_schema_name}.{sql_table_name} foreign key constraint {fk_key_field_name}
@@ -69,7 +67,7 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
                 rel_sql_schema_name=relation.sql_schema_name(),
                 rel_sql_table_name=relation.sql_table_name(),
                 rel_sql_table_name_short=relation.sql_table_name()[0:5],
-                rel_pk_key_field_name=fk_field_name
+                rel_pk_key_field_name=relation.pk_field_name()
             )
 
         return txt

@@ -8,31 +8,6 @@ class SchemaSqlTable():
         sql table and correlation table
     '''
 
-    def cor_first(self, relation_def):
-        return self.cls()(relation_def['first'])
-
-    def cor_second(self, relation_def):
-        return (
-            self.cls()(relation_def['rel']) if relation_def['first'] == self.schema_name()
-            else self
-        )
-
-    def cor_schema_name(self, relation_def):
-        first = self.cor_first(relation_def)
-        return relation_def.get('cor_schema_name', first.sql_schema_name())
-
-    def cor_table_name(self, relation_def):
-        first = self.cor_first(relation_def)
-        second = self.cor_second(relation_def)
-        cor_table_name = relation_def.get('cor_table_name', 'cor_{}_{}'.format(first.object_name(), second.object_name()))
-        if relation_def.get('cor_suffix'):
-            cor_table_name += '_{}'.format(relation_def.get('cor_suffix'))
-        return cor_table_name
-
-    def cor_schema_dot_table(self, relation_def):
-        return '{}.{}'.format(self.cor_schema_name(relation_def), self.cor_table_name(relation_def))
-        pass
-
     def sql_txt_process_correlations(self):
         '''
             fonction qui cree les table de correlation associée
@@ -50,23 +25,23 @@ class SchemaSqlTable():
         '''
         txt = ''
 
-        if not self.relation_type(relation_def) == 'n-n':
+        if not relation_def['relation_type'] == 'n-n':
             return txt
 
-        local_key = relation_def['local_key']
+        local_key = self.pk_field_name()
         local_key_type = self.get_sql_type(self.column(local_key), cor_table=True)
         local_table_name = self.sql_table_name()
         local_schema_name = self.sql_schema_name()
 
-        relation = self.cls()(relation_def['rel'])
-        foreign_key = relation_def['foreign_key']
+        relation = self.cls()(relation_def['schema_name'])
+        foreign_key = relation.pk_field_name()
         foreign_key_type = relation.get_sql_type(relation.column(foreign_key), cor_table=True)
         foreign_table_name = relation.sql_table_name()
         foreign_schema_name = relation.sql_schema_name()
 
-        cor_schema_name = self.cor_schema_name(relation_def)
-        cor_table_name = self.cor_table_name(relation_def)
-        cor_schema_dot_table = self.cor_schema_dot_table(relation_def)
+        cor_schema_dot_table = relation_def['schema_dot_table']
+        cor_schema_name = cor_schema_dot_table.split('.')[0]
+        cor_table_name = cor_schema_dot_table.split('.')[1]
 
         txt_args = {
             'cor_schema_name': cor_schema_name,

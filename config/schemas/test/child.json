@@ -4,7 +4,7 @@
     "$meta": {
         "sql_processing": true,
         "genre": "M",
-        "label": "enfant",
+        "title": "enfant",
         "label_field_name": "child_name",
         "table": {
             "columns": [
@@ -37,33 +37,36 @@
     "properties": {
         "child_id": {
             "type": "integer",
-            "label": "ID enfant",
+            "title": "ID enfant",
             "primary_key": true
         },
         "child_name": {
             "type": "string",
-            "label": "Nom enfant"
+            "title": "Nom enfant"
         },
         "child_code": {
             "type": "string",
-            "label": "Code enfant"
+            "title": "Code enfant"
         },
         "parent_id": {
             "type": "integer",
-            "label": "ID parent",
-            "foreign_key": "schemas/test/parent.parent_id"
+            "title": "ID parent",
+            "foreign_key": true,
+            "schema_name": "schemas.test.parent"
         },
         "parent": {
-            "label": "Parent",
+            "title": "Parent",
             "local_key": "parent_id",
-            "rel": "schemas.test.parent"
+            "schema_name": "schemas.test.parent",
+            "relation_type": "n-1",
+            "type": "relation"
         },
         "examples": {
-            "label" : "Examples",
-            "rel": "schemas.test.example",
-            "local_key": "child_id",
-            "foreign_key": "example_id",
-            "first": "schemas.test.child"
+            "title" : "Examples",
+            "schema_name": "schemas.test.example",
+            "type": "relation",
+            "relation_type": "n-n",
+            "schema_dot_table": "m_test.cor_child_example"
         }
     }
 }

@@ -60,8 +60,7 @@ class SchemaConfigBase():
             if '.' in key:
                 (key_relationship, key_column) = key.split('.')
                 relation_def = self.relationship(key_relationship)
-                relation_schema_name = relation_def['rel']
-                relation = self.cls()(relation_schema_name)
+                relation = self.cls()(relation_def['schema_name'])
                 relation_column = relation.column(key_column)
                 column_def = {'title': relation_def['title'], 'field': key, 'headerFilter': True}
             else:

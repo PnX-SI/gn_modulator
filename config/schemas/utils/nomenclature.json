@@ -4,13 +4,24 @@
     "$meta": {
         "autoschema": true,
         "import": {
-            "test_keys": ["id_type", "cd_nomenclature"],
+            "test_keys": [
+                "id_type",
+                "cd_nomenclature"
+            ],
             "get_foreign_key": {
-                "id_type": ["type"]
+                "id_type": [
+                    "type"
+                ]
             },
             "copy": {
-                "label": ["label_fr", "label_default"],
-                "definition": ["definition_fr", "definition_default"]
+                "label": [
+                    "label_fr",
+                    "label_default"
+                ],
+                "definition": [
+                    "definition_fr",
+                    "definition_default"
+                ]
             }
         },
         "model_name": "TNomenclatures",
@@ -19,11 +30,23 @@
         "genre": "F",
         "label": "nomenclature",
         "table": {
-            "columns": ["cd_nomenclature", "mnemonique", "label_fr", "type.mnemonique", "type.label_fr"]
+            "columns": [
+                "cd_nomenclature",
+                "mnemonique",
+                "label_fr",
+                "type.mnemonique",
+                "type.label_fr"
+            ]
         },
         "label_field_name": "label_fr"
     },
     "properties": {
-        "type": { "local_key": "id_type", "title": "Type", "rel": "schemas.utils.nomenclature_type" }
+        "type": {
+            "local_key": "id_type",
+            "title": "Type",
+            "schema_name": "schemas.utils.nomenclature_type",
+            "relation_type": "n-1",
+            "type": "relation"
+        }
     }
 }

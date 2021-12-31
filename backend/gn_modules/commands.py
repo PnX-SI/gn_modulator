@@ -100,7 +100,14 @@ def cmd_check(_schema_name=None):
             schema_infos['error_sample_marshmallow'] = sm.unserialize(sm.Model()(), SchemaMethods.c_sample(schema_name))
             schema_infos['valid_sample_marshmallow'] = not schema_infos['error_sample_marshmallow']
 
-        for key in filter(lambda k: k != 'schema_name', schema_infos.keys()):
+            print(schema_infos['valid_sample_marshmallow'], schema_infos['error_sample_marshmallow'])
+        for key in schema_infos.keys():
+            if key in [
+                'schema_name',
+                'error_sample_marshmallow',
+                'error_sample_jsonschema'
+            ]:
+                continue
             schema_infos[key] = (
                 'o' if schema_infos[key] is True
                 else 'x' if schema_infos[key] is False

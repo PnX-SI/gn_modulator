@@ -24,7 +24,8 @@
       "title": "géometrie",
       "type": "geometry",
       "geometry_type": "geometry",
-      "srid": 2154
+      "srid": 4326,
+      "index": true
     }
   }
 }
