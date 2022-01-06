@@ -31,7 +31,10 @@
         </div>
 
         <div class="button-container">
-          <button class="btn btn-success small mr-2" (click)="onEditClick()"
+          <button
+            class="btn btn-success small mr-2"
+            (click)="onEditClick()"
+            *ngIf="bEditAllowed"
         >
           Éditer
         </button>

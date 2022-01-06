@@ -24,6 +24,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
 
   dataSource = null;
   displayedColumns = null;
+  bEditAllowed=false;
 
   layout;
   processedLayout;
@@ -63,6 +64,8 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
       fields.push(this.geometryFieldName());
     }
 
+    fields.push('cruved_ownership')
+
     return this._mData.getOne(
       this.schemaName,
       this.value,
@@ -80,6 +83,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
   processData(data) {
     this.data = data;
     this.layoutData = {};
+    this.bEditAllowed = data['cruved_ownership'] <= this.moduleConfig.cruved['U'];
     for (const field of this.getLayoutFields(this.layout)) {
       var key = field.key || field;
       var keyValue = field.key_value || field.key || field;
