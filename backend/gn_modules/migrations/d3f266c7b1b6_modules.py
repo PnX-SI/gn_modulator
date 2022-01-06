@@ -1,6 +1,6 @@
 """ gn_modules
 Revision ID: d3f266c7b1b6
-Revises: 
+Revises:
 Create Date: 2021-09-15 11:49:24.512562
 
 """

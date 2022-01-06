@@ -77,6 +77,11 @@ cp ${source_csv} /tmp/source.csv
 
 psqla -f ${data_dir}/reset_sipaf.sql
 gn_venv
+
+# patch pourris maj modules en attendant alembic
+psqla -c "DROP SCHEMA gn_modules CASCADE"
+geonature modules sql_process -n schemas.module.sous_module -e
+
 geonature modules install modules.sipaf.module
 
 psqla -f ${source_sql}
