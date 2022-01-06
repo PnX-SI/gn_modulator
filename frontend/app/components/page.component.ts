@@ -50,7 +50,6 @@ export class PageComponent implements OnInit {
 
   setBreadcrumbs() {
     this.breadcrumbs = []
-    console.log(this.pageConfig)
     if(this.pageConfig.parent) {
       const parentPageConfig = this._mConfig.moduleConfig(this.moduleName).pages[this.pageConfig.parent.pageName]
       this.breadcrumbs.push({
@@ -62,7 +61,6 @@ export class PageComponent implements OnInit {
     this.breadcrumbs.push({
       txt: `${this.pageConfig.label} ${this.value || ''}`
     })
-    console.log('uutuutu')
   }
 
   modulePageUrl(moduleName, pageName, params) {
@@ -72,7 +70,7 @@ export class PageComponent implements OnInit {
     for (const [key, value] of Object.entries(params)) {
       url = url.replace(`:${key}`, value)
     }
-    return `#/modules/${moduleConfig.code.toLowerCase()}/${url}`
+    return `#/modules/${moduleConfig.module_code.toLowerCase()}/${url}`
   }
 
   navigateToPage(moduleName, pageName, params) {

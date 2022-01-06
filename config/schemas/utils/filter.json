@@ -1,0 +1,16 @@
+{
+    "$id": "schemas/utils/filter",
+    "type": "object",
+    "$meta": {
+        "autoschema": true,
+        "model_name": "TFilters",
+        "sql_schema_name": "gn_permissions",
+        "sql_table_name": "t_filters",
+        "label": "filtre",
+        "label_field_name": "label_filter",
+        "genre": "M",
+        "import": {
+            "test_keys": ["value_filter"]
+        }
+    }
+}

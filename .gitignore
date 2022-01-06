@@ -12,6 +12,7 @@ node_modules
 
 
 data/sources/*
+data/schema_sipaf.sql
 !data/sources/.gitkeep
 
 **/*.egg-info

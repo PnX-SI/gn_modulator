@@ -63,8 +63,8 @@ fi
 
 # 2) csv -> sql
 
-echo "DROP TABLE IF EXISTS public.tmp_import_sipaf;" > ${source_sql}
-csvsql ${source_csv} --no-constraints --tables public.tmp_import_sipaf | sed \
+echo "DROP TABLE IF EXISTS sipaf.tmp_import_sipaf;" > ${source_sql}
+csvsql ${source_csv} --no-constraints --tables sipaf.tmp_import_sipaf | sed \
     -e 's/DECIMAL/VARCHAR/g' \
     -e 's/BOOLEAN/VARCHAR/g' \
     -e 's/, /,/g' \
@@ -75,17 +75,18 @@ cp ${source_csv} /tmp/source.csv
 
 # 3) sql
 
-psqla -c 'DROP SCHEMA IF EXISTS sipaf CASCADE;'
-psqla -f ${source_sql}
-cat ${source_csv} | psqla -c "COPY public.tmp_import_sipaf FROM STDIN CSV HEADER DELIMITER ';';"
-# psqla -f ${data_dir}/schema_sipaf.sql
+psqla -f ${data_dir}/reset_sipaf.sql
 gn_venv
-geonature modules sql_process -n schemas.sipaf.pf > ${data_dir}/schema_sipaf.sql
-psqla -f ${data_dir}/schema_sipaf.sql
+geonature modules install modules.sipaf.module
+
+psqla -f ${source_sql}
+cat ${source_csv} | psqla -c "COPY sipaf.tmp_import_sipaf FROM STDIN CSV HEADER DELIMITER ';';"
+# psqla -f ${data_dir}/schema_sipaf.sql
 
 # insert routes
 ${data_dir}/insert_routes.sh -g "${geonature_dir}"
 
 psqla -f ${data_dir}/import_sipaf.sql
+psqla -f ${data_dir}/patch_sipaf_dataset.sql
 
 

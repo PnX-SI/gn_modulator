@@ -5,7 +5,7 @@
 from pathlib import Path
 import os
 import json
-
+import copy
 from geonature.utils.env import GN_EXTERNAL_MODULE
 
 from gn_modules import MODULE_CODE
@@ -146,6 +146,21 @@ class SchemaFiles():
         self._schema_name = schema_name
         self._schemas = {}
         self._schemas['definition'] = self.cls().load_json_file_from_name(schema_name)
+
+        if self.meta('extends'):
+            base_schema_name = self.meta('extends.schema_name')
+            base_schema = self.cls()(base_schema_name)
+            properties = copy.deepcopy(base_schema.properties())
+            properties.update(self._schemas['definition'].get('properties', {}))
+
+            # la clé primaire du schema de base est à la fois
+            #  - une clé primaire du schema
+            #  - et une clé étrangère vers le schema de base
+
+            properties[base_schema.pk_field_name()]['foreign_key'] = True
+            properties[base_schema.pk_field_name()]["schema_name"] = base_schema_name
+            self._schemas['definition']['properties'] = properties
+
         if self.autoschema():
             self._schemas['definition'] = self.get_autoschema()
         self._schemas['validation'] = self.process_definition_schema(True)

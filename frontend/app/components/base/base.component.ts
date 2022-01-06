@@ -5,6 +5,7 @@ import { ModulesDataService } from "../../services/data.service";
 import { CommonService } from "@geonature_common/service/common.service";
 import { ModulesMapService } from "../../services/map.service"
 import { ModulesFormService } from "../../services/form.service"
+import { AuthService, User } from "@geonature/components/auth/auth.service";
 
 import { mergeMap, concatMap, catchError } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
@@ -62,6 +63,8 @@ export class BaseComponent implements OnInit {
 
   _name: string;
 
+  currentUser: User;
+
   constructor(
     protected _route: ActivatedRoute,
     protected _commonService: CommonService,
@@ -71,6 +74,8 @@ export class BaseComponent implements OnInit {
     protected _mForm: ModulesFormService,
     protected _router: Router,
     protected _mRoute: ModulesRouteService,
+    protected _auth: AuthService,
+
   ) {
     this._name = 'BaseComponent';
     this.elemId = `elem_${Math.random()}`.replace('.', '')
@@ -164,6 +169,8 @@ export class BaseComponent implements OnInit {
   }
 
   process() {
+    this.currentUser = this._auth.getCurrentUser();
+
     this.mapId = this.mapId || `map_${Math.random()}`;
 
     if(this.isProcessing) {

@@ -6,10 +6,29 @@
    // margin-left: 5px;
 }
 
+:host ::ng-deep .table-icon {
+   padding: 3px;
+   border-radius: 5px;
+   // margin-left: 5px;
+}
+
+
+:host ::ng-deep .table-icon.disabled {
+   color: grey;
+   padding: 3px;
+   border-radius: 5px;
+   // margin-left: 5px;
+}
+
+
 :host ::ng-deep .table-icon:hover{
    background-color: lightgrey;
 }
 
+
+:host ::ng-deep .table-icon.disabled:hover{
+   background-color: none;
+}
 
 :host ::ng-deep .tabulator {
    font-size: 12px;

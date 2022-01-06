@@ -5,6 +5,7 @@ import { ModulesMapService } from "../../services/map.service"
 import { ModulesDataService } from "../../services/data.service"
 import { ModulesFormService } from "../../services/form.service"
 import { ModulesRouteService } from "../../services/route.service"
+import { AuthService } from "@geonature/components/auth/auth.service";
 
 import { CommonService } from "@geonature_common/service/common.service";
 import { mergeMap, concatMap } from "@librairies/rxjs/operators";
@@ -37,8 +38,9 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
       _mForm: ModulesFormService,
       _router: Router,
       _mRoute: ModulesRouteService,
+      _auth: AuthService,
     ) {
-      super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute)
+      super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
       this._name = 'BaseMap'
     }
 
@@ -48,7 +50,6 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
 
   getData() {
     if(this.compress) {
-      const fields = this.schemaConfig.table.columns.map(column => column.field);
       const extendedParams = {
         fields: [
           this.schemaConfig.utils.pk_field_name,
@@ -61,7 +62,6 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
       };
       return this._mData.getList(this.schemaName, extendedParams)
     } else {
-      const fields = this.schemaConfig.table.columns.map(column => column.field);
       const extendedParams = {
         fields: [this.schemaConfig.utils.pk_field_name, this.schemaConfig.utils.label_field_name], // fields
         filters: this.filters,
@@ -89,7 +89,9 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
 
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
-    this._mData.getOne(this.schemaName, value)
+    const fields = this.schemaConfig.table.columns.map(column => column.field);
+    fields.push('cruved_ownership');
+    this._mData.getOne(this.schemaName, value, { fields })
     .subscribe((data) => {
       layer.setPopupContent(this.popupHTML(data));
     });
@@ -176,8 +178,8 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
                 ).openTooltip();
 
               /** tooltip - zoom et emprise */
-              layer.onZoomMoveEnd = this._mapService
-                .layerZoomMoveEndListener(this.mapId, layer, this.tooltipDisplayZoomTreshold)
+                layer.onZoomMoveEnd = this._mapService
+                  .layerZoomMoveEndListener(this.mapId, layer, this.tooltipDisplayZoomTreshold)
               }
               layer.bindPopup(this.popupHTML(feature.properties))
                 .on('popupopen', (event) => {
@@ -195,10 +197,11 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
 
   popupHTML(properties) {
     const label = properties[this.labelFieldName()];
-    const popupFields = this.schemaConfig.map.popup_fields ;
+    const popupFields = this.schemaConfig.map.popup_fields;
     var propertiesHTML="";
     propertiesHTML += '<ul>\n'
     propertiesHTML += popupFields
+      .filter(fieldKey => fieldKey != "cruved_ownership")
       .map( fieldKey => {
         const fieldLabel = this.schemaConfig.schema.properties[fieldKey].title;
         const fieldValue = properties[fieldKey]
@@ -207,11 +210,17 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
       .join('\n');
     propertiesHTML += '</ul>\n'
 
+    const htmlDetails = '<button action="details">Details</button>'
+    const condEdit = properties['cruved_ownership'] <= this.moduleConfig.cruved['U'];
+    const htmlEdit = condEdit
+      ? '<button action="details">Detail</button>'
+      : '';
+
     const html = `
     <h4>${label || ''}</h4>
     <div>
-      <button action="details">Detail</button>
-      <button action="edit">Edition</button>
+      ${htmlDetails}
+      ${htmlEdit}
     </div>
     ${propertiesHTML}
     `

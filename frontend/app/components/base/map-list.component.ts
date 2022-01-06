@@ -5,6 +5,7 @@ import { ModulesMapService } from "../../services/map.service"
 import { ModulesDataService } from "../../services/data.service"
 import { ModulesFormService } from "../../services/form.service"
 import { ModulesRouteService } from "../../services/route.service"
+import { AuthService } from "@geonature/components/auth/auth.service";
 
 import { CommonService } from "@geonature_common/service/common.service";
 import { mergeMap, concatMap } from "@librairies/rxjs/operators";
@@ -28,8 +29,9 @@ export class ModulesMapListComponent extends BaseComponent implements OnInit {
     _mForm: ModulesFormService,
     _router: Router,
     _mRoute: ModulesRouteService,
+    _auth: AuthService,
     ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute)
+    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
     this._name = 'MapList'
   }
 

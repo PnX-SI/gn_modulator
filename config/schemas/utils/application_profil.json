@@ -1,0 +1,16 @@
+{
+    "$id": "schemas/utils/application_profil",
+    "type": "object",
+    "$meta": {
+        "autoschema": true,
+        "model_name": "UserApplicationRight",
+        "sql_schema_name": "utilisateurs",
+        "sql_table_name": "cor_role_app_profil",
+        "label": "application profil",
+        "label_field_name": "id_app",
+        "genre": "F",
+        "import": {
+            "test_keys": ["id_profil", "id_role", "id_application"]
+        }
+    }
+}

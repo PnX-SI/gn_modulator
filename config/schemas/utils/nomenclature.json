@@ -5,14 +5,8 @@
         "autoschema": true,
         "import": {
             "test_keys": [
-                "id_type",
-                "cd_nomenclature"
+                "id_type", "cd_nomenclature"
             ],
-            "get_foreign_key": {
-                "id_type": [
-                    "type"
-                ]
-            },
             "copy": {
                 "label": [
                     "label_fr",

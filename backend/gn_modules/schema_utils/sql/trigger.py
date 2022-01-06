@@ -226,8 +226,8 @@ class SchemaSqlTrigger():
             BEGIN
                 DELETE FROM {cor_schema_name}.{cor_table_name} WHERE {local_key} = NEW.{local_key};
                 INSERT INTO {cor_schema_name}.{cor_table_name} (
-                    a.{foreign_key},
-                    t.{local_key}
+                    {foreign_key},
+                    {local_key}
                 )
                 SELECT
                     a.{foreign_key},

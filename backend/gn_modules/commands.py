@@ -12,7 +12,13 @@ import json
 from flask.cli import with_appcontext
 
 from .schema import SchemaMethods
-from .schema_utils.errors import SchemaDataPathError
+from .module import ModuleMethods
+from .schema_utils.errors import (
+    SchemaDataPathError,
+    SchemaRepositoryError
+)
+
+from sqlalchemy.orm.exc import NoResultFound
 
 schema_names = SchemaMethods.schema_names('schemas')
 
@@ -46,15 +52,15 @@ def cmd_model_to_schema(schema_dot_table, schema_name, write=False, force_write=
 @click.command('schema')
 @click.argument('schema_name')
 @click.option('-p', '--schema_path', default=None, help="chemin vers les elements du schema: '$meta', 'properties[<key>]'")
-@click.option('-d', '--definition', is_flag=True)
-def cmd_schema(schema_name, schema_path=None, definition=False):
+@click.option('-v', '--validation', is_flag=True)
+def cmd_schema(schema_name, schema_path=None, validation=False):
     '''
         Affiche le schema depuis <schema_name>
 
           - par exemple:
             - schemas.test.example
     '''
-    schema = SchemaMethods(schema_name).schema(schema_type=('definition' if definition else 'validation'))
+    schema = SchemaMethods(schema_name).schema(schema_type=('validation' if validation else 'definition'))
 
     if schema_path:
         for p in schema_path.split('.'):
@@ -96,8 +102,8 @@ def cmd_check(_schema_name=None):
 
             schema_infos['error_sample_jsonschema'] = sm.validate_data(SchemaMethods.c_sample(schema_name))
             schema_infos['valid_sample_jsonschema'] = not schema_infos['error_sample_jsonschema']
-
-            schema_infos['error_sample_marshmallow'] = sm.unserialize(sm.Model()(), SchemaMethods.c_sample(schema_name))
+            m = sm.Model()()
+            schema_infos['error_sample_marshmallow'] = sm.unserialize(m, SchemaMethods.c_sample(schema_name))
             schema_infos['valid_sample_marshmallow'] = not schema_infos['error_sample_marshmallow']
 
             print(schema_infos['valid_sample_marshmallow'], schema_infos['error_sample_marshmallow'])
@@ -126,7 +132,6 @@ def cmd_check(_schema_name=None):
 
         if schema_infos['error_sample_jsonschema']:
             print('  - Erreur data (jsonschema)\n', schema_infos['error_sample_jsonschema'])
-
 
 @click.command('sample')
 @click.option('-n', '--schema-name', help='nom du schema')
@@ -302,6 +307,16 @@ def cmd_sql_schema(schema_name, exec_sql):
         print('\n{}\n'.format(sm.sql_txt_process()))
 
 
+@click.command('install')
+@click.argument('module_name')
+@with_appcontext
+def cmd_install_module(module_name):
+    """
+        enregistre un module en base
+    """
+
+    ModuleMethods.install_module(module_name)
+
 # liste des commande pour export dans blueprint.py
 commands = [
     cmd_sql_schema,
@@ -310,5 +325,6 @@ commands = [
     cmd_check,
     cmd_schema,
     cmd_explore_data,
-    cmd_model_to_schema
+    cmd_model_to_schema,
+    cmd_install_module,
 ]

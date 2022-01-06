@@ -118,6 +118,13 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
 
         # liste des champs
         for key, column_def in self.columns().items():
+
+            if self.meta('extends'):
+                base_schema_name = self.meta('extends.schema_name')
+                base_schema = self.cls()(base_schema_name)
+                if key in base_schema.column_keys() and key != base_schema.pk_field_name():
+                    continue
+
             sql_type = self.get_sql_type(column_def)
             txt += '\n    {} {},'.format(key, sql_type)
 

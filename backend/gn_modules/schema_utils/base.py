@@ -11,6 +11,7 @@ import json
 import re
 
 from geonature.utils.config import config
+from sqlalchemy.util.langhelpers import portable_instancemethod
 
 from .errors import SchemaProcessConfigError, SchemaRelationError
 
@@ -134,6 +135,7 @@ class SchemaBase():
         for key, column_def in self.columns().items():
             if column_def.get('primary_key'):
                 pk_field_names.append(key)
+
         return pk_field_names
 
     def pk_field_name(self):
@@ -174,6 +176,23 @@ class SchemaBase():
         return [k for k, v in self.properties().items() if self.is_relationship(v)]
 
     def properties(self, schema_type='definition'):
+
+        # if self.meta('extends'):
+        #     base_schema_name = self.meta('extends.schema_name')
+        #     base_schema = self.cls()(base_schema_name)
+        #     properties = copy.copy(base_schema.properties(schema_type))
+        #     print(self, properties.keys())
+        #     properties.update(self.schema(schema_type=schema_type).get('properties', {}))
+
+        #     # la clé primaire du schema de base est à la fois
+        #     #  - une clé primaire du schema
+        #     #  - et une clé étrangère vers le schema de base
+
+        #     properties[base_schema.pk_field_name()]['foreign_key'] = True
+        #     properties[base_schema.pk_field_name()]["schema_name"] = base_schema_name
+        #     print("properties")
+        #     return properties
+
         return self.schema(schema_type=schema_type)['properties']
 
     def get_property(self, key):

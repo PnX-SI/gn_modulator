@@ -5,7 +5,7 @@
     "sql_schema_name": "ref_geo",
     "sql_table_name": "l_areas",
     "model_name": "LAreas",
-    "title": "geométrie",
+    "label": "geométrie",
     "label_field_name": "area_name",
     "genre": "F",
     "autoschema": true

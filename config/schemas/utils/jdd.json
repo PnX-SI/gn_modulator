@@ -3,10 +3,7 @@
   "type": "object",
   "$meta": {
     "import": {
-      "test_keys": ["dataset_name", "id_acquisition_framework"],
-      "get_foreign_key": {
-        "id_acquisition_framework": ["acquisition_framework_name"]
-      }
+      "test_keys": ["id_acquisition_framework", "dataset_name"]
     },
     "sql_schema_name": "gn_meta",
     "sql_table_name": "t_datasets",

@@ -89,7 +89,7 @@ INSERT INTO sipaf.t_passages_faune(
 )
 WITH non_doublons AS (
 	SELECT id_pf
-	FROM tmp_import_sipaf tis
+	FROM sipaf.tmp_import_sipaf tis
 	GROUP BY id_pf
 	HAVING COUNT(*) = 1
 )
@@ -157,9 +157,9 @@ SELECT
 	NULL,
 	NULL,
 	NULL
-    FROM public.tmp_import_sipaf i
+    FROM sipaf.tmp_import_sipaf i
 	JOIN non_doublons nd on nd.id_pf = i.id_pf
-	JOIN gn_meta.t_datasets d on d.dataset_name = 'test jdd passage faune'
+	JOIN gn_meta.t_datasets d on d.dataset_name = 'SIPAF'
     WHERE i.id_pf IS NOT NULL;
 
 

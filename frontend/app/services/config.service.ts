@@ -98,7 +98,7 @@ export class ModulesConfigService {
   }
 
   moduleConfig(moduleName) {
-    return this._config['modules'][moduleName];
+    return this._config['modules'].find(m => moduleName == m.module_name);
   }
 
 

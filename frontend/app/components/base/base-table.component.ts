@@ -7,6 +7,7 @@ import { CommonService } from "@geonature_common/service/common.service";
 import { ModulesTableService } from "../../services/table.service";
 import { ModulesFormService } from "../../services/form.service"
 import { ModulesRouteService } from "../../services/route.service"
+import { AuthService } from "@geonature/components/auth/auth.service";
 
 import { mergeMap, concatMap } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
@@ -41,8 +42,9 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
     _router: Router,
     _mTable: ModulesTableService,
     _mRoute: ModulesRouteService,
+    _auth: AuthService,
   ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute)
+    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
     this._name = 'BaseTable';
   }
 
@@ -57,6 +59,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   ajaxRequestFunc = (url, config, paramsTable) => {
     return new Promise((resolve, reject) => {
       const fields = this.columns().map(column => column.field);
+      fields.push('cruved_ownership')
       const params = {
         ...paramsTable
       };
@@ -147,17 +150,19 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
         {
           headerSort: false,
           formatter: (cell, formatterParams, onRendered) => {
+            const editAllowed = cell._cell.row.data['cruved_ownership'] <= this.moduleConfig.cruved['U'];
             var html = '';
-            html += `<span class="table-icon"><i class='fa fa-pencil' action="edit"></i></span>`;
+            html += `<span class="table-icon ${editAllowed ? '' : 'disabled'}"><i class='fa fa-pencil' ${editAllowed ? 'action="edit"': ''}></i></span>`;
             return html;
           },
           width:25,
           hozAlign:"center",
-          tooltip: (cell) => `Éditer ${this.schemaConfig.display.def_label} ${this.getCellValue(cell)}`
-          // cellClick: (e, cell) => {
-          //   const value = cell._cell.row.data[pkFieldName]
-          //   this.onRowSelected.emit({value, action:"details"})
-          // }
+          tooltip: (cell) => {
+            const editAllowed = cell._cell.row.data['cruved_ownership'] + 10 <= this.moduleConfig.cruved['U'];
+            return editAllowed
+              ? `Éditer ${this.schemaConfig.display.def_label} ${this.getCellValue(cell)}`
+              : ''
+          }
         },
 
       // {
@@ -183,7 +188,6 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   }
 
   drawTable(): void {
-    console.log(this.size, this.schemaConfig.utils.size)
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
       locale: 'fr',
@@ -198,6 +202,9 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
       paginationSize: this.size || this.schemaConfig.utils.size,
       pagination: "remote",
       ajaxSorting: true,
+      initialSort:[
+        {column:this.pkFieldName(), dir:"asc"}, //sort by this first
+      ],
       selectable: 1,
       columnMinWidth: 20,
       // tooltips:true,

@@ -131,6 +131,7 @@ class SchemaProcess():
         # - relations
         for key, _relation_def in self.relationships().items():
             relation_def = copy.deepcopy(_relation_def)
+            relation_def.pop('type')
             self.set_definition_from_schema_name(definitions, relation_def['schema_name'], is_validation_schema)
             properties[key] = self.validation_schema({
                 **relation_def,

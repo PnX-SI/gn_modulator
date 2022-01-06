@@ -1,0 +1,16 @@
+{
+    "$id": "schemas/utils/dataset_actor",
+    "type": "object",
+    "$meta": {
+        "autoschema": true,
+        "model_name": "CorDatasetActor",
+        "sql_schema_name": "gn_meta",
+        "sql_table_name": "cor_dataset_actor",
+        "label": "Acteur de jeux de données",
+        "label_field_name": "id_cda",
+        "genre": "M",
+        "import": {
+            "test_keys": ["id_dataset", "id_role", "id_organism"]
+        }
+    }
+}

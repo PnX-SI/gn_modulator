@@ -4,9 +4,13 @@
 '''
 
 import os
+import copy
 from pathlib import Path
+from typing import Container
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
+from pkg_resources import resource_exists
+from sqlalchemy import schema
 from sqlalchemy.orm.exc import NoResultFound
 
 from .errors import SchemaDataTypeError
@@ -64,16 +68,12 @@ class SchemaImports:
         '''
         '''
 
-        if not schema_name.startswith('data.'):
-            return
-
         data_file_path = cls.schema_path_from_name(schema_name)
         data = cls.load_and_validate_data(data_file_path)
 
         infos = []
 
         for data_item in data:
-
             info = cls.process_data_item(data_item)
 
             infos.append({
@@ -86,27 +86,54 @@ class SchemaImports:
 
         return infos
 
-    def pre_process_data(self, d):
-        for key_process, keys in self.meta('import.get_foreign_key', {}).items():
-            sm_rel = self.cls()(self.column(key_process)['schema_name'])
-            rel_test_keys = sm_rel.meta('import.test_keys')
-            rel_test_values = [d[test_key] for test_key in keys]
+    def get_foreign_key(self, key_process, rel_test_values):
+
+        if not isinstance(rel_test_values, list):
+            rel_test_values = [rel_test_values]
+        sm_rel = self.cls()(self.column(key_process)['schema_name'])
+        rel_test_keys = sm_rel.meta('import.test_keys')
+        d = {
+            key: rel_test_values[index]
+            for index, key in enumerate(rel_test_keys)
+        }
+        sm_rel.get_foreign_keys(d)
+        rel_test_values = [d[key] for key in d]
+        # rel_test_values = d
+
+        try:
             m = sm_rel.get_row(rel_test_values, rel_test_keys)
-            d[key_process] = getattr(m, key_process)
+            return getattr(m, sm_rel.pk_field_name())
+        except NoResultFound:
+            print('no result', self.schema_name(), sm_rel.schema_name(), rel_test_values, rel_test_keys)
+            return None
 
-            for key in keys:
-                if key not in self.columns():
-                    d.pop(key)
+    def get_foreign_keys(self, d):
 
+        for key in d:
+            if not (
+                key in self.column_keys() and self.column(key).get('foreign_key')
+            ):
+                continue
+            d[key] = self.get_foreign_key(key, d[key])
+
+    def copy_keys(self, d):
         for key, keys in self.meta('import.copy', {}).items():
             for k in keys:
                 d[k] = d.get(k, d[key])
+
+    def pre_process_data(self, d):
+        self.get_foreign_keys(d)
+        self.copy_keys(d)
+
+    def clean_data(self, d):
+        for key in copy.copy(d):
             if key not in self.columns():
+                if self.schema_name() == 'schemas.utils.organisme':
+                    print(self.schema_name(), 'pop key', key)
                 d.pop(key)
 
     @classmethod
     def process_data_item(cls, data_item):
-
         schema_name = data_item['schema_name']
         sm = cls(schema_name)
 
@@ -116,19 +143,24 @@ class SchemaImports:
         test_keys = sm.meta('import.test_keys')
 
         for d in data_item['items']:
-
             # validate_data
 
             # pre traitement
             sm.pre_process_data(d)
-            values = [d[key] for key in test_keys]
+
+            # clean data
+            sm.clean_data(d)
+
+            # print('after pre process', d)
+            values = [d.get(key) for key in test_keys]
 
             # pour visualiser quel ligne est insérée / modifiée
             value = ', '.join([str(value) for value in values])
+            m = None
 
             # on tente un update
             try:
-                _, b_update = sm.update_row(
+                m, b_update = sm.update_row(
                     values,
                     d,
                     test_keys
@@ -138,168 +170,14 @@ class SchemaImports:
 
             # si erreur NoResultFound -> on tente un insert
             except NoResultFound:
-                sm.insert_row(d)
+                m = sm.insert_row(d)
                 inserts.append(value)
 
-        return {'updates': updates, 'inserts': inserts}
-
-
-    @classmethod
-    def process_data_jdd(cls, elements):
-
-        updates = []
-        inserts = []
-        test_keys = ['dataset_name']
-
-        sm = cls('schemas.utils.jdd')
-
-        for d in elements:
-            id_acquisition_framework = cls('schemas.utils.ca').get_row(
-                d['acquisition_framework_name'],
-                'acquisition_framework_name',
-            ).id_acquisition_framework
-
-            full_data = d
-            full_data['id_acquisition_framework'] = id_acquisition_framework
-            values = [full_data[key] for key in test_keys]
-            full_data.pop('acquisition_framework_name')
-            value = ', '.join(values)
-
-            try:
-                _, b_update = sm.update_row(
-                    values,
-                    full_data,
-                    test_keys
-                )
-                if b_update:
-                    updates.append(value)
-
-            except NoResultFound:
-                sm.insert_row(full_data)
-                inserts.append(value)
 
         return {'updates': updates, 'inserts': inserts}
 
     @classmethod
-    def process_data_ca(cls, elements):
-        updates = []
-        test_keys = ['acquisition_framework_name']
-
-        inserts = []
-        sm = cls('schemas.utils.ca')
-
-        for d in elements:
-
-            full_data = d
-            values = [full_data[key] for key in test_keys]
-            value = ', '.join(values)
-            try:
-                _, b_update = sm.update_row(
-                    values,
-                    full_data,
-                    test_keys
-                )
-                if b_update:
-                    updates.append(value)
-
-            except NoResultFound:
-                sm.insert_row(full_data)
-                inserts.append(value)
-
-        return {'updates': updates, 'inserts': inserts}
-
-
-    @classmethod
-    def process_data_nomenclature_type(cls, elements):
-
-        data_type = 'nomenclature_type'
-        updates = []
-        inserts = []
-        sNomenclatureType = cls('schemas.utils.nomenclature_type')
-
-        for d in elements:
-            # donnée au format nomenclature_type
-            full_data = {
-                'mnemonique': d['mnemonique'],
-                'label_default': d['label'],
-                'label_fr': d['label'],
-                'definition_default': d['definition'],
-                'definition_fr': d['definition'],
-                'source': d['source'],
-            }
-            key = 'mnemonique'
-            value = full_data[key]
-
-            try:
-                _, b_update = sNomenclatureType.update_row(
-                    value,
-                    full_data,
-                    key
-                )
-                if b_update:
-                    updates.append(value)
-
-            except NoResultFound:
-                sNomenclatureType.insert_row(full_data)
-                inserts.append(value)
-
-        return {'updates': updates, 'inserts': inserts}
-
-    @classmethod
-    def process_data_nomenclature(cls, elements):
-        # nomenclatures
-
-        data_type = 'nomenclature'
-        updates = []
-        inserts = []
-        sNomenclature = cls('schemas.utils.nomenclature')
-        sNomenclatureType = cls('schemas.utils.nomenclature_type')
-
-        for d in elements:
-            # donnée au format nomenclature_type
-            id_type = (
-                sNomenclatureType
-                .get_row(d['type'], field_name='mnemonique')
-                .id_type
-            )
-
-            full_data = {
-                'cd_nomenclature': d['cd_nomenclature'],
-                'mnemonique': d['mnemonique'],
-                'label_default': d['label'],
-                'label_fr': d['label'],
-                'definition_default': d['definition'],
-                'definition_fr': d['definition'],
-                'source': d['source'],
-                'type': {
-                    'id_type': id_type,
-                    'mnemonique': d['type']
-                },
-                'id_type': id_type,
-                'active': True
-            }
-
-            field_names = ['type.mnemonique', 'cd_nomenclature']
-            values = [d['type'], d['cd_nomenclature']]
-
-            try:
-                _, b_update = sNomenclature.update_row(
-                    values,
-                    full_data,
-                    field_names
-                )
-
-                if b_update:
-                    updates.append(values)
-
-            except NoResultFound:
-                sNomenclature.insert_row(full_data)
-                inserts.append(values)
-
-        return {'updates': updates, 'inserts': inserts}
-
-    @classmethod
-    def log_data_info_detail(cls, info, info_type):
+    def log_data_info_detail(cls, info, info_type, details=False):
         '''
             affichage du detail pour insert ou update
             un peu compliqué
@@ -322,7 +200,7 @@ class SchemaImports:
         # detail = '\n  - {}  ({})'.format(info_type, nb)
         detail = ''
 
-        if nb:
+        if nb and details:
             tab = '      - '
             detail += '{}{}'.format(
                 tab,
@@ -334,25 +212,35 @@ class SchemaImports:
         # return '\n    - '.join(['' + '.'.join(elem) if type(elem) is list else elem for elem in info[info_type]])
 
     @classmethod
-    def txt_data_info(cls, info):
+    def txt_data_info(cls, info, details=False):
         txt = ''
-        detail_updates = cls.log_data_info_detail(info, 'updates')
-        detail_inserts = cls.log_data_info_detail(info, 'inserts')
-        txt += '  - {schema_name}\n'.format(schema_name=info['schema_name'])
-        txt += '    - items ({})\n'.format(len(info['items']))
-        txt += '    - updates ({})\n'.format(len(info['updates']))
-        txt += '{}'.format(detail_updates)
-        txt += '    - inserts ({})\n'.format(len(info['inserts']))
-        txt += '{}'.format(detail_inserts)
+        detail_updates = cls.log_data_info_detail(info, 'updates', details=details)
+        detail_inserts = cls.log_data_info_detail(info, 'inserts', details=details)
+        # txt += '  - {schema_name}\n'.format(schema_name=info['schema_name'])
+        # txt += '    - items ({})\n'.format(len(info['items']))
+        # txt += '    - updates ({})\n'.format(len(info['updates']))
+        # txt += '{}'.format(detail_updates)
+        # txt += '    - inserts ({})\n'.format(len(info['inserts']))
+        # txt += '{}'.format(detail_inserts)
+
+        txt = (
+            '  - {schema_name:40}    #:{nb_items:4}    I:{nb_inserts:4}    U:{nb_updates:4}'
+            .format(
+                schema_name=info['schema_name'],
+                nb_items=len(info['items']),
+                nb_inserts=len(info['inserts']),
+                nb_updates=len(info['updates'])
+            )
+        )
 
         return txt
 
     @classmethod
-    def txt_data_infos(cls, infos_file):
+    def txt_data_infos(cls, infos_file, details=False):
         txt_list = []
         for schema_name, info_file_value in infos_file.items():
-            txt = '- {} - nb_type ({})\n'.format(schema_name, len(info_file_value))
+            txt = '- {}'.format(schema_name, len(info_file_value))
             for info in info_file_value:
-                txt += '\n{}'.format(cls.txt_data_info(info))
+                txt += '\n{}'.format(cls.txt_data_info(info, details=details))
             txt_list.append(txt)
         return '\n\n'.join(txt_list)

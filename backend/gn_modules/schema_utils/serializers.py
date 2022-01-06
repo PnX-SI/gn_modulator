@@ -6,7 +6,8 @@
 
 from geoalchemy2.shape import to_shape, from_shape
 from geojson import Feature
-from marshmallow import pre_load, fields, ValidationError
+from marshmallow import pre_load, post_load, fields, ValidationError
+from marshmallow_sqlalchemy.convert import ModelConverter
 from shapely.geometry import asShape
 from sqlalchemy.orm import ColumnProperty
 
@@ -69,7 +70,8 @@ class SchemaSerializers:
         }
 
         if column_def.get('primary_key'):
-            return MA.auto_field(**kwargs)
+            return fields.Integer(**kwargs)
+            # return MA.auto_field(**kwargs)
 
         if field_type == 'integer':
             return fields.Integer(**kwargs)
@@ -160,6 +162,7 @@ class SchemaSerializers:
         '''
             remove pk_key from data when pk_key is None
         '''
+
         @pre_load
         def pre_load_make_object(self_marshmallow, data, **kwargs):
             for key in self.pk_field_names():
@@ -193,8 +196,14 @@ class SchemaSerializers:
         for key, relation_def in self.relationships().items():
             marshmallow_schema_dict[key] = self.process_relation_marshmallow(relation_def)
 
-            # MarshmallowSchema._declared_fields[key] = self.process_relation_marshmallow(relation_def)
-        MarshmallowSchema = type(self.marshmallow_schema_name(), (MA.SQLAlchemyAutoSchema,), marshmallow_schema_dict)
+        if self.meta('check_cruved'):
+            marshmallow_schema_dict['cruved_ownership'] = fields.Integer(dumps_only=True)
+
+        MarshmallowSchema = type(
+            self.marshmallow_schema_name(),
+            (MA.SQLAlchemyAutoSchema,),
+            marshmallow_schema_dict
+        )
 
         cache_marshmallow[self.schema_name()] = MarshmallowSchema
 
@@ -230,7 +239,7 @@ class SchemaSerializers:
         else:
             return data
 
-    def serialize_list(self, m_list, fields=None, as_geojson=True, geometry_field_name=False):
+    def serialize_list(self, m_list, fields=None, as_geojson=False, geometry_field_name=False):
         '''
             serialize using marshmallow
 
@@ -248,6 +257,8 @@ class SchemaSerializers:
         marshmallowSchema = self.MarshmallowSchema()(**kwargs)
 
         data_list = marshmallowSchema.dump(m_list, many=True)
+
+        print(kwargs)
 
         if as_geojson:
 
@@ -275,7 +286,6 @@ class SchemaSerializers:
         '''
             unserialize using marshmallow
         '''
-
         MS = self.MarshmallowSchema()
         ms = MS()
         try:

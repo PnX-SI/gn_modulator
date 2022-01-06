@@ -2,11 +2,16 @@
     "$id": "schemas/utils/organisme",
     "type": "object",
     "$meta": {
+        "autoschema": true,
         "sql_schema_name": "utilisateurs",
         "sql_table_name": "bib_organismes",
+        "model_name": "Organisme",
         "genre": "M",
         "label": "organisme",
-        "label_field_name": "nom_organisme"
+        "label_field_name": "nom_organisme",
+        "import": {
+            "test_keys": ["nom_organisme"]
+        }
     },
     "properties": {
         "id_organisme": { "type": "integer", "label": "ID organisme", "primary_key": true},

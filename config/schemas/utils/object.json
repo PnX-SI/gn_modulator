@@ -1,0 +1,16 @@
+{
+    "$id": "schemas/utils/object",
+    "type": "object",
+    "$meta": {
+        "autoschema": true,
+        "model_name": "TObjects",
+        "sql_schema_name": "gn_permissions",
+        "sql_table_name": "t_objects",
+        "label": "object",
+        "label_field_name": "label_object",
+        "genre": "M",
+        "import": {
+          "test_keys": ["code_object"]
+        }
+    }
+}

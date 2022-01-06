@@ -96,8 +96,9 @@
               "schema_dot_table": { "type": "string" },
               "schema_name": { "type": "string" },
               "title": { "type": "string"},
-              "trigger": { "type": "string" },
+              "trigger": { "type": "object" },
               "type": { "enum": [ "relation" ] }
+
             },
             "required": [ "type", "title", "schema_name", "schema_dot_table", "relation_type"],
             "additionalProperties": false
@@ -109,7 +110,8 @@
               "srid": { "type": "integer" },
               "geometry_type": { "enum": [ "geometry", "point" ] },
               "title": { "type": "string"},
-              "description": { "type": "string"}
+              "description": { "type": "string"},
+              "index": { "type": "boolean"}
             },
             "required": [ "type", "srid", "geometry_type", "title" ],
             "additionalProperties": false

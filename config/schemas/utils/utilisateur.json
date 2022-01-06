@@ -3,6 +3,7 @@
     "type": "object",
     "$meta": {
         "autoschema": true,
+        "model_name": "User",
         "sql_schema_name": "utilisateurs",
         "sql_table_name": "t_roles",
         "label": "utilisateur",
@@ -14,31 +15,15 @@
                 "prenom_role",
                 "organisme.nom_organisme"
             ]
+        },
+        "import": {
+            "test_keys": ["identifiant"]
+        }
+    },
+    "properties": {
+        "password": {
+            "type": "string",
+            "title": "password"
         }
     }
-    // "properties": {
-    //     "id_role": {
-    //         "type": "integer",
-    //         "label": "ID utilisateur",
-    //         "primary_key": true
-    //     },
-    //     "id_organisme": {
-    //         "type": "integer",
-    //         "label": "ID organisme",
-    //         "foreign_key": "schemas/utils/organisme.id_organisme"
-    //     },
-    //     "nom_role": {
-    //         "type": "string",
-    //         "label": "Nom"
-    //     },
-    //     "prenom_role": {
-    //         "type": "string",
-    //         "label": "Prénom"
-    //     },
-    //     "organisme": {
-    //         "label": "Organisme",
-    //         "foreign_key": "id_organisme",
-    //         "rel": "schemas.utils.organisme"
-    //     }
-    // }
 }

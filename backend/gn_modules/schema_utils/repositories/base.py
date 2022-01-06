@@ -68,7 +68,9 @@ class SchemaRepositoriesBase():
 
         self.validate_data(data)
         m = self.Model()()
-        self.unserialize(m, data)
+        error = self.unserialize(m, data)
+        if error:
+            raise SchemaRepositoryError('Erreur de désérialisation: {}', error)
         DB.session.add(m)
         DB.session.commit()
 
@@ -115,7 +117,7 @@ class SchemaRepositoriesBase():
         # pour les uuid la comparaison directe donne non egal en cas d'égalité
         # (pourquoi??) d'ou transformation en string pour la comparaison
         if not (model == data or str(model) == str(data)):
-            print('elem diff', data, model)
+            # print('elem diff', data, model)
             return True
 
         return False
@@ -129,7 +131,8 @@ class SchemaRepositoriesBase():
         self.validate_data(data)
         m = self.get_row(value, field_name=field_name)
         if not self.is_new_data(m, data):
-            print('not new')
+            DB.session.commit()
+            DB.session.flush()
             return m, False
         self.unserialize(m, data)
         DB.session.commit()
@@ -193,30 +196,18 @@ class SchemaRepositoriesBase():
             - page ( OFFSET(size, page) )
         '''
 
-
         query_info = {
             'page': params.get('page', None),
             'size': params.get('size', None)
         }
-
-        # if params['value']:
-        #     row_number = self.get_row_number(params, params['value'], info_role)
-        #     query_info['row_number'] = row_number
-        #     print('row number', row_number, 'id_pf', params['value'])
-
 
         # init query
         Model = self.Model()
         query = DB.session.query(Model)
 
         # CRUVED ??? TODO
-        query = self.process_cruved(info_role, 'R', Model, query)
-
         # pre filters
-
-        # row number
-
-        query = self.process_sorters(Model, params.get('sorters', []), query)
+        query = self.process_cruved(info_role, 'R', Model, query)
 
         # TODO distinguer filter et pre_filter search
         query_info['total'] = query.count()

@@ -245,12 +245,12 @@
                             "direction": "row",
                             "type": "fieldset",
                             "items": [
-                                { "items": ["cd_com", "pk", "pr", "pr_abs"] },
+                                { "items": ["pk", "pr", "pr_abs"] },
                                 { "items":
                                     [
-                                        { "key": "commune", "label": "Commune", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "COM"}] },
-                                        { "key": "departement", "label": "Département", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "DEP"}] },
-                                        { "label": "Axe routier", "key": "routes.route_name" }
+                                        { "key": "commune", "title": "Commune", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "COM"}] },
+                                        { "key": "departement", "title": "Département", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "DEP"}] },
+                                        { "title": "Axe routier", "key": "routes.route_name" }
                                     ]
                                 }
                             ]

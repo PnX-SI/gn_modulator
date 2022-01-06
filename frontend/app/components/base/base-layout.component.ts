@@ -6,6 +6,7 @@ import { CommonService } from "@geonature_common/service/common.service";
 import { ModulesMapService } from "../../services/map.service"
 import { ModulesFormService } from "../../services/form.service"
 import { ModulesRouteService } from "../../services/route.service"
+import { AuthService } from "@geonature/components/auth/auth.service";
 
 import { BaseComponent } from "./base.component";
 import utils from '../../utils'
@@ -31,8 +32,9 @@ constructor(
   _mForm: ModulesFormService,
   _router: Router,
   _mRoute: ModulesRouteService,
+  _auth: AuthService,
 ) {
-  super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute)
+  super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
   this._name = 'BaseLayout';
 }
 

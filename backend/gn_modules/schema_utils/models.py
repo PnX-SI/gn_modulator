@@ -2,27 +2,30 @@
     SchemaMethods : sqlalchemy existing_Models processing
 '''
 
+from flask_sqlalchemy import model
 from geoalchemy2 import Geometry
+from gn_modules.schema_utils.repositories import cruved
 
 from sqlalchemy.orm import column_property
 
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import func, select
+from sqlalchemy import func, select, case
 
 from geonature.utils.env import DB
 
 from .errors import SchemaProcessedPropertyError
 
-from geonature.core.taxonomie.models import Taxref  # noqa
-from geonature.core.gn_synthese.models import Synthese  # noqa
-from geonature.core.gn_meta.models import TDatasets  # noqa
-from pypnnomenclature.models import TNomenclatures, BibNomenclaturesTypes # noqa
-from geonature.core.ref_geo.models import LAreas, BibAreasTypes
-
 # store the sqla Models
 cache_model = {}
 cache_cor_table = {}
 
+from geonature.core.taxonomie.models import Taxref  # noqa
+from geonature.core.gn_synthese.models import Synthese  # noqa
+from geonature.core.gn_meta.models import TDatasets  # noqa
+from pypnnomenclature.models import TNomenclatures, BibNomenclaturesTypes # noqa
+from geonature.core.ref_geo.models import LAreas, BibAreasTypes # noqa
+from pypnusershub.db.models import User, Organisme # noqa
+from geonature.core.users.models import CorRole # noqa
 
 class SchemaModel():
     '''
@@ -128,7 +131,7 @@ class SchemaModel():
 
     def process_relation_model(self, key, relationship_def, Model):
 
-        relation = self.cls()(relationship_def['scehma_name'])
+        relation = self.cls()(relationship_def['schema_name'])
 
         kwargs = {}
         if relationship_def.get('relation_type') == 'n-1':
@@ -152,8 +155,8 @@ class SchemaModel():
     def CorTable(self, relation_def):
 
         schema_dot_table = relation_def.get('schema_dot_table')
-        cor_schema_name = self.cor_schema_name(relation_def).split('.')[0]
-        cor_table_name = self.cor_table_name(relation_def).split('.')[1]
+        cor_schema_name = schema_dot_table.split('.')[0]
+        cor_table_name = schema_dot_table.split('.')[1]
 
         if cache_cor_table.get(schema_dot_table):
             return cache_cor_table[schema_dot_table]
@@ -237,16 +240,58 @@ class SchemaModel():
             }
         }
 
+        ModelBaseClass = DB.Model
+        if self.meta('extends'):
+            dict_model['__mapper_args__'] = {
+                'polymorphic_identity': self.meta('extends.type'),
+            }
+            base_schema = self.cls()(self.meta('extends.schema_name'))
+            ModelBaseClass = base_schema.Model()
+
+
+        if self.meta('extends'):
+            base_schema = self.cls()(self.meta('extends.schema_name'))
+
         # process properties
         for key, column_def in self.columns().items():
+
+            if self.meta('extends'):
+                base_schema = self.cls()(self.meta('extends.schema_name'))
+                if key in base_schema.column_keys() and key != base_schema.pk_field_name():
+                    continue
+
             dict_model[key] = self.process_column_model(column_def)
 
-        Model = type(self.model_name(), (DB.Model,), dict_model)
+        Model = type(self.model_name(), (ModelBaseClass,), dict_model)
+
         # store in cache before relations (avoid circular dependancies)
         cache_model[self.schema_name()] = Model
 
         # process relations
         for key, value in self.relationships().items():
+
+            if self.meta('extends'):
+                base_schema = self.cls()(self.meta('extends.schema_name'))
+                if key in base_schema.column_keys():
+                    continue
+
             setattr(Model, key, self.process_relation_model(key, value, Model))
 
         return Model
+
+    def cruved_ownership(self, id_role, id_organism):
+        return column_property(
+            select(
+                [
+                    case(
+                        [
+                            (TDatasets.id_digitizer == id_role, 1),
+                            (TDatasets.cor_dataset_actor.any(id_role=id_role), 1),
+                            (TDatasets.cor_dataset_actor.any(id_organism=id_organism), 2),
+                        ],
+                        else_=3
+                    )
+                ]
+            )
+            .where(getattr(self.Model(), 'id_dataset') == TDatasets.id_dataset)
+        )

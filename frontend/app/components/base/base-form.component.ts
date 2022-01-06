@@ -11,6 +11,7 @@ import { ModulesMapService } from "../../services/map.service"
 import { ModulesFormService } from "../../services/form.service"
 import { CommonService } from "@geonature_common/service/common.service";
 import { ModulesRouteService } from "../../services/route.service"
+import { AuthService } from "@geonature/components/auth/auth.service";
 
 import { additionalWidgets } from './form'
 import utils from '../../utils';
@@ -45,10 +46,11 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     _mForm: ModulesFormService,
     _router: Router,
     _mRoute: ModulesRouteService,
+    _auth: AuthService,
     private _widgetLibraryService: WidgetLibraryService,
     private _formBuilder: FormBuilder,
   ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute)
+    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
     this.mapId = `base-form_${Math.random()}`;
     this._name = 'BaseForm';
 

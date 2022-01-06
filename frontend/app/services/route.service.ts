@@ -81,18 +81,17 @@ export class ModulesRouteService {
    * fonction qui lit la config des modules et ajoute les routes à la config du router
    */
   addModulesRoutes(routesModules, modulesConfig) {
-    for (const [moduleName, module] of Object.entries(modulesConfig)) {
-      for (const [pageName, pageConfig] of Object.entries(module['pages'])) {
+    for (const moduleConfig of modulesConfig) {
+      for (const [pageName, pageConfig] of Object.entries(moduleConfig['pages'])) {
         const pagePath = !!pageConfig['url']
-          ? `${module['code'].toLowerCase()}/${pageConfig['url']}`
-          : `${module['code'].toLowerCase()}`;
-
+          ? `${moduleConfig['module_code'].toLowerCase()}/${pageConfig['url']}`
+          : `${moduleConfig['module_code'].toLowerCase()}`;
           routesModules.push(
           {
             path: pagePath,
             component: PageComponent,
             data: {
-              moduleName,
+              moduleName: moduleConfig.module_name,
               pageName
             }
           })
@@ -133,7 +132,7 @@ export class ModulesRouteService {
     for (const [key, value] of Object.entries(params)) {
       url = url.replace(`:${key}`, value)
     }
-    return `/modules/${moduleConfig.code.toLowerCase()}/${url}`
+    return `/modules/${moduleConfig.module_code.toLowerCase()}/${url}`
   }
 
   navigateToPage(moduleName, pageName, params) {
