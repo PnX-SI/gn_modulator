@@ -1,6 +1,6 @@
 [
   {
-    "schema_name": "schemas.utils.nomenclature_type",
+    "schema_name": "schemas.utils.nomenclature.nomenclature_type",
     "items": [
       { "mnemonique": "PF_MATERIAUX", "label": "Matériaux", "definition": "Matériaux composant l'ouvrage", "source": "SIPAF" },
       { "mnemonique": "PF_OH_POSITION", "label": "OH Position", "definition": "Position de l'ouvrage hydrolique", "source": "SIPAF" },
@@ -9,7 +9,7 @@
     ]
   },
   {
-    "schema_name": "schemas.utils.nomenclature",
+    "schema_name": "schemas.utils.nomenclature.nomenclature",
     "items": [
       { "id_type": ["PF_MATERIAUX"], "cd_nomenclature": "BET", "mnemonique": "Béta.", "label": "Béton", "definition": "Béton", "source": "SIPAF"},
       { "id_type": ["PF_MATERIAUX"], "cd_nomenclature": "MET", "mnemonique": "Mét.", "label": "Métal", "definition": "Métal", "source": "SIPAF"},

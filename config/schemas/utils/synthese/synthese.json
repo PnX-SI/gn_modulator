@@ -1,0 +1,22 @@
+{
+    "$id": "schemas/utils/synthese",
+    "type": "object",
+    "$meta": {
+        "autoschema": true,
+        "sql_schema_name": "gn_synthese",
+        "sql_table_name": "synthese",
+        "model_name": "Synthese",
+        "genre": "M",
+        "title": "element de la synthese",
+        "label_field_name": "cd_nom",
+        "geometry_field_name": "the_geom_4326",
+        "labels": "elements de la synthese",
+        "table": {
+            "columns": [
+                "id_synthese",
+                "cd_nom",
+                "taxon.lb_nom"
+            ]
+        }
+    }
+}

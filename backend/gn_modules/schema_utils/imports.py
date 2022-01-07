@@ -128,7 +128,7 @@ class SchemaImports:
     def clean_data(self, d):
         for key in copy.copy(d):
             if key not in self.columns():
-                if self.schema_name() == 'schemas.utils.organisme':
+                if self.schema_name() == 'schemas.utils.utilisateur.organisme':
                     print(self.schema_name(), 'pop key', key)
                 d.pop(key)
 

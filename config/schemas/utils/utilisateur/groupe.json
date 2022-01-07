@@ -16,7 +16,7 @@
     "properties": {
       "id_role_utilisateur": {
         "foreign_key": true,
-        "schema_name": "schemas.utils.utilisateur"
+        "schema_name": "schemas.utils.utilisateur.role"
       }
     }
 }

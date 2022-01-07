@@ -1,6 +1,6 @@
 [
   {
-    "schema_name": "schemas.utils.ca",
+    "schema_name": "schemas.utils.meta.ca",
     "items": [
       {
         "acquisition_framework_name": "SIPAF",
@@ -10,7 +10,7 @@
     ]
   },
   {
-    "schema_name": "schemas.utils.jdd",
+    "schema_name": "schemas.utils.meta.jdd",
     "items": [
       {
         "id_acquisition_framework": "SIPAF",
@@ -39,7 +39,7 @@
     ]
   },
   {
-    "schema_name": "schemas.utils.dataset_actor",
+    "schema_name": "schemas.utils.meta.dataset_actor",
     "items": [
       {
         "id_dataset": ["SIPAF", "SIPAF RN_106"],

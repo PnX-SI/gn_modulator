@@ -128,7 +128,7 @@
                                 {
                                     "key": "id_dataset",
                                     "type": "list-form",
-                                    "schema_name": "schemas.utils.jdd",
+                                    "schema_name": "schemas.utils.meta.jdd",
                                     "label": "Jeu de données",
                                     "data_reload_on_search": true,
                                     "size": 10
@@ -466,20 +466,20 @@
             "type": "integer",
             "title": "id_dataset",
             "foreign_key": true,
-            "schema_name": "schemas.utils.jdd"
+            "schema_name": "schemas.utils.meta.jdd"
         },
         "id_nomenclature_materiaux": {
             "type": "integer",
             "title": "Matériaux",
             "foreign_key": true,
-            "schema_name": "schemas.utils.nomenclature",
+            "schema_name": "schemas.utils.nomenclature.nomenclature",
             "nomenclature_type": "PF_MATERIAUX"
         },
         "id_nomenclature_oh_position": {
             "type": "integer",
             "title": "OH Position",
             "foreign_key": true,
-            "schema_name": "schemas.utils.nomenclature",
+            "schema_name": "schemas.utils.nomenclature.nomenclature",
             "nomenclature_type": "PF_OH_POSITION"
         },
         "id_nomenclature_oh_banq_caract": {
@@ -487,13 +487,13 @@
             "title": "OH Caractrisation banquette",
             "nomenclature_type": "PF_OH_BANQ_CARACT",
             "foreign_key": true,
-            "schema_name": "schemas.utils.nomenclature"
+            "schema_name": "schemas.utils.nomenclature.nomenclature"
         },
         "id_nomenclature_oh_banq_type": {
             "type": "integer",
             "title": "OH type de banquette",
             "foreign_key": true,
-            "schema_name": "schemas.utils.nomenclature",
+            "schema_name": "schemas.utils.nomenclature.nomenclature",
             "nomenclature_type": "PF_OH_BANQ_TYPE"
         },
 
@@ -502,28 +502,28 @@
         "nomenclature_materiaux": {
             "type": "relation",
             "relation_type": "n-1",
-            "schema_name": "schemas.utils.nomenclature",
+            "schema_name": "schemas.utils.nomenclature.nomenclature",
             "title": "Matériaux",
             "local_key": "id_nomenclature_materiaux"
         },
         "nomenclature_oh_position": {
             "type": "relation",
             "relation_type": "n-1",
-            "schema_name": "schemas.utils.nomenclature",
+            "schema_name": "schemas.utils.nomenclature.nomenclature",
             "title": "Position banquette",
             "local_key": "id_nomenclature_oh_position"
         },
         "nomenclature_oh_banq_caract": {
             "type": "relation",
             "relation_type": "n-1",
-            "schema_name": "schemas.utils.nomenclature",
+            "schema_name": "schemas.utils.nomenclature.nomenclature",
             "title": "OH Caractrisation banquette",
             "local_key": "id_nomenclature_oh_banq_caract"
         },
         "nomenclature_oh_banq_type": {
             "type": "relation",
             "relation_type": "n-1",
-            "schema_name": "schemas.utils.nomenclature",
+            "schema_name": "schemas.utils.nomenclature.nomenclature",
             "title": "OH type de banquette",
             "local_key": "id_nomenclature_oh_banq_type"
         },
@@ -531,7 +531,7 @@
             "type": "relation",
             "title": "Areas",
             "relation_type": "n-n",
-            "schema_name": "schemas.utils.area",
+            "schema_name": "schemas.utils.ref_geo.area",
             "schema_dot_table": "sipaf.cor_area_pf",
             "trigger": {
                 "name": "intersect_ref_geo"

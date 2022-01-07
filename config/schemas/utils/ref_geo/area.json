@@ -15,7 +15,7 @@
       "type": "relation",
       "relation_type": "n-1",
       "title": "Type",
-      "schema_name": "schemas.utils.area_type"
+      "schema_name": "schemas.utils.ref_geo.area_type"
     }
   }
 }

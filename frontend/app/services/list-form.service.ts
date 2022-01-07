@@ -59,7 +59,7 @@ export class ListFormService {
   initConfig(options) {
     // gestion des nomenclatures pour simplifier la config du layout
     if (options.nomenclature_type) {
-      options.schema_name = options.schema_name || 'schemas.utils.nomenclature';
+      options.schema_name = options.schema_name || 'schemas.utils.nomenclature.nomenclature';
       options.params = options.params || {}
       options.params.filters = options.params.filters || [];
       options.params.filters.push({field: 'type.mnemonique', type: '=', value: options.nomenclature_type})
@@ -67,7 +67,7 @@ export class ListFormService {
     }
 
     if (options.area_type) {
-      options.schema_name = options.schema_name || 'schemas.utils.area';
+      options.schema_name = options.schema_name || 'schemas.utils.ref_geo.area';
       options.params = options.params || {}
       options.params.filters = options.params.filters || [];
       options.params.filters.push({field: 'area_type.type_code', type: '=', value: options.area_type})

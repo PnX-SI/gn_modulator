@@ -38,7 +38,7 @@
         "type": {
             "local_key": "id_type",
             "title": "Type",
-            "schema_name": "schemas.utils.nomenclature_type",
+            "schema_name": "schemas.utils.nomenclature.nomenclature_type",
             "relation_type": "n-1",
             "type": "relation"
         }

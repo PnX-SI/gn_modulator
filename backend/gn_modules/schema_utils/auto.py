@@ -160,7 +160,7 @@ class SchemaAuto():
             property['foreign_key'] = True
             property['schema_name'] = schema_name
 
-            if schema_name == 'schemas.utils.nomenclature':
+            if schema_name == 'schemas.utils.nomenclature.nomenclature':
 
                 # nomenclature_type
                 nomenclature_type = cls.reflect_nomenclature_type(sql_schema_name, sql_table_name, column.key)

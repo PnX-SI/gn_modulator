@@ -1,6 +1,6 @@
 [
   {
-    "schema_name": "schemas.utils.organisme",
+    "schema_name": "schemas.utils.utilisateur.organisme",
     "items": [
       {
         "nom_organisme": "Occitanie",
@@ -9,7 +9,7 @@
     ]
   },
   {
-    "schema_name": "schemas.utils.utilisateur",
+    "schema_name": "schemas.utils.utilisateur.role",
     "items": [
       {
         "identifiant": "grp_user_sipaf",
@@ -46,14 +46,14 @@
       }
     ]
   },
-  { "schema_name": "schemas.utils.application_profil",
+  { "schema_name": "schemas.utils.utilisateur.application_profil",
     "items": [
       { "id_application": "GN", "id_profil": "1", "id_role": "grp_user_sipaf"},
       { "id_application": "GN", "id_profil": "1", "id_role": "grp_admin_sipaf"}
     ]
   },
   {
-    "schema_name": "schemas.utils.permission",
+    "schema_name": "schemas.utils.permission.permission",
     "items": [
       { "id_module": ["SIPAF"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["C"], "id_filter": ["3"] },
       { "id_module": ["SIPAF"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["R"], "id_filter": ["3"] },
@@ -85,7 +85,7 @@
     ]
   },
   {
-    "schema_name": "schemas.utils.groupe",
+    "schema_name": "schemas.utils.utilisateur.groupe",
     "items": [
       { "id_role_groupe": ["grp_admin_sipaf"], "id_role_utilisateur": ["admin_sipaf"]},
       { "id_role_groupe": ["grp_user_sipaf"], "id_role_utilisateur": ["RN_106"]}
