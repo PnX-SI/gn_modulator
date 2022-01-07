@@ -31,7 +31,6 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   public table;
   // public height: string = "311px";
   tab = document.createElement("div");
-
   constructor(
     _route: ActivatedRoute,
     _commonService: CommonService,
