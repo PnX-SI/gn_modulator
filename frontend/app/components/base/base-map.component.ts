@@ -213,7 +213,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     const htmlDetails = '<button action="details">Details</button>'
     const condEdit = properties['cruved_ownership'] <= this.moduleConfig.cruved['U'];
     const htmlEdit = condEdit
-      ? '<button action="details">Detail</button>'
+      ? '<button action="edit">Éditer</button>'
       : '';
 
     const html = `
