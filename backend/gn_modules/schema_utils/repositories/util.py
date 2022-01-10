@@ -37,18 +37,23 @@ class SchemaRepositoriesUtil():
             # cas avec un seul . => a.b
             # on verra ensuite si on à le besoin de le faire récursivement
 
-            (rel, col) = field_name.split('.')
+            field_names = field_name.split('.')
 
+            rel = field_names[0]
             relationship = getattr(Model, rel)
+
+            col = '.'.join(field_names[1:])
 
             alias = orm.aliased(relationship.mapper.entity)
 
             if query:
                 query = query.join(alias, relationship)
 
-            model_attribute = getattr(alias, col)
+            return self.custom_getattr(alias, col, query)
 
-            return model_attribute, query
+            # model_attribute = getattr(alias, col)
+
+            # return model_attribute, query
 
     def get_sorters(self, Model, sorters, query):
         order_bys = []
