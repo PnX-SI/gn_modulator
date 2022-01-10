@@ -1,5 +1,5 @@
 {
-    "$id": "schemas/utils/synthese",
+    "$id": "schemas/utils/synthese/synthese",
     "type": "object",
     "$meta": {
         "autoschema": true,

@@ -29,7 +29,6 @@ export class ModulesFormService {
       layout.fxLayoutGap = '5px';
 
       if (layout.type == 'fieldset') {
-        console.log('fieldset', layout.title)
         layout.htmlClass='fieldset';
       }
 

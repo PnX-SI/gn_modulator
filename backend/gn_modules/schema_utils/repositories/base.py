@@ -7,7 +7,6 @@ import math
 from geonature.utils.env import DB
 
 from sqlalchemy import cast, orm, and_, or_, not_, func, select
-from sqlalchemy.sql.selectable import subquery
 
 from ..errors import (
     SchemaRepositoryError

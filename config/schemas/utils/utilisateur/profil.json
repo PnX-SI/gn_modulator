@@ -1,5 +1,5 @@
 {
-    "$id": "schemas/utils/profil",
+    "$id": "schemas/utils/utilisateur/profil",
     "type": "object",
     "$meta": {
         "autoschema": true,

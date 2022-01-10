@@ -53,5 +53,13 @@
       }
 
     ]
+  },
+  {
+    "schema_name": "schemas.utils.commons.module_jdd",
+    "items": [
+      { "id_dataset": ["SIPAF", "SIPAF"], "id_module": "SIPAF" },
+      { "id_dataset": ["SIPAF", "SIPAF RN_106"], "id_module": "SIPAF" },
+      { "id_dataset": ["SIPAF", "SIPAF Occitanie"], "id_module": "SIPAF" }
+    ]
   }
 ]

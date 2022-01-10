@@ -1,5 +1,5 @@
 {
-    "$id": "schemas/utils/sous_module",
+    "$id": "schemas/utils/commons/sous_module",
     "type": "object",
     "$meta": {
       "model_name": "TModulesComplements",

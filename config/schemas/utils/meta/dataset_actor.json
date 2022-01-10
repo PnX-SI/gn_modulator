@@ -1,5 +1,5 @@
 {
-    "$id": "schemas/utils/dataset_actor",
+    "$id": "schemas/utils/meta/dataset_actor",
     "type": "object",
     "$meta": {
         "autoschema": true,

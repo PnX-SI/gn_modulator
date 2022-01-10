@@ -27,28 +27,6 @@ schema_names = SchemaMethods.schema_names('schemas')
 #     return [k for k in schema_names if incomplete in k]
 
 
-@click.command('model2schema')
-@click.argument('schema_dot_table')
-@click.argument('schema_name')
-@click.option('-w', '--write', default=False, is_flag=True, help="Ecrirre le fichier")
-@click.option('-f', '--force-write', default=False, is_flag=True, help="Forcer l'écriture du fichier")
-@with_appcontext
-def cmd_model_to_schema(schema_dot_table, schema_name, write=False, force_write=False):
-    '''
-        model2schema <schema_dot_table> <schema_name>
-
-        crée une prémisse de schéma à partir d'une table
-        - selon le type de variable
-        - relations ?
-        - commentaires ?
-        - not null -> required
-    '''
-
-    schema = SchemaMethods.c_get_autoschema(schema_dot_table)
-
-    SchemaMethods.pprint(schema)
-
-
 @click.command('schema')
 @click.argument('schema_name')
 @click.option('-p', '--schema_path', default=None, help="chemin vers les elements du schema: '$meta', 'properties[<key>]'")
@@ -325,6 +303,5 @@ commands = [
     cmd_check,
     cmd_schema,
     cmd_explore_data,
-    cmd_model_to_schema,
     cmd_install_module,
 ]

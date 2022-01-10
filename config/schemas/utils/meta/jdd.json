@@ -1,5 +1,5 @@
 {
-  "$id": "schemas/utils/jdd",
+  "$id": "schemas/utils/meta/jdd",
   "type": "object",
   "$meta": {
     "import": {
@@ -12,7 +12,9 @@
     "labels": "jeux de données",
     "label_field_name": "dataset_shortname",
     "genre": "M",
-    "autoschema": true
+    "autoschema": true,
+    "relation": ["modules"]
+    // "check_cruved": true
   },
   "properties": {
     "dataset_name": {

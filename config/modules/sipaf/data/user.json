@@ -55,40 +55,40 @@
   {
     "schema_name": "schemas.utils.permission.permission",
     "items": [
-      { "id_module": ["SIPAF"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["C"], "id_filter": ["3"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["R"], "id_filter": ["3"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["U"], "id_filter": ["3"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["V"], "id_filter": ["3"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["E"], "id_filter": ["3"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["D"], "id_filter": ["3"] },
+      { "id_module": "SIPAF", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "C", "id_filter": "3" },
+      { "id_module": "SIPAF", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "R", "id_filter": "3" },
+      { "id_module": "SIPAF", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "U", "id_filter": "3" },
+      { "id_module": "SIPAF", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "V", "id_filter": "3" },
+      { "id_module": "SIPAF", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "E", "id_filter": "3" },
+      { "id_module": "SIPAF", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "D", "id_filter": "3" },
 
-      { "id_module": ["GEONATURE"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["C"], "id_filter": ["3"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["R"], "id_filter": ["3"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["U"], "id_filter": ["3"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["V"], "id_filter": ["3"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["E"], "id_filter": ["3"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_admin_sipaf"], "id_object": ["ALL"], "id_action": ["D"], "id_filter": ["3"] },
+      { "id_module": "GEONATURE", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "C", "id_filter": "3" },
+      { "id_module": "GEONATURE", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "R", "id_filter": "3" },
+      { "id_module": "GEONATURE", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "U", "id_filter": "3" },
+      { "id_module": "GEONATURE", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "V", "id_filter": "3" },
+      { "id_module": "GEONATURE", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "E", "id_filter": "3" },
+      { "id_module": "GEONATURE", "id_role": "grp_admin_sipaf", "id_object": "ALL", "id_action": "D", "id_filter": "3" },
 
-      { "id_module": ["SIPAF"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["C"], "id_filter": ["1"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["R"], "id_filter": ["2"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["U"], "id_filter": ["1"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["V"], "id_filter": ["0"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["E"], "id_filter": ["1"] },
-      { "id_module": ["SIPAF"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["D"], "id_filter": ["1"] },
+      { "id_module": "SIPAF", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "C", "id_filter": "1" },
+      { "id_module": "SIPAF", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "R", "id_filter": "2" },
+      { "id_module": "SIPAF", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "U", "id_filter": "1" },
+      { "id_module": "SIPAF", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "V", "id_filter": "0" },
+      { "id_module": "SIPAF", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "E", "id_filter": "1" },
+      { "id_module": "SIPAF", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "D", "id_filter": "1" },
 
-      { "id_module": ["GEONATURE"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["C"], "id_filter": ["1"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["R"], "id_filter": ["2"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["U"], "id_filter": ["1"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["V"], "id_filter": ["0"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["E"], "id_filter": ["1"] },
-      { "id_module": ["GEONATURE"], "id_role": ["grp_user_sipaf"], "id_object": ["ALL"], "id_action": ["D"], "id_filter": ["1"] }
+      { "id_module": "GEONATURE", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "C", "id_filter": "1" },
+      { "id_module": "GEONATURE", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "R", "id_filter": "2" },
+      { "id_module": "GEONATURE", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "U", "id_filter": "1" },
+      { "id_module": "GEONATURE", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "V", "id_filter": "0" },
+      { "id_module": "GEONATURE", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": "E", "id_filter": "1" },
+      { "id_module": "GEONATURE", "id_role": "grp_user_sipaf", "id_object": "ALL", "id_action": ["D"], "id_filter": ["1"] }
     ]
   },
   {
     "schema_name": "schemas.utils.utilisateur.groupe",
     "items": [
-      { "id_role_groupe": ["grp_admin_sipaf"], "id_role_utilisateur": ["admin_sipaf"]},
-      { "id_role_groupe": ["grp_user_sipaf"], "id_role_utilisateur": ["RN_106"]}
+      { "id_role_groupe": "grp_admin_sipaf", "id_role_utilisateur": "admin_sipaf"},
+      { "id_role_groupe": "grp_user_sipaf", "id_role_utilisateur": "RN_106"}
     ]
   }
 ]

@@ -1,7 +1,7 @@
 from sqlalchemy import cast, orm, and_, or_, not_, func, select
 from geonature.utils.env import DB
 
-cache_custom_getattr = {}
+# cache_custom_getattr = {}
 
 class SchemaRepositoriesUtil():
     '''
@@ -19,18 +19,17 @@ class SchemaRepositoriesUtil():
 
                 on a deux relations de type nomenclature
                 et l'on souhaite filtrer la requête par rapport aux deux
-        '''
 
-        if model_attribute := cache_custom_getattr.get(field_name):
-            return model_attribute, query
+            TODO gerer plusieurs '.'
+            exemple
+            http://localhost:8000/modules/schemas.sipaf.pf/rest/?page=1&size=13&sorters=[{%22field%22:%22id_pf%22,%22dir%22:%22asc%22}]&filters=[{%22field%22:%22areas.type.coe_type%22,%22type%22:%22=%22,%22value%22:%22DEP%22}]&fields=[%22id_pf%22,%22nom_pf%22,%22cruved_ownership%22]
+        '''
 
         if '.' not in field_name:
 
             # cas simple
             model_attribute = getattr(Model, field_name)
 
-            # mise en cache
-            cache_custom_getattr['field_name'] = model_attribute
             return model_attribute, query
 
         else:
@@ -42,15 +41,12 @@ class SchemaRepositoriesUtil():
 
             relationship = getattr(Model, rel)
 
-            alias = orm.aliased(relationship.mapper.entity)  # Model ?????
+            alias = orm.aliased(relationship.mapper.entity)
 
             if query:
                 query = query.join(alias, relationship)
 
             model_attribute = getattr(alias, col)
-
-            # mise en cache
-            cache_custom_getattr['field_name'] = model_attribute
 
             return model_attribute, query
 
@@ -58,9 +54,12 @@ class SchemaRepositoriesUtil():
         order_bys = []
 
         for s in sorters:
+
             s_field = s['field']
             s_dir = s['dir']
+
             model_attribute, query = self.custom_getattr(Model, s_field, query)
+
             if model_attribute is None:
                 continue
 
@@ -83,6 +82,7 @@ class SchemaRepositoriesUtil():
         if order_bys:
             query = query.order_by(*(tuple(order_bys)))
         return query
+
 
     # def get_row_number_from_value(self, value, query):
 

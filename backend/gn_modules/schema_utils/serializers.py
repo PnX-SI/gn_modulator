@@ -258,8 +258,6 @@ class SchemaSerializers:
 
         data_list = marshmallowSchema.dump(m_list, many=True)
 
-        print(kwargs)
-
         if as_geojson:
 
             features = []

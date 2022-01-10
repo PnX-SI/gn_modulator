@@ -34,7 +34,29 @@ class SchemaAuto():
             combine definition schema & autoschema
         '''
         schema_definition = self.schema()
-        autoschema = self.cls().c_get_autoschema(self.schema_dot_table())
+
+        schema_dot_table = self.schema_dot_table()
+
+        if not self.cls().c_sql_schema_dot_table_exists(schema_dot_table):
+            raise SchemaAutoError("La table {} n'existe pas".format(schema_dot_table))
+
+        Model = self.cls().c_get_model_from_schema_dot_table(schema_dot_table)
+
+        if Model is None:
+            raise SchemaAutoError('Pas de modèles trouvé pour la table {}'.format(schema_dot_table))
+
+        sql_table_name = Model.__tablename__
+        sql_schema_name = Model.__table__.schema
+
+        properties = self.autoproperties(Model)
+
+        autoschema = {
+            '$meta': {
+                "sql_table_name": sql_table_name,
+                "sql_schema_name": sql_schema_name,
+            },
+            "properties": properties
+        }
 
         for key, property in schema_definition.get('properties', {}).items():
 
@@ -47,38 +69,8 @@ class SchemaAuto():
 
         return schema_definition
 
-    @classmethod
-    def c_get_autoschema(cls, schema_dot_table):
-        '''
-            depuis <schema>.<table>
-            cree automatiquement un schema
-            s'aide un peu du modèle existant
-        '''
-
-        if not cls.c_sql_schema_dot_table_exists(schema_dot_table):
-            raise SchemaAutoError("La table {} n'existe pas".format(schema_dot_table))
-
-        Model = cls.c_get_model_from_schema_dot_table(schema_dot_table)
-
-        if Model is None:
-            raise SchemaAutoError('Pas de modèles trouvé pour la table {}'.format(schema_dot_table))
-
-        sql_table_name = Model.__tablename__
-        sql_schema_name = Model.__table__.schema
-
-        properties = cls.c_autoproperties(Model)
-
-        return {
-            '$meta': {
-                "sql_table_name": sql_table_name,
-                "sql_schema_name": sql_schema_name,
-            },
-            "properties": properties
-        }
-
-    @classmethod
-    def c_autoproperties(cls, Model):
-
+    def autoproperties(self, Model):
+        print('auto', self)
         properties = {}
 
         sql_table_name = Model.__tablename__
@@ -89,18 +81,19 @@ class SchemaAuto():
         for column in Model.__table__.columns:
             if not hasattr(Model, column.key):
                 continue
-            properties[column.key] = cls.process_column_auto(column, reflected_columns, sql_schema_name, sql_table_name)
+            properties[column.key] = self.process_column_auto(column, reflected_columns, sql_schema_name, sql_table_name)
 
         for relation_key, relation in inspect(Model).relationships.items():
-            property = cls.process_relation_auto(relation_key, relation)
+            if relation_key not in self.meta('relation', []):
+                continue
+            property = self.process_relation_auto(relation_key, relation)
             if property:
                 properties[relation_key] = property
 
         return properties
 
-    @classmethod
-    def process_relation_auto(cls, relation_key, relation):
-        return
+    def process_relation_auto(self, relation_key, relation):
+        # return
         if not relation.target.schema:
             return
         property = {
@@ -110,18 +103,22 @@ class SchemaAuto():
                 else '1-n' if relation.direction.name == "ONETOMANY"
                 else 'n-n'
             ),
-            "schema_name": cls.c_get_schema_name_from_schema_dot_table(relation.target.schema + '.' + relation.target.name),
+            "schema_name": self.cls().c_get_schema_name_from_schema_dot_table(relation.target.schema + '.' + relation.target.name),
             "title": relation_key
         }
+
+        if property['relation_type'] == 'n-n':
+            property['schema_dot_table'] = '{}.{}'.format(relation.secondary.schema, relation.secondary.name)
+
         if not property['schema_name']:
-            return None
+            return
+
         return property
 
-    @classmethod
-    def process_column_auto(cls, column, reflected_columns, sql_schema_name, sql_table_name):
+    def process_column_auto(self, column, reflected_columns, sql_schema_name, sql_table_name):
         type = str(column.type)
 
-        schema_type = cls.c_get_type(type, 'sql', 'definition')
+        schema_type = self.cls().c_get_type(type, 'sql', 'definition')
 
         if not schema_type:
             raise SchemaAutoError(
@@ -153,7 +150,7 @@ class SchemaAuto():
         for foreign_key in column.foreign_keys:
             key = foreign_key.target_fullname.split('.')[-1]
             schema_dot_table = ".".join(foreign_key._table_key().split('.'))
-            schema_name = cls.c_get_schema_name_from_schema_dot_table(schema_dot_table)
+            schema_name = self.cls().c_get_schema_name_from_schema_dot_table(schema_dot_table)
             if not schema_name:
                 # TODO avec des schema non encore crées ??
                 continue
@@ -163,7 +160,7 @@ class SchemaAuto():
             if schema_name == 'schemas.utils.nomenclature.nomenclature':
 
                 # nomenclature_type
-                nomenclature_type = cls.reflect_nomenclature_type(sql_schema_name, sql_table_name, column.key)
+                nomenclature_type = self.reflect_nomenclature_type(sql_schema_name, sql_table_name, column.key)
                 property['nomenclature_type'] = nomenclature_type
                 # property.pop('foreign_key')
 
@@ -174,8 +171,7 @@ class SchemaAuto():
 
         return property
 
-    @classmethod
-    def reflect_nomenclature_type(cls, sql_schema_name, sql_table_name, column_key):
+    def reflect_nomenclature_type(self, sql_schema_name, sql_table_name, column_key):
         '''
             va chercher les type de nomenclature depuis les contraintes 'check_nomenclature_type'
         '''

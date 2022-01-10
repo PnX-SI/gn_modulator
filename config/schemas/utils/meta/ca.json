@@ -1,5 +1,5 @@
 {
-  "$id": "schemas/utils/ca",
+  "$id": "schemas/utils/meta/ca",
   "type": "object",
   "$meta": {
     "import": {

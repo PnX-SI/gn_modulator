@@ -16,8 +16,7 @@ from geonature.utils.env import DB
 from .errors import SchemaProcessedPropertyError
 
 # store the sqla Models
-cache_model = {}
-cache_cor_table = {}
+
 
 from geonature.core.taxonomie.models import Taxref  # noqa
 from geonature.core.gn_synthese.models import Synthese  # noqa
@@ -26,6 +25,14 @@ from pypnnomenclature.models import TNomenclatures, BibNomenclaturesTypes # noqa
 from geonature.core.ref_geo.models import LAreas, BibAreasTypes # noqa
 from pypnusershub.db.models import User, Organisme # noqa
 from geonature.core.users.models import CorRole # noqa
+from geonature.core.gn_commons.models.base import CorModuleDataset # noqa
+
+cache_model = {
+    # 'schemas.utils.commons.module_jdd': CorModuleDataset
+}
+
+cache_cor_table = {}
+
 
 class SchemaModel():
     '''
@@ -170,11 +177,13 @@ class SchemaModel():
             DB.metadata,
             DB.Column(
                 local_key,
-                DB.ForeignKey('{}.{}'.format(self.schema_dot_table(), local_key))
+                DB.ForeignKey('{}.{}'.format(self.schema_dot_table(), local_key)),
+                primary_key=True
             ),
             DB.Column(
                 foreign_key,
-                DB.ForeignKey('{}.{}'.format(relation.schema_dot_table(), foreign_key))
+                DB.ForeignKey('{}.{}'.format(relation.schema_dot_table(), foreign_key)),
+                primary_key=True
             ),
             schema=cor_schema_name
         )
@@ -280,6 +289,7 @@ class SchemaModel():
         return Model
 
     def cruved_ownership(self, id_role, id_organism):
+
         return column_property(
             select(
                 [
@@ -293,5 +303,5 @@ class SchemaModel():
                     )
                 ]
             )
-            .where(getattr(self.Model(), 'id_dataset') == TDatasets.id_dataset)
+            .where(self.Model().id_dataset == TDatasets.id_dataset)
         )

@@ -1,5 +1,5 @@
 {
-    "$id": "schemas/utils/groupe",
+    "$id": "schemas/utils/utilisateur/groupe",
     "type": "object",
     "$meta": {
         "autoschema": true,

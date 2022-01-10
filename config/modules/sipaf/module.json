@@ -58,6 +58,7 @@
     }
   },
   "data": [
+    // "modules.sipaf.data.test"
     "modules.sipaf.data.nomenclature",
     "modules.sipaf.data.user",
     "modules.sipaf.data.jdd"

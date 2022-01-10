@@ -1,5 +1,5 @@
 {
-    "$id": "schemas/utils/organisme",
+    "$id": "schemas/utils/utilisateurorganisme",
     "type": "object",
     "$meta": {
         "autoschema": true,

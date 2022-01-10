@@ -1,5 +1,5 @@
 {
-    "$id": "schemas/utils/role",
+    "$id": "schemas/utils/utilisateur/role",
     "type": "object",
     "$meta": {
         "autoschema": true,

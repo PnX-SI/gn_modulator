@@ -130,6 +130,9 @@
                                     "type": "list-form",
                                     "schema_name": "schemas.utils.meta.jdd",
                                     "label": "Jeu de données",
+                                    "params": {
+                                        "filters": [{ "field":"modules.module_code", "type": "=", "value": "SIPAF"}]
+                                    },
                                     "data_reload_on_search": true,
                                     "size": 10
                                 }
@@ -173,9 +176,6 @@
                                 { "items": ["cd_com", "pk", "pr", "pr_abs"] }
                             ]
                         }
-                        // {
-                        //     "items": "geom"
-                        // }
                     ]
                 },
                 {

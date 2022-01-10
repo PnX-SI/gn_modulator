@@ -224,7 +224,7 @@ class SchemaImports:
         # txt += '{}'.format(detail_inserts)
 
         txt = (
-            '  - {schema_name:40}    #:{nb_items:4}    I:{nb_inserts:4}    U:{nb_updates:4}'
+            '  - {schema_name:45}    #:{nb_items:4}    I:{nb_inserts:4}    U:{nb_updates:4}'
             .format(
                 schema_name=info['schema_name'],
                 nb_items=len(info['items']),

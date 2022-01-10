@@ -1,5 +1,5 @@
 {
-  "$id": "schemas/utils/area",
+  "$id": "schemas/utils/ref_geo/area",
   "type": "object",
   "$meta": {
     "sql_schema_name": "ref_geo",

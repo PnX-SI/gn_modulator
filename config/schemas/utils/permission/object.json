@@ -1,5 +1,5 @@
 {
-    "$id": "schemas/utils/object",
+    "$id": "schemas/utils/permission/object",
     "type": "object",
     "$meta": {
         "autoschema": true,
