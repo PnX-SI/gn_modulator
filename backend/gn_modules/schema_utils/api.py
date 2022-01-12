@@ -114,9 +114,9 @@ class SchemaApi():
         '''
         '''
 
-        def get_page_number(self_mv, info_role, value):
+        def get_page_number(self_mv, value):
             params = self.parse_request_args(request)
-            return self.get_page_number(params, value, info_role)
+            return self.get_page_number(params, value)
 
         def get_config(self_mv, config_path):
             '''
@@ -136,7 +136,7 @@ class SchemaApi():
                 return str(e), 500
             return self.process_dict_path(config, config_path)
 
-        def get_rest(self_mv, info_role, value=None):
+        def get_rest(self_mv, value=None):
 
             if value:
 
@@ -146,7 +146,6 @@ class SchemaApi():
 
                     m = self.get_row(
                         value,
-                        info_role=info_role,
                         field_name=params.get('field_name'),
                     )
 
@@ -162,7 +161,7 @@ class SchemaApi():
             # get list
             else:
                 params = self.parse_request_args(request)
-                query, query_info = self.get_list(params, info_role)
+                query, query_info = self.get_list(params)
                 res_list = query.all()
 
                 out = {
@@ -190,13 +189,13 @@ class SchemaApi():
                     out['data'] = data
                 return out
 
-        def post_rest(self_mv, info_role):
+        def post_rest(self_mv):
 
             data = request.get_json()
             params = self.parse_request_args(request)
 
             try:
-                m = self.insert_row(data, info_role=info_role)
+                m = self.insert_row(data)
 
             except SchemaUnsufficientCruvedRigth as e:
                 return 'Erreur Cruved : {}'.format(str(e)), 403
@@ -207,14 +206,14 @@ class SchemaApi():
                 as_geojson=params.get('as_geojson')
             )
 
-        def patch_rest(self_mv, info_role, value):
+        def patch_rest(self_mv, value):
 
             data = request.get_json()
             params = self.parse_request_args(request)
             field_name = request.args.get('field_name')
 
             try:
-                m, _ = self.update_row(value, data, field_name, info_role=info_role)
+                m, _ = self.update_row(value, data, field_name)
 
             except SchemaUnsufficientCruvedRigth as e:
                 return 'Erreur Cruved : {}'.format(str(e)), 403
@@ -225,12 +224,12 @@ class SchemaApi():
                 as_geojson=params.get('as_geojson')
             )
 
-        def delete_rest(self_mv, info_role, value):
+        def delete_rest(self_mv, value):
 
             field_name = request.args.get('field_name')
             params = self.parse_request_args(request)
 
-            m = self.get_row(value, field_name=field_name, info_role=info_role)
+            m = self.get_row(value, field_name=field_name)
             dict_out = self.serialize(
                 m,
                 fields=params.get('fields'),
@@ -238,7 +237,7 @@ class SchemaApi():
             )
 
             try:
-                self.delete_row(info_role, value, field_name=field_name)
+                self.delete_row(value, field_name=field_name)
 
             except SchemaUnsufficientCruvedRigth as e:
                 return 'Erreur Cruved : {}'.format(str(e)), 403
@@ -247,16 +246,16 @@ class SchemaApi():
 
         return {
             'rest': {
-                'get': permissions.check_cruved_scope('R', True)(get_rest),
-                'post': permissions.check_cruved_scope('C', True)(post_rest),
-                'patch': permissions.check_cruved_scope('U', True)(patch_rest),
-                'delete': permissions.check_cruved_scope('D', True)(delete_rest)
+                'get': permissions.login_required(get_rest),
+                'post': permissions.login_required(post_rest),
+                'patch': permissions.login_required(patch_rest),
+                'delete': permissions.login_required(delete_rest)
             },
             'config': {
-                'get': permissions.check_cruved_scope('R')(get_config)
+                'get': permissions.login_required(get_config)
             },
             'page_number': {
-                'get': permissions.check_cruved_scope('R', True)(get_page_number)
+                'get': permissions.login_required(get_page_number)
             }
 
         }

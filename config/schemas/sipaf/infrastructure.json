@@ -1,23 +1,23 @@
 {
-  "$id": "schemas/pf/route",
+  "$id": "schemas/pf/infrastructure",
   "type": "object",
   "$meta": {
     "sql_processing": true,
     "sql_schema_name": "sipaf",
-    "sql_table_name": "l_routes",
+    "sql_table_name": "l_infrastructures",
     "genre": "F",
-    "label": "route",
+    "label": "infrastructure",
     "geometry_field_name": "geom",
-    "label_field_name": "route_name"
+    "label_field_name": "infrastructure_name"
   },
   "properties": {
-    "id_route": {
+    "id_infrastructure": {
       "type": "integer",
       "title": "ID enfant",
       "primary_key": true
     },
-    "route_name": {
-      "title": "Code route",
+    "infrastructure_name": {
+      "title": "Code infrastructure",
       "type": "string"
     },
     "geom": {

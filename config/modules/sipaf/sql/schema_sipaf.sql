@@ -1,6 +1,6 @@
 -- process schema : schemas.sipaf.pf
 --
--- and dependancies : schemas.sipaf.route
+-- and dependancies : schemas.sipaf.infrastructure
 
 
 ---- sql schema sipaf
@@ -57,11 +57,11 @@ CREATE TABLE sipaf.t_passages_faune (
 );
 
 
----- table sipaf.l_routes
+---- table sipaf.l_infrastructures
 
-CREATE TABLE sipaf.l_routes (
-    id_route SERIAL NOT NULL,
-    route_name VARCHAR,
+CREATE TABLE sipaf.l_infrastructures (
+    id_infrastructure SERIAL NOT NULL,
+    infrastructure_name VARCHAR,
     geom GEOMETRY(GEOMETRY, 4326)
 );
 
@@ -72,10 +72,10 @@ ALTER TABLE sipaf.t_passages_faune
     ADD CONSTRAINT pk_sipaf_t_passages_faune_id_pf PRIMARY KEY (id_pf);
 
 
----- sipaf.l_routes primary key constraint
+---- sipaf.l_infrastructures primary key constraint
 
-ALTER TABLE sipaf.l_routes
-    ADD CONSTRAINT pk_sipaf_l_routes_id_route PRIMARY KEY (id_route);
+ALTER TABLE sipaf.l_infrastructures
+    ADD CONSTRAINT pk_sipaf_l_infrastructures_id_infrastructure PRIMARY KEY (id_infrastructure);
 
 
 ---- sipaf.t_passages_faune foreign key constraint id_dataset
@@ -161,29 +161,29 @@ ALTER TABLE sipaf.cor_area_pf
     ADD CONSTRAINT fk_sipaf_cor_area_pf_id_area FOREIGN KEY (id_area)
     REFERENCES ref_geo.l_areas (id_area)
     ON UPDATE CASCADE ON DELETE NO ACTION;
--- cor sipaf.cor_route_pf
+-- cor sipaf.cor_infrastructure_pf
 
-CREATE TABLE IF NOT EXISTS sipaf.cor_route_pf (
+CREATE TABLE IF NOT EXISTS sipaf.cor_infrastructure_pf (
     id_pf INTEGER NOT NULL,
-    id_route INTEGER NOT NULL
+    id_infrastructure INTEGER NOT NULL
 );
 
 
----- sipaf.cor_route_pf primary keys contraints
+---- sipaf.cor_infrastructure_pf primary keys contraints
 
-ALTER TABLE sipaf.cor_route_pf
-    ADD CONSTRAINT pk_sipaf_cor_route_pf_id_pf_id_route PRIMARY KEY (id_pf, id_route);
+ALTER TABLE sipaf.cor_infrastructure_pf
+    ADD CONSTRAINT pk_sipaf_cor_infrastructure_pf_id_pf_id_infrastructure PRIMARY KEY (id_pf, id_infrastructure);
 
----- sipaf.cor_route_pf foreign keys contraints
+---- sipaf.cor_infrastructure_pf foreign keys contraints
 
-ALTER TABLE sipaf.cor_route_pf
-    ADD CONSTRAINT fk_sipaf_cor_route_pf_id_pf FOREIGN KEY (id_pf)
+ALTER TABLE sipaf.cor_infrastructure_pf
+    ADD CONSTRAINT fk_sipaf_cor_infrastructure_pf_id_pf FOREIGN KEY (id_pf)
     REFERENCES sipaf.t_passages_faune (id_pf)
     ON UPDATE CASCADE ON DELETE NO ACTION;
 
-ALTER TABLE sipaf.cor_route_pf
-    ADD CONSTRAINT fk_sipaf_cor_route_pf_id_route FOREIGN KEY (id_route)
-    REFERENCES sipaf.l_routes (id_route)
+ALTER TABLE sipaf.cor_infrastructure_pf
+    ADD CONSTRAINT fk_sipaf_cor_infrastructure_pf_id_infrastructure FOREIGN KEY (id_infrastructure)
+    REFERENCES sipaf.l_infrastructures (id_infrastructure)
     ON UPDATE CASCADE ON DELETE NO ACTION;
 
 
@@ -265,22 +265,22 @@ CREATE TRIGGER trg_update_sipaf_cor_area_pf
     FOR EACH ROW
         EXECUTE PROCEDURE sipaf.fct_trig_update_cor_area_pf_on_row();
 
----- Trigger sipaf.t_passages_faune.geom avec une distance de 0.001 avec sipaf.l_routes.id_route
+---- Trigger sipaf.t_passages_faune.geom avec une distance de 0.001 avec sipaf.l_infrastructures.id_infrastructure
 
-CREATE OR REPLACE FUNCTION sipaf.fct_trig_insert_cor_route_pf_on_each_statement()
+CREATE OR REPLACE FUNCTION sipaf.fct_trig_insert_cor_infrastructure_pf_on_each_statement()
     RETURNS trigger AS
         $BODY$
             DECLARE
             BEGIN
-                INSERT INTO sipaf.cor_route_pf (
-                    id_route,
+                INSERT INTO sipaf.cor_infrastructure_pf (
+                    id_infrastructure,
                     id_pf
                 )
                 SELECT
-                    a.id_route,
+                    a.id_infrastructure,
                     t.id_pf
                     FROM sipaf.t_passages_faune t
-                    JOIN sipaf.l_routes a
+                    JOIN sipaf.l_infrastructures a
                         ON ST_DWITHIN(t.geom, a.geom, 0.001)
                 ;
                 RETURN NULL;
@@ -289,19 +289,19 @@ CREATE OR REPLACE FUNCTION sipaf.fct_trig_insert_cor_route_pf_on_each_statement(
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION sipaf.fct_trig_update_cor_route_pf_on_row()
+CREATE OR REPLACE FUNCTION sipaf.fct_trig_update_cor_infrastructure_pf_on_row()
     RETURNS trigger AS
         $BODY$
             BEGIN
-                DELETE FROM sipaf.cor_route_pf WHERE id_pf = NEW.id_pf;
-                INSERT INTO sipaf.cor_route_pf (
-                    id_route,
+                DELETE FROM sipaf.cor_infrastructure_pf WHERE id_pf = NEW.id_pf;
+                INSERT INTO sipaf.cor_infrastructure_pf (
+                    id_infrastructure,
                     id_pf
                 )
                 SELECT
-                    a.id_route,
+                    a.id_infrastructure,
                     t.id_pf
-                FROM sipaf.l_routes a
+                FROM sipaf.l_infrastructures a
                 JOIN sipaf.t_passages_faune t
                     ON ST_DWITHIN(t.geom, a.geom, 0.001)
                 WHERE
@@ -313,16 +313,16 @@ CREATE OR REPLACE FUNCTION sipaf.fct_trig_update_cor_route_pf_on_row()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE TRIGGER trg_insert_sipaf_cor_route_pf
+CREATE TRIGGER trg_insert_sipaf_cor_infrastructure_pf
     AFTER INSERT ON sipaf.t_passages_faune
     REFERENCING NEW TABLE AS NEW
     FOR EACH STATEMENT
-        EXECUTE PROCEDURE sipaf.fct_trig_insert_cor_route_pf_on_each_statement();
+        EXECUTE PROCEDURE sipaf.fct_trig_insert_cor_infrastructure_pf_on_each_statement();
 
-CREATE TRIGGER trg_update_sipaf_cor_route_pf
+CREATE TRIGGER trg_update_sipaf_cor_infrastructure_pf
     AFTER UPDATE OF geom ON sipaf.t_passages_faune
     FOR EACH ROW
-        EXECUTE PROCEDURE sipaf.fct_trig_update_cor_route_pf_on_row();
+        EXECUTE PROCEDURE sipaf.fct_trig_update_cor_infrastructure_pf_on_row();
 
 
 
@@ -337,7 +337,7 @@ CREATE INDEX sipaf_t_passages_faune_geom_idx
 -- Indexes
 
 
-CREATE INDEX sipaf_l_routes_geom_idx
-    ON sipaf.l_routes
+CREATE INDEX sipaf_l_infrastructures_geom_idx
+    ON sipaf.l_infrastructures
     USING GIST (geom);
 

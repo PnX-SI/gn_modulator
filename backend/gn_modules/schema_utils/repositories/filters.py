@@ -137,7 +137,6 @@ class SchemaRepositoriesFilters():
 
         model_attribute, query = self.custom_getattr(Model, f_field, query)
 
-        print(model_attribute)
         # si besoin de redefinir type
 
         if f_type == 'like':

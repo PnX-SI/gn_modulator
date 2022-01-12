@@ -35,9 +35,9 @@
                     "filter_type": "=",
                     "type": "integer"
                 },
-                "route": {
+                "infrastructure": {
                     "title": "Route",
-                    "field": "routes.id_route",
+                    "field": "infrastructures.id_infrastructure",
                     "filter_type": "=",
                     "type": "integer"
                 },
@@ -82,9 +82,9 @@
                         },
                         {
                             "search": true,
-                            "key": "route",
+                            "key": "infrastructure",
                             "type": "list-form",
-                            "schema_name": "schemas.sipaf.route",
+                            "schema_name": "schemas.sipaf.infrastructure",
                             "data_reload_on_search": true,
                             "size": 10
                         }
@@ -250,7 +250,7 @@
                                     [
                                         { "key": "commune", "title": "Commune", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "COM"}] },
                                         { "key": "departement", "title": "Département", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "DEP"}] },
-                                        { "title": "Axe routier", "key": "routes.route_name" }
+                                        { "title": "Axe routier", "key": "infrastructures.infrastructure_name" }
                                     ]
                                 }
                             ]
@@ -537,12 +537,12 @@
                 "name": "intersect_ref_geo"
             }
         },
-        "routes": {
+        "infrastructures": {
             "type": "relation",
             "title": "Routes",
             "relation_type": "n-n",
-            "schema_name": "schemas.sipaf.route",
-            "schema_dot_table": "sipaf.cor_route_pf",
+            "schema_name": "schemas.sipaf.infrastructure",
+            "schema_dot_table": "sipaf.cor_infrastructure_pf",
             "trigger": {
                 "name": "d_within",
                 "distance": 0.001

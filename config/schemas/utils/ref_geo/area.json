@@ -8,14 +8,16 @@
     "label": "geométrie",
     "label_field_name": "area_name",
     "genre": "F",
-    "autoschema": true
-  },
-  "properties": {
-    "area_type": {
-      "type": "relation",
-      "relation_type": "n-1",
-      "title": "Type",
-      "schema_name": "schemas.utils.ref_geo.area_type"
-    }
+    "autoschema": true,
+    "relation": ["area_type"]
   }
+  // ,
+  // "properties": {
+  //   "area_type": {
+  //     "type": "relation",
+  //     "relation_type": "n-1",
+  //     "title": "Type",
+  //     "schema_name": "schemas.utils.ref_geo.area_type"
+  //   }
+  // }
 }

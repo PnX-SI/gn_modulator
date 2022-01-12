@@ -18,7 +18,7 @@ class SchemaRepositoriesBase():
         class for sqlalchemy query processing
     '''
 
-    def get_row(self, value, field_name=None, b_get_one=True, info_role=None):
+    def get_row(self, value, field_name=None, b_get_one=True):
         '''
             return query get one row (Model.<field_name> == value)
 
@@ -52,6 +52,10 @@ class SchemaRepositoriesBase():
 
         for index, val in enumerate(values):
             f_name = field_names[index]
+            # patch si la valeur est une chaine de caractère ??
+            # if self.column(f_name)['type'] == "integer" and val is not None:
+                # val = int(val)
+
             modelValue, query = self.custom_getattr(Model, f_name, query)
             query = query.filter(modelValue == val)
 
@@ -60,7 +64,7 @@ class SchemaRepositoriesBase():
 
         return query
 
-    def insert_row(self, data, info_role=None):
+    def insert_row(self, data):
         '''
             insert new row with data
         '''
@@ -121,7 +125,7 @@ class SchemaRepositoriesBase():
 
         return False
 
-    def update_row(self, value, data, field_name=None, info_role=None):
+    def update_row(self, value, data, field_name=None):
         '''
             update row (Model.<field_name> == value) with data
 
@@ -137,7 +141,7 @@ class SchemaRepositoriesBase():
         DB.session.commit()
         return m, True
 
-    def delete_row(self, value, field_name=None, info_role=None):
+    def delete_row(self, value, field_name=None):
         '''
             delete row (Model.<field_name> == value)
         '''
@@ -146,14 +150,14 @@ class SchemaRepositoriesBase():
         DB.session.commit()
         return m
 
-    def get_row_number(self, params, value, info_role=None):
+    def get_row_number(self, params, value):
 
         Model = self.Model()
         query = DB.session.query(Model.id_pf)
         query = query.add_columns(func.row_number().over(order_by=self.get_sorters(Model, params.get('sorters', []), query)))
 
         # pre_filters
-        query = self.process_cruved(info_role, 'R', Model, query)
+        query = self.process_cruved('R', Model, query)
 
         # filters
         query = self.process_filters(Model, params.get('filters', []), query)
@@ -168,19 +172,19 @@ class SchemaRepositoriesBase():
 
         return res[1]
 
-    def get_page_number(self, params, value, info_role=None):
+    def get_page_number(self, params, value):
 
         if not params.get('size') and value:
             return
 
-        row_number = self.get_row_number(params, value, info_role)
+        row_number = self.get_row_number(params, value)
 
         return {
             'row_number': row_number,
             'page': math.ceil(row_number / params.get('size'))
         }
 
-    def get_list(self, params, info_role=None):
+    def get_list(self, params):
         '''
             process request for list of rows
             - params : dict
@@ -206,7 +210,7 @@ class SchemaRepositoriesBase():
 
         # CRUVED ??? TODO
         # pre filters
-        query = self.process_cruved(info_role, 'R', Model, query)
+        query = self.process_cruved('R', Model, query)
 
         # TODO distinguer filter et pre_filter search
         query_info['total'] = query.count()

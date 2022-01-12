@@ -70,7 +70,6 @@ class SchemaAuto():
         return schema_definition
 
     def autoproperties(self, Model):
-        print('auto', self)
         properties = {}
 
         sql_table_name = Model.__tablename__
