@@ -11,21 +11,43 @@
     "label_field_name": "infrastructure_name"
   },
   "properties": {
+
     "id_infrastructure": {
       "type": "integer",
       "title": "ID enfant",
       "primary_key": true
     },
+
     "infrastructure_name": {
       "title": "Code infrastructure",
       "type": "string"
     },
+
+    "id_nomenclature_infrastructure_type": {
+      "title": "Type d'infrastructure",
+      "type": "integer",
+      "foreign_key": true,
+      "schema_name": "schemas.utils.nomenclature.nomenclature",
+      "nomenclature_type": "PF_INFRASTRUCTURE_TYPE"
+    },
+
     "geom": {
       "title": "géometrie",
       "type": "geometry",
       "geometry_type": "geometry",
       "srid": 4326,
       "index": true
+    },
+    
+    // relation
+    
+    "nomenclature_infrastructure_type": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "schema_name": "schemas.utils.nomenclature.nomenclature",
+      "title": "Type d'infrastructure",
+      "local_key": "id_nomenclature_infrastructure_type"
     }
+
   }
 }

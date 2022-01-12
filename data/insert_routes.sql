@@ -18,10 +18,16 @@ WITH raw_routes AS (
 )
 INSERT INTO sipaf.l_infrastructures (
 	infrastructure_name,
-	geom
+	geom,
+	id_nomenclature_infrastructure_type
 )
 SELECT
 	r.num_route AS area_code,
-	geom
+	geom,
+	CASE
+		WHEN r.num_route LIKE 'N%' THEN ref_nomenclatures.get_id_nomenclature('PF_INFRASTRUCTURE_TYPE', 'RN')
+		WHEN r.num_route LIKE 'A%' THEN ref_nomenclatures.get_id_nomenclature('PF_INFRASTRUCTURE_TYPE', 'AU')
+		ELSE NULL
+	END
 FROM routes r
 

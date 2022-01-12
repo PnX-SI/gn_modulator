@@ -5,7 +5,8 @@
       { "mnemonique": "PF_MATERIAUX", "label": "Matériaux", "definition": "Matériaux composant l'ouvrage", "source": "SIPAF" },
       { "mnemonique": "PF_OH_POSITION", "label": "OH Position", "definition": "Position de l'ouvrage hydrolique", "source": "SIPAF" },
       { "mnemonique": "PF_OH_BANQ_CARACT", "label": "OH Caractrisation banquette", "definition": "Caractérisation de la banquette pour un ouvrage hydrolique", "source": "SIPAF" },
-      { "mnemonique": "PF_OH_BANQ_TYPE", "label": "OH Type de banquette", "definition": "Type de banquette pour un ouvrage hydrolique", "source": "SIPAF" }
+      { "mnemonique": "PF_OH_BANQ_TYPE", "label": "OH Type de banquette", "definition": "Type de banquette pour un ouvrage hydrolique", "source": "SIPAF" },
+      { "mnemonique": "PF_INFRASTRUCTURE_TYPE", "label": "Type d'infrastructure", "definition": "Type d'infrastructure pour les passages à faune", "source": "SIPAF" }
     ]
   },
   {
@@ -30,7 +31,14 @@
       { "id_type": "PF_OH_BANQ_TYPE", "cd_nomenclature": "BET", "mnemonique": "Bet.", "label": "Banquette béton", "definition": "Banquette béton", "source": "SIPAF", "active": true},
       { "id_type": "PF_OH_BANQ_TYPE", "cd_nomenclature": "ECB", "mnemonique": "Ecb.", "label": "Encorbellement", "definition": "Encorbellement", "source": "SIPAF", "active": true},
       { "id_type": "PF_OH_BANQ_TYPE", "cd_nomenclature": "POF", "mnemonique": "Po. F.", "label": "Ponton flottant", "definition": "Ponton flottant", "source": "SIPAF", "active": true},
-      { "id_type": "PF_OH_BANQ_TYPE", "cd_nomenclature": "AUT", "mnemonique": "Aut.", "label": "Autre", "definition": "Autre", "source": "SIPAF", "active": true}
+      { "id_type": "PF_OH_BANQ_TYPE", "cd_nomenclature": "AUT", "mnemonique": "Aut.", "label": "Autre", "definition": "Autre", "source": "SIPAF", "active": true},
+
+      { "id_type": "PF_INFRASTRUCTURE_TYPE", "cd_nomenclature": "AU", "mnemonique": "Auto.", "label": "Autoroute", "definition": "Autoroute", "source": "SIPAF", "active": true},
+      { "id_type": "PF_INFRASTRUCTURE_TYPE", "cd_nomenclature": "RN", "mnemonique": "R. N.", "label": "Route Nationale", "definition": "Route Nationale", "source": "SIPAF", "active": true},
+      { "id_type": "PF_INFRASTRUCTURE_TYPE", "cd_nomenclature": "RD", "mnemonique": "R. D.", "label": "Route Départementale", "definition": "Route Départementale", "source": "SIPAF", "active": true},
+      { "id_type": "PF_INFRASTRUCTURE_TYPE", "cd_nomenclature": "VF", "mnemonique": "V. F.", "label": "Voie ferrée", "definition": "Voie ferrée", "source": "SIPAF", "active": true},
+      { "id_type": "PF_INFRASTRUCTURE_TYPE", "cd_nomenclature": "CA", "mnemonique": "Ca.", "label": "Canal / Rivère navigable", "definition": "Canal / Rivère navigable", "source": "SIPAF", "active": true}
+
     ]
   }
 ]

@@ -62,6 +62,7 @@ CREATE TABLE sipaf.t_passages_faune (
 CREATE TABLE sipaf.l_infrastructures (
     id_infrastructure SERIAL NOT NULL,
     infrastructure_name VARCHAR,
+    id_nomenclature_infrastructure_type INTEGER,
     geom GEOMETRY(GEOMETRY, 4326)
 );
 
@@ -114,6 +115,14 @@ ALTER TABLE sipaf.t_passages_faune
     ON UPDATE CASCADE ON DELETE NO ACTION;
 
 
+---- sipaf.l_infrastructures foreign key constraint id_nomenclature_infrastructure_type
+
+ALTER TABLE sipaf.l_infrastructures
+    ADD CONSTRAINT fk_sipaf_l_inf_t_nom_id_nomenclature_infrastructure_type FOREIGN KEY (id_nomenclature_infrastructure_type)
+    REFERENCES ref_nomenclatures.t_nomenclatures(id_nomenclature)
+    ON UPDATE CASCADE ON DELETE NO ACTION;
+
+
 ---- nomenclature check type constraints
 
 ALTER TABLE sipaf.t_passages_faune
@@ -134,6 +143,14 @@ ALTER TABLE sipaf.t_passages_faune
 ALTER TABLE sipaf.t_passages_faune
         ADD CONSTRAINT check_nom_type_sipaf_t_passages_faune_pf_oh_banq_type
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_oh_banq_type,'PF_OH_BANQ_TYPE'))
+        NOT VALID;
+
+
+---- nomenclature check type constraints
+
+ALTER TABLE sipaf.l_infrastructures
+        ADD CONSTRAINT check_nom_type_sipaf_l_infrastructures_pf_infrastructure_type
+        CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_infrastructure_type,'PF_INFRASTRUCTURE_TYPE'))
         NOT VALID;
 
 
