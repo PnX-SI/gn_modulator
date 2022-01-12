@@ -65,7 +65,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       this._widgetLibraryService.registerWidget(key, AdditionalWidget);
     }
     setTimeout(() => {this.bDraw = true}, 3000)
-    this.setFullHeight();
+    this.initHeight();
+
   }
 
   setComponentTitle(): void {

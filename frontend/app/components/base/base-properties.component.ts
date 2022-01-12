@@ -45,7 +45,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setFullHeight()
+    this.initHeight()
   }
 
   getData() {

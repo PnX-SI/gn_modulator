@@ -98,6 +98,17 @@ export class BaseComponent implements OnInit {
   // this.heightMap = height - 60 + "px";
   }
 
+  listenResize() {
+    window.addEventListener('resize', (event) => {
+      this.setFullHeight();
+  }, true);
+  }
+
+  initHeight() {
+    this.setFullHeight();
+    this.listenResize()
+  }
+
   id() {
     return this.data[this.schemaConfig.utils.pk_field_name];
   }
