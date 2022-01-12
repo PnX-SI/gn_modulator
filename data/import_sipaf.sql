@@ -162,16 +162,3 @@ SELECT
 	JOIN gn_meta.t_datasets d on d.dataset_name = 'SIPAF'
     WHERE i.id_pf IS NOT NULL;
 
-
--- INSERT INTO sipaf.cor_route_pf(
--- 	id_pf,
--- 	id_route
--- )
--- SELECT
--- 	id_pf,
--- 	id_route
--- FROM sipaf.l_routes r
--- JOIN sipaf.t_passages_faune tpf
--- 	ON ST_DWITHIN(r.geom, tpf.geom, 0.001)
--- ;
-

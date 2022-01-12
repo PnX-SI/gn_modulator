@@ -27,10 +27,10 @@ WITH pf_N106 AS (
 	SELECT 
 		id_dataset,
 		id_pf
-	FROM sipaf.l_routes r
+	FROM sipaf.l_infrastructures r
 	JOIN gn_meta.t_datasets td ON td.dataset_name = 'SIPAF RN_106'
-	JOIN sipaf.cor_route_pf crp ON crp.id_route = r.id_route
-	WHERE r.route_name = 'N106'
+	JOIN sipaf.cor_infrastructure_pf crp ON crp.id_infrastructure = r.id_infrastructure
+	WHERE r.infrastructure_name = 'N106'
 )
 UPDATE sipaf.t_passages_faune pf SET id_dataset = n.id_dataset
 	FROM pf_N106 n

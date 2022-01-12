@@ -16,8 +16,8 @@ WITH raw_routes AS (
 	    FROM raw_routes
 	    GROUP BY num_route
 )
-INSERT INTO sipaf.l_routes (
-	route_name,
+INSERT INTO sipaf.l_infrastructures (
+	infrastructure_name,
 	geom
 )
 SELECT

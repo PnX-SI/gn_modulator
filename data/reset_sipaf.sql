@@ -1,5 +1,3 @@
-SELECT * FROM gn_meta.t_datasets td 
-
 -- DROP schema
 
 DROP SCHEMA IF EXISTS sipaf CASCADE;
