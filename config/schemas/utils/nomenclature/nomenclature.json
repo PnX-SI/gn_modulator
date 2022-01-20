@@ -28,19 +28,21 @@
                 "cd_nomenclature",
                 "mnemonique",
                 "label_fr",
-                "type.mnemonique",
-                "type.label_fr"
+                "nomenclature_type.mnemonique",
+                "nomenclature_type.label_fr"
             ]
         },
-        "label_field_name": "label_fr"
-    },
-    "properties": {
-        "type": {
-            "local_key": "id_type",
-            "title": "Type",
-            "schema_name": "schemas.utils.nomenclature.nomenclature_type",
-            "relation_type": "n-1",
-            "type": "relation"
-        }
+        "label_field_name": "label_fr",
+        "relation": ["nomenclature_type"]
     }
+    // ,
+    // "properties": {
+    //     "type": {
+    //         "local_key": "id_type",
+    //         "title": "Type",
+    //         "schema_name": "schemas.utils.nomenclature.nomenclature_type",
+    //         "relation_type": "n-1",
+    //         "type": "relation"
+    //     }
+    // }
 }

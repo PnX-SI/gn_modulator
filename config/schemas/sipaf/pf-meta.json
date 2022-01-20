@@ -1,0 +1,308 @@
+{
+  "sql_processing": true,
+  "sql_schema_name": "sipaf",
+  "sql_table_name": "t_passages_faune",
+  "genre": "M",
+  "label": "passage à faune",
+  "labels": "passages à faune",
+  "label_field_name": "nom_pf",
+  "geometry_field_name": "geom",
+  "check_cruved": true,
+  "filters": {
+      "defs":{
+          "haut_ouvrag_min": { "title": "Hauteur ouvrage min", "field": "haut_ouvrag", "type": "number", "filter_type": ">="},
+          "haut_ouvrag_max":{ "title": "Hauteur ouvrage max", "field": "haut_ouvrag", "type": "number", "filter_type": "<="},
+          "larg_ouvrag_min":{ "title": "Largeur ouvrage min", "field": "larg_ouvrag", "type": "number", "filter_type": ">="},
+          "larg_ouvrag_max":{ "title": "Largeur ouvrage max", "field": "larg_ouvrag", "type": "number", "filter_type": "<="},
+          "materiaux":{
+              "title": "Matériaux",
+              "field": "id_nomenclature_materiaux",
+              "filter_type": "=",
+              "type": "integer"
+          },
+          "departement": {
+              "title": "Département",
+              "field": "areas.id_area",
+              "filter_type": "=",
+              "type": "integer"
+          },
+          "commune": {
+              "title": "Commune",
+              "field": "areas.id_area",
+              "filter_type": "=",
+              "type": "integer"
+          },
+          "infrastructure": {
+              "title": "Infrastructure",
+              "field": "infrastructures.id_infrastructure",
+              "filter_type": "=",
+              "type": "integer"
+          },
+
+          "nom_pf": { "title": "Nom pf", "field": "nom_pf", "filter_type": "ilike"}
+      },
+      "layout": [
+          "nom_pf",
+          {
+              "key": "materiaux",
+              "type": "list-form",
+              "nomenclature_type": "PF_MATERIAUX"
+          },
+          {
+              "title": "dimensions",
+              "items": [
+                  {
+                      "direction": "row",
+                      "items": ["larg_ouvrag_min", "larg_ouvrag_max"]
+                  },
+                  {
+                      "direction": "row",
+                      "items": ["haut_ouvrag_min", "haut_ouvrag_max"]
+                  }
+
+              ]
+          },
+          {
+              "title": "Localisation",
+              "items": [
+                  {
+                      "search": true,
+                      "key": "departement",
+                      "type": "list-form",
+                      "area_type": "DEP"
+                  },
+                  {
+                      "search": true,
+                      "key": "commune",
+                      "type": "list-form",
+                      "area_type": "COM"
+                  },
+                  {
+                      "search": true,
+                      "key": "infrastructure",
+                      "type": "list-form",
+                      "schema_name": "schemas.sipaf.infrastructure",
+                      "params": {
+                          "filters": [
+                              { "field": "has_passages_faune", "type": "=", "value": "true" }
+                          ],
+                          "sorters": [
+                              { "field": "nomenclature_infrastructure_type.cd_nomenclature", "dir": "asc" },
+                              { "field": "infrastructure_number", "dir": "asc" }
+                          ]
+                      },
+                      "data_reload_on_search": true,
+                      "size": 10
+                  }
+              ]
+          }
+      ]
+  },
+  "map": {
+      "fields": [
+          "id_pf",
+          "nom_pf"
+      ],
+      "popup_fields": [
+          "id_pf",
+          "nom_pf",
+          "pi_ou_ps",
+          "lb_materiaux"
+      ]
+  },
+  "form": {
+      "layout": [
+          {
+             "title": "Informations",
+             "type": "fieldset",
+             "items": [
+                  {
+                      "direction": "row",
+                      "items": [ "nom_pf", "id_op"]
+                  },
+                  {
+                     "direction": "row",
+                     "items": [
+                      { "items": ["date_creat", "date_requal"] },
+                      { "items": ["id_corr", "nom_corr"] },
+                      { "items": ["id_obst", "nom_obst"] },
+                      { "items": ["id_resv", "nom_resv"] }
+                     ]
+                  },
+                  {
+                      "items": [
+                          {
+                              "key": "id_dataset",
+                              "type": "list-form",
+                              "schema_name": "schemas.utils.meta.jdd",
+                              "label": "Jeu de données",
+                              "params": {
+                                  "filters": [{ "field":"modules.module_code", "type": "=", "value": "SIPAF"}]
+                              },
+                              "data_reload_on_search": true,
+                              "size": 10
+                          }
+                      ]
+                  }
+             ]
+          },
+          {
+              "title": "Type",
+              "type": "fieldset",
+              "items": [
+                  {
+                      "direction": "row",
+                      "items": [
+                          "lb_typ_ouv",
+                          "pi_ou_ps",
+                          "oh",
+                          "specificit"
+                      ]
+                  },
+                  { "key": "id_nomenclature_materiaux", "type": "list-form", "nomenclature_type": "PF_MATERIAUX"}
+              ]
+          },
+          {
+              "direction": "row",
+              "items": [
+                  {
+                      "title": "Dimensions",
+                      "type": "fieldset",
+                      "items": [
+                          { "direction": "row", "items": ["diam", "long_franch"]},
+                          { "direction": "row", "items": ["larg_ouvrag", "haut_ouvrag"]},
+                          { "direction": "row", "items": ["larg_disp", "haut_disp"]}
+                      ]
+                  },
+                  {
+                      "title": "Localisation",
+                      "type": "fieldset",
+                      "direction": "row",
+                      "items": [
+                          { "items": ["cd_com", "pk", "pr", "pr_abs"] }
+                      ]
+                  }
+              ]
+          },
+          {
+              "title": "Banquette (OH)",
+              "type": "fieldset",
+              "direction": "row",
+              "items": [
+                  { "key": "id_nomenclature_oh_position", "type": "list-form", "nomenclature_type": "PF_OH_POSITION"},
+                  { "key": "id_nomenclature_oh_banq_type", "type": "list-form", "nomenclature_type": "PF_OH_BANQ_TYPE"},
+                  { "key": "id_nomenclature_oh_banq_caract", "type": "list-form", "nomenclature_type": "PF_OH_BANQ_CARACT"},
+                  "oh_tirant"
+              ]
+          }
+      ]
+  },
+  "details": {
+      "layout": [
+          {
+             "title": "Informations",
+             "type": "fieldset",
+             "items": [
+                  {
+                      "direction": "row",
+                      "items": [ "nom_pf", "id_op"]
+                  },
+                  {
+                     "direction": "row",
+                     "items": [
+                      { "items": ["date_creat", "date_requal"] },
+                      { "items": ["id_corr", "nom_corr"] },
+                      { "items": ["id_obst", "nom_obst"] },
+                      { "items": ["id_resv", "nom_resv"] }
+                     ]
+                  }
+             ]
+          },
+          {
+              "title": "Type",
+              "type": "fieldset",
+              "items": [
+                  {
+                      "direction": "row",
+                      "items": [
+                          "lb_typ_ouv",
+                          "pi_ou_ps",
+                          "oh",
+                          "specificit"
+                      ]
+                  },
+                  "nomenclature_materiaux.label_fr"
+              ]
+          },
+          {
+              "direction": "row",
+              "items": [
+                  {
+                      "title": "Dimensions",
+                      "type": "fieldset",
+                      "items": [
+                          { "direction": "row", "items": ["diam", "long_franch"]},
+                          { "direction": "row", "items": ["larg_ouvrag", "haut_ouvrag"]},
+                          { "direction": "row", "items": ["larg_disp", "haut_disp"]}
+                      ]
+                  },
+                  {
+                      "title": "Localisation",
+                      "direction": "row",
+                      "type": "fieldset",
+                      "items": [
+                          { "items": ["pk", "pr", "pr_abs"] },
+                          { "items":
+                              [
+                                  { "key": "commune", "title": "Commune", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "COM"}] },
+                                  { "key": "departement", "title": "Département", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "DEP"}] },
+                                  { "title": "Infrastrucure", "key": "label_infrastructures" }
+                              ]
+                          }
+                      ]
+                  }
+                  // {
+                  //     "items": "geom"
+                  // }
+              ]
+          },
+          {
+              "title": "Banquette (OH)",
+              "type": "fieldset",
+              "direction": "row",
+              "items": [
+                  "nomenclature_oh_position.label_fr",
+                  "nomenclature_oh_banq_type.label_fr",
+                  "nomenclature_oh_banq_caract.label_fr",
+                  "oh_tirant"
+              ]
+          }
+      ]
+  },
+  "table": {
+      "columns": [
+          "id_pf",
+          "uuid_pf",
+          "nom_pf",
+          "cd_com",
+          "nom_corr",
+          "nomenclature_materiaux.label_fr",
+          "date_creat",
+          "larg_ouvrag",
+          "haut_ouvrag",
+          "larg_disp",
+          "haut_disp",
+          "long_franch",
+          "diam",
+          "comment",
+          "x",
+          "y"
+      ],
+      "columns_short": [
+          "id_pf",
+          "nom_pf",
+          "nomenclature_materiaux.label_fr",
+          "label_infrastructures"
+      ]
+  }
+}

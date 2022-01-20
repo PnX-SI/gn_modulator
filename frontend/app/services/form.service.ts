@@ -39,7 +39,9 @@ export class ModulesFormService {
         layout['flex-direction'] = 'row';
       }
       for (const [key, value] of Object.entries(layout)) {
-        layout[key] = this.processLayout(value)
+        if(! ['params'].includes(key)) {
+          layout[key] = this.processLayout(value)
+        }
       }
       return layout;
     }

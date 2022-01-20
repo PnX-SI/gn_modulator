@@ -9,7 +9,10 @@ class SchemaRepositoriesUtil():
     '''
     __abstract__ = True
 
+    cache_custom_get_attr = {}
+
     def custom_getattr(self, Model, field_name, query=None):
+        
         '''
             getattr pour un modèle, étendu pour pouvoir traiter les 'rel.field_name'
 
@@ -33,6 +36,7 @@ class SchemaRepositoriesUtil():
             return model_attribute, query
 
         else:
+            print("\ncustom_getattr", field_name, "\n")
 
             # cas avec un seul . => a.b
             # on verra ensuite si on à le besoin de le faire récursivement
@@ -47,7 +51,11 @@ class SchemaRepositoriesUtil():
             alias = orm.aliased(relationship.mapper.entity)
 
             if query:
-                query = query.join(alias, relationship)
+                query = (
+                    query
+                    .join(alias, relationship)
+                    .options(orm.joinedload(alias, relationship))
+                )
 
             return self.custom_getattr(alias, col, query)
 
@@ -76,17 +84,38 @@ class SchemaRepositoriesUtil():
 
             order_bys.append(order_by)
 
-        return order_bys
+        return order_bys, query
+
+    def get_sorter(self, Model, sorter, query):
+
+        s_field = sorter['field']
+        s_dir = sorter['dir']
+
+        model_attribute, query = self.custom_getattr(Model, s_field, query)
+
+        order_by = (
+            model_attribute.desc() if s_dir == 'desc'
+            else
+            model_attribute.asc()
+        )
+
+        return order_by, query
 
     def process_sorters(self, Model, sorters, query):
         '''
             process sorters (ORDER BY)
         '''
 
-        order_bys = self.get_sorters(Model, sorters, query)
-        if order_bys:
-            query = query.order_by(*(tuple(order_bys)))
+        for sorter in sorters:
+            order_by, query = self.get_sorter(Model, sorter, query)
+            query = query.order_by(order_by)
+
         return query
+
+        # order_bys, query = self.get_sorters(Model, sorters, query)
+        # if order_bys:
+        #     query = query.order_by(*(tuple(order_bys)))
+        # return query
 
 
     # def get_row_number_from_value(self, value, query):

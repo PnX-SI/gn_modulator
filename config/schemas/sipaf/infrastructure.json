@@ -23,6 +23,12 @@
       "type": "string"
     },
 
+    
+    "infrastructure_number": {
+      "title": "Code infrastructure",
+      "type": "integer"
+    },
+
     "id_nomenclature_infrastructure_type": {
       "title": "Type d'infrastructure",
       "type": "integer",
@@ -38,16 +44,52 @@
       "srid": 4326,
       "index": true
     },
-    
+
     // relation
-    
+
     "nomenclature_infrastructure_type": {
       "type": "relation",
       "relation_type": "n-1",
       "schema_name": "schemas.utils.nomenclature.nomenclature",
       "title": "Type d'infrastructure",
       "local_key": "id_nomenclature_infrastructure_type"
+    },
+
+    "passages_faune": {
+      "type": "relation",
+      "relation_type": "n-n",
+      "schema_name": "schemas.sipaf.pf",
+      "title": "Passages faune",
+      "schema_dot_table": "sipaf.cor_infrastructure_pf"
+      // "column_properties": [
+        // { "type": "nb" },
+        // { "type": "has" }
+      // ]
+    },
+
+    // column_properties
+    "nb_passages_faune": {
+      "type": "integer",
+      "title": "Nombre de passages faune",
+      "column_property": "nb",
+      "relation_key": "passages_faune"
+    },
+
+    "has_passages_faune": {
+      "type": "boolean",
+      "title": "Possède des passages faune",
+      "column_property": "has",
+      "relation_key": "passages_faune"
     }
+    // ,
+    // "label_passages_faune": {
+    //   "type": "string",
+    //   "title": "Possède des passages faune",
+    //   "column_property": "label",
+    //   "relation_key": "passages_faune",
+    //   "label_key": "id_pf"
+    // }
+
 
   }
 }

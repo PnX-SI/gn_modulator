@@ -53,7 +53,9 @@ CREATE TABLE sipaf.t_passages_faune (
     id_nomenclature_materiaux INTEGER,
     id_nomenclature_oh_position INTEGER,
     id_nomenclature_oh_banq_caract INTEGER,
-    id_nomenclature_oh_banq_type INTEGER
+    id_nomenclature_oh_banq_type INTEGER,
+    nb_infrastructures INTEGER,
+    label_infrastructures VARCHAR
 );
 
 
@@ -62,8 +64,11 @@ CREATE TABLE sipaf.t_passages_faune (
 CREATE TABLE sipaf.l_infrastructures (
     id_infrastructure SERIAL NOT NULL,
     infrastructure_name VARCHAR,
+    infrastructure_number INTEGER,
     id_nomenclature_infrastructure_type INTEGER,
-    geom GEOMETRY(GEOMETRY, 4326)
+    geom GEOMETRY(GEOMETRY, 4326),
+    nb_passages_faune INTEGER,
+    has_passages_faune BOOLEAN
 );
 
 

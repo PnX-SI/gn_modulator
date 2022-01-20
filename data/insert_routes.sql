@@ -18,11 +18,13 @@ WITH raw_routes AS (
 )
 INSERT INTO sipaf.l_infrastructures (
 	infrastructure_name,
+	infrastructure_number,
 	geom,
 	id_nomenclature_infrastructure_type
 )
 SELECT
 	r.num_route AS area_code,
+	NULLIF(regexp_replace(r.num_route , '[^\.\d]','','g'), '')::numeric AS infrastructure_number,
 	geom,
 	CASE
 		WHEN r.num_route LIKE 'N%' THEN ref_nomenclatures.get_id_nomenclature('PF_INFRASTRUCTURE_TYPE', 'RN')

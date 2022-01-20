@@ -1,1 +1,2 @@
 jsonschema
+utils-flask-sqlalchemy>=0.2.6

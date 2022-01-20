@@ -146,6 +146,8 @@ class SchemaFiles():
         self._schema_name = schema_name
         self._schemas = {}
         self._schemas['definition'] = self.cls().load_json_file_from_name(schema_name)
+    
+        # tous les fichiers du meme dossier avec le même nom + -
 
         if self.meta('extends'):
             base_schema_name = self.meta('extends.schema_name')

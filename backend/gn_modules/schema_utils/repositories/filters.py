@@ -165,6 +165,12 @@ class SchemaRepositoriesFilters():
                 cast(model_attribute, DB.String) == (str(f_value))
             )
 
+        elif f_type == '!=':
+            filter_out != (
+                cast(model_attribute, DB.String) == (str(f_value))
+            )
+
+
         elif f_type == 'in':
             filter_out = (
                 cast(model_attribute, DB.String)

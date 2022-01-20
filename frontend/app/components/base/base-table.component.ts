@@ -73,6 +73,29 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
       };
       this._params = extendedParams;
       this._mData.getList(this.schemaName, extendedParams).subscribe((res) => {
+
+        // process lists
+
+        for (const column of this.columns()) {
+          for (const d of res.data) {
+            if( column['field'].includes('.')) {
+              let val = utils.getAttr(d, column['field'])
+              val = Array.isArray(val) ? val.join(', ') : val;
+              delete d[column['field'].split('.')[0]]
+              utils.setAttr(d,  column['field'], val);
+            }
+          }
+        }
+
+        // for (const d of res.data) {
+        //   for (const [key, value] of Object.entries(d)) {
+        //     if (Array.isArray(value)) {
+        //       console.log(key, value)
+        //       d[key] = value.map(v => utils.isObject(v) ? v : v).join(', ')
+        //     }
+        //   }
+        // }
+
         resolve(res);
         if(this.value) {
           setTimeout(() => {this.selectRow(this.value)}, 100);

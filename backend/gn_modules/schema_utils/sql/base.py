@@ -12,6 +12,7 @@ from ..errors import (
     SchemaProcessedPropertyError,
 )
 
+cache_sql_tables={}
 
 class SchemaSqlBase():
 
@@ -151,6 +152,7 @@ class SchemaSqlBase():
             process all sql for a schema
         '''
 
+        cache_sql_tables = {}
         if not self.sql_processing():
             return ''
 

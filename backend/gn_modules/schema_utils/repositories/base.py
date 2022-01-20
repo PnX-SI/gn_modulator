@@ -151,10 +151,11 @@ class SchemaRepositoriesBase():
         return m
 
     def get_row_number(self, params, value):
-
+        """
+            todo UN SUEL
+        """
         Model = self.Model()
-        query = DB.session.query(Model.id_pf)
-        query = query.add_columns(func.row_number().over(order_by=self.get_sorters(Model, params.get('sorters', []), query)))
+        query = DB.session.query(Model)
 
         # pre_filters
         query = self.process_cruved('R', Model, query)
@@ -166,11 +167,13 @@ class SchemaRepositoriesBase():
         query = self.process_sorters(Model, params.get('sorters', []), query)
 
         # query row number
-        field_name = self.pk_field_name()
+        order_by, query = self.get_sorters(Model, params.get('sorters', []), query)
+        query = query.add_columns(func.row_number().over(order_by=order_by))
         sub_query = query.subquery()
+        field_name = self.pk_field_name()
         res = DB.session.query(sub_query).filter(getattr(sub_query.c, field_name) == value).one()
 
-        return res[1]
+        return res[-1]
 
     def get_page_number(self, params, value):
 
@@ -208,6 +211,8 @@ class SchemaRepositoriesBase():
         Model = self.Model()
         query = DB.session.query(Model)
 
+        query = self.process_sorters(Model, params.get('sorters', []), query)
+
         # CRUVED ??? TODO
         # pre filters
         query = self.process_cruved('R', Model, query)
@@ -222,19 +227,18 @@ class SchemaRepositoriesBase():
         query = self.process_filters(Model, params.get('filters', []), query)
 
         # TODO distinguer filter et filter search
+
         query_info['filtered'] = query.count()
+
+        if query_info['filtered'] > query_info['total']:
+            raise Exception('Pb filtered {} > total {} pour get_list {}'.format(
+                query_info['filtered'],
+                query_info['total'],
+                self.schema_name()
+            ))
 
         if params.get('size'):
             query_info['last_page'] = math.ceil(query_info['filtered'] / params.get('size'))
-            # if query_info.get('row_number'):
-            #     query_info['value_page'] = math.ceil(query_info['row_number'] / params.get('size'))
-
-        # sorters
-
-        query = self.process_sorters(Model, params.get('sorters', []), query)
-
-        # if params.get('value'):
-        #     query_info['row_number'] = self.get_row_number_from_value(params.get('value'), query)
 
         # page, size
         query = self.process_page_size(params.get('page'), params.get('size'), params.get('value'), query)

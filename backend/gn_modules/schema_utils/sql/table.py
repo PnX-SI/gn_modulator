@@ -2,6 +2,8 @@
     sql table
 '''
 
+from .base import cache_sql_tables
+
 
 class SchemaSqlTable():
     '''
@@ -27,6 +29,11 @@ class SchemaSqlTable():
 
         if not relation_def['relation_type'] == 'n-n':
             return txt
+
+        if relation_def['schema_dot_table'] in cache_sql_tables:
+            return txt
+            
+        cache_sql_tables[relation_def['schema_dot_table']] = True
 
         local_key = self.pk_field_name()
         local_key_type = self.get_sql_type(self.column(local_key), cor_table=True)

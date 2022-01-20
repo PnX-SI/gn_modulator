@@ -9,7 +9,8 @@ from gn_modules.schema_utils.repositories import cruved
 from sqlalchemy.orm import column_property
 
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import func, select, case
+from sqlalchemy import func, select, case, exists, and_ , literal_column, cast
+from sqlalchemy.dialects.postgresql import aggregate_order_by
 
 from geonature.utils.env import DB
 
@@ -78,7 +79,7 @@ class SchemaModel():
         return self.meta('model_name', 'T{}'.format(self.schema_name('pascal_case')))
 
     def clear_cache_model(self):
-        if cache_model.get(self.schema_name()):
+        if cache_model.get(self.schema_name()) is not None:
             del cache_model[self.schema_name()]
 
     def get_db_type(self, column):
@@ -157,7 +158,42 @@ class SchemaModel():
         if relationship_def.get('relation_type') == 'n-n':
             kwargs['secondary'] = self.CorTable(relationship_def)
 
-        return DB.relationship(relation.Model(), **kwargs)
+        # kwargs['lazy'] = 'joined'
+
+        relationship = DB.relationship(relation.Model(), **kwargs)
+
+        return relationship
+
+    def process_column_property_model(self, key, column_property_def, Model):
+        print('cp', key)
+        if column_property_def.get('column_property') == 'nb':
+
+            return column_property(
+                select([func.count('*')])
+                .where(getattr(Model, column_property_def['relation_key']))
+            )
+
+        if column_property_def.get('column_property') == 'has':
+
+            return column_property(
+                exists()
+                .where(getattr(Model, column_property_def['relation_key']))
+            )
+
+        if column_property_def.get('column_property') == 'label':
+
+            relation = getattr(Model, column_property_def['relation_key'])
+            relation_label = getattr(relation.mapper.entity, column_property_def['label_key'])
+            return column_property(
+                select([
+                    func.string_agg(
+                        cast(relation_label, DB.String),
+                        literal_column("', '")
+                    )
+                ])
+                .where(relation)
+            )
+
 
     def CorTable(self, relation_def):
 
@@ -165,7 +201,7 @@ class SchemaModel():
         cor_schema_name = schema_dot_table.split('.')[0]
         cor_table_name = schema_dot_table.split('.')[1]
 
-        if cache_cor_table.get(schema_dot_table):
+        if cache_cor_table.get(schema_dot_table) is not None:
             return cache_cor_table[schema_dot_table]
 
         relation = self.cls()(relation_def['schema_name'])
@@ -222,6 +258,7 @@ class SchemaModel():
 
             setattr(Model, key, self.process_relation_model(key, relation_def, Model))
 
+
         return Model
 
     def Model(self):
@@ -241,6 +278,8 @@ class SchemaModel():
         if Model := self.get_existing_model():
             return Model
 
+        print('get model {}'.format(self.schema_name()))
+
         # dict_model used with type() to list properties and methods for class creation
         dict_model = {
             '__tablename__': self.sql_table_name(),
@@ -257,12 +296,14 @@ class SchemaModel():
             base_schema = self.cls()(self.meta('extends.schema_name'))
             ModelBaseClass = base_schema.Model()
 
-
         if self.meta('extends'):
             base_schema = self.cls()(self.meta('extends.schema_name'))
 
         # process properties
         for key, column_def in self.columns().items():
+
+            if column_def.get('column_property') is not None:
+                continue
 
             if self.meta('extends'):
                 base_schema = self.cls()(self.meta('extends.schema_name'))
@@ -277,15 +318,24 @@ class SchemaModel():
         cache_model[self.schema_name()] = Model
 
         # process relations
-        for key, value in self.relationships().items():
+        for key, relationship_def in self.relationships().items():
 
             if self.meta('extends'):
                 base_schema = self.cls()(self.meta('extends.schema_name'))
                 if key in base_schema.column_keys():
                     continue
 
-            setattr(Model, key, self.process_relation_model(key, value, Model))
+            relationship = self.process_relation_model(key, relationship_def, Model)
+            setattr(Model, key, relationship)
 
+        # process column properties
+        for key, column_property_def in self.columns().items():
+            if column_property_def.get('column_property') is None:
+                continue
+            print(key)
+
+            setattr(Model, key, self.process_column_property_model(key, column_property_def, Model))
+            
         return Model
 
     def cruved_ownership(self, id_role, id_organism):

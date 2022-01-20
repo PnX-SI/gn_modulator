@@ -62,7 +62,7 @@ export class ListFormService {
       options.schema_name = options.schema_name || 'schemas.utils.nomenclature.nomenclature';
       options.params = options.params || {}
       options.params.filters = options.params.filters || [];
-      options.params.filters.push({field: 'type.mnemonique', type: '=', value: options.nomenclature_type})
+      options.params.filters.push({field: 'nomenclature_type.mnemonique', type: '=', value: options.nomenclature_type})
       options.useCache = true;
     }
 

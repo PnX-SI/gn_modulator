@@ -106,6 +106,7 @@ const setAttr = (obj, paths, value) => {
         console.error(`setAttr ${obj} ${paths} ${path}`)
         return
       }
+      inter = inter[path]
     } else {
       inter[path] = value
     }

@@ -196,6 +196,9 @@ class SchemaSerializers:
         for key, relation_def in self.relationships().items():
             marshmallow_schema_dict[key] = self.process_relation_marshmallow(relation_def)
 
+            if relation_def.get('column_property', {}).get('type') == 'nb':
+                marshmallow_schema_dict['nb_{}'.format(key)] = fields.Integer()
+
         if self.meta('check_cruved'):
             marshmallow_schema_dict['cruved_ownership'] = fields.Integer(dumps_only=True)
 
@@ -257,6 +260,13 @@ class SchemaSerializers:
         marshmallowSchema = self.MarshmallowSchema()(**kwargs)
 
         data_list = marshmallowSchema.dump(m_list, many=True)
+
+        key_debug = 'nb_passages_faune'
+        if hasattr(marshmallowSchema, key_debug):
+            for m in m_list:
+                print(getattr(m, key_debug))
+        else:
+            print('no {} {}'.format(self.schema_name(), key_debug))
 
         if as_geojson:
 

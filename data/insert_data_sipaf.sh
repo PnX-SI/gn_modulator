@@ -75,11 +75,12 @@ cp ${source_csv} /tmp/source.csv
 
 # 3) sql
 
+psqla -c "DROP SCHEMA IF EXISTS gn_sipaf CASCADE;"
 psqla -f ${data_dir}/reset_sipaf.sql
 gn_venv
 
 # patch pourris maj modules en attendant alembic
-psqla -c "DROP SCHEMA IF EXISTS gn_modules CASCADE"
+psqla -c "DROP SCHEMA IF EXISTS gn_modules CASCADE;"
 geonature modules sql_process -n schemas.module.sous_module -e
 
 geonature modules install modules.sipaf.module

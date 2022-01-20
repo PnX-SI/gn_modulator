@@ -36,12 +36,12 @@
                     "type": "integer"
                 },
                 "infrastructure": {
-                    "title": "Route",
+                    "title": "Infrastructure",
                     "field": "infrastructures.id_infrastructure",
                     "filter_type": "=",
                     "type": "integer"
                 },
-
+      
                 "nom_pf": { "title": "Nom pf", "field": "nom_pf", "filter_type": "ilike"}
             },
             "layout": [
@@ -62,7 +62,7 @@
                             "direction": "row",
                             "items": ["haut_ouvrag_min", "haut_ouvrag_max"]
                         }
-
+      
                     ]
                 },
                 {
@@ -85,6 +85,15 @@
                             "key": "infrastructure",
                             "type": "list-form",
                             "schema_name": "schemas.sipaf.infrastructure",
+                            "params": {
+                                "filters": [
+                                    { "field": "has_passages_faune", "type": "=", "value": "true" }
+                                ],
+                                "sorters": [
+                                    { "field": "nomenclature_infrastructure_type.cd_nomenclature", "dir": "asc" },
+                                    { "field": "infrastructure_number", "dir": "asc" }
+                                ]
+                            },
                             "data_reload_on_search": true,
                             "size": 10
                         }
@@ -250,7 +259,7 @@
                                     [
                                         { "key": "commune", "title": "Commune", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "COM"}] },
                                         { "key": "departement", "title": "Département", "key_value": "areas.area_name", "filters": [{ "key":"areas.area_type.type_code", "value": "DEP"}] },
-                                        { "title": "Axe routier", "key": "infrastructures.infrastructure_name" }
+                                        { "title": "Infrastrucure", "key": "label_infrastructures" }
                                     ]
                                 }
                             ]
@@ -294,7 +303,9 @@
             ],
             "columns_short": [
                 "id_pf",
-                "nom_pf"
+                "nom_pf",
+                "nomenclature_materiaux.label_fr",
+                "label_infrastructures"
             ]
         }
     },
@@ -539,7 +550,7 @@
         },
         "infrastructures": {
             "type": "relation",
-            "title": "Routes",
+            "title": "Infrastructures",
             "relation_type": "n-n",
             "schema_name": "schemas.sipaf.infrastructure",
             "schema_dot_table": "sipaf.cor_infrastructure_pf",
@@ -548,5 +559,24 @@
                 "distance": 0.001
             }
         }
+        ,
+
+        // column properties
+        "nb_infrastructures": {
+            "type": "integer",
+            "title": "Infrastrutures",
+            "column_property": "nb",
+            "relation_key": "infrastructures"
+        }
+        ,
+
+        "label_infrastructures": {
+            "type": "string",
+            "title": "Infrastrutures",
+            "column_property": "label",
+            "relation_key": "infrastructures",
+            "label_key": "infrastructure_name"
+        }
+
     }
 }
