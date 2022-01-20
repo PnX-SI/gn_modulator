@@ -81,6 +81,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
   }
 
   processData(data) {
+    console.log('processData', data)
     this.data = data;
     this.layoutData = {};
     this.bEditAllowed = data['cruved_ownership'] <= this.moduleConfig.cruved['U'];
@@ -107,10 +108,15 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
    }
 
   setLayersData(flyToPoint=false) {
+    console.log('setLayersData')
     const properties = {
       id: this.id()
     };
     const geometry = this.data[this.geometryFieldName()];
+    console.log(geometry)
+    if (!geometry) {
+      return;
+    }
     if(flyToPoint) {
       this._mapService.waitForMap(this.mapId).then(()=> {
         this._mapService.setCenter(this.mapId, [ geometry.coordinates[1], geometry.coordinates[0] ]);

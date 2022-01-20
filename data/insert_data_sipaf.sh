@@ -95,4 +95,6 @@ ${data_dir}/insert_routes.sh -g "${geonature_dir}"
 psqla -f ${data_dir}/import_sipaf.sql
 psqla -f ${data_dir}/patch_sipaf_dataset.sql
 
+psqla -f ${data_dir}/after_import.sql
+
 

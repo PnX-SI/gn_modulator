@@ -43,6 +43,19 @@
         }
       ]
     },
+    "create": {
+      "label": "Création",
+      "parent": {
+        "pageName": "map_list"
+      },
+      "url": "create",
+      "elements": [
+        {
+          "type": "form",
+          "schema_name": "schemas.sipaf.pf"
+        }
+      ]
+    },
     "details": {
       "label": "Propriétés",
       "parent": {

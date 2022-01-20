@@ -36,10 +36,7 @@ class SchemaRepositoriesUtil():
             return model_attribute, query
 
         else:
-            print("\ncustom_getattr", field_name, "\n")
-
-            # cas avec un seul . => a.b
-            # on verra ensuite si on à le besoin de le faire récursivement
+            # cas avec un ou plusieurs '.', recursif
 
             field_names = field_name.split('.')
 

@@ -22,7 +22,6 @@ CREATE TABLE sipaf.t_passages_faune (
     x FLOAT,
     y FLOAT,
     nom_pf VARCHAR,
-    cd_com VARCHAR,
     date_creat VARCHAR,
     date_requal VARCHAR,
     larg_ouvrag FLOAT,

@@ -125,7 +125,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     const fields = this.getFields()
 
     if(!this.value) {
-      return of(null)
+      return of({})
     }
     return this._mData.getOne(
       this.schemaName,
@@ -167,6 +167,9 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     };
 
     const geometry = this.data[this.geometryFieldName()];
+    if(!geometry) {
+      return;
+    }
     if(flyToPoint) {
       this._mapService.waitForMap(this.mapId).then(()=> {
         this._mapService.setCenter(this.mapId, [ geometry.coordinates[1], geometry.coordinates[0] ]);

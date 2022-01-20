@@ -41,7 +41,6 @@
                     "filter_type": "=",
                     "type": "integer"
                 },
-      
                 "nom_pf": { "title": "Nom pf", "field": "nom_pf", "filter_type": "ilike"}
             },
             "layout": [
@@ -98,6 +97,10 @@
                             "size": 10
                         }
                     ]
+                },
+                {
+                    "type": "submit",
+                    "title": "Rechercher"
                 }
             ]
         },
@@ -182,7 +185,7 @@
                             "type": "fieldset",
                             "direction": "row",
                             "items": [
-                                { "items": ["cd_com", "pk", "pr", "pr_abs"] }
+                                { "items": ["pk", "pr", "pr_abs"] }
                             ]
                         }
                     ]
@@ -287,7 +290,6 @@
                 "id_pf",
                 "uuid_pf",
                 "nom_pf",
-                "cd_com",
                 "nom_corr",
                 "nomenclature_materiaux.label_fr",
                 "date_creat",
@@ -358,10 +360,6 @@
         "nom_pf": {
             "type": "string",
             "title": "Nom Passage Faune"
-        },
-        "cd_com": {
-            "type": "string",
-            "title": "Code commune"
         },
         "date_creat": {
             "type": "string",
