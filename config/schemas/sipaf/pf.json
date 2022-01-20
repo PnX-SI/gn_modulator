@@ -51,7 +51,7 @@
                     "nomenclature_type": "PF_MATERIAUX"
                 },
                 {
-                    "title": "dimensions",
+                    "title": "Dimensions",
                     "items": [
                         {
                             "direction": "row",
