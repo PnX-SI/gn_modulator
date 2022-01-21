@@ -1,7 +1,7 @@
 import { AbstractControl } from '@angular/forms';
-import { buildTitleMap, isArray } from 'angular7-json-schema-form';
+import { buildTitleMap, isArray } from '@ajsf/core';
 import { Component, Input, OnInit } from '@angular/core';
-import { JsonSchemaFormService } from 'angular7-json-schema-form';
+import { JsonSchemaFormService } from '@ajsf/core';
 import { HttpClient } from "@angular/common/http";
 import { ListFormService } from '../../../services/list-form.service';
 import { mergeMap } from "@librairies/rxjs/operators";

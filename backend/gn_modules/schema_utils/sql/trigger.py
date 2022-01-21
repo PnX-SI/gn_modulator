@@ -208,9 +208,10 @@ class SchemaSqlTrigger():
                 SELECT
                     a.{foreign_key},
                     t.{local_key}
-                    FROM {sql_schema_name}.{sql_table_name} t
+                    FROM NEW AS t
                     JOIN {relation_schema_name}.{relation_table_name} a
                         ON ST_DWITHIN(t.{geometry_field_name}, a.{relation_geometry_field_name}, {distance})
+                    WHERE t.{local_key} = NEW.{local_key}
                 ;
                 RETURN NULL;
             END;

@@ -332,7 +332,6 @@ class SchemaModel():
         for key, column_property_def in self.columns().items():
             if column_property_def.get('column_property') is None:
                 continue
-            print(key)
 
             setattr(Model, key, self.process_column_property_model(key, column_property_def, Model))
             

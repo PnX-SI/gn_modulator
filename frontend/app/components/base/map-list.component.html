@@ -1,7 +1,7 @@
 <div *ngIf="debug" class="debug"> {{ _name }} value {{ value }} filters {{ filters | json }}</div>
 
 <div
-  *ngIf="componentInitialized; else loadingBlock"
+  *ngIf="componentInitialized"
   [attr.id]="elemId"
   class="element-container"
 >

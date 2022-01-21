@@ -284,7 +284,6 @@
           "id_pf",
           "uuid_pf",
           "nom_pf",
-          "cd_com",
           "nom_corr",
           "nomenclature_materiaux.label_fr",
           "date_creat",

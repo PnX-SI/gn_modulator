@@ -20,7 +20,7 @@ import { BaseLayoutComponent } from "./components/base/base-layout.component";
 import { PageElementComponent } from "./components/base/page-element.component";
 import { ModulesMapComponent } from "./components/base/map/map.component";
 
-import { MaterialDesignFrameworkModule } from 'angular7-json-schema-form';
+import { MaterialDesignFrameworkModule } from '@ajsf/material';
 
 import { ModulesConfigService } from "./services/config.service";
 import { ModulesRouteService } from "./services/route.service";
@@ -33,7 +33,7 @@ import { ListFormService } from "./services/list-form.service";
 
 import {
   MatTableModule
-} from "@angular/material";
+} from "@angular/material/table";
 
 
 const routes: Routes = [

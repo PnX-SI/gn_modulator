@@ -1,6 +1,6 @@
 -- DROP schema
 
-DROP SCHEMA IF EXISTS sipaf CASCADE;
+-- DROP SCHEMA IF EXISTS sipaf CASCADE;
 
 -- DELETE data +
 

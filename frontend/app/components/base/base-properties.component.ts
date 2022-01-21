@@ -49,7 +49,6 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
   }
 
   getData() {
-    console.log('getDaa', this.value)
     if(!this.value) {
       return of(null)
     }
@@ -81,7 +80,6 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
   }
 
   processData(data) {
-    console.log('processData', data)
     this.data = data;
     this.layoutData = {};
     this.bEditAllowed = data['cruved_ownership'] <= this.moduleConfig.cruved['U'];
@@ -108,12 +106,10 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
    }
 
   setLayersData(flyToPoint=false) {
-    console.log('setLayersData')
     const properties = {
       id: this.id()
     };
     const geometry = this.data[this.geometryFieldName()];
-    console.log(geometry)
     if (!geometry) {
       return;
     }

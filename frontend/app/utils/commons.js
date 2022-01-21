@@ -49,8 +49,6 @@ const condAttr = (obj, paths, value) => {
 
   if (Array.isArray(obj)) {
     const cond = obj.some(elem => condAttr(elem, paths, value));
-    // console.log('condAttr array', {cond, paths, value}, obj)
-
     return cond
   }
 
@@ -60,7 +58,6 @@ const condAttr = (obj, paths, value) => {
   const inter = obj[path];
 
   const cond = condAttr(inter, nextPaths, value);
-  // console.log('condAttr obj', {cond, paths, value}, obj)
 
   return cond
 }

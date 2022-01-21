@@ -300,9 +300,10 @@ CREATE OR REPLACE FUNCTION sipaf.fct_trig_insert_cor_infrastructure_pf_on_each_s
                 SELECT
                     a.id_infrastructure,
                     t.id_pf
-                    FROM sipaf.t_passages_faune t
+                    FROM NEW AS t
                     JOIN sipaf.l_infrastructures a
                         ON ST_DWITHIN(t.geom, a.geom, 0.001)
+                    WHERE t.id_pf = NEW.id_pf
                 ;
                 RETURN NULL;
             END;

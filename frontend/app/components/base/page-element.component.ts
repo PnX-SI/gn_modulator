@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
-import { WidgetLibraryService } from 'angular7-json-schema-form';
+import { WidgetLibraryService } from '@ajsf/core';
 import { ActivatedRoute, Router, ParamMap } from "@angular/router";
 import { ModulesConfigService } from "../../services/config.service"
 import { ModulesDataService } from "../../services/data.service"

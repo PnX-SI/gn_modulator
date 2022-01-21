@@ -8,7 +8,7 @@ import { CommonService } from "@geonature_common/service/common.service";
 import { ModulesMapService } from "../../services/map.service"
 import { ModulesFormService } from "../../services/form.service"
 import { ModulesRouteService } from "../../services/route.service"
-import { WidgetLibraryService } from 'angular7-json-schema-form';
+import { WidgetLibraryService } from '@ajsf/core';;
 import { AuthService } from "@geonature/components/auth/auth.service";
 
 import { mergeMap, concatMap } from "@librairies/rxjs/operators";

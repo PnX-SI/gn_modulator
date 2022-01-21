@@ -13,6 +13,8 @@ export default {
   },
 
   setDrawOptions(mapId, drawOptions) {
+    const map = this.getMap(mapId);
+    if (!map) return;
     map.pm.setDrawOptions(drawOptions)
   }
 }

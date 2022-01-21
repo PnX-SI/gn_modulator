@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { isInputRequired } from 'angular7-json-schema-form';
+import { isInputRequired } from '@ajsf/core';
 import { ModulesMapService } from "../../../services/map.service";
 import utils from "../../../utils"
 @Component({

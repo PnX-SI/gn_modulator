@@ -68,7 +68,8 @@ export class ModulesDataService {
       'post',
       'rest',
       {
-        params
+        params,
+        data
       }
     );
   }

@@ -106,7 +106,6 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
           },
           component: this._name
         }
-        console.log('map', event)
         this.emitEvent(event);
       }
     });

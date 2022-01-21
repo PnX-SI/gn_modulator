@@ -4,7 +4,7 @@ import { mergeMap, concatMap } from "@librairies/rxjs/operators";
 import { Observable, of, forkJoin } from "@librairies/rxjs";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 
-import { WidgetLibraryService } from 'angular7-json-schema-form';
+import { WidgetLibraryService } from '@ajsf/core';
 import { ModulesConfigService } from "../../services/config.service"
 import { ModulesDataService } from "../../services/data.service"
 import { ModulesMapService } from "../../services/map.service"
@@ -61,6 +61,19 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     // charge les widget additionels
     this.geometryFormGroup=this._formBuilder.group({'geometry': [null, Validators.required]})
+
+    this._mapService.waitForMap(this.mapId).then(()=> {
+      this._mapService.getMap(this.mapId).on('pm:create', (event) => {
+        event.layer.on('pm:edit', ({ layer }) => {
+          // layer has been edited
+          this.data[this.geometryFieldName()] = utils.copy(layer.toGeoJSON().geometry);
+          this.setLayersData();
+        })
+        this.data[this.geometryFieldName()] = utils.copy(event.layer.toGeoJSON().geometry);
+        this.setLayersData();
+      })
+    });
+
     for (const [key, AdditionalWidget] of Object.entries(additionalWidgets)) {
       this._widgetLibraryService.registerWidget(key, AdditionalWidget);
     }
@@ -97,7 +110,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       drawCircle: false,
       drawCircleMarker: false,
       drawRectangle: false,
-      drawMarker: !this.id() && ['geometry', 'point'].includes(geometryType),
+      drawMarker: ['geometry', 'point'].includes(geometryType),
       drawPolygon: !this.id() && ['geometry', 'polygon'].includes(geometryType),
       drawPolyline: !this.id() && ['geometry', 'polyline'].includes(geometryType),
       dragMode: geometryType != 'point',
@@ -154,10 +167,12 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     if((!event) || JSON.stringify(event) === '{}' || utils.fastDeepEqual(event, this.dataSave)) {
       return
     }
+
     this.dataSave  = event;
     // test depuis la derniere json stringify ou autre
     this.data = event;
-    this.setLayersData(true);
+
+    // this.setLayersData(true);
 
   }
 
@@ -167,7 +182,11 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     };
 
     const geometry = this.data[this.geometryFieldName()];
-    if(!geometry) {
+    if(!(geometry && geometry.coordinates)) {
+      this.data[this.geometryFieldName()] = {
+        type: null,
+        coordinates: null
+      }
       return;
     }
     if(flyToPoint) {
@@ -188,7 +207,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           onEachFeature: (feature, layer) => {
             layer.on('pm:edit', (event) => {
               this.data[this.geometryFieldName()] = event.layer.toGeoJSON().geometry;
-              this.setLayersData();
+              // this.setLayersData();
               // set layer in data
               // set layer in layerData
             })

@@ -87,15 +87,6 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
           }
         }
 
-        // for (const d of res.data) {
-        //   for (const [key, value] of Object.entries(d)) {
-        //     if (Array.isArray(value)) {
-        //       console.log(key, value)
-        //       d[key] = value.map(v => utils.isObject(v) ? v : v).join(', ')
-        //     }
-        //   }
-        // }
-
         resolve(res);
         if(this.value) {
           setTimeout(() => {this.selectRow(this.value)}, 100);
