@@ -1,16 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges } from "@angular/core";
-import { ActivatedRoute, Router, ParamMap } from "@angular/router";
-import { ModulesConfigService } from "../../services/config.service";
-import { ModulesDataService } from "../../services/data.service";
-import { CommonService } from "@geonature_common/service/common.service";
-import { ModulesMapService } from "../../services/map.service"
-import { ModulesFormService } from "../../services/form.service"
-import { AuthService, User } from "@geonature/components/auth/auth.service";
 
-import { mergeMap, concatMap, catchError } from "@librairies/rxjs/operators";
-import { Observable, of, forkJoin } from "@librairies/rxjs";
+import { ModulesService } from "../../services/all.service";
+
+import { User } from "@geonature/components/auth/auth.service";
+import { mergeMap, catchError } from "@librairies/rxjs/operators";
+import { Observable, of } from "@librairies/rxjs";
 import utils  from "../../utils"
-import { ModulesRouteService } from "../../services/route.service";
 
 @Component({
   selector: "modules-base-component",
@@ -46,36 +41,28 @@ export class BaseComponent implements OnInit {
   componentInitialized = false;
   isProcessing=false;
 
-  response = null;
-  data = null;
-  layersData = null;
+  response;
+  data;
+  layersData;
 
   fields;
 
   elemId;
 
-  schemaConfig = null;
-  moduleConfig = null;
+  schemaConfig;
+  moduleConfig;
 
-  componentTitle = null;
+  componentTitle;
 
-  errorMsg = null;
+  errorMsg;
 
   _name: string;
 
   currentUser: User;
 
-  constructor(
-    protected _route: ActivatedRoute,
-    protected _commonService: CommonService,
-    protected _mapService: ModulesMapService,
-    protected _mConfig: ModulesConfigService,
-    protected _mData: ModulesDataService,
-    protected _mForm: ModulesFormService,
-    protected _router: Router,
-    protected _mRoute: ModulesRouteService,
-    protected _auth: AuthService,
 
+  constructor(
+    protected _services: ModulesService
   ) {
     this._name = 'BaseComponent';
     this.elemId = `elem_${Math.random()}`.replace('.', '')
@@ -118,32 +105,7 @@ export class BaseComponent implements OnInit {
     setTimeout(()=> {});
   }
 
-  getLayoutFields(layout, keysOnly=false) {
-    if (this.getLayoutType(layout) == 'array') {
-      return utils.flatAndRemoveDoublons(layout.map(l => this.getLayoutFields(l, keysOnly)))
-    }
-    if (this.getLayoutType(layout) == 'obj') {
-      return utils.flatAndRemoveDoublons(layout.items.map(l => this.getLayoutFields(l, keysOnly)))
-    }
-    if (! keysOnly) {
-      return layout
-    }
-    var keys = [layout.key_value || layout.key || layout];
-    if (layout.filters) {
-      keys = [ ...keys, ...layout.filters.map(f => f.key) ];
-    }
-    return utils.flatAndRemoveDoublons(keys);
-  };
 
-  getLayoutType(layout) {
-    return !layout
-      ? null
-      : Array.isArray(layout)
-        ? 'array'
-        : utils.isObject(layout) && layout.items
-          ? 'obj'
-          : 'key'
-  };
 
   geometryFieldName() {
     return this.schemaConfig.utils.geometry_field_name;
@@ -153,7 +115,7 @@ export class BaseComponent implements OnInit {
     if (! this.hasGeometry()) {
       return;
     }
-    return this.schemaConfig.schema.properties[this.geometryFieldName()].geometry_type;
+    return this.schemaConfig.definition.properties[this.geometryFieldName()].geometry_type;
   }
 
   hasGeometry() {
@@ -180,7 +142,7 @@ export class BaseComponent implements OnInit {
   }
 
   process() {
-    this.currentUser = this._auth.getCurrentUser();
+    this.currentUser = this._services.auth.getCurrentUser();
 
     this.mapId = this.mapId || `map_${Math.random()}`;
 
@@ -189,12 +151,12 @@ export class BaseComponent implements OnInit {
     }
     this.isProcessing = true;
     // load_config
-    this._mConfig
+    this._services.mConfig
       .loadConfig(this.schemaName)
       .pipe(
         mergeMap((schemaConfig) => {
           this.schemaConfig=schemaConfig;
-          this.moduleConfig=this._mConfig.moduleConfig(this.moduleName);
+          this.moduleConfig=this._services.mConfig.moduleConfig(this.moduleName);
           this.processConfig();
           return of(true);
         }),
@@ -249,8 +211,8 @@ export class BaseComponent implements OnInit {
           ? JSON.stringify(value)
           : value
       }
-      this._router.navigate([], {
-      relativeTo: this._route,
+      this._services.router.navigate([], {
+      relativeTo: this._services.route,
       queryParams: queryParamsProcessed,
       queryParamsHandling: 'merge',
     });

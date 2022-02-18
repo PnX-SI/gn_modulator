@@ -18,15 +18,9 @@ export class ModulesIndexComponent implements OnInit {
     private _mRoute: ModulesRouteService,
   ) {
 
-    this._mConfig.getSchemaGroups()
-      .subscribe((schemaGroups:Array<any>) => {
-        this.schemaGroups=schemaGroups
-        this.groups=Object.keys(schemaGroups)
-      });
-
     this._mConfig.getModules()
       .subscribe( (modules) => {
-        this.modules = modules;
+        this.modules = Object.values(modules);
       });
   }
 

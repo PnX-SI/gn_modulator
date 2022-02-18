@@ -25,6 +25,8 @@ import { MaterialDesignFrameworkModule } from '@ajsf/material';
 import { ModulesConfigService } from "./services/config.service";
 import { ModulesRouteService } from "./services/route.service";
 import { ModulesDataService } from "./services/data.service";
+import { ModulesService } from "./services/all.service";
+import { ModulesLayoutService } from "./services/layout.service";
 import { ModulesFormService } from "./services/form.service";
 import { ModulesRequestService } from "./services/request.service";
 import { ModulesMapService } from "./services/map.service";
@@ -73,6 +75,8 @@ const routes: Routes = [
   providers: [
     ModulesConfigService,
     ModulesDataService,
+    ModulesService,
+    ModulesLayoutService,
     ModulesFormService,
     ModulesRequestService,
     ListFormService,

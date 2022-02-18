@@ -1,17 +1,8 @@
-import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { ActivatedRoute, Router, ParamMap } from "@angular/router";
+import { Component, OnInit } from "@angular/core";
 
-import { ModulesConfigService } from "../../services/config.service";
-import { ModulesDataService } from "../../services/data.service";
-import { CommonService } from "@geonature_common/service/common.service";
-import { ModulesMapService } from "../../services/map.service"
-import { ModulesFormService } from "../../services/form.service"
-import { ModulesRouteService } from "../../services/route.service"
-import { AuthService } from "@geonature/components/auth/auth.service";
+import { ModulesService } from "../../services/all.service";
 
-import { mergeMap, concatMap } from "@librairies/rxjs/operators";
-import { Observable, of, forkJoin } from "@librairies/rxjs";
+import { of } from "@librairies/rxjs";
 import { BaseComponent } from "./base.component";
 
 import utils from "../../utils"
@@ -28,20 +19,12 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
 
   layout;
   processedLayout;
-  constructor(
-    _route: ActivatedRoute,
-    _commonService: CommonService,
-    _mapService: ModulesMapService,
-    _mConfig: ModulesConfigService,
-    _mData: ModulesDataService,
-    _mForm: ModulesFormService,
-    _router: Router,
-    _mRoute: ModulesRouteService,
-    _auth: AuthService,
-  ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
-    this._name = 'BaseProperties';
 
+  constructor(
+    _services: ModulesService
+  ) {
+    super(_services)
+    this._name = 'BaseProperties';
   }
 
   ngOnInit() {
@@ -53,7 +36,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
       return of(null)
     }
 
-    const fields = this.getLayoutFields(this.layout, true)
+    const fields = this._services.mLayout.getLayoutFields(this.layout)
 
     if(!fields.includes(this.pkFieldName())) {
       fields.push(this.pkFieldName());
@@ -65,7 +48,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
 
     fields.push('cruved_ownership')
 
-    return this._mData.getOne(
+    return this._services.mData.getOne(
       this.schemaName,
       this.value,
       {
@@ -76,28 +59,12 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
 
   processConfig(): void {
       this.layout = this.schemaConfig.details.layout;
-      // this.layout = this._mForm.processLayout(this.schemaConfig.details.layout)
   }
 
   processData(data) {
     this.data = data;
-    this.layoutData = {};
-    this.bEditAllowed = data['cruved_ownership'] <= this.moduleConfig.cruved['U'];
-    for (const field of this.getLayoutFields(this.layout)) {
-      var key = field.key || field;
-      var keyValue = field.key_value || field.key || field;
-      var keyProp = keyValue.split('.')[0];
-      const property = this.schemaConfig.schema.properties[keyProp];
-      var title = field.title || property.title;
-      const value =
-        field.filters
-          ? utils.getAttr(utils.filtersAttr(this.data, field.filters), keyValue)
-          : utils.getAttr(this.data, keyValue)
-      this.layoutData[key] = {
-        title,
-        value
-      }
-    }
+    this.layoutData = this._services.mLayout.getLayoutData(this.layout, this.data, this.schemaConfig.definition);
+    this.bEditAllowed = data['cruved_ownership'] <= this.moduleConfig.module.cruved['U'];
     this.setLayersData(true);
   }
 
@@ -114,8 +81,10 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
       return;
     }
     if(flyToPoint) {
-      this._mapService.waitForMap(this.mapId).then(()=> {
-        this._mapService.setCenter(this.mapId, [ geometry.coordinates[1], geometry.coordinates[0] ]);
+      this._services.mapService.waitForMap(this.mapId).then(()=> {
+        const filters = {}
+        filters[this.pkFieldName()] = this.id();
+        this._services.mapService.findLayer(this.mapId, filters);
       });
     }
     this.layersData = {

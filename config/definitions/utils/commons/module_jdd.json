@@ -1,0 +1,12 @@
+{
+    "meta": {
+        "schema_name": "commons.module_jdd",
+        "autoschema": true,
+        "model_name": "CorModuleDataset",
+        "sql_schema_dot_table": "gn_commons.cor_module_dataset",
+        "label": "module",
+        "label_field_name": "id_module",
+        "genre": "M",
+        "unique": ["id_module", "id_dataset"]
+      }
+}

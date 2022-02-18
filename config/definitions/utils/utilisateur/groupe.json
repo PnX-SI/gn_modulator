@@ -1,0 +1,18 @@
+{
+    "meta": {
+        "schema_name": "user.groupe",
+        "autoschema": true,
+        "model_name": "CorRole",
+        "sql_schema_dot_table": "utilisateurs.cor_roles",
+        "label": "groupe",
+        "label_field_name": "id_role",
+        "genre": "M",
+        "unique": ["id_role_utilisateur", "id_role_groupe"]
+    },
+    "properties": {
+      "id_role_utilisateur": {
+        "foreign_key": true,
+        "schema_name": "user.role"
+      }
+    }
+}

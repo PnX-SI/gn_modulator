@@ -15,19 +15,20 @@
   [placeholder]="options?.notitle ? options?.placeholder : options?.title"
   [required]="options?.required"
   [style.width]="'100%'"
-  (blur)="options.showErrors = true">
+  (blur)="onBlur($event)">
+  <mat-option>
   <ngx-mat-select-search
     placeholderLabel="Filtre"
     (ngModelChange)="searchChanged($event)"
     [ngModel]="search"
-    [clearSearchInput]="false"
+    [clearSearchInput]="true"
+    noEntriesFoundLabel="Pas de données"
+  >
+
   ></ngx-mat-select-search>
-  <mat-option
-    [value]="null">
-    <span [innerHTML]="''"></span>
-  </mat-option>
+</mat-option>
   <ng-template ngFor let-selectItem [ngForOf]="selectList">
-    <mat-option *ngIf="!isArray(selectItem?.items)"
+    <mat-option *ngIf="!isArray(selectItem?.items)" [ngClass]="{ 'mat-option-hidden':selectItem.hidden } "
       [value]="selectItem">
       <span [innerHTML]="selectItem[options.label_field_name]"></span>
     </mat-option>
@@ -50,17 +51,13 @@
   [required]="options?.required"
   [style.width]="'100%'"
   [value]="controlValue"
-  (blur)="options.showErrors = true"
+  (blur)="onBlur($event)"
   (change)="updateValue($event)">
-  <mat-option
-      [value]="null">
-      <span [innerHTML]="'Choisissez une valeur'"></span>
-    </mat-option>
   <ng-template ngFor let-selectItem [ngForOf]="selectList">
     <mat-option *ngIf="!isArray(selectItem?.items)"
       [attr.selected]="selectItem[options.value_field_name] === controlValue"
       [value]="selectItem[options.value_field_name]">
-      <span [innerHTML]="selectItem[options.label_field_name]"></span>
+      <span [innerHTML]="selectItem[options.label_field_name] + 'aa'"></span>
     </mat-option>
     <mat-optgroup *ngIf="isArray(selectItem?.items)"
       [label]="selectItem?.group">
@@ -72,8 +69,14 @@
     </mat-optgroup>
   </ng-template>
 </mat-select>
-<span matSuffix *ngIf="options?.suffix || options?.fieldAddonRight"
-  [innerHTML]="options?.suffix || options?.fieldAddonRight"></span>
+<div matSuffix *ngIf="!!model">
+  <div class="example-button-container">
+    <button mat-icon-button matTooltip="Effacer la selection" (click)="clearModel($event)">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+  <!-- <mat-icon [inline] class="close-icon" (click)="clearModel($event)">clear</mat-icon> -->
+</div>
 <mat-hint *ngIf="options?.description && (!options?.showErrors || !options?.errorMessage)"
   align="end" [innerHTML]="options?.description"></mat-hint>
 </mat-form-field>

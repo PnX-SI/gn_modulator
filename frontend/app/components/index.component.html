@@ -3,7 +3,7 @@
 <div *ngIf="modules">
 
     <div *ngFor="let module of modules">
-        <a href="#/{{module.module_path}}"> {{ module.module_code }}</a>
+        <a href="#/{{module.module.module_path}}"> {{ module.module.module_code }}</a>
     </div>
 
 </div>

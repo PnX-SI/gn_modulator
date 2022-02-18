@@ -3,8 +3,16 @@ import { Injectable } from "@angular/core";
 import { ModulesConfigService } from "./config.service";
 import * as L from '@librairies/leaflet';
 import '@librairies/@geoman-io/leaflet-geoman-free';
+import {CustomIcon} from '@geonature/utils/leaflet-icon';
+
+
+delete L.Icon.Default.prototype['_getIconUrl'];
+L.Icon.Default.mergeOptions(CustomIcon);
 
 L.PM.initialize({ optIn: true }); // Property 'PM' does not exist on type 'typeof import(".../node_modules/@types/leaflet/index")'.ts(2339)
+
+delete L.Icon.Default.prototype['_getIconUrl'];
+L.Icon.Default.mergeOptions(CustomIcon);
 
 import mapMethods from './map'
 

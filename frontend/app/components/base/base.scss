@@ -40,7 +40,7 @@
     padding: 1px;
 }
 
-div.layout-array {
+div.layout-items {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -50,7 +50,7 @@ div.layout-row {
     flex-direction: row;
 }
 
-div.layout-array > div {
+div.layout-items > div {
     flex: auto;
 }
 

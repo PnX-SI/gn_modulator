@@ -6,45 +6,39 @@
     - test_schema : process tests on a specified schema
 """
 
+from distutils.log import error
 import click
 import json
 
 from flask.cli import with_appcontext
+from flask_marshmallow import Schema
+from gn_modules.schema.models import SchemaModel
 
 from .schema import SchemaMethods
 from .module import ModuleMethods
-from .schema_utils.errors import (
-    SchemaDataPathError,
-    SchemaRepositoryError
-)
+from .schema import errors
+
 
 from sqlalchemy.orm.exc import NoResultFound
 
-schema_names = SchemaMethods.schema_names('schemas')
+# @click.command('schema')
+# @click.argument('schema_name')
+# @click.option('-p', '--schema_path', default=None, help="chemin vers les elements du schema: '$meta', 'properties[<key>]'")
+# @click.option('-v', '--validation', is_flag=True)
+# def cmd_schema(schema_name, schema_path=None, validation=False):
+#     '''
+#         Affiche le schema depuis <schema_name>
 
+#           - par exemple:
+#             - schemas.test.example
+#     '''
+#     schema = SchemaMethods(schema_name).schema(schema_type=('validation' if validation else 'definition'))
 
-# def autocomplete_schema(ctx, args, incomplete):
-#     return [k for k in schema_names if incomplete in k]
+#     if schema_path:
+#         for p in schema_path.split('.'):
+#             schema = schema[p]
 
-
-@click.command('schema')
-@click.argument('schema_name')
-@click.option('-p', '--schema_path', default=None, help="chemin vers les elements du schema: '$meta', 'properties[<key>]'")
-@click.option('-v', '--validation', is_flag=True)
-def cmd_schema(schema_name, schema_path=None, validation=False):
-    '''
-        Affiche le schema depuis <schema_name>
-
-          - par exemple:
-            - schemas.test.example
-    '''
-    schema = SchemaMethods(schema_name).schema(schema_type=('validation' if validation else 'definition'))
-
-    if schema_path:
-        for p in schema_path.split('.'):
-            schema = schema[p]
-
-    SchemaMethods.pprint(schema)
+#     SchemaMethods.pprint(schema)
 
 
 @click.command('check')
@@ -62,7 +56,7 @@ def cmd_check(_schema_name=None):
         print('check {}'.format(schema_name))
         sm = SchemaMethods(schema_name)
 
-        error_definition = SchemaMethods.validate_schema(schema_name, sm.schema())
+        error_definition = SchemaMethods.validate_schema(schema_name, sm.definition)
         has_sample = SchemaMethods.file_path(schema_name, 'sample').is_file()
 
         schema_infos = {
@@ -150,27 +144,34 @@ def cmd_sample(schema_name, value=None, field_name=None, write_file=False, write
             )
 
 
-@click.command('process_data')
-@click.option('-d', '--data-name', help='nom de la donnée (test, test.exemple)')
+@click.command('data')
+@click.argument('data_file_path', type=click.Path(exists=True))
 @with_appcontext
-def cmd_process_data(data_name='data'):
+def cmd_process_data(data_file_path):
     '''
-        procède à l'insertion ou la mise à jour de données pour le type de données et le nom de la données
+        traite le fichier de données renseigné
 
-        récupère les données depuis un fichier json donne par data_name
-        - 'test' => <gn_modules>/data/test.json
-        - 'test.exemple' => <gn_modules>/data/test/exemple.json
+        {
+            schema_name:
+            items: [
+                {}
+            ]
+        }
     '''
 
-    try:
-        infos = SchemaMethods.process_data_name(data_name)
-        SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
-        return True
+    infos = {'data': SchemaMethods.process_data(data_file_path) }
+    print(SchemaMethods.txt_data_infos(infos))
 
-    except SchemaDataPathError as e:
-        SchemaMethods.log('\n{}\n'.format(e))
 
-    return False
+    # try:
+    #     infos = SchemaMethods.process_data_name(data_name)
+    #     SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
+    #     return True
+
+    # except SchemaDataPathError as e:
+    #     SchemaMethods.log('\n{}\n'.format(e))
+
+    # return False
 
 
 @click.command('explore_data')
@@ -210,7 +211,7 @@ def cmd_explore_data(schema_name, attr_name=None, limit=10, print_txt=False):
 """
             .format(
                 column_key=column_key,
-                schema_dot_table=sm.schema_dot_table(),
+                schema_dot_table=sm.sql_schema_dot_table(),
                 limit=limit
             )
         )
@@ -272,6 +273,8 @@ def cmd_sql_schema(schema_name, exec_sql):
         -e exécute la commandeExécute la commande
     '''
 
+    SchemaMethods.init_schemas()
+
     sm = SchemaMethods(schema_name)
 
     exec_sql = exec_sql
@@ -295,13 +298,48 @@ def cmd_install_module(module_name):
 
     ModuleMethods.install_module(module_name)
 
+
+@click.command('test')
+@with_appcontext
+def cmd_test():
+    """
+        test update schemas
+    """
+
+    sm_pf = SchemaMethods('sipaf.pf')
+    m = sm_pf.get_row(1)
+    out = sm_pf.serialize(
+        m,
+        fields=[
+            'label_communes',
+            'label_departements',
+            'nb_infrastructures',
+            'has_infrastructures',
+        ]
+    )
+    print(out)
+
+    sm_pf = SchemaMethods('sipaf.infrastructure')
+    m = sm_pf.get_row(1)
+    out = sm_pf.serialize(
+        m,
+        fields=[
+            'nb_passages_faune',
+            'has_passages_faune',
+        ]
+    )
+    print(out)
+
+
+
 # liste des commande pour export dans blueprint.py
 commands = [
     cmd_sql_schema,
     cmd_process_data,
     cmd_sample,
     cmd_check,
-    cmd_schema,
+    # cmd_schema,
     cmd_explore_data,
     cmd_install_module,
+    cmd_test,
 ]

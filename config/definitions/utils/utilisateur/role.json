@@ -1,0 +1,25 @@
+{
+    "meta": {
+        "schema_name": "user.role",
+        "autoschema": true,
+        "model_name": "User",
+        "sql_schema_dot_table": "utilisateurs.t_roles",
+        "label": "utilisateur",
+        "label_field_name": "nom_role",
+        "genre": "M",
+        "table": {
+            "columns": [
+                "nom_role",
+                "prenom_role",
+                "organisme.nom_organisme"
+            ]
+        },
+        "unique": ["identifiant"]
+    },
+    "properties": {
+        "password": {
+            "type": "string",
+            "title": "password"
+        }
+    }
+}

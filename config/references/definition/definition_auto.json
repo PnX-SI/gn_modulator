@@ -1,0 +1,27 @@
+{
+  "$id:": "references/schema/schema",
+  "type": "object",
+  "definitions": {
+    "ref": { "$id": "/ref", "type": "string" }
+  },
+  "required": ["meta"],
+  "properties": {
+    "meta": {
+      "$ref": "references/definition/meta.json"
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "title": "auto property",
+            "properties": {
+              "title": { "type": "string"}
+            },
+            "additionalProperties": true
+          }
+        ]
+      }
+   }
+  }
+}

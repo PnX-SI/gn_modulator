@@ -1,4 +1,4 @@
-from .module_utils.base import ModuleBase
+from .module.base import ModuleBase
 
 class ModuleMethods(ModuleBase):
 

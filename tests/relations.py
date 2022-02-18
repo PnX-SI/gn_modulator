@@ -42,7 +42,7 @@ class TestSchemas:
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
 
-            processed_schema = sm.schema('validation')
+            processed_schema = sm.schema
 
             for key, relation_def in sm.relationships().items():
 

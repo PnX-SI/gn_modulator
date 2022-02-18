@@ -1,9 +1,7 @@
-import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
-import { ActivatedRoute, Router, ParamMap } from "@angular/router";
-import { ModulesConfigService } from "../services/config.service";
-import { ModulesMapService } from "../services/map.service";
-import { mergeMap, concatMap } from "@librairies/rxjs/operators";
-import { Observable, of, forkJoin } from "@librairies/rxjs";
+import { Component, OnInit } from "@angular/core";
+import { mergeMap } from "@librairies/rxjs/operators";
+import { of } from "@librairies/rxjs";
+import { ModulesService } from "../services/all.service";
 
 @Component({
   selector: "modules-test",
@@ -35,23 +33,20 @@ export class TestComponent implements OnInit {
   filters = {}
 
   constructor(
-    private _route: ActivatedRoute,
-    private _router: Router,
-    protected _mapService: ModulesMapService,
-    private _mConfig: ModulesConfigService,
+    private _services: ModulesService
   ) {}
 
   ngOnInit() {
     this.process();
-    this._mapService.waitForMap(this.mapListId).then((map) => {
+    this._services.mapService.waitForMap(this.mapListId).then((map) => {
       (map as any).on('zoomend', () => { this.setMapQueryParams(this.mapListId) });
       (map as any).on('moveend', () => { this.setMapQueryParams(this.mapListId) });
     })
   }
 
   setMapQueryParams(mapId) {
-    this.zoom = this._mapService.getZoom(mapId);
-    this.center = this._mapService.getCenter(mapId, true);
+    this.zoom = this._services.mapService.getZoom(mapId);
+    this.center = this._services.mapService.getCenter(mapId, true);
     this.setQueryParams({
       zoom: this.zoom,
       center: this.center
@@ -61,7 +56,7 @@ export class TestComponent implements OnInit {
    * Chargement de la configuration
    */
   process() {
-    this._route.queryParams
+    this._services.route.queryParams
     .pipe(
       mergeMap((params) => {
         this.schemaName = params.schemaName;
@@ -75,10 +70,10 @@ export class TestComponent implements OnInit {
           ? params.center.map(c => Number(c))
           : null
         ;
-        return this._mConfig.loadConfig(this.schemaName)
+        return this._services.mConfig.loadConfig(this.schemaName)
       }),
       mergeMap(() => {
-        this.listTab = this._mConfig.schemaConfig(this.schemaName).utils.geometry_field_name
+        this.listTab = this._services.mConfig.schemaConfig(this.schemaName).utils.geometry_field_name
           ? ['map', 'table', 'details', 'edit', 'filters', ]
           : ['table', 'details', 'edit', 'filters']
         ;
@@ -115,8 +110,8 @@ export class TestComponent implements OnInit {
   }
 
   setQueryParams(queryParams) {
-      this._router.navigate([], {
-       relativeTo: this._route,
+      this._services.router.navigate([], {
+       relativeTo: this._services.route,
        queryParams,
        queryParamsHandling: 'merge',
     });

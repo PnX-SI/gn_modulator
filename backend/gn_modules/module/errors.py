@@ -1,0 +1,2 @@
+class ModuleDbError(Exception):
+    pass

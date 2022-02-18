@@ -84,7 +84,7 @@ INSERT INTO sipaf.t_passages_faune(
 	id_nomenclature_materiaux,
 	id_nomenclature_oh_position,
 	id_nomenclature_oh_banq_caract,
-	id_nomenclature_oh_banq_type
+	id_nomenclature_ouvrage_hydro_banq_type
 )
 WITH non_doublons AS (
 	SELECT id_pf

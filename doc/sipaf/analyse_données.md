@@ -44,7 +44,7 @@
     - oh_position
     - oh_tirant
     - id_nomenclature_oh_banq_caract
-    - id_nomenclature_oh_banq_type
+    - id_nomenclature_ouvrage_hydro_banq_type
     - id_nomenclature_oh_banq_position
 
 - localisation

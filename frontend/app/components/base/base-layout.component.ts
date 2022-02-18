@@ -7,6 +7,7 @@ import { ModulesMapService } from "../../services/map.service"
 import { ModulesFormService } from "../../services/form.service"
 import { ModulesRouteService } from "../../services/route.service"
 import { AuthService } from "@geonature/components/auth/auth.service";
+import { ModulesService } from "../../services/all.service";
 
 import { BaseComponent } from "./base.component";
 import utils from '../../utils'
@@ -20,21 +21,15 @@ export class BaseLayoutComponent extends BaseComponent implements OnInit {
 
   layoutType;
   layoutTxt;
+  arrayLayout;
+  arrayData;
 
   @Input() direction;
 
 constructor(
-  _route: ActivatedRoute,
-  _commonService: CommonService,
-  _mapService: ModulesMapService,
-  _mConfig: ModulesConfigService,
-  _mData: ModulesDataService,
-  _mForm: ModulesFormService,
-  _router: Router,
-  _mRoute: ModulesRouteService,
-  _auth: AuthService,
+  _services: ModulesService
 ) {
-  super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
+  super(_services)
   this._name = 'BaseLayout';
 }
 
@@ -43,11 +38,22 @@ constructor(
   }
 
   checkLayout(layout) {
-    this.layoutType = this.getLayoutType(layout)
-    if(this.layoutType == 'key') {
+    this.layoutType = this._services.mLayout.getLayoutType(layout)
+    if(['key', 'array'].includes(this.layoutType)) {
       this.data = this.layoutData[this.layout.key || this.layout];
-      // const data = this.layoutData[this.layout];
       this.layoutTxt = `${this.data.label} : ${this.data.value}`
+    }
+
+    // on enlève les []
+    if (this.layoutType == 'array'){
+      this.arrayLayout = this._services.mLayout.removeBrakets(this.layout.items)
+      this.arrayData = this.data.value
+        .map(d =>
+          this._services.mLayout.getLayoutData(
+            this.arrayLayout,
+            d
+          )
+        );
     }
   }
 

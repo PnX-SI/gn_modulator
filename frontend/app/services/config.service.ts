@@ -98,7 +98,7 @@ export class ModulesConfigService {
   }
 
   moduleConfig(moduleName) {
-    return this._config['modules'].find(m => moduleName == m.module_name);
+    return this._config['modules'][moduleName];
   }
 
 
@@ -127,7 +127,7 @@ export class ModulesConfigService {
   }
 
   moduleMonitoringCode() {
-    return ModuleConfig.MODULE_CODE;
+    return this.moduleConfig['module'].module_code;
   }
 
 }

@@ -70,7 +70,7 @@ export class PageComponent implements OnInit {
     for (const [key, value] of Object.entries(params)) {
       url = url.replace(`:${key}`, value)
     }
-    return `#/modules/${moduleConfig.module_code.toLowerCase()}/${url}`
+    return `#/modules/${moduleConfig.module.module_code.toLowerCase()}/${url}`
   }
 
   navigateToPage(moduleName, pageName, params) {

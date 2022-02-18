@@ -1,0 +1,12 @@
+{
+    "meta": {
+        "schema_name": "commons.module",
+        "autoschema": true,
+        "model_name": "TModules",
+        "sql_schema_dot_table": "gn_commons.t_modules",
+        "label": "module",
+        "label_field_name": "module_name",
+        "genre": "M",
+        "unique": ["module_code"]
+      }
+}

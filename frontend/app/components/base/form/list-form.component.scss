@@ -1,0 +1,24 @@
+.mat-option-hidden {
+    // background-color: blue;
+    display: none;
+}
+.close-icon {
+    font-size: 100%;
+    color: grey;
+}
+
+.close-icon:hover {
+    font-size: 100%;
+    color: black;
+}
+
+
+mat-error {
+    font-size: 75%;
+    margin-top: -1rem;
+    margin-bottom: 0.5rem;
+}
+
+ ::ng-deep json-schema-form mat-form-field .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix {
+    width: initial;
+}

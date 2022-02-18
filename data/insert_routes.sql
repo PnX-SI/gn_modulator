@@ -11,7 +11,7 @@ WITH raw_routes AS (
 ), routes AS (
     SELECT
 	    num_route,
-	    st_transform(st_multi(ST_UNION(st_force2d(geom))), 4326) AS geom
+	    st_transform(st_multi(ST_UNION(st_force2d(geom))), 2154) AS geom
 
 	    FROM raw_routes
 	    GROUP BY num_route

@@ -20,7 +20,7 @@ setuptools.setup(
     url='https://github.com/joelclems/gn_modules',
     packages=setuptools.find_packages('backend'),
     package_dir={'': 'backend'},
-    package_data={'gn_modules.migrations': ['data/*.sql']},
+    package_data={'gn_modules.migrations': ['data/*.sql', 'data/**/*.sql']},
     install_requires=requirements,
     entry_points={
         'gn_module': [

@@ -14,5 +14,5 @@ DELETE FROM gn_meta.t_acquisition_frameworks a WHERE a.acquisition_framework_nam
 DELETE FROM utilisateurs.t_roles WHERE remarques = 'SIPAF';
 DELETE FROM utilisateurs.bib_organismes WHERE adresse_organisme = 'SIPAF' ;
 
-DELETE FROM gn_modules.t_module_complements mc USING gn_commons.t_modules m WHERE m.module_code = 'SIPAF' AND m.id_module = mc.id_module;
+-- DELETE FROM gn_modules.t_module_complements mc USING gn_commons.t_modules m WHERE m.module_code = 'SIPAF' AND m.id_module = mc.id_module;
 DELETE FROM gn_commons.t_modules m WHERE m.module_code = 'SIPAF';

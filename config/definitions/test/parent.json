@@ -1,0 +1,56 @@
+{
+    "meta": {
+        "schema_name": "test.parent",
+        "sql_schema_dot_table": "m_test.t_parents",
+        "sql_processing": true,
+        "genre": "M",
+        "label": "parent",
+        "label_field_name": "parent_name",
+        "unique": ["parent_code"],
+        "form": {
+            "layout": [
+                {
+                    "title": "Parent",
+                    "direction": "row",
+                    "items": [
+                        "parent_name",
+                        "parent_code"
+                    ]
+                },
+                {
+                    "key": "children",
+                    "direction": "row",
+                    "items": {
+                        "direction": "row",
+                        "items": [
+                            "children[].child_name",
+                            "children[].child_code"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "properties": {
+        "parent_id": {
+            "type": "integer",
+            "title": "ID parent",
+            "primary_key": true
+        },
+        "parent_name": {
+            "type": "string",
+            "title": "Nom parent"
+        },
+        "parent_code": {
+            "type": "string",
+            "title": "Code parent"
+        },
+        "children": {
+            "title": "Enfants",
+            "schema_name": "test.child",
+            "foreign_key": "parent_id",
+            "type": "relation",
+            "relation_type": "1-n"
+        }
+    }
+}

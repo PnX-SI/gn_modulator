@@ -115,12 +115,20 @@ const flat = (array) => {
 }
 
 const removeDoublons = (array) => {
-  return [... new Set(array)]
+  return array.filter(function(item, pos, self) {
+    const index = self.findIndex((elem) => fastDeepEqual(item, elem))
+    return index == pos;
+})
+  //  return [... new Set(array)]
 }
 
 const flatAndRemoveDoublons = (array) => {
   return removeDoublons(flat(array));
 }
+
+const unaccent = (str) => str.normalize("NFD").replace(/\p{Diacritic}/gu, "")
+
+const lowerUnaccent = (str) => str && str.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
 
 export default {
   fastDeepEqual,
@@ -133,4 +141,6 @@ export default {
   isObject,
   removeDoublons,
   setAttr,
+  unaccent,
+  lowerUnaccent
 }

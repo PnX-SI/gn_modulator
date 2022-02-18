@@ -1,14 +1,5 @@
-import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
-import { WidgetLibraryService } from '@ajsf/core';
-import { ActivatedRoute, Router, ParamMap } from "@angular/router";
-import { ModulesConfigService } from "../../services/config.service"
-import { ModulesDataService } from "../../services/data.service"
-import { ModulesMapService } from "../../services/map.service"
-import { ModulesFormService } from "../../services/form.service"
-import { CommonService } from "@geonature_common/service/common.service";
-import { ModulesRouteService } from "../../services/route.service"
-import { AuthService } from "@geonature/components/auth/auth.service";
-
+import { Component, OnInit, Input } from "@angular/core";
+import { ModulesService } from "../../services/all.service";
 import { BaseComponent } from "./base.component";
 
 @Component({
@@ -21,17 +12,9 @@ export class PageElementComponent extends BaseComponent implements OnInit  {
     @Input() elementType: string;
 
     constructor(
-      _route: ActivatedRoute,
-      _commonService: CommonService,
-      _mapService: ModulesMapService,
-      _mConfig: ModulesConfigService,
-      _mData: ModulesDataService,
-      _mForm: ModulesFormService,
-      _router: Router,
-      _mRoute: ModulesRouteService,
-      _auth: AuthService,
-    ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
+      _services: ModulesService
+        ) {
+    super(_services)
     this._name="PageElement"
     };
 
@@ -50,7 +33,7 @@ export class PageElementComponent extends BaseComponent implements OnInit  {
       }
 
       if(action.type == 'link') {
-        return this._mRoute.navigateToPage(this.moduleName, action.pageName, event.params)
+        return this._services.mRoute.navigateToPage(this.moduleName, action.pageName, event.params)
       }
 
 

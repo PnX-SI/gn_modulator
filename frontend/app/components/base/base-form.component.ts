@@ -1,17 +1,8 @@
-import { Component, OnInit, Input, SimpleChanges } from "@angular/core";
-import { ActivatedRoute, Router, ParamMap } from "@angular/router";
-import { mergeMap, concatMap } from "@librairies/rxjs/operators";
-import { Observable, of, forkJoin } from "@librairies/rxjs";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { Component, OnInit } from "@angular/core";
+import { of } from "@librairies/rxjs";
 
+import { ModulesService } from "../../services/all.service";
 import { WidgetLibraryService } from '@ajsf/core';
-import { ModulesConfigService } from "../../services/config.service"
-import { ModulesDataService } from "../../services/data.service"
-import { ModulesMapService } from "../../services/map.service"
-import { ModulesFormService } from "../../services/form.service"
-import { CommonService } from "@geonature_common/service/common.service";
-import { ModulesRouteService } from "../../services/route.service"
-import { AuthService } from "@geonature/components/auth/auth.service";
 
 import { additionalWidgets } from './form'
 import utils from '../../utils';
@@ -33,24 +24,15 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   dataSave= null;
 
   drawOptions=null;
-  geometryFormGroup;
+  // geometryFormGroup;
   processedLayout = {};
   additionalWidgets = additionalWidgets;
 
   constructor(
-    _route: ActivatedRoute,
-    _commonService: CommonService,
-    _mapService: ModulesMapService,
-    _mConfig: ModulesConfigService,
-    _mData: ModulesDataService,
-    _mForm: ModulesFormService,
-    _router: Router,
-    _mRoute: ModulesRouteService,
-    _auth: AuthService,
+    _services: ModulesService,
     private _widgetLibraryService: WidgetLibraryService,
-    private _formBuilder: FormBuilder,
   ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
+    super(_services)
     this.mapId = `base-form_${Math.random()}`;
     this._name = 'BaseForm';
 
@@ -59,17 +41,15 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 ;
 
   ngOnInit() {
-    // charge les widget additionels
-    this.geometryFormGroup=this._formBuilder.group({'geometry': [null, Validators.required]})
 
-    this._mapService.waitForMap(this.mapId).then(()=> {
-      this._mapService.getMap(this.mapId).on('pm:create', (event) => {
+    this._services.mapService.waitForMap(this.mapId).then(()=> {
+      this._services.mapService.getMap(this.mapId).on('pm:create', (event) => {
         event.layer.on('pm:edit', ({ layer }) => {
           // layer has been edited
-          this.data[this.geometryFieldName()] = utils.copy(layer.toGeoJSON().geometry);
+          this.setDataGeom(layer);
           this.setLayersData();
         })
-        this.data[this.geometryFieldName()] = utils.copy(event.layer.toGeoJSON().geometry);
+        this.setDataGeom(event.layer);
         this.setLayersData();
       })
     });
@@ -82,6 +62,14 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
   }
 
+  setDataGeom(layer) {
+    this.data[this.geometryFieldName()] = null;
+
+    const dataGeom = layer.toGeoJSON().geometry;
+    this.setSchemaGeom(dataGeom)
+    this.data[this.geometryFieldName()] = dataGeom;
+  }
+
   setComponentTitle(): void {
     this.componentTitle = this.id()
       ? `Modification ${this.schemaConfig.display.prep_label} ${this.id()}`
@@ -91,8 +79,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
   processConfig(): void {
       this.layout = this.schemaConfig.form.layout
-      this.processedLayout = this._mForm.processLayout(this.layout);
-      console.log(this.processedLayout);
+      this.processedLayout = this._services.mForm.processLayout(this.layout);
       if(Array.isArray(this.processedLayout)) {
         this.processedLayout.push({
           type: 'submit',
@@ -111,8 +98,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       drawCircleMarker: false,
       drawRectangle: false,
       drawMarker: ['geometry', 'point'].includes(geometryType),
-      drawPolygon: !this.id() && ['geometry', 'polygon'].includes(geometryType),
-      drawPolyline: !this.id() && ['geometry', 'polyline'].includes(geometryType),
+      drawPolygon: ['geometry', 'polygon'].includes(geometryType),
+      drawPolyline: ['geometry', 'polyline'].includes(geometryType),
       dragMode: geometryType != 'point',
       cutPolygon: false,
       removalMode: false,
@@ -122,7 +109,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   }
 
   getFields() {
-    const fields = this.getLayoutFields(this.layout, true)
+    const fields = this._services.mLayout.getLayoutFields(this.layout)
     if (this.hasGeometry) {
       fields.push(this.geometryFieldName());
     }
@@ -140,7 +127,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     if(!this.value) {
       return of({})
     }
-    return this._mData.getOne(
+    return this._services.mData.getOne(
       this.schemaName,
       this.value,
       {
@@ -150,9 +137,23 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   }
 
   processData(data) {
+    this.setSchemaGeom(data[this.geometryFieldName()]);
     this.data = data;
     this.drawOptions = this.getDrawOptions();
     this.setLayersData(true);
+  }
+
+  /**
+   * patch car oneOf ne marche pas pour les geometrie pff
+   */
+  setSchemaGeom(dataGeomField) {
+    const schemaForm = this.schemaConfig.form.schema
+    const schemaGeomField = schemaForm.properties[this.geometryFieldName()]
+    if (dataGeomField) {
+      schemaGeomField.$ref = `#/definitions/references_geom_${dataGeomField.type.toLowerCase()}`;
+    }
+    // pour que le changement de schema soit pris en compte
+    this.schemaConfig = utils.copy(this.schemaConfig)
   }
 
   onIsValid(event) {
@@ -190,8 +191,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       return;
     }
     if(flyToPoint) {
-      this._mapService.waitForMap(this.mapId).then(()=> {
-        this._mapService.setCenter(this.mapId, [ geometry.coordinates[1], geometry.coordinates[0] ]);
+      this._services.mapService.waitForMap(this.mapId).then(()=> {
+        this._services.mapService.setCenter(this.mapId, [ geometry.coordinates[1], geometry.coordinates[0] ]);
       });
     }
     this.layersData = {
@@ -206,7 +207,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           pkFieldName: this.pkFieldName(),
           onEachFeature: (feature, layer) => {
             layer.on('pm:edit', (event) => {
-              this.data[this.geometryFieldName()] = event.layer.toGeoJSON().geometry;
+              this.setDataGeom(event.layer);
               // this.setLayersData();
               // set layer in data
               // set layer in layerData
@@ -227,9 +228,9 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     const fields = this.getFields();
 
     if (this.id()) {
-        request = this._mData.patch(this.schemaName, this.id(), this.data, { fields })
+        request = this._services.mData.patch(this.schemaName, this.id(), this.data, { fields })
     } else {
-        request = this._mData.post(this.schemaName, this.data, { fields })
+        request = this._services.mData.post(this.schemaName, this.data, { fields })
     }
 
     request.subscribe(
@@ -239,7 +240,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           ? 'de modification'
           : "d'ajout"
         ;
-        this._commonService.regularToaster(
+        this._services.commonService.regularToaster(
           "success",
           `La requete ${requestType} pour l'object ${this.schemaName} d'id ${this.id()} a bien été effectué`
         );
@@ -252,9 +253,9 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
         })
       },
       (error) => {
-        this._commonService.regularToaster(
+        this._services.commonService.regularToaster(
           "error",
-          `Erreur dans la requete ${requestType} pour l'object ${this.schemaName} d'id ${this.id()} a bien été effectué`
+          `Erreur dans la requete ${requestType} pour l'object ${this.schemaName} d'id ${this.id()}`
         );
 
       });

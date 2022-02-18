@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "schema_name": "ref_geo.area",
+    "sql_schema_dot_table": "ref_geo.l_areas",
+    "model_name": "LAreas",
+    "label": "geométrie",
+    "label_field_name": "area_name",
+    "genre": "F",
+    "autoschema": true,
+    "relations": ["area_type"],
+    "unique": ["id_type", "area_code"]
+  }
+  // ,
+  // "properties": {
+  //   "type_code": {
+  //     "type": "string",
+  //     "title": "Code Type",
+  //     "column_property": "label",
+  //     "relation_key": "area_type",
+  //     "label_key": "type_code"
+  //   }
+  // }
+}

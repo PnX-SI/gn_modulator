@@ -6,7 +6,7 @@ import { mergeMap } from "@librairies/rxjs/operators";
 import { ModulesRequestService } from "./request.service";
 import { ModulesConfigService } from "./config.service";
 import { ModulesDataService } from "./data.service"
-
+import utils  from "./../utils"
 @Injectable()
 export class ListFormService {
 
@@ -57,9 +57,12 @@ export class ListFormService {
    *  - labelFieldName
    */
   initConfig(options) {
-    // gestion des nomenclatures pour simplifier la config du layout
+      // gestion des nomenclatures pour simplifier la config du layout
+
+    console.log(options)
+
     if (options.nomenclature_type) {
-      options.schema_name = options.schema_name || 'schemas.utils.nomenclature.nomenclature';
+      options.schema_name = options.schema_name || 'ref_nom.nomenclature';
       options.params = options.params || {}
       options.params.filters = options.params.filters || [];
       options.params.filters.push({field: 'nomenclature_type.mnemonique', type: '=', value: options.nomenclature_type})
@@ -67,7 +70,7 @@ export class ListFormService {
     }
 
     if (options.area_type) {
-      options.schema_name = options.schema_name || 'schemas.utils.ref_geo.area';
+      options.schema_name = options.schema_name || 'ref_geo.area';
       options.params = options.params || {}
       options.params.filters = options.params.filters || [];
       options.params.filters.push({field: 'area_type.type_code', type: '=', value: options.area_type})
@@ -123,14 +126,14 @@ export class ListFormService {
          * sans tous les champs, l'option return Object passe mal
          * => error sur les champs manquants?
          **/
-        fields: options.return_object ? null : [options.value_field_name, options.label_field_name],
+        fields: [options.value_field_name, options.label_field_name],
         ...options.params
       };
       params.filters = (params.filters || []);
       if (options.search || true) {
         params.filters = params.filters.filter(f => f.label_field_name != options.label_field_name);
         params.filters.push(
-          { field: options.label_field_name, type: 'ilike', value: options.search }
+          { field: options.label_field_name, type: 'ilike', value:  `${options.search}%` }
         )
         params.size = options.size;
       };
@@ -141,7 +144,7 @@ export class ListFormService {
           ? [value]
           : [];
 
-      // filtre pour ne pas récupérer les valeurs qui sont déjà dans value
+      //filtre pour ne pas récupérer les valeurs qui sont déjà dans value
       if (values.length) {
         params.filters.push(
           ...[
@@ -158,10 +161,11 @@ export class ListFormService {
       return this._requestService.request('get', options.api, { params, useCache: options.useCache })
         .pipe(
           mergeMap( (res: any) => {
-            return of([
+            return of(utils.removeDoublons([
+              ...res.data,
               ...values,
-              ...res.data
-            ])
+              // ...(options.multiple ? values : []),
+            ]))
           })
         );
     }
@@ -212,7 +216,8 @@ export class ListFormService {
             options.api,
             {
               params: {
-                filters
+                filters,
+                fields: [options.value_field_name, options.label_field_name],
               }
             }
           )

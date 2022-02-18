@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "schema_name": "test.example",
+    "sql_schema_dot_table": "m_test.t_examples",
+    "label": "exemple",
+    "label_field_name": "example_name",
+    "genre": "M",
+    "sql_processing": true,
+    "unique": ["example_code"]
+  },
+  "properties" : {
+      "example_id" : {"type": "integer", "title": "ID", "primary_key": true},
+      "example_name" : {"type" : "string", "title": "nom"},
+      "example_code" : {"type" : "string", "title": "code"}
+  }
+}

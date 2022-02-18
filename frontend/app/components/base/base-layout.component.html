@@ -9,7 +9,8 @@
  <!-- Debug -->
 
  <div *ngIf="debug" class="debug">
-    {{_name}} {{layoutType}} {{layout.type}} {{layout | json}}
+    {{_name}} {{layoutType}} {{layout.type}} {{layout | json}} <br>
+    {{data | json}}
 </div>
 
 
@@ -17,11 +18,11 @@
 
 <ng-container [ngSwitch]="layoutType">
 
-    <!-- Array -->
+    <!-- items -->
 
-    <ng-container *ngSwitchCase="'array'">
+    <ng-container *ngSwitchCase="'items'">
 
-        <div [ngClass]="{'layout-row': direction == 'row', 'layout-array': true }">
+        <div [ngClass]="{'layout-row': direction == 'row', 'layout-items': true }">
             <div *ngFor="let item of layout">
                 <modules-base-layout
                     [layout]="item"
@@ -31,6 +32,23 @@
             </div>
         </div>
 
+    </ng-container>
+
+
+    <!-- Array -->
+    <ng-container *ngSwitchCase="'array'">
+        <ng-container *ngIf="'data'">
+
+            <h4 *ngIf="layout.title"> {{ layut.title }} </h4>
+            <div *ngFor="let elem of arrayData">
+                <modules-base-layout
+                [layout]="arrayLayout"
+                [layoutData]="elem"
+                [debug]=debug
+                ></modules-base-layout>
+            </div>
+
+        </ng-container>
     </ng-container>
 
 

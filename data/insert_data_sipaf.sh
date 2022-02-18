@@ -21,6 +21,7 @@ data_dir=$(dirname "${current_script}")
 
 utils_file=${data_dir}/utils.sh
 
+
 source_ods=${data_dir}/sources/passage_faune_v3.ods
 source_csv=${source_ods%%.ods}.csv
 source_sql=${source_ods%%.ods}.sql
@@ -52,13 +53,10 @@ export PGPASSWORD=${user_pg_pass};
 # 1) ods -> csv
 
 if [ ! -f "${source_csv}" ]; then
-
-log_process 'ODS -> CSV'
 # --infilter pour gérer les accents
 # https://unix.stackexchange.com/questions/259361/specify-encoding-with-libreoffice-convert-to-csv
 # libreoffice --convert-to csv:"59" --infilter=CSV:44,34,76,1 --outdir ${data_dir}/sources ${source_ods}
 unoconv -f csv -e FilterOptions="59,34,0,0" ${source_ods}
-
 fi
 
 # 2) csv -> sql
@@ -75,15 +73,16 @@ cp ${source_csv} /tmp/source.csv
 
 # 3) sql
 
-psqla -c "DROP SCHEMA IF EXISTS gn_sipaf CASCADE;"
+psqla -c "DROP SCHEMA IF EXISTS sipaf CASCADE;"
+psqla -c "DROP SCHEMA IF EXISTS gn_modules CASCADE;"
+
 psqla -f ${data_dir}/reset_sipaf.sql
 gn_venv
 
 # patch pourris maj modules en attendant alembic
-psqla -c "DROP SCHEMA IF EXISTS gn_modules CASCADE;"
-geonature modules sql_process -n schemas.module.sous_module -e
+geonature modules sql_process -n modules.module -e
 
-geonature modules install modules.sipaf.module
+geonature modules install SIPAF
 
 psqla -f ${source_sql}
 cat ${source_csv} | psqla -c "COPY sipaf.tmp_import_sipaf FROM STDIN CSV HEADER DELIMITER ';';"
@@ -92,9 +91,11 @@ cat ${source_csv} | psqla -c "COPY sipaf.tmp_import_sipaf FROM STDIN CSV HEADER 
 # insert routes
 ${data_dir}/insert_routes.sh -g "${geonature_dir}"
 
-psqla -f ${data_dir}/import_sipaf.sql
-psqla -f ${data_dir}/patch_sipaf_dataset.sql
+geonature modules data ${data_dir}/../config/modules/sipaf/features/pf.json
 
-psqla -f ${data_dir}/after_import.sql
+# psqla -f ${data_dir}/import_sipaf.sql
+# psqla -f ${data_dir}/patch_sipaf_dataset.sql
+
+# psqla -f ${data_dir}/after_import.sql
 
 

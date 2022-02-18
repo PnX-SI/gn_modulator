@@ -1,0 +1,24 @@
+{
+    "meta": {
+        "schema_name": "ref_nom.type",
+        "autoschema": true,
+        "unique": ["mnemonique"],
+        "import": {
+            "copy": {
+                "label_default": ["label_fr"],
+                "definition_default": ["definition_fr"]
+            }
+        },
+        "model_name": "BibNomenclaturesTypes",
+        "sql_schema_dot_table": "ref_nomenclatures.bib_nomenclatures_types",
+        "genre": "F",
+        "label": "nomenclature",
+        "label_field_name": "label_fr"
+    }
+    // "properties": {
+    //     "id_type": { "type": "integer", "label": "ID type", "primary_key": true},
+    //     "mnemonique": { "type": "string", "label": "Type code"},
+    //     "label_default": { "type": "string", "label": "Label par defaut"},
+    //     "label_fr": { "type": "string", "label": "Label (fr)"}
+    // }
+}

@@ -1,8 +1,0 @@
-[
-  {
-    "schema_name": "schemas.utils.commons.module_jdd",
-    "items": [
-      { "id_dataset": ["SIPAF", "SIPAF Occitanie"], "id_module": "SIPAF" }
-    ]
-  }
-]

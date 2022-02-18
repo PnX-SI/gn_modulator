@@ -4,17 +4,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { JsonSchemaFormService } from '@ajsf/core';
 import { HttpClient } from "@angular/common/http";
 import { ListFormService } from '../../../services/list-form.service';
+import { FormArray, FormGroup, FormBuilder } from "@angular/forms";
 import { mergeMap } from "@librairies/rxjs/operators";
 import { of } from "@librairies/rxjs";
-
+import utils from "../../../utils"
 @Component({
   selector: 'list-form',
   templateUrl: 'list-form.component.html',
-  styles: [`
-    mat-error { font-size: 75%; margin-top: -1rem; margin-bottom: 0.5rem; }
-    ::ng-deep json-schema-form mat-form-field .mat-form-field-wrapper .mat-form-field-flex
-      .mat-form-field-infix { width: initial; }
-  `],
+  styleUrls: ['list-form.component.scss'],
 })
 export class ListFormComponent implements OnInit {
   formControl: AbstractControl;
@@ -24,6 +21,10 @@ export class ListFormComponent implements OnInit {
   boundControl = false;
   options: any;
   selectList: any[] = [];
+
+  // pour pouvoir filter en local
+  selectListSave: any[] = [];
+
   search = '';
   model=null;
   selectedItems: [];
@@ -35,7 +36,8 @@ export class ListFormComponent implements OnInit {
 
   constructor(
     private jsf: JsonSchemaFormService,
-    private _listFormService: ListFormService
+    private _listFormService: ListFormService,
+    private _fb: FormBuilder,
   ) { }
 
   ngOnInit() {
@@ -61,12 +63,15 @@ export class ListFormComponent implements OnInit {
     setTimeout(()=>{
     this._listFormService.initListForm(this.options, this.formControl.value)
       .subscribe(({selectList, model}) => {
+        // this.formControl.valueChanges.subscribe((v) => {
+          // console.log('value changed', v)
+        // });
         this.selectList = (selectList as any[]);
+        this.selectListSave = utils.copy(selectList as any[]);
         this.model = model;
+        // console.log(this.model)
         // pour s'assurer du bon affichage
-        setTimeout(() => {
-          this.formControl.patchValue(this.formControl.value);
-        });
+        // this.formControl.patchValue(this.formControl.value);
     });
     });
 //
@@ -89,22 +94,59 @@ export class ListFormComponent implements OnInit {
   }
 
   searchChanged(event) {
-    if (this.options.data_reload_on_search && this.options.api && event != this.search) {
-      this.search = event;
+
+    // passer par obsevable et debounce
+    this.search = event;
+
+    // filtrage server side
+    if (this.options.data_reload_on_search && this.options.api && event != this.options.search) {
       this.options.search=event;
       this._listFormService.getSelectList(this.options, this.model).subscribe((selectList) => {
         this.selectList = selectList;
         this.jsf.updateValue(this, this.controlValue);
       })
     }
+    // filtrage local
+    else {
+      const searchLowerUnaccent = utils.lowerUnaccent(this.search);
+      this.selectList =this.selectListSave.filter(item => {
+        const label = item[this.options.label_field_name].toLowerCase()
+        return (
+          !searchLowerUnaccent
+          || utils.lowerUnaccent(label).includes(searchLowerUnaccent)
+        )
+      });
+      // for (const item of this.selectList) {
+      // }
+    }
+  }
+
+  clearModel(event) {
+    event.stopPropagation();
+    this.updateValue(this.options.multiple ? [] : null);
+  }
+
+  onBlur(event) {
+    this.options.showErrors = true;
   }
 
   updateValue(event) {
     this.model = event;
     this.options.showErrors = true;
+    let value = this._listFormService.modelToForm(this.options, this.model)
+    console.log(value, this.controlValue)
 
-    const value = this._listFormService.modelToForm(this.options, this.model)
-
+    // patch clear
+    if (this.options.return_object && this.options.multiple) {
+      const formArray = this.jsf.getFormControl(this) as FormArray;
+      while (formArray.controls.length > 0) {
+        formArray.removeAt(0);
+      }
+      value.forEach((v, i) => {
+        formArray.setControl(i, this._fb.group(v))
+        formArray.patchValue(value)
+      });
+    }
 
     this.jsf.updateValue(this, value);
   }

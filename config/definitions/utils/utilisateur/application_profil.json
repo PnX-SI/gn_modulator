@@ -1,0 +1,12 @@
+{
+    "meta": {
+        "schema_name": "user.app_profil",
+        "autoschema": true,
+        "model_name": "UserApplicationRight",
+        "sql_schema_dot_table": "utilisateurs.cor_role_app_profil",
+        "label": "application profil",
+        "label_field_name": "id_app",
+        "genre": "F",
+        "unique": ["id_profil", "id_role", "id_application"]
+    }
+}

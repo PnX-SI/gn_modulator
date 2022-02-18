@@ -4,7 +4,7 @@ import json
 from flask import testing
 
 from geonature import create_app
-from geonature.utils.env import DB as db
+from geonature.utils.env import db as db
 
 
 class JSONClient(testing.FlaskClient):

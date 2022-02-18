@@ -26,7 +26,7 @@ export class ModulesFormService {
     }
 
     else if ( utils.isObject(layout) ) {
-      layout.fxLayoutGap = '1px';
+      // layout.fxLayoutGap = '1px';
 
       if (layout.type == 'fieldset') {
         layout.htmlClass='fieldset';
@@ -35,7 +35,7 @@ export class ModulesFormService {
       if ( layout.direction == 'row') {
         // layout.type = 'flex';
         layout.displayFlex = true;
-        layout.fxLayoutGap = '1px';
+        // layout.fxLayoutGap = '1px';
         layout['flex-direction'] = 'row';
       }
       for (const [key, value] of Object.entries(layout)) {

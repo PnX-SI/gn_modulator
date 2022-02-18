@@ -1,0 +1,22 @@
+{
+  "meta": {
+      "schema_name": "modules.module",
+      "model_name": "TModulesComplements",
+      "sql_processing": true,
+      "sql_schema_dot_table": "gn_modules.t_module_complements",
+      "label": "sous-module",
+      "label_field_name": "module_label",
+      "genre": "M",
+      "extends": {
+        "schema_name": "commons.module",
+        "type": "sous_module"
+      },
+      "unique": ["module_code"]
+    },
+    "properties": {
+      "module_name": {
+        "type": "string",
+        "title": "Module name"
+      }
+    }
+}

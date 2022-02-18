@@ -1,16 +1,8 @@
-import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter } from "@angular/core";
-import { ActivatedRoute, Router, ParamMap } from "@angular/router";
-import { ModulesConfigService } from "../../services/config.service"
-import { ModulesDataService } from "../../services/data.service"
-import { ModulesMapService } from "../../services/map.service"
-import { CommonService } from "@geonature_common/service/common.service";
-import { ModulesTableService } from "../../services/table.service";
-import { ModulesFormService } from "../../services/form.service"
-import { ModulesRouteService } from "../../services/route.service"
-import { AuthService } from "@geonature/components/auth/auth.service";
+import { Component, OnInit, SimpleChanges } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 
-import { mergeMap, concatMap } from "@librairies/rxjs/operators";
-import { Observable, of, forkJoin } from "@librairies/rxjs";
+import { ModulesService } from "../../services/all.service";
+
 import tabulatorLangs  from './table/tabulator-langs'
 import Tabulator from "tabulator-tables";
 import utils from "../../utils"
@@ -32,18 +24,9 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   // public height: string = "311px";
   tab = document.createElement("div");
   constructor(
-    _route: ActivatedRoute,
-    _commonService: CommonService,
-    _mapService: ModulesMapService,
-    _mConfig: ModulesConfigService,
-    _mData: ModulesDataService,
-    _mForm: ModulesFormService,
-    _router: Router,
-    _mTable: ModulesTableService,
-    _mRoute: ModulesRouteService,
-    _auth: AuthService,
+    _services: ModulesService
   ) {
-    super(_route, _commonService, _mapService, _mConfig, _mData, _mForm, _router, _mRoute, _auth)
+    super(_services)
     this._name = 'BaseTable';
   }
 
@@ -72,7 +55,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
         fields, // fields
       };
       this._params = extendedParams;
-      this._mData.getList(this.schemaName, extendedParams).subscribe((res) => {
+      this._services.mData.getList(this.schemaName, extendedParams).subscribe((res) => {
 
         // process lists
 
@@ -163,7 +146,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
         {
           headerSort: false,
           formatter: (cell, formatterParams, onRendered) => {
-            const editAllowed = cell._cell.row.data['cruved_ownership'] <= this.moduleConfig.cruved['U'];
+            const editAllowed = cell._cell.row.data['cruved_ownership'] <= this.moduleConfig.module.cruved['U'];
             var html = '';
             html += `<span class="table-icon ${editAllowed ? '' : 'disabled'}"><i class='fa fa-pencil' ${editAllowed ? 'action="edit"': ''}></i></span>`;
             return html;
@@ -171,7 +154,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
           width:25,
           hozAlign:"center",
           tooltip: (cell) => {
-            const editAllowed = cell._cell.row.data['cruved_ownership'] + 10 <= this.moduleConfig.cruved['U'];
+            const editAllowed = cell._cell.row.data['cruved_ownership'] + 10 <= this.moduleConfig.module.cruved['U'];
             return editAllowed
               ? `Éditer ${this.schemaConfig.display.def_label} ${this.getCellValue(cell)}`
               : ''
@@ -243,7 +226,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
       return;
     }
     // this.table.setData();
-    this._mData.getPageNumber(this.schemaName, value, this._params)
+    this._services.mData.getPageNumber(this.schemaName, value, this._params)
       .subscribe((res) => {
         // set Page
         this.table.setPage(res.page)

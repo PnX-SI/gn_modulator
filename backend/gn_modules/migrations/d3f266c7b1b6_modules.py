@@ -22,7 +22,6 @@ def upgrade():
     for sql_file in sql_files:
         operations = pkg_resources.resource_string("gn_modules.migrations", f"data/{sql_file}").decode('utf-8')
         op.get_bind().execute(text(operations))
-        # op.get_bind().execute(text(operations), MYLOCALSRID=config['LOCAL_SRID'])
 
 def downgrade():
     op.execute(f'DROP SCHEMA gn_modules CASCADE')

@@ -1,0 +1,73 @@
+{
+    "meta": {
+        "schema_name": "test.child",
+        "sql_schema_dot_table": "m_test.t_childs",
+        "sql_processing": true,
+        "genre": "M",
+        "label": "enfant",
+        "label_field_name": "child_name",
+        "unique": ["child_code"],
+        "table": {
+            "columns": [
+                "child_id",
+                "child_name",
+                "parent.parent_name"
+            ]
+        },
+        "form": {
+            "layout": [
+                {
+                    "type": "string",
+                    "key": "child_name"
+                },
+                {
+                    "type": "string",
+                    "key": "child_code"
+                },
+                {
+                    "type": "div",
+                    "items": [
+                        "parent.parent_id",
+                        "parent.parent_name",
+                        "parent.parent_code"
+                    ]
+                }
+            ]
+        }
+    },
+    "properties": {
+        "child_id": {
+            "type": "integer",
+            "title": "ID enfant",
+            "primary_key": true
+        },
+        "child_name": {
+            "type": "string",
+            "title": "Nom enfant"
+        },
+        "child_code": {
+            "type": "string",
+            "title": "Code enfant"
+        },
+        "parent_id": {
+            "type": "integer",
+            "title": "ID parent",
+            "foreign_key": true,
+            "schema_name": "test.parent"
+        },
+        "parent": {
+            "title": "Parent",
+            "local_key": "parent_id",
+            "schema_name": "test.parent",
+            "relation_type": "n-1",
+            "type": "relation"
+        },
+        "examples": {
+            "title" : "Examples",
+            "schema_name": "test.example",
+            "type": "relation",
+            "relation_type": "n-n",
+            "schema_dot_table": "m_test.cor_child_example"
+        }
+    }
+}
