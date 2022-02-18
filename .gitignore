@@ -2,7 +2,7 @@ conf_schema_gn_module.toml
 egg.info
 node_modules
 
-cconfig/modules/*
+config/modules/*
 
 # config/schemas
 # !config/schemas/utils/*
