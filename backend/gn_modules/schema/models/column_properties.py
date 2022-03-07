@@ -68,7 +68,8 @@ class SchemaModelColumnProperties():
             condition_filters, conditions = self.process_filter_array(
                 relation.mapper.entity,
                 column_property_def.get('filters'),
-                condition=conditions
+                query=conditions,
+                condition=True
             )
             conditions = and_(
                 conditions,

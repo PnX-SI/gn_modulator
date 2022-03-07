@@ -10,6 +10,7 @@ from .base import SchemaBase
 from .cache import SchemaCache
 from .commands import SchemaCommands
 from .config import SchemaConfig
+from .doc import SchemaDoc
 from .imports import SchemaImports
 from .files import SchemaFiles
 from .models import SchemaModel
@@ -28,6 +29,7 @@ class SchemaMethods(
     SchemaCache,
     SchemaCommands,
     SchemaConfig,
+    SchemaDoc,
     SchemaImports,
     SchemaFiles,
     SchemaModel,

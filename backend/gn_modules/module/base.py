@@ -3,29 +3,21 @@ from pathlib import Path
 from ..schema import SchemaMethods
 from sqlalchemy.orm.exc import NoResultFound
 from flask import g
+from . import errors
 from geonature.core.gn_permissions.tools import (
     cruved_scope_for_user_in_module,
 )
-
-from . import errors
 
 cache_modules_config = {}
 
 class ModuleBase():
 
     @classmethod
-    def install_module(cls, module_code):
-
-        # insert module in gn_commons.t_modules and gn_modules.t_module_complements
-        cls.register_or_update_module(module_code)
-
-        # process module data (nomenclature, groups ?, datasets, etc..)
-        cls.process_module_sql(module_code)
-
-        # process module data (nomenclature, groups ?, datasets, etc..)
-        cls.process_module_data(module_code)
-
-        return
+    def migrations_dir(cls, module_code=None):
+        if not module_code:
+            return SchemaMethods.migrations_directory()
+        module_config = cls.module_config(module_code)
+        return Path(module_config['module_dir_path']) / 'migrations'
 
     @classmethod
     def module_config(cls, module_code):
@@ -37,8 +29,7 @@ class ModuleBase():
         return cls.modules_config()[module_code]
 
     @classmethod
-    def register_or_update_module(cls, module_code):
-
+    def register_db_module(cls, module_code):
         schema_module = SchemaMethods('modules.module')
         module_data = cls.module_config(module_code)['module']
         module_code = module_data['module_code']
@@ -52,37 +43,49 @@ class ModuleBase():
             'module_path': 'modules/{}'.format(module_code.lower()),
             'active_backend': False,
         }
-
-        try:
-            _, b_update = schema_module.update_row(module_code, module_row_data, field_name='module_code')
-
-            print("Le module {} existe déjà".format(module_code))
-            if b_update:
-                print('Mise à jour')
-            return
-
-        except NoResultFound:
-            pass
-
-            schema_module.insert_row(module_row_data)
-
-            print('Le module {} à bien été enregistré'.format(module_code))
-            return
+        schema_module.insert_row(module_row_data, commit=True)
 
     @classmethod
-    def save_sql_txt(cls, module_code, txt):
+    def delete_db_module(cls, module_code):
+        schema_module = SchemaMethods('commons.module')
+        schema_module.delete_row(module_code, field_name='module_code')
 
-        module_config = cls.module_config(module_code)
-        sql_dir = Path(module_config['module_dir_path']) / 'data'
-        sql_dir.mkdir(parents=True, exist_ok=True)
-        sql_file_path = sql_dir / 'schema_{}.sql'.format(module_code.lower())
-        print('Sauvegarde du code sql dans {}'.format(sql_file_path))
+    # @classmethod
+    # def register_or_update_module(cls, module_code):
 
-        with open(sql_file_path, 'w') as f:
-            f.write(txt)
+    #     schema_module = SchemaMethods('modules.module')
+    #     module_data = cls.module_config(module_code)['module']
+    #     module_code = module_data['module_code']
+    #     module_row_data = {
+    #         'module_label': module_data['module_label'],
+    #         'module_desc': module_data['module_desc'],
+    #         'module_picto': module_data['module_picto'],
+    #         'active_frontend': module_data['active_frontend'],
+    #         'module_code': module_code,
+    #         'module_name': module_code,
+    #         'module_path': 'modules/{}'.format(module_code.lower()),
+    #         'active_backend': False,
+    #     }
+
+    #     try:
+    #         _, b_update = schema_module.update_row(module_code, module_row_data, field_name='module_code')
+
+    #         print("Le module {} existe déjà".format(module_code))
+    #         if b_update:
+    #             print('Mise à jour')
+    #         return
+
+    #     except NoResultFound:
+    #         pass
+
+    #         schema_module.insert_row(module_row_data)
+
+    #         print('Le module {} à bien été enregistré'.format(module_code))
+    #         return
+
 
     @classmethod
-    def process_module_sql(cls, module_code):
+    def create_schema_sql(cls, module_code):
 
         module_config = cls.module_config(module_code)
         schema_names = module_config['schemas']
@@ -90,14 +93,36 @@ class ModuleBase():
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
             if sm.sql_schema_exists():
-                return
+                break
             txt += sm.sql_txt_process()
 
-        cls.save_sql_txt(module_code, txt)
+        sql_file_path = cls.migrations_dir(module_code) / 'data/schema.sql'
+        sql_file_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(sql_file_path, 'w') as f:
+            f.write(txt)
+        print('- Création du fichier {}'.format(sql_file_path.name))
 
-        print('Exécution du code sql')
-        SchemaMethods.c_sql_exec_txt(txt)
-        pass
+    @classmethod
+    def create_reset_sql(cls, module_code):
+        sql_file_path = cls.migrations_dir(module_code) / 'data/reset.sql'
+        if sql_file_path.exists:
+            return
+        sql_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+        module_config = cls.module_config(module_code)
+        schema_names = module_config['schemas']
+        txt = "--\n-- reset.sql ({})\n--\n\n".format(module_code)
+        for schema_name in schema_names:
+            sm = SchemaMethods(schema_name)
+            txt_drop_schema = "-- DROP SCHEMA {} CASCADE;\n".format(sm.sql_schema_name())
+            if txt_drop_schema not in txt:
+                txt += txt_drop_schema
+
+        with open(sql_file_path, 'w') as f:
+            f.write(txt)
+
+
+        print('- Création du fichier {} (!!! à compléter)'.format(sql_file_path.name))
 
     @classmethod
     def process_module_features(cls, module_code):
@@ -113,6 +138,8 @@ class ModuleBase():
 
         modules_db = {}
         module_schema = SchemaMethods('modules.module')
+        if not module_schema.sql_table_exists():
+            return {}
         query, _ = module_schema.get_list({})
         modules_dict = module_schema.serialize_list(query.all())
 
@@ -138,6 +165,10 @@ class ModuleBase():
                 module_files[module_code] = module_file
 
         return module_files
+
+    @classmethod
+    def modules(cls):
+        return list(cls.modules_config().keys())
 
     @classmethod
     def modules_config(cls):

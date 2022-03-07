@@ -48,15 +48,14 @@ class SchemaRepositoriesUtil():
             relation_entity = relationship.mapper.entity
 
             if query is not None and condition is None:
-                print(field_name, col)
                 relation_entity = orm.aliased(relation_entity)
-                query = (
-                    query
-                    .join(relation_entity, relationship)
-                    .options(orm.joinedload(relation_entity, relationship))
-                )
+                try:
+                    query = query.join(relation_entity, relationship)
+                except Exception:
+                    pass
+                # query = query.options(orm.joinedload(relationship))
 
-            elif condition is not None:
+            elif condition:
                 # TODO gérer les alias si filtres un peu plus tordus ??
                 query = and_(query, relationship._query_clause_element())
 

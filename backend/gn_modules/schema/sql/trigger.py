@@ -175,37 +175,36 @@ class SchemaSqlTrigger():
         cor_schema_name = property_def['schema_dot_table'].split('.')[0]
         cor_table_name = property_def['schema_dot_table'].split('.')[1]
         relation = self.cls(property_def['schema_name'])
-
-        txt_data = {
-            'distance': property_def['trigger']['distance'],
-            'sql_schema_name': self.sql_schema_name(),
-            'sql_table_name': self.sql_table_name(),
-            'relation_schema_name': relation.sql_schema_name(),
-            'relation_table_name': relation.sql_table_name(),
-            'relation_geometry_field_name': relation.geometry_field_name(),
-            'cor_schema_name': cor_schema_name,
-            'cor_table_name': cor_table_name,
-            'local_key': self.pk_field_name(),
-            'of_key': property_def['trigger'].get('on', property_def['trigger']['key']),
-            'foreign_key': relation.pk_field_name(),
-            'trigger_function_insert_name': (
-                '{}.fct_trig_insert_{}_on_each_statement'
-                .format(cor_schema_name, cor_table_name)
-            ),
-            'trigger_function_update_name': (
-                '{}.fct_trig_update_{}_on_row'
-                .format(cor_schema_name, cor_table_name)
-            ),
-            'geometry_field_name': property_def['trigger']['key'],
-        }
+        distance = property_def['trigger']['distance']
+        sql_schema_name = self.sql_schema_name()
+        sql_table_name = self.sql_table_name()
+        relation_schema_name = relation.sql_schema_name()
+        relation_table_name = relation.sql_table_name()
+        relation_geometry_field_name = relation.geometry_field_name()
+        cor_schema_name = cor_schema_name
+        cor_table_name = cor_table_name
+        local_key = self.pk_field_name()
+        of_key = property_def['trigger'].get('on', property_def['trigger']['key'])
+        foreign_key = relation.pk_field_name()
+        trigger_function_insert_name = (
+            '{}.fct_trig_insert_{}_on_each_statement'
+            .format(cor_schema_name, cor_table_name)
+        )
+        trigger_function_update_name = (
+            '{}.fct_trig_update_{}_on_row'
+            .format(cor_schema_name, cor_table_name)
+        )
+        geometry_field_name = property_def['trigger']['key']
+        partition_keys = "t." + local_key
+        if property_def['trigger'].get('partition'):
+            partition_keys += ", " + ", l.".join(property_def['trigger'].get('partition'))
 
         txt = ''
         txt += (
             '---- Trigger {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec une distance de {distance} avec {relation_schema_name}.{relation_table_name}.{foreign_key}\n\n'
-            .format(**txt_data)
         )
 
-        txt += '''CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
+        txt += f'''CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
     RETURNS trigger AS
         $BODY$
             DECLARE
@@ -214,13 +213,22 @@ class SchemaSqlTrigger():
                     {foreign_key},
                     {local_key}
                 )
+                WITH t_match AS (
+                    SELECT
+                        l.{foreign_key},
+                        t.{local_key},
+                        ROW_NUMBER() OVER (PARTITION BY {partition_keys}) As rank
+                        FROM NEW AS t
+                        JOIN {relation_schema_name}.{relation_table_name} l
+                            ON ST_DWITHIN(t.{geometry_field_name}, l.{relation_geometry_field_name}, {distance})
+                        WHERE l.enable = TRUE
+                        ORDER BY t.{geometry_field_name} <-> l.{relation_geometry_field_name}
+                )
                 SELECT
-                    a.{foreign_key},
-                    t.{local_key}
-                    FROM NEW AS t
-                    JOIN {relation_schema_name}.{relation_table_name} a
-                        ON ST_DWITHIN(t.{geometry_field_name}, a.{relation_geometry_field_name}, {distance})
-                    -- WHERE t.{local_key} = NEW.{local_key}
+                    {foreign_key},
+                    {local_key}
+                    FROM t_match
+                    WHERE rank = 1
                 ;
                 RETURN NULL;
             END;
@@ -228,9 +236,7 @@ class SchemaSqlTrigger():
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-'''.format(**txt_data)
-
-        txt += '''CREATE OR REPLACE FUNCTION {trigger_function_update_name}()
+CREATE OR REPLACE FUNCTION {trigger_function_update_name}()
     RETURNS trigger AS
         $BODY$
             BEGIN
@@ -239,14 +245,24 @@ class SchemaSqlTrigger():
                     {foreign_key},
                     {local_key}
                 )
+                WITH t_match AS (
+                    SELECT
+                        l.{foreign_key},
+                        t.{local_key},
+                        ROW_NUMBER() OVER (PARTITION BY {partition_keys}) As rank
+                        FROM {sql_schema_name}.{sql_table_name} AS t
+                        JOIN {relation_schema_name}.{relation_table_name} l
+                            ON ST_DWITHIN(t.{geometry_field_name}, l.{relation_geometry_field_name}, {distance})
+                        WHERE
+                            t.{local_key} = NEW.{local_key}
+                            AND l.enable = TRUE
+                        ORDER BY t.{geometry_field_name} <-> l.{relation_geometry_field_name}
+                )
                 SELECT
-                    a.{foreign_key},
-                    t.{local_key}
-                FROM {relation_schema_name}.{relation_table_name} a
-                JOIN {sql_schema_name}.{sql_table_name} t
-                    ON ST_DWITHIN(t.{geometry_field_name}, a.{relation_geometry_field_name}, {distance})
-                WHERE
-                    t.{local_key} = NEW.{local_key}
+                    {foreign_key},
+                    {local_key}
+                    FROM t_match
+                    WHERE rank = 1
                 ;
                 RETURN NULL;
             END;
@@ -254,22 +270,18 @@ class SchemaSqlTrigger():
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-'''.format(**txt_data)
-
-        txt += '''CREATE TRIGGER trg_insert_{cor_schema_name}_{cor_table_name}
+CREATE TRIGGER trg_insert_{cor_schema_name}_{cor_table_name}
     AFTER INSERT ON {sql_schema_name}.{sql_table_name}
     REFERENCING NEW TABLE AS NEW
     FOR EACH STATEMENT
         EXECUTE PROCEDURE {trigger_function_insert_name}();
 
-'''.format(**txt_data)
-
-        txt += '''CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
+CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
     AFTER UPDATE OF {of_key} ON {sql_schema_name}.{sql_table_name}
     FOR EACH ROW
         EXECUTE PROCEDURE {trigger_function_update_name}();
 
-'''.format(**txt_data)
+'''
 
         return txt
 

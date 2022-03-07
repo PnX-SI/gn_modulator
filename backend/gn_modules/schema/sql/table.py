@@ -172,11 +172,13 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
             if column_def.get('description') is None:
                 continue
             txt += (
-                "COMMENT ON COLUMN {sql_schema_name}{sql_table_name}.{key} IS '{description}'"
+                "COMMENT ON COLUMN {sql_schema_name}.{sql_table_name}.{key} IS '{description}';\n"
                 .format(
                     sql_schema_name=self.sql_schema_name(),
                     sql_table_name=self.sql_table_name(),
                     key=key,
-                    description=column_def['description']
+                    description=column_def['description'].replace("'", "''")
                 )
             )
+
+        return txt

@@ -27,7 +27,7 @@ setuptools.setup(
             'code = gn_modules:MODULE_CODE',
             'picto = gn_modules:MODULE_PICTO',
             'blueprint = gn_modules.blueprint:blueprint',
-            'migrations = gn_modules:migrations',
+            'migrations = gn_modules.migrations:versions',
         ],
     },
     classifiers=['Development Status :: 1 - Planning',

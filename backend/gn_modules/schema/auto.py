@@ -134,7 +134,7 @@ class SchemaAuto():
         }
 
         if(schema_type['type'] == 'geometry'):
-            property['srid'] = schema_type['srid']
+            property['srid'] = int(schema_type['srid'])
             property['geometry_type'] = schema_type['geometry_type']
 
         # primary_key

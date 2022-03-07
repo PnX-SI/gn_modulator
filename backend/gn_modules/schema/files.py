@@ -17,15 +17,24 @@ from gn_modules import MODULE_CODE
 
 from . import errors
 
-GN_MODULES_CONFIG_DIR = GN_EXTERNAL_MODULE / MODULE_CODE.lower() / 'config/'
-
+GN_MODULES_DIR = GN_EXTERNAL_MODULE / MODULE_CODE.lower()
 class SchemaFiles():
     '''
     '''
 
+
+    @classmethod
+    def modules_directory(self):
+        return GN_MODULES_DIR
+
     @classmethod
     def config_directory(self):
-        return GN_MODULES_CONFIG_DIR
+        return GN_MODULES_DIR / 'config'
+
+    @classmethod
+    def migrations_directory(self):
+        return GN_MODULES_DIR / 'backend/gn_modules/migrations'
+
 
     @classmethod
     def schema_name_from_path(cls, schema_path):
@@ -256,8 +265,11 @@ class SchemaFiles():
             check = item in cls.schema_names_from_cache()
             if not check:
                 raise errors.SchemaNameError(
-                    "Le schema {schema_name} fait appel au schema {} qui n'est pas présent dans les dossiers de configuration"
-                    .format(schema_name, check)
+                    "Le schema {schema_name} fait appel au schema {schema_missing} qui n'est pas présent dans les dossiers de configuration"
+                    .format(
+                        schema_name=schema_name,
+                        schema_missing=item
+                    )
                 )
         return check
 
@@ -343,7 +355,7 @@ class SchemaFiles():
         if type(data) is str and '__CONFIG.' in data:
             config_key_str = cls._re_CONFIG.search(data)
             config_key_str = config_key_str and config_key_str.group(1)
-
+            config_key_replace_str = f'__CONFIG.{config_key_str}__'
             if not config_key_str:
                 return data
 
@@ -355,7 +367,8 @@ class SchemaFiles():
             except Exception:
                 raise errors.SchemaProcessConfigError("La clé {} n'est pas dans la config de geonature".format(config_key_str))
 
-            data = data.replace(data, str(config_value) or '')
+            data = data.replace(config_key_replace_str, str(config_value) or '')
+
             if key == 'srid':
                 data = int(data)
 

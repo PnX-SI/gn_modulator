@@ -63,7 +63,7 @@ class SchemaRepositoriesBase():
 
         return query
 
-    def insert_row(self, data):
+    def insert_row(self, data, commit=True):
         '''
             insert new row with data
         '''
@@ -72,7 +72,8 @@ class SchemaRepositoriesBase():
         m = self.Model()()
         self.unserialize(m, data)
         db.session.add(m)
-        db.session.commit()
+        if commit:
+            db.session.commit()
 
         return m
 

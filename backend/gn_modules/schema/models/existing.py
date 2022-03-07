@@ -6,7 +6,7 @@ from geonature.core.gn_commons.models.base import CorModuleDataset, TModules
 from geonature.core.gn_meta.models import TDatasets, TAcquisitionFramework, CorAcquisitionFrameworkActor, CorDatasetActor
 from geonature.core.gn_synthese.models import Synthese
 from geonature.core.gn_permissions.models import TActions, TFilters, TObjects, CorRoleActionFilterModuleObject
-from geonature.core.ref_geo.models import LAreas, BibAreasTypes
+from geonature.core.ref_geo.models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
 from geonature.core.taxonomie.models import Taxref
 from geonature.core.users.models import CorRole
 
@@ -22,6 +22,9 @@ cache_existing_models = {
     "perm.filter": TFilters,
     "perm.object": TObjects,
     "perm.permission": CorRoleActionFilterModuleObject,
+    "ref_geo.linear": LLinears,
+    "ref_geo.linear_group": TLinearGroups,
+    "ref_geo.linear_type": BibLinearsTypes,
     "ref_geo.area": LAreas,
     "ref_geo.area_type": BibAreasTypes,
     "ref_nom.nomenclature": TNomenclatures,

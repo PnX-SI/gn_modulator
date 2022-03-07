@@ -4,18 +4,11 @@ node_modules
 
 config/modules/*
 
-# config/schemas
-# !config/schemas/utils/*
-# !config/schemas/test/*
-# !config/schemas/data/*
+backend/gn_modules/migrations/data/m_*
 
-# config/data/nomenclature/
-# config/data/nomenclature/.gitkeep
-
-
-data/sources/*
-data/schema_sipaf.sql
-!data/sources/.gitkeep
+#!migrations/data/*.sql
+backend/gn_modules/migrations/versions/*
+!migrations/versions/*_gn_modules.py
 
 !.gitkeep
 

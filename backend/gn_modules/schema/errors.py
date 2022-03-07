@@ -121,6 +121,5 @@ class SchemaUnsufficientCruvedRigth(SchemaError):
     '''
     pass
 
-
 class SchemaModelColumnPropertyError(SchemaError):
     pass

@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "schema_name": "ref_geo.linear_type",
+    "sql_schema_dot_table": "ref_geo.bib_linears_types",
+    "model_name": "BibLinearsTypes",
+    "label": "type de linéaire",
+    "label_field_name": "type_name",
+    "genre": "M",
+    "autoschema": true,
+    "unique": ["type_code"]
+  }
+}

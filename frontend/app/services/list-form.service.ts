@@ -133,7 +133,7 @@ export class ListFormService {
       if (options.search || true) {
         params.filters = params.filters.filter(f => f.label_field_name != options.label_field_name);
         params.filters.push(
-          { field: options.label_field_name, type: 'ilike', value:  `${options.search}%` }
+          { field: options.label_field_name, type: 'ilike', value:  `%${options.search}%` }
         )
         params.size = options.size;
       };

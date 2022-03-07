@@ -122,7 +122,6 @@ class SchemaRepositoriesFilters():
                 # s'il n'y a pas de filtre courant, on initialise la variable cur_filter
                 else:
                     cur_filter = loop_filter
-
         return cur_filter, query
 
     def get_filter(self, Model, f, query=None, condition=None):

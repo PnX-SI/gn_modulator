@@ -1,5 +1,5 @@
 
-from flask import Blueprint, request, jsonify, g
+from flask import Blueprint, request, jsonify, g, current_app
 from gn_modules.module import ModuleMethods
 from .commands import commands
 from .schema import SchemaMethods, errors
@@ -9,6 +9,7 @@ blueprint = Blueprint('modules', __name__)
 blueprint.cli.short_help = 'Commandes pour l''administration du module MODULES'
 for cmd in commands:
     blueprint.cli.add_command(cmd)
+
 
 try:
     SchemaMethods.init_schemas()
