@@ -27,6 +27,7 @@ export class PageElementComponent extends BaseComponent implements OnInit  {
     processEvent(event) {
 
       const action = this.actions[event.action]
+      console.log(action, event, this.actions)
 
       if (!action) {
         return;
@@ -36,6 +37,13 @@ export class PageElementComponent extends BaseComponent implements OnInit  {
 
       if(action.type == 'link') {
         return this._services.mRoute.navigateToPage(this.moduleName, action.pageName, event.params)
+      }
+
+      if(action.type == 'export') {
+        console.log('uu')
+        return this._services.mData.export(event.module_code, event.export_code).subscribe(() => {
+          this._services.commonService.regularToaster("success", "L'export est disponible");
+        });
       }
 
 

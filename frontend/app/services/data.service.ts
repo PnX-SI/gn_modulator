@@ -109,6 +109,12 @@ export class ModulesDataService {
         params
       }
     );
+  }
 
+  export(moduleCode, exportCode) {
+    return this._requestService.request(
+      'get',
+      `${this._mConfig.backendModuleUrl()}/${moduleCode}/export/${exportCode}`
+    );
   }
 }

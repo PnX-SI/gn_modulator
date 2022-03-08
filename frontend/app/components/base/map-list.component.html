@@ -38,7 +38,7 @@
             <button (click)="emitEvent({action: 'create'})" mat-fab color="primary">
                 <mat-icon matTooltip="Ajouter">add</mat-icon>
             </button>
-            <button mat-fab color="primary">
+            <button (click)="emitEvent({action: 'export', module_code: 'm_sipaf', export_code: 'sipaf.pf'})" mat-fab color="primary">
                 <mat-icon matTooltip="Exporter">save</mat-icon>
             </button>
 
