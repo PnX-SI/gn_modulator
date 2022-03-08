@@ -36,8 +36,8 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
       return of(null)
     }
 
+    // console.log(this.layout[1].items)
     const fields = this._services.mLayout.getLayoutFields(this.layout)
-
     if(!fields.includes(this.pkFieldName())) {
       fields.push(this.pkFieldName());
     }

@@ -50,10 +50,11 @@ export class ModulesLayoutService {
 
   removeBrakets(layout) {
     if (utils.isObject(layout)) {
+      const layoutOut = {}
       for (const key of Object.keys(layout)){
-        layout[key] = this.removeBrakets(layout[key])
+        layoutOut[key] = this.removeBrakets(layout[key])
       }
-      return layout
+      return layoutOut
     }
     if (Array.isArray(layout)) {
       return layout.map(l => this.removeBrakets(l))
