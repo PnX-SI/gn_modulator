@@ -73,17 +73,18 @@ export class BaseComponent implements OnInit {
   }
 
   setFullHeight() {
-    // this.height = '800px'
-    // this.height = '100%'
     utils.waitForElement(this.elemId).then((elem) => {
       const height = document.body.clientHeight - document.getElementById(this.elemId).offsetTop;
       this.height = height -20 + "px";
+      this.afterResize();
     })
     // document.getElementById("object").style.height = height - 20 + "px";
 
 
   // this.heightMap = height - 60 + "px";
   }
+
+  afterResize() {};
 
   listenResize() {
     window.addEventListener('resize', (event) => {
@@ -138,7 +139,7 @@ export class BaseComponent implements OnInit {
   }
 
   log(msg) {
-    console.log(`${this._name}`, msg)
+    console.log(`${this._name} ${this.elemId}`, msg)
   }
 
   process() {

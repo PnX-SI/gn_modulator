@@ -34,12 +34,19 @@
     </div>
 
     <div class="map-list-list">
+        <div class="action-list">
+            <button (click)="emitEvent({action: 'create'})" mat-fab color="primary">
+                <mat-icon matTooltip="Ajouter">add</mat-icon>
+            </button>
+            <button mat-fab color="primary">
+                <mat-icon matTooltip="Exporter">save</mat-icon>
+            </button>
 
+        </div>
         <modules-base-table
             [displayFilters]="false"
             [debug]="debug"
             [filters]="filters"
-            [height]="height"
             [moduleName]="moduleName"
             [short]="true"
             [size]="13"

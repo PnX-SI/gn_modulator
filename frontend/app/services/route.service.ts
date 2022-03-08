@@ -130,7 +130,7 @@ export class ModulesRouteService {
     const moduleConfig = this._mConfig.moduleConfig(moduleName);
     const pageConfig = moduleConfig.pages[pageName];
     var url = pageConfig.url;
-    for (const [key, value] of Object.entries(params)) {
+    for (const [key, value] of Object.entries(params || {})) {
       url = url.replace(`:${key}`, value)
     }
     return `/modules/${moduleConfig.module.module_code.toLowerCase()}/${url}`

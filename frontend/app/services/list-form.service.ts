@@ -59,8 +59,6 @@ export class ListFormService {
   initConfig(options) {
       // gestion des nomenclatures pour simplifier la config du layout
 
-    console.log(options)
-
     if (options.nomenclature_type) {
       options.schema_name = options.schema_name || 'ref_nom.nomenclature';
       options.params = options.params || {}

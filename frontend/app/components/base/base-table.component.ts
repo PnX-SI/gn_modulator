@@ -31,8 +31,12 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initHeight();
   }
 
+  afterResize(): void {
+    this.drawTable();
+  }
 
   processConfig(): void {
     this.drawTable();
