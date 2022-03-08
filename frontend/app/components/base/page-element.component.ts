@@ -40,12 +40,8 @@ export class PageElementComponent extends BaseComponent implements OnInit  {
       }
 
       if(action.type == 'export') {
-        console.log('uu')
-        return this._services.mData.export(event.module_code, event.export_code).subscribe(() => {
-          this._services.commonService.regularToaster("success", "L'export est disponible");
-        });
+        return this._services.mData.export(event.module_code, event.export_code);
       }
-
 
     }
 

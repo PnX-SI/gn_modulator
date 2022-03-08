@@ -4,13 +4,15 @@ import { Observable } from "@librairies/rxjs";
 import { mergeMap } from "@librairies/rxjs/operators";
 import { ModulesConfigService } from "./config.service";
 import { ModulesRequestService } from "./request.service";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable()
 export class ModulesDataService {
 
   constructor(
     private _requestService: ModulesRequestService,
-    private _mConfig: ModulesConfigService
+    private _mConfig: ModulesConfigService,
+    private _http: HttpClient,
   ) {}
 
   init() {
@@ -111,10 +113,10 @@ export class ModulesDataService {
     );
   }
 
+  // exportUrl(moduleCode, exportCode) {
+  //   return `${this._mConfig.backendModuleUrl()}/${moduleCode}/export/${exportCode}`
+  //  }
   export(moduleCode, exportCode) {
-    return this._requestService.request(
-      'get',
-      `${this._mConfig.backendModuleUrl()}/${moduleCode}/export/${exportCode}`
-    );
+    window.open(`${this._mConfig.backendModuleUrl()}/${moduleCode}/export/${exportCode}`)
   }
 }
