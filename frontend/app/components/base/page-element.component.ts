@@ -33,8 +33,6 @@ export class PageElementComponent extends BaseComponent implements OnInit  {
         return;
       }
 
-      console.log('action')
-
       if(action.type == 'link') {
         return this._services.mRoute.navigateToPage(this.moduleName, action.pageName, event.params)
       }

@@ -32,8 +32,7 @@ export class BaseComponent implements OnInit {
   @Input() actions;
 
   @Input() layout;
-  @Input() layoutData;
-
+  @Input() layoutData
   @Output() onEvent: EventEmitter<any> = new EventEmitter<any>();
 
   processedEntries = ['moduleName', 'schemaName', 'value', 'filters'];
@@ -56,6 +55,7 @@ export class BaseComponent implements OnInit {
 
   errorMsg;
 
+  heightDec = 20
   _name: string;
 
   currentUser: User;
@@ -75,7 +75,7 @@ export class BaseComponent implements OnInit {
   setFullHeight() {
     utils.waitForElement(this.elemId).then((elem) => {
       const height = document.body.clientHeight - document.getElementById(this.elemId).offsetTop;
-      this.height = height -20 + "px";
+      this.height = height - this.heightDec + "px";
       this.afterResize();
     })
     // document.getElementById("object").style.height = height - 20 + "px";
@@ -92,9 +92,10 @@ export class BaseComponent implements OnInit {
   }, true);
   }
 
-  initHeight() {
+  initHeight(dec=null) {
+    this.heightDec = dec || this.heightDec;
     this.setFullHeight();
-    this.listenResize()
+    this.listenResize();
   }
 
   id() {

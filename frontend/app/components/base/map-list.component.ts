@@ -18,7 +18,7 @@ export class ModulesMapListComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initHeight();
+    this.initHeight(50);
   }
 
   processEvent(event) {

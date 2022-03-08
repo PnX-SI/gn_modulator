@@ -28,7 +28,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     }
 
   ngOnInit() {
-
+    this.initHeight()
   }
 
   getData() {
