@@ -9,8 +9,6 @@ import {CustomIcon} from '@geonature/utils/leaflet-icon';
 delete L.Icon.Default.prototype['_getIconUrl'];
 L.Icon.Default.mergeOptions(CustomIcon);
 
-L.PM.initialize({ optIn: true }); // Property 'PM' does not exist on type 'typeof import(".../node_modules/@types/leaflet/index")'.ts(2339)
-
 delete L.Icon.Default.prototype['_getIconUrl'];
 L.Icon.Default.mergeOptions(CustomIcon);
 
@@ -28,6 +26,9 @@ const iconDefault = L.icon({
   shadowSize: [41, 41]
 });
 L.Marker.prototype.options.icon = iconDefault;
+
+L.PM.initialize({ optIn: true }); // Property 'PM' does not exist on type 'typeof import(".../node_modules/@types/leaflet/index")'.ts(2339)
+
 
 import mapMethods from './map'
 
