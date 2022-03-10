@@ -220,6 +220,10 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   }
 
   onSubmit($event) {
+    console.log('submit', $event)
+    if(!!$event) {
+      return
+    }
     let request = null;
     const requestType = this.id()
       ? 'patch'
