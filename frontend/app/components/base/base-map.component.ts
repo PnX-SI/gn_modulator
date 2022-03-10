@@ -126,7 +126,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
         geojson,
         layerOptions: {
           label: `${this.schemaConfig.display.labels}`,
-          bZoom: false,
+          bZoom: true,
           onEachFeature: (feature, layer) => {
 
             /** click */

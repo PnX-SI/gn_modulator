@@ -66,7 +66,6 @@ export class ListFormComponent implements OnInit {
       // patch valeur init buggée
       if (this.options.return_object && this.options.multiple) {
         if (this.formControl.value.length == 1 && this.formControl.value[0][this.options.value_field_name] == null) {
-          console.log(this.options.nomenclature_type, this.formControl.value);
           this.updateValue([]);
 
         }
@@ -93,7 +92,6 @@ export class ListFormComponent implements OnInit {
   updateModel(val) {
     return  this._listFormService.formToModel(this.options, val)
       .subscribe((model)=> {
-        console.log(model)
         this.updateValue(model);
       });
   }
@@ -136,7 +134,6 @@ export class ListFormComponent implements OnInit {
   }
 
   updateValue(event) {
-    console.log('updateValue', event);
     this.model = event;
     this.options.showErrors = true;
     let value = this._listFormService.modelToForm(this.options, this.model)
