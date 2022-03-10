@@ -96,7 +96,7 @@ export class ModulesLayoutService {
           ? labels[0]
           : value
     }
-    return {title, value}
+    return {title, value }
   }
 
 }

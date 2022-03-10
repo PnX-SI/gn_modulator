@@ -4,6 +4,7 @@
   class="element-container"
 >
 
+
   <div class="flex-row-container">
 
     <!-- Carte avec saisie geoman -->
@@ -28,18 +29,20 @@
       <h4 *ngIf="displayTitle"> {{ componentTitle }} </h4>
 
       <div class="content">
-        <json-schema-form
-          [schema]="schemaConfig.form.schema"
-          framework="material-design"
-          [(data)]="data"
-          (onSubmit)="onSubmit($event)"
-          (onChanges)="onFormChanges($event)"
-          [layout]="processedLayout"
-          language=fr
-          (isValid)="onIsValid($event)"
-          (validationErrors)="onValidationErrors($event)"
-        >
-        </json-schema-form>
+        <div>
+          <json-schema-form
+            [schema]="schemaConfig.form.schema"
+            framework="material-design"
+            [(data)]="data"
+            (onSubmit)="onSubmit($event)"
+            (onChanges)="onFormChanges($event)"
+            [layout]="processedLayout"
+            language=fr
+            (isValid)="onIsValid($event)"
+            (validationErrors)="onValidationErrors($event)"
+          >
+          </json-schema-form>
+        </div>
       </div>
 
       <div class="button-container">

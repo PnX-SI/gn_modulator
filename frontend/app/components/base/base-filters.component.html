@@ -1,6 +1,6 @@
 <!-- <div *ngIf="debug" class="debug"> {{ _name }} value {{ value }} filters {{ filters | json }}</div> -->
 
-<div *ngIf="componentInitialized; else loadingBlock" [ngStyle]="{'height': height, 'overflow-y': 'scroll'}">
+<div *ngIf="componentInitialized; else loadingBlock" [attr.id]="elemId" [ngStyle]="{'height': height, 'overflow-y': 'scroll'}">
     <div class="form-container">
 
         <!-- Formulaire -->
@@ -10,14 +10,21 @@
           [schema]="schemaConfig.filters.form.schema"
           framework="material-design"
           [(data)]="filterValues"
-          (onSubmit)="onSubmit($event)"
           (onChanges)="onFormChanges($event)"
           [layout]="processedLayout"
           language=fr
           (isValid)="onIsValid($event)"
           (validationErrors)="onValidationErrors($event)"
         >
-        </json-schema-form>
+
+      </json-schema-form>
+
+
+      <div class="button-container">
+        <button mat-flat-button color="primary" (click)="onSubmit()">Rechercher</button>
+        <button mat-flat-button color="primary" (click)="onReinit()">Réinitialiser</button>
+        </div>
+
       </div>
 
       <!-- Debug : valide, erreur et valeurs -->
@@ -52,7 +59,6 @@
         </div>
       </div>
     </div>
-
 
   </div>
 

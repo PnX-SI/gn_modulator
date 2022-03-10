@@ -11,7 +11,7 @@ import utils from "../../utils"
 @Component({
   selector: "modules-base-filters",
   templateUrl: "base-filters.component.html",
-  styleUrls: ["base-filters.component.scss"],
+  styleUrls: ["./base.scss", "base-filters.component.scss"],
 })
 export class BaseFiltersComponent extends BaseComponent implements OnInit {
   additionalWidgets = additionalWidgets;
@@ -49,6 +49,7 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
       this._widgetLibraryService.registerWidget(key, AdditionalWidget);
     }
 
+    this._services.mForm.processFieldSets(this.elemId);
   }
 
   processConfig(): void {
@@ -66,7 +67,7 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
       }))
   }
 
-  onSubmit(event) {
+  onSubmit() {
     this.emitEvent({
       action: 'filters',
       params: {
@@ -74,6 +75,13 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
       }
     })
 
+  }
+
+  onReinit() {
+    for (let [k,v] of Object.entries(this.filterValues)) {
+      this.filterValues[k] = Array.isArray(v) ? [] : null;
+    }
+    this.onSubmit();
   }
 
   onFormChanges(event) {

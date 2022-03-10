@@ -4,7 +4,8 @@
 [style.width]="'100%'">
 <span matPrefix *ngIf="options?.prefix || options?.fieldAddonLeft"
   [innerHTML]="options?.prefix || options?.fieldAddonLeft"></span>
-<mat-select *ngIf="boundControl"
+
+  <mat-select *ngIf="boundControl"
   (ngModelChange)="updateValue($event)"
   [ngModel]="model"
   (changed)="updateValue($event)"

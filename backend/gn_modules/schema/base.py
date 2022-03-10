@@ -246,3 +246,18 @@ class SchemaBase():
             deps.remove(self.schema_name())
 
         return list(dict.fromkeys(deps))
+
+    def remove_field(self, field_name, schema):
+
+        if isinstance(schema, dict):
+            schema_out = {}
+            for k, v in schema.items():
+                if k == field_name:
+                    continue
+                schema_out[k] = self.remove_field(field_name, v)
+            return schema_out
+
+        if isinstance(schema, list):
+            return [self.remove_field(field_name, v) for v in schema]
+
+        return schema

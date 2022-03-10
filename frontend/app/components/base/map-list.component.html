@@ -7,8 +7,7 @@
 >
 
 <div class="map-list-container">
-    <div class="map-list-filters">
-        <h3> Filtres</h3>
+    <div class="map-list-filter">
         <modules-base-filters
             [debug]="debug"
             [height]="height"
@@ -34,14 +33,14 @@
 
     <div class="map-list-list">
         <div class="action-list">
-            <button (click)="emitEvent({action: 'create'})" mat-fab color="primary">
-                <mat-icon matTooltip="Ajouter">add</mat-icon>
+            <button (click)="emitEvent({action: 'create'})" mat-mini-fab color="primary">
+                <mat-icon matTooltip="Ajouter {{schemaConfig.display.undef_label_new}}">add</mat-icon>
             </button>
             <button
                 (click)="emitEvent({action: 'export', module_code: 'm_sipaf', export_code: 'sipaf.pf'})"
-                mat-fab color="primary"
+                mat-mini-fab color="primary"
             >
-                <mat-icon matTooltip="Exporter">save</mat-icon>
+                <mat-icon matTooltip="Exporter {{schemaConfig.display.def_labels}}">save</mat-icon>
             </button>
 
         </div>

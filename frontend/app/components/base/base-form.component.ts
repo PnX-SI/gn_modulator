@@ -41,7 +41,6 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 ;
 
   ngOnInit() {
-
     this._services.mapService.waitForMap(this.mapId).then(()=> {
       this._services.mapService.getMap(this.mapId).on('pm:create', (event) => {
         event.layer.on('pm:edit', ({ layer }) => {
@@ -59,6 +58,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     }
     setTimeout(() => {this.bDraw = true}, 3000)
     this.initHeight();
+
+    this._services.mForm.processFieldSets(this.elemId);
 
   }
 

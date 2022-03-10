@@ -5,7 +5,7 @@ import { JsonSchemaFormService } from '@ajsf/core';
 import { HttpClient } from "@angular/common/http";
 import { ListFormService } from '../../../services/list-form.service';
 import { FormArray, FormGroup, FormBuilder } from "@angular/forms";
-import { mergeMap } from "@librairies/rxjs/operators";
+import { mergeMap, startWith, pairwise } from "@librairies/rxjs/operators";
 import { of } from "@librairies/rxjs";
 import utils from "../../../utils"
 @Component({
@@ -24,6 +24,7 @@ export class ListFormComponent implements OnInit {
 
   // pour pouvoir filter en local
   selectListSave: any[] = [];
+
 
   search = '';
   model=null;
@@ -61,36 +62,40 @@ export class ListFormComponent implements OnInit {
      */
 
     setTimeout(()=>{
-    this._listFormService.initListForm(this.options, this.formControl.value)
+
+      // patch valeur init buggée
+      if (this.options.return_object && this.options.multiple) {
+        if (this.formControl.value.length == 1 && this.formControl.value[0][this.options.value_field_name] == null) {
+          console.log(this.options.nomenclature_type, this.formControl.value);
+          this.updateValue([]);
+
+        }
+      }
+
+    this._listFormService.initListForm(this.options, this.formControl)
       .subscribe(({selectList, model}) => {
-        // this.formControl.valueChanges.subscribe((v) => {
-          // console.log('value changed', v)
-        // });
         this.selectList = (selectList as any[]);
         this.selectListSave = utils.copy(selectList as any[]);
         this.model = model;
-        // console.log(this.model)
-        // pour s'assurer du bon affichage
-        // this.formControl.patchValue(this.formControl.value);
+
+        this.formControl.valueChanges
+          .pipe(startWith(null as string), pairwise())
+          .subscribe(([prev, next]: [any, any]) => {
+            if(utils.fastDeepEqual(prev, next) && next != this.controlValue) {
+              this.updateModel(next);
+              return
+            }
+          });
+      });
     });
-    });
-//
-        //   of(true)
-    //   // this._listFormService
-    //     // .formToModel(this.options, this.formControl.value)
-    //     .pipe(
-    //       // init list form config
-    //       mergeMap(() => { return this._listFormService()}),
-    //       mergeMap( (model) => {
-    //         this.model = model;
-    //         return this._listFormService
-    //           .getSelectList(this.options, this.model)
-    //       })
-    //     ).subscribe((selectList)=>{
-    //       this.selectList = selectList;
-    //       // pour s'assurer du bon affichage
-    //       this.formControl.patchValue(this.formControl.value)
-    //     })
+  }
+
+  updateModel(val) {
+    return  this._listFormService.formToModel(this.options, val)
+      .subscribe((model)=> {
+        console.log(model)
+        this.updateValue(model);
+      });
   }
 
   searchChanged(event) {
@@ -131,10 +136,10 @@ export class ListFormComponent implements OnInit {
   }
 
   updateValue(event) {
+    console.log('updateValue', event);
     this.model = event;
     this.options.showErrors = true;
     let value = this._listFormService.modelToForm(this.options, this.model)
-    console.log(value, this.controlValue)
 
     // patch clear
     if (this.options.return_object && this.options.multiple) {

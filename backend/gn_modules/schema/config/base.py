@@ -95,11 +95,11 @@ class SchemaConfigBase():
             "label": self.label(),
             "labels": self.labels(),
             "def_label": self.def_label(),
+            "def_labels": self.def_labels(),
             "undef_label": self.undef_label(),
             "undef_label_new": self.undef_label_new(),
             "undef_labels_new": self.undef_labels_new(),
             "prep_label": self.prep_label(),
-            "def_labels": self.def_label(),
             "undef_labels": self.undef_labels(),
             "description": self.description(),
         }
@@ -136,7 +136,7 @@ class SchemaConfigBase():
         '''
 
         return {
-            "schema": self.json_schema,
+            "schema": self.remove_field('description', self.json_schema),
             "layout": self.form_layout()
         }
 

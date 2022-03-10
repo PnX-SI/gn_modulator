@@ -28,7 +28,7 @@ export class ListFormService {
    *  - selectList
    *
    */
-  initListForm(options, value) {
+  initListForm(options, control) {
     var model;
     return of(true)
       .pipe(
@@ -37,7 +37,7 @@ export class ListFormService {
         mergeMap(() => { return this.initConfig(options)}),
 
         // form to model
-        mergeMap(() => { return this.formToModel(options, value)}),
+        mergeMap(() => { return this.formToModel(options, control.value)}),
 
         // get selectList
         mergeMap((_model) => { model = _model; return this.getSelectList(options, model)}),
@@ -46,6 +46,14 @@ export class ListFormService {
         mergeMap((selectList) => { return of({selectList, model});})
 
       );
+  }
+
+  checkValModel(val, model, options) {
+    return options.return_object
+        ? utils.fastDeepEqual(val ,model)
+        : options.multiple
+          ? utils.fastDeepEqual(model.map(v => v[options.value_field_name]), val)
+          : val == (model && model[options.value_field_name])
   }
 
   /**
@@ -91,6 +99,8 @@ export class ListFormService {
           }),
         )
     }
+
+
 
     return of(true)
   }
