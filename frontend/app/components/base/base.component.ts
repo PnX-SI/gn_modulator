@@ -180,6 +180,7 @@ export class BaseComponent implements OnInit {
           }
           this.setComponentTitle();
           this.isProcessing=false;
+          this.log(`proc ${this.isProcessing}`);
           this.componentInitialized = !!response;
           this.onComponentInitialized()
           });

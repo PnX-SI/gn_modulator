@@ -23,6 +23,8 @@ export class ModulesMapComponent implements OnInit {
   @Input() bEdit: boolean = false;
   @Input() drawOptions;
 
+  @Input() isProcessing = false;
+
   isInitialized=false;
 
   constructor(
