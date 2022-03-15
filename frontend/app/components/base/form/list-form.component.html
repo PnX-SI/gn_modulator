@@ -2,6 +2,7 @@
 [class]="options?.htmlClass || ''"
 [floatLabel]="options?.floatLabel || (options?.notitle ? 'never' : 'auto')"
 [style.width]="'100%'">
+<!-- {{model | json}}__{{controlValue | json}} -->
 <span matPrefix *ngIf="options?.prefix || options?.fieldAddonLeft"
   [innerHTML]="options?.prefix || options?.fieldAddonLeft"></span>
 
@@ -42,7 +43,7 @@
     </mat-optgroup>
   </ng-template>
 </mat-select>
-<mat-select *ngIf="!boundControl"
+<!-- <mat-select *ngIf="!boundControl"
   [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
   [attr.name]="controlName"
   [disabled]="controlDisabled || options?.readonly"
@@ -69,15 +70,15 @@
       </mat-option>
     </mat-optgroup>
   </ng-template>
-</mat-select>
+</mat-select> -->
 <div matSuffix *ngIf="!!model">
   <div class="example-button-container">
     <button mat-icon-button matTooltip="Effacer la selection" (click)="clearModel($event)">
       <mat-icon>clear</mat-icon>
     </button>
   </div>
-  <!-- <mat-icon [inline] class="close-icon" (click)="clearModel($event)">clear</mat-icon> -->
 </div>
+<!-- <mat-icon [inline] class="close-icon" (click)="clearModel($event)">clear</mat-icon> -->
 <mat-hint *ngIf="options?.description && (!options?.showErrors || !options?.errorMessage)"
   align="end" [innerHTML]="options?.description"></mat-hint>
 </mat-form-field>

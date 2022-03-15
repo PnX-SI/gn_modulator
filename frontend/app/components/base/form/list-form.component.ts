@@ -22,6 +22,8 @@ export class ListFormComponent implements OnInit {
   options: any;
   selectList: any[] = [];
 
+  firstChange = true;
+
   // pour pouvoir filter en local
   selectListSave: any[] = [];
 
@@ -67,12 +69,12 @@ export class ListFormComponent implements OnInit {
       if (this.options.return_object && this.options.multiple) {
         if (this.formControl.value.length == 1 && this.formControl.value[0][this.options.value_field_name] == null) {
           this.updateValue([]);
-
         }
       }
 
     this._listFormService.initListForm(this.options, this.formControl)
       .subscribe(({selectList, model}) => {
+
         this.selectList = (selectList as any[]);
         this.selectListSave = utils.copy(selectList as any[]);
         this.model = model;
@@ -80,7 +82,11 @@ export class ListFormComponent implements OnInit {
         this.formControl.valueChanges
           .pipe(startWith(null as string), pairwise())
           .subscribe(([prev, next]: [any, any]) => {
-            if(utils.fastDeepEqual(prev, next) && next != this.controlValue) {
+            if(this.firstChange) {
+              this.firstChange=false;
+              return;
+            }
+            if(utils.fastDeepEqual(prev, next) && !utils.fastDeepEqual(next, this.controlValue)) {
               this.updateModel(next);
               return
             }
@@ -134,6 +140,9 @@ export class ListFormComponent implements OnInit {
   }
 
   updateValue(event) {
+    if(this.controlName == 'id_role') {
+      console.log('up', event)
+    }
     this.model = event;
     this.options.showErrors = true;
     let value = this._listFormService.modelToForm(this.options, this.model)

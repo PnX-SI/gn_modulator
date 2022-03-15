@@ -64,8 +64,8 @@ def api_modules_export(module_code, export_code):
     q = db.session.query(*columns)
     data = q.all()
 
-    t = datetime.datetime.now().strftime("%Y_%m_%d_%Hh%Mm%S")
-    filename = f'export_csv_{module_code}_{export_code}_{t}.csv'
+    t = datetime.datetime.now().strftime("%Y_%m_%d_%Hh%Mm")
+    filename = f'{module_code}_{export_code}_{t}'
 
 
     return to_csv_resp(

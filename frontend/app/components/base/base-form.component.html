@@ -46,12 +46,17 @@
       </div>
 
       <div class="button-container">
-        <button class="btn btn-success mr-2" (click)="onSubmitClick()"
+        <button
+          class="btn btn-success mr-2"
+          (click)="onSubmitClick()"
+          [disabled]="!isValid"
       >
         Valider
       </button>
 
-      <button class="btn btn-primary mr-2" (click)="onCancelClick()"
+      <button
+        class="btn btn-primary mr-2"
+        (click)="onCancelClick()"
       >
         Annuler
       </button>

@@ -118,6 +118,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     if(!fields.includes(this.pkFieldName())) {
       fields.push(this.pkFieldName());
     }
+    console.log(fields)
+
     return fields;
   }
 
