@@ -49,11 +49,10 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
       this._widgetLibraryService.registerWidget(key, AdditionalWidget);
     }
 
-    this._services.mForm.processFieldSets(this.elemId);
   }
 
   processConfig(): void {
-    this.processedLayout = this._services.mForm.processLayout(utils.copy(this.schemaConfig.filters.form.layout))
+    this.processedLayout = this.schemaConfig.filters.form.layout
   }
 
   getFilters() {

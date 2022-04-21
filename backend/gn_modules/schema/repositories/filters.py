@@ -152,7 +152,7 @@ class SchemaRepositoriesFilters():
                         cast(model_attribute, db.String)
                     ),
                     f_type
-                )('{}'.format(f_value_unaccent))
+                )(f'%{f_value_unaccent}%')
             )
 
         elif f_type == '>':

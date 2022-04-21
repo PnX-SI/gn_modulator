@@ -161,6 +161,8 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
         #  - point virgule final
         txt = txt[:-1] + '\n);\n\n'
 
+        txt += self.sql_txt_comments()
+
         return txt
 
     def sql_txt_comments(self):

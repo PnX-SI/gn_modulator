@@ -64,6 +64,7 @@ class SchemaSerializers:
     def marshmallow_meta_name(self):
         return 'Meta{}'.format(self.marshmallow_schema_name())
 
+
     def process_column_marshmallow(self, column_def):
         field_type = column_def.get('type')
 
@@ -198,6 +199,10 @@ class SchemaSerializers:
 
         for key, column_def in self.columns().items():
             marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
+
+        for key, column_def in self.column_properties().items():
+            marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
+
 
         # store in cache before realtion(avoid circular dependancies)
         for key, relation_def in self.relationships().items():

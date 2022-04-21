@@ -31,16 +31,22 @@ class ModuleMigration():
 
     @classmethod
     def migration_files(cls, module_code, link=False, types=[]):
-        migration_files=[]
-        suffix = '_{}.py'.format(module_code.lower())
+        migration_files = []
+        modules_version_dir = cls.migrations_dir() / 'versions'
+        module_version_dir = cls.migrations_dir(module_code) / 'versions'
         dir_path = (
-            cls.migrations_dir() / 'versions' if link
-            else cls.migrations_dir(module_code) / 'versions'
+            modules_version_dir if link
+            else module_version_dir
         )
+
         for root, dir, files in os.walk(dir_path):
             for f in files:
-                if f.endswith(suffix) and (not types or [t for t in types if '_{}_'.format(t) in f]):
-                    migration_files.append(Path(root) / f)
+                if link:
+                    if module_version_dir.resolve() == (Path(root) / f).resolve().parent:
+                        migration_files.append(Path(root) / f)
+                else:
+                    if(f.endswith('.py') and f != '__init__.py'):
+                        migration_files.append(Path(root) / f)
             break
         return migration_files
 

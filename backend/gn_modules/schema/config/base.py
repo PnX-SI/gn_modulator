@@ -73,7 +73,7 @@ class SchemaConfigBase():
 
     def config_details(self):
         return {
-            'layout': self.attr('details.layout')
+            'layout': self.process_layout(self.attr('details.layout'))
         }
 
     def config_table(self):

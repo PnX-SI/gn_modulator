@@ -5,8 +5,8 @@ import { JsonSchemaFormService } from '@ajsf/core';
 import { HttpClient } from "@angular/common/http";
 import { ListFormService } from '../../../services/list-form.service';
 import { FormArray, FormGroup, FormBuilder } from "@angular/forms";
-import { mergeMap, startWith, pairwise } from "@librairies/rxjs/operators";
-import { of } from "@librairies/rxjs";
+import { mergeMap, startWith, pairwise, switchMap, debounceTime, distinctUntilChanged } from "@librairies/rxjs/operators";
+import { of, Subject } from "@librairies/rxjs";
 import utils from "../../../utils"
 @Component({
   selector: 'list-form',
@@ -27,10 +27,15 @@ export class ListFormComponent implements OnInit {
   // pour pouvoir filter en local
   selectListSave: any[] = [];
 
+  isLoading=false;
+
+
 
   search = '';
   model=null;
   selectedItems: [];
+
+  searchSubject: Subject<string>;
 
   isArray = isArray;
   @Input() layoutNode: any;
@@ -44,6 +49,7 @@ export class ListFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.searchSubject = new Subject();
     this.options = this.layoutNode.options || {};
     // this.selectList = buildTitleMap(
     //   this.options.titleMap || this.options.enumNames,
@@ -71,6 +77,14 @@ export class ListFormComponent implements OnInit {
           this.updateValue([]);
         }
       }
+
+    this.searchSubject.pipe(
+      distinctUntilChanged(),
+      debounceTime(400),
+      switchMap((search) => {
+        return this.processSearchChanged(search);
+      })
+    ).subscribe(()=> {});
 
     this._listFormService.initListForm(this.options, this.formControl)
       .subscribe(({selectList, model}) => {
@@ -103,21 +117,29 @@ export class ListFormComponent implements OnInit {
   }
 
   searchChanged(event) {
-
-    // passer par obsevable et debounce
     this.search = event;
 
+    this.searchSubject.next(event);
+  }
+
+  processSearchChanged(search) {
     // filtrage server side
     if (this.options.data_reload_on_search && this.options.api && event != this.options.search) {
-      this.options.search=event;
-      this._listFormService.getSelectList(this.options, this.model).subscribe((selectList) => {
-        this.selectList = selectList;
-        this.jsf.updateValue(this, this.controlValue);
-      })
+      this.options.search=search;
+      this.isLoading = true;
+      return this._listFormService.getSelectList(this.options, this.model)
+      .pipe(
+        mergeMap((selectList) => {
+          this.isLoading = false;
+          this.selectList = selectList;
+          this.jsf.updateValue(this, this.controlValue);
+          return of(true);
+        })
+      );
     }
     // filtrage local
     else {
-      const searchLowerUnaccent = utils.lowerUnaccent(this.search);
+      const searchLowerUnaccent = utils.lowerUnaccent(search);
       this.selectList =this.selectListSave.filter(item => {
         const label = item[this.options.label_field_name].toLowerCase()
         return (
@@ -125,8 +147,7 @@ export class ListFormComponent implements OnInit {
           || utils.lowerUnaccent(label).includes(searchLowerUnaccent)
         )
       });
-      // for (const item of this.selectList) {
-      // }
+      return of(true);
     }
   }
 

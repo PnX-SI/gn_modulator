@@ -57,34 +57,21 @@ class SchemaSqlTrigger():
 
         cor_schema_name = property_def['schema_dot_table'].split('.')[0]
         cor_table_name = property_def['schema_dot_table'].split('.')[1]
+        sql_schema_name = self.sql_schema_name()
+        sql_table_name = self.sql_table_name()
+        local_key = self.pk_field_name()
+        trigger_function_insert_name = f'{cor_schema_name}.fct_trig_insert_{cor_table_name}_on_each_statement'
+        trigger_function_update_name = f'{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row'
+        function_process_all_name = f'{cor_schema_name}.process_all_{cor_table_name}'
+        area_types = area_types
+        geometry_field_name = property_def['trigger']['key']
+        area_types_txt = area_types_txt
+        of_key = property_def['trigger'].get('on', property_def['trigger']['key'])
 
-        txt_data = {
-            'sql_schema_name': self.sql_schema_name(),
-            'sql_table_name': self.sql_table_name(),
-            'cor_schema_name':cor_schema_name,
-            'cor_table_name': cor_table_name,
-            'local_key': self.pk_field_name(),
-            'trigger_function_insert_name': (
-                '{}.fct_trig_insert_{}_on_each_statement'
-                .format(cor_schema_name, cor_table_name)
-            ),
-            'trigger_function_update_name': (
-                '{}.fct_trig_update_{}_on_row'
-                .format(cor_schema_name, cor_table_name)
-            ),
+        txt += f'''---- Trigger intersection {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec le ref_geo{area_types_txt}
 
-            'area_types': area_types,
-            'geometry_field_name': property_def['trigger']['key'],
-            'area_types_txt': area_types_txt,
-            'of_key': property_def['trigger'].get('on', property_def['trigger']['key']),
-        }
 
-        txt += (
-            '---- Trigger intersection {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec le ref_geo{area_types_txt}\n\n'
-            .format(**txt_data)
-        )
-
-        txt += '''CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
+CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
     RETURNS trigger AS
         $BODY$
             DECLARE
@@ -117,9 +104,7 @@ class SchemaSqlTrigger():
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-'''.format(**txt_data)
-
-        txt += '''CREATE OR REPLACE FUNCTION {trigger_function_update_name}()
+CREATE OR REPLACE FUNCTION {trigger_function_update_name}()
     RETURNS trigger AS
         $BODY$
             BEGIN
@@ -148,23 +133,46 @@ class SchemaSqlTrigger():
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-'''.format(**txt_data)
+CREATE OR REPLACE FUNCTION {function_process_all_name}()
+    RETURNS INTEGER AS
+        $BODY$
+            BEGIN
+                DELETE FROM {cor_schema_name}.{cor_table_name};
+                INSERT INTO {cor_schema_name}.{cor_table_name} (
+                    id_area,
+                    {local_key}
+                )
+                SELECT
+                    a.id_area,
+                    t.{local_key}
+                FROM ref_geo.l_areas a
+                JOIN {sql_schema_name}.{sql_table_name} t
+                    ON public.ST_INTERSECTS(ST_TRANSFORM(t.{geometry_field_name}, 2154), a.geom)
+                WHERE
+                    a.enable IS TRUE
+                    AND (
+                        ST_GeometryType(t.{geometry_field_name}) = 'ST_Point'
+                        OR NOT public.ST_TOUCHES(ST_TRANSFORM(t.{geometry_field_name}, 2154), a.geom)
+                    )
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
 
-        txt += '''CREATE TRIGGER trg_insert_{cor_schema_name}_{cor_table_name}
+CREATE TRIGGER trg_insert_{cor_schema_name}_{cor_table_name}
     AFTER INSERT ON {sql_schema_name}.{sql_table_name}
     REFERENCING NEW TABLE AS NEW
     FOR EACH STATEMENT
         EXECUTE PROCEDURE {trigger_function_insert_name}();
 
-'''.format(**txt_data)
-
-        txt += '''CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
+CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
     AFTER UPDATE OF {of_key} ON {sql_schema_name}.{sql_table_name}
     FOR EACH ROW
         EXECUTE PROCEDURE {trigger_function_update_name}();
 
-'''.format(**txt_data)
-
+'''
         return txt
 
     def sql_txt_trigger_d_within(self, property_key, property_def):
@@ -186,25 +194,20 @@ class SchemaSqlTrigger():
         local_key = self.pk_field_name()
         of_key = property_def['trigger'].get('on', property_def['trigger']['key'])
         foreign_key = relation.pk_field_name()
-        trigger_function_insert_name = (
-            '{}.fct_trig_insert_{}_on_each_statement'
-            .format(cor_schema_name, cor_table_name)
-        )
-        trigger_function_update_name = (
-            '{}.fct_trig_update_{}_on_row'
-            .format(cor_schema_name, cor_table_name)
-        )
+        trigger_function_insert_name = f'{cor_schema_name}.fct_trig_insert_{cor_table_name}_on_each_statement'
+        trigger_function_update_name = f'{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row'
+        function_process_all_name = f'{cor_schema_name}.process_all_{cor_table_name}'
+
         geometry_field_name = property_def['trigger']['key']
         partition_keys = "t." + local_key
         if property_def['trigger'].get('partition'):
             partition_keys += ", " + ", l.".join(property_def['trigger'].get('partition'))
 
         txt = ''
-        txt += (
-            '---- Trigger {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec une distance de {distance} avec {relation_schema_name}.{relation_table_name}.{foreign_key}\n\n'
-        )
+        txt += f'''---- Trigger {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec une distance de {distance} avec {relation_schema_name}.{relation_table_name}.{foreign_key}
 
-        txt += f'''CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
+
+CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
     RETURNS trigger AS
         $BODY$
             DECLARE
@@ -256,6 +259,38 @@ CREATE OR REPLACE FUNCTION {trigger_function_update_name}()
                         WHERE
                             t.{local_key} = NEW.{local_key}
                             AND l.enable = TRUE
+                        ORDER BY t.{geometry_field_name} <-> l.{relation_geometry_field_name}
+                )
+                SELECT
+                    {foreign_key},
+                    {local_key}
+                    FROM t_match
+                    WHERE rank = 1
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE OR REPLACE FUNCTION {function_process_all_name}()
+    RETURNS INTEGER AS
+        $BODY$
+            BEGIN
+                DELETE FROM {cor_schema_name}.{cor_table_name};
+                INSERT INTO {cor_schema_name}.{cor_table_name} (
+                    {foreign_key},
+                    {local_key}
+                )
+                WITH t_match AS (
+                    SELECT
+                        l.{foreign_key},
+                        t.{local_key},
+                        ROW_NUMBER() OVER (PARTITION BY {partition_keys}) As rank
+                        FROM {sql_schema_name}.{sql_table_name} AS t
+                        JOIN {relation_schema_name}.{relation_table_name} l
+                            ON ST_DWITHIN(t.{geometry_field_name}, l.{relation_geometry_field_name}, {distance})
+                        WHERE l.enable = TRUE
                         ORDER BY t.{geometry_field_name} <-> l.{relation_geometry_field_name}
                 )
                 SELECT

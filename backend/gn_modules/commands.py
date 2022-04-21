@@ -47,6 +47,30 @@ def cmd_remove_module(module_code, force=False):
 
     return ModuleMethods.remove_module(module_code, force)
 
+
+@click.command('process_all')
+@click.argument('module_code')
+@click.option('-f', '--force', is_flag=True)
+@with_appcontext
+def cmd_process_all(module_code, force=False):
+    '''
+
+    '''
+
+    ModuleMethods.remove_migration_links(module_code)
+    ModuleMethods.make_migration_links(module_code)
+
+
+@click.command('sql')
+@click.argument('module_code')
+@click.option('-f', '--force', is_flag=True)
+@with_appcontext
+def cmd_process_sql(module_code, force=False):
+    '''
+    '''
+
+    ModuleMethods.create_schema_sql(module_code, force)
+
 @click.command('doc')
 @click.argument('schema_name')
 @click.option('-f', '--force', is_flag=True)
@@ -65,5 +89,7 @@ commands = [
     cmd_init_module,
     cmd_install_module,
     cmd_remove_module,
-    cmd_doc_schema
+    cmd_doc_schema,
+    cmd_process_all,
+    cmd_process_sql
 ]

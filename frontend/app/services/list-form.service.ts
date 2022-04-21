@@ -1,59 +1,33 @@
 import { Injectable } from "@angular/core";
 
-
-import { of } from "@librairies/rxjs";
+import { of, Observable } from "@librairies/rxjs";
 import { mergeMap } from "@librairies/rxjs/operators";
 import { ModulesRequestService } from "./request.service";
 import { ModulesConfigService } from "./config.service";
-import { ModulesDataService } from "./data.service"
-import utils  from "./../utils"
+import { ModulesDataService } from "./data.service";
+import utils from "./../utils";
 @Injectable()
 export class ListFormService {
+  /**
+   * pour test si une url est absolue ou relative ?
+   * depuis https://stackoverflow.com/questions/10687099/how-to-test-if-a-url-string-is-absolute-or-relative
+   */
+
+  regexpUrlAbsolute = new RegExp("^(?:[a-z]+:)?//", "i");
 
   constructor(
     private _requestService: ModulesRequestService,
-    private _mConfig: ModulesConfigService,
+    private _mConfig: ModulesConfigService
   ) {}
 
-  init() {
-  }
+  init() {}
 
-  /**
-   * entrees
-   *  - options
-   *  - value
-   *
-   * sorties
-   *  - model
-   *  - selectList
-   *
-   */
   initListForm(options, control) {
-    var model;
-    return of(true)
-      .pipe(
-
-        // init config
-        mergeMap(() => { return this.initConfig(options)}),
-
-        // form to model
-        mergeMap(() => { return this.formToModel(options, control.value)}),
-
-        // get selectList
-        mergeMap((_model) => { model = _model; return this.getSelectList(options, model)}),
-
-        // return selectList Model
-        mergeMap((selectList) => { return of({selectList, model});})
-
-      );
-  }
-
-  checkValModel(val, model, options) {
-    return options.return_object
-        ? utils.fastDeepEqual(val ,model)
-        : options.multiple
-          ? utils.fastDeepEqual(model.map(v => v[options.value_field_name]), val)
-          : val == (model && model[options.value_field_name])
+    return this.initConfig(options).pipe(
+      mergeMap(() => {
+        return this.getSelectList(options, control.value);
+      })
+    );
   }
 
   /**
@@ -65,44 +39,70 @@ export class ListFormService {
    *  - labelFieldName
    */
   initConfig(options) {
-      // gestion des nomenclatures pour simplifier la config du layout
+    return this.processSchemaConfig(options).pipe(
+      mergeMap(() => {
+        options.label_field_name = options.label_field_name || "label";
+        options.value_field_name = options.value_field_name || "value";
+        return of(true);
+      })
+    );
+  }
 
+  /**
+   * ajoute les éléments par défaut pour un schéma donné
+   * api, value_field_name, label_field_name, title_field_name, etc....
+   */
+  processSchemaConfig(options) {
+    /** patch
+     * - nomenclature_type
+     * - area_type
+     **/
+    let schemaFilters = [];
     if (options.nomenclature_type) {
-      options.schema_name = options.schema_name || 'ref_nom.nomenclature';
-      options.params = options.params || {}
-      options.params.filters = options.params.filters || [];
-      options.params.filters.push({field: 'nomenclature_type.mnemonique', type: '=', value: options.nomenclature_type})
-      options.useCache = true;
+      options.schema_name = "ref_nom.nomenclature";
+      schemaFilters.push({
+        field: "nomenclature_type.mnemonique",
+        type: "=",
+        value: options.nomenclature_type,
+      });
+      options.cache = true;
     }
-
     if (options.area_type) {
-      options.schema_name = options.schema_name || 'ref_geo.area';
-      options.params = options.params || {}
-      options.params.filters = options.params.filters || [];
-      options.params.filters.push({field: 'area_type.type_code', type: '=', value: options.area_type})
-      options.data_reload_on_search = true;
+      options.schema_name = "ref_geo.area";
+      schemaFilters.push({
+        field: "area_type.type_code",
+        type: "=",
+        value: options.area_type,
+      });
     }
 
-    if (options.schema_name) {
-      return this._mConfig.loadConfig(options.schema_name)
-        .pipe(
-          mergeMap(() => {
-            options.api = options.api || this._mConfig.schemaConfig(options.schema_name).utils.urls.rest;
-            options.value_field_name =  options.value_field_name ||this._mConfig.schemaConfig(options.schema_name).utils.value_field_name;
-            options.label_field_name = options.label_field_name || this._mConfig.schemaConfig(options.schema_name).utils.label_field_name;
-            // size ??
-            options.size = options.useCache
-              ? null
-              : 10
-            ;
-            return of(true)
-          }),
-        )
+    if (!options.schema_name) {
+      return of(true);
     }
-
-
-
-    return of(true)
+    return this._mConfig.loadConfig(options.schema_name).pipe(
+      mergeMap(() => {
+        options.api =
+          options.api ||
+          this._mConfig.schemaConfig(options.schema_name).utils.urls.rest;
+        options.value_field_name =
+          options.value_field_name ||
+          this._mConfig.schemaConfig(options.schema_name).utils
+            .value_field_name;
+        options.label_field_name =
+          options.label_field_name ||
+          this._mConfig.schemaConfig(options.schema_name).utils
+            .label_field_name;
+        options.title_field_name =
+          options.title_field_name ||
+          this._mConfig.schemaConfig(options.schema_name).utils
+            .title_field_name;
+        // size ??
+        options.size = options.cache ? null : options.size || 10;
+        options.items_path = "data";
+        options.filters = [...(options.filters || []), ...schemaFilters];
+        return of(true);
+      })
+    );
   }
 
   /**
@@ -124,137 +124,75 @@ export class ListFormService {
    *
    */
   getSelectList(options, value) {
-    if(options.items) {
-      return of(options.items);
+    if (options.items) {
+      /**  Si item est une liste on */
+      return of({
+        items: this.processItems(options, options.items),
+        nbItems: options.items.length,
+      });
     }
-
-    if(options.api) {
-      const params = {
-        /**
-         * sans tous les champs, l'option return Object passe mal
-         * => error sur les champs manquants?
-         **/
-        fields: [options.value_field_name, options.label_field_name],
-        ...options.params
-      };
-      params.filters = (params.filters || []);
-      if (options.search || true) {
-        params.filters = params.filters.filter(f => f.label_field_name != options.label_field_name);
-        params.filters.push(
-          { field: options.label_field_name, type: 'ilike', value:  `%${options.search}%` }
-        )
-        params.size = options.size;
-      };
-
-      const values = options.multiple
-        ? value
-        : value
-          ? [value]
-          : [];
-
-      //filtre pour ne pas récupérer les valeurs qui sont déjà dans value
-      if (values.length) {
-        params.filters.push(
-          ...[
-            '!',
-            {
-              field: options.value_field_name,
-              type: 'in',
-              value: values.map(v => v[options.value_field_name])
-            }
-          ]
-        )
-      }
-
-      return this._requestService.request('get', options.api, { params, useCache: options.useCache })
-        .pipe(
-          mergeMap( (res: any) => {
-            return of(utils.removeDoublons([
-              ...res.data,
-              ...values,
-              // ...(options.multiple ? values : []),
-            ]))
-          })
-        );
+    if (options.api) {
+      return this.getItemsFromApi(options, value);
     }
+    return of([]);
   }
 
-    /**
-   * Observable
+  url(api) {
+    return this.regexpUrlAbsolute.test(api)
+      ? api
+      : `${this._mConfig.backendUrl()}/${api}`;
+  }
+
+  /**
+   * getItemsFromApi
    */
-     formToModel(options, value) {
-      let model;
+  getItemsFromApi(options, value): Observable<any> {
+    const params = options.params || {};
+    if (options.schema_name) {
+      params.filters = utils.copy(options.filters);
+      params.fields = utils.removeDoublons([options.value_field_name, options.title_field_name, options.label_field_name].filter(e => !!e))
+      if(options.reload_on_search && options.search) {
 
-      /**
-       * Cas simple, on a déjà un objet
-       */
-      if (options.return_object) {
-        model = options.multiple
-        ? (value || [])
-        : value
-
-      return of(model);
-
-      /**
-       * Cas moins simple, on a seulement les id, il faut requêter les valeurs
-       */
-      } else {
-
-        /** on passe en array */
-        const values = value
-          ? options.multiple
-            ? value
-            : [value]
-          : []
-        ;
-
-        const filters = values.length
-          ? [
-              {
-                field: options.value_field_name,
-                type: 'in',
-                value: values
-              }
-            ]
-          : [];
-
-        return ( values.length
-          ? this._requestService.request(
-            'get',
-            options.api,
-            {
-              params: {
-                filters,
-                fields: [options.value_field_name, options.label_field_name],
-              }
-            }
-          )
-          : of([])
-        ).pipe(
-          mergeMap((res: any) => {
-            let data = values.map( v =>
-              res.data.find( d =>
-                d[options.value_field_name] == v
-              )
-            );
-
-            data = options.multiple
-                ? data
-                : data[0]
-
-            return of(data);
-          })
-        );
+        params.filters.push({
+          field: options.label_field_name,
+          type: "ilike",
+          value: options.search
+        });
       }
     }
 
-  modelToForm(options, model) {
-
-    return  options.return_object
-      ? model
-      : options.multiple
-        ? model.map( m => m[options.value_field_name])
-        : model && model[options.value_field_name]
+    // size
+    params.size = options.reload_on_search
+      ? options.size || 10
+      : 0
     ;
+
+    return this._requestService
+      .request("get", this.url(options.api), { params, cache: options.cache })
+      .pipe(
+        mergeMap((res) => {
+          const items = this.processItems(
+            options,
+            options.items_path ? res[options.items_path] : res
+          );
+          return of({ items, nbItems: items.length });
+        })
+      );
+  }
+  /** si on a une liste de valeur simple, on renvoie une liste de dictionnaires
+   * {
+   *    <options.value_field_name>: item,
+   *    <options.label_field_name>: item
+   * }
+   */
+  processItems(options, items) {
+    return items.map((item) => {
+      if (utils.isObject(item)) {
+        return item;
+      }
+      let d = {};
+      d[options.label_field_name] = d[options.value_field_name] = item;
+      return d;
+    });
   }
 }

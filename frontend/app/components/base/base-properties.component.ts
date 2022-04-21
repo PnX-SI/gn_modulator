@@ -5,40 +5,37 @@ import { ModulesService } from "../../services/all.service";
 import { of } from "@librairies/rxjs";
 import { BaseComponent } from "./base.component";
 
-import utils from "../../utils"
+import utils from "../../utils";
 @Component({
   selector: "modules-base-properties",
   templateUrl: "base-properties.component.html",
   styleUrls: ["base.scss", "base-properties.component.scss"],
 })
 export class BasePropertiesComponent extends BaseComponent implements OnInit {
-
   dataSource = null;
   displayedColumns = null;
-  bEditAllowed=false;
+  bEditAllowed = false;
 
   layout;
   processedLayout;
 
-  constructor(
-    _services: ModulesService
-  ) {
-    super(_services)
-    this._name = 'BaseProperties';
+  constructor(_services: ModulesService) {
+    super(_services);
+    this._name = "BaseProperties";
   }
 
   ngOnInit() {
-    this.initHeight()
+    this.initHeight();
   }
 
   getData() {
-    if(!this.value) {
-      return of(null)
+    if (!this.value) {
+      return of(null);
     }
 
-    // console.log(this.layout[1].items)
-    const fields = this._services.mLayout.getLayoutFields(this.layout)
-    if(!fields.includes(this.pkFieldName())) {
+    const fields = this._services.mLayout.getLayoutFields(this.layout);
+    console.log(fields);
+    if (!fields.includes(this.pkFieldName())) {
       fields.push(this.pkFieldName());
     }
 
@@ -46,43 +43,61 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
       fields.push(this.geometryFieldName());
     }
 
-    fields.push('cruved_ownership')
+    fields.push("cruved_ownership");
 
-    return this._services.mData.getOne(
-      this.schemaName,
-      this.value,
-      {
-        fields
-      }
-    );
+    return this._services.mData.getOne(this.schemaName, this.value, {
+      fields,
+    });
   }
 
   processConfig(): void {
-      this.layout = this.schemaConfig.details.layout;
+    this.layout = this.schemaConfig.details.layout;
   }
 
   processData(data) {
     this.data = data;
-    this.layoutData = this._services.mLayout.getLayoutData(this.layout, this.data, this.schemaConfig.definition);
-    this.bEditAllowed = data['cruved_ownership'] <= this.moduleConfig.module.cruved['U'];
+    this.bEditAllowed =
+      data["cruved_ownership"] <= this.moduleConfig.module.cruved["U"];
+    this.setComponentTitle();
+    this.processedLayout = {
+      height_auto: true,
+      items: [
+        {
+          title: this.componentTitle,
+        },
+        {
+          items: this.schemaConfig.details.layout,
+          overflow: true,
+        },
+        {
+          type: "button",
+          color: "primary",
+          title: "Éditer",
+          description: `Editer ${this.schemaConfig.display.def_label}`,
+          action: "edit",
+        },
+      ],
+    };
     this.setLayersData(true);
   }
 
   setComponentTitle(): void {
-      this.componentTitle = `Propriétés ${this.schemaConfig.display.prep_label} ${this.pkFieldName()}=${this.value}`;
-   }
+    this.componentTitle = `Propriétés ${
+      this.schemaConfig.display.prep_label
+    } ${this.pkFieldName()}=${this.value}`;
+  }
 
-  setLayersData(flyToPoint=false) {
+  setLayersData(flyToPoint = false) {
     const properties = {
-      id: this.id()
+      id: this.id(),
     };
     const geometry = this.data[this.geometryFieldName()];
     if (!geometry) {
       return;
     }
-    if(flyToPoint) {
-      this._services.mapService.waitForMap(this.mapId).then(()=> {
-        const filters = {}
+    if (flyToPoint) {
+      this._services.mapService.waitForMap(this.mapId).then(() => {
+        const filters = {};
         filters[this.pkFieldName()] = this.id();
         this._services.mapService.findLayer(this.mapId, filters);
       });
@@ -90,24 +105,26 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     this.layersData = {
       geomEdit: {
         geojson: {
-          type: 'Feature',
+          type: "Feature",
           geometry,
-          properties
+          properties,
         },
         layerOptions: {
-          type: 'marker',
-        }
-      }
+          type: "marker",
+        },
+      },
+    };
+  }
+
+  onAction(event) {
+    console.log(event)
+    if (event.action == "edit") {
+      this.emitEvent({
+        action: "edit",
+        params: {
+          value: this.id(),
+        },
+      });
     }
   }
-
-  onEditClick() {
-    this.emitEvent({
-      action: 'edit',
-      params: {
-        value: this.id()
-      }
-    });
-  }
-
 }

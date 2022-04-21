@@ -65,7 +65,6 @@ class SchemaModelBase():
     def process_column_model(self, column_def):
         '''
         '''
-
         # get field_options
         field_args = []
         field_kwargs = {}

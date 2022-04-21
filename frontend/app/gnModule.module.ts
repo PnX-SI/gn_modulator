@@ -1,13 +1,24 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule } from "@angular/common";
 import { GN2CommonModule } from "@geonature_common/GN2Common.module";
-import { Routes,  RouterModule, Router } from "@angular/router";
-import { NgModule, APP_BOOTSTRAP_LISTENER, APP_INITIALIZER } from '@angular/core';
+import { Routes, RouterModule, Router } from "@angular/router";
+import {
+  NgModule,
+  APP_BOOTSTRAP_LISTENER,
+  APP_INITIALIZER,
+} from "@angular/core";
 
-import { TestComponent } from "./components/test.component";
+import { TestLayoutComponent } from "./components/test/test-layout.component";
+import { ModulesLayoutComponent } from "./components/layout/layout.component";
+import { ModulesLayoutSectionComponent } from "./components/layout/layout-section.component";
+import { ModulesLayoutKeyComponent } from "./components/layout/layout-key.component";
+import { ModulesLayoutArrayComponent } from "./components/layout/layout-array.component";
+import { ModulesLayoutObjectComponent } from "./components/layout/layout-object.component";
+import { ModulesGenericFormComponent } from "./components/form/generic-form.component";
+import { ModulesFormElementComponent } from "./components/form/form-element.component";
+import { ModulesListFormComponent } from "./components/form/list-form.component";
 import { ModulesIndexComponent } from "./components/index.component";
 import { PageComponent } from "./components/page.component";
 import { PageNotFoundComponent } from "./components/page-not-found.component";
-import { ListFormComponent } from "./components/base/form"
 import { BasePropertiesComponent } from "./components/base/base-properties.component";
 import { BaseFormComponent } from "./components/base/base-form.component";
 import { BaseTableComponent } from "./components/base/base-table.component";
@@ -16,11 +27,10 @@ import { BaseFiltersComponent } from "./components/base/base-filters.component";
 import { BaseComponent } from "./components/base/base.component";
 import { ModulesMapListComponent } from "./components/base/map-list.component";
 import { ModulesDebugComponent } from "./components/base/debug.component";
-import { BaseLayoutComponent } from "./components/base/base-layout.component";
 import { PageElementComponent } from "./components/base/page-element.component";
 import { ModulesMapComponent } from "./components/base/map/map.component";
 
-import { MaterialDesignFrameworkModule } from '@ajsf/material';
+import { MaterialDesignFrameworkModule } from "@ajsf/material";
 
 import { ModulesConfigService } from "./services/config.service";
 import { ModulesRouteService } from "./services/route.service";
@@ -33,16 +43,14 @@ import { ModulesMapService } from "./services/map.service";
 import { ModulesTableService } from "./services/table.service";
 import { ListFormService } from "./services/list-form.service";
 
-import {
-  MatTableModule
-} from "@angular/material/table";
-
+import { MatTableModule } from "@angular/material/table";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 
 const routes: Routes = [
-    { path: "", component: ModulesIndexComponent },
-    { path: "test_schema", component: TestComponent },
-    { path: "**", component: PageNotFoundComponent },
-  ];
+  { path: "", component: ModulesIndexComponent },
+  { path: "test_layout", component: TestLayoutComponent },
+  { path: "**", component: PageNotFoundComponent },
+];
 @NgModule({
   declarations: [
     BaseComponent,
@@ -53,14 +61,20 @@ const routes: Routes = [
     BaseFiltersComponent,
     ModulesIndexComponent,
     ModulesDebugComponent,
+    ModulesFormElementComponent,
+    ModulesGenericFormComponent,
+    ModulesLayoutComponent,
+    ModulesLayoutSectionComponent,
+    ModulesLayoutKeyComponent,
+    ModulesLayoutArrayComponent,
+    ModulesLayoutObjectComponent,
+    ModulesListFormComponent,
     PageComponent,
-    BaseLayoutComponent,
     PageElementComponent,
     PageNotFoundComponent,
-    TestComponent,
-    ListFormComponent,
+    TestLayoutComponent,
     ModulesMapComponent,
-    ModulesMapListComponent
+    ModulesMapListComponent,
   ],
   imports: [
     GN2CommonModule,
@@ -68,6 +82,7 @@ const routes: Routes = [
     CommonModule,
     MaterialDesignFrameworkModule,
     MatTableModule,
+    MatCheckboxModule
   ],
   // exports: [
   //   PageComponent
@@ -85,6 +100,6 @@ const routes: Routes = [
     ModulesTableService,
   ],
   bootstrap: [],
-  entryComponents: [ListFormComponent, PageComponent]
+  entryComponents: [PageComponent],
 })
-export class GeonatureModule { }
+export class GeonatureModule {}

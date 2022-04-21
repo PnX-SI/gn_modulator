@@ -1,0 +1,52 @@
+{
+  "layout_name": "test_form_array",
+  "layout_description": "Test de formulaire (Array)",
+  "layout": {
+    "title": "Test",
+    "type": "form",
+    "appearance": "outline",
+    "items": [
+      {
+        "key": "test",
+        "type": "string"
+      }
+      ,{
+        "key": "liste",
+        "title": "Personnes",
+        "type": "array",
+        "items": {
+          "direction": "row",
+          "items": [
+            {
+              "key": "nom",
+              "type": "string"
+            },
+            {
+              "key": "prenom",
+              "type": "string"
+            },
+            {
+              "key": "age",
+              "type": "number"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "test": "test",
+    "liste": [
+      {
+        "nom": "Truc",
+        "prenom": "Machin",
+        "age": 666
+      },
+      {
+        "nom": "Bidule",
+        "prenom": "Truc",
+        "age": 120
+      }
+    ]
+  }
+}

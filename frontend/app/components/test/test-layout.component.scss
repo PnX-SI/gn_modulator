@@ -1,0 +1,20 @@
+.test-form-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background-color: white;
+}
+
+.test-form-container > div{
+    width: 30%
+}
+
+:host ::ng-deep json-editor,
+:host ::ng-deep json-editor .jsoneditor,
+:host ::ng-deep json-editor > div,
+:host ::ng-deep json-editor jsoneditor-outer {
+  height: 300px;
+  width: 100%;
+  display: inline-block;
+
+}

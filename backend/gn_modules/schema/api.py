@@ -310,6 +310,11 @@ class SchemaApi():
         out = copy.deepcopy(d)
         for p in dict_path.split('/'):
             if p:
+                # gestion des indices des listes
+                try:
+                    p = int(p)
+                except Exception:
+                    pass
                 try:
                     out = out[p]
                     p_error.append(p)

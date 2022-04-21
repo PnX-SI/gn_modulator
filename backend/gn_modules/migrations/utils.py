@@ -1,6 +1,18 @@
+from genericpath import exists
 from alembic import context, op
 from pathlib import Path
 from utils_flask_sqla.migrations.utils import logger, open_remote_file
+
+
+def table_exists(table):
+
+    a=op.get_bind().execute(f"""SELECT EXISTS (SELECT FROM information_schema.tables
+   WHERE  table_schema = '{table.split('.')[0]}'
+   AND    table_name   = '{table.split('.')[1]}'
+   );""").fetchone()[0]
+    print(a)
+    return a
+
 
 def import_csv_file(csvfile_path, temporary_table):
 

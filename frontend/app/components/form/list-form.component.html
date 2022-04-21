@@ -1,0 +1,66 @@
+<ng-container *ngIf="!!formControl">
+  <mat-form-field
+    style="width: 100%"
+    [appearance]="options.appearance || 'standart'"
+    dense
+  >
+    <mat-label>{{ computedLayout.title || computedLayout.key }}</mat-label>
+    <mat-select
+      [formControl]="formControl"
+      [multiple]="computedLayout.multiple"
+      [placeholder]="computedLayout.placeholder"
+      [required]="computedLayout.required"
+      [compareWith]="compareFn"
+    >
+      <mat-option>
+        <ngx-mat-select-search
+          placeholderLabel="Filtre"
+          [ngModel]="search"
+          (ngModelChange)="searchChanged($event)"
+          [searching]="isLoading"
+          [clearSearchInput]="false"
+          noEntriesFoundLabel="Pas de données"
+        ></ngx-mat-select-search>
+      </mat-option>
+      <ng-template ngFor let-item [ngForOf]="items">
+        <mat-option
+          [ngClass]="{ 'mat-option-hidden': item.hidden }"
+          [value]="
+            computedLayout.return_object
+              ? item
+              : item[computedLayout.value_field_name]
+          "
+          [title]="
+            (computedLayout.title_field_name &&
+              item[computedLayout.title_field_name]) ||
+            ''
+          "
+        >
+          <span [innerHTML]="item[computedLayout.label_field_name]"></span>
+        </mat-option>
+      </ng-template>
+    </mat-select>
+    <mat-icon
+      matPrefix
+      *ngIf="computedLayout.description"
+      [matTooltip]="computedLayout.description"
+      class="icon-description"
+    >
+      help
+    </mat-icon>
+
+    <div matSuffix>
+      <div>
+        <button
+          mat-icon-button
+          matTooltip="Effacer la selection"
+          (click)="clearSelection()"
+        >
+          <mat-icon class="reset-list-form-button">clear</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-hint>{{ layout.hint }}</mat-hint>
+    <mat-error *ngIf="computedLayout.required">Ce champs est requis</mat-error>
+  </mat-form-field>
+</ng-container>

@@ -39,6 +39,16 @@ const getAttr = (obj, paths) => {
 }
 
 
+const parseJSON = (txt) => {
+  try {
+    return JSON.parse(txt);
+  }
+  catch {
+    return null;
+  }
+}
+
+
 const condAttr = (obj, paths, value) => {
 
 
@@ -130,6 +140,7 @@ const unaccent = (str) => str.normalize("NFD").replace(/\p{Diacritic}/gu, "")
 
 const lowerUnaccent = (str) => str && str.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
 
+const JSONStringify = (obj) => JSON.stringify(obj, null, 4)
 export default {
   fastDeepEqual,
   copy,
@@ -142,5 +153,7 @@ export default {
   removeDoublons,
   setAttr,
   unaccent,
-  lowerUnaccent
+  lowerUnaccent,
+  parseJSON,
+  JSONStringify
 }

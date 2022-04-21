@@ -24,13 +24,12 @@ export class ModulesRequestService {
   /**
    *
    */
-  request(method, url, {params={}, data={}, useCache=false} = {}): Observable<any> {
+  request(method, url, {params={}, data={}, cache=false} = {}): Observable<any> {
     return new Observable<any>(observer => {
       const urlRequest = `${url}${this.sQueryParams(params)}`
-      if ( useCache && this._cacheRequests[urlRequest]) {
+      if ( cache && this._cacheRequests[urlRequest]) {
         observer.next(this._cacheRequests[urlRequest]);
         return observer.complete();
-        // return Observable.of(this._cacheRequests[urlRequest] as any);
       }
 
       let pendingSubject = method == 'get'
@@ -44,7 +43,7 @@ export class ModulesRequestService {
           this._http[method](urlRequest, data)
             .subscribe(
               (value) => {
-                if(useCache) {
+                if(cache) {
                   this._cacheRequests[urlRequest] = value;
                 }
                 pendingSubject.next(value);

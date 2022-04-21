@@ -1,3 +1,5 @@
+<ng-template *ngIf="formControl">
+
 <mat-form-field
 [class]="options?.htmlClass || ''"
 [floatLabel]="options?.floatLabel || (options?.notitle ? 'never' : 'auto')"
@@ -22,11 +24,10 @@
   <ngx-mat-select-search
     placeholderLabel="Filtre"
     (ngModelChange)="searchChanged($event)"
+    [searching]="isLoading"
     [ngModel]="search"
     [clearSearchInput]="true"
     noEntriesFoundLabel="Pas de données"
-  >
-
   ></ngx-mat-select-search>
 </mat-option>
   <ng-template ngFor let-selectItem [ngForOf]="selectList">
@@ -43,34 +44,6 @@
     </mat-optgroup>
   </ng-template>
 </mat-select>
-<!-- <mat-select *ngIf="!boundControl"
-  [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
-  [attr.name]="controlName"
-  [disabled]="controlDisabled || options?.readonly"
-  [id]="'control' + layoutNode?._id"
-  [multiple]="options?.multiple"
-  [placeholder]="options?.notitle ? options?.placeholder : options?.title"
-  [required]="options?.required"
-  [style.width]="'100%'"
-  [value]="controlValue"
-  (blur)="onBlur($event)"
-  (change)="updateValue($event)">
-  <ng-template ngFor let-selectItem [ngForOf]="selectList">
-    <mat-option *ngIf="!isArray(selectItem?.items)"
-      [attr.selected]="selectItem[options.value_field_name] === controlValue"
-      [value]="selectItem[options.value_field_name]">
-      <span [innerHTML]="selectItem[options.label_field_name] + 'aa'"></span>
-    </mat-option>
-    <mat-optgroup *ngIf="isArray(selectItem?.items)"
-      [label]="selectItem?.group">
-      <mat-option *ngFor="let subItem of selectItem.items"
-        [attr.selected]="subItem[options.value_field_name] === controlValue"
-        [value]="subItem[options.value_field_name]">
-        <span [innerHTML]="subItem[options.label_field_name]"></span>
-      </mat-option>
-    </mat-optgroup>
-  </ng-template>
-</mat-select> -->
 <div matSuffix *ngIf="!!model">
   <div class="example-button-container">
     <button mat-icon-button matTooltip="Effacer la selection" (click)="clearModel($event)">
@@ -78,9 +51,12 @@
     </button>
   </div>
 </div>
+
 <!-- <mat-icon [inline] class="close-icon" (click)="clearModel($event)">clear</mat-icon> -->
 <mat-hint *ngIf="options?.description && (!options?.showErrors || !options?.errorMessage)"
   align="end" [innerHTML]="options?.description"></mat-hint>
 </mat-form-field>
 <mat-error *ngIf="options?.showErrors && options?.errorMessage"
 [innerHTML]="options?.errorMessage"></mat-error>
+
+</ng-template>

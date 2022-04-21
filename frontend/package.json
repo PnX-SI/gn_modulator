@@ -9,7 +9,6 @@
   "author": "PNX",
   "license": "ISC",
   "dependencies": {
-    "@ajsf/material": "^0.6.0-beta.1",
     "tabulator-tables": "^4.9.3"
   }
 }

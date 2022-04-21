@@ -18,19 +18,18 @@
       </div>
 
 
-      <div class="content-container" [ngStyle]="{'height': height}">
-
-        <h4 *ngIf="displayTitle">{{componentTitle}}</h4>
+      <div class="content-container">
 
         <div class="content">
-          <modules-base-layout
-            [layout]="layout"
-            [layoutData]="layoutData"
+          <modules-layout
+            [layout]="processedLayout"
+            [data]="data"
             [debug]="debug"
-          ></modules-base-layout>
+            (onAction)="onAction($event)"
+          ></modules-layout>
         </div>
 
-        <div class="button-container">
+        <!-- <div class="button-container">
           <button
             class="btn btn-success small mr-2"
             (click)="onEditClick()"
@@ -39,7 +38,7 @@
           Éditer
         </button>
 
-        </div>
+        </div> -->
 
       </div>
 

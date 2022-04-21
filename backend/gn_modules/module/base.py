@@ -85,15 +85,15 @@ class ModuleBase():
 
 
     @classmethod
-    def create_schema_sql(cls, module_code):
+    def create_schema_sql(cls, module_code, force=False):
 
         module_config = cls.module_config(module_code)
         schema_names = module_config['schemas']
         txt = ""
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
-            if sm.sql_schema_exists():
-                break
+            # if sm.sql_schema_exists() and not force:
+                # break
             txt += sm.sql_txt_process()
 
         sql_file_path = cls.migrations_dir(module_code) / 'data/schema.sql'

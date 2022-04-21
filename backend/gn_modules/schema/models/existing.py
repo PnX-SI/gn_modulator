@@ -6,7 +6,7 @@ from geonature.core.gn_commons.models.base import CorModuleDataset, TModules
 from geonature.core.gn_meta.models import TDatasets, TAcquisitionFramework, CorAcquisitionFrameworkActor, CorDatasetActor
 from geonature.core.gn_synthese.models import Synthese
 from geonature.core.gn_permissions.models import TActions, TFilters, TObjects, CorRoleActionFilterModuleObject
-from geonature.core.ref_geo.models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
+from ref_geo.models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
 from geonature.core.taxonomie.models import Taxref
 from geonature.core.users.models import CorRole
 

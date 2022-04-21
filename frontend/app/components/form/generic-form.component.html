@@ -1,0 +1,15 @@
+<ng-container *ngIf="isInitialized">
+    <h3 *ngIf="computedLayout.title">{{ computedLayout.title }}</h3>
+    <form [formGroup]="formGroup">
+      <modules-layout
+        [data]="data"
+        [debug]="debug"
+        [depth]="depth + 1"
+        [direction]="layout.direction"
+        [globalData]="globalData"
+        [layout]="computedLayout.items"
+        [options]="options"
+        (onAction)="processAction($event)"
+      ></modules-layout>
+    </form>
+</ng-container>

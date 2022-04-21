@@ -182,10 +182,6 @@ class SchemaProcess():
             if schema.get('type') in ['date', 'datetime', 'uuid']:
                 schema['format'] = schema.get('format', schema.get('type'))
                 schema['type'] = 'string'
-                if schema['format'] == '%Y':
-                    schema['pattern'] = '^[0-9]{4}$'
-                    schema.pop('format')
-                # todo date format + serialiser
             else:
                 return {key: self.process_json_schema(elem) for key, elem in schema.items()}
 

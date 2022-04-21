@@ -18,7 +18,6 @@
 </div>
 
 <div *ngFor="let element of pageConfig.elements">
-
     <modules-page-element
         [elementType]="element.type"
         [schemaName]="element.schema_name"
@@ -26,6 +25,7 @@
         [actions]="element.actions || actions"
         [value]="value"
         [debug]="debug"
+        [zoom]="element.zoom"
     ></modules-page-element>
 </div>
 

@@ -184,7 +184,6 @@ class SchemaSqlBase():
         # actions
         for action in [
             'sql_txt_create_table',
-            'sql_txt_comments',
             'sql_txt_primary_key_constraints',
             'sql_txt_foreign_key_constraints',
             'sql_txt_nomenclature_type_constraints',

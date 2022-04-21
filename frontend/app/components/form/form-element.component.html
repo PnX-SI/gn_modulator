@@ -1,0 +1,78 @@
+
+<ng-container *ngIf="layout && options.formGroup && options.formGroup.get(layout.key)">
+  <!-- input -->
+  <ng-container
+    *ngIf="['date', 'string', 'number', 'textarea', 'uuid', 'integer'].includes(computedLayout.type)"
+  >
+    <mat-form-field
+      style="width: 100%; padding: 2px;"
+      [appearance]="options.appearance || 'standart'"
+    >
+      <mat-label>{{ computedLayout.title || computedLayout.key }}</mat-label>
+
+      <input
+        *ngIf="['date', 'string', 'number'].includes(computedLayout.type)"
+        matInput
+        [type]="computedLayout.type"
+        [formControl]="options.formGroup.get(layout.key)"
+        [required]="computedLayout.required"
+      />
+
+      <input
+      *ngIf="'uuid' == computedLayout.type"
+      matInput
+      type="text"
+      [formControl]="options.formGroup.get(layout.key)"
+      [required]="computedLayout.required"
+    />
+
+    <input
+    *ngIf="'integer' == computedLayout.type"
+    matInput
+    type="number"
+    step="1"
+    [formControl]="options.formGroup.get(layout.key)"
+    [required]="computedLayout.required"
+  />
+
+
+      <textarea
+        *ngIf="computedLayout.type == 'textarea'"
+        matInput
+        cdkTextareaAutosize
+        [cdkAutosizeMinRows]="computedLayout.min_rows"
+        [cdkAutosizeMaxRows]="computedLayout.max_rows"
+        [formControl]="options.formGroup.get(layout.key)"
+        [required]="computedLayout.required"
+      ></textarea>
+
+      <mat-hint>{{ computedLayout.hint }}</mat-hint>
+      <mat-error *ngIf="computedLayout.required">Ce champs est requis</mat-error>
+      <mat-icon
+        matPrefix
+        *ngIf="computedLayout.description"
+        [matTooltip]="computedLayout.description"
+        class="icon-description"
+      >
+      help
+      </mat-icon>
+    </mat-form-field>
+  </ng-container>
+
+
+  <!-- checkbox -->
+  <mat-checkbox
+    *ngIf="['checkbox', 'boolean'].includes(computedLayout.type)"
+    [formControl]="options.formGroup.get(layout.key)"
+    >{{ computedLayout.title }}
+  </mat-checkbox>
+
+  <!-- list-form -->
+  <ng-container *ngIf="computedLayout.type == 'list_form'">
+    <modules-list-form
+      [layout]="layout"
+      [data]="data"
+      [options]="options"
+    ></modules-list-form>
+  </ng-container>
+</ng-container>

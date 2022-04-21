@@ -2,6 +2,7 @@
     AutoSchemas
 '''
 from sqlalchemy.inspection import inspect
+from sqlalchemy.orm.properties import ColumnProperty
 from sqlalchemy.engine import reflection
 from flask_sqlalchemy import model
 from geonature.utils.env import db
@@ -71,11 +72,25 @@ class SchemaAuto():
 
         reflected_columns = insp.get_columns(sql_table_name, schema=sql_schema_name)
 
+        # columns
         for column in Model.__table__.columns:
             if not hasattr(Model, column.key):
                 continue
             properties[column.key] = self.process_column_auto(column, reflected_columns, sql_schema_name, sql_table_name)
 
+
+        # column properties
+        columns = [c.key for c in Model.__table__.columns]
+        for k in Model.__mapper__.attrs.keys():
+            col = getattr(Model, k)
+            if (not isinstance(col.property, ColumnProperty)) or k in columns:
+                continue
+            properties[k] = {
+                "type": "string",
+                "column_property": "label",
+            }
+
+        # relationships
         for relation_key, relation in inspect(Model).relationships.items():
             if relation_key not in self.attr('meta.relations', []):
                 continue

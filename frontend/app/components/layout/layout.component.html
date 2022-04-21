@@ -1,0 +1,104 @@
+<!-- Debug -->
+<div
+  *ngIf="debug && layout"
+  class="debug"
+  [ngStyle]="{ 'margin-left': debugMarginLeft }"
+>
+  <b>{{ layoutType }}</b> - <i>{{ computedLayout.type }}</i>
+
+  <ng-container *ngIf="layoutType == 'items'">
+    <i> {{ direction }} ({{ layout.length }})</i>
+  </ng-container>
+  <span [matTooltip]="prettyDebug.layout">layout</span>
+  <span *ngIf="layoutType == 'key'" [matTooltip]="prettyDebug.dataKey"
+    >dataK</span
+  >
+</div>
+
+<ng-container
+  [ngSwitch]="layoutType"
+  *ngIf="computedLayout && !computedLayout.hidden && isInitialized"
+>
+  <!-- items -->
+  <ng-container *ngSwitchCase="'items'">
+    <modules-layout-array
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth"
+      [direction]="direction"
+      [layout]="layout"
+      [globalData]="globalData"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-array>
+  </ng-container>
+
+  <!-- section -->
+  <ng-container *ngSwitchCase="'section'">
+    <modules-layout-section
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth"
+      [globalData]="globalData"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-section>
+  </ng-container>
+
+  <!-- key -->
+  <ng-container *ngSwitchCase="'key'">
+    <ng-container *ngIf="computedLayout.type == 'array'; else layoutObject">
+      <modules-layout-array
+        [data]="data"
+        [debug]="debug"
+        [depth]="depth"
+        [globalData]="globalData"
+        [layout]="layout"
+        [options]="options"
+        (onAction)="processAction($event)"
+      >
+      </modules-layout-array>
+    </ng-container>
+    <ng-template #layoutObject>
+      <ng-container *ngIf="computedLayout.type == 'object'; else layoutKey">
+        <modules-layout-object
+          [data]="data"
+          [debug]="debug"
+          [depth]="depth"
+          [globalData]="globalData"
+          [layout]="layout"
+          [options]="options"
+          (onAction)="processAction($event)"
+        ></modules-layout-object>
+      </ng-container>
+    </ng-template>
+
+    <ng-template #layoutKey>
+      <modules-layout-key
+        [data]="data"
+        [debug]="debug"
+        [depth]="depth + 1"
+        [globalData]="globalData"
+        [layout]="layout"
+        [options]="options"
+        (onAction)="processAction($event)"
+      ></modules-layout-key>
+    </ng-template>
+  </ng-container>
+
+  <!-- buttons -->
+  <ng-container *ngSwitchCase="'button'">
+    <div class="layout-buttons">
+      <button
+        [matTooltip]="computedLayout.description || ''"
+        mat-raised-button
+        [color]="computedLayout.color"
+        [disabled]="computedLayout.disabled"
+        (click)="emitLayoutAction()"
+      >
+        {{ computedLayout.title }}
+      </button>
+    </div>
+  </ng-container>
+</ng-container>

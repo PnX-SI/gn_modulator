@@ -24,7 +24,8 @@
               "format": { "type": "string"},
               "description": { "type": "string"},
               "labels": { "type": "array", "items": { "type": "string"}},
-              "required": { "type": "boolean" }
+              "required": { "type": "boolean" },
+              "dateFormat": { "type": "string"}
             },
             "required": [ "type", "title" ],
             "additionalProperties": false

@@ -10,7 +10,8 @@ import re
 import json
 import copy
 import jsonschema
-from geonature.utils.env import GN_EXTERNAL_MODULE
+from ref_geo.utils import get_local_srid
+from geonature.utils.env import GN_EXTERNAL_MODULE, db
 
 from geonature.utils.config import config as gn_config
 from gn_modules import MODULE_CODE
@@ -333,7 +334,9 @@ class SchemaFiles():
             par exemple __CONFIG.LOCAL_SRID__ => 2154
         '''
 
-        # optimisation regexp
+
+        # patch local srid config
+        gn_config['LOCAL_SRID'] = get_local_srid(db.engine)
 
         if not hasattr(cls, '_re_CONFIG'):
             setattr(cls, '_re_CONFIG', re.compile(r'__CONFIG\.(.*?)__'))
@@ -405,10 +408,32 @@ class SchemaFiles():
         if elem in _defs:
             return cls.process_defs(_defs[elem], _defs)
 
-        if str(elem).startswith('_'):
+        if str(elem).startswith('_') and not str(elem).startswith('__f__'):
             raise Exception(
                 'Un elément commençant par "_" est présent dans les fichiers de config {}'
                 .format(elem)
             )
 
         return elem
+
+    @classmethod
+    def get_layouts(cls):
+        '''
+            renvoie la liste des layouts
+        '''
+
+        layouts = []
+        for root, dirs, files in os.walk(cls.config_directory() / 'layout', followlinks=True):
+            for file in filter(
+                lambda f: f.endswith('.json'),
+                files
+            ):
+                file_path = Path(root) / file
+                layout = cls.load_json_file(file_path)
+                layout['layout_name'] = layout.get('layout_name', file_path.name)
+                layout = cls.process_defs(layout)
+                if '_defs' in layout:
+                    del layout['_defs']
+                layouts.append(layout)
+
+        return layouts

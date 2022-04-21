@@ -1,0 +1,57 @@
+{
+  "layout_name": "test_form_object",
+  "layout_description": "Test de formulaire (Object)",
+  "layout": {
+    "title": "Test",
+    "type": "form",
+    "appearance": "outline",
+    "items": [
+      {
+        "key": "test1",
+        "title": "Truc",
+        "type": "string"
+      },
+      {
+        "key": "test2",
+        "title": "Trucaca",
+        "type": "string",
+        "hidden": "__f__{console.log('rr'); return data.test == 'uru'}"
+      },
+      {
+        "key": "test",
+        "title": "Coordonnées",
+        "type": "object",
+        "items": {
+          "direction": "row",
+          "items": [
+            {
+              "key": "nom",
+              "title": "Nom",
+              "type": "string"
+            },
+            {
+              "key": "prenom",
+              "title": "Prenom",
+              "type": "string",
+              "hidden": "__f__data.test == 'uru'"
+
+            },
+            {
+              "key": "numero",
+              "title": "Numéro",
+              "type": "string",
+              "hidden": "__f__data.nom == 'uru'"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "test": {
+      "nom": "Truc",
+      "prenom": "Machin",
+      "numero": "666"
+    }
+  }
+}

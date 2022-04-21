@@ -16,7 +16,7 @@
 }
 
 .content {
-    overflow-y: scroll; width: 100%; height: 85%;
+    width: 100%;
 }
 
 .button-container {
@@ -49,6 +49,7 @@ div.layout-items {
     display: flex;
     flex-direction: column;
     width: 100%;
+
 }
 
 div.layout-row {
@@ -84,6 +85,11 @@ div.layout-items > div {
     padding: 5px
 }
 
+.layout-buttons {
+    padding: 10px
+}
+
+
 .layout-key-title {
     color: rgb(100, 100, 100);
     font-style: italic;
@@ -99,4 +105,13 @@ div.layout-items > div {
 
 .action-list button{
     margin: 5px;
+}
+
+.pre-small {
+    font-size: 0.7em
+}
+
+:host ::ng-deep .icon-description {
+    color: gray;
+    font-size: 1.2em
 }

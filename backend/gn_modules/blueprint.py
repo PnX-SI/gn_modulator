@@ -31,7 +31,7 @@ def api_modules_config():
 
     return jsonify(ModuleMethods.modules_config())
 
-@blueprint.route('/<module_code>/export/<export_code>')
+@blueprint.route('/<module_code>/export/<export_code>', methods=['GET'])
 def api_modules_export(module_code, export_code):
     '''
         route d'export pour les modules
@@ -74,3 +74,13 @@ def api_modules_export(module_code, export_code):
         separator=";",
         columns=[c.key for c in columns], # Exclude the geom column from CSV
     )
+
+
+@blueprint.route('/layouts/', methods=['GET'])
+def api_layout():
+    '''
+        Renvoie la liste des layouts
+    '''
+
+    return jsonify(SchemaMethods.get_layouts())
+

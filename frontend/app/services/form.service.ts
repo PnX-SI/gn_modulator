@@ -1,78 +1,182 @@
 import { Injectable } from "@angular/core";
-
-import { AppConfig } from "@geonature_config/app.config";
-import { ModuleConfig } from "../module.config";
-
-import { of, Observable } from "@librairies/rxjs";
-import { mergeMap, catchError } from "@librairies/rxjs/operators";
-import { ModulesRequestService } from "./request.service";
-import utils from "../utils"
+import {
+  FormArray,
+  FormGroup,
+  FormBuilder,
+  FormControl,
+  Validators,
+} from "@angular/forms";
+import { ModulesLayoutService } from "./layout.service";
+import utils from "../utils";
 
 @Injectable()
 export class ModulesFormService {
-
   constructor(
+    private _formBuilder: FormBuilder,
+    private _mLayout: ModulesLayoutService
   ) {}
 
   /** Configuration */
 
-  init() {
+  init() {}
+
+  /** Initialise un formGroup à partir d'un layout */
+  initForm(layout) {
+    return this.formGroup(layout);
   }
 
-  // patch pour que les fieldset puissent etre en colonne
-  processFieldSets(elemId) {
-    utils.waitForElement(elemId).then((container) => {
-      utils.waitForElements(
-        '.fieldset-column > flex-layout-root-widget',
-        container
-        ).then((elems) => {
-          for (let elem of (elems as Array<any>)) {
-            elem.style['flex-direction'] = 'column';
-            elem.style['flex-flow'] = 'column';
-          }
-        });
-      });
+  formValidators(layout) {
+    const validators = [];
+    if (layout.required) {
+      validators.push(Validators.required);
+    }
+    return validators;
   }
 
-  processLayout(layout) {
+  formDefinition(layout) {
+    if (layout.type == "array") {
+      return this.formArray(layout);
+    }
+    if (layout.type == "object") {
+      return this.formGroup(layout.items);
+    }
+    let formDefinition = [null, this.formValidators(layout)];
+    return formDefinition;
+  }
 
-    if ( Array.isArray(layout) ) {
-      return layout.map(l => this.processLayout(l))
+  formGroup(layout) {
+    let formGroupDefinition = {};
+    for (let elem of this._mLayout.flatLayout(layout)) {
+      formGroupDefinition[elem.key] = this.formDefinition(elem);
+    }
+    let control = this._formBuilder.group(formGroupDefinition);
+    return control;
+  }
+
+  formArray(layout) {
+    let formArrayDefinition = [];
+    return this._formBuilder.array(formArrayDefinition);
+  }
+
+  setControls(formControl, layout, data, globalData) {
+    for (let elem of this._mLayout.flatLayout(layout)) {
+      this.setControl(formControl, elem, data, globalData);
+    }
+    if (data) {
+      formControl.patchValue(data);
+    }
+  }
+
+  /** configure un control en fonction d'un layout */
+  setControl(formControl, layout, data, globalData) {
+    let control = formControl.get(layout.key);
+    let computedLayout = this._mLayout.computeLayout({layout, data, globalData, formGroup: null, elemId: null})
+    control.setValidators(this.formValidators(computedLayout));
+    // control pour object
+    if (layout.type == "object") {
+      let controlData = (data || {})[layout.key] || {};
+      this.setControls(control, layout.items, controlData, globalData);
+    }
+    // control pour array
+    if (layout.type == "array") {
+      let controlData = (data || {})[layout.key] || [];
+      if (controlData.length == control.value.length) {
+        return;
+      }
+
+      control.clear();
+      for (let elem of controlData) {
+        let elemControl = this.formGroup(layout.items);
+        this.setControls(elemControl, layout.items, elem, globalData);
+        control.push(elemControl);
+      }
+    }
+  }
+
+  /** pour mettre à jour les données sans casser les références */
+  updateData(data, formValue) {
+    if (utils.fastDeepEqual(data, formValue)) {
+      return data;
     }
 
-    else if ( utils.isObject(layout) ) {
-      // layout.fxLayoutGap = '1px';
-
-      if (layout.type == 'fieldset') {
-        layout.htmlClass+=' fieldset';
+    if (utils.isObject(formValue)) {
+      data = data || {};
+      if(!utils.isObject(data)) {
+        data = formValue
       }
-
-      if (['fieldset', 'array'].includes(layout.type)) {
-        if ( layout.direction == 'row') {
-        } else {
-          layout.htmlClass+=' fieldset-column';
+      for (let [k, v] of Object.entries(formValue)) {
+        data[k] = this.updateData(data[k], v);
       }
-      }
-
-      if ( layout.direction == 'row') {
-        layout.displayFlex = true;
-        layout['flex-direction'] = 'row';
-        layout.fxLayoutGap = '5px';
-
-      }
-      for (const [key, value] of Object.entries(layout)) {
-        if(! ['params'].includes(key)) {
-          layout[key] = this.processLayout(value)
+      for (let [k, v] of Object.entries(data)) {
+        if( ! (k in formValue)) {
+          delete data[k];
         }
       }
-      return layout;
+
+
+      return data;
     }
 
-    else {
-      // layout.fxLayoutGap = '5px';
-      return layout;
+    if (Array.isArray(formValue)) {
+      data = data || [];
+      let out = [];
+
+      if (formValue.length == data.length) {
+        for (let [index, elem] of data.entries()) {
+          data[index] = this.updateData(elem, formValue[index]);
+        }
+        return data;
+      } else {
+        return formValue;
+      }
     }
 
+    return formValue;
   }
 
+  /** pour corriger les string t
+   * en nombre ??? */
+  processData(data, layout) {
+    for (let elem of this._mLayout.flatLayout(layout)) {
+      if (elem.key && elem.type == "number") {
+        data[elem.key] = data[elem.key]
+          ? parseFloat(data[elem.key])
+          : data[elem.key]
+      }
+    }
+    return data;
+  }
+
+  processAction(formGroup, layout, data, options) {
+    // if (options.type == "add-array-element") {
+    //   data[options.key].push({});
+    //   this.setControls(formGroup, layout, data);
+    //   formGroup.patchValue(data);
+    // }
+    // if (options.type == "remove-array-element") {
+    //   this.setControls(formGroup, layout, data);
+    //   data[options.key].splice(options.index, 1);
+    //   // console.log(data, options.index)
+    //   // formGroup.patchValue(data);
+    // }
+    // if (options.type == "remove-array-element") {
+    //   data[options.key] = [];
+    //   this.setControls(formGroup, layout, data);
+    //   formGroup.patchValue(data);
+    // }
+  }
+
+  isEqual(formValue, data) {
+    return utils.isObject(formValue)
+      ? !utils.isObject(data)
+        ? false
+        : Object.entries(formValue).every(([k, v]) => this.isEqual(v, data[k]))
+      : Array.isArray(formValue)
+      ? !Array.isArray(data)
+        ? false
+        : formValue.length != data.length
+        ? false
+        : formValue.every((elem) => data.find((d) => this.isEqual(elem, d)))
+      : formValue == data;
+  }
 }

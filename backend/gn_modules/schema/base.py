@@ -159,6 +159,9 @@ class SchemaBase():
     def is_column(self, property):
         return property.get('type') in column_types
 
+    def is_column_property(self, property):
+        return property.get('type') in column_types and property.get('column_property')
+
     def is_relationship(self, property):
         return property['type'] == 'relation'
 
@@ -168,6 +171,13 @@ class SchemaBase():
             column_keys.sort()
         return column_keys
 
+    def column_properties_keys(self, sort=False):
+        column_keys = [k for k, v in self.properties().items() if self.is_column_property(v)]
+        if sort:
+            column_keys.sort()
+        return column_keys
+
+
     def relationship_keys(self):
         return [k for k, v in self.properties().items() if self.is_relationship(v)]
 
@@ -175,7 +185,23 @@ class SchemaBase():
         return self.definition['properties']
 
     def property(self, key):
+
+        if '.' in key:
+            # on cherche la relation
+            rel_key = key.split('.')[0]
+            rel_prop = self.property(rel_key)
+            rel = self.cls(rel_prop['schema_name'])
+            return rel.property(key.split('.')[1])
         return self.properties()[key]
+
+    def has_property(self, key):
+        if '.' in key:
+            # on cherche la relation
+            rel_key = key.split('.')[0]
+            rel_prop = self.property(rel_key)
+            rel = self.cls(rel_prop['schema_name'])
+            return rel.has_property(key.split('.')[1])
+        return self.properties().get(key) is not None
 
     def columns(self, sort=False):
 
@@ -185,6 +211,16 @@ class SchemaBase():
             column[key] = self.property(key)
 
         return column
+
+    def column_properties(self, sort=False):
+
+        column = {}
+
+        for key in self.column_properties_keys(sort=sort):
+            column[key] = self.property(key)
+
+        return column
+
 
     def relationships(self):
 

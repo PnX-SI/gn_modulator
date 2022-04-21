@@ -1,0 +1,20 @@
+{
+  "layout_name": "test_list",
+  "layout_description": "Test de form list",
+  "layout": {
+    "title": "Test de form list",
+    "type": "form",
+    "appearance": "outline",
+    "items": [
+      {
+        "key": "simple",
+        "type": "list_form",
+        "items": ["Un", "Deux", "Trois"],
+        "description": "Simple",
+        "hint": "simple"        }
+    ]
+  },
+  "data": {
+    "test_simple": "Un"
+  }
+}

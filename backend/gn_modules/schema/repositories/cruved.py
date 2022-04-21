@@ -23,6 +23,8 @@ class SchemaRepositoriesCruved():
         if not self.attr('meta.check_cruved'):
             return query
 
+        print('uururu')
+
         user_cruved = get_scopes_by_action(module_code="META_DATA")
 
         setattr(Model, 'cruved_ownership', self.cruved_ownership(g.current_user.id_role, g.current_user.id_organisme))

@@ -1,0 +1,24 @@
+<!-- form -->
+<ng-container *ngIf="options?.form; else layoutKeyDefault">
+  <modules-form-element
+    [data]="data"
+    [debug]="debug"
+    [depth]="depth"
+    [layout]="layout"
+    [globalData]="globalData"
+    [options]="options"
+    (onAction)="processAction($event)"
+  ></modules-form-element>
+</ng-container>
+
+<ng-template #layoutKeyDefault>
+  <div>
+    <div class="layout-key">
+      <div class="layout-key-title">{{ layout.title }}</div>
+      <div class="layout-key-value">
+        <ng-container *ngIf="[null, undefined].includes(dataKey); else displayValue">?</ng-container>
+        <ng-template #displayValue >{{dataKey}}</ng-template>
+        </div>
+    </div>
+  </div>
+</ng-template>

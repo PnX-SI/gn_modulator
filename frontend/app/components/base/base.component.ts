@@ -175,12 +175,13 @@ export class BaseComponent implements OnInit {
           return of(false)
         })
       ).subscribe((response) => {
+          console.log(response)
+
           if(response) {
             this.processData(response);
           }
           this.setComponentTitle();
           this.isProcessing=false;
-          this.log(`proc ${this.isProcessing}`);
           this.componentInitialized = !!response;
           this.onComponentInitialized()
           });

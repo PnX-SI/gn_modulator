@@ -3,79 +3,59 @@
   [attr.id]="elemId"
   class="element-container"
 >
-
-
   <div class="flex-row-container">
-
     <!-- Carte avec saisie geoman -->
     <div
-      class='map-row-container'
+      class="map-row-container"
       *ngIf="schemaConfig.utils.geometry_field_name"
     >
-        <modules-map
-          [mapId]="mapId"
-          [height]="height"
-          [bEdit]="true"
-          [drawOptions]=drawOptions
-          [zoom]="zoom"
-          [center]="center"
-          [layersData]="layersData"
-        ></modules-map>
+      <modules-map
+        [mapId]="mapId"
+        [height]="height"
+        [bEdit]="true"
+        [drawOptions]="drawOptions"
+        [zoom]="zoom"
+        [center]="center"
+        [layersData]="layersData"
+      ></modules-map>
     </div>
 
     <!-- Formulaire -->
-      <div class="content-container" [ngStyle]="{'height': height}">
-
-      <h4 *ngIf="displayTitle"> {{ componentTitle }} </h4>
-
+    <div class="content-container">
       <div class="content">
         <div>
-          <json-schema-form
-            [schema]="schemaConfig.form.schema"
-            framework="material-design"
-            [(data)]="data"
-            (onSubmit)="onSubmit($event)"
-            (onChanges)="onFormChanges($event)"
+          <modules-layout
             [layout]="processedLayout"
-            language=fr
-            (isValid)="onIsValid($event)"
-            (validationErrors)="onValidationErrors($event)"
+            [data]="data"
+            [debug]="debug"
+            (onAction)="onAction($event)"
           >
-          </json-schema-form>
+          </modules-layout>
         </div>
       </div>
 
-      <div class="button-container">
+      <!-- <div class="button-container">
         <button
           class="btn btn-success mr-2"
-          (click)="onSubmitClick()"
+          (click)="onAction('submit', $event)"
           [disabled]="!isValid"
-      >
-        Valider
-      </button>
+        >
+          Valider
+        </button>
 
-      <button
-        class="btn btn-primary mr-2"
-        (click)="onCancelClick()"
-      >
-        Annuler
-      </button>
-
-
-      </div>
-
-
+        <button class="btn btn-primary mr-2" (click)="onCancelClick()">
+          Annuler
+        </button>
+      </div> -->
     </div>
 
     <!-- Debug : valide, erreur et valeurs -->
-    <div *ngIf='debug'>
-      <pre>{{data | json}}</pre>
-      <pre>{{processedLayout | json}}</pre>
-    </div>
+    <!-- <div *ngIf="debug">
+      <pre>{{ validationErrors | json }}</pre>
+      <pre>{{ data | json }}</pre>
+    </div> -->
   </div>
-
 </div>
-
 
 <ng-template #loadingBlock>
   <div>Chargement en cours</div>

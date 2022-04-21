@@ -1,0 +1,55 @@
+<ng-container *ngIf="!isInitialized; else section"></ng-container>
+
+<ng-template #section>
+  <div [ngStyle]="computedLayout.style" [attr.id]="_id" class="layout-section">
+    <ng-container *ngIf="computedLayout.type == 'form'; else sectionFieldset">
+      <modules-generic-form
+        [(data)]="data"
+        (dataChange)="onDataChange($event)"
+        [debug]="debug"
+        [depth]="depth"
+        [layout]="layout"
+        [options]="options"
+        (onAction)="processAction($event)"
+      >
+      </modules-generic-form>
+    </ng-container>
+
+    <ng-template #sectionFieldset>
+      <ng-container
+        *ngIf="computedLayout.type == 'fieldset'; else defaultSection"
+      >
+        <fieldset class="fieldset">
+          <legend *ngIf="computedLayout.title">
+            {{ computedLayout.title }}
+          </legend>
+
+          <modules-layout
+            [data]="data"
+            [debug]="debug"
+            [depth]="depth + 1"
+            [direction]="computedLayout.direction"
+            [globalData]="globalData"
+            [layout]="computedLayout.items || []"
+            [options]="options"
+            (onAction)="processAction($event)"
+          ></modules-layout>
+        </fieldset>
+      </ng-container>
+    </ng-template>
+
+    <ng-template #defaultSection>
+      <h3 *ngIf="computedLayout.title">{{ computedLayout.title }}</h3>
+      <modules-layout
+        [data]="data"
+        [debug]="debug"
+        [depth]="depth + 1"
+        [direction]="computedLayout.direction"
+        [globalData]="globalData"
+        [layout]="computedLayout.items || []"
+        [options]="options"
+        (onAction)="processAction($event)"
+      ></modules-layout>
+    </ng-template>
+  </div>
+</ng-template>

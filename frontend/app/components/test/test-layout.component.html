@@ -1,0 +1,47 @@
+<div>
+  <h1>Test Layout</h1>
+
+  <div>
+    <div class="test-form-container">
+      <div>
+        <modules-layout
+          [layout]="testLayoutForm"
+          [data]="rawLayout"
+          (onAction)="processAction($event)"
+        ></modules-layout>
+      </div>
+      <div *ngIf="!!layout && data">
+        <h2>Rendu</h2>
+        <modules-layout
+          [layout]="layout"
+          [debug]="debug"
+          [data]="data"
+        >
+        </modules-layout>
+      </div>
+
+      <!-- <div> -->
+      <!-- <h2>Layout</h2>
+        <div *ngIf="error">
+          Il y a une erreur dans le layout
+          <pre class="pre-small"
+            >{{ error | json }}
+          </pre>
+        </div>
+        <pre class="pre-small"
+          >{{ processedLayout | json }}
+          </pre
+        >
+        <pre class="pre-small"
+        >{{ layoutDefinition | json }}
+      </pre>
+    -->
+      <div>
+        <h2>Data</h2>
+        <pre class="pre-small"
+          >{{ data | json }}
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
