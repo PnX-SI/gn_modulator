@@ -1,10 +1,11 @@
 <!-- Debug -->
 <div
-  *ngIf="debug && layout"
+  *ngIf="debug && layout && computedLayout"
   class="debug"
   [ngStyle]="{ 'margin-left': debugMarginLeft }"
 >
   <b>{{ layoutType }}</b> - <i>{{ computedLayout.type }}</i>
+  <span [matTooltip]="prettyDebug.data">data</span>
 
   <ng-container *ngIf="layoutType == 'items'">
     <i> {{ direction }} ({{ layout.length }})</i>
@@ -100,5 +101,29 @@
         {{ computedLayout.title }}
       </button>
     </div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'message'">
+    <div>
+      <div
+        [ngClass]="{
+          'layout-message': true,
+          error: layout.class == 'error',
+          info: layout.class == 'info',
+          warning: layout.class == 'warning'
+        }"
+      >
+        <div
+          class="layout.html"
+          *ngIf="computedLayout.html"
+          [innerHTML]="computedLayout.html"
+        ></div>
+        <pre *ngIf="computedLayout.json">{{ computedLayout.json | json }}</pre>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'medias'">
+    <modules-layout-medias [data]="data" [layout]="layout" [debug]="debug">
+    </modules-layout-medias>
   </ng-container>
 </ng-container>

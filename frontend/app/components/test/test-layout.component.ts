@@ -40,34 +40,40 @@ export class TestLayoutComponent implements OnInit {
         display: "form",
         min_rows: "5",
         max_rows: "30",
-      }
+      },
     ],
   };
 
   test = {
     layout: {
       type: "form",
-      appearance: "outline",
-      height_auto: true,
+      appearance: "fill",
       items: [
         {
-          title: "Titre du formulaire",
+          key: "minmax",
+          type: "integer",
+          min: 0,
+          max: 10,
+          required: true,
         },
         {
-          items: "abcdefghijklmno".split("").map(a=>({key:a, type: 'string', title: a})),
-          // style: { "overflow-y": "scroll", "flex-grow": 1},
-          overflow:  true
+          direction: "row",
+          items: [
+            {
+              type: "message",
+              // hidden: "__f__!formGroup.errors",
+              json: "__f__utils.getFormErrors(formGroup)",
+            },
+            {
+              type: "message",
+              // hidden: "__f__!formGroup.errors",
+              json: "__f__formGroup.value",
+            },
+          ],
         },
-        {
-          type: "button",
-          title: "Valider",
-          color: "primary",
-        }
-
-      ]
+      ],
     },
-    data: {
-    },
+    data: {},
   };
 
   rawLayout: any = {

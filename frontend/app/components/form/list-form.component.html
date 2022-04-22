@@ -1,8 +1,7 @@
 <ng-container *ngIf="!!formControl">
   <mat-form-field
-    style="width: 100%"
+    class="form-field"
     [appearance]="options.appearance || 'standart'"
-    dense
   >
     <mat-label>{{ computedLayout.title || computedLayout.key }}</mat-label>
     <mat-select

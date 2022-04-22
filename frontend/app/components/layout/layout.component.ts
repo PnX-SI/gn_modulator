@@ -84,6 +84,8 @@ export class ModulesLayoutComponent implements OnInit {
     return this.options.formGroup;
   }
 
+  postComputeLayout() {};
+
   computeLayout() {
     this.layoutType =
       this.layoutType || this._mLayout.getLayoutType(this.layout);
@@ -102,6 +104,7 @@ export class ModulesLayoutComponent implements OnInit {
       data: this.pretty(this.data),
       dataKey: this.pretty(this.dataKey),
     };
+    this.postComputeLayout();
   }
 
   processLayout() {
@@ -138,7 +141,6 @@ export class ModulesLayoutComponent implements OnInit {
     }
     const elem = document.getElementById(this._id);
     const height = document.body.clientHeight - elem.offsetTop;
-    this.log(height);
     this.layout.style = this.computedLayout.style || {};
     this.layout.style.height = `${height}px`;
     this._mLayout.reComputeLayout();

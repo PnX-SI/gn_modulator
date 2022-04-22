@@ -4,6 +4,7 @@
     Utilisation de marshmallow
 '''
 
+import copy
 from geoalchemy2.shape import to_shape, from_shape
 from geoalchemy2 import functions
 from geojson import Feature
@@ -189,6 +190,18 @@ class SchemaSerializers:
                 ):
                     data.pop(relation_key)
 
+            # clean data
+            for k in [k for k in data.keys()]:
+                if self.has_property(k):
+                    property = self.property(k)
+                    # test if array
+                    if property.get('relation_type') in ['n-1', 'n-n'] and data[k] is None:
+                        data.pop(k)
+                # rem ove extra items
+                else:
+                    data.pop(k)
+
+            # remove array when null
             return data
 
         marshmallow_schema_dict = {

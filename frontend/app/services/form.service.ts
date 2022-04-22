@@ -5,6 +5,9 @@ import {
   FormBuilder,
   FormControl,
   Validators,
+  ValidatorFn,
+  ValidationErrors,
+  AbstractControl
 } from "@angular/forms";
 import { ModulesLayoutService } from "./layout.service";
 import utils from "../utils";
@@ -30,6 +33,16 @@ export class ModulesFormService {
     if (layout.required) {
       validators.push(Validators.required);
     }
+    if(![undefined, null].includes(layout.min)) {
+      validators.push(Validators.min(layout.min))
+    }
+    if(![undefined, null].includes(layout.max)) {
+      validators.push(Validators.max(layout.max))
+    }
+    if(layout.type == 'integer') {
+      validators.push(this.integerValidator())
+    }
+
     return validators;
   }
 
@@ -178,5 +191,12 @@ export class ModulesFormService {
         ? false
         : formValue.every((elem) => data.find((d) => this.isEqual(elem, d)))
       : formValue == data;
+  }
+
+  integerValidator(): ValidatorFn
+   {
+    return (control: AbstractControl): ValidationErrors | null => {
+      return control.value && parseInt(control.value) != control.value ? {integer: {value: control.value}} : null;
+    };
   }
 }

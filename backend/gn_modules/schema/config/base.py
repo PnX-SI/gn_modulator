@@ -94,13 +94,13 @@ class SchemaConfigBase():
         return {
             "label": self.label(),
             "labels": self.labels(),
-            "def_label": self.def_label(),
-            "def_labels": self.def_labels(),
-            "undef_label": self.undef_label(),
-            "undef_label_new": self.undef_label_new(),
-            "undef_labels_new": self.undef_labels_new(),
-            "prep_label": self.prep_label(),
-            "undef_labels": self.undef_labels(),
+            "le_labels": self.le_label(),
+            "les_labels": self.les_labels(),
+            "un_label": self.un_label(),
+            "des_labels": self.des_labels(),
+            "un_nouveau_label": self.un_nouveau_label(),
+            "des_nouveaux_labels": self.des_nouveaux_labels(),
+            "du_label": self.du_label(),
             "description": self.description(),
         }
 
@@ -236,40 +236,40 @@ class SchemaConfigBase():
             else 'du '
         )
 
-    def def_label(self):
+    def le_label(self):
         '''
         Renvoie le label précédé de l'article défini
         '''
         return '{}{}'.format(self.article_def(), self.label())
 
-    def undef_label(self):
+    def un_label(self):
         '''
         Renvoie le label précédé de l'article indéfini
         '''
         return '{}{}'.format(self.article_undef(), self.label())
 
-    def undef_label_new(self):
+    def un_nouveau_label(self):
         '''
         Renvoie le label précédé de l'article indéfini et de self.new()
         '''
         return '{}{}{}'.format(self.article_undef(), self.new(), self.label())
 
-    def undef_labels_new(self):
+    def des_nouveaux_labels(self):
         '''
         Renvoie le labels précédé de l'article indéfini et de self.new()
         '''
         return 'des {}{}'.format(self.news(), self.labels())
 
-    def prep_label(self):
+    def du_label(self):
         '''
         Renvoie le label précédé de la préposition
         '''
         return '{}{}'.format(self.preposition(), self.label())
 
-    def def_labels(self):
+    def les_labels(self):
         return 'les {}'.format(self.labels())
 
-    def undef_labels(self):
+    def des_labels(self):
         return 'des {}'.format(self.labels())
 
     def description(self):

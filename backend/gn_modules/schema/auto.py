@@ -88,6 +88,7 @@ class SchemaAuto():
             properties[k] = {
                 "type": "string",
                 "column_property": "label",
+                "title": k,
             }
 
         # relationships

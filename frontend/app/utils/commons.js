@@ -155,5 +155,6 @@ export default {
   unaccent,
   lowerUnaccent,
   parseJSON,
-  JSONStringify
+  JSONStringify,
+  JSON
 }

@@ -208,7 +208,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
   }
 
   setMapTitle() {
-      this.mapTitle = `Carte ${this.schemaConfig.display.undef_labels}`;
+      this.mapTitle = `Carte ${this.schemaConfig.display.des_labels}`;
   }
 
   // getZoom() {

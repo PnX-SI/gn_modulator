@@ -64,12 +64,13 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     const dataGeom = layer.toGeoJSON().geometry;
     this.setSchemaGeom(dataGeom);
     this.data[this.geometryFieldName()] = dataGeom;
+    this._services.mLayout.reComputeLayout();
   }
 
   setComponentTitle(): void {
     this.componentTitle = this.id()
-      ? `Modification ${this.schemaConfig.display.prep_label} ${this.id()}`
-      : `Creation ${this.schemaConfig.display.undef_label_new}`;
+      ? `Modification ${this.schemaConfig.display.du_label} ${this.id()}`
+      : `Creation ${this.schemaConfig.display.un_nouveau_label}`;
   }
 
   processConfig(): void {
@@ -85,11 +86,18 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
             `  const id = data.${this.schemaConfig.utils.pk_field_name};`,
             "  return id",
             "    ? `Modification " +
-              this.schemaConfig.display.prep_label +
+              this.schemaConfig.display.du_label +
               " ${id}`",
-            `    : "Création + ${this.schemaConfig.display.undef_label_new}";`,
+            `    : "Création + ${this.schemaConfig.display.un_nouveau_label}";`,
             "}",
           ],
+        },
+        {
+          hidden: "__f__(data.geom && data.geom.coordinates)",
+          type: "message",
+          html: "<b>Veuillez saisir une geométrie sur la carte</b>",
+          class: "warning",
+          center: true
         },
         {
           items: this.schemaConfig.form.layout,
@@ -106,6 +114,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
               title: "Valider",
               description: "Enregistrer le contenu du formulaire",
               action: "submit",
+              disabled: "__f__!formGroup.valid"
             },
             {
               flex: "initial",

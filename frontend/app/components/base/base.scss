@@ -115,3 +115,38 @@ div.layout-items > div {
     color: gray;
     font-size: 1.2em
 }
+
+.layout-html {
+    text-align: center;
+}
+
+.layout-message {
+    padding: 10px;
+    margin: 5px;
+    background-color: lightgrey;
+    color: grey;
+    border-radius: 15px;
+    border: solid 1px;
+    display: inline-block;
+}
+
+.form-field {
+    width: 100% !important;
+    padding: 2px !important;
+}
+
+.layout-html.error {
+    color: red;
+    background-color: lightcoral;
+}
+
+.layout-html.warning {
+    color: orangered;
+    background-color: lightgoldenrodyellow;
+}
+
+
+.layout-html.info {
+    color: blue;
+    background-color: lightblue;
+}

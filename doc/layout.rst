@@ -24,8 +24,6 @@ Sections
 Les clés
 ========
 
-
-
 - ``key`` *string*
     - clé de l'élément, qui permet de récupérer sa valeur dans ``data``
 - ``title`` *string*
@@ -42,6 +40,18 @@ Les clés
 
 - ``hidden`` *string*
     - si égal à ``true``, le composant n'est pas affiché
+
+
+Les contraintes
+---------------
+- ``required``
+    - pour indiquer que ce champs est obligatoire
+- ``min``
+    - pour les types ``number``, ``integer``, ``date``, ``datetime``
+    - permet
+- ``max``
+    - cf ``min``
+
 
 object
 ------
@@ -68,6 +78,16 @@ Bouttons
 - ``action``
 - ``disabled``
 - ``icon``
+
+Message
+=======
+
+- ``type``: ``message``
+    - permet d'affichier un message dans un cadre
+    - class
+        - ``info``: bleu
+        - ``error``: rouge
+        - ``warning``: orange
 
 Valeurs dynamiques
 ==================

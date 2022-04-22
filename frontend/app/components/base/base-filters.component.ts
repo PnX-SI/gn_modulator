@@ -1,12 +1,12 @@
-import { Component, OnInit, } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 
 import { ModulesService } from "../../services/all.service";
-import { WidgetLibraryService } from '@ajsf/core';
+import { WidgetLibraryService } from "@ajsf/core";
 
 import { BaseComponent } from "./base.component";
-import { additionalWidgets } from './form'
+import { additionalWidgets } from "./form";
 
-import utils from "../../utils"
+import utils from "../../utils";
 
 @Component({
   selector: "modules-base-filters",
@@ -20,8 +20,7 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
 
   filterValues = {};
   processedLayout = {};
-  dataSave = {}
-
+  dataSave = {};
 
   // dataFilters = {
   //   "filters": [
@@ -35,24 +34,21 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
 
   constructor(
     _services: ModulesService,
-    private _widgetLibraryService: WidgetLibraryService,
-
+    private _widgetLibraryService: WidgetLibraryService
   ) {
-    super(_services)
-    this._name = 'BaseFilters';
-    this.processedEntries = ['schemaName']
+    super(_services);
+    this._name = "BaseFilters";
+    this.processedEntries = ["schemaName"];
   }
-
 
   ngOnInit() {
     for (const [key, AdditionalWidget] of Object.entries(additionalWidgets)) {
       this._widgetLibraryService.registerWidget(key, AdditionalWidget);
     }
-
   }
 
   processConfig(): void {
-    this.processedLayout = this.schemaConfig.filters.form.layout
+    this.processedLayout = this.schemaConfig.filters.form.layout;
   }
 
   getFilters() {
@@ -60,38 +56,36 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
     return Object.entries(this.filterValues)
       .filter(([key, value]) => ![null, undefined].includes(value))
       .map(([key, value]) => ({
-          field: filterDefs[key].field,
-          type: filterDefs[key].filter_type,
-          value
-      }))
+        field: filterDefs[key].field,
+        type: filterDefs[key].filter_type,
+        value,
+      }));
   }
 
   onSubmit() {
     this.emitEvent({
-      action: 'filters',
+      action: "filters",
       params: {
-        filters: this.getFilters()
-      }
-    })
-
+        filters: this.getFilters(),
+      },
+    });
   }
 
   onReinit() {
-    for (let [k,v] of Object.entries(this.filterValues)) {
-      this.filterValues[k] = Array.isArray(v) ? [] : null;
+    for (const key of Object.keys(this.filterValues)) {
+      this.filterValues[key] = null;
     }
-    this.onSubmit();
+    const filterValues = utils.copy(this.filterValues);
+    this.filterValues = null;
+    setTimeout(() => {
+      this.filterValues = filterValues;
+      this.onSubmit();
+    });
   }
 
-  onFormChanges(event) {
-  }
+  onFormChanges(event) {}
 
-  onIsValid(event) {
-
-  }
+  onIsValid(event) {}
 
   onValidationErrors(event) {}
-
-
-
 }

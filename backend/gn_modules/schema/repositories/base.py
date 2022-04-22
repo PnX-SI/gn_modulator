@@ -85,6 +85,7 @@ class SchemaRepositoriesBase():
 
         if isinstance(data, dict) and not isinstance(model, dict):
             for key, data_value in data.items():
+
                 m = self.serialize(model, fields=[key])[key]
                 if self.is_new_data(m, data_value):
                     return True
@@ -120,6 +121,7 @@ class SchemaRepositoriesBase():
             model = {
                 key: model[key]
                 for key in data
+                if key in model
             }
         if not (model == data or str(model) == str(data)):
             return True

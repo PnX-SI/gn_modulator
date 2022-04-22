@@ -13,6 +13,7 @@ import { ModulesLayoutSectionComponent } from "./components/layout/layout-sectio
 import { ModulesLayoutKeyComponent } from "./components/layout/layout-key.component";
 import { ModulesLayoutArrayComponent } from "./components/layout/layout-array.component";
 import { ModulesLayoutObjectComponent } from "./components/layout/layout-object.component";
+import { ModulesLayoutMediasComponent } from "./components/layout/layout-medias.component";
 import { ModulesGenericFormComponent } from "./components/form/generic-form.component";
 import { ModulesFormElementComponent } from "./components/form/form-element.component";
 import { ModulesListFormComponent } from "./components/form/list-form.component";
@@ -68,6 +69,7 @@ const routes: Routes = [
     ModulesLayoutKeyComponent,
     ModulesLayoutArrayComponent,
     ModulesLayoutObjectComponent,
+    ModulesLayoutMediasComponent,
     ModulesListFormComponent,
     PageComponent,
     PageElementComponent,

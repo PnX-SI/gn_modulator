@@ -198,6 +198,8 @@ class SchemaBase():
         if '.' in key:
             # on cherche la relation
             rel_key = key.split('.')[0]
+            if not self.has_property(rel_key):
+                return False
             rel_prop = self.property(rel_key)
             rel = self.cls(rel_prop['schema_name'])
             return rel.has_property(key.split('.')[1])

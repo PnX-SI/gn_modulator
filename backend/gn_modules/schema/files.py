@@ -284,7 +284,11 @@ class SchemaFiles():
             return definition
         except jsonschema.exceptions.ValidationError as e:
             # import pdb; pdb.set_trace()
-            raise errors.SchemaLoadError("Il y a une erreur avec le fichier de définition {}\n\n{}".format(file_path, e))
+            raise errors.SchemaLoadError(
+                f"""- {str(file_path).replace(str(cls.config_directory().parent), '')}
+  - {' -> '.join(e.absolute_path)}
+  - {str(e)}"""
+            )
 
     @classmethod
     def init_definitions(cls):

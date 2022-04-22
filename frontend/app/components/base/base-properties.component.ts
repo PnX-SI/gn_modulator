@@ -34,7 +34,6 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     }
 
     const fields = this._services.mLayout.getLayoutFields(this.layout);
-    console.log(fields);
     if (!fields.includes(this.pkFieldName())) {
       fields.push(this.pkFieldName());
     }
@@ -56,6 +55,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
 
   processData(data) {
     this.data = data;
+    console.log(data["cruved_ownership"], this.moduleConfig.module.cruved["U"])
     this.bEditAllowed =
       data["cruved_ownership"] <= this.moduleConfig.module.cruved["U"];
     this.setComponentTitle();
@@ -78,12 +78,13 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
         },
       ],
     };
+    console.log('setLayerData')
     this.setLayersData(true);
   }
 
   setComponentTitle(): void {
     this.componentTitle = `Propriétés ${
-      this.schemaConfig.display.prep_label
+      this.schemaConfig.display.du_label
     } ${this.pkFieldName()}=${this.value}`;
   }
 
@@ -94,13 +95,6 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     const geometry = this.data[this.geometryFieldName()];
     if (!geometry) {
       return;
-    }
-    if (flyToPoint) {
-      this._services.mapService.waitForMap(this.mapId).then(() => {
-        const filters = {};
-        filters[this.pkFieldName()] = this.id();
-        this._services.mapService.findLayer(this.mapId, filters);
-      });
     }
     this.layersData = {
       geomEdit: {
@@ -114,10 +108,27 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
         },
       },
     };
+    if (flyToPoint) {
+      this._services.mapService.waitForMap(this.mapId).then(() => {
+        this._services.mapService.setCenter(this.mapId, [
+          geometry.coordinates[1],
+          geometry.coordinates[0],
+        ]);
+      });
+    }
+    if (flyToPoint) {
+      this._services.mapService.waitForMap(this.mapId).then(() => {
+        const filters = {};
+        filters[this.pkFieldName()] = this.id();
+        const layer = this._services.mapService.findLayer(this.mapId, filters);
+        console.log('ururuuru', layer)
+
+      });
+    }
+
   }
 
   onAction(event) {
-    console.log(event)
     if (event.action == "edit") {
       this.emitEvent({
         action: "edit",

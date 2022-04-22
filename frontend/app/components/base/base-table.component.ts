@@ -144,12 +144,13 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
           width:30,
           hozAlign:"center",
           tooltip: (cell) =>
-            `Afficher les détail ${this.schemaConfig.display.prep_label} ${this.getCellValue(cell)}`
+            `Afficher les détail ${this.schemaConfig.display.du_label} ${this.getCellValue(cell)}`
 
         },
         {
           headerSort: false,
           formatter: (cell, formatterParams, onRendered) => {
+            console.log(this.moduleConfig.module.cruved['U'], cell._cell.row.data['cruved_ownership'])
             const editAllowed = cell._cell.row.data['cruved_ownership'] <= this.moduleConfig.module.cruved['U'];
             var html = '';
             html += `<span class="table-icon ${editAllowed ? '' : 'disabled'}"><i class='fa fa-pencil' ${editAllowed ? 'action="edit"': ''}></i></span>`;
@@ -158,9 +159,9 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
           width:25,
           hozAlign:"center",
           tooltip: (cell) => {
-            const editAllowed = cell._cell.row.data['cruved_ownership'] + 10 <= this.moduleConfig.module.cruved['U'];
+            const editAllowed = cell._cell.row.data['cruved_ownership'] <= this.moduleConfig.module.cruved['U'];
             return editAllowed
-              ? `Éditer ${this.schemaConfig.display.def_label} ${this.getCellValue(cell)}`
+              ? `Éditer ${this.schemaConfig.display.le_label} ${this.getCellValue(cell)}`
               : ''
           }
         },
@@ -219,7 +220,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   }
 
   setComponentTitle() {
-      this.componentTitle = `Liste ${this.schemaConfig.display.undef_labels}`;
+      this.componentTitle = `Liste ${this.schemaConfig.display.des_labels}`;
   }
 
   processValue(value) {

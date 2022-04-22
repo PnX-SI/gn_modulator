@@ -7,7 +7,7 @@
 >
   <div class="form-container">
     <!-- Formulaire -->
-    <div class="base-form">
+    <div class="base-form" v-if="filterValues">
       <modules-layout
         [layout]="schemaConfig.filters.form.layout"
         [data]="filterValues"

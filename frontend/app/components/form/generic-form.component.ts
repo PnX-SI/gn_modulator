@@ -42,6 +42,9 @@ export class ModulesGenericFormComponent
   }
 
   updateForm() {
+    if(!this.formGroup) {
+      return;
+    }
     this.listenToChanges = false;
     this._formService.setControls(this.formGroup, this.layout, this.data, this.globalData);
     this.listenToChanges = true;
@@ -61,6 +64,12 @@ export class ModulesGenericFormComponent
     this.updateForm();
     this.emitAction({type:'data-change'});
     this._mLayout.reComputeLayout();
+  }
+
+  postComputeLayout(): void {
+    console.log('gen form post compute layout')
+    this.updateForm();
+
   }
 
   initForm() {

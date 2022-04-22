@@ -4,8 +4,10 @@
 
 import utilsDom from './dom';
 import utilsCommons from './commons';
+import utilsForm from './form';
 
 export default {
   ...utilsCommons,
-  ...utilsDom
+  ...utilsDom,
+  ...utilsForm
 }

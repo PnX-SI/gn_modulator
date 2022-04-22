@@ -24,8 +24,10 @@
               "format": { "type": "string"},
               "description": { "type": "string"},
               "labels": { "type": "array", "items": { "type": "string"}},
+              "dateFormat": { "type": "string"},
               "required": { "type": "boolean" },
-              "dateFormat": { "type": "string"}
+              "min": { "type": "number"},
+              "max": { "type": "number"}
             },
             "required": [ "type", "title" ],
             "additionalProperties": false
@@ -120,7 +122,8 @@
               "title": { "type": "string"},
               "description": { "type": "string"},
               "index": { "type": "boolean"},
-              "trigger": { "type": "object"}
+              "trigger": { "type": "object"},
+              "required": { "type": "boolean" }
             },
             "required": [ "type", "srid", "geometry_type", "title" ],
             "additionalProperties": false

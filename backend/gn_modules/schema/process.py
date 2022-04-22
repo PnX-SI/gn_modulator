@@ -54,12 +54,12 @@ class SchemaProcess():
             schema_definition['properties'] = schema['properties']
 
         # if is_validation_schema:
-        #     schema_definition = {
-        #         'oneOf': [
-        #             {'type': 'null'},
-        #             schema_definition
-        #         ]
-        #     }
+        # schema_definition = {
+        #     'oneOf': [
+        #         {'type': 'null'},
+        #         schema_definition
+        #     ]
+        # }
 
         schema_definition['deps'] = dependencies
         schema_definition = self.process_json_schema(schema_definition)
@@ -150,12 +150,25 @@ class SchemaProcess():
                 properties[key]['$ref'] = ref
 
             if relation_def['relation_type'] == '1-n':
+
                 properties[key]['type'] = 'array'
                 properties[key]['items'] = {'$ref': ref}
+                properties[key] = {
+                    'oneOf': [
+                        {'type': 'null'},
+                        properties[key]
+                    ]
+                }
 
             if relation_def['relation_type'] == 'n-n':
                 properties[key]['type'] = 'array'
                 properties[key]['items'] = {'$ref': ref}
+                properties[key] = {
+                    'oneOf': [
+                        {'type': 'null'},
+                        properties[key]
+                    ]
+                }
 
         self.set_definition(
             self.cls.get_global_cache('js_definition'),
@@ -182,8 +195,8 @@ class SchemaProcess():
             if schema.get('type') in ['date', 'datetime', 'uuid']:
                 schema['format'] = schema.get('format', schema.get('type'))
                 schema['type'] = 'string'
-            else:
-                return {key: self.process_json_schema(elem) for key, elem in schema.items()}
+
+            return {key: self.process_json_schema(elem) for key, elem in schema.items() if key != 'required'}
 
         return schema
 

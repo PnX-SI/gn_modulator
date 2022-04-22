@@ -43,10 +43,10 @@ export class ModulesLayoutService {
       ? null
       : Array.isArray(layout)
       ? "items"
+      : ["button", "html", "message", "medias"].includes(layout.type)
+      ? layout.type
       : layout.key
       ? "key"
-      : layout.type == "button"
-      ? "button"
       : "section";
     return layoutType;
   }
@@ -156,7 +156,7 @@ export class ModulesLayoutService {
     }
 
     if (Array.isArray(layout)) {
-      return this.computeLayoutHeight(layout, elemId)
+      return this.computeLayoutHeight(layout, elemId);
     }
     return layout;
   }
@@ -164,8 +164,10 @@ export class ModulesLayoutService {
   computeLayoutHeight(items, elemId) {
     const layoutIndex =
       items && items.findIndex && items.findIndex((l) => l["overflow"]);
-    if ([-1, null, undefined].includes(layoutIndex) || !document
-    .getElementById(`${elemId}.0`)) {
+    if (
+      [-1, null, undefined].includes(layoutIndex) ||
+      !document.getElementById(`${elemId}.0`)
+    ) {
       return items;
     }
 
@@ -173,13 +175,15 @@ export class ModulesLayoutService {
       .getElementById(`${elemId}.0`)
       .closest(".layout-section").clientHeight;
 
-
     const heightSibblings = items
-      .map((l, ind) => document.getElementById(`${elemId}.${ind}`).clientHeight)
+      .map((l, ind) =>
+        document.getElementById(`${elemId}.${ind}`)
+          ? document.getElementById(`${elemId}.${ind}`).clientHeight
+          : 0
+      )
       .filter((l, ind) => ind != layoutIndex)
       .reduce((acc, cur) => acc + cur);
 
-    console.log('H1', heightParent, heightSibblings, items.map((l, ind) => document.getElementById(`${elemId}.${ind}`)));
     const height = heightParent - heightSibblings;
     // const height = 300;
 
@@ -246,7 +250,7 @@ export class ModulesLayoutService {
     if (!strFunction.includes("return ") && strFunction[0] != "{") {
       strFunction = `{ return ${strFunction} }`;
     }
-    return new Function("data", "globalData", "formGroup",  strFunction);
+    return new Function("data", "globalData", "formGroup", "utils", strFunction);
   }
 
   evalLayout({ layout, data, globalData = null, formGroup = null }) {
@@ -259,8 +263,19 @@ export class ModulesLayoutService {
     }
 
     if (this.isStrFunction(layout)) {
-      return this.evalFunction(layout)(data, globalData, formGroup);
+      return this.evalFunction(layout)(data, globalData, formGroup, utils);
     }
     return layout;
+  }
+
+  /**
+   * pour traduire un layout en formDef (pour les dynamic_form)
+   */
+  toFormDef(layout) {
+    const formDef = utils.copy(layout);
+    formDef.attribut_label = formDef.attribut_label || layout.title;
+    formDef.attribut_name = formDef.attribut_name || layout.key;
+
+    return formDef;
   }
 }

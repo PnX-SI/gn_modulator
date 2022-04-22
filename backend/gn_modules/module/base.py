@@ -4,9 +4,6 @@ from ..schema import SchemaMethods
 from sqlalchemy.orm.exc import NoResultFound
 from flask import g
 from . import errors
-from geonature.core.gn_permissions.tools import (
-    cruved_scope_for_user_in_module,
-)
 
 cache_modules_config = {}
 
@@ -144,8 +141,6 @@ class ModuleBase():
         modules_dict = module_schema.serialize_list(query.all())
 
         for module in modules_dict:
-            if hasattr(g, 'current_user'):
-                module['cruved'] = cruved_scope_for_user_in_module(g.current_user.id_role, module_code=module['module_code'])[0]
             modules_db[module['module_code']] = module
 
         return modules_db

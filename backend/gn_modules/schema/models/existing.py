@@ -2,7 +2,7 @@ from .. import errors
 
 from pypnnomenclature.models import TNomenclatures, BibNomenclaturesTypes
 from pypnusershub.db.models import User, Organisme, Application, Profils, UserApplicationRight
-from geonature.core.gn_commons.models.base import CorModuleDataset, TModules
+from geonature.core.gn_commons.models.base import CorModuleDataset, TModules, TMedias, BibTablesLocation
 from geonature.core.gn_meta.models import TDatasets, TAcquisitionFramework, CorAcquisitionFrameworkActor, CorDatasetActor
 from geonature.core.gn_synthese.models import Synthese
 from geonature.core.gn_permissions.models import TActions, TFilters, TObjects, CorRoleActionFilterModuleObject
@@ -15,6 +15,8 @@ from geonature.utils.env import db
 cache_existing_models = {
     "commons.module": TModules,
     "commons.module_jdd": CorModuleDataset,
+    "commons.media": TMedias,
+    "commons.table_location": BibTablesLocation,
     "meta.actor": CorDatasetActor,
     "meta.ca": TAcquisitionFramework,
     "meta.jdd": TDatasets,
@@ -37,6 +39,7 @@ cache_existing_models = {
     "user.organisme": Organisme,
     "user.profil": Profils,
     "user.role": User,
+
 }
 
 class SchemaModelExisting():
@@ -48,7 +51,6 @@ class SchemaModelExisting():
         if Model:
             return Model
 
-        print('arrrrrrrrg', self.schema_name())
         for Model in db.Model._decl_class_registry.values():
             if not (isinstance(Model, type) and issubclass(Model, db.Model)):
                 continue
