@@ -26,26 +26,31 @@ export class ModulesLayoutArrayComponent
   }
 
   postComputeLayout(): void {
-    const layoutIndex = this.layout && this.layout.findIndex && this.layout.findIndex((l) => l["overflow"]);
+    const layoutIndex =
+      this.layout &&
+      this.layout.findIndex &&
+      this.layout.findIndex((l) => l["overflow"]);
     if ([-1, null, undefined].includes(layoutIndex)) {
       return;
     }
 
-    console.log('postprocess array')
+    console.log("postprocess array");
     setTimeout(() => {
+      if (!document.getElementById(`${this._id}.0`)) {
+        return;
+      }
       const heightParent = document
         .getElementById(`${this._id}.0`)
-        .closest(".layout-section")
-        .clientHeight
+        .closest(".layout-section").clientHeight;
 
       const heightSibblings = this.layout
-        .map((l, ind) => document.getElementById(`${this._id}.${ind}`).clientHeight)
+        .map(
+          (l, ind) => document.getElementById(`${this._id}.${ind}`).clientHeight
+        )
         .filter((l, ind) => ind != layoutIndex)
-        .reduce(
-          (acc, cur) => acc + cur
-        );
+        .reduce((acc, cur) => acc + cur);
 
-      console.log(heightParent, heightSibblings)
+      console.log(heightParent, heightSibblings);
       const height = heightParent - heightSibblings;
       // const height = 300;
 

@@ -3,6 +3,7 @@
     par exemple la nomenclature
 '''
 
+from calendar import c
 import os
 import copy
 from pathlib import Path
@@ -10,8 +11,10 @@ from typing import Container
 import jsonschema
 import marshmallow
 from pkg_resources import resource_exists
-from sqlalchemy import schema
+from sqlalchemy import schema, text
 from sqlalchemy.orm.exc import NoResultFound
+from geonature.utils.env import db
+from utils_flask_sqla.generic import GenericTable
 
 from . import errors
 
@@ -365,3 +368,378 @@ class SchemaImports:
                 txt += '\n{}'.format(cls.txt_data_info(info, details=details))
             txt_list.append(txt)
         return '\n\n'.join(txt_list)
+
+############################################
+#
+# Bulk import
+#
+############################################
+
+    @classmethod
+    def import_bulk_data(cls, schema_name, file_path):
+        '''
+            import de données
+        '''
+
+        temp_table = "public.tmp_import_bulk_data"
+
+        #) 0) clean
+        db.engine.execute(f"DROP VIEW IF EXISTS public.v_tmp_import_bulk_data CASCADE;")
+        db.engine.execute(f"DROP VIEW IF EXISTS public.v_tmp_import_bulk_data_inter CASCADE;")
+        db.engine.execute(f"DROP TABLE IF EXISTS public.tmp_import_bulk_data CASCADE;")
+
+        # 1) csv -> table temporaire
+        cls.csv_to_temp_table(temp_table, file_path)
+
+        # 2) table temporaire -> vue d'import_1
+        v_temp_table_1 = cls.temp_table_to_import_view_1(schema_name, temp_table)
+
+        # 2.2) table temporaire -> vue d'import_2
+        v_temp_table_2 = cls.temp_table_to_import_view_2(schema_name, v_temp_table_1)
+
+
+        # 3) commande insert
+        cls.import_view_to_insert(schema_name, v_temp_table_2)
+
+        # 4) commande update
+        cls.import_view_to_update(schema_name, v_temp_table_2)
+
+        # 5) process relations
+        # cls.process_import_relations(schema_name, temp_table)
+        return "ok"
+
+
+    # @classmethod
+    # def process_import_relations(cls, schema_name, temp_table):
+    #     sm = cls(schema_name)
+    #     columns = (
+    #         GenericTable(temp_table.split('.')[1], temp_table.split('.')[0], db.engine)
+    #         .tableDef
+    #         .columns
+    #     )
+
+    #     for index, column in enumerate(columns):
+    #         if not sm.is_relationship(column.key):
+    #             continue
+    #         property = sm.property(column.key)
+
+    #         if property.get('relation_type') in ('n-n'):
+    #             rel = cls(property.get('schema_name'))
+    #             print(key, rel)
+    #             txt = f"""
+    # CREATE VIEW test_import_{rel.schema_name()} AS
+    # SELECT
+    #     UNNEST({key}) as id_nomenclature,
+    #     t.{sm.pk_field_name()}
+    #     FROM {temp_table}
+    #     JOIN {sm.sql_schema_dot_table()} t ON t.{pk_field_name}
+    # """
+
+    @classmethod
+    def import_view_to_update(cls, schema_name, v_temp_table):
+
+        sm = cls(schema_name)
+        columns = (
+            GenericTable(v_temp_table.split('.')[1], v_temp_table.split('.')[0], db.engine)
+            .tableDef
+            .columns
+        )
+
+        v_column_keys = map(
+            lambda x: x.key,
+            filter(
+                lambda x: sm.has_property(x.key) and sm.is_column(x.key),
+                columns
+            ),
+        )
+
+        v_set_keys = map(
+            lambda x: x.key,
+            filter(
+                lambda x: sm.has_property(x.key) and sm.is_column(x.key) and not sm.property(x.key).get('primary_key'),
+                columns
+            ),
+        )
+
+        txt_set_keys = ",\n    ".join(
+            map(
+                lambda x: f"{x}=a.{x}",
+                v_set_keys
+            )
+        )
+        txt_columns_keys = ",\n        ".join(v_column_keys)
+
+        txt_update = f"""
+UPDATE {sm.sql_schema_dot_table()} t SET
+    {txt_set_keys}
+FROM (
+    SELECT
+        {txt_columns_keys}
+    FROM {v_temp_table}
+)a
+WHERE a.{sm.pk_field_name()} = t.{sm.pk_field_name()}
+;
+"""
+
+        print(txt_update)
+        res = db.engine.execute(txt_update)
+
+
+    @classmethod
+    def import_view_to_insert(cls, schema_name, v_temp_table):
+
+        sm = cls(schema_name)
+        columns = (
+            GenericTable(v_temp_table.split('.')[1], v_temp_table.split('.')[0], db.engine)
+            .tableDef
+            .columns
+        )
+
+        v_column_keys = map(
+            lambda x: x.key,
+            filter(
+                lambda x: sm.has_property(x.key) and sm.is_column(x.key) and not sm.property(x.key).get('primary_key'),
+                columns
+            ),
+        )
+
+        txt_columns_keys = ",\n    ".join(v_column_keys)
+
+        txt_insert=f"""
+INSERT INTO {sm.sql_schema_dot_table()} (
+    {txt_columns_keys}
+)
+SELECT
+    {txt_columns_keys}
+FROM {v_temp_table}
+WHERE {sm.pk_field_name()} IS NULL
+;
+"""
+
+        print(txt_insert)
+        res = db.engine.execute(txt_insert)
+
+
+    @classmethod
+    def temp_table_to_import_view_1(cls, schema_name, temp_table):
+        '''
+            ajout de nomenclature type
+        '''
+        v_temp_table_1 = f"{temp_table.split('.')[0]}.v_{temp_table.split('.')[1]}_inter"
+
+        columns = (
+            GenericTable(temp_table.split('.')[1], temp_table.split('.')[0], db.engine)
+            .tableDef
+            .columns
+        )
+
+        sm = cls(schema_name)
+
+        v_txt_columns = []
+
+        # colonnes
+        for index, column in enumerate(columns):
+            txt_col = None
+            if sm.has_property(column.key) and sm.is_column(column.key) and sm.property(column.key).get('nomenclature_type'):
+                nomenclature_type = sm.property(column.key).get('nomenclature_type')
+                v_txt_columns.append(f"""CASE
+        WHEN t.{column.key} = '' THEN NULL
+        WHEN t.{column.key} IS NOT NULL AND t.{column.key} NOT LIKE '%%|%%'
+            THEN CONCAT('{nomenclature_type}','|',t.{column.key})
+        ELSE NULL
+    END AS {column.key}""")
+                continue
+            v_txt_columns.append(f"""CASE
+        WHEN t.{column.key}::text = '' THEN NULL
+        ELSE t.{column.key}
+    END AS {column.key}""")
+
+        txt_columns = ",\n    ".join(v_txt_columns)
+        txt_from = f"FROM {temp_table} t"
+
+        txt_view = f"""CREATE VIEW {v_temp_table_1} AS
+SELECT
+    {txt_columns}
+{txt_from}
+;"""
+
+        print(txt_view)
+        db.engine.execute(str(txt_view))
+
+        return v_temp_table_1
+
+
+
+
+    @classmethod
+    def temp_table_to_import_view_2(cls, schema_name, v_temp_table_1):
+        '''
+            TODO eclater le code
+            recursif sur les join ??
+        '''
+
+        v_temp_table_2 = f"{v_temp_table_1.replace('inter', '')}"
+
+        columns = (
+            GenericTable(v_temp_table_1.split('.')[1], v_temp_table_1.split('.')[0], db.engine)
+            .tableDef
+            .columns
+        )
+        sm = cls(schema_name)
+
+        v_txt_columns = []
+
+        # colonnes
+        for index, column in enumerate(columns):
+            txt_col = None
+
+            # si cle non dans schema (par ex id_import)
+            if not (sm.has_property(column.key)):
+                v_txt_columns.append(f"t.{column.key}")
+                continue
+
+            property = sm.property(column.key)
+
+            # si c'est la clé primaire
+            if property.get('primary_key'):
+                v_txt_columns.append(f"j_{index}.{column.key}")
+                continue
+
+            if property.get('foreign_key'):
+                rel = cls(property.get('schema_name'))
+                v_txt_columns.append(f"j_{index}.{rel.pk_field_name()} AS {column.key}")
+                continue
+
+            # boolean
+            if property.get('type') == "boolean":
+                v_txt_columns.append(f"""CASE WHEN t.{column.key} = 't' THEN TRUE WHEN t.{column.key} = 't' THEN FALSE ELSE NULL END AS {column.key}""")
+                continue
+
+            # number
+            if property.get('type') in ("number", "date", "integer"):
+                sql_type = "float" if property.get('type') =='number' else property.get('type')
+                v_txt_columns.append(f"t.{column.key}::{sql_type}")
+                continue
+
+                # # integer
+                # if property.get('type') == "integer":
+                #     v_txt_columns.append(f"CASE WHEN t.{column.key} = '' THEN NULL ELSE t.{column.key}::float END AS {column.key}")
+                #     continue
+
+                # # integer
+                # if property.get('type') == "date":
+                #     v_txt_columns.append(f"t.{column.key}::date")
+                #     continue
+
+            # si geom
+            if property.get('type') == "geometry":
+                v_txt_columns.append(f"ST_SETSRID(ST_FORCE2D(ST_GEOMFROMEWKT(t.{column.key})), {property.get('srid')}) AS {column.key}")
+                continue
+
+            v_txt_columns.append(f"t.{column.key}")
+
+        v_txt_joins = []
+        for index, column in enumerate(columns):
+            txt_join = None
+
+            # si cle non dans schema
+            if not (sm.has_property(column.key)):
+                continue
+
+            property = sm.property(column.key)
+            # si c'est la clé primaire
+            if property.get('primary_key'):
+
+                join_on = " AND ".join(
+                    map(
+                        lambda x: f'j_{index}.{x} = t.{x}',
+                        sm.attr('meta.unique')
+                    )
+                )
+                v_txt_joins.append(
+                    f"LEFT JOIN {sm.sql_schema_dot_table()} AS j_{index} ON {join_on}"
+                )
+                continue
+
+            if property.get('foreign_key'):
+                rel = cls(property.get('schema_name'))
+                unique = rel.attr('meta.unique')
+                cond_rel2 = ""
+                for  index_unique, k_unique in enumerate(unique):
+                    if rel.property(k_unique).get('foreign_key'):
+                        rel2 = cls(rel.property(k_unique)['schema_name'])
+                        rel2_pk_unique = rel2.attr('meta.unique')[0]
+
+    #                     if property.get('nomenclature_type'):
+    #                         v_txt_joins.append(
+    #                             f"""LEFT JOIN {rel2.sql_schema_dot_table()} AS j_{index}_0
+    # ON j_{index}_0.{rel2_pk_unique} = '{property['nomenclature_type']}'"""
+    #                         )
+    #                     else:
+                        v_txt_joins.append(
+                            f"""LEFT JOIN {rel2.sql_schema_dot_table()} AS j_{index}_0
+    ON j_{index}_0.{rel2_pk_unique} = SPLIT_PART(t.{column.key}, '|', {index_unique + 1})"""
+                        )
+                        cond_rel2 = f" AND j_{index}_0.{rel2.pk_field_name()} = j_{index}.{k_unique}"
+                    else:
+    #                     if property.get('nomenclature_type'):
+    #                         v_txt_joins.append(
+    #                             f"""LEFT JOIN {rel.sql_schema_dot_table()} AS j_{index}
+    # ON j_{index}.{k_unique} = CASE
+    #     WHEN t.{column.key} LIKE '%,%' THEN SPLIT_PART(t.{column.key}, ',', {index_unique + 1})
+    #     ELSE t.{column.key}
+    #     END{cond_rel2}"""
+    #                         )
+                        # else:
+                        v_txt_joins.append(
+                            f"""LEFT JOIN {rel.sql_schema_dot_table()} AS j_{index}
+    ON j_{index}.{k_unique} = SPLIT_PART(t.{column.key}, '|', {index_unique + 1}){cond_rel2}"""
+                        )
+
+                continue
+
+        txt_columns = ",\n    ".join(v_txt_columns)
+        txt_from = f"FROM {v_temp_table_1} t"
+        txt_joins = "\n".join(v_txt_joins)
+
+        txt_view = f"""
+CREATE VIEW {v_temp_table_2} AS
+SELECT
+{txt_columns}
+{txt_from}
+{txt_joins}
+;
+"""
+
+        print(txt_view)
+        db.engine.execute(str(txt_view))
+
+        return v_temp_table_2
+
+    @classmethod
+    def csv_to_temp_table(cls, temp_table, file_path):
+        '''
+            créé une table temporaire à partir d'un fichier csv
+        '''
+
+        with open(file_path, 'r') as f:
+            line = f.readline()
+
+            columns = line.replace('\n', '').split("\t")
+            print(columns)
+            columns_fields = ', '.join(columns)
+            columns_sql = '\n'.join(map(lambda x: f'{x} VARCHAR,', columns))
+
+            print('Create table')
+            txt_create_temp_table = f"""
+                CREATE TABLE IF NOT EXISTS {temp_table} (
+                    id_import SERIAL NOT NULL,
+                    {columns_sql}
+                    CONSTRAINT pk_{'_'.join(temp_table.split('.'))}_id_import PRIMARY KEY (id_import)
+                );
+"""
+            db.engine.execute(txt_create_temp_table)
+
+            print(f'Copy data {columns_fields}')
+            db.session.connection().connection.cursor().copy_expert(f"COPY {temp_table}({columns_fields}) FROM STDIN;", f)
+            db.session.commit()

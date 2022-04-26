@@ -6,12 +6,9 @@
 
 import click
 from flask.cli import with_appcontext
-from flask_marshmallow import Schema
 
 from .schema import SchemaMethods
 from .module import ModuleMethods
-from .schema import errors
-from gn_modules import module
 
 @click.command('init')
 @click.argument('module_code')
@@ -85,11 +82,27 @@ def cmd_doc_schema(schema_name, force=False):
     return True
 
 
+@click.command('import')
+@click.argument('schema_name')
+@click.argument('file_path', type=click.Path(exists=True))
+@with_appcontext
+def cmd_import_bulk_data(schema_name, file_path):
+    '''
+        importe des données pour un schema
+    '''
+
+    print(f'Try to import {schema_name} data from {file_path}')
+    txt = SchemaMethods.import_bulk_data(schema_name, file_path)
+    print(txt)
+    return True
+
+
 commands = [
     cmd_init_module,
     cmd_install_module,
     cmd_remove_module,
     cmd_doc_schema,
     cmd_process_all,
-    cmd_process_sql
+    cmd_process_sql,
+    cmd_import_bulk_data
 ]

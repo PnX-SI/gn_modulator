@@ -156,30 +156,34 @@ class SchemaBase():
     def name_field_name(self):
         return self.attr('meta.name_field_name', '{}_name'.format(self.object_name()))
 
-    def is_column(self, property):
-        return property.get('type') in column_types
+    def is_column(self, key):
+        return self.has_property(key) and self.property(key).get('type') in column_types
 
-    def is_column_property(self, property):
-        return property.get('type') in column_types and property.get('column_property')
+    def is_column_property(self, key):
+        return (
+            self.has_property(key)
+            and self.property(key).get('type') in column_types
+            and self.property(key).get('column_property')
+        )
 
-    def is_relationship(self, property):
-        return property['type'] == 'relation'
+    def is_relationship(self, key):
+        return  self.has_property(key) and self.property(key)['type'] == 'relation'
 
     def column_keys(self, sort=False):
-        column_keys = [k for k, v in self.properties().items() if self.is_column(v)]
+        column_keys = [k for k, v in self.properties().items() if self.is_column(k)]
         if sort:
             column_keys.sort()
         return column_keys
 
     def column_properties_keys(self, sort=False):
-        column_keys = [k for k, v in self.properties().items() if self.is_column_property(v)]
+        column_keys = [k for k, v in self.properties().items() if self.is_column_property(k)]
         if sort:
             column_keys.sort()
         return column_keys
 
 
     def relationship_keys(self):
-        return [k for k, v in self.properties().items() if self.is_relationship(v)]
+        return [k for k, v in self.properties().items() if self.is_relationship(k)]
 
     def properties(self):
         return self.definition['properties']
