@@ -55,7 +55,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
 
   processData(data) {
     this.data = data;
-    console.log(data["cruved_ownership"], this.moduleConfig.module.cruved["U"])
+    console.log(data["cruved_ownership"], this.moduleConfig.module.cruved["U"]);
     this.bEditAllowed =
       data["cruved_ownership"] <= this.moduleConfig.module.cruved["U"];
     this.setComponentTitle();
@@ -78,14 +78,14 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
         },
       ],
     };
-    console.log('setLayerData')
+    console.log("setLayerData");
     this.setLayersData(true);
   }
 
   setComponentTitle(): void {
-    this.componentTitle = `Propriétés ${
-      this.schemaConfig.display.du_label
-    } ${this.pkFieldName()}=${this.value}`;
+    this.componentTitle = `Propriétés ${this.schemaConfig.display.du_label} ${
+      this.data[this.schemaConfig.utils.label_field_name]
+    }`;
   }
 
   setLayersData(flyToPoint = false) {
@@ -121,11 +121,9 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
         const filters = {};
         filters[this.pkFieldName()] = this.id();
         const layer = this._services.mapService.findLayer(this.mapId, filters);
-        console.log('ururuuru', layer)
-
+        console.log("ururuuru", layer);
       });
     }
-
   }
 
   onAction(event) {

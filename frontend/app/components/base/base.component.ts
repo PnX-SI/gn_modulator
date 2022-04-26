@@ -102,6 +102,11 @@ export class BaseComponent implements OnInit {
     return this.data[this.schemaConfig.utils.pk_field_name];
   }
 
+  label() {
+    return this.data[this.schemaConfig.utils.label_field_name];
+  }
+
+
   emitEvent(event) {
     this.onEvent.emit(event);
     setTimeout(()=> {});

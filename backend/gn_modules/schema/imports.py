@@ -405,35 +405,28 @@ class SchemaImports:
         cls.import_view_to_update(schema_name, v_temp_table_2)
 
         # 5) process relations
-        # cls.process_import_relations(schema_name, temp_table)
+        cls.process_import_relations(schema_name, temp_table)
         return "ok"
 
 
-    # @classmethod
-    # def process_import_relations(cls, schema_name, temp_table):
-    #     sm = cls(schema_name)
-    #     columns = (
-    #         GenericTable(temp_table.split('.')[1], temp_table.split('.')[0], db.engine)
-    #         .tableDef
-    #         .columns
-    #     )
+    @classmethod
+    def process_import_relations(cls, schema_name, temp_table):
+        sm = cls(schema_name)
+        columns = (
+            GenericTable(temp_table.split('.')[1], temp_table.split('.')[0], db.engine)
+            .tableDef
+            .columns
+        )
 
-    #     for index, column in enumerate(columns):
-    #         if not sm.is_relationship(column.key):
-    #             continue
-    #         property = sm.property(column.key)
+        for index, column in enumerate(columns):
+            txt_vue_rel = ""
+            if not sm.is_relationship(column.key):
+                continue
+            property = sm.property(column.key)
 
-    #         if property.get('relation_type') in ('n-n'):
-    #             rel = cls(property.get('schema_name'))
-    #             print(key, rel)
-    #             txt = f"""
-    # CREATE VIEW test_import_{rel.schema_name()} AS
-    # SELECT
-    #     UNNEST({key}) as id_nomenclature,
-    #     t.{sm.pk_field_name()}
-    #     FROM {temp_table}
-    #     JOIN {sm.sql_schema_dot_table()} t ON t.{pk_field_name}
-    # """
+            if property.get('relation_type') in ('n-n'):
+                rel = cls(property.get('schema_name'))
+                print(column.key)
 
     @classmethod
     def import_view_to_update(cls, schema_name, v_temp_table):
@@ -536,10 +529,12 @@ WHERE {sm.pk_field_name()} IS NULL
         sm = cls(schema_name)
 
         v_txt_columns = []
-
+        v_txt_joins = []
+        v_txt_withs = []
         # colonnes
         for index, column in enumerate(columns):
-            txt_col = None
+
+            # nomenclature
             if sm.has_property(column.key) and sm.is_column(column.key) and sm.property(column.key).get('nomenclature_type'):
                 nomenclature_type = sm.property(column.key).get('nomenclature_type')
                 v_txt_columns.append(f"""CASE
@@ -549,6 +544,35 @@ WHERE {sm.pk_field_name()} IS NULL
         ELSE NULL
     END AS {column.key}""")
                 continue
+
+            # relations
+            if sm.is_relationship(column.key):
+                property = sm.property(column.key)
+                if property.get('nomenclature_type') and property['relation_type'] in ('n-1', 'n-n'):
+                    v_txt_columns.append(f"j_{index}.{column.key} AS {column.key}")
+                    v_txt_joins.append(f"LEFT JOIN w_{column.key} j_{index} ON j_{index}.{sm.pk_field_name()} = t.{sm.pk_field_name()}")
+                    v_txt_withs.append(f"""pre_w_{column.key} AS (
+    SELECT
+        t.{sm.pk_field_name()},
+        UNNEST(STRING_TO_ARRAY(t.{column.key}, ',')) AS {column.key}
+        FROM {temp_table} t
+    ),
+w_{column.key} AS (
+    SELECT
+        p.{sm.pk_field_name()},
+        STRING_AGG(
+            CASE
+                WHEN p.{column.key} = '' THEN NULL
+                WHEN p.{column.key} IS NOT NULL AND p.{column.key} NOT LIKE '%%|%%'
+                    THEN CONCAT('{nomenclature_type}','|', p.{column.key})
+                ELSE NULL
+            END
+        , ',') AS {column.key}
+    FROM pre_w_{column.key} p
+    GROUP BY {sm.pk_field_name()}
+)""")
+                    continue
+
             v_txt_columns.append(f"""CASE
         WHEN t.{column.key}::text = '' THEN NULL
         ELSE t.{column.key}
@@ -556,11 +580,15 @@ WHERE {sm.pk_field_name()} IS NULL
 
         txt_columns = ",\n    ".join(v_txt_columns)
         txt_from = f"FROM {temp_table} t"
+        txt_join = "\n".join(v_txt_joins)
+        txt_with = "WITH\n" + ",\n".join(v_txt_withs) if v_txt_withs else ''
 
         txt_view = f"""CREATE VIEW {v_temp_table_1} AS
+{txt_with}
 SELECT
     {txt_columns}
 {txt_from}
+{txt_join}
 ;"""
 
         print(txt_view)

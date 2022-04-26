@@ -47,6 +47,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
         this.setDataGeom(event.layer);
         this.setLayersData();
       });
+
     });
 
     for (const [key, AdditionalWidget] of Object.entries(additionalWidgets)) {
@@ -55,7 +56,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     setTimeout(() => {
       this.bDraw = true;
     }, 3000);
-    // this.initHeight();
+    this.initHeight();
   }
 
   setDataGeom(layer) {
@@ -69,7 +70,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
   setComponentTitle(): void {
     this.componentTitle = this.id()
-      ? `Modification ${this.schemaConfig.display.du_label} ${this.id()}`
+      ? `Modification ${this.schemaConfig.display.du_label} ${this.label()}`
       : `Creation ${this.schemaConfig.display.un_nouveau_label}`;
   }
 
@@ -87,7 +88,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
             "  return id",
             "    ? `Modification " +
               this.schemaConfig.display.du_label +
-              " ${id}`",
+              " ${data." + this.schemaConfig.utils.label_field_name + "}`",
             `    : "Création + ${this.schemaConfig.display.un_nouveau_label}";`,
             "}",
           ],
