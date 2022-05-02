@@ -46,6 +46,9 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
     return new Promise((resolve, reject) => {
       const fields = this.columns().map(column => column.field);
       fields.push('cruved_ownership')
+      if(!fields.includes(this.schemaConfig.utils.pk_field_name)){
+        fields.push(this.schemaConfig.utils.pk_field_name)
+      }
       const params = {
         ...paramsTable
       };

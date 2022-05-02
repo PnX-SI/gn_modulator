@@ -34,13 +34,13 @@ class SchemaConfigLayout():
                     layout['title'] = layout.get('title', definition['title'])
 
                 definition = self.property(layout['key'])
+                layout['required'] = self.is_required(layout['key'])
                 for key in [
                     'title',
                     'description',
                     'type',
                     'schema_name',
                     'nomenclature_type',
-                    'required',
                     'min',
                     'max'
                 ]:

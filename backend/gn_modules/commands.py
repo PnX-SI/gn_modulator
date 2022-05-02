@@ -84,16 +84,16 @@ def cmd_doc_schema(schema_name, force=False):
 
 @click.command('import')
 @click.argument('schema_name')
-@click.argument('file_path', type=click.Path(exists=True))
+@click.argument('data_file_path', type=click.Path(exists=True))
+@click.option('-p', '--pre-process', 'pre_process_file_path', type=click.Path(exists=True), help="chemin vers le script sql de pre-process")
+@click.option('-v', '--verbose', is_flag=True, help="affiche les commandes sql")
 @with_appcontext
-def cmd_import_bulk_data(schema_name, file_path):
+def cmd_import_bulk_data(schema_name, data_file_path, pre_process_file_path=None, verbose=False):
     '''
         importe des données pour un schema
     '''
 
-    print(f'Try to import {schema_name} data from {file_path}')
-    txt = SchemaMethods.import_bulk_data(schema_name, file_path)
-    print(txt)
+    txt = SchemaMethods.process_csv_file(schema_name, data_file_path, pre_process_file_path, verbose)
     return True
 
 
