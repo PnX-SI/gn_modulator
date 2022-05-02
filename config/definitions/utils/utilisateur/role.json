@@ -1,4 +1,5 @@
 {
+    "required": ["identifiant", "nom_role", "prenom_role", "id_organism"],
     "meta": {
         "schema_name": "user.role",
         "autoschema": true,

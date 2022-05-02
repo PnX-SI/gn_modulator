@@ -195,10 +195,8 @@ FROM pre_process
 
         sm = cls(schema_name)
 
-        txt_pk_column, v_join = sm.resolve_key(sm.pk_field_name(), alias_join_base="j_pk")
-
-        v_columns = [txt_pk_column]
-        v_joins = v_join
+        v_columns = []
+        v_joins = []
 
         columns = filter(
             lambda x: (
@@ -208,11 +206,25 @@ FROM pre_process
             cls.get_table_columns(raw_import_view)
         )
 
+        solved_keys = {}
+
         for index, column in enumerate(columns):
             txt_column, v_join = sm.process_column_import_view(index, column.key)
             if txt_column:
-                v_columns.append(txt_column)
+                # TODO n-n ici ????
+                if sm.has_property(column.key) and sm.property(column.key).get('relation_type') == 'n-n':
+                    rel = cls(sm.property(column.key)['schema_name'])
+                    v_columns.append(
+                        f"{txt_column.split('.')[0]}.{rel.pk_field_name()}"
+                    )
+                else:
+                    v_columns.append(f'{txt_column} AS {column.key}')
+            solved_keys[column.key] = txt_column
             v_joins += v_join
+
+        txt_pk_column, v_join = sm.resolve_key(sm.pk_field_name(), alias_join_base="j_pk", solved_keys=solved_keys)
+        v_columns.append(txt_pk_column)
+        v_joins += v_join
 
         txt_columns = ",\n    ".join(v_columns)
         txt_joins = "\n".join(v_joins)
@@ -224,7 +236,7 @@ FROM {raw_import_view} t
 {txt_joins}
 """
 
-    def resolve_key(self, key, index=None, alias_main='t', alias_join_base="j", key_column=None):
+    def resolve_key(self, key, index=None, alias_main='t', alias_join_base="j", solved_keys={}):
         '''
         compliqué
         crée le txt pour
@@ -234,9 +246,7 @@ FROM {raw_import_view} t
 
         alias_join = alias_join_base if index is None else f"{alias_join_base}_{index}"
 
-        key_column = key_column or key
-
-        txt_column = f"{alias_join}.{self.pk_field_name()} AS {key_column}"
+        txt_column = f"{alias_join}.{self.pk_field_name()}"
 
         uniques = self.attr('meta.unique')
         v_join = []
@@ -250,26 +260,35 @@ FROM {raw_import_view} t
             var_key = self.var_key(key, k_unique, index_unique, link_joins, alias_main)
 
             if self.property(k_unique).get('foreign_key'):
-                rel = self.cls(self.property(k_unique)['schema_name'])
-                txt_column_join, v_join_inter = (
-                    rel
-                    .resolve_key(
-                        var_key,
-                        index_unique,
-                        alias_main=alias_join,
-                        alias_join_base=alias_join
-                    )
-                )
-                v_join += v_join_inter
 
-                link_joins[k_unique] = f"{alias_join}_{index_unique}.{rel.pk_field_name()}"
+                if k_unique in solved_keys:
+                    link_joins[k_unique] = solved_keys[k_unique]
+                else:
+                    rel = self.cls(self.property(k_unique)['schema_name'])
+                    txt_column_join, v_join_inter = (
+                        rel.resolve_key(
+                            var_key,
+                            index_unique,
+                            alias_main=alias_join,
+                            alias_join_base=alias_join
+                        )
+                    )
+                    v_join += v_join_inter
+
+                    link_joins[k_unique] = f"{alias_join}_{index_unique}.{rel.pk_field_name()}"
 
         # creation des joins avec les conditions
         v_join_on = []
 
         for index_unique, k_unique in enumerate(uniques):
             var_key = self.var_key(key, k_unique, index_unique, link_joins, alias_main)
-            v_join_on.append(f"{alias_join}.{k_unique} = {var_key}")
+            # !!!(SELECT (NULL = NULL) => NULL)
+            txt_join_on = (
+                f"{alias_join}.{k_unique} = {var_key}"
+                if self.is_required(k_unique) else
+                f"({alias_join}.{k_unique} = {var_key} OR ({alias_join}.{k_unique} IS NULL AND {var_key} IS NULL))"
+            )
+            v_join_on.append(txt_join_on)
 
         txt_join_on = "\n        AND ".join(v_join_on)
         txt_join = f"LEFT JOIN {self.sql_schema_dot_table()} {alias_join} ON\n      {txt_join_on}"
@@ -312,7 +331,10 @@ FROM {raw_import_view} t
 
         if property.get('relation_type') == 'n-n':
             rel = self.cls(property['schema_name'])
-            return rel.resolve_key(key, index, key_column=rel.pk_field_name())
+            return rel.resolve_key(key, index)
+
+            # txt_column, v_join = rel.resolve_key(key, index)
+            # return f"{txt_column.split('.')[0]}.{rel.pk_field_name()}", v_join
 
         return f't.{key}', []
 

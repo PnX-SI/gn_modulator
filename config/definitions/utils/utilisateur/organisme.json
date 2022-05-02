@@ -1,4 +1,5 @@
 {
+    "required": ["nom_organisme"],
     "meta": {
         "schema_name": "user.organisme",
         "autoschema": true,

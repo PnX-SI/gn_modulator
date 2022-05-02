@@ -14,14 +14,15 @@ class SchemaBulkImports():
         raw_import_view = f"public.v_raw_import_{sm.schema_name('_')}"
         processed_import_view = f"public.v_processed_import_{sm.schema_name('_')}"
 
-        print(raw_import_table)
+        # cls.bulk_import_process_relations(schema_name, raw_import_table, verbose)
+        # DEV
+        # return
 
         db.engine.execute(f'DROP TABLE IF EXISTS {raw_import_table} CASCADE;')
         # db.engine.execute(f'DROP VIEW IF EXISTS {pre_processed_view} CASCADE;')
         # db.engine.execute(f'SELECT * FROM {raw_import_table} LIMIT 1;')
         # db.engine.execute(f'SELECT * FROM {pre_processed_view} LIMIT 1;')
         db.session.commit()
-
         # return
 
         # 0) clean
@@ -58,6 +59,7 @@ class SchemaBulkImports():
         # 3) vue brute -> vue prête pour l'import avec les clés étrangéres et primaires résolues
         txt_create_processed_import_view = cls.txt_create_processed_import_view(schema_name, raw_import_view, processed_import_view)
         verbose and print(txt_create_processed_import_view)
+        # print(txt_create_processed_import_view)
         db.engine.execute(txt_create_processed_import_view)
         db.engine.execute(f'SELECT * FROM {processed_import_view} LIMIT 1')
 
@@ -69,7 +71,6 @@ class SchemaBulkImports():
 
         # return
         # 4) INSERT / UPDATE
-
         # 4-1) INSERT
         txt_import_view_to_insert = cls.txt_import_view_to_insert(schema_name, processed_import_view)
         verbose and print(txt_import_view_to_insert)
@@ -103,7 +104,6 @@ class SchemaBulkImports():
 
     @classmethod
     def bulk_import_process_relation_n_n(cls, schema_name, raw_import_table, key, verbose):
-
         sm = cls(schema_name)
 
         property = sm.property(key)

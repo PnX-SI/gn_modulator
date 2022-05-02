@@ -1,4 +1,5 @@
 {
+    "required": ["id_type", "cd_nomenclature"],
     "meta": {
         "schema_name": "ref_nom.nomenclature",
         "autoschema": true,

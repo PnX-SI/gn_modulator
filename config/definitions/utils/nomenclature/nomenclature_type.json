@@ -1,4 +1,5 @@
 {
+    "required": ["mnemonique"],
     "meta": {
         "schema_name": "ref_nom.type",
         "autoschema": true,
@@ -15,10 +16,4 @@
         "label": "nomenclature",
         "label_field_name": "label_fr"
     }
-    // "properties": {
-    //     "id_type": { "type": "integer", "label": "ID type", "primary_key": true},
-    //     "mnemonique": { "type": "string", "label": "Type code"},
-    //     "label_default": { "type": "string", "label": "Label par defaut"},
-    //     "label_fr": { "type": "string", "label": "Label (fr)"}
-    // }
 }

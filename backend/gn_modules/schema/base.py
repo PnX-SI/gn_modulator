@@ -68,13 +68,17 @@ class SchemaBase():
     # utils - schema parser
 
     def required(self):
-        return self.definition.get('required', [])
+        return self.attr("required", [])
 
     def is_required(self, key):
 
         return (
-            self.properties()[key].get('required') or key in self.required() if key in self.properties()
-            else False
+            key in self.properties()
+            and (
+                self.properties()[key].get('required')
+                or key in self.required()
+                or key in self.pk_field_names()
+            )
         )
 
     def attr(self, prop=None, default=None):
