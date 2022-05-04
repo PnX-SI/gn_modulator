@@ -21,12 +21,15 @@ export class ModulesRequestService {
   init() {
   }
 
-  /**
-   *
-   */
+  /** Renvoie l'url en prenant en compte les query params */
+  url(baseUrl, params={}) {
+    return `${baseUrl}${this.sQueryParams(params)}`
+  }
+
+  /** */
   request(method, url, {params={}, data={}, cache=false} = {}): Observable<any> {
     return new Observable<any>(observer => {
-      const urlRequest = `${url}${this.sQueryParams(params)}`
+      const urlRequest = this.url(url, params)
       if ( cache && this._cacheRequests[urlRequest]) {
         observer.next(this._cacheRequests[urlRequest]);
         return observer.complete();

@@ -307,3 +307,19 @@ class SchemaBase():
             return [self.remove_field(field_name, v) for v in schema]
 
         return schema
+
+
+    ## A mettre ailleurs
+
+    def process_csv_data(self, data):
+        """
+        pour rendre les sorties des relations jolies pour l'export ??
+        """
+
+        if isinstance(data, list):
+            return ", ".join([self.process_csv_data(d) for d in data])
+
+        if isinstance(data, dict):
+            return "_".join([self.process_csv_data(data[key]) for key in data.keys()])
+
+        return data

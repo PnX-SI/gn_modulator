@@ -42,6 +42,7 @@ import { ModulesFormService } from "./services/form.service";
 import { ModulesRequestService } from "./services/request.service";
 import { ModulesMapService } from "./services/map.service";
 import { ModulesTableService } from "./services/table.service";
+import { ModulesSchemaService } from "./services/schema.service";
 import { ListFormService } from "./services/list-form.service";
 
 import { MatTableModule } from "@angular/material/table";
@@ -100,6 +101,7 @@ const routes: Routes = [
     ModulesMapService,
     ModulesRouteService,
     ModulesTableService,
+    ModulesSchemaService
   ],
   bootstrap: [],
   entryComponents: [PageComponent],

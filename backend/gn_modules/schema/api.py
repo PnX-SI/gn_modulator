@@ -5,9 +5,9 @@
 import json
 import copy
 from flask.views import MethodView
-from flask import request, jsonify
+from flask import request, jsonify, Response
 from functools import wraps
-
+import csv
 from geonature.core.gn_permissions import decorators as permissions
 from geonature.utils.config import config
 
@@ -30,6 +30,24 @@ from .errors import SchemaLoadError, SchemaUnsufficientCruvedRigth
 #             return 'Erreur Cruved : {}'.format(str(e))
 
 #     return _check_cruved_on_row
+
+class Line(object):
+    def __init__(self):
+        self._line = None
+
+    def write(self, line):
+        self._line = line
+
+    def read(self):
+        return self._line
+
+
+def iter_csv(data):
+    line = Line()
+    writer = csv.writer(line)
+    for csv_line in data:
+        writer.writerow(csv_line)
+        yield line.read()
 
 class SchemaApi():
     '''
@@ -101,14 +119,20 @@ class SchemaApi():
             'page': self.load_param(request.args.get('page', 'null')),
             'size': self.load_param(request.args.get('size', 'null')),
             'sorters': self.load_param(request.args.get('sorters', '[]')),
-            "value": self.load_param(request.args.get('value', 'null'))
+            "value": self.load_param(request.args.get('value', 'null')),
+            'as_csv': self.load_param(request.args.get('as_csv', 'false')),
         }
         return params
 
     def load_param(self, param):
         if param == 'undefined':
             return None
-        return json.loads(param)
+
+        # pour traiter les true false
+        try:
+            return json.loads(param)
+        except Exception:
+            return param
 
     def schema_api_dict(self):
         '''
@@ -187,6 +211,27 @@ class SchemaApi():
                     out['fields'] += ['x', 'y']
                     out['fields'].remove(self.geometry_field_name())
                     out['data'] = data
+
+                if params.get('as_csv'):
+                    if not out['data']:
+                        return '', 404
+                    data_csv = []
+                    keys = list(params.get('fields', out['data'][0].keys()))
+                    data_csv.append(keys)
+                    data_csv += [
+                        [
+                            self.process_csv_data(d[key])
+                            for key in keys
+                        ] for d in out['data']
+                    ]
+
+                    if params.get('as_csv') == 'test':
+                        return jsonify(data_csv)
+
+                    response = Response(iter_csv(data_csv), mimetype='text/csv')
+                    response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
+                    return response
+
                 return out
 
         def post_rest(self_mv):

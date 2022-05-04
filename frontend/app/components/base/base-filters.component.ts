@@ -63,6 +63,7 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
   }
 
   onSubmit() {
+    this._services.schema.get(this.schemaName).filters = this.getFilters();
     this.emitEvent({
       action: "filters",
       params: {
