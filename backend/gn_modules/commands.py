@@ -83,21 +83,45 @@ def cmd_doc_schema(schema_name, force=False):
 
 
 @click.command('import')
-@click.argument('schema_name')
-@click.argument('data_file_path', type=click.Path(exists=True))
+@click.option('-s', 'schema_name')
+@click.option('-d', 'data_file_path', type=click.Path(exists=True))
 @click.option('-p', '--pre-process', 'pre_process_file_path', type=click.Path(exists=True), help="chemin vers le script sql de pre-process")
+@click.option('-i', '--import-file', 'import_file_path', type=click.Path(exists=True), help="chemin vers le fichier json d'imports")
 @click.option('-v', '--verbose', is_flag=True, help="affiche les commandes sql")
+@click.option('-k', '--keep-raw', is_flag=True, help="garde le csv en base")
 @with_appcontext
-def cmd_import_bulk_data(schema_name, data_file_path, pre_process_file_path=None, verbose=False):
+def cmd_import_bulk_data(schema_name=None, import_file_path=None, data_file_path=None, pre_process_file_path=None, verbose=False, keep_raw=False):
     '''
         importe des données pour un schema
     '''
 
-    txt = SchemaMethods.process_csv_file(schema_name, data_file_path, pre_process_file_path, verbose)
+    if schema_name and data_file_path:
+        SchemaMethods.process_csv_file(
+            schema_name=schema_name,
+            data_file_path=data_file_path,
+            pre_process_file_path=pre_process_file_path,
+            verbose=verbose,
+            keep_raw=keep_raw
+        )
+
+    if import_file_path:
+        SchemaMethods.process_import_file(import_file_path, verbose)
+
     return True
 
 
+@click.command('test')
+@with_appcontext
+def cmd_test():
+    '''
+        importe des données pour un schema
+    '''
+
+    print('test')
+    return True
+
 commands = [
+    cmd_test,
     cmd_init_module,
     cmd_install_module,
     cmd_remove_module,

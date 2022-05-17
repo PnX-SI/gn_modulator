@@ -1,3 +1,5 @@
+from geonature.utils.env import db
+
 cor_type = [
     {
         'definition': 'integer',
@@ -47,6 +49,7 @@ class SchemaTypes():
             inter = inter.split(',')
             geometry_type = inter[0]
             srid = int(inter[1])
+
             return {
                 "type": "geometry",
                 "srid": srid,

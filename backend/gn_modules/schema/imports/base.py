@@ -266,7 +266,6 @@ class SchemaBaseImports:
                 v_errors.append({"value": value, "data": d, "error": msg_error})
 
             except marshmallow.exceptions.ValidationError as e:
-                print(e)
                 key = list(e.messages.keys())[0]
                 msg_error = (
                     '{values} : {key}={quote}{value}{quote} ({msg}) (m)'
@@ -284,7 +283,7 @@ class SchemaBaseImports:
                 msg_error = (
                     '{values}: {err}'
                     .format(
-                        values=', '.join(values),
+                        values=', '.join(map(lambda x: str(x), values)),
                         err=str(e)
                     )
                 )

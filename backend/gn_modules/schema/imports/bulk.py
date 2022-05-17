@@ -1,39 +1,61 @@
 from geonature.utils.env import db
+from pathlib import Path
+
+schema_import = 'gn_modules_import'
 
 class SchemaBulkImports():
 
     @classmethod
-    def process_csv_file(cls, schema_name, file_path, pre_process_file_path=None, verbose=False):
+    def process_import_file(cls, import_file_path, verbose=False):
+        '''
+            import_file est le chemin vers un fichier json qui contient
+            les différents fichiers à importer
+        '''
+
+        data = cls.load_json_file(import_file_path)
+
+        for d in data:
+            data_file_path = Path(import_file_path).parent / d['data']
+            pre_process_file_path = (
+                Path(import_file_path).parent / d['pre_process'] if d.get('pre_process')
+                else None
+            )
+            cls.process_csv_file(
+                schema_name=d['schema_name'],
+                data_file_path=data_file_path,
+                pre_process_file_path=pre_process_file_path,
+                keep_raw=d.get('keep_raw'),
+                verbose=verbose
+            )
+
+    @classmethod
+    def process_csv_file(cls, schema_name, data_file_path, pre_process_file_path=None, verbose=False, keep_raw=False):
         '''
             import de données
+
+            todo tout types de données
         '''
 
+        db.engine.execute(f"CREATE SCHEMA IF NOT exists {schema_import}")
+
         sm = cls(schema_name)
-        raw_import_table = f"public.tmp_import_{sm.schema_name('_')}"
-        pre_processed_view = f"public.v_pre_processed_import_{sm.schema_name('_')}"
-        raw_import_view = f"public.v_raw_import_{sm.schema_name('_')}"
-        processed_import_view = f"public.v_processed_import_{sm.schema_name('_')}"
-
-        # cls.bulk_import_process_relations(schema_name, raw_import_table, verbose)
-        # DEV
-        # return
-
-        db.engine.execute(f'DROP TABLE IF EXISTS {raw_import_table} CASCADE;')
-        # db.engine.execute(f'DROP VIEW IF EXISTS {pre_processed_view} CASCADE;')
-        # db.engine.execute(f'SELECT * FROM {raw_import_table} LIMIT 1;')
-        # db.engine.execute(f'SELECT * FROM {pre_processed_view} LIMIT 1;')
-        db.session.commit()
-        # return
+        raw_import_table = f"{schema_import}.tmp_import_{Path(data_file_path).stem}"
+        pre_processed_view = f"{schema_import}.v_pre_processed_import_{sm.schema_name('_')}"
+        raw_import_view = f"{schema_import}.v_raw_import_{sm.schema_name('_')}"
+        processed_import_view = f"{schema_import}.v_processed_import_{sm.schema_name('_')}"
 
         # 0) clean
-        cls.clean_import(raw_import_view)
-        # db.engine.execute(f"DROP VIEW IF EXISTS {processed_import_view}")
-        # db.engine.execute(f"DROP VIEW IF EXISTS {raw_import_view}")
-        # db.engine.execute(f"DROP VIEW IF EXISTS {pre_processed_view}")
-        # db.engine.execute(f"DROP TABLE IF EXISTS {raw_import_table}")
+        if not keep_raw:
+            db.engine.execute(f'DROP TABLE IF EXISTS {raw_import_table} CASCADE')
+        else:
+            db.engine.execute(f'DROP VIEW IF EXISTS {pre_processed_view} CASCADE')
+            db.engine.execute(f'DROP VIEW IF EXISTS {raw_import_view} CASCADE')
 
         # 1) csv -> table temporaire
-        cls.bulk_import_process_csv(schema_name, file_path, raw_import_table)
+        if not (cls.c_sql_schema_dot_table_exists(raw_import_table)  and keep_raw):
+            print(f'-- import csv_file {data_file_path.name} into {raw_import_table}')
+            cls.bulk_import_process_csv(schema_name, data_file_path, raw_import_table)
+
         nb_csv = db.engine.execute(f"SELECT COUNT(*) FROM {raw_import_table}").fetchone()[0]
 
         # 2) pre-process
@@ -45,6 +67,7 @@ class SchemaBulkImports():
                     .replace(':pre_processed_import_view', pre_processed_view)
                     .replace('%', '%%')
                 )
+
                 verbose and print(txt_pre_process_raw_import_view.replace('%%', '%'))
                 db.engine.execute(txt_pre_process_raw_import_view)
                 raw_import_table = pre_processed_view
@@ -66,8 +89,9 @@ class SchemaBulkImports():
         nb_processed = db.engine.execute(f"SELECT COUNT(*) FROM {processed_import_view}").fetchone()[0]
         nb_raw = db.engine.execute(f"SELECT COUNT(*) FROM {raw_import_view}").fetchone()[0]
         nb_insert = db.engine.execute(f"SELECT COUNT(*) FROM {processed_import_view} WHERE {sm.pk_field_name()} IS NULL").fetchone()[0]
-        nb_update = db.engine.execute(f"SELECT COUNT(*) FROM {processed_import_view} WHERE {sm.pk_field_name()} IS NOT NULL").fetchone()[0]
-        print(f'-- {schema_name} CSV {nb_csv} RAW {nb_raw} PROCESSED {nb_processed} INSERT {nb_insert} UPDATE {nb_update}')
+        verbose and print(cls.txt_nb_update(schema_name, processed_import_view))
+        nb_update = db.engine.execute(cls.txt_nb_update(schema_name, processed_import_view)).fetchone()[0]
+        nb_schema_avant = db.engine.execute(f"SELECT COUNT(*) FROM {cls(schema_name).sql_schema_dot_table()}").fetchone()[0]
 
         # return
         # 4) INSERT / UPDATE
@@ -76,10 +100,15 @@ class SchemaBulkImports():
         verbose and print(txt_import_view_to_insert)
         db.engine.execute(txt_import_view_to_insert)
 
+        nb_schema_apres = db.engine.execute(f"SELECT COUNT(*) FROM {cls(schema_name).sql_schema_dot_table()}").fetchone()[0]
+
+        print(f'-- {schema_name} CSV {nb_csv} RAW {nb_raw} PROCESSED {nb_processed} INSERT {nb_insert} UPDATE {nb_update} AVANT {nb_schema_avant} APRES {nb_schema_apres}')
+
         # 4-2) UPDATE
-        txt_import_view_to_update = cls.txt_import_view_to_update(schema_name, processed_import_view)
-        verbose and print(txt_import_view_to_update)
-        db.engine.execute(txt_import_view_to_update)
+        if nb_update:
+            txt_import_view_to_update = cls.txt_import_view_to_update(schema_name, processed_import_view)
+            verbose and print(txt_import_view_to_update)
+            db.engine.execute(txt_import_view_to_update)
 
         # # 5) process relations ???
         ## ?? au moins n-n
@@ -110,11 +139,11 @@ class SchemaBulkImports():
         cor_table = property['schema_dot_table']
         rel = cls(property['schema_name'])
 
-        raw_delete_import_view = f"public.v_raw_delete_import_{sm.schema_name('_')}_{key}"
-        processed_delete_import_view = f"public.v_processed_delete_import_{sm.schema_name('_')}_{key}"
-        raw_import_view = f"public.v_raw_import_{sm.schema_name('_')}_{key}"
-        pre_processed_view = f"public.v_pre_processed_import_{sm.schema_name('_')}"
-        processed_import_view = f"public.v_processed_import_{sm.schema_name('_')}_{key}"
+        raw_delete_import_view = f"{schema_import}.v_raw_delete_import_{sm.schema_name('_')}_{key}"
+        processed_delete_import_view = f"{schema_import}.v_processed_delete_import_{sm.schema_name('_')}_{key}"
+        raw_import_view = f"{schema_import}.v_raw_import_{sm.schema_name('_')}_{key}"
+        pre_processed_view = f"{schema_import}.v_pre_processed_import_{sm.schema_name('_')}"
+        processed_import_view = f"{schema_import}.v_processed_import_{sm.schema_name('_')}_{key}"
 
         # 0) clean
         db.engine.execute(f'DROP VIEW IF EXISTS {processed_import_view}')
@@ -160,12 +189,6 @@ DELETE FROM {cor_table} t
         verbose and print(txt_insert)
         db.engine.execute(txt_insert)
 
-        # 0) clean
-        # db.engine.execute(f'DROP VIEW IF EXISTS {processed_import_view}')
-        # db.engine.execute(f'DROP VIEW IF EXISTS {raw_import_view}')
-        # db.engine.execute(f'DROP VIEW IF EXISTS {processed_delete_import_view}')
-        # db.engine.execute(f'DROP VIEW IF EXISTS {raw_delete_import_view}')
-
 
     @classmethod
     def bulk_import_process_csv(cls, schema_name, file_path, raw_import_table):
@@ -173,14 +196,16 @@ DELETE FROM {cor_table} t
             cree une vue a partir d'un fichier csv pour pouvoir traiter les données ensuite
 
             le fichier csv
-                separateurs : tabs
-                pas de quote
+                separateur : ';'
             créé
                 - une table temporaire pour avoir les données du csv en varchar
                 - une vue pour passer les champs en '' à NULL
         '''
 
+        # db.engine.execute(f"SELECT gn_imports.load_csv_file(file_path, raw_import_table)")
+
         sm = cls(schema_name)
+
 
         with open(file_path, 'r') as f:
 

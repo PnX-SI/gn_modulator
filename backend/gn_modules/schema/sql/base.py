@@ -73,7 +73,7 @@ class SchemaSqlBase():
 
     @classmethod
     def c_sql_table_exists(cls, sql_schema_name, sql_table_name):
-        return sql_table_name in inspect(db.engine).get_table_names(sql_schema_name)
+        return sql_table_name.lower() in inspect(db.engine).get_table_names(sql_schema_name)
 
     @classmethod
     def c_sql_schema_exists(cls, sql_schema_name):

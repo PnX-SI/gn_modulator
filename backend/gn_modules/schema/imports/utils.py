@@ -24,7 +24,7 @@ class SchemaUtilsImports():
         '''
 
         # pour avoir le nom des champs de la table temporaire
-        columns = first_line.replace('\n', '').split("\t")
+        columns = first_line.replace('\n', '').split(";")
         columns_sql = '\n'.join(
             map(
                 lambda x: f'{x} VARCHAR,',
@@ -63,9 +63,9 @@ class SchemaUtilsImports():
             Commande pour effectuer le copy d'un fichier csv dans une table temporaire
         '''
 
-        columns = first_line.replace('\n', '').split("\t")
+        columns = first_line.replace('\n', '').split(";")
         columns_fields = ', '.join(columns)
-        return f"COPY {temporary_table}({columns_fields}) FROM STDIN;"
+        return f"COPY {temporary_table}({columns_fields}) FROM STDIN WITH CSV DELIMITER ';' QUOTE '\"';"
 
     @classmethod
     def get_table_columns(cls, schema_dot_table):
@@ -118,7 +118,8 @@ class SchemaUtilsImports():
         txt_columns = ',\n    '.join(v_txt_columns)
         txt_pre_process_columns = ',\n    '.join(v_txt_pre_process_columns)
 
-        return f"""CREATE VIEW {raw_import_view} AS
+        return f"""DROP VIEW IF EXISTS {raw_import_view} CASCADE;
+CREATE VIEW {raw_import_view} AS
 WITH pre_process AS (
 SELECT
     {txt_pre_process_columns}
@@ -179,11 +180,19 @@ FROM pre_process
     END AS {key}"""
 
         if property['type'] == "geometry":
-            return f"""ST_SETSRID(
-        ST_FORCE2D(
-            ST_GEOMFROMEWKT({key})
-        ), {self.property(key).get('srid')}
-    ) AS {key}"""
+            print(property)
+            geometry_type = (
+                'ST_MULTI' if property['geometry_type'] == 'multipolygon'
+                else ''
+            )
+            return f"""{geometry_type}(
+        ST_SETSRID(
+            ST_FORCE2D(
+                ST_GEOMFROMEWKT({key})
+            ), {self.property(key).get('srid')}
+        )
+    )
+    AS {key}"""
 
         return f"{key}"
 
@@ -229,7 +238,8 @@ FROM pre_process
         txt_columns = ",\n    ".join(v_columns)
         txt_joins = "\n".join(v_joins)
 
-        return f"""CREATE VIEW {processed_import_view} AS
+        return f"""DROP VIEW IF EXISTS {processed_import_view} CASCADE;
+CREATE VIEW {processed_import_view} AS
 SELECT
     {txt_columns}
 FROM {raw_import_view} t
@@ -392,16 +402,28 @@ FROM {processed_import_view}
             ),
         )
 
-        v_set_keys = map(
+        v_set_keys = list(map(
             lambda x: f"{x.key}=a.{x.key}",
             filter(
                 lambda x: sm.has_property(x.key) and sm.is_column(x.key) and not sm.property(x.key).get('primary_key'),
                 columns
             ),
-        )
+        ))
+
+        v_update_condition = list(map(
+            lambda x: f"(t.{x.key} IS DISTINCT FROM a.{x.key})",
+            filter(
+                lambda x: sm.has_property(x.key) and sm.is_column(x.key) and not sm.property(x.key).get('primary_key'),
+                columns
+            ),
+        ))
+
+
 
         txt_set_keys = ",\n    ".join(v_set_keys)
         txt_columns_keys = ",\n        ".join(v_column_keys)
+        txt_update_conditions = "NOT (" + "\n    AND ".join(v_update_condition) + ")"
+
 
         return f"""
 UPDATE {sm.sql_schema_dot_table()} t SET
@@ -412,5 +434,35 @@ FROM (
     FROM {processed_import_view}
 )a
 WHERE a.{sm.pk_field_name()} = t.{sm.pk_field_name()}
+AND {txt_update_conditions}
+;
+"""
+
+
+    @classmethod
+    def txt_nb_update(cls, schema_name, processed_import_view):
+
+        sm = cls(schema_name)
+
+        columns = cls.get_table_columns(processed_import_view)
+
+
+        v_update_conditions = list(map(
+            lambda x: f"(t.{x.key} IS DISTINCT FROM a.{x.key})",
+            filter(
+                lambda x: sm.has_property(x.key) and sm.is_column(x.key) and not sm.property(x.key).get('primary_key'),
+                columns
+            ),
+        ))
+
+        txt_update_conditions = "" + "\n    OR ".join(v_update_conditions) + ""
+
+        return f"""
+    SELECT
+        COUNT(*)
+    FROM {sm.sql_schema_dot_table()} t
+    JOIN {processed_import_view} a
+        ON a.{sm.pk_field_name()} = t.{sm.pk_field_name()}
+    WHERE {txt_update_conditions}
 ;
 """

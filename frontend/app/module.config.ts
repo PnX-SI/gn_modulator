@@ -1,5 +1,5 @@
 export const ModuleConfig = {
- "FRONTEND_PATH": "/home/admin_pnc/missions/info/app/GeoNature/external_modules/modules/frontend",
+ "FRONTEND_PATH": "/home/joel/info/sipaf/app/GeoNature/external_modules/modules/frontend",
  "MODULE_CODE": "MODULES",
  "MODULE_URL": "/modules"
 }

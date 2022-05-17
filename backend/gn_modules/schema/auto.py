@@ -74,10 +74,10 @@ class SchemaAuto():
 
         # columns
         for column in Model.__table__.columns:
+
             if not hasattr(Model, column.key):
                 continue
             properties[column.key] = self.process_column_auto(column, reflected_columns, sql_schema_name, sql_table_name)
-
 
         # column properties
         columns = [c.key for c in Model.__table__.columns]
@@ -129,7 +129,9 @@ class SchemaAuto():
         return property
 
     def process_column_auto(self, column, reflected_columns, sql_schema_name, sql_table_name):
+
         type = str(column.type)
+        reflected_column = next(x for x in reflected_columns if x['name'] == column.key)
 
         schema_type = self.cls.c_get_type(type, 'sql', 'definition')
 
@@ -150,8 +152,15 @@ class SchemaAuto():
         }
 
         if(schema_type['type'] == 'geometry'):
+            if schema_type['srid'] == -1:
+                schema_type['srid'] = (
+                    db.engine
+                    .execute(f"SELECT FIND_SRID('{sql_schema_name}', '{sql_table_name}', '{column.key}')")
+                    .fetchone()[0]
+                )
             property['srid'] = schema_type['srid']
             property['geometry_type'] = schema_type['geometry_type']
+            property['geometry_type'] = reflected_column['type'].geometry_type.lower() or schema_type['geometry_type']
 
         # primary_key
 
@@ -178,9 +187,11 @@ class SchemaAuto():
                 # property.pop('foreign_key')
 
         # commentaires
-        reflected_column = next(x for x in reflected_columns if x['name'] == column.key)
         if reflected_column.get('comment'):
             property['description'] = reflected_column.get('comment')
+
+        if reflected_column['nullable'] == False and reflected_column['default'] == None:
+            property['required'] = True
 
         return property
 
