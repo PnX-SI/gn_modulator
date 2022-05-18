@@ -105,7 +105,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           type: "message",
           json: "__f__utils.getFormErrors(formGroup)",
           class: "warning",
-          center: true
+          center: true,
+          hidden: true
         },
         {
           items: this.schemaConfig.form.layout,
