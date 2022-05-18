@@ -68,6 +68,9 @@ class SchemaRepositoriesBase():
             insert new row with data
         '''
 
+        if self.pk_field_name() in data:
+            data.pop(self.pk_field_name())
+
         self.validate_data(data)
         m = self.Model()()
         self.unserialize(m, data)
