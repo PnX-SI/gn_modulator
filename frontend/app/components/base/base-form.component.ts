@@ -76,6 +76,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
   processConfig(): void {
     this.layout = this.schemaConfig.form.layout;
+    console.log(this.layout)
     this.processedLayout = {
       type: "form",
       appearance: "fill",
@@ -101,6 +102,12 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           center: true
         },
         {
+          type: "message",
+          json: "__f__utils.getFormErrors(formGroup)",
+          class: "warning",
+          center: true
+        },
+        {
           items: this.schemaConfig.form.layout,
           overflow: true,
         },
@@ -115,7 +122,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
               title: "Valider",
               description: "Enregistrer le contenu du formulaire",
               action: "submit",
-              disabled: "__f__!formGroup.valid"
+              disabled: "__f__!(formGroup.valid && data.geom && data.geom.coordinates )"
             },
             {
               flex: "initial",

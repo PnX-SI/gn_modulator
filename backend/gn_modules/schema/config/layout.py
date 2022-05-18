@@ -34,7 +34,11 @@ class SchemaConfigLayout():
                     layout['title'] = layout.get('title', definition['title'])
 
                 definition = self.property(layout['key'])
-                layout['required'] = self.is_required(layout['key'])
+                print(layout)
+                layout['required'] = (
+                    layout['required'] if layout.get('required') is not None
+                    else self.is_required(layout['key'])
+                )
                 for key in [
                     'title',
                     'description',

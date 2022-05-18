@@ -1,6 +1,7 @@
 <ng-container *ngIf="isInitialized">
-    <h3 *ngIf="computedLayout.title">{{ computedLayout.title }}</h3>
-    <form [formGroup]="formGroup">
+  <h3 *ngIf="computedLayout.title">{{ computedLayout.title }}</h3>
+  {{formGroup.value.geom | json}}
+  <form [formGroup]="formGroup">
       <modules-layout
         [data]="data"
         [debug]="debug"

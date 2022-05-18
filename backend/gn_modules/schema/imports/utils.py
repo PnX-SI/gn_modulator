@@ -180,7 +180,6 @@ FROM pre_process
     END AS {key}"""
 
         if property['type'] == "geometry":
-            print(property)
             geometry_type = (
                 'ST_MULTI' if property['geometry_type'] == 'multipolygon'
                 else ''
