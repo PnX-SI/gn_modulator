@@ -22,11 +22,12 @@ class SchemaModelColumnProperties():
     def column_property_relation_x_n(self, key, column_property_def, Model):
         # a passer en argument
 
-        cp_select = self.cp_select(key, column_property_def, Model)
+        cp_query = cp_select = self.cp_select(key, column_property_def, Model)
 
-        cp_where_conditions = self.column_property_util_relation_where_conditions(key, column_property_def , Model)
-        cp_query = cp_select.where(cp_where_conditions)
-        # print('\n{}\n'.format(cp_query))
+        if column_property_def.get('relation_key'):
+            cp_where_conditions = self.column_property_util_relation_where_conditions(key, column_property_def , Model)
+            cp_query = cp_select.where(cp_where_conditions)
+
         return column_property(cp_query)
 
     def cp_select(self, key, column_property_def, Model):
@@ -55,8 +56,15 @@ class SchemaModelColumnProperties():
                 ]
             )
 
+        if column_property_def.get('column_property') == 'st_x':
+            return func.st_x(getattr(Model, column_property_def['key']))
+
+        if column_property_def.get('column_property') == 'st_y':
+            return func.st_y(getattr(Model, column_property_def['key']))
+
+
         raise errors.SchemaModelColumnPropertyError(
-            'La column_property {} {} est mal dénie'
+            'La column_property {} {} est mal définie'
             .format(self.schema_name(), key)
         )
 
@@ -83,7 +91,9 @@ class SchemaModelColumnProperties():
         if column_property_def.get('column_property') in [
             'nb',
             'has',
-            'label'
+            'label',
+            'st_x',
+            'st_y',
         ]:
             return self.column_property_relation_x_n(key, column_property_def, Model)
 

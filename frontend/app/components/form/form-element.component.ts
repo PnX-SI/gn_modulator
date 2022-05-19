@@ -23,13 +23,24 @@ export class ModulesFormElementComponent extends ModulesLayoutComponent implemen
 
   postProcessLayout(): void {
     if(this.computedLayout.type == 'dyn_form') {
-
       this.formDef = this._mLayout.toFormDef(this.computedLayout);
-      console.log(this.formDef)
     }
   }
   onCheckboxChange(event) {
     this.options.formGroup.get(this.layout.key).patchValue(event)
+  }
+
+  onInputChange() {
+    if(this.computedLayout.type == 'number') {
+      this.options.formGroup.get(this.layout.key)
+        .patchValue(parseFloat(this.options.formGroup.get(this.layout.key).value))
+    }
+    if(this.computedLayout.type == 'integer') {
+      this.options.formGroup.get(this.layout.key)
+        .patchValue(parseInt(this.options.formGroup.get(this.layout.key).value))
+    }
+
+    this.computedLayout.change && this.computedLayout.change();
   }
 
 }

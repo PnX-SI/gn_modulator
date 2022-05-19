@@ -23,6 +23,7 @@
           [required]="computedLayout.required"
           [min]="computedLayout.min"
           [max]="computedLayout.max"
+          (change)="onInputChange()"
         />
 
         <input
@@ -31,6 +32,7 @@
           type="text"
           [formControl]="formControl"
           [required]="computedLayout.required"
+          (change)="onInputChange()"
         />
 
         <input
@@ -42,6 +44,7 @@
           [required]="computedLayout.required"
           [min]="computedLayout.min"
           [max]="computedLayout.max"
+          (change)="onInputChange()"
         />
 
         <textarea
@@ -52,6 +55,8 @@
           [cdkAutosizeMaxRows]="computedLayout.max_rows"
           [formControl]="formControl"
           [required]="computedLayout.required"
+          (change)="onInputChange()"
+
         ></textarea>
 
         <mat-hint>{{ computedLayout.hint }}</mat-hint>

@@ -76,11 +76,11 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
 
   processConfig(): void {
     this.layout = this.schemaConfig.form.layout;
-    console.log(this.layout)
     this.processedLayout = {
       type: "form",
       appearance: "fill",
       height_auto: true,
+      change: () => {console.log('form change', this.data.geom.coordinates); this.setLayersData(true)},
       items: [
         {
           title: [

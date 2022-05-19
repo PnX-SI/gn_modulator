@@ -34,7 +34,6 @@ export class ModulesLayoutArrayComponent
       return;
     }
 
-    console.log("postprocess array");
     setTimeout(() => {
       if (!document.getElementById(`${this._id}.0`)) {
         return;
@@ -50,7 +49,6 @@ export class ModulesLayoutArrayComponent
         .filter((l, ind) => ind != layoutIndex)
         .reduce((acc, cur) => acc + cur);
 
-      console.log(heightParent, heightSibblings);
       const height = heightParent - heightSibblings;
       // const height = 300;
 

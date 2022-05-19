@@ -33,8 +33,10 @@ class SchemaConfigLayout():
                     definition = self.property(layout['key'].split('.')[0])
                     layout['title'] = layout.get('title', definition['title'])
 
+
+                if not self.has_property(layout['key']):
+                    return layout
                 definition = self.property(layout['key'])
-                print(layout)
                 layout['required'] = (
                     layout['required'] if layout.get('required') is not None
                     else self.is_required(layout['key'])
@@ -46,10 +48,12 @@ class SchemaConfigLayout():
                     'schema_name',
                     'nomenclature_type',
                     'min',
-                    'max'
+                    'max',
+                    'change'
                 ]:
                     if key in definition:
                         layout[key] = layout.get(key, definition[key])
+
                 if layout['type'] in ['array', 'object'] and layout.get('schema_name'):
                     rel = self.cls(layout['schema_name'])
                     layout['items'] = rel.process_layout(layout['items'])

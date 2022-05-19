@@ -64,10 +64,10 @@ export class ModulesGenericFormComponent
     this.updateForm();
     this.emitAction({type:'data-change'});
     this._mLayout.reComputeLayout();
+    this.computedLayout.change && this.computedLayout.change();
   }
 
   postComputeLayout(): void {
-    console.log('gen form post compute layout')
     this.updateForm();
 
   }

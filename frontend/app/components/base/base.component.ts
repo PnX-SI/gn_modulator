@@ -188,8 +188,6 @@ export class BaseComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        console.log(response);
-
         if (response) {
           this.processData(response);
         }
@@ -240,7 +238,6 @@ export class BaseComponent implements OnInit {
     const exportConfig = this.moduleConfig.exports.find(
       (c) => c.export_code == exportCode
     );
-    console.log(exportConfig, exportCode);
     return this._services.request.url(this.schemaConfig.utils.urls.rest, {
       ...exportConfig,
       filters: this._services.schema.get(this.schemaName).filters,
