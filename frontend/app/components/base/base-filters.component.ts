@@ -58,7 +58,7 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
       .map(([key, value]) => ({
         field: filterDefs[key].field,
         type: filterDefs[key].filter_type,
-        value,
+        value: filterDefs.key ? value[filterDefs.key]: value,
       }));
   }
 

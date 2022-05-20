@@ -60,17 +60,17 @@ class SchemaRepositoriesFilters():
                 - des operateurs :
                     - '!' : négation, unitaire
                     - '*' : et
-                    - '+ : ou
+                    - '| : ou
 
             l'opérateur par défaut est '*':
 
             exemples (f1 et f2 sont des filtres):
 
                 - [ f1, '*', f2]                  =>  f1 ET f2
-                - [ f1, '+', f2]                  =>  f1 OU f2
+                - [ f1, '|', f2]                  =>  f1 OU f2
                 - [ f1, f2]                       =>  f1 ET f2
-                - [ '!', f1, '+', '!', f2]        =>  (NON f1) OU (NON f2)
-                - [ '!', [ f1, '+', '!', f2 ] ]   =>  NON (f1 OU (NON f2))
+                - [ '!', f1, '|', '!', f2]        =>  (NON f1) OU (NON f2)
+                - [ '!', [ f1, '|', '!', f2 ] ]   =>  NON (f1 OU (NON f2))
         '''
         cur_filter = None
         cur_ops = []
@@ -88,7 +88,7 @@ class SchemaRepositoriesFilters():
                 loop_filter, query = self.get_filter(Model, elem, query, condition)
 
             # operation
-            elif elem in '!+*':
+            elif elem in '!|*':
                 # deux négations '!' s'annulent
                 if elem == '!' and len(cur_ops) > 0 and cur_ops[-1] == '!':
                     cur_ops = cur_ops[:-1]
@@ -116,7 +116,7 @@ class SchemaRepositoriesFilters():
                 if cur_filter is not None:
                     if op == '*':
                         cur_filter = and_(cur_filter, loop_filter)
-                    if op == '+':
+                    if op == '|':
                         cur_filter = or_(cur_filter, loop_filter)
 
                 # s'il n'y a pas de filtre courant, on initialise la variable cur_filter
@@ -144,15 +144,21 @@ class SchemaRepositoriesFilters():
         # si besoin de redefinir type
 
         # pour ilike et like, on teste sans tenir compte des accents
+        # si un '%' est présent => on le garde tel quel
+        # sinon on ajoute '%' en début et fin
         if f_type in ['like', 'ilike']:
             f_value_unaccent = unidecode.unidecode(f_value)
+            f_value_unaccent = (
+                f_value_unaccent if '%' in f_value_unaccent
+                else f'%{f_value_unaccent}%'
+            )
             filter_out = (
                 getattr(
                     unaccent(
                         cast(model_attribute, db.String)
                     ),
                     f_type
-                )(f'%{f_value_unaccent}%')
+                )(f_value_unaccent)
             )
 
         elif f_type == '>':

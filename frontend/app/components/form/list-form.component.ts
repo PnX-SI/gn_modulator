@@ -30,6 +30,8 @@ export class ModulesListFormComponent
     _mLayout: ModulesLayoutService
   ) {
     super(_mLayout);
+    this._name = "list_form"
+
   }
 
   items: any[] = [];
@@ -46,9 +48,6 @@ export class ModulesListFormComponent
   isLoading = false;
 
   @Input() formControl: AbstractControl = null;
-
-  ngOnInit() {
-  }
 
   initSearch() {
     this.searchSubject = this.searchSubject || new Subject();
@@ -71,7 +70,11 @@ export class ModulesListFormComponent
         : a == b;
   }
   /** initialisation du composant select */
-  postProcessLayout(): void {
+  // postProcessLayout(): void {
+
+  // }
+
+  processListFormConfig() {
     this.initSearch();
     this.formControl = this.options.formGroup.get(this.layout.key);
     this.isLoading=true;
@@ -86,6 +89,12 @@ export class ModulesListFormComponent
       });
   }
 
+  /** */
+  postComputeLayout(): void {
+    this.processListFormConfig();
+
+  }
+
   /** action lorsque le champs de recherche change */
   searchChanged(event) {
     this.searchSubject.next(event);
@@ -95,7 +104,6 @@ export class ModulesListFormComponent
   processSearchChanged(search) {
     if (this.computedLayout.reload_on_search) {
     // server side search ??
-      console.log('server side search')
       this.computedLayout.search = search;
       this.isLoading = true;
       this._listFormService.getSelectList(this.computedLayout, this.formControl.value)

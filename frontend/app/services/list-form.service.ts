@@ -99,7 +99,7 @@ export class ListFormService {
         // size ??
         options.size = options.cache ? null : options.size || 10;
         options.items_path = "data";
-        options.filters = [...(options.filters || []), ...schemaFilters];
+        options.schema_filters = schemaFilters;
         return of(true);
       })
     );
@@ -124,6 +124,7 @@ export class ListFormService {
    *
    */
   getSelectList(options, value) {
+
     if (options.items) {
       /**  Si item est une liste on */
       return of({
@@ -148,9 +149,11 @@ export class ListFormService {
    */
   getItemsFromApi(options, value): Observable<any> {
     const params = options.params || {};
+
+    params.filters= [...(options.filters || [])]
     if (options.schema_name) {
-      params.filters = utils.copy(options.filters);
-      params.fields = utils.removeDoublons([options.value_field_name, options.title_field_name, options.label_field_name].filter(e => !!e))
+      params.filters = [...params.filters, ...(options.schema_filters || [])];
+
       if(options.reload_on_search && options.search) {
 
         params.filters.push({
@@ -160,6 +163,15 @@ export class ListFormService {
         });
       }
     }
+
+    params.fields = utils.removeDoublons(
+      [
+        options.value_field_name,
+        options.title_field_name,
+        options.label_field_name,
+        ...(options.additional_fields || [])
+      ].filter(e => !!e)
+    )
 
     // size
     params.size = options.reload_on_search

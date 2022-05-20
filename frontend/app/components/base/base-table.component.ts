@@ -153,7 +153,6 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
         {
           headerSort: false,
           formatter: (cell, formatterParams, onRendered) => {
-            console.log(this.moduleConfig.module.cruved['U'], cell._cell.row.data['cruved_ownership'])
             const editAllowed = cell._cell.row.data['cruved_ownership'] <= this.moduleConfig.module.cruved['U'];
             var html = '';
             html += `<span class="table-icon ${editAllowed ? '' : 'disabled'}"><i class='fa fa-pencil' ${editAllowed ? 'action="edit"': ''}></i></span>`;
