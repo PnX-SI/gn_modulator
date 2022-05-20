@@ -172,7 +172,10 @@ class SchemaRepositoriesFilters():
 
         elif f_type == '=':
             filter_out = (
-                cast(model_attribute, db.String) == (str(f_value))
+                or_(
+                    model_attribute == f_value,
+                    cast(model_attribute, db.String) == (str(f_value))
+                )
             )
 
         elif f_type == '!=':

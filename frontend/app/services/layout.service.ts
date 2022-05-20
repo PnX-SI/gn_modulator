@@ -144,11 +144,6 @@ export class ModulesLayoutService {
     if (utils.isObject(layout)) {
       const computedLayout = {};
       for (const [key, value] of Object.entries(layout)) {
-        // if (key == "change") {
-        //   console.log('change', layout)
-        //   layout[key] = value;
-        //   continue;
-        // }
         computedLayout[key] = this.isStrFunction(value)
           ? this.evalLayout({ layout: value, data, globalData, formGroup })
           : value;

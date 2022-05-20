@@ -169,7 +169,6 @@ export class ModulesFormService {
     // if (options.type == "remove-array-element") {
     //   this.setControls(formGroup, layout, data);
     //   data[options.key].splice(options.index, 1);
-    //   // console.log(data, options.index)
     //   // formGroup.patchValue(data);
     // }
     // if (options.type == "remove-array-element") {

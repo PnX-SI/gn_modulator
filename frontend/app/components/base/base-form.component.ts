@@ -44,7 +44,6 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           this._services.mapService.getMap(this.mapId).removeLayer(this.currentLayer);
         }
         this.currentLayer=event.layer;
-        console.log('create', event)
         // remove previous layer if needed
 
         event.layer.on("pm:edit", ({ layer }) => {
@@ -88,7 +87,8 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
       type: "form",
       appearance: "fill",
       height_auto: true,
-      change: () => {console.log('form change', this.data.geom.coordinates); this.setLayersData(true)},
+      // tester avant  set Layer ????
+      change: () => {this.setLayersData(true)},
       items: [
         {
           title: [
@@ -268,7 +268,6 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           pkFieldName: this.pkFieldName(),
           onEachFeature: (feature, layer) => {
             layer.on("pm:edit", (event) => {
-              console.log('edit', event)
               this.setDataGeom(event.layer);
               // this.setLayersData();
               // set layer in data
@@ -295,9 +294,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   }
 
   onSubmit(data) {
-    console.log("submit", data);
     if (!data) {
-      console.log("no submit", data);
       return;
     }
     let request = null;
