@@ -3,25 +3,25 @@
 <div
   *ngIf="componentInitialized; else loadingBlock"
   [attr.id]="elemId"
-  [ngStyle]="{ height: height, 'overflow-y': 'scroll' }"
 >
-  <div class="form-container">
+  <div>
     <!-- Formulaire -->
-    <div class="base-form" v-if="filterValues">
+    <div v-if="filterValues">
       <modules-layout
-        [layout]="schemaConfig.filters.form.layout"
+        [layout]="processedLayout"
         [data]="filterValues"
         [debug]="debug"
+        (onAction)="onAction($event)"
       ></modules-layout>
 
-      <div class="button-container">
+      <!-- <div class="button-container">
         <button mat-flat-button color="primary" (click)="onSubmit()">
           Rechercher
         </button>
         <button mat-flat-button color="primary" (click)="onReinit()">
           Réinitialiser
         </button>
-      </div>
+      </div> -->
     </div>
 
     <!-- Debug : valide, erreur et valeurs -->

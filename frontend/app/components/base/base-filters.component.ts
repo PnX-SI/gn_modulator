@@ -48,7 +48,46 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
   }
 
   processConfig(): void {
-    this.processedLayout = this.schemaConfig.filters.form.layout;
+    this.processedLayout = {
+      height_auto: true,
+      type: "form",
+      appearance: "outline",
+      items: [
+        {
+          title: "Filtres",
+        },
+        {
+          items: this.schemaConfig.filters.form.layout,
+          overflow: true,
+        },
+        {
+          direction: "row",
+          items: [
+            {
+              flex: "initial",
+              type: "button",
+              color: "primary",
+              title: "Rechercher",
+              description: "Effectuer une recherche avec les filtre définis ci-dessus",
+              action: "filter",
+            },
+            {
+              flex: "initial",
+              type: "button",
+              color: "primary",
+              title: "Réinitialiser",
+              description: "RAZ des filtres",
+              action: "clear-filters",
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  onAction(event) {
+    event.action == "filter" && this.applyFilters();
+    event.action == "clear-filters" && this.clearFilters();
   }
 
   getFilters() {
@@ -58,21 +97,23 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
       .map(([key, value]) => ({
         field: filterDefs[key].field,
         type: filterDefs[key].filter_type,
-        value: filterDefs[key].key ? value[filterDefs[key].key]: value,
+        value: filterDefs[key].key ? value[filterDefs[key].key] : value,
       }));
   }
 
-  onSubmit() {
+
+  applyFilters() {
     this._services.schema.get(this.schemaName).filters = this.getFilters();
     this.emitEvent({
       action: "filters",
       params: {
         filters: this.getFilters(),
       },
+
     });
   }
 
-  onReinit() {
+  clearFilters() {
     for (const key of Object.keys(this.filterValues)) {
       this.filterValues[key] = null;
     }
@@ -80,7 +121,7 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
     this.filterValues = null;
     setTimeout(() => {
       this.filterValues = filterValues;
-      this.onSubmit();
+      this.applyFilters();
     });
   }
 
