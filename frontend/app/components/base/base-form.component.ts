@@ -20,6 +20,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   bDraw = false;
   geometry = null;
 
+  currentLayer;
   dataSave = null;
 
   drawOptions = null;
@@ -39,6 +40,13 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     this._services.mapService.waitForMap(this.mapId).then(() => {
       this._services.mapService.getMap(this.mapId).on("pm:create", (event) => {
+        if(this.currentLayer) {
+          this._services.mapService.getMap(this.mapId).removeLayer(this.currentLayer);
+        }
+        this.currentLayer=event.layer;
+        console.log('create', event)
+        // remove previous layer if needed
+
         event.layer.on("pm:edit", ({ layer }) => {
           // layer has been edited
           this.setDataGeom(layer);
@@ -260,6 +268,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           pkFieldName: this.pkFieldName(),
           onEachFeature: (feature, layer) => {
             layer.on("pm:edit", (event) => {
+              console.log('edit', event)
               this.setDataGeom(event.layer);
               // this.setLayersData();
               // set layer in data
