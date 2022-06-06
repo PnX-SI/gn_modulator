@@ -1,5 +1,5 @@
 from sqlalchemy.orm import column_property
-from sqlalchemy import func, select, case, exists, and_ , literal_column, cast, column
+from sqlalchemy import func, select, case, exists, and_ , literal_column, cast, column, text
 from geonature.utils.env import db
 from .. import errors
 
@@ -63,6 +63,21 @@ class SchemaModelColumnProperties():
             return func.st_y(getattr(Model, column_property_def['key']))
 
 
+        if column_property_def.get('column_property') == 'type_complement':
+            s_complement = self.cls(self.attr('meta.schema_complement'))
+            query, _ = s_complement.get_list()
+            complements_case = []
+            for complement in query.all():
+                complements_case.append((getattr(Model, f'has_{complement.relation_name}'), complement.complement_name))
+
+            return case(
+                complements_case,
+                else_=None
+            )
+
+            # return func.st_y(getattr(Model, column_property_def['key']))
+
+
         raise errors.SchemaModelColumnPropertyError(
             'La column_property {} {} est mal définie'
             .format(self.schema_name(), key)
@@ -88,16 +103,6 @@ class SchemaModelColumnProperties():
 
     def process_column_property_model(self, key, column_property_def, Model):
 
-        if column_property_def.get('column_property') in [
-            'nb',
-            'has',
-            'label',
-            'st_x',
-            'st_y',
-        ]:
-            return self.column_property_relation_x_n(key, column_property_def, Model)
+        # ici l'ordre import par ex type_complement après has
+        return self.column_property_relation_x_n(key, column_property_def, Model)
 
-        raise errors.SchemaModelColumnPropertyError(
-            'La column_property {} {} est mal définie'
-            .format(self.schema_name(), key)
-        )

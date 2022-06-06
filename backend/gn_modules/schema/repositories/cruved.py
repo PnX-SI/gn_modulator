@@ -21,9 +21,8 @@ class SchemaRepositoriesCruved():
         '''
 
         if not self.attr('meta.check_cruved'):
+            setattr(Model, 'cruved_ownership', 0)
             return query
-
-        print('uururu')
 
         user_cruved = get_scopes_by_action(module_code="META_DATA")
 

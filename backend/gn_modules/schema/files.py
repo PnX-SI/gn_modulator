@@ -262,7 +262,7 @@ class SchemaFiles():
         if isinstance(item, list):
             for check_item in [cls.check_schema_names(schema_name, item_value) for item_value in item]:
                 check = check_item and check
-        if key == 'schema_name':
+        if key == 'schema_name' and isinstance(item ,str):
             check = item in cls.schema_names_from_cache()
             if not check:
                 raise errors.SchemaNameError(
@@ -310,11 +310,50 @@ class SchemaFiles():
         return check_schema_names
 
     @classmethod
+    def process_complement(cls):
+        for schema_name in cls.schema_names_from_cache():
+            sm = cls(schema_name)
+            if not sm.attr('meta.schema_complement'):
+                continue
+
+            # lister les complements
+            s_complement = cls(sm.attr('meta.schema_complement'))
+
+            if not s_complement.sql_table_exists():
+                continue
+            s_complement.Model()
+
+            s_complement.MarshmallowSchema()
+            query, _ = s_complement.get_list()
+            for complement in query.all():
+                sm.definition['properties'][complement.relation_name] = {
+                    "type": "relation",
+                    "relation_type": "1-1",
+                    "local_key": sm.pk_field_name(),
+                    "schema_name": complement.schema_name,
+                    "title": complement.complement_name,
+                    "description": complement.complement_desc
+                }
+
+                sm.definition['properties'][f'has_{complement.relation_name}'] = {
+                    "type": "boolean",
+                    "column_property": "has",
+                    "title": f"Est de type {complement.complement_name}?",
+                    "relation_key": complement.relation_name
+                }
+
+
+    @classmethod
     def init_schemas(cls):
         cls.clear_global_cache()
         cls.clear_schema_cache()
         cls.init_references()
         cls.init_definitions()
+
+        # init complement ??
+        # ici on ajoute les relations dans les definitions
+        cls.process_complement()
+
         # init models
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
@@ -323,6 +362,8 @@ class SchemaFiles():
             except AttributeError as e:
                 raise errors.SchemaError(
                     '{}: {}'.format(sm.schema_name(), e))
+
+
 
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)

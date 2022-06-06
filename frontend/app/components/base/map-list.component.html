@@ -43,6 +43,7 @@
           mat-mini-fab
           [href]="exportUrl('passages_faune_test')"
           color="primary"
+          *ngIf="moduleConfig.exports"
         >
           <mat-icon matTooltip="Exporter {{ schemaConfig.display.def_labels }}">
             save

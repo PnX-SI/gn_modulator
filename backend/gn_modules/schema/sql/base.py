@@ -14,7 +14,7 @@ from ..errors import (
 
 class SchemaSqlBase():
 
-    def get_sql_type(self, column_def, cor_table=False):
+    def get_sql_type(self, column_def, cor_table=False, required=False):
         field_type = column_def.get('type')
 
         sql_type = self.cls.c_get_type(field_type, "definition", 'sql')['type']
@@ -33,6 +33,10 @@ class SchemaSqlBase():
                 'Property type {} in processed_properties but not managed yet for SQL processing'
                 .format(field_type)
             )
+
+        if required and ('NOT NULL' not in sql_type):
+            sql_type += ' NOT NULL'
+
 
         return sql_type
 

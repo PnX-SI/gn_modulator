@@ -36,13 +36,13 @@ class SchemaSqlTable():
         self.cls.set_global_cache('sql_table', relation_def['schema_dot_table'], True)
 
         local_key = self.pk_field_name()
-        local_key_type = self.get_sql_type(self.column(local_key), cor_table=True)
+        local_key_type = self.get_sql_type(self.column(local_key), cor_table=True, required=True)
         local_table_name = self.sql_table_name()
         local_schema_name = self.sql_schema_name()
 
         relation = self.cls(relation_def['schema_name'])
         foreign_key = relation.pk_field_name()
-        foreign_key_type = relation.get_sql_type(relation.column(foreign_key), cor_table=True)
+        foreign_key_type = relation.get_sql_type(relation.column(foreign_key), cor_table=True, required=True)
         foreign_table_name = relation.sql_table_name()
         foreign_schema_name = relation.sql_schema_name()
 
@@ -142,7 +142,7 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
                 if key in base_schema.column_keys() and key != base_schema.pk_field_name():
                     continue
 
-            sql_type = self.get_sql_type(column_def)
+            sql_type = self.get_sql_type(column_def, required=self.is_required(key))
             sql_default = self.sql_default(column_def)
             txt += (
                 '\n    {} {}{},'

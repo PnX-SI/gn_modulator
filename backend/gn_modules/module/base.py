@@ -89,8 +89,6 @@ class ModuleBase():
         txt = ""
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
-            # if sm.sql_schema_exists() and not force:
-                # break
             txt += sm.sql_txt_process()
 
         sql_file_path = cls.migrations_dir(module_code) / 'data/schema.sql'

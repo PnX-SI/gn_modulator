@@ -163,6 +163,9 @@ class SchemaRepositoriesFilters():
 
         elif f_type == '>':
             filter_out = (model_attribute > f_value)
+        elif f_type == '!=':
+            filter_out = getattr(model_attribute, 'isnot')(f_value)
+
         elif f_type == '>=':
             filter_out = (model_attribute >= f_value)
         elif f_type == '<':

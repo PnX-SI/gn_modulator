@@ -74,30 +74,30 @@ class SchemaSerializers:
         }
 
         if column_def.get('primary_key'):
-            return fields.Integer(**kwargs)
-            # return ma.auto_field(**kwargs)
+            return fields.Integer(metadata=kwargs)
+            # return ma.auto_field(metadata=kwargs)
 
         if field_type == 'integer':
-            return fields.Integer(**kwargs)
+            return fields.Integer(metadata=kwargs)
 
         if field_type == 'number':
-            return fields.Number(**kwargs)
+            return fields.Number(metadata=kwargs)
 
         if field_type == 'string':
-            return fields.String(**kwargs)
+            return fields.String(metadata=kwargs)
 
         if field_type == 'date':
-            format=column_def.get('format', "%Y-%m-%d")
-            return fields.Date(format=format, **kwargs)
+            # kwargs['format'] = column_def.get('format', "%Y-%m-%d")
+            return fields.Date(metadata=kwargs)
 
         if field_type == 'uuid':
-            return fields.UUID(**kwargs)
+            return fields.UUID(metadata=kwargs)
 
         if field_type == 'boolean':
-            return fields.Boolean(**kwargs)
+            return fields.Boolean(metadata=kwargs)
 
         if field_type == 'geometry':
-            return GeojsonSerializationField(**kwargs)
+            return GeojsonSerializationField(metadata=kwargs)
 
         raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
 
@@ -138,7 +138,7 @@ class SchemaSerializers:
         exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
         relation_serializer = None
 
-        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), exclude=exclude, dump_default=None)
+        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), metadata={"exclude":exclude, "dump_default": None})
 
         if relation_def['relation_type'] == 'n-1':
             relation_serializer = relation_serializer
@@ -216,6 +216,11 @@ class SchemaSerializers:
         for key, column_def in self.column_properties().items():
             marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
 
+        # if self.attr('meta.check_cruved'):
+        marshmallow_schema_dict['cruved_ownership'] = fields.Integer(metadata={'dumps_only': True})
+        # else:
+            # marshmallow_schema_dict['cruved_ownership'] = 0
+
 
         # store in cache before realtion(avoid circular dependancies)
         for key, relation_def in self.relationships().items():
@@ -224,8 +229,6 @@ class SchemaSerializers:
             if relation_def.get('column_property', {}).get('type') == 'nb':
                 marshmallow_schema_dict['nb_{}'.format(key)] = fields.Integer()
 
-        if self.attr('meta.check_cruved'):
-            marshmallow_schema_dict['cruved_ownership'] = fields.Integer(dumps_only=True)
 
         MarshmallowSchema = type(
             self.marshmallow_schema_name(),
@@ -283,7 +286,6 @@ class SchemaSerializers:
                 fields.append(geometry_field_name)
 
         marshmallowSchema = self.MarshmallowSchema()(**kwargs)
-
         data_list = marshmallowSchema.dump(m_list, many=True)
 
         if as_geojson:

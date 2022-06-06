@@ -38,7 +38,9 @@
               "type": { "enum": [ "integer" ] },
               "title": { "type": "string"},
               "description": { "type": "string"},
-              "primary_key": { "type": "boolean" }
+              "primary_key": { "type": "boolean" },
+              "foreign_key": { "type": "boolean" },
+              "schema_name": { "type": "string" }
             },
             "required": [ "type", "primary_key", "title" ],
             "additionalProperties": false
@@ -74,6 +76,19 @@
               "description": { "type": "string"},
               "local_key": { "type": "string" },
               "relation_type": { "enum": ["n-1"] },
+              "schema_name": { "type": "string" },
+              "title": { "type": "string"},
+              "type": { "enum": [ "relation" ] }
+            },
+            "required": [ "type", "title", "relation_type", "local_key", "schema_name"],
+            "additionalProperties": false
+          },
+          {
+            "title": "relation 1-1",
+            "properties": {
+              "description": { "type": "string"},
+              "local_key": { "type": "string" },
+              "relation_type": { "enum": ["1-1"] },
               "schema_name": { "type": "string" },
               "title": { "type": "string"},
               "type": { "enum": [ "relation" ] }

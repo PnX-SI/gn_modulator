@@ -68,7 +68,7 @@ class SchemaRepositoriesBase():
             insert new row with data
         '''
 
-        if self.pk_field_name() in data:
+        if self.pk_field_name() in data and data[self.pk_field_name()] is None:
             data.pop(self.pk_field_name())
 
         self.validate_data(data)
@@ -196,7 +196,7 @@ class SchemaRepositoriesBase():
             'page': math.ceil(row_number / params.get('size'))
         }
 
-    def get_list(self, params):
+    def get_list(self, params={}):
         '''
             process request for list of rows
             - params : dict

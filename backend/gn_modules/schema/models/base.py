@@ -98,6 +98,9 @@ class SchemaModelBase():
         relation = self.cls(relationship_def['schema_name'])
 
         kwargs = {}
+        if relationship_def.get('relation_type') == '1-1':
+            kwargs['uselist'] = False
+
         if relationship_def.get('relation_type') == 'n-1':
             kwargs['foreign_keys'] = getattr(Model, relationship_def['local_key'])
 
@@ -224,10 +227,19 @@ class SchemaModelBase():
             setattr(Model, key, relationship)
 
         # process column properties
-        for key, column_property_def in self.columns().items():
-            if column_property_def.get('column_property') is None:
-                continue
 
-            setattr(Model, key, self.process_column_property_model(key, column_property_def, Model))
+        for type_column_property in [
+            'nb',
+            'has',
+            'label',
+            'st_x',
+            'st_y',
+            'type_complement'
+        ]:
+            for key, column_property_def in self.columns().items():
+                if column_property_def.get('column_property') != type_column_property:
+                    continue
+
+                setattr(Model, key, self.process_column_property_model(key, column_property_def, Model))
 
         return Model

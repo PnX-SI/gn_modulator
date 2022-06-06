@@ -82,7 +82,7 @@ export class ModulesRouteService {
    */
   addModulesRoutes(routesModules, modulesConfig) {
     for (const [moduleCode, moduleConfig ]  of Object.entries(modulesConfig)) {
-      for (const [pageName, pageConfig] of Object.entries(moduleConfig['pages'])) {
+      for (const [pageName, pageConfig] of Object.entries(moduleConfig['pages'] || {})) {
 
         const pagePath = !!pageConfig['url']
           ? `${moduleCode.toLowerCase()}/${pageConfig['url']}`

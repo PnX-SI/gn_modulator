@@ -42,7 +42,9 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
       fields.push(this.geometryFieldName());
     }
 
-    fields.push("cruved_ownership");
+    // if(this.schemaConfig.definition.meta.check_cruved) {
+      fields.push('cruved_ownership');
+    // }
 
     return this._services.mData.getOne(this.schemaName, this.value, {
       fields,

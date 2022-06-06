@@ -65,5 +65,5 @@ class ModuleCommands():
 
         migration_init_file_path = cls.migration_init_file_path(module_code)
 
-        if not migration_init_file_path.exists():
+        if not (migration_init_file_path and migration_init_file_path.exists()):
             cls.create_migration_init_file(module_code)

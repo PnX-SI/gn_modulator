@@ -73,7 +73,9 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
     const fields = this.schemaConfig.table.columns.map(column => column.field);
-    fields.push('cruved_ownership');
+    // if(this.schemaConfig.definition.meta.check_cruved) {
+      fields.push('cruved_ownership');
+    // }
     this._services.mData.getOne(this.schemaName, value, { fields })
     .subscribe((data) => {
       layer.setPopupContent(this.popupHTML(data));
@@ -177,7 +179,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
 
   popupHTML(properties) {
     const label = properties[this.labelFieldName()];
-    const popupFields = this.schemaConfig.map.popup_fields;
+    const popupFields = this.schemaConfig.map.popup_fields || [];
     var propertiesHTML="";
     propertiesHTML += '<ul>\n'
     propertiesHTML += popupFields
