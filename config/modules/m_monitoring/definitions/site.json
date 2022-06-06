@@ -37,7 +37,16 @@
       "schema_name": "m_monitoring.site_complement"
     }
   },
-
+  "table": {
+    "columns": [
+      "id_site"
+    ],
+    "columns_short": [
+      "site_code",
+      "site_name",
+      "type_site"
+    ]
+  },
   "required": [
     "site_code",
     "site_name",
