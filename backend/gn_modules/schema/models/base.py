@@ -161,6 +161,9 @@ class SchemaModelBase():
         return CorTable
 
     def Model(self):
+        if not self.sql_table_exists():
+            return None
+        print('Model', self, self.sql_table_exists())
         '''
         create and returns schema Model : a class created with type(name, (bases,), dict_model) function
         - name : self.model_name()

@@ -68,7 +68,8 @@ class SchemaModelColumnProperties():
             query, _ = s_complement.get_list()
             complements_case = []
             for complement in query.all():
-                complements_case.append((getattr(Model, f'has_{complement.relation_name}'), complement.complement_name))
+                if hasattr(Model, f'has_{complement.relation_name}'):
+                    complements_case.append((getattr(Model, f'has_{complement.relation_name}'), complement.complement_name))
 
             return case(
                 complements_case,
