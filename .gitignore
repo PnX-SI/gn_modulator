@@ -3,6 +3,7 @@ egg.info
 node_modules
 
 config/modules/*
+!config/modules/m_monitoring
 
 backend/gn_modules/migrations/data/m_*
 

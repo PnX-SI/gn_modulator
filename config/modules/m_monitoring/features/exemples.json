@@ -1,0 +1,76 @@
+[
+  {
+    "schema_name": "m_monitoring.site_complement",
+    "items": [
+      {
+        "complement_name": "Arbre à loge",
+        "complement_code": "AL",
+        "complement_desc": "Données complémentaire sur les site pour les arbres à loge",
+        "schema_name": "m_monitoring.sc_arbre_loge",
+        "relation_name": "data_arbre_loge"
+      },
+      {
+        "complement_name": "Grotte",
+        "complement_code": "GT",
+        "complement_desc": "Données complémentaire sur les site pour les grottes",
+        "schema_name": "m_monitoring.sc_grotte",
+        "relation_name": "data_grotte"
+      }
+    ]
+  },
+  {
+    "schema_name": "m_monitoring.site",
+    "items": [
+      {
+        "site_name": "Arbre à loge 1",
+        "site_code": "AL1",
+        "site_desc": "Très beau arbre à loge",
+        "site_geom": { "type": "Point", "coordinates": [3.7, 43.8]}
+      },
+      {
+        "site_name": "Arbre à loge 2",
+        "site_code": "AL2",
+        "site_desc": "Une autre arbre à loge",
+        "site_geom": { "type": "Point", "coordinates": [3.6, 43.9]}
+      },
+      {
+        "site_name": "Grotte 1",
+        "site_code": "GR1",
+        "site_desc": "Une Grotte",
+        "site_geom": { "type": "Point", "coordinates": [3.5, 43.5]}
+      },
+      {
+        "site_name": "Grotte 2",
+        "site_code": "GR2",
+        "site_desc": "Une autre Grotte",
+        "site_geom": { "type": "Point", "coordinates": [3.1, 44.2]}
+      }
+    ]
+  },
+  {
+    "schema_name": "m_monitoring.sc_arbre_loge",
+    "items": [
+      {
+        "id_site": "AL1",
+        "hauteur": 10
+      },
+      {
+        "id_site": "AL2",
+        "hauteur": 20
+      }
+    ]
+  },
+  {
+    "schema_name": "m_monitoring.sc_grotte",
+    "items": [
+      {
+        "id_site": "GR1",
+        "profondeur": 100
+      },
+      {
+        "id_site": "GR2",
+        "profondeur": 500
+      }
+    ]
+  }
+]

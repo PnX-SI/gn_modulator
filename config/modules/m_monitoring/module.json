@@ -1,0 +1,89 @@
+{
+  "module": {
+    "module_code": "m_monitoring",
+    "module_label": "Module(s) de suivi",
+    "module_desc": "Tentative de monitoringV2",
+    "module_picto": "fa-puzzle-piece",
+    "active_frontend": true
+  },
+  "schemas": [
+    "m_monitoring.site",
+    "m_monitoring.site_complement",
+    "m_monitoring.sc_arbre_loge",
+    "m_monitoring.sc_grotte"
+  ],
+
+  "features": [
+    "exemples.json"
+  ],
+  "actions": {
+    "edit": {
+      "type": "link",
+      "pageName": "edit"
+    },
+    "details": {
+      "type": "link",
+      "pageName": "details"
+    },
+    "create": {
+      "type": "link",
+      "pageName": "create"
+    },
+    "export": {
+      "type": "export"
+    }
+  },
+  "pages": {
+    "map_list": {
+      "label": "MONITORING",
+      "url": "",
+      "elements": [
+        {
+          "schema_name": "m_monitoring.site",
+          "type": "map_list"
+        }
+      ]
+    },
+    "edit": {
+      "label": "Édition",
+      "parent": {
+        "pageName": "map_list"
+      },
+      "url": "edit/:value",
+      "elements": [
+        {
+          "type": "form",
+          "schema_name": "m_sipaf.pf",
+          "zoom": "15"
+        }
+      ]
+    },
+    "create": {
+      "label": "Création",
+      "parent": {
+        "pageName": "map_list"
+      },
+      "url": "create",
+      "elements": [
+        {
+          "type": "form",
+          "schema_name": "m_sipaf.pf"
+        }
+      ]
+    },
+    "details": {
+      "label": "Propriétés",
+      "parent": {
+        "pageName": "map_list"
+      },
+      "url": "details/:value",
+      "elements": [
+        {
+          "zoom": "15",
+          "type": "properties",
+          "schema_name": "m_sipaf.pf"
+        }
+      ]
+    }
+  }
+}

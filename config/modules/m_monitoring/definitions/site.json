@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "schema_name": "m_monitoring.site",
+    "sql_processing": true,
+    "sql_schema_dot_table": "m_monitoring.t_sites",
+    "genre": "M",
+    "label": "site",
+    "label_field_name": "site_name",
+    "geometry_field_name": "site_geom",
+    "unique": [
+      "site_code"
+    ],
+    // "check_cruved": true,
+    "schema_complement": "m_monitoring.site_complement"
+  },
+  "map": {
+    "popup_fields": [
+      "site_name",
+      "site_code",
+      "site_desc"
+    ]
+  },
+  "filters": {
+    "defs": {
+      "type_site": {
+        "title": "Type de site",
+        "field": "type_site",
+        "type": "string",
+        "filter_type": "="
+      }
+    },
+    "layout": {
+      "key": "type_site",
+      "type": "list_form",
+      "title": "Type de site",
+      "value_field_name": "complement_name",
+      "schema_name": "m_monitoring.site_complement"
+    }
+  },
+
+  "required": [
+    "site_code",
+    "site_name",
+    "site_geom"
+  ],
+  "properties": {
+    "id_site": {
+      "type": "integer",
+      "title": "Pk du site",
+      "primary_key": true
+    },
+    "site_code": {
+      "type": "string",
+      "title": "Code du site",
+      "required": true
+    },
+    "site_name": {
+      "type": "string",
+      "title": "Nom du site",
+      "required": true
+    },
+    "site_desc": {
+      "type": "string",
+      "title": "Description du site"
+    },
+    "site_geom": {
+      "type": "geometry",
+      "geometry_type": "geometry",
+      "title": "Géométrie",
+      "srid": 4326
+    }
+    ,
+    "type_site": {
+      "type": "string",
+      "column_property": "type_complement",
+      "title": "Type de site"
+    }
+  }
+}
