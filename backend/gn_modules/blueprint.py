@@ -36,8 +36,9 @@ def api_modules_config():
 
     modules_config = copy.deepcopy(ModuleMethods.modules_config())
 
+    # pour ne pas exposer module_dir_path
     for key, module_config in modules_config.items():
-        module_config['module_dir_path']='xxx'
+        module_config.pop('module_dir_path')
 
     if not hasattr(g, 'current_user'):
         return modules_config

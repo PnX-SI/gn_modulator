@@ -217,10 +217,10 @@ class SchemaApi():
                         return '', 404
                     data_csv = []
                     keys = list(params.get('fields', out['data'][0].keys()))
-                    data_csv.append(keys)
+                    data_csv.append(self.process_csv_keys(keys))
                     data_csv += [
                         [
-                            self.process_csv_data(d[key])
+                            self.process_csv_data(key, d)
                             for key in keys
                         ] for d in out['data']
                     ]

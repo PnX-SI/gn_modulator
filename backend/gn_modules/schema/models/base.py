@@ -235,6 +235,7 @@ class SchemaModelBase():
             'has',
             'label',
             'st_x',
+            'st_astext',
             'st_y',
             'type_complement'
         ]:

@@ -250,10 +250,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
     }
     if (flyToPoint) {
       this._services.mapService.waitForMap(this.mapId).then(() => {
-        this._services.mapService.setCenter(this.mapId, [
-          geometry.coordinates[1],
-          geometry.coordinates[0],
-        ]);
+        this._services.mapService.setCenter(this.mapId, geometry);
       });
     }
     this.layersData = {

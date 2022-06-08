@@ -74,30 +74,29 @@ class SchemaSerializers:
         }
 
         if column_def.get('primary_key'):
-            return fields.Integer(metadata=kwargs)
-            # return ma.auto_field(metadata=kwargs)
+            return fields.Integer(**kwargs)
 
         if field_type == 'integer':
-            return fields.Integer(metadata=kwargs)
+            return fields.Integer(**kwargs)
 
         if field_type == 'number':
-            return fields.Number(metadata=kwargs)
+            return fields.Number(**kwargs)
 
         if field_type == 'string':
-            return fields.String(metadata=kwargs)
+            return fields.String(**kwargs)
 
         if field_type == 'date':
             # kwargs['format'] = column_def.get('format', "%Y-%m-%d")
-            return fields.Date(metadata=kwargs)
+            return fields.Date(**kwargs)
 
         if field_type == 'uuid':
-            return fields.UUID(metadata=kwargs)
+            return fields.UUID(**kwargs)
 
         if field_type == 'boolean':
-            return fields.Boolean(metadata=kwargs)
+            return fields.Boolean(**kwargs)
 
         if field_type == 'geometry':
-            return GeojsonSerializationField(metadata=kwargs)
+            return GeojsonSerializationField(**kwargs)
 
         raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
 
@@ -138,7 +137,7 @@ class SchemaSerializers:
         exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
         relation_serializer = None
 
-        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), metadata={"exclude":exclude, "dump_default": None})
+        relation_serializer = fields.Nested(relation.marshmallow_schema_name(), **{"exclude":exclude, "dump_default": None})
 
         if relation_def['relation_type'] == 'n-1':
             relation_serializer = relation_serializer
@@ -171,8 +170,11 @@ class SchemaSerializers:
         @pre_load
         def pre_load_make_object(self_marshmallow, data, **kwargs):
 
+            print('youki', data, self.pk_field_names())
+
             for key in self.pk_field_names():
                 if key in data and data[key] is None:
+                    print('marsh remove pk null', key)
                     data.pop(key, None)
 
             # # pour les champs null avec default defini dans les proprietés

@@ -32,13 +32,15 @@ class SchemaModelColumnProperties():
 
     def cp_select(self, key, column_property_def, Model):
 
-        if column_property_def.get('column_property') == 'nb':
+        column_property_type = column_property_def.get('column_property')
+
+        if column_property_type == 'nb':
             return select([func.count('*')])
 
-        if column_property_def.get('column_property') == 'has':
+        if column_property_type == 'has':
             return exists()
 
-        if column_property_def.get('column_property') == 'label':
+        if column_property_type == 'label':
             # TODO communes <area_name> (<area_code[:2]>) ??
             # relation = getattr(Model, column_property_def['relation_key'])
             # relation_entity = relation.mapper.entity
@@ -56,14 +58,16 @@ class SchemaModelColumnProperties():
                 ]
             )
 
-        if column_property_def.get('column_property') == 'st_x':
-            return func.st_x(getattr(Model, column_property_def['key']))
+        if column_property_type in  ['st_x', 'st_y']:
+            return (
+                getattr(func, column_property_type)
+                (func.st_centroid(getattr(Model, column_property_def['key'])))
+            )
 
-        if column_property_def.get('column_property') == 'st_y':
-            return func.st_y(getattr(Model, column_property_def['key']))
+        if column_property_type in  ['st_astext']:
+            return func.st_astext(getattr(Model, column_property_def['key']))
 
-
-        if column_property_def.get('column_property') == 'type_complement':
+        if column_property_type == 'type_complement':
             s_complement = self.cls(self.attr('meta.schema_complement'))
             query, _ = s_complement.get_list()
             complements_case = []

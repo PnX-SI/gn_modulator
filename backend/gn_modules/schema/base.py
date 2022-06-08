@@ -6,6 +6,7 @@
 
 '''
 
+from cProfile import label
 import copy
 import json
 import re
@@ -311,15 +312,44 @@ class SchemaBase():
 
     ## A mettre ailleurs
 
-    def process_csv_data(self, data):
+
+    def process_csv_keys(self, keys):
+        return [
+            self.property(key.split('.')[0])['title'] if self.has_property(key.split('.')[0])
+            else key
+            for key in keys
+        ]
+
+    def process_csv_data(self, key, data, options={}):
         """
         pour rendre les sorties des relations jolies pour l'export ??
         """
 
         if isinstance(data, list):
-            return ", ".join([self.process_csv_data(d) for d in data])
+            return ", ".join([self.process_csv_data(key, d) for d in data])
 
         if isinstance(data, dict):
-            return "_".join([self.process_csv_data(data[key]) for key in data.keys()])
+
+            if not key:
+                return "_".join([self.process_csv_data(None, data[k]) for k in data.keys()])
+
+            if '.' in key:
+                key1 = key.split('.')[0]
+                key2 = '.'.join(key.split('.')[1:])
+
+                return self.process_csv_data(key2, data[key1])
+
+
+            options = self.has_property(key) and self.property(key) or {}
+            return self.process_csv_data(None, data[key], options)
+
+        if labels:=options.get('labels'):
+
+            if data is True:
+                return labels[0] if len(labels) > 0 else True
+            elif data is False:
+                return labels[1] if len(labels) > 1 else False
+            else:
+                return labels[1] if len(labels) > 2 else None
 
         return data

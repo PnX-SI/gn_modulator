@@ -152,7 +152,7 @@ class ModuleBase():
                 files
             ):
                 file_path = Path(root) / file
-                module_file = SchemaMethods.load_json_file(file_path)
+                module_file = SchemaMethods.load_json_file(file_path, load_keys=True)
                 module_file['module_dir_path'] = str(file_path.parent)
                 module_code = module_file['module']['module_code']
                 module_files[module_code] = module_file

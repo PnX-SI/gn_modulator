@@ -110,19 +110,16 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     };
     if (flyToPoint) {
       this._services.mapService.waitForMap(this.mapId).then(() => {
-        this._services.mapService.setCenter(this.mapId, [
-          geometry.coordinates[1],
-          geometry.coordinates[0],
-        ]);
+        this._services.mapService.setCenter(this.mapId, geometry);
       });
     }
-    if (flyToPoint) {
-      this._services.mapService.waitForMap(this.mapId).then(() => {
-        const filters = {};
-        filters[this.pkFieldName()] = this.id();
-        const layer = this._services.mapService.findLayer(this.mapId, filters);
-      });
-    }
+    // if (flyToPoint) {
+    //   this._services.mapService.waitForMap(this.mapId).then(() => {
+    //     const filters = {};
+    //     filters[this.pkFieldName()] = this.id();
+    //     const layer = this._services.mapService.findLayer(this.mapId, filters);
+    //   });
+    // }
   }
 
   onAction(event) {
