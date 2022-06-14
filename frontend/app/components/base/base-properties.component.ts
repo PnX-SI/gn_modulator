@@ -110,6 +110,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     };
     if (flyToPoint) {
       this._services.mapService.waitForMap(this.mapId).then(() => {
+        console.log('uuuuuuuu', geometry)
         this._services.mapService.setCenter(this.mapId, geometry);
       });
     }

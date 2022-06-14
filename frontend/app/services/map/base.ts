@@ -59,6 +59,9 @@ export default {
       const centroid = this.getCentroid(geom.coordinates[0])
       return L.latLng(centroid[1], centroid[0]);
     }
+    if (['Point'].includes(geom.type)) {
+      return L.latLng(geom.coordinates[1], geom.coordinates[0]);
+    }
   },
 
   getCentroid(arr) {

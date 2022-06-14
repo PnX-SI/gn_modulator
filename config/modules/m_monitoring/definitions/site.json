@@ -2,7 +2,7 @@
   "meta": {
     "schema_name": "m_monitoring.site",
     "sql_processing": true,
-    "sql_schema_dot_table": "m_monitoring.t_sites",
+    "sql_schema_dot_table": "m_monitoring.t_base_sites",
     "genre": "M",
     "label": "site",
     "label_field_name": "site_name",

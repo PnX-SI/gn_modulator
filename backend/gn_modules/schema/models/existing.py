@@ -39,7 +39,6 @@ cache_existing_models = {
     "user.organisme": Organisme,
     "user.profil": Profils,
     "user.role": User,
-
 }
 
 

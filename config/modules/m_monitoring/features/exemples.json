@@ -24,7 +24,7 @@
       {
         "site_name": "Arbre à loge 1",
         "site_code": "AL1",
-        "site_desc": "Très beau arbre à loge",
+        "site_desc": "Très bel arbre à loge",
         "site_geom": { "type": "Point", "coordinates": [3.7, 43.8]}
       },
       {

@@ -72,7 +72,8 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
 
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
-    const fields = this.schemaConfig.table.columns.map(column => column.field);
+    // const fields = this.schemaConfig.table.columns.map(column => column.field);
+    const fields = this.schemaConfig.map.popup_fields;
     // if(this.schemaConfig.definition.meta.check_cruved) {
       fields.push('cruved_ownership');
     // }
