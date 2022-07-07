@@ -193,6 +193,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   }
 
   drawTable(): void {
+    console.log(this.schemaConfig.table.sort)
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
       locale: 'fr',
@@ -207,9 +208,8 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
       paginationSize: this.size || this.schemaConfig.utils.size,
       pagination: "remote",
       ajaxSorting: true,
-      initialSort:[
-        {column:this.pkFieldName(), dir:"asc"}, //sort by this first
-      ],
+      initialSort:utils.copy(this.schemaConfig.table.sort) || [],
+      // {column:this.pkFieldName(), dir:"asc"}, //sort by this first
       selectable: 1,
       columnMinWidth: 20,
       // tooltips:true,

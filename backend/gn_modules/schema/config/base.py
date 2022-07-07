@@ -84,6 +84,7 @@ class SchemaConfigBase():
         return {
             'columns': self.columns_table(),
             'columns_short': self.columns_table(short=True),
+            'sort': self.attr('table.sort', []),
             'url': self.url('/rest/', full_url=True)
         }
 
