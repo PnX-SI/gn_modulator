@@ -49,7 +49,9 @@ class SchemaConfigLayout():
                     'nomenclature_type',
                     'min',
                     'max',
-                    'change'
+                    'change',
+                    'placeholder',
+                    'disabled'
                 ]:
                     if key in definition:
                         layout[key] = layout.get(key, definition[key])

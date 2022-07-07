@@ -175,7 +175,7 @@ class SchemaBase():
         return  self.has_property(key) and self.property(key)['type'] == 'relation'
 
     def column_keys(self, sort=False):
-        column_keys = [k for k, v in self.properties().items() if self.is_column(k)]
+        column_keys = [k for k, v in self.properties().items() if self.is_column(k) ]
         if sort:
             column_keys.sort()
         return column_keys

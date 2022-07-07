@@ -170,8 +170,6 @@ class SchemaSerializers:
         @pre_load
         def pre_load_make_object(self_marshmallow, data, **kwargs):
 
-            print('youki', data, self.pk_field_names())
-
             for key in self.pk_field_names():
                 if key in data and data[key] is None:
                     print('marsh remove pk null', key)

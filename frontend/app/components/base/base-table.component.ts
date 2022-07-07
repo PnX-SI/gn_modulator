@@ -193,7 +193,6 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   }
 
   drawTable(): void {
-    console.log(this.schemaConfig.table.sort)
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
       locale: 'fr',
@@ -243,6 +242,8 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
   }
 
   selectRow(value, fieldName=null) {
+    //
+    this.table.deselectRow();
     if (! fieldName) {
       fieldName = this.pkFieldName();
     }
@@ -250,6 +251,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
     if (!row) {
       return;
     }
+
     this.table.selectRow(row);
     return true;
   }

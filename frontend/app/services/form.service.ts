@@ -7,10 +7,11 @@ import {
   Validators,
   ValidatorFn,
   ValidationErrors,
-  AbstractControl
+  AbstractControl,
 } from "@angular/forms";
 import { ModulesLayoutService } from "./layout.service";
 import utils from "../utils";
+import form from "../utils/form";
 
 @Injectable()
 export class ModulesFormService {
@@ -33,14 +34,14 @@ export class ModulesFormService {
     if (layout.required) {
       validators.push(Validators.required);
     }
-    if(![undefined, null].includes(layout.min)) {
-      validators.push(Validators.min(layout.min))
+    if (![undefined, null].includes(layout.min)) {
+      validators.push(Validators.min(layout.min));
     }
-    if(![undefined, null].includes(layout.max)) {
-      validators.push(Validators.max(layout.max))
+    if (![undefined, null].includes(layout.max)) {
+      validators.push(Validators.max(layout.max));
     }
-    if(layout.type == 'integer') {
-      validators.push(this.integerValidator())
+    if (layout.type == "integer") {
+      validators.push(this.integerValidator());
     }
 
     return validators;
@@ -53,7 +54,8 @@ export class ModulesFormService {
     if (layout.type == "object") {
       return this.formGroup(layout.items);
     }
-    let formDefinition = [null, this.formValidators(layout)];
+
+    let formDefinition = [null];
     return formDefinition;
   }
 
@@ -83,8 +85,17 @@ export class ModulesFormService {
   /** configure un control en fonction d'un layout */
   setControl(formControl, layout, data, globalData) {
     let control = formControl.get(layout.key);
-    let computedLayout = this._mLayout.computeLayout({layout, data, globalData, formGroup: null, elemId: null})
+    let computedLayout = this._mLayout.computeLayout({
+      layout,
+      data,
+      globalData,
+      formGroup: null,
+      elemId: null,
+    });
     control.setValidators(this.formValidators(computedLayout));
+    if( computedLayout.disabled) {
+      control.disable()
+    }
     // control pour object
     if (layout.type == "object") {
       let controlData = (data || {})[layout.key] || {};
@@ -114,18 +125,17 @@ export class ModulesFormService {
 
     if (utils.isObject(formValue)) {
       data = data || {};
-      if(!utils.isObject(data)) {
-        data = formValue
+      if (!utils.isObject(data)) {
+        data = formValue;
       }
       for (let [k, v] of Object.entries(formValue)) {
         data[k] = this.updateData(data[k], v);
       }
       for (let [k, v] of Object.entries(data)) {
-        if( ! (k in formValue)) {
+        if (!(k in formValue)) {
           delete data[k];
         }
       }
-
 
       return data;
     }
@@ -154,7 +164,7 @@ export class ModulesFormService {
       if (elem.key && elem.type == "number") {
         data[elem.key] = data[elem.key]
           ? parseFloat(data[elem.key])
-          : data[elem.key]
+          : data[elem.key];
       }
     }
     return data;
@@ -192,10 +202,11 @@ export class ModulesFormService {
       : formValue == data;
   }
 
-  integerValidator(): ValidatorFn
-   {
+  integerValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      return control.value && parseInt(control.value) != control.value ? {integer: {value: control.value}} : null;
+      return control.value && parseInt(control.value) != control.value
+        ? { integer: { value: control.value } }
+        : null;
     };
   }
 }

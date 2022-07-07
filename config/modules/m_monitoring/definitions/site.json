@@ -77,12 +77,37 @@
       "geometry_type": "geometry",
       "title": "Géométrie",
       "srid": 4326
-    }
-    ,
+    },
     "type_site": {
       "type": "string",
       "column_property": "type_complement",
       "title": "Type de site"
     }
+  },
+  "form": {
+    "layout": [
+      "id_site",
+      "site_code",
+      "site_name",
+      // {
+      //   "key": "type_site",
+      //   "type": "list_form",
+      //   "title": "Type de site",
+      //   "value_field_name": "complement_name",
+      //   "schema_name": "m_monitoring.site_complement"
+      // },
+      {
+        "key": "site_geom",
+        "hidden": true
+      }
+    ]
+  },
+  "details": {
+    "layout": [
+      "id_site",
+      "site_code",
+      "site_name",
+      "type_site"
+    ]
   }
 }

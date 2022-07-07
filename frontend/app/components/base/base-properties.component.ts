@@ -32,19 +32,27 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     if (!this.value) {
       return of(null);
     }
-
     const fields = this._services.mLayout.getLayoutFields(this.layout);
+    console.log('urururu get data', fields, this.layout)
+
     if (!fields.includes(this.pkFieldName())) {
       fields.push(this.pkFieldName());
     }
+
+    console.log('urururu 2')
+
 
     if (this.hasGeometry() && !fields.includes(this.geometryFieldName())) {
       fields.push(this.geometryFieldName());
     }
 
+    console.log('urururu 3')
+
     // if(this.schemaConfig.definition.meta.check_cruved) {
       fields.push('cruved_ownership');
     // }
+
+    console.log(fields)
 
     return this._services.mData.getOne(this.schemaName, this.value, {
       fields,
@@ -83,6 +91,9 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
   }
 
   setComponentTitle(): void {
+    if (!this.data) {
+      return;
+    }
     this.componentTitle = `Propriétés ${this.schemaConfig.display.du_label} ${
       this.data[this.schemaConfig.utils.label_field_name]
     }`;

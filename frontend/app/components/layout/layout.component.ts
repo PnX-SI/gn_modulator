@@ -116,7 +116,7 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   listenResize() {
-    if(!this.computedLayout.height_auto) {
+    if(!(this.computedLayout && this.computedLayout.height_auto)) {
       return;
     }
     utils.waitForElement(this._id).then(() => this.processHeightAuto());

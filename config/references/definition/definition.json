@@ -27,7 +27,8 @@
               "dateFormat": { "type": "string"},
               "required": { "type": "boolean" },
               "min": { "type": "number"},
-              "max": { "type": "number"}
+              "max": { "type": "number"},
+              "placeholder": { "type": "string" }
             },
             "required": [ "type", "title" ],
             "additionalProperties": false

@@ -2,3 +2,8 @@
     font-size: 1.2em;
     color: grey;
 }
+
+:host ::ng-deep body .mat-select-panel {
+    max-height: 500px !important;
+    background-color: red;
+}

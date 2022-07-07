@@ -14,10 +14,10 @@
         [appearance]="options.appearance || 'standart'"
       >
         <mat-label>{{ computedLayout.title || computedLayout.key }}</mat-label>
-
         <input
           *ngIf="['date', 'string', 'number'].includes(computedLayout.type)"
           matInput
+          [placeholder]="computedLayout.placeholder"
           [type]="computedLayout.type"
           [formControl]="formControl"
           [required]="computedLayout.required"
@@ -30,6 +30,7 @@
           *ngIf="'uuid' == computedLayout.type"
           matInput
           type="text"
+          [placeholder]="computedLayout.placeholder"
           [formControl]="formControl"
           [required]="computedLayout.required"
           (change)="onInputChange()"
@@ -40,6 +41,7 @@
           matInput
           type="number"
           step="1"
+          [placeholder]="computedLayout.placeholder"
           [formControl]="formControl"
           [required]="computedLayout.required"
           [min]="computedLayout.min"
@@ -51,6 +53,7 @@
           *ngIf="computedLayout.type == 'textarea'"
           matInput
           cdkTextareaAutosize
+          [placeholder]="computedLayout.placeholder"
           [cdkAutosizeMinRows]="computedLayout.min_rows"
           [cdkAutosizeMaxRows]="computedLayout.max_rows"
           [formControl]="formControl"

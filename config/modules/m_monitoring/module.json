@@ -12,7 +12,6 @@
     "m_monitoring.sc_arbre_loge",
     "m_monitoring.sc_grotte"
   ],
-
   "features": [
     "exemples.json"
   ],
@@ -25,6 +24,7 @@
       "type": "link",
       "pageName": "details"
     },
+
     "create": {
       "type": "link",
       "pageName": "create"
@@ -53,7 +53,7 @@
       "elements": [
         {
           "type": "form",
-          "schema_name": "m_sipaf.pf",
+          "schema_name": "m_monitoring.site",
           "zoom": "15"
         }
       ]
@@ -67,7 +67,7 @@
       "elements": [
         {
           "type": "form",
-          "schema_name": "m_sipaf.pf"
+          "schema_name": "m_monitoring.site"
         }
       ]
     },
@@ -81,7 +81,7 @@
         {
           "zoom": "15",
           "type": "properties",
-          "schema_name": "m_sipaf.pf"
+          "schema_name": "m_monitoring.site"
         }
       ]
     }

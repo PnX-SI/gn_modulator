@@ -103,15 +103,15 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
           ],
         },
         {
-          hidden: "__f__(data.geom && data.geom.coordinates)",
+          hidden: `__f__(data["${this.schemaConfig.utils.geometry_field_name}"] && data["${this.schemaConfig.utils.geometry_field_name}"].coordinates)`,
           type: "message",
-          html: "<b>Veuillez saisir une geométrie sur la carte</b>",
+          html: `__f__'<b>Veuillez saisir une geométrie sur la carte <pre>data["${this.schemaConfig.utils.geometry_field_name}"]</pre></b>' + data["${this.schemaConfig.utils.geometry_field_name}"]`,
           class: "warning",
           center: true
         },
         {
           type: "message",
-          json: "__f__utils.getFormErrors(formGroup)",
+          json: "__f__`${utils.getFormErrors(formGroup)} ${formGroup.valid}`",
           class: "warning",
           center: true,
           hidden: true
@@ -131,7 +131,7 @@ export class BaseFormComponent extends BaseComponent implements OnInit {
               title: "Valider",
               description: "Enregistrer le contenu du formulaire",
               action: "submit",
-              disabled: "__f__!(formGroup.valid && data.geom && data.geom.coordinates )"
+              disabled: "__f__!(formGroup.valid )"
             },
             {
               flex: "initial",

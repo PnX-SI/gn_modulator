@@ -2,7 +2,7 @@ import { Component, OnInit, Input, SimpleChanges, } from "@angular/core";
 import { ModulesService } from "../../services/all.service";
 
 import { BaseComponent } from "./base.component";
-
+import utils from '../../utils'
 @Component({
   selector: "modules-base-map",
   templateUrl: "base-map.component.html",
@@ -79,6 +79,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     // }
     this._services.mData.getOne(this.schemaName, value, { fields })
     .subscribe((data) => {
+      console.log(data);
       layer.setPopupContent(this.popupHTML(data));
     });
     this._services.mapService.L.DomEvent
@@ -186,8 +187,10 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     propertiesHTML += popupFields
       .filter(fieldKey => fieldKey != "cruved_ownership")
       .map( fieldKey => {
-        const fieldLabel = this.schemaConfig.definition.properties[fieldKey].title;
-        const fieldValue = properties[fieldKey]
+        // gerer les '.'
+        const fieldKeyLabel = fieldKey.split('.')[0]
+        const fieldLabel = this.schemaConfig.definition.properties[fieldKeyLabel].title;
+        const fieldValue = utils.getAttr(properties, fieldKey)
         return `<li>${fieldLabel} : ${fieldValue}</li>`
       })
       .join('\n');
