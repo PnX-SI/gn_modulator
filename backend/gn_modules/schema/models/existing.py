@@ -8,7 +8,7 @@ from geonature.core.gn_synthese.models import Synthese
 from geonature.core.gn_permissions.models import TActions, TFilters, TObjects, CorRoleActionFilterModuleObject
 from ref_geo.models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
 from geonature.core.taxonomie.models import Taxref
-from geonature.core.users.models import CorRole
+from geonature.core.users.models import CorRole, TListes
 
 from geonature.utils.env import db
 
@@ -39,6 +39,7 @@ cache_existing_models = {
     "user.organisme": Organisme,
     "user.profil": Profils,
     "user.role": User,
+    "user.liste": TListes,
 }
 
 

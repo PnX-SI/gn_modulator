@@ -21,6 +21,13 @@
         "password": {
             "type": "string",
             "title": "password"
+        },
+        "liste": {
+            "type": "relation",
+            "relation_type": "n-n",
+            "schema_name": "user.liste",
+            "schema_dot_table": "utilisateurs.cor_role_liste",
+            "title": "Liste"
         }
     }
 }

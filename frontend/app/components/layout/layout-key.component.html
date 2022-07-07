@@ -14,11 +14,26 @@
 <ng-template #layoutKeyDefault>
   <div>
     <div class="layout-key">
-      <div class="layout-key-title">{{ layout.title }}</div>
+      <div class="layout-key-title">
+        {{ layout.title }}
+        <mat-icon
+          matPrefix
+          *ngIf="computedLayout.description"
+          [matTooltip]="computedLayout.description"
+          class="icon-description"
+        >
+          help
+        </mat-icon>
+      </div>
       <div class="layout-key-value">
-        <ng-container *ngIf="[null, undefined].includes(dataKey); else displayValue">?</ng-container>
-        <ng-template #displayValue >{{dataKey}}</ng-template>
-        </div>
+        <ng-container
+          *ngIf="[null, undefined].includes(dataKey); else displayValue"
+          >...</ng-container
+        >
+        <ng-template #displayValue>
+          {{ dataKey }}
+        </ng-template>
+      </div>
     </div>
   </div>
 </ng-template>

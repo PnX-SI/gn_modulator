@@ -250,6 +250,11 @@ export class ModulesLayoutService {
   }
 
   evalLayout({ layout, data, globalData = null, formGroup = null }) {
+
+    if (this.isStrFunction(layout) && !data) {
+      return null;
+    }
+
     if (!data) {
       return layout;
     }

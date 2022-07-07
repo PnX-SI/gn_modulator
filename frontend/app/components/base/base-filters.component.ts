@@ -109,7 +109,6 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
       params: {
         filters: this.getFilters(),
       },
-
     });
   }
 
@@ -124,10 +123,4 @@ export class BaseFiltersComponent extends BaseComponent implements OnInit {
       this.applyFilters();
     });
   }
-
-  onFormChanges(event) {}
-
-  onIsValid(event) {}
-
-  onValidationErrors(event) {}
 }

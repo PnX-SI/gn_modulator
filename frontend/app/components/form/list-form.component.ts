@@ -92,7 +92,6 @@ export class ModulesListFormComponent
   /** */
   postComputeLayout(): void {
     this.processListFormConfig();
-
   }
 
   /** action lorsque le champs de recherche change */

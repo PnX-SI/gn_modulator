@@ -1,0 +1,13 @@
+{
+    "required": ["identifiant", "nom_role", "prenom_role"],
+    "meta": {
+        "schema_name": "user.liste",
+        "autoschema": true,
+        "model_name": "TListes",
+        "sql_schema_dot_table": "utilisateurs.t_listes",
+        "label": "liste",
+        "label_field_name": "nom_liste",
+        "genre": "F",
+        "unique": ["code_liste"]
+    }
+}
