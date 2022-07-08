@@ -97,6 +97,9 @@ class SchemaModelBase():
 
         relation = self.cls(relationship_def['schema_name'])
 
+        if not relation.Model():
+            return
+
         kwargs = {}
         # if relationship_def.get('backref'):
         #     kwargs['backref'] = relationship_def.get('backref')
