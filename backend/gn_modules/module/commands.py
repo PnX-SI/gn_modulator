@@ -3,6 +3,7 @@ from pathlib import Path
 from . import errors
 from ..schema import SchemaMethods
 from flask_migrate import upgrade as db_upgrade, downgrade as db_downgrade
+from sqlalchemy.orm.exc import NoResultFound
 
 class ModuleCommands():
 
@@ -36,6 +37,10 @@ class ModuleCommands():
 
         # alembic
         db_upgrade(revision='{}@head'.format(module_code.lower()))
+
+        # pour les update du module ?
+        cls.register_db_module(module_code)
+
 
         # process module data (nomenclature, groups ?, datasets, etc..)
         cls.process_module_data(module_code)

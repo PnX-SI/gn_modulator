@@ -46,7 +46,10 @@ class ModuleBase():
             'module_path': 'modules/{}'.format(module_code.lower()),
             'active_backend': False,
         }
-        schema_module.insert_row(module_row_data, commit=True)
+        try:
+            schema_module.update_row(module_code, module_row_data, field_name='module_code')
+        except NoResultFound:
+            schema_module.insert_row(module_row_data, commit=True)
 
     @classmethod
     def delete_db_module(cls, module_code):
