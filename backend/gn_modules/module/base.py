@@ -182,9 +182,7 @@ class ModuleBase():
     def modules_config(cls):
 
         if cache_modules_config != {}:
-            print('cache')
             return cache_modules_config
-        print('no cache')
 
         modules_db = cls.modules_db()
         modules_files = cls.modules_files()
