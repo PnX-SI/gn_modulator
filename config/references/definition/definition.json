@@ -91,8 +91,9 @@
               "local_key": { "type": "string" },
               "relation_type": { "enum": ["1-1"] },
               "schema_name": { "type": "string" },
-              "title": { "type": "string"},
-              "type": { "enum": [ "relation" ] }
+              "title": { "type": "string" },
+              "type": { "enum": [ "relation" ] },
+              "backref": { "type": "string" }
             },
             "required": [ "type", "title", "relation_type", "local_key", "schema_name"],
             "additionalProperties": false
@@ -105,7 +106,8 @@
               "relation_type": { "enum": ["1-n"] },
               "schema_name": { "type": "string" },
               "title": { "type": "string"},
-              "type": { "enum": [ "relation" ] }
+              "type": { "enum": [ "relation" ] },
+              "backref": { "type": "string" }
             },
             "required": [ "type", "title", "schema_name", "relation_type", "foreign_key"],
             "additionalProperties": false
@@ -123,8 +125,8 @@
               "schema_name": { "type": "string" },
               "title": { "type": "string"},
               "trigger": { "type": "object" },
-              "type": { "enum": [ "relation" ] }
-
+              "type": { "enum": [ "relation" ] },
+              "backref": { "type": "string" }
             },
             "required": [ "type", "title", "schema_name", "schema_dot_table", "relation_type"],
             "additionalProperties": false

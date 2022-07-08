@@ -43,7 +43,7 @@ export class ModulesLayoutService {
       ? null
       : Array.isArray(layout)
       ? "items"
-      : ["button", "html", "message", "medias"].includes(layout.type)
+      : ["button", "html", "message", "medias", "card"].includes(layout.type)
       ? layout.type
       : layout.key
       ? "key"
@@ -82,30 +82,6 @@ export class ModulesLayoutService {
     // TODO filters ???
     return keys.map((key) => (baseKey ? `${baseKey}.${key}` : key));
   }
-
-  //   if (this.getLayoutType(layout) == "section" && layout.type == "array") {
-  //     return processArray ? this.getLayoutFields(layout.items) : [layout.key];
-  //   } else if (
-  //     this.getLayoutType(layout) == "section" &&
-  //     layout.type == "items"
-  //   ) {
-  //     return utils.flatAndRemoveDoublons(
-  //       layout.map((l) => this.getLayoutFields(l, processArray))
-  //     );
-  //   } else if (this.getLayoutType(layout) == "section") {
-  //     return utils.flatAndRemoveDoublons(
-  //       layout.items.map((l) => this.getLayoutFields(l, processArray))
-  //     );
-  //   }
-
-  //   const key = layout.key_value || layout.key || layout;
-  //   var keys = [key];
-  //   if (layout.filters) {
-  //     keys = [...keys, ...layout.filters.map((f) => f.key)];
-  //   }
-  //   keys = keys.map((key) => key.replace("[]", ""));
-  //   return utils.flatAndRemoveDoublons(keys);
-  // }
 
   isStrFunction(layout) {
     return typeof layout == "string"
@@ -192,53 +168,6 @@ export class ModulesLayoutService {
     return items;
   }
 
-  // computeLayout({ layoutDefinition, data, globalData, layout }) {
-  //   globalData = globalData || data;
-  //   if (utils.isObject(layoutDefinition)) {
-  //     layout = layout || {};
-
-  //     for (const [key, value] of Object.entries(layoutDefinition)) {
-  //       if (key == "change") {
-  //         layout[key] = value;
-  //         continue;
-  //       }
-
-  //       if (key == "items" && ["array", "object"].includes(layout.type)) {
-  //         layout[key] = this.computeLayout({
-  //           layoutDefinition: layoutDefinition[key],
-  //           data: data[layout.key],
-  //           globalData,
-  //           layout: layout[key],
-  //         });
-  //         continue;
-  //       }
-
-  //       layout[key] = this.computeLayout({
-  //         layoutDefinition: layoutDefinition[key],
-  //         data,
-  //         globalData,
-  //         layout: layout[key],
-  //       });
-  //     }
-  //     return layout;
-  //   }
-
-  //   if (Array.isArray(layoutDefinition)) {
-  //     for (const index in layoutDefinition) {
-  //       layout = layout || [];
-  //       layout[index] = this.computeLayout(
-  //         {
-  //           layoutDefinitionlayoutDefinition[index],
-  //         data,
-  //         globalData,
-  //         layout[index]
-  //       );
-  //     }
-  //     return layout;
-  //   }
-
-  //   return this.evalLayout(layoutDefinition, data, globalData, null);
-  // }
 
   evalFunction(layout) {
     let strFunction = Array.isArray(layout) ? layout.join("") : layout;

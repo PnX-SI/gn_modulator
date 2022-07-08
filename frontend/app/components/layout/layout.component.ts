@@ -141,6 +141,7 @@ export class ModulesLayoutComponent implements OnInit {
     }
     const elem = document.getElementById(this._id);
     const height = document.body.clientHeight - elem.offsetTop;
+    this.log('ha', height)
     this.layout.style = this.computedLayout.style || {};
     this.layout.style.height = `${height}px`;
     this._mLayout.reComputeLayout();

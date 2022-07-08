@@ -1,19 +1,4 @@
-<h1>Module gn_modules</h1>
-
-<div *ngIf="modules">
-
-    <div *ngFor="let module of modules">
-        <a href="#/{{module.module.module_path}}"> {{ module.module.module_code }}</a>
-    </div>
-
-</div>
-
-<!-- <div *ngFor='let groupName of groups'>
-    <ul>
-        <li *ngFor="let objectName of schemaGroups[groupName]">
-            <a href="#/modules/test_schema/?schemaName=schemas.{{groupName}}.{{objectName}}">
-                <i>{{groupName}}.{{objectName}}</i>
-            </a>
-        </li>
-    </ul>
-</div> -->
+<modules-layout
+    [layout]="layout"
+>
+</modules-layout>

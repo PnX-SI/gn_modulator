@@ -101,16 +101,24 @@ class SchemaSerializers:
         raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
 
     def opposite_relation_def(self, relation_def):
-        return {
+        opposite = {
+            'type': 'relation',
             'relation_type': (
                 'n-1' if relation_def['relation_type'] == '1-n'
                 else '1-n' if relation_def['relation_type'] == 'n-1'
                 else 'n-n'
             ),
             'schema_name': self.schema_name(),
-            'local_key': relation_def.get('foreign_key'),
-            'foreign_key': relation_def.get('local_key'),
+            'title': self.attr('meta.label')
         }
+        if relation_def.get('foreign_key'):
+            opposite['local_key'] = relation_def.get('foreign_key')
+        if relation_def.get('local_key'):
+            opposite['foreign_key'] = relation_def.get('local_key')
+        if relation_def.get('schema_dot_table'):
+            opposite['schema_dot_table'] = relation_def.get('schema_dot_table')
+
+        return opposite
 
     def is_relation_excluded(self, relation_def_test, relation_def):
         return (

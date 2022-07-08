@@ -1,0 +1,28 @@
+<ng-container *ngIf="!isInitialized; else card"></ng-container>
+
+<ng-template #card>
+  <mat-card
+    [href]="computedLayout.href"
+    [ngClass]="computedLayout && computedLayout.class"
+  >
+    <mat-card-content class="card-content" [routerLink]="computedLayout.href">
+      <img
+        mat-card-image
+        class="card-image"
+        [src]="computedLayout.img"
+        alt="img"
+      />
+      <mat-card-title class="card-title">{{
+        computedLayout.title
+      }}</mat-card-title>
+      <p>
+        {{ computedLayout.description }}
+      </p>
+    </mat-card-content>
+    <mat-card-footer class="card-footer">
+      <button mat-raised-button primary [routerLink]="computedLayout.href">
+        Accéder
+      </button>
+    </mat-card-footer>
+  </mat-card>
+</ng-template>

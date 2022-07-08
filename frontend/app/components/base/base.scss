@@ -48,7 +48,7 @@
 div.layout-items {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    // width: 100%;
 
 }
 
@@ -57,7 +57,7 @@ div.layout-row {
 }
 
 div.layout-items > div {
-    flex: auto;
+    // flex: auto;
 }
 
 :host ::ng-deep  fieldset.fieldset {
@@ -149,4 +149,39 @@ div.layout-items > div {
 .layout-html.info {
     color: blue;
     background-color: lightblue;
+}
+
+:host ::ng-deep .module-card {
+    width: 400px;
+    margin: 5px;
+    display: inline-block;
+
+}
+
+:host ::ng-deep .module-card img {
+    width: 400px;
+    height: 300px;
+    padding: 5px;
+    object-fit: cover;
+}
+
+:host ::ng-deep .card-content {
+    height: 400px;
+    overflow: ellipsis;
+}
+
+:host ::ng-deep .modules {
+    background-color: white;
+    // color: white;
+}
+
+:host ::ng-deep .modules-liste {
+    margin: 0 40px;
+}
+
+
+:host ::ng-deep .modules h3{
+    text-align: center;
+    font-size: 4em;
+    font-weight: bold;
 }

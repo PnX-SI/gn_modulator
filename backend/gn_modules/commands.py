@@ -59,14 +59,40 @@ def cmd_process_all(module_code, force=False):
 
 
 @click.command('sql')
-@click.argument('module_code')
+@click.option('-m', 'module_code')
+@click.option('-s', 'schema_name')
 @click.option('-f', '--force', is_flag=True)
 @with_appcontext
-def cmd_process_sql(module_code, force=False):
+def cmd_process_sql(module_code=None, schema_name=None, force=False):
     '''
     '''
 
-    ModuleMethods.create_schema_sql(module_code, force)
+    if schema_name:
+        sm = SchemaMethods(schema_name)
+        print(sm.sql_txt_process())
+
+    if module_code:
+        module_config = ModuleMethods.module_config(module_code)
+        schema_names = module_config['schemas']
+        for schema_name in schema_names:
+            sm = SchemaMethods(schema_name)
+            print(sm.sql_txt_process())
+
+
+
+    # ModuleMethods.create_schema_sql(module_code)
+
+
+# @click.command('sql_schema')
+# @click.argument('module_code')
+# @click.option('-f', '--force', is_flag=True)
+# @with_appcontext
+# def cmd_process_sql(module_code, force=False):
+#     '''
+#     '''
+
+#     ModuleMethods.create_schema_sql(module_code, force)
+
 
 @click.command('doc')
 @click.argument('schema_name')

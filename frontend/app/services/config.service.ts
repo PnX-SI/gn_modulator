@@ -121,13 +121,8 @@ export class ModulesConfigService {
     return `${AppConfig.API_ENDPOINT}${ModuleConfig.MODULE_URL}`;
   }
 
-  /** Frontend Module Monitoring Url */
-  frontendModuleMonitoringUrl() {
-    return ModuleConfig.MODULE_URL;
-  }
-
-  moduleMonitoringCode() {
-    return this.moduleConfig['module'].module_code;
+  assetsDirectory() {
+    return this.backendUrl() + '/static/external_assets/modules';
   }
 
 }

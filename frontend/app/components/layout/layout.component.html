@@ -23,6 +23,7 @@
   <!-- items -->
   <ng-container *ngSwitchCase="'items'">
     <modules-layout-array
+      [ngClass]="computedLayout && computedLayout.class"
       [data]="data"
       [debug]="debug"
       [depth]="depth"
@@ -37,6 +38,7 @@
   <!-- section -->
   <ng-container *ngSwitchCase="'section'">
     <modules-layout-section
+      [ngClass]="computedLayout && computedLayout.class"
       [data]="data"
       [debug]="debug"
       [depth]="depth"
@@ -45,6 +47,19 @@
       [options]="options"
       (onAction)="processAction($event)"
     ></modules-layout-section>
+  </ng-container>
+
+  <!-- cards -->
+  <ng-container *ngSwitchCase="'card'">
+    <modules-layout-card
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth"
+      [globalData]="globalData"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-card>
   </ng-container>
 
   <!-- key -->

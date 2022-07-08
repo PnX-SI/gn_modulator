@@ -4,8 +4,14 @@ from ..schema import SchemaMethods
 from sqlalchemy.orm.exc import NoResultFound
 from flask import g
 from . import errors
+from geonature.utils.env import BACKEND_DIR
 
 cache_modules_config = {}
+
+def symlink(path_source, path_dest):
+    if(os.path.islink(path_dest)):
+        os.remove(path_dest)
+    os.symlink(path_source, path_dest)
 
 class ModuleBase():
 
@@ -92,6 +98,10 @@ class ModuleBase():
             txt += sm.sql_txt_process()
 
         sql_file_path = cls.migrations_dir(module_code) / 'data/schema.sql'
+        if sql_file_path.exists() and not force:
+            print('- Le fichier existe déjà {}'.format(sql_file_path))
+            print('- Veuillez relancer la commande avec -f pour forcer la réécriture')
+            return
         sql_file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(sql_file_path, 'w') as f:
             f.write(txt)
@@ -204,3 +214,19 @@ class ModuleBase():
             infos[data_name] = SchemaMethods.process_data(file_path)
             SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
         pass
+
+    @classmethod
+    def process_module_assets(cls, module_code):
+        '''
+            copie le dossier assets d'un module dans le repertoire static de geonature
+            dans le dossier 'static/external_assets/modules/{module_code.lower()}'
+        '''
+        module_config = cls.module_config(module_code)
+        module_assets_dir = Path(module_config['module_dir_path']) / 'assets'
+        assets_static_dir = BACKEND_DIR / f'static/external_assets/modules/'
+        assets_static_dir.mkdir(exist_ok=True, parents=True)
+
+        symlink(
+            module_assets_dir,
+            assets_static_dir / module_code.lower(),
+        )

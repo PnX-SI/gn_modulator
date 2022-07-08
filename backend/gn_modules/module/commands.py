@@ -40,6 +40,9 @@ class ModuleCommands():
         # process module data (nomenclature, groups ?, datasets, etc..)
         cls.process_module_data(module_code)
 
+        # assets
+        cls.process_module_assets(module_code)
+
         return
 
     @classmethod

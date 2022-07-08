@@ -22,9 +22,9 @@
     <div
       *ngFor="let item of computedLayout; let index = index"
       attr.id="{{ _id }}.{{ index }}"
-      [ngStyle]="{'flex' : item.flex || 'auto' }"
+      [ngStyle]="{ flex: item.flex || 'auto' }"
     >
-    <modules-layout
+      <modules-layout
         [data]="data"
         [debug]="debug"
         [depth]="depth + 1"

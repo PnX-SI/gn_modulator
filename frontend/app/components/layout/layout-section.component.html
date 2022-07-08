@@ -1,7 +1,7 @@
 <ng-container *ngIf="!isInitialized; else section"></ng-container>
 
 <ng-template #section>
-  <div [ngStyle]="computedLayout.style" [attr.id]="_id" class="layout-section">
+  <div [ngStyle]="computedLayout.style" [attr.id]="_id" class="layout-section" [ngClass]="computedLayout.class">
     <ng-container *ngIf="computedLayout.type == 'form'; else sectionFieldset">
       <modules-generic-form
         [(data)]="data"

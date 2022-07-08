@@ -16,7 +16,7 @@ from geonature.utils.env import GN_EXTERNAL_MODULE, db
 from geonature.utils.config import config as gn_config
 from gn_modules import MODULE_CODE
 
-from . import errors
+from . import errors, SchemaBase
 
 GN_MODULES_DIR = GN_EXTERNAL_MODULE / MODULE_CODE.lower()
 class SchemaFiles():
@@ -310,6 +310,23 @@ class SchemaFiles():
         return check_schema_names
 
     @classmethod
+    def process_backrefs(cls):
+        '''
+            ajout des definition des relation avec backref dans le schema correspondant
+        '''
+        for schema_name in cls.schema_names_from_cache():
+            sm = cls(schema_name)
+
+            for relation_key, relation_def in sm.relationships().items():
+                if not relation_def.get('backref'):
+                    continue
+                opposite = sm.opposite_relation_def(relation_def)
+                rel = cls(relation_def['schema_name'])
+                rel_properties = rel.attr('properties')
+                if not rel_properties.get(relation_def['backref']):
+                    rel_properties[relation_def['backref']] = opposite
+
+    @classmethod
     def process_complement(cls):
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
@@ -349,6 +366,8 @@ class SchemaFiles():
         cls.clear_schema_cache()
         cls.init_references()
         cls.init_definitions()
+
+        cls.process_backrefs()
 
         # init complement ??
         # ici on ajoute les relations dans les definitions

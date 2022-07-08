@@ -10,6 +10,7 @@ import {
 import { TestLayoutComponent } from "./components/test/test-layout.component";
 import { ModulesLayoutComponent } from "./components/layout/layout.component";
 import { ModulesLayoutSectionComponent } from "./components/layout/layout-section.component";
+import { ModulesLayoutCardComponent } from "./components/layout/layout-card.component";
 import { ModulesLayoutKeyComponent } from "./components/layout/layout-key.component";
 import { ModulesLayoutArrayComponent } from "./components/layout/layout-array.component";
 import { ModulesLayoutObjectComponent } from "./components/layout/layout-object.component";
@@ -67,6 +68,7 @@ const routes: Routes = [
     ModulesGenericFormComponent,
     ModulesLayoutComponent,
     ModulesLayoutSectionComponent,
+    ModulesLayoutCardComponent,
     ModulesLayoutKeyComponent,
     ModulesLayoutArrayComponent,
     ModulesLayoutObjectComponent,

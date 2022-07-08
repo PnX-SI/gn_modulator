@@ -98,6 +98,9 @@ class SchemaModelBase():
         relation = self.cls(relationship_def['schema_name'])
 
         kwargs = {}
+        # if relationship_def.get('backref'):
+        #     kwargs['backref'] = relationship_def.get('backref')
+
         if relationship_def.get('relation_type') == '1-1':
             kwargs['uselist'] = False
 
@@ -178,7 +181,9 @@ class SchemaModelBase():
 
         # get Model from existing
         if Model := self.get_existing_model():
+
             return Model
+
 
         # dict_model used with type() to list properties and methods for class creation
         dict_model = {

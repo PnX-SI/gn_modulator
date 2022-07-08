@@ -164,7 +164,7 @@ class SchemaSqlBase():
         processed_schema_names = []
         for name in self.dependencies():
             sm = self.cls(name)
-            if sm.sql_processing():  # and not sm.sql_table_exists():
+            if sm.sql_processing() and not sm.sql_table_exists():
                 processed_schema_names.append(name)
 
         txt = "-- process schema : {}\n".format(self.schema_name())
@@ -178,7 +178,7 @@ class SchemaSqlBase():
         sql_schema_names = []
         for name in processed_schema_names:
             sm = self.cls(name)
-            if sm.sql_schema_name() not in sql_schema_names:  # and not sm.sql_schema_exists():
+            if sm.sql_schema_name() not in sql_schema_names  and not sm.sql_schema_exists():
                 sql_schema_names.append(sm.sql_schema_name())
 
         for sql_schema_name in sql_schema_names:

@@ -4,6 +4,7 @@
 '''
 
 from calendar import c
+from cgi import test
 import os
 import copy
 from pathlib import Path
@@ -238,6 +239,7 @@ class SchemaBaseImports:
 
                 # on tente un update
                 try:
+                    print('model', sm.Model())
                     m, b_update = sm.update_row(
                         values,
                         d,

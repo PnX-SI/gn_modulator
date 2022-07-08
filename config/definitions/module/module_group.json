@@ -1,0 +1,42 @@
+{
+  "meta": {
+      "schema_name": "modules.group",
+      "model_name": "TModulesGroup",
+      "sql_processing": true,
+      "sql_schema_dot_table": "gn_modules.t_module_groups",
+      "label": "Groupe de modules",
+      "labels": "Groupes de modules",
+      "label_field_name": "group_name",
+      "genre": "M",
+      "unique": ["module_group_code"]
+    },
+    "properties": {
+      "id_module_group": {
+        "type": "integer",
+        "primary_key": true,
+        "title": "Code du groupe de module"
+      },
+      "module_group_code": {
+        "type": "string",
+        "title": "Code du groupe de module"
+      },
+      "module_group_name": {
+        "type": "string",
+        "title": "Nom du groupe de module"
+      },
+      "module_group_desc": {
+        "type": "string",
+        "title": "Description du groupe de module"
+      }
+      ,
+      "modules": {
+        "type": "relation",
+        "relation_type": "n-n",
+        "title": "modules",
+        "description": "Liste des modules du groupe",
+        "schema_dot_table": "gn_modules.cor_module_groupe",
+        "schema_name": "modules.module",
+        "backref": "groups"
+      }
+    }
+}
