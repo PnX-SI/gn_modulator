@@ -239,7 +239,6 @@ class SchemaBaseImports:
 
                 # on tente un update
                 try:
-                    print('model', sm.Model())
                     m, b_update = sm.update_row(
                         values,
                         d,
