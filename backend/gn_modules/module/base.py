@@ -50,6 +50,8 @@ class ModuleBase():
             schema_module.update_row(module_code, module_row_data, field_name='module_code')
         except NoResultFound:
             schema_module.insert_row(module_row_data, commit=True)
+        print(module_data['module_desc'])
+        print(schema_module.get_row(module_code, 'module_code').module_desc)
 
     @classmethod
     def delete_db_module(cls, module_code):
@@ -180,7 +182,9 @@ class ModuleBase():
     def modules_config(cls):
 
         if cache_modules_config != {}:
+            print('cache')
             return cache_modules_config
+        print('no cache')
 
         modules_db = cls.modules_db()
         modules_files = cls.modules_files()
@@ -199,7 +203,9 @@ class ModuleBase():
             module_config['registred'] = module_db != {}
 
             for key in (module_db or {}):
-                module_config['module'][key] = module_db[key]
+                module_config['module'][key] = module_config['module'].get(key, module_db[key])
+
+
             modules_config[module_code] = module_config
 
         for key in modules_config:
