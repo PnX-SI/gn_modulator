@@ -50,8 +50,6 @@ class ModuleBase():
             schema_module.update_row(module_code, module_row_data, field_name='module_code')
         except NoResultFound:
             schema_module.insert_row(module_row_data, commit=True)
-        print(module_data['module_desc'])
-        print(schema_module.get_row(module_code, 'module_code').module_desc)
 
     @classmethod
     def delete_db_module(cls, module_code):
