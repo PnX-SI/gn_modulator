@@ -8,82 +8,54 @@
   },
   "schemas": [
     "m_monitoring.site",
-    "m_monitoring.site_complement",
-    "m_monitoring.sc_arbre_loge",
-    "m_monitoring.sc_grotte"
+    // TODO refactor sql processing pour eviter de créer plusieurs fois les tables
+    // "m_monitoring.site_category",
+    "m_monitoring.visit"
+    // "m_monitoring.sc_arbre_loge",
+    // "m_monitoring.sc_grotte"
   ],
   "features": [
     "exemples.json"
   ],
-  "actions": {
-    "edit": {
-      "type": "link",
-      "pageName": "edit"
+  "objects": {
+    "site": {
+      "schema_name": "m_monitoring.site"
     },
-    "details": {
-      "type": "link",
-      "pageName": "details"
-    },
-
-    "create": {
-      "type": "link",
-      "pageName": "create"
-    },
-    "export": {
-      "type": "export"
+    "visit": {
+      "schema_name": "m_monitoring.visit"
     }
   },
+
+  // "actions": {
+  //   "site": {
+  //     "details": "site_details",
+  //     "edit": "site_edit",
+  //     "create": "site_create",
+  //     "map_list": "site_map_list"
+  //   },
+  //   "visit": {
+  //     "details": "site_details",
+  //     "edit": "site_edit",
+  //     "create": "site_create",
+  //     "map_list": "site_map_list"
+  //   }
+  // },
   "pages": {
-    "map_list": {
-      "label": "MONITORING",
+    "sites": {
       "url": "",
-      "elements": [
-        {
-          "schema_name": "m_monitoring.site",
-          "type": "map_list"
-        }
-      ]
+      "layout_name": "m_monitoring.site_map_list"
     },
-    "edit": {
-      "label": "Édition",
-      "parent": {
-        "pageName": "map_list"
-      },
-      "url": "edit/:value",
-      "elements": [
-        {
-          "type": "form",
-          "schema_name": "m_monitoring.site",
-          "zoom": "15"
+    "site_details": {
+      "url": "site_details/:value",
+      "layout_name": "m_monitoring.site_details",
+      "params": {
+        "site": {
+          "value": ":value"
+        },
+        "visit": {
+         "prefilters": [{ "field": "id_site", "type": "=", "value": ":value" }]
         }
-      ]
-    },
-    "create": {
-      "label": "Création",
-      "parent": {
-        "pageName": "map_list"
-      },
-      "url": "create",
-      "elements": [
-        {
-          "type": "form",
-          "schema_name": "m_monitoring.site"
-        }
-      ]
-    },
-    "details": {
-      "label": "Propriétés",
-      "parent": {
-        "pageName": "map_list"
-      },
-      "url": "details/:value",
-      "elements": [
-        {
-          "zoom": "15",
-          "type": "properties",
-          "schema_name": "m_monitoring.site"
-        }
-      ]
+      }
     }
   }
 }

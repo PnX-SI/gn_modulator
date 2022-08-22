@@ -1,0 +1,19 @@
+.modal-container {
+    z-index: 100000;
+    background-color: rgba(0,0,0,0.7);
+    position: absolute;
+    top:0px;
+    left:0px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-container > div {
+    width: 500px;
+    padding: 10px;
+    opacity: 1;
+
+}

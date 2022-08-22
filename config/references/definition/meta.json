@@ -7,7 +7,6 @@
     "label_field_name": { "type": "string"},
     "genre": { "type": "string"},
     "sql_schema_dot_table": { "type": "string"},
-    "schema_complement": { "type": "string"},
     "unique": { " type" : "array" , "items": {"type": "string"}}
   },
   "required": [

@@ -1,0 +1,29 @@
+{
+  "_defs": {
+    "_value": 100,
+    "_schema_name": "m_sipaf.pf"
+  },
+  "layout": {
+    "title": "Test form map",
+    // "height_auto": true,
+    "direction": "row",
+    "items": [
+      {
+        "type": "schema",
+        "component": "map",
+        "value": "_value",
+        "schema_name": "_schema_name"
+      },
+      {
+        "type": "schema",
+        "schema_name": "_schema_name",
+        "component": "form",
+        "value": "_value",
+        "module_code": "m_sipaf"
+      }
+    ]
+  },
+  "data": {},
+  "layout_description": "Test schema map + form",
+  "layout_name": "test_schema_form_map"
+}

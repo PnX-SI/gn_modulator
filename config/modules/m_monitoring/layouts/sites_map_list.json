@@ -1,0 +1,24 @@
+{
+  "layout_name": "m_monitoring.site_map_list",
+  "height_auto": true,
+  "direction": "row",
+  "items": [
+    {
+      "type": "object",
+      "component": "filters",
+      "object_name": "site"
+    },
+    {
+      "flex": 2,
+      "type": "object",
+      "component": "map",
+      "object_name": "site"
+    },
+    {
+      "flex": 2,
+      "type": "object",
+      "component": "table",
+      "object_name": "site"
+    }
+  ]
+}

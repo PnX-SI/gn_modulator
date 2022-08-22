@@ -1,16 +1,47 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
 import utils from "../utils";
 import layer from "./map/layer";
 import { Subject } from "@librairies/rxjs";
+import { ModulesConfigService } from "../services/config.service";
 
 @Injectable()
 export class ModulesLayoutService {
-  constructor() {}
+  _mConfig: ModulesConfigService;
+  utils;
+  constructor(private _injector: Injector) {
+    this._mConfig = this._injector.get(ModulesConfigService);
+  }
 
   $reComputeLayout = new Subject();
+  $recomputedHeight = new Subject();
+  modals = {};
+  $closeModals = new Subject();
 
-  reComputeLayout() {
+  initModal(modalName) {
+    if (!this.modals[modalName]) {
+      this.modals[modalName] = new Subject();
+    }
+  }
+
+  openModal(modalName, data) {
+    this.modals[modalName] && this.modals[modalName].next(data);
+  }
+
+  closeModals() {
+    this.$closeModals.next();
+  }
+
+  getLayoutFromName(layoutName) {
+    return this._mConfig.getLayout(layoutName);
+    // from config ??
+  }
+
+  reComputeLayout(name) {
     this.$reComputeLayout.next(true);
+  }
+
+  reComputeHeight(name) {
+    this.$recomputedHeight.next(true);
   }
 
   /** Met à plat tous les layouts
@@ -43,8 +74,22 @@ export class ModulesLayoutService {
       ? null
       : Array.isArray(layout)
       ? "items"
-      : ["button", "html", "message", "medias", "card"].includes(layout.type)
+      : [
+          "button",
+          "html",
+          "message",
+          "medias",
+          "card",
+          "object",
+          "table",
+          "tabs",
+          "map",
+          "modal",
+          "dict"
+        ].includes(layout.type)
       ? layout.type
+      : layout.layout_name
+      ? "name"
       : layout.key
       ? "key"
       : "section";
@@ -56,7 +101,6 @@ export class ModulesLayoutService {
    */
   getLayoutFields(layout, baseKey = null) {
     const layoutType = this.getLayoutType(layout);
-
     /** section */
     if (layoutType == "section") {
       return utils.flatAndRemoveDoublons(
@@ -71,7 +115,7 @@ export class ModulesLayoutService {
       );
     }
     /** key - array ou object */
-    if (layoutType == "key" && ["array", "object"].includes(layout.type)) {
+    if (layoutType == "key" && ["array", "dict"].includes(layout.type)) {
       const newBaseKey = baseKey ? `${baseKey}.${layout.key}` : layout.key;
       return utils.flatAndRemoveDoublons(
         this.getLayoutFields(layout.items, newBaseKey)
@@ -79,8 +123,10 @@ export class ModulesLayoutService {
     }
     /** key */
     const keys = [layout.key];
-    // TODO filters ???
-    return keys.map((key) => (baseKey ? `${baseKey}.${key}` : key));
+
+    return keys
+      .filter((k) => !!k)
+      .map((key) => (baseKey ? `${baseKey}.${key}` : key));
   }
 
   isStrFunction(layout) {
@@ -127,9 +173,10 @@ export class ModulesLayoutService {
       return computedLayout;
     }
 
-    if (Array.isArray(layout)) {
-      return this.computeLayoutHeight(layout, elemId);
-    }
+    // if (Array.isArray(layout) && layout.length) {
+    //   return this.computeLayoutHeight(layout, elemId);
+    // }
+
     return layout;
   }
 
@@ -137,15 +184,27 @@ export class ModulesLayoutService {
     const layoutIndex =
       items && items.findIndex && items.findIndex((l) => l["overflow"]);
     if (
-      [-1, null, undefined].includes(layoutIndex) ||
-      !document.getElementById(`${elemId}.0`)
+      [-1, null, undefined].includes(layoutIndex) //||
+      // !document.getElementById(`${elemId}.0`)
     ) {
       return items;
     }
 
-    const heightParent = document
-      .getElementById(`${elemId}.0`)
-      .closest(".layout-section").clientHeight;
+    let elem = document.getElementById(
+      `${elemId}.${layoutIndex}`
+    ) as HTMLElement;
+
+    if (!elem) {
+      return items;
+    }
+
+    if (!items[layoutIndex]?.style?.height) {
+      items[layoutIndex].style = items[layoutIndex].style || {};
+      items[layoutIndex].style.height = "10px";
+      return;
+    }
+
+    const heightParent = elem.closest(".layout-section").clientHeight;
 
     const heightSibblings = items
       .map((l, ind) =>
@@ -157,17 +216,16 @@ export class ModulesLayoutService {
       .reduce((acc, cur) => acc + cur);
 
     const height = heightParent - heightSibblings;
-    // const height = 300;
-
+    // const height = elem.closest("div")?.clientHeight;
     items[layoutIndex].style = {
       ...(items[layoutIndex].style || {}),
       "overflow-y": "scroll",
       height: `${height}px`,
+      // height: `100px`,
     };
 
     return items;
   }
-
 
   evalFunction(layout) {
     let strFunction = Array.isArray(layout) ? layout.join("") : layout;
@@ -175,11 +233,16 @@ export class ModulesLayoutService {
     if (!strFunction.includes("return ") && strFunction[0] != "{") {
       strFunction = `{ return ${strFunction} }`;
     }
-    return new Function("data", "globalData", "formGroup", "utils", strFunction);
+    return new Function(
+      "data",
+      "globalData",
+      "formGroup",
+      "utils",
+      strFunction
+    );
   }
 
   evalLayout({ layout, data, globalData = null, formGroup = null }) {
-
     if (this.isStrFunction(layout) && !data) {
       return null;
     }
@@ -193,7 +256,8 @@ export class ModulesLayoutService {
     }
 
     if (this.isStrFunction(layout)) {
-      return this.evalFunction(layout)(data, globalData, formGroup, utils);
+      const val = this.evalFunction(layout)(data, globalData, formGroup, utils);
+      return val !== undefined ? val : null; // on veut eviter le undefined
     }
     return layout;
   }

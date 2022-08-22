@@ -5,6 +5,15 @@ Modules
 Definition du module ``module.json``
 ====================================
 
+Ce fichier permet de définir
+
+- des données relatives au module et à la table ``gn_commons.t_modules``
+    - ``module_code``, ``module_label``, ``module_desc``, ...
+
+- des routes ou pages
+    - ``url``: url relative de la page dans le module
+    - ``layout_name``: nom du layout associé à cette page
+
 
 Commandes
 =========

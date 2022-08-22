@@ -84,10 +84,25 @@ Message
 
 - ``type``: ``message``
     - permet d'affichier un message dans un cadre
-    - class
+    - ``class``
         - ``info``: bleu
         - ``error``: rouge
         - ``warning``: orange
+
+
+Schéma
+======
+
+- ``type``: ``schema``
+    - permet d'afficher des composant de base pour un schema
+- ``schema_name``:  le nom du Schéma
+- ``component``: type de composant parmi
+    - ``map``
+    - ``details``
+    - ``form``
+    - ``value``
+
+
 
 Valeurs dynamiques
 ==================

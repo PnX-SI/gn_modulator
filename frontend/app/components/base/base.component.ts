@@ -20,7 +20,7 @@ import utils from "../../utils";
 })
 export class BaseComponent implements OnInit {
   @Input() schemaName: string = null;
-  @Input() moduleName: string = null;
+  @Input() moduleCode: string = null;
   @Input() debug: boolean = false;
   @Input() value = null;
 
@@ -34,14 +34,14 @@ export class BaseComponent implements OnInit {
   @Input() displayTitle = false;
   @Input() displayFilters = false;
   @Input() short: boolean = false;
-  @Input() size;
+  @Input() pageSize;
   @Input() actions;
 
   @Input() layout;
   @Input() layoutData;
   @Output() onEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  processedEntries = ["moduleName", "schemaName", "value", "filters"];
+  processedEntries = ["moduleCode", "schemaName", "value", "filters"];
 
   componentInitialized = false;
   isProcessing = false;
@@ -169,7 +169,7 @@ export class BaseComponent implements OnInit {
         mergeMap((schemaConfig) => {
           this.schemaConfig = schemaConfig;
           this.moduleConfig = this._services.mConfig.moduleConfig(
-            this.moduleName
+            this.moduleCode
           );
           this.processConfig();
           return of(true);
@@ -231,16 +231,6 @@ export class BaseComponent implements OnInit {
       relativeTo: this._services.route,
       queryParams: queryParamsProcessed,
       queryParamsHandling: "merge",
-    });
-  }
-
-  exportUrl(exportCode) {
-    const exportConfig = this.moduleConfig.exports.find(
-      (c) => c.export_code == exportCode
-    );
-    return this._services.request.url(this.schemaConfig.utils.urls.rest, {
-      ...exportConfig,
-      filters: this._services.schema.get(this.schemaName).filters,
     });
   }
 

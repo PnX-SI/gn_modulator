@@ -17,7 +17,7 @@
           {
             "title": "propriété commune",
             "properties": {
-              "type": { "enum": [ "integer", "string", "date", "number", "date", "uuid", "datetime", "boolean" ] },
+              "type": { "enum": [ "integer", "string", "date", "number", "date", "uuid", "datetime", "boolean", "json" ] },
               "default": { "type": "string" },
               "pattern": { "type": "string"},
               "title": { "type": "string"},

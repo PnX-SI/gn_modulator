@@ -4,19 +4,19 @@ FRONTEND
 
 Briques de bases et routes test/
 ===============================
- 
+
 - Détail des propriétés
-  - ``/test/properties/<module>/<name>/<id>`` 
+  - ``/test/properties/<module>/<name>/<id>``
 - Tableau de données
   - ``/test/table/<module>/<name>``
 - Formulaire
   - ``/test/form/<module>/<name>``
   - ``/test/form/<module>/<name>/<id>``
-- les trois dans la même page (id pris depuis le click sur le tableau par exemple 
+- les trois dans la même page (id pris depuis le click sur le tableau par exemple
   - ``/test/form/<module>/<name>``
 Pour chacun
 - Initialisation:
-  - récupération de la configuration (schema, display) 
+  - récupération de la configuration (schema, display)
     - par un service (ModulesConfigService)
     - à partir de ``<module>``, ``<name>``
 
@@ -37,7 +37,7 @@ inputs du composant en lien avec les paramètres de route
 - params
   - filtres
   - page
-  - size
+  - page_size
   - sort
 
 
@@ -50,4 +50,4 @@ inputs du composant en lien avec les paramètres de route
 
 - params
   - value
-  - 
+  -

@@ -1,0 +1,29 @@
+{
+  "layout_name": "m_monitoring.site_details",
+  "height_auto": true,
+  "direction": "row",
+  "items": [
+    {
+      "type": "object",
+      "component": "map",
+      "object_name": "site"
+    },
+    {
+      "items": [
+        {
+          "object_name": "site",
+          "type": "object",
+          "component": "properties"
+        },
+        {
+          "title": "Visites",
+          "items": {
+            "type": "object",
+            "component": "table",
+            "object_name": "visit"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import { ModulesConfigService } from "./config.service";
+import { ModulesLayoutService } from "./layout.service";
 import * as L from '@librairies/leaflet';
 import '@librairies/@geoman-io/leaflet-geoman-free';
 // import {CustomIcon} from '@geonature/utils/leaflet-icon';
@@ -38,7 +39,8 @@ import mapMethods from './map'
 export class ModulesMapService {
 
   constructor(
-    private _config: ModulesConfigService,
+    private _mConfig: ModulesConfigService,
+    private _mLayout: ModulesLayoutService
   ) {
     /** on récupère touts les méthodes definies dans les fichiers du répertoire ./map/ */
     for (const methods of Object.values(mapMethods)) {
@@ -51,6 +53,7 @@ export class ModulesMapService {
 
   /** map cache: {..., <mapId>: map,...} */
   _maps = {};
+  _pendingMaps = {};
 
   /** layerDataCache */
   _layersData = {};
@@ -95,13 +98,16 @@ export class ModulesMapService {
   /** ./map/layers */
 
   processLayersData = mapMethods.layer.processLayersData;
+  processData = mapMethods.layer.processData;
   layerZoomMoveEndListener = mapMethods.layer.layerZoomMoveEndListener;
   actionTooltipDisplayZoomThreshold = mapMethods.layer.actionTooltipDisplayZoomThreshold;
   findLayer = mapMethods.layer.findLayer;
 
   /** ./map/draw */
 
-  initDraw = mapMethods.draw.initDraw;
-  setDrawOptions = mapMethods.draw.setDrawOptions;
+  // initDraw = mapMethods.draw.initDraw;
+  setDrawConfig = mapMethods.draw.setDrawConfig;
 
+  /** ./map/control */
+  addControl = mapMethods.control.addControl
 }

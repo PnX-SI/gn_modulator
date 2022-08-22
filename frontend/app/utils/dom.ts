@@ -1,27 +1,35 @@
 export default {
-  waitForElement: (id, container: any =document) => {
+  waitForElement: (id, container: any = document) => {
+    let cpt = 100;
     return new Promise((resolve, reject) => {
-      const checkExist = setInterval(function() {
-        const elem = container.getElementById(id);
-        if (elem) {
-          resolve(elem)
+      const checkExist = setInterval(function () {
+        const elem = container.getElementById
+          ? container.getElementById(id)
+          : container.querySelector(`#${id}`);
+        if (cpt > 1000) {
           clearInterval(checkExist);
           return;
         }
-     }, 100);
+
+        if (elem) {
+          resolve(elem as HTMLElement);
+          clearInterval(checkExist);
+          return;
+        }
+        cpt += 1;
+      }, 100);
     });
   },
   waitForElements: (selector, container: any = document) => {
     return new Promise((resolve, reject) => {
-      const checkExist = setInterval(function() {
+      const checkExist = setInterval(function () {
         const elems = container.querySelectorAll(selector);
         if (elems) {
-          resolve(elems as Array<any>)
+          resolve(elems as Array<any>);
           clearInterval(checkExist);
           return;
         }
-     }, 100);
+      }, 100);
     });
-  }
-
-}
+  },
+};

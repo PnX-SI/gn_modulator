@@ -1,4 +1,11 @@
 import * as fastDeepEqual from '@librairies/fast-deep-equal/es6';
+import _ from 'lodash';
+
+
+
+// const fastDeepEqual = (obj1, obj2) => {
+//   return fastDeepEqual_(obj1, obj2) || fastDeepEqual_(copy(obj1), copy(obj2))
+// }
 
 const isObject = (obj) => {
   return (
@@ -9,6 +16,7 @@ const isObject = (obj) => {
 }
 
 const copy = (obj) => {
+  // return _.cloneDeep(obj);
   if (!obj) {
     return obj;
   }
@@ -140,6 +148,29 @@ const unaccent = (str) => str.normalize("NFD").replace(/\p{Diacritic}/gu, "")
 
 const lowerUnaccent = (str) => str && str.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
 
+// remplacer dans strTest, strReplace dans un dict, array, string
+const replace = (obj, strTest, strReplace) => {
+
+  if(isObject(obj)) {
+    const out = {};
+    for( const [key, value] of Object.entries(obj)) {
+      out[key] = replace(obj[key], strTest, strReplace);
+    }
+    return out;
+  }
+
+  if(Array.isArray(obj)) {
+    return obj.map(elem => replace(elem, strTest, strReplace))
+  }
+
+  if(typeof obj == 'string') {
+    return obj.replace(strTest, strReplace)
+  }
+
+  return obj;
+}
+
+
 const JSONStringify = (obj) => JSON.stringify(obj, null, 4)
 export default {
   fastDeepEqual,
@@ -156,5 +187,6 @@ export default {
   lowerUnaccent,
   parseJSON,
   JSONStringify,
+  replace,
   JSON
 }

@@ -1,13 +1,11 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
 
-import { AppConfig } from "@geonature_config/app.config";
-import { ModuleConfig } from "../module.config";
 
-import { of, Observable, Subject } from "@librairies/rxjs";
-import { mergeMap, catchError } from "@librairies/rxjs/operators";
-import { ModulesRequestService } from "./request.service";
+import { of, Subject } from "@librairies/rxjs";
+import { mergeMap } from "@librairies/rxjs/operators";
 import { ModulesConfigService } from "./config.service";
-import { Routes,  RouterModule, Router } from "@angular/router";
+import { CommonService } from "@geonature_common/service/common.service";
+import { Router } from "@angular/router";
 import { PageComponent } from "../components/page.component";
 
 
@@ -16,12 +14,17 @@ export class ModulesRouteService {
 
   routesLoaded=false;
   routesLoadedSubject;
+  _commonService: CommonService
+  _router: Router
+  _mConfig: ModulesConfigService
 
   constructor(
-    private _router: Router,
-    private _mConfig: ModulesConfigService
+    private _injector: Injector
   ) {
     // setTimeout(()=> {
+      this._mConfig = this._injector.get(ModulesConfigService);
+      this._commonService = this._injector.get(CommonService);
+      this._router = this._injector.get(Router);
       this.initRoutes().subscribe(() =>  {})
     // });
   }
@@ -49,7 +52,6 @@ export class ModulesRouteService {
       return this._mConfig.getModules()
       .pipe(
         mergeMap((modulesConfig) => {
-
           // recupération des routes de 'modules'
           const routesModules = this.getRoutesModules();
 
@@ -92,7 +94,7 @@ export class ModulesRouteService {
             path: pagePath,
             component: PageComponent,
             data: {
-              moduleName: moduleCode,
+              moduleCode: moduleCode,
               pageName
             }
           })
@@ -126,9 +128,13 @@ export class ModulesRouteService {
     });
   }
 
-  modulePageUrl(moduleName, pageName, params) {
-    const moduleConfig = this._mConfig.moduleConfig(moduleName);
+  modulePageUrl(moduleCode, pageName, params) {
+    const moduleConfig = this._mConfig.moduleConfig(moduleCode);
     const pageConfig = moduleConfig.pages[pageName];
+    if(!pageConfig) {
+      this._commonService.regularToaster("error", `Il n'a pas de route définie pour la page ${pageName} pour le module ${moduleCode}`)
+      return;
+    }
     var url = pageConfig.url;
     for (const [key, value] of Object.entries(params || {})) {
       url = url.replace(`:${key}`, value)
@@ -136,9 +142,12 @@ export class ModulesRouteService {
     return `/modules/${moduleConfig.module.module_code.toLowerCase()}/${url}`
   }
 
-  navigateToPage(moduleName, pageName, params) {
-    const url = this.modulePageUrl(moduleName, pageName, params);
+  navigateToPage(moduleCode, pageName, params) {
+    const url = this.modulePageUrl(moduleCode, pageName, params);
 
+    if (undefined == url ) {
+      return
+    }
     // patch sinon navigateByUrl met des plombes...
     const baseUrl = window.location.href.replace(this._router.url, '')
     window.location.href = baseUrl +url;

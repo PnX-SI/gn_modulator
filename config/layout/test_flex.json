@@ -1,0 +1,42 @@
+{
+  "layout": {
+    "direction": "row",
+    "height_auto": true,
+    "title": "test_flex",
+    "style": { "background-color": "purple"},
+    "items": [
+      {
+        "title": "1",
+        "style": { "background-color": "blue"}
+      },
+      {
+        "items": [
+          {
+            "title": "2",
+        "style": { "background-color": "red"}
+
+          },
+          {
+    "direction": "row",
+            "items": [
+          {
+            "title": "3",
+        "style": { "background-color": "green"}
+
+          },
+          {
+            "title": "4",
+        "style": { "background-color": "yellow"}
+
+          }
+
+        ]
+          }
+        ]
+      }
+    ]
+  },
+  "data": {},
+  "layout_description": "Test flex",
+  "layout_name": "test_flex"
+}

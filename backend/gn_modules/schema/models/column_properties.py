@@ -9,6 +9,11 @@ class SchemaModelColumnProperties():
     pass
 
     def cruved_ownership(self, id_role, id_organism):
+        '''
+            TODO
+            attention le modèle peut être redéfini si plusieurs utilisateur demandent la route en meme temsp
+            à placer dans g / session ????
+        '''
         return column_property(
             case(
                 [
@@ -23,7 +28,6 @@ class SchemaModelColumnProperties():
         # a passer en argument
 
         cp_query = cp_select = self.cp_select(key, column_property_def, Model)
-
         if column_property_def.get('relation_key'):
             cp_where_conditions = self.column_property_util_relation_where_conditions(key, column_property_def , Model)
             cp_query = cp_select.where(cp_where_conditions)
@@ -67,18 +71,18 @@ class SchemaModelColumnProperties():
         if column_property_type in  ['st_astext']:
             return func.st_astext(getattr(Model, column_property_def['key']))
 
-        if column_property_type == 'type_complement':
-            s_complement = self.cls(self.attr('meta.schema_complement'))
-            query, _ = s_complement.get_list()
-            complements_case = []
-            for complement in query.all():
-                if hasattr(Model, f'has_{complement.relation_name}'):
-                    complements_case.append((getattr(Model, f'has_{complement.relation_name}'), complement.complement_name))
+        # if column_property_type == 'type_complement':
+        #     s_complement = self.cls(self.attr('meta.schema_complement'))
+        #     query, _ = s_complement.get_list()
+        #     complements_case = []
+        #     for complement in query.all():
+        #         if hasattr(Model, f'has_{complement.relation_name}'):
+        #             complements_case.append((getattr(Model, f'has_{complement.relation_name}'), complement.complement_name))
 
-            return case(
-                complements_case,
-                else_=None
-            )
+        #     return case(
+        #         complements_case,
+        #         else_=None
+        #     )
 
             # return func.st_y(getattr(Model, column_property_def['key']))
 
@@ -107,7 +111,6 @@ class SchemaModelColumnProperties():
         return conditions
 
     def process_column_property_model(self, key, column_property_def, Model):
-
         # ici l'ordre import par ex type_complement après has
         return self.column_property_relation_x_n(key, column_property_def, Model)
 

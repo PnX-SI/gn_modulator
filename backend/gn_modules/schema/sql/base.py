@@ -152,31 +152,44 @@ class SchemaSqlBase():
 
         return txt
 
-    def sql_txt_process(self):
+    def sql_txt_process(self, processed_schema_names = []):
         '''
             process all sql for a schema
         '''
+
+        # si le schema à déjà été traité -> on passe
+        # print(self.schema_name(), processed_schema_names)
+        # if self.schema_name() in processed_schema_names:
+        #     return
 
         self.cls.clear_global_cache('sql_table')
         if not self.sql_processing():
             return ''
 
-        processed_schema_names = []
+        schema_names_to_process = []
         for name in self.dependencies():
             sm = self.cls(name)
-            if sm.sql_processing() and not sm.sql_table_exists():
-                processed_schema_names.append(name)
+            if (
+                # si la creation de sql est permise pour ce schema
+                sm.sql_processing()
+                # et si la table n'existe pas déjà
+                and (not sm.sql_table_exists())
+                # et si le code sql pour ce schema ne vient pas d'être crée par un appel précédent à sql_txt_process
+                and (not name in processed_schema_names)
+            ):
+                schema_names_to_process.append(name)
 
         txt = "-- process schema : {}\n".format(self.schema_name())
-        if processed_schema_names:
-            txt += "--\n-- and dependancies : {}\n".format(', '.join(processed_schema_names))
+        if schema_names_to_process:
+            txt += "--\n-- and dependancies : {}\n".format(', '.join(schema_names_to_process))
         txt += '\n\n'
 
-        processed_schema_names.insert(0, self.schema_name())
+        if self.schema_name() not in processed_schema_names:
+            schema_names_to_process.insert(0, self.schema_name())
 
         # schemas
         sql_schema_names = []
-        for name in processed_schema_names:
+        for name in schema_names_to_process:
             sm = self.cls(name)
             if sm.sql_schema_name() not in sql_schema_names  and not sm.sql_schema_exists():
                 sql_schema_names.append(sm.sql_schema_name())
@@ -195,10 +208,10 @@ class SchemaSqlBase():
             'sql_txt_process_triggers',
             'sql_txt_process_index',
         ]:
-            for name in processed_schema_names:
+            for name in schema_names_to_process:
                 sm = self.cls(name)
                 txt_action = getattr(sm, action)()
                 if txt_action:
                     txt += '{}\n'.format(txt_action)
-
-        return txt
+        print(self.schema_name(), processed_schema_names, schema_names_to_process)
+        return txt, processed_schema_names + schema_names_to_process

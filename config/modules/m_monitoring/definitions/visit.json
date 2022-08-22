@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "schema_name": "m_monitoring.visit",
+    "sql_processing": "true",
+    "sql_schema_dot_table": "m_monitoring.t_visits",
+    "genre": "F",
+    "label": "visite",
+    "label_field_name": "visit_date_min",
+    "unique": ["id_site", "visit_date_min"]
+  },
+  "properties": {
+    "id_visit": {
+      "type": "integer",
+      "title": "Pk du site",
+      "description": "Clé primaire de la visite",
+      "primary_key": true
+    },
+    "id_site": {
+      "type": "integer",
+      "foreign_key": true,
+      "title": "Site",
+      "description": "Site associé à la visite",
+      "schema_name": "m_monitoring.site"
+    },
+    "site": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "schema_name": "m_monitoring.site",
+      "local_key": "id_site",
+      "description": "Site associé à la visite",
+      "title": "Site"
+    },
+    "visit_date_min": {
+      "type": "date",
+      "title": "Date (min)",
+      "description" : "Date (minimale) associée à la visite",
+      "required": true
+    },
+    "visit_data": {
+      "type": "json",
+      "description": "Données additionnelles du site",
+      "title": "Données additionnelles"
+    }
+  },
+  "table": {
+    "columns": [
+      "site.site_name",
+      "visit_date_min"
+    ],
+    "columns_short": [
+      "site.site_name",
+      "visit_date_min"
+    ]
+
+  }
+}

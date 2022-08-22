@@ -1,0 +1,21 @@
+<ng-container *ngIf="isInitialized">
+  <div class="flexiflex">
+    <div class="flexiflex-title">
+      <h3 *ngIf="computedLayout.title">{{ computedLayout.title }}</h3>
+    </div>
+    <div class="flexiflex-content">
+      <form [formGroup]="formGroup" class="layout-section">
+        <modules-layout
+          [data]="data"
+          [debug]="debug"
+          [depth]="depth + 1"
+          [direction]="layout.direction"
+          [globalData]="globalData"
+          [layout]="computedLayout.items"
+          [options]="options"
+          (onAction)="processAction($event)"
+        ></modules-layout>
+      </form>
+    </div>
+  </div>
+</ng-container>

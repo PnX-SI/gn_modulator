@@ -1,0 +1,15 @@
+<!-- schema-->
+<link href="https://unpkg.com/tabulator-tables@4.1.4/dist/css/tabulator.min.css" rel="stylesheet">
+
+<div
+  *ngIf="debug && layout && computedLayout"
+  class="debug"
+  [ngStyle]="{ 'margin-left': debugMarginLeft }"
+>
+  <b>{{ layoutType }}</b> - {{ computedLayout.object_name }} -
+</div>
+
+<div [attr.id]="_id" class="layout-section table" [ngStyle]="computedLayout.style">
+  <div [attr.id]="tableId"></div>
+<div>
+

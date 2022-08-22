@@ -61,24 +61,27 @@ def cmd_process_all(module_code, force=False):
 @click.command('sql')
 @click.option('-m', 'module_code')
 @click.option('-s', 'schema_name')
-@click.option('-f', '--force', is_flag=True)
 @with_appcontext
 def cmd_process_sql(module_code=None, schema_name=None, force=False):
     '''
+        affiche les commandes sql qui va être générées pour
+        - un schema spécifié par l'option -s,schema_name
+        - un module spécifié par l'option -s,module_code
+            (ensemble de schema définis par le module)
     '''
 
     if schema_name:
         sm = SchemaMethods(schema_name)
-        print(sm.sql_txt_process())
+        txt, processed_schema_names = sm.sql_txt_process()
+        print(txt)
 
     if module_code:
         module_config = ModuleMethods.module_config(module_code)
         schema_names = module_config['schemas']
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
-            print(sm.sql_txt_process())
-
-
+            txt, processed_schema_names = sm.sql_txt_process()
+            print(txt)
 
     # ModuleMethods.create_schema_sql(module_code)
 
@@ -136,18 +139,7 @@ def cmd_import_bulk_data(schema_name=None, import_file_path=None, data_file_path
     return True
 
 
-@click.command('test')
-@with_appcontext
-def cmd_test():
-    '''
-        importe des données pour un schema
-    '''
-
-    print('test')
-    return True
-
 commands = [
-    cmd_test,
     cmd_init_module,
     cmd_install_module,
     cmd_remove_module,

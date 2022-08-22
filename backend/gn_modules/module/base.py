@@ -96,9 +96,12 @@ class ModuleBase():
         module_config = cls.module_config(module_code)
         schema_names = module_config['schemas']
         txt = ""
+
+        processed_schema_names = []
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
-            txt += sm.sql_txt_process()
+            txt_schema, processed_schema_names = sm.sql_txt_process(processed_schema_names)
+            txt += txt_schema
 
         sql_file_path = cls.migrations_dir(module_code) / 'data/schema.sql'
         if sql_file_path.exists() and not force:
@@ -178,6 +181,8 @@ class ModuleBase():
 
     @classmethod
     def modules_config(cls):
+        '''
+        '''
 
         if cache_modules_config != {}:
             return cache_modules_config

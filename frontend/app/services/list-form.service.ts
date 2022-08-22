@@ -22,12 +22,58 @@ export class ListFormService {
 
   init() {}
 
+  /** Initialisation du composant de liste */
   initListForm(options, control) {
+    // initialisation de la configuration
     return this.initConfig(options).pipe(
       mergeMap(() => {
+        // demande de la liste
+        // - config
+        // - api
+        //    - (toutes la liste / une partie)
         return this.getSelectList(options, control.value);
+      }),
+      mergeMap((liste) => {
+        // gestion des valeurs par defaut
+        return this.processDefault(options, control, liste);
       })
     );
+  }
+
+  /**
+   * gestion des valeurs par defaut
+   *  TODO traiter reload on search
+   *
+   */
+  processDefault(options, control, liste) {
+    // si pas de defaut, on ne fait rien
+    if (!options.default) {
+      return of(liste);
+    }
+
+    // si on a déjà une valeur => retour
+    if (control.value) {
+      return of(liste);
+    }
+
+    // recherche de la valeur dans la liste
+    // recherce de la valeur par api et ajout dans la liste
+    let value = liste.items.find((item) =>
+      Object.entries(options.default).every(
+        ([key, value]) => item[key] == value
+      )
+    );
+    if (!value) {
+      // message, erreur ?
+      console.error(
+        `Pas de valeur trouvée pour ${JSON.stringify(options.default)}`
+      );
+      return of(liste);
+    }
+    value = options.return_object ? value : value[options.value_field_name];
+    control.patchValue(value);
+
+    return of(liste);
   }
 
   /**
@@ -96,8 +142,7 @@ export class ListFormService {
           options.title_field_name ||
           this._mConfig.schemaConfig(options.schema_name).utils
             .title_field_name;
-        // size ??
-        options.size = options.cache ? null : options.size || 10;
+        options.page_size = options.cache ? null : options.page_size || 10;
         options.items_path = "data";
         options.schema_filters = schemaFilters;
         return of(true);
@@ -124,7 +169,6 @@ export class ListFormService {
    *
    */
   getSelectList(options, value) {
-
     if (options.items) {
       /**  Si item est une liste on */
       return of({
@@ -148,36 +192,36 @@ export class ListFormService {
    * getItemsFromApi
    */
   getItemsFromApi(options, value): Observable<any> {
+    // TODO test si cela ne vient pas d'être fait ?
     const params = options.params || {};
 
-    params.filters= [...(options.filters || [])]
+    params.filters = [...(options.filters || [])];
     if (options.schema_name) {
-      params.filters = [...params.filters, ...(options.schema_filters || [])];
+      params.filters = [...params.filters, ...(options.schema_filters || [])];
 
-      if(options.reload_on_search && options.search) {
-
+      if (options.reload_on_search && options.search) {
         params.filters.push({
           field: options.label_field_name,
           type: "ilike",
-          value: options.search
+          value: options.search,
         });
       }
     }
 
-    params.fields = utils.removeDoublons(
-      [
-        options.value_field_name,
-        options.title_field_name,
-        options.label_field_name,
-        ...(options.additional_fields || [])
-      ].filter(e => !!e)
-    )
+    params.fields = utils
+      .removeDoublons(
+        [
+          options.value_field_name,
+          options.title_field_name,
+          options.label_field_name,
+          ...(options.additional_fields || []),
+        ].filter((e) => !!e)
+      )
+      .join(",");
 
-    // size
-    params.size = options.reload_on_search
-      ? options.size || 10
-      : 0
-    ;
+    params.page_size = options.reload_on_search ? options.page_size || 10 : 0;
+
+    const url = this.url(options.api);
 
     return this._requestService
       .request("get", this.url(options.api), { params, cache: options.cache })
@@ -194,7 +238,7 @@ export class ListFormService {
   /** si on a une liste de valeur simple, on renvoie une liste de dictionnaires
    * {
    *    <options.value_field_name>: item,
-   *    <options.label_field_name>: item
+   *    <options.label_field_name>: item,
    * }
    */
   processItems(options, items) {

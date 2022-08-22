@@ -10,7 +10,7 @@ from gn_modules.schema.repositories import cruved
 
 from sqlalchemy.orm import column_property
 
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy import func, select, case, exists, and_ , literal_column, cast, column
 from sqlalchemy.dialects.postgresql import aggregate_order_by
 
@@ -37,6 +37,8 @@ class SchemaModelBase():
 
         if field_type == 'integer':
             return db.Integer
+        if field_type == 'json':
+            return JSONB
         if field_type == 'boolean':
             return db.Boolean
         if field_type == 'number':
@@ -222,6 +224,9 @@ class SchemaModelBase():
 
         Model = type(self.model_name(), (ModelBaseClass,), dict_model)
 
+        # patch cruved
+        Model.cruved_ownership = 0
+
         # store in cache before relations (avoid circular dependancies)
         self.cls.set_schema_cache(self.schema_name(), 'model', Model)
 
@@ -245,7 +250,6 @@ class SchemaModelBase():
             'st_x',
             'st_astext',
             'st_y',
-            'type_complement'
         ]:
             for key, column_property_def in self.columns().items():
                 if column_property_def.get('column_property') != type_column_property:

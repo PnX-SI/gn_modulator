@@ -1,6 +1,5 @@
 
-from ast import Mod, mod
-from flask import Blueprint, request, jsonify, g, current_app
+from flask import Blueprint, request, jsonify, g, current_app, Response
 from gn_modules.module import ModuleMethods
 from pyrsistent import v
 from .commands import commands
@@ -14,6 +13,26 @@ from geonature.core.gn_permissions.tools import (
 )
 import copy
 import datetime
+
+
+import csv
+class Line(object):
+    def __init__(self):
+        self._line = None
+
+    def write(self, line):
+        self._line = line
+
+    def read(self):
+        return self._line
+
+
+def iter_csv(data):
+    line = Line()
+    writer = csv.writer(line)
+    for csv_line in data:
+        writer.writerow(csv_line)
+        yield line.read()
 
 blueprint = Blueprint('modules', __name__)
 
@@ -53,50 +72,27 @@ def api_modules_config():
             )[0].items()
         }
 
-    return jsonify(modules_config)
 
-@blueprint.route('/<module_code>/export/<export_code>', methods=['GET'])
-def api_modules_export(module_code, export_code):
-    '''
-        route d'export pour les modules
-        TODO le faire avec les schémas filtres etc..
-    '''
 
+    return {
+        'modules': modules_config,
+        'layouts': SchemaMethods.get_layouts(as_dict=True)
+    }
+
+@blueprint.route('export/<module_code>/<export_code>')
+def api_export(module_code, export_code):
+    '''
+        TODO proprer
+    '''
     module_config = ModuleMethods.module_config(module_code)
 
-    export = None
+    export = next(x for x in module_config['exports'] if x['export_code'] == export_code)
 
-    for export_ in module_config.get('exports', []):
-        if export_.get('export_code') == export_code:
-            export = export_
+    sm = SchemaMethods(export['schema_name'])
 
-    if not export:
-        return (
-            f"La vue pour l'export du module {module_code} de code {export_code} n'a pas été trouvée",
-            500
-        )
+    return sm.process_export(export)
 
-    view = export.get('export_view')
 
-    view = GenericTable(
-        tableName=view.split(".")[1],
-        schemaName=view.split(".")[0],
-        engine=db.engine
-    )
-
-    columns = view.tableDef.columns
-    q = db.session.query(*columns)
-    data = q.all()
-
-    t = datetime.datetime.now().strftime("%Y_%m_%d_%Hh%Mm")
-    filename = f'{module_code}_{export_code}_{t}'
-
-    return to_csv_resp(
-        filename,
-        data=serializeQuery(data, q.column_descriptions),
-        separator=";",
-        columns=[c.key for c in columns], # Exclude the geom column from CSV
-    )
 
 
 @blueprint.route('/layouts/', methods=['GET'])
@@ -106,13 +102,3 @@ def api_layout():
     '''
 
     return jsonify(SchemaMethods.get_layouts())
-
-
-
-@blueprint.route('/test_user/', methods=['GET'])
-def api_test_user():
-    '''
-        Renvoie la liste des layouts
-    '''
-
-    return g.current_user.nom_role

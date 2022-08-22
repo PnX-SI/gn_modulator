@@ -13,9 +13,9 @@
       },
       {
         "key": "test2",
-        "title": "Trucaca",
+        "title": "Truc",
         "type": "string",
-        "hidden": "__f__{console.log('rr'); return data.test == 'uru'}"
+        "hidden": "__f__{return data.test == 'uru'}"
       },
       {
         "key": "test",

@@ -1,0 +1,139 @@
+<!-- items -->
+<ng-container *ngIf="layoutType == 'items'; else layoutArray">
+  <div [ngClass]="{ 'layout-row': direction == 'row', 'layout-items': true }">
+    <div *ngIf="options.index != undefined && options.form" style="flex: '0'">
+      <button
+        *ngIf="options.form"
+        mat-icon-button
+        color="black"
+        [matTooltip]="layout.delete_one_title || 'Supprimer l\'élément'"
+        (click)="
+          this.emitAction({
+            type: 'remove-array-element',
+            index: options.index
+          })
+        "
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+    <div
+      *ngFor="let item of computedLayout; let index = index"
+      attr.id="{{ _id }}.{{ index }}"
+      [ngStyle]="{ flex: item.flex || '1' }"
+      class="layout-item"
+    >
+      <modules-layout
+        [data]="data"
+        [debug]="debug"
+        [depth]="depth + 1"
+        [globalData]="globalData"
+        [layout]="item"
+        [options]="options"
+        (onAction)="processAction($event)"
+      ></modules-layout>
+    </div>
+  </div>
+</ng-container>
+
+<!-- array -->
+<ng-template #layoutArray>
+  <!-- fieldset -->
+  <ng-container
+    *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple"
+  >
+    <fieldset class="fieldset">
+      <legend *ngIf="computedLayout.title">
+        {{ computedLayout.title }} ({{ data && data[layout.key]?.length }})
+      </legend>
+      <div
+        [ngClass]="{
+          'layout-row': computedLayout.direction == 'row',
+          'layout-items': true
+        }"
+        [attr.id]="_id"
+      >
+        <div
+          attr.id="{{ _id }}.{{ index }}"
+          *ngFor="
+            let elem of (data && data[layout.key]) || [];
+            let index = index
+          "
+        >
+          <modules-layout
+            [data]="elem"
+            [debug]="debug"
+            [depth]="depth + 1"
+            [globalData]="globalData"
+            [layout]="computedLayout.items"
+            [options]="arrayOptions(index)"
+            (onAction)="processAction($event)"
+          ></modules-layout>
+        </div>
+      </div>
+
+      <div>
+        <button
+          *ngIf="options.form"
+          mat-mini-fab
+          color="primary"
+          aria-label="Example icon button with a menu icon"
+          [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
+          (click)="addArrayElement()"
+          (onAction)="processAction($event)"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </fieldset>
+  </ng-container>
+
+  <!-- normal -->
+  <ng-template #layoutArraySimple>
+    <ng-container>
+      <h3>
+        {{ computedLayout.title }} ({{ data && data[layout.key]?.length }})
+      </h3>
+
+      <div
+        [ngClass]="{
+          'layout-row': computedLayout.direction == 'row',
+          'layout-items': true
+        }"
+        [attr.id]="_id"
+      >
+        <div
+          attr.id="{{ _id }}.{{ index }}"
+          *ngFor="
+            let elem of (data && data[layout.key]) || [];
+            let index = index
+          "
+        >
+          <modules-layout
+            [data]="elem"
+            [debug]="debug"
+            [depth]="depth + 1"
+            [globalData]="globalData"
+            [layout]="computedLayout.items"
+            [options]="arrayOptions(index)"
+            (onAction)="processAction($event)"
+          ></modules-layout>
+        </div>
+      </div>
+
+      <div>
+        <button
+          *ngIf="options.form"
+          mat-mini-fab
+          color="primary"
+          aria-label="Example icon button with a menu icon"
+          [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
+          (click)="addArrayElement()"
+          (onAction)="processAction($event)"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </ng-container>
+  </ng-template>
+</ng-template>

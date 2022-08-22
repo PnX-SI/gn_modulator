@@ -1,0 +1,24 @@
+{
+  "layout": {
+    "height_auto": true,
+    "direction": "row",
+    "style": {"background-color": "red"},
+    "items": [
+      {
+       "style": {"background-color": "blue", "heigth": "100%"},
+        "type": "schema",
+        "schema_name": "m_sipaf.pf",
+        "component": "map",
+        "display_filters": true,
+        "module_code": "m_sipaf"
+      },
+      {
+        "title":  "test",
+       "style": {"background-color": "yellow"}
+
+      }
+    ]
+  },
+  "data": {},
+  "layout_description": "Test schema map"
+}

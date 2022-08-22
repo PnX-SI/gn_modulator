@@ -1,0 +1,218 @@
+import { Component, OnInit, Input } from "@angular/core";
+import { ListFormService } from "../../services/list-form.service";
+import { ModulesLayoutComponent } from "../layout/layout.component";
+import { ModulesLayoutService } from "../../../services/layout.service";
+import {
+  FormArray,
+  FormGroup,
+  FormBuilder,
+  AbstractControl,
+} from "@angular/forms";
+
+import {
+  mergeMap,
+  startWith,
+  pairwise,
+  switchMap,
+  debounceTime,
+  distinctUntilChanged,
+} from "@librairies/rxjs/operators";
+import { of, Subject } from "@librairies/rxjs";
+
+
+import utils from "../../utils";
+
+@Component({
+  selector: "modules-list-form",
+  templateUrl: "list-form.component.html",
+  styleUrls: ["../../base/base.scss", "list-form.component.scss"],
+})
+export class ModulesListFormComponent
+  extends ModulesLayoutComponent
+  implements OnInit
+{
+  constructor(
+    private _listFormService: ListFormService,
+    _mLayout: ModulesLayoutService,
+    private _fb: FormBuilder,
+
+  ) {
+    super(_mLayout);
+  }
+
+  debounceTime
+  selectList: any[] = [];
+  search = "";
+  model = null;
+  searchSubject: Subject<string>;
+  isLoading=false;
+  firstChange = true;
+
+  // pour pouvoir filter en local
+  selectListSave: any[] = [];
+
+
+
+  @Input() formControl: AbstractControl = null;
+
+
+  ngOnInit() {
+    this.searchSubject = new Subject();
+
+    this.layout.search = this.search;
+
+    if (
+      !this.layout.notitle &&
+      !this.layout.description &&
+      this.layout.placeholder
+    ) {
+      this.layout.description = this.layout.placeholder;
+    }
+
+    /**
+     * ici set time out pour temporiser après l'initialisation de jsf
+     * et être sûr d'avoir une valeur pour controlValue (ou formControl.value0)
+     */
+
+    setTimeout(() => {
+      // patch valeur init buggée
+      if (this.layout.return_object && this.layout.multiple) {
+        if (
+          this.formControl.value.length == 1 &&
+          this.formControl.value[0][this.layout.value_field_name] == null
+        ) {
+          this.updateValue([]);
+        }
+      }
+
+      this.searchSubject
+        .pipe(
+          distinctUntilChanged(),
+          debounceTime(400),
+          switchMap((search) => {
+            return this.processSearchChanged(search);
+          })
+        )
+        .subscribe(() => {});
+
+      this._listFormService
+        .initListForm(this.layout, this.formControl)
+        .subscribe(({ selectList, model }) => {
+          this.selectList = selectList as any[];
+          this.selectListSave = utils.copy(selectList as any[]);
+          this.model = model;
+
+          // patch default, à redéfinir
+          if (this.layout.default) {
+            let model = this.selectList
+            .find(elem => Object.entries(this.layout.default).every(([key, value]) => elem[key]==value ))
+            if([null, undefined].includes(this.model)) {
+              this.model = model
+              this.onChange(model)
+            }
+          }
+
+
+          this.formControl.valueChanges
+            .pipe(startWith(null as string), pairwise())
+            .subscribe(([prev, next]: [any, any]) => {
+              if (this.firstChange) {
+                this.firstChange = false;
+                return;
+              }
+              if (
+                utils.fastDeepEqual(prev, next) &&
+                !utils.fastDeepEqual(next, this.formControl.value)
+              ) {
+                this.updateModel(next);
+                return;
+              }
+            });
+        });
+    });
+  }
+
+  updateModel(val) {
+    return this._listFormService
+      .formToModel(this.layout, val)
+      .subscribe((model) => {
+        this.updateValue(model);
+      });
+  }
+
+  onChange(event) {
+    this.updateValue(event)
+    if (this.layout.change) {
+      this.data[this.layout.key] = this.formControl.value;
+      this._mLayout.evalLayout({layout: this.layout.change,  data: this.data, formGroup: this.formControl.parent})
+      // this.dataChange.emit(this.data);
+    }
+
+  }
+
+  searchChanged(event) {
+    this.search = event;
+
+    this.searchSubject.next(event);
+  }
+
+  processSearchChanged(search) {
+    // filtrage server side
+    if (
+      this.layout.data_reload_on_search &&
+      this.layout.api &&
+      event != this.layout.search
+    ) {
+      this.layout.search = search;
+      this.isLoading = true;
+      return this._listFormService.getSelectList(this.layout, this.model).pipe(
+        mergeMap((selectList) => {
+          this.isLoading = false;
+          this.selectList = selectList;
+          this.formControl.patchValue(this.formControl.value);
+          return of(true);
+        })
+      );
+    }
+    // filtrage local
+    else {
+      const searchLowerUnaccent = utils.lowerUnaccent(search);
+      this.selectList = this.selectListSave.filter((item) => {
+        const label = item[this.layout.label_field_name].toLowerCase();
+        return (
+          !searchLowerUnaccent ||
+          utils.lowerUnaccent(label).includes(searchLowerUnaccent)
+        );
+      });
+      return of(true);
+    }
+  }
+
+  clearModel(event) {
+    event.stopPropagation();
+    this.updateValue(this.layout.multiple ? [] : null);
+  }
+
+  onBlur(event) {
+    this.layout.showErrors = true;
+  }
+
+  updateValue(event) {
+    this.model = event;
+    this.layout.showErrors = true;
+    let value = this._listFormService.modelToForm(this.layout, this.model);
+
+    // patch clear
+    if (this.layout.return_object && this.layout.multiple) {
+      const formArray = this.formControl as FormArray;
+      while (formArray.controls.length > 0) {
+        formArray.removeAt(0);
+      }
+      value.forEach((v, i) => {
+        formArray.setControl(i, this._fb.group(v));
+        formArray.patchValue(value);
+      });
+    }
+    this.formControl.patchValue(value);
+  }
+}

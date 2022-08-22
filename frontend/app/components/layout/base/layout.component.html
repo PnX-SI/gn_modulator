@@ -1,0 +1,218 @@
+<!-- Debug -->
+<div
+  *ngIf="debug && layout && computedLayout"
+  class="debug"
+  [ngStyle]="{ 'margin-left': debugMarginLeft }"
+>
+  <b>{{ layoutType }}</b> - <i>{{ computedLayout.type }}</i>
+  <span [matTooltip]="prettyDebug.data">data</span>
+
+  <ng-container *ngIf="layoutType == 'items'">
+    <i> {{ direction }} ({{ layout.length }})</i>
+  </ng-container>
+  <span [matTooltip]="prettyDebug.layout">layout</span>
+  <span *ngIf="layoutType == 'key'" [matTooltip]="prettyDebug.dataKey"
+    >dataK</span
+  >
+</div>
+
+<ng-container
+  [ngSwitch]="layoutType"
+  *ngIf="computedLayout && !computedLayout.hidden && isInitialized"
+>
+  <!-- name-->
+  <ng-container *ngSwitchCase="'name'">
+    <modules-layout
+      *ngIf="layoutFromName"
+      [layout]="layoutFromName"
+      [data]="data"
+      [debug]="debug"
+      (onAction)="processAction($event)"
+    ></modules-layout>
+  </ng-container>
+
+  <!-- items -->
+  <ng-container *ngSwitchCase="'items'">
+    <modules-layout-array
+      [ngClass]="computedLayout && computedLayout.class"
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth"
+      [direction]="direction"
+      [layout]="layout"
+      [globalData]="globalData"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-array>
+  </ng-container>
+
+  <!-- tabs -->
+  <ng-container *ngSwitchCase="'tabs'">
+    <mat-tab-group>
+      <mat-tab
+        [label]="item.label || item.title || index"
+        *ngFor="let item of layout.items; let index = index"
+      >
+        <modules-layout
+          [data]="data"
+          [debug]="debug"
+          [depth]="depth"
+          [globalData]="globalData"
+          [layout]="item"
+          [options]="options"
+          (onAction)="processAction($event)"
+        >
+        </modules-layout>
+      </mat-tab>
+    </mat-tab-group>
+  </ng-container>
+
+  <!-- section -->
+  <ng-container *ngSwitchCase="'section'">
+    <modules-layout-section
+      [ngClass]="computedLayout && computedLayout.class"
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth"
+      [globalData]="globalData"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-section>
+  </ng-container>
+
+  <!-- cards -->
+  <ng-container *ngSwitchCase="'card'">
+    <modules-layout-card
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth"
+      [globalData]="globalData"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-card>
+  </ng-container>
+
+  <!-- key -->
+  <ng-container *ngSwitchCase="'key'">
+    <ng-container *ngIf="computedLayout.type == 'array'; else layoutObject">
+      <modules-layout-array
+        [data]="data"
+        [debug]="debug"
+        [depth]="depth"
+        [globalData]="globalData"
+        [layout]="layout"
+        [options]="options"
+        (onAction)="processAction($event)"
+      >
+      </modules-layout-array>
+    </ng-container>
+    <ng-template #layoutObject>
+      <ng-container *ngIf="computedLayout.type == 'dict'; else layoutKey">
+        <modules-layout-dict
+          [data]="data"
+          [debug]="debug"
+          [depth]="depth"
+          [globalData]="globalData"
+          [layout]="layout"
+          [options]="options"
+          (onAction)="processAction($event)"
+        ></modules-layout-dict>
+      </ng-container>
+    </ng-template>
+
+    <ng-template #layoutKey>
+      <modules-layout-key
+        [data]="data"
+        [debug]="debug"
+        [depth]="depth + 1"
+        [globalData]="globalData"
+        [layout]="layout"
+        [options]="options"
+        (onAction)="processAction($event)"
+      ></modules-layout-key>
+    </ng-template>
+  </ng-container>
+
+  <!-- buttons -->
+  <ng-container *ngSwitchCase="'button'">
+    <div class="layout-buttons">
+      <button
+        *ngIf="!computedLayout.href"
+        [matTooltip]="computedLayout.description || ''"
+        mat-raised-button
+        [color]="computedLayout.color"
+        [disabled]="computedLayout.disabled"
+        (click)="onButtonClick()"
+      >
+        {{ computedLayout.title }}
+      </button>
+      <a
+        *ngIf="computedLayout.href"
+        mat-raised-button
+        [href]="computedLayout.href"
+        color="primary"
+      >
+        {{ computedLayout.title }}
+      </a>
+    </div>
+  </ng-container>
+
+  <!-- messages -->
+  <ng-container *ngSwitchCase="'message'">
+    <div>
+      <div
+        [ngClass]="{
+          'layout-message': true,
+          error: layout.class == 'error',
+          info: layout.class == 'info',
+          warning: layout.class == 'warning'
+        }"
+      >
+        <div
+          class="layout.html"
+          *ngIf="computedLayout.html"
+          [innerHTML]="computedLayout.html"
+        ></div>
+        <pre *ngIf="computedLayout.json">{{ computedLayout.json | json }}</pre>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- medias-->
+  <ng-container *ngSwitchCase="'medias'">
+    <modules-layout-medias [data]="data" [layout]="layout" [debug]="debug">
+    </modules-layout-medias>
+  </ng-container>
+
+  <!-- object -->
+  <ng-container *ngSwitchCase="'object'">
+    <modules-layout-object
+      [data]="data"
+      [layout]="layout"
+      [debug]="debug"
+    ></modules-layout-object>
+  </ng-container>
+
+  <!-- map -->
+  <ng-container *ngSwitchCase="'map'">
+    <modules-layout-map
+      [data]="data"
+      [layout]="layout"
+      [debug]="debug"
+      [options]="options"
+    ></modules-layout-map>
+  </ng-container>
+
+  <!-- modal -->
+  <ng-container *ngSwitchCase="'modal'">
+    <modules-layout-modal
+      [data]="data"
+      [layout]="layout"
+      [debug]="debug"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-modal>
+  </ng-container>
+</ng-container>

@@ -101,9 +101,11 @@ class SchemaApi():
             TODO !!! à refaire avec repo get_list
             parse request flask element
             - filters
+            - prefilters
+            - fields
             - sorters
             - page
-            - size
+            - page_size
 
             TODO plusieurs possibilités pour le parametrage
             - par exemple au format tabulator ou autre ....
@@ -114,15 +116,29 @@ class SchemaApi():
         params = {
             'as_geojson': self.load_param(request.args.get('as_geojson', 'false')),
             'compress': self.load_param(request.args.get('compress', 'false')),
-            'fields': self.load_param(request.args.get('fields', '[]')),
+            'fields': self.load_array_param(request.args.get('fields', 'null')),
             'filters': self.load_param(request.args.get('filters', '[]')),
+            'prefilters': self.load_param(request.args.get('prefilters', '[]')),
             'page': self.load_param(request.args.get('page', 'null')),
-            'size': self.load_param(request.args.get('size', 'null')),
+            'page_size': self.load_param(request.args.get('page_size', 'null')),
             'sorters': self.load_param(request.args.get('sorters', '[]')),
             "value": self.load_param(request.args.get('value', 'null')),
             'as_csv': self.load_param(request.args.get('as_csv', 'false')),
         }
+
         return params
+
+    def load_array_param(self, param):
+        '''
+            pour les cas ou params est une chaine de caractère séparée par des ','
+        '''
+
+        if not param:
+            return []
+
+        return param.split(',')
+
+
 
     def load_param(self, param):
         if param == 'undefined':
@@ -164,75 +180,86 @@ class SchemaApi():
 
             if value:
 
-                params = self.parse_request_args(request)
+                return get_one_rest(value)
 
-                try:
+            else:
+                return get_list_rest()
 
-                    m = self.get_row(
-                        value,
-                        field_name=params.get('field_name'),
-                    )
+        def get_one_rest(value):
+            params = self.parse_request_args(request)
 
-                except SchemaUnsufficientCruvedRigth as e:
-                    return 'Erreur Cruved : {}'.format(str(e)), 403
+            try:
 
-                return self.serialize(
-                    m,
+                m = self.get_row(
+                    value,
+                    field_name=params.get('field_name'),
+                )
+
+            except SchemaUnsufficientCruvedRigth as e:
+                return 'Erreur Cruved : {}'.format(str(e)), 403
+
+            return self.serialize(
+                m,
+                fields=params.get('fields'),
+                as_geojson=params.get('as_geojson'),
+            )
+
+        def get_list_rest():
+
+            params = self.parse_request_args(request)
+            query, query_info = self.get_list(params)
+            res_list = query.all()
+            return {
+                **query_info,
+                'data': self.serialize_list(
+                    res_list,
                     fields=params.get('fields'),
                     as_geojson=params.get('as_geojson'),
                 )
+            }
 
-            # get list
-            else:
-                params = self.parse_request_args(request)
-                query, query_info = self.get_list(params)
-                res_list = query.all()
+        def get_export(self_mv, module_code, export_code):
+            '''
+            TODO
+            pour l'instant csv
+            ajouter json, geosjon, shape, etc...
+            recupérer les paramètres de route depuis la config ???
 
-                out = {
-                    **query_info,
-                    'data': self.serialize_list(
-                        res_list,
-                        fields=params.get('fields'),
-                        as_geojson=params.get('as_geojson'),
-                    )
-                }
+            '''
 
-                # TODO à passer dans serializer
-                if params.get('compress'):
-                    out['fields'] = params.get('fields')
-                    data = []
-                    for d in out['data']:
-                        dd = [d[f] for f in out['fields'] if f != 'geom']
-                        dd += [
-                            d[self.geometry_field_name()]['coordinates'][0],
-                            d[self.geometry_field_name()]['coordinates'][1]
-                        ]
-                        data.append(dd)
-                    out['fields'] += ['x', 'y']
-                    out['fields'].remove(self.geometry_field_name())
-                    out['data'] = data
+            return f"export {module_code} {export_code}"
 
-                if params.get('as_csv'):
-                    if not out['data']:
-                        return '', 404
-                    data_csv = []
-                    keys = list(params.get('fields', out['data'][0].keys()))
-                    data_csv.append(self.process_csv_keys(keys))
-                    data_csv += [
-                        [
-                            self.process_csv_data(key, d)
-                            for key in keys
-                        ] for d in out['data']
-                    ]
+            params = self.parse_request_args(request)
+            query, query_info = self.get_list(params)
+            res_list = query.all()
 
-                    if params.get('as_csv') == 'test':
-                        return jsonify(data_csv)
+            out = {
+                **query_info,
+                'data': self.serialize_list(
+                    res_list,
+                    fields=params.get('fields'),
+                    as_geojson=params.get('as_geojson'),
+                )
+            }
 
-                    response = Response(iter_csv(data_csv), mimetype='text/csv')
-                    response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
-                    return response
+            if not out['data']:
+                return '', 404
+            data_csv = []
+            keys = list(params.get('fields', out['data'][0].keys()))
+            data_csv.append(self.process_csv_keys(keys))
+            data_csv += [
+                [
+                    self.process_csv_data(key, d)
+                    for key in keys
+                ] for d in out['data']
+            ]
 
-                return out
+            if params.get('as_csv') == 'test':
+                return jsonify(data_csv)
+
+            response = Response(iter_csv(data_csv), mimetype='text/csv')
+            response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
+            return response
 
         def post_rest(self_mv):
 
@@ -302,6 +329,9 @@ class SchemaApi():
             'page_number': {
                 'get': permissions.login_required(get_page_number)
             }
+            # 'export': {
+            #     'get': permissions.login_required(get_export)
+            # }
 
         }
 
@@ -341,6 +371,10 @@ class SchemaApi():
         # page_number
         view_func_page_number = self.view_func('page_number')
         bp.add_url_rule(self.url('/page_number/<value>'), view_func=view_func_page_number, methods=['GET'])
+
+        # get export
+        # view_func_export = self.view_func('export')
+        # bp.add_url_rule(self.url('/export/<string:module_code>/<string:export_code>'), view_func=view_func_export, methods=['GET'])
 
     def process_dict_path(self, d, dict_path):
         '''

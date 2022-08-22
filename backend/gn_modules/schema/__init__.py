@@ -11,6 +11,7 @@ from .cache import SchemaCache
 from .commands import SchemaCommands
 from .config import SchemaConfig
 from .doc import SchemaDoc
+from .export import SchemaExport
 from .imports import SchemaImports
 from .files import SchemaFiles
 from .models import SchemaModel
@@ -30,6 +31,7 @@ class SchemaMethods(
     SchemaCommands,
     SchemaConfig,
     SchemaDoc,
+    SchemaExport,
     SchemaImports,
     SchemaFiles,
     SchemaModel,

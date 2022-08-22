@@ -24,7 +24,7 @@ class SchemaRepositoriesUtil():
 
             TODO gerer plusieurs '.'
             exemple
-            http://localhost:8000/modules/schemas.sipaf.pf/rest/?page=1&size=13&sorters=[{%22field%22:%22id_pf%22,%22dir%22:%22asc%22}]&filters=[{%22field%22:%22areas.type.coe_type%22,%22type%22:%22=%22,%22value%22:%22DEP%22}]&fields=[%22id_pf%22,%22nom_pf%22,%22cruved_ownership%22]
+            http://localhost:8000/modules/schemas.sipaf.pf/rest/?page=1&page_size=13&sorters=[{%22field%22:%22id_pf%22,%22dir%22:%22asc%22}]&filters=[{%22field%22:%22areas.type.coe_type%22,%22type%22:%22=%22,%22value%22:%22DEP%22}]&fields=[%22id_pf%22,%22nom_pf%22,%22cruved_ownership%22]
         '''
 
         if '.' not in field_name:
@@ -125,18 +125,18 @@ class SchemaRepositoriesUtil():
 
     #     return res
 
-    def process_page_size(self, page, size, value, query):
+    def process_page_size(self, page, page_size, value, query):
         '''
         LIMIT et OFFSET
         '''
 
         # if value:
         #     row_number = self.get_row_number_from_value(value, query)
-        if size and int(size) > 0:
-            query = query.limit(size)
+        if page_size and int(page_size) > 0:
+            query = query.limit(page_size)
 
             if page and int(page) > 1:
-                offset = (int(page) - 1) * int(size)
+                offset = (int(page) - 1) * int(page_size)
                 query = query.offset(offset)
 
         return query

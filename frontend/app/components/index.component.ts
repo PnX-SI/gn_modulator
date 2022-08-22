@@ -23,7 +23,6 @@ export class ModulesIndexComponent implements OnInit {
     this._mConfig.getModules()
       .subscribe( (modules) => {
         this.modules = Object.values(modules);
-        console.log(this.modules)
         this.layout={
           title: "Liste des modules",
           class: "modules",

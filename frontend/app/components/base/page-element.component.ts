@@ -33,11 +33,7 @@ export class PageElementComponent extends BaseComponent implements OnInit  {
       }
 
       if(action.type == 'link') {
-        return this._services.mRoute.navigateToPage(this.moduleName, action.pageName, event.params)
-      }
-
-      if(action.type == 'export') {
-        return this._services.mData.export(event.module_code, event.export_code);
+        return this._services.mRoute.navigateToPage(this.moduleCode, action.pageName, event.params)
       }
 
     }

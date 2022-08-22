@@ -97,7 +97,7 @@ class SchemaConfigBase():
         return {
             "label": self.label(),
             "labels": self.labels(),
-            "le_labels": self.le_label(),
+            "le_label": self.le_label(),
             "les_labels": self.les_labels(),
             "un_label": self.un_label(),
             "des_labels": self.des_labels(),
@@ -115,6 +115,7 @@ class SchemaConfigBase():
         return {
             'columns_array': self.columns_array(columns_only=True),
             'urls': {
+                'export': self.url('/export/', full_url=True),
                 'rest': self.url('/rest/', full_url=True),
                 'page_number': self.url('/page_number/', full_url=True)
             },
@@ -126,11 +127,11 @@ class SchemaConfigBase():
             'schema_name': self.schema_name(),
             'sql_schema_name': self.sql_schema_name(),
             'sql_table_name': self.sql_table_name(),
-            'size': self.size()
+            'page_size': self.page_size()
         }
 
-    def size(self):
-        return self.attr('meta.size', 10)
+    def page_size(self):
+        return self.attr('meta.page_size', 10)
 
     def config_form(self):
         '''
@@ -162,7 +163,7 @@ class SchemaConfigBase():
             'geometry_field_name': self.geometry_field_name(),
             "data_reload_on_search": True,
             "params": {
-                "size": 7
+                "page_size": 7
             },
             "label": self.label(),
         }

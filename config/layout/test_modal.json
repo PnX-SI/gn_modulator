@@ -1,0 +1,44 @@
+{
+  "layout_name": "modal_gpx",
+  "layout_description": "test modal",
+  "layout": {
+    "height_auto": true,
+    "title": "Test modal",
+    "items": [
+      {
+        "type": "button",
+        "flex": "0",
+        "title": "Ouvrir modal",
+        "action": {
+          "type": "modal",
+          "modal_name": "gps"
+        }
+      },
+      {
+        "type": "modal",
+        "modal_name": "gps",
+        "items": [
+          {
+            "title": "Entrer les coordonnées GPS",
+            "type": "form",
+            "direction": "row",
+            "items": [
+              {
+                "type": "number",
+                "key": "X"
+              },
+              {
+                "type": "number",
+                "key": "Y"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "data": {
+    "x": 0,
+    "y": 45
+  }
+}

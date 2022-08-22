@@ -68,7 +68,7 @@ class ModuleCommands():
 
         print('Initialisation du module {}'.format(module_code))
 
-        cls.create_schema_sql(module_code)
+        cls.create_schema_sql(module_code, force)
         cls.create_reset_sql(module_code)
 
         migration_init_file_path = cls.migration_init_file_path(module_code)

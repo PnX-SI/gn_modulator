@@ -1,0 +1,16 @@
+{
+  "layout": {
+    "title": "Test display tabs",
+    "type": "tabs",
+    "items": [
+      {
+        "title": "test 11"
+      },
+      {
+        "title": "test 2"
+      }
+    ]
+ },
+  "data": {},
+  "layout_description": "Test tabs"
+}

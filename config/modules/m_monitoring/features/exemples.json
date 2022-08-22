@@ -1,20 +1,20 @@
 [
   {
-    "schema_name": "m_monitoring.site_complement",
+    "schema_name": "m_monitoring.site_category",
     "items": [
       {
-        "complement_name": "Arbre à loge",
-        "complement_code": "AL",
-        "complement_desc": "Données complémentaire sur les site pour les arbres à loge",
-        "schema_name": "m_monitoring.sc_arbre_loge",
-        "relation_name": "data_arbre_loge"
+        "category_name": "Arbre à loge",
+        "category_code": "AL",
+        "category_desc": "Données complémentaire sur les site pour les arbres à loge"
+        // "schema_name": "m_monitoring.sc_arbre_loge",
+        // "relation_name": "data_arbre_loge"
       },
       {
-        "complement_name": "Grotte",
-        "complement_code": "GT",
-        "complement_desc": "Données complémentaire sur les site pour les grottes",
-        "schema_name": "m_monitoring.sc_grotte",
-        "relation_name": "data_grotte"
+        "category_name": "Grotte",
+        "category_code": "GT",
+        "category_desc": "Données complémentaire sur les site pour les grottes"
+        // "schema_name": "m_monitoring.sc_grotte",
+        // "relation_name": "data_grotte"
       }
     ]
   },
@@ -72,5 +72,35 @@
         "profondeur": 500
       }
     ]
+  },
+  {
+    "schema_name": "m_monitoring.visit",
+    "items": [
+      {
+        "id_site": "GR1",
+        "visit_date_min": "2022-01-01"
+      },
+      {
+        "id_site": "GR1",
+        "visit_date_min": "2022-01-02"
+      },
+      {
+        "id_site": "GR1",
+        "visit_date_min": "2022-01-03"
+      },
+      {
+        "id_site": "AL1",
+        "visit_date_min": "2022-01-01"
+      },
+      {
+        "id_site": "AL1",
+        "visit_date_min": "2022-01-02"
+      },
+      {
+        "id_site": "AL1",
+        "visit_date_min": "2022-01-03"
+      }
+    ]
   }
+
 ]

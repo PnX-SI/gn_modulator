@@ -11,7 +11,7 @@
         "type": "list_form",
         "items": ["Un", "Deux", "Trois"],
         "description": "Simple",
-        "hint": "simple"        }
+        "hint": "simple truc"        }
     ]
   },
   "data": {

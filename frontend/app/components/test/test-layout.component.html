@@ -1,17 +1,14 @@
 <div>
-  <h1>Test Layout</h1>
-
   <div>
     <div class="test-form-container">
-      <div>
+      <div class="layout-def">
         <modules-layout
           [layout]="testLayoutForm"
           [data]="rawLayout"
           (onAction)="processAction($event)"
         ></modules-layout>
       </div>
-      <div *ngIf="!!layout && data">
-        <h2>Rendu</h2>
+      <div class="layout-rendu" *ngIf="!!(layout && data)">
         <modules-layout
           [layout]="layout"
           [debug]="debug"
@@ -36,12 +33,12 @@
         >{{ layoutDefinition | json }}
       </pre>
     -->
-      <div>
+      <!-- <div>
         <h2>Data</h2>
         <pre class="pre-small"
           >{{ data | json }}
         </pre>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

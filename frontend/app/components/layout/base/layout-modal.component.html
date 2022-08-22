@@ -1,0 +1,21 @@
+<div
+  *ngIf="debug && layout && computedLayout"
+  class="debug"
+  [ngStyle]="{ 'margin-left': debugMarginLeft }"
+>
+  modal
+</div>
+
+<ng-container *ngIf="isOpen">
+  <div class="modal-container">
+    <div class="modal-content" tabindex="0">
+      <modules-layout
+        [layout]="processedLayout"
+        [data]="data"
+        [debug]="debug"
+        (onAction)="processAction($event)"
+      >
+      </modules-layout>
+    </div>
+  </div>
+</ng-container>

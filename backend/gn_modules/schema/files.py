@@ -320,44 +320,45 @@ class SchemaFiles():
             for relation_key, relation_def in sm.relationships().items():
                 if not relation_def.get('backref'):
                     continue
+
                 opposite = sm.opposite_relation_def(relation_def)
                 rel = cls(relation_def['schema_name'])
                 rel_properties = rel.attr('properties')
                 if not rel_properties.get(relation_def['backref']):
                     rel_properties[relation_def['backref']] = opposite
 
-    @classmethod
-    def process_complement(cls):
-        for schema_name in cls.schema_names_from_cache():
-            sm = cls(schema_name)
-            if not sm.attr('meta.schema_complement'):
-                continue
+    # @classmethod
+    # def process_complement(cls):
+    #     for schema_name in cls.schema_names_from_cache():
+    #         sm = cls(schema_name)
+    #         if not sm.attr('meta.schema_complement'):
+    #             continue
 
-            # lister les complements
-            s_complement = cls(sm.attr('meta.schema_complement'))
+    #         # lister les complements
+    #         s_complement = cls(sm.attr('meta.schema_complement'))
 
-            if not s_complement.sql_table_exists():
-                continue
-            s_complement.Model()
+    #         if not s_complement.sql_table_exists():
+    #             continue
+    #         s_complement.Model()
 
-            s_complement.MarshmallowSchema()
-            query, _ = s_complement.get_list()
-            for complement in query.all():
-                sm.definition['properties'][complement.relation_name] = {
-                    "type": "relation",
-                    "relation_type": "1-1",
-                    "local_key": sm.pk_field_name(),
-                    "schema_name": complement.schema_name,
-                    "title": complement.complement_name,
-                    "description": complement.complement_desc
-                }
+    #         s_complement.MarshmallowSchema()
+    #         query, _ = s_complement.get_list()
+    #         for complement in query.all():
+    #             sm.definition['properties'][complement.relation_name] = {
+    #                 "type": "relation",
+    #                 "relation_type": "1-1",
+    #                 "local_key": sm.pk_field_name(),
+    #                 "schema_name": complement.schema_name,
+    #                 "title": complement.complement_name,
+    #                 "description": complement.complement_desc
+    #             }
 
-                sm.definition['properties'][f'has_{complement.relation_name}'] = {
-                    "type": "boolean",
-                    "column_property": "has",
-                    "title": f"Est de type {complement.complement_name}?",
-                    "relation_key": complement.relation_name
-                }
+    #             sm.definition['properties'][f'has_{complement.relation_name}'] = {
+    #                 "type": "boolean",
+    #                 "column_property": "has",
+    #                 "title": f"Est de type {complement.complement_name}?",
+    #                 "relation_key": complement.relation_name
+    #             }
 
 
     @classmethod
@@ -371,18 +372,16 @@ class SchemaFiles():
 
         # init complement ??
         # ici on ajoute les relations dans les definitions
-        cls.process_complement()
+        # cls.process_complement()
 
         # init models
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
-            try:
-                sm.Model()
-            except AttributeError as e:
-                raise errors.SchemaError(
-                    '{}: {}'.format(sm.schema_name(), e))
-
-
+            # try:
+            sm.Model()
+            # except AttributeError as e:
+                # raise errors.SchemaError(
+                    # '{}: {}'.format(sm.schema_name(), e))
 
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
@@ -465,7 +464,7 @@ class SchemaFiles():
             elem_out = []
             for item in elem:
                 val = cls.process_defs(item, _defs)
-                if val:
+                if val is not None and val != []:
                     elem_out.append(val)
             return elem_out
 
@@ -481,23 +480,34 @@ class SchemaFiles():
         return elem
 
     @classmethod
-    def get_layouts(cls):
+    def get_layouts(cls, as_dict=False):
         '''
             renvoie la liste des layouts
         '''
 
         layouts = []
-        for root, dirs, files in os.walk(cls.config_directory() / 'layout', followlinks=True):
+        for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
             for file in filter(
                 lambda f: f.endswith('.json'),
                 files
             ):
                 file_path = Path(root) / file
                 layout = cls.load_json_file(file_path)
-                layout['layout_name'] = layout.get('layout_name', file_path.name)
+                if not (isinstance(layout, dict) and layout.get('layout_name')):
+                    continue
+                # layout['layout_name'] = layout.get('layout_name', file_path.stem)
                 layout = cls.process_defs(layout)
                 if '_defs' in layout:
                     del layout['_defs']
                 layouts.append(layout)
+
+
+        if as_dict is True:
+            out = {}
+            for layout in layouts:
+                out[layout['layout_name']] = layout
+                layout.pop('layout_name')
+
+            return out
 
         return layouts

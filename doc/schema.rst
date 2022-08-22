@@ -37,8 +37,8 @@ Les schemas
         - on filtre sur les route de listes
         - TODO check cruved pour creation et update en backend
 
-- schema_complement
-    - nom du schema qui va lister les tables de complément pour cette table
+# - schema_complement
+"     - nom du schema qui va lister les tables de complément pour cette table
 
 
 ``properties``

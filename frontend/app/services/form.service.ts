@@ -85,6 +85,7 @@ export class ModulesFormService {
   /** configure un control en fonction d'un layout */
   setControl(formControl, layout, data, globalData) {
     let control = formControl.get(layout.key);
+    console.assert(!!control, {key: layout.key, control: Object.keys(formControl.value)})
     let computedLayout = this._mLayout.computeLayout({
       layout,
       data,
@@ -168,24 +169,6 @@ export class ModulesFormService {
       }
     }
     return data;
-  }
-
-  processAction(formGroup, layout, data, options) {
-    // if (options.type == "add-array-element") {
-    //   data[options.key].push({});
-    //   this.setControls(formGroup, layout, data);
-    //   formGroup.patchValue(data);
-    // }
-    // if (options.type == "remove-array-element") {
-    //   this.setControls(formGroup, layout, data);
-    //   data[options.key].splice(options.index, 1);
-    //   // formGroup.patchValue(data);
-    // }
-    // if (options.type == "remove-array-element") {
-    //   data[options.key] = [];
-    //   this.setControls(formGroup, layout, data);
-    //   formGroup.patchValue(data);
-    // }
   }
 
   isEqual(formValue, data) {

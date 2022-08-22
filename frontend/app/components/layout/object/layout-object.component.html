@@ -1,0 +1,52 @@
+<!-- schema-->
+<div
+  *ngIf="debug && layout && computedLayout"
+  class="debug"
+  [ngStyle]="{ 'margin-left': debugMarginLeft }"
+>
+  <b>{{ layoutType }}</b> - {{ computedLayout.object_name }} -
+  {{ computedLayout.component }} <br />
+</div>
+
+<!-- Cas formulaire et properties-->
+<!-- <div [attr.id]="_id" [ngStyle]="computedLayout.style" class="layout-section" *ngIf="
+schemaData && ['form', 'properties', 'export'].includes(computedLayout.component)
+"> -->
+<modules-layout
+  *ngIf="
+    schemaData &&
+    ['form', 'properties', 'export'].includes(computedLayout.component)
+  "
+  [layout]="processedLayout"
+  [data]="schemaData"
+  [debug]="debug"
+  (onAction)="processAction($event)"
+></modules-layout>
+<!-- </div> -->
+
+<!-- Liste-->
+<modules-layout-object-table
+  *ngIf="computedLayout.component == 'table'"
+  [layout]="layout"
+  [debug]="debug"
+  [data]="data"
+>
+</modules-layout-object-table>
+
+<!-- Liste-->
+<modules-layout-object-map
+  *ngIf="computedLayout.component == 'map'"
+  [layout]="layout"
+  [debug]="debug"
+  [data]="data"
+>
+</modules-layout-object-map>
+
+<!-- Filtres-->
+<modules-layout-object-filters
+  *ngIf="computedLayout.component == 'filters'"
+  [layout]="layout"
+  [debug]="debug"
+  [data]="data"
+>
+</modules-layout-object-filters>

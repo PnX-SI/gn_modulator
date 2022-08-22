@@ -1,32 +1,13 @@
-<!-- <div *ngIf="debug" class="debug">
-    routeData <pre>{{ routeData |json }}</pre>
-    pageConfig <pre>{{  pageConfig?.elements|json }}</pre>
-    value {{value}}
-</div> -->
-
-
-<!-- Elements -->
-<div *ngIf="pageConfig">
-
-<div>
-    <ng-container *ngFor="let breadcrumb of breadcrumbs; last as isLast;">
-        <a *ngIf="!!breadcrumb.url" [href]="breadcrumb.url"> {{ breadcrumb.txt }} </a>
-        <a *ngIf="!breadcrumb.url"> {{ breadcrumb.txt }} </a>
-        <ng-container *ngIf="!isLast">/</ng-container>
-    </ng-container>
-
-</div>
-
-<div *ngFor="let element of pageConfig.elements">
-    <modules-page-element
-        [elementType]="element.type"
-        [schemaName]="element.schema_name"
-        [moduleName]="routeData.moduleName"
-        [actions]="element.actions || actions"
-        [value]="value"
-        [debug]="debug"
-        [zoom]="element.zoom"
-    ></modules-page-element>
-</div>
-
+<!-- Element de page
+    - permet d'afficher le layout associé à la page
+    - et de faire remonter les actions à exécuter
+-->
+<div *ngIf="pageInitialized" class="page">
+  <modules-layout
+    *ngIf="layout"
+    [layout]="layout"
+    [data]="data"
+    [debug]="debug"
+    (onAction)="processAction($event)"
+  ></modules-layout>
 </div>

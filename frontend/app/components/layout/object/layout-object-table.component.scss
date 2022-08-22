@@ -1,0 +1,87 @@
+// @import '~tabulator-tables/dist/css/tabulator_site.min.css';
+
+:host ::ng-deep .table-icon {
+    padding: 3px;
+    border-radius: 5px;
+    // margin-left: 5px;
+ }
+
+ :host ::ng-deep .table-icon {
+    padding: 3px;
+    border-radius: 5px;
+    // margin-left: 5px;
+ }
+
+
+ :host ::ng-deep .table-icon.disabled {
+    color: grey;
+    padding: 3px;
+    border-radius: 5px;
+    // margin-left: 5px;
+ }
+
+
+ :host ::ng-deep .table-icon:hover{
+    background-color: lightgrey;
+ }
+
+
+ :host ::ng-deep .table-icon.disabled:hover{
+    background-color: none;
+ }
+
+ :host ::ng-deep .tabulator {
+    font-size: 12px;
+    border: none;
+
+  }
+
+ :host ::ng-deep .tabulator .tabulator-header {
+     font-weight: normal;
+     border-bottom: 1px solid;
+     border-bottom-color: rgba(0, 0, 0, 0.12);
+     color: rgba(0, 0, 0, 0.54);
+  }
+
+ :host ::ng-deep .tabulator .tabulator-header .tabulator-col {
+    height: 48px;
+    background-color: #ffffff;
+    border: none;
+    padding: 0 7px;
+ }
+
+ :host ::ng-deep .tabulator-row {
+    border-bottom: 1px solid;
+    border-bottom-color: rgba(0, 0, 0, 0.12);
+    min-height: 48px;
+    vertical-align: middle;
+ }
+
+ :host ::ng-deep .tabulator-row .tabulator-cell {
+    padding: 16px 7px;
+    border-right: none;
+    vertical-align: middle;
+ }
+
+ // :host ::ng-deep .tabulator-row .tabulator-cell:first-of-type,
+ // .tabulator .tabulator-header .tabulator-col:first-of-type {
+    // padding-left: 2   4px;
+ // }
+
+ :host ::ng-deep .tabulator-row.tabulator-row-even {
+    background-color: rgb(240, 240, 250);
+ }
+
+ :host ::ng-deep .tabulator-row.tabulator-row-even.tabulator-selected {
+    background-color: rgb(154, 188, 234)
+ }
+
+ :host ::ng-deep .table {
+   margin-bottom: 0px;
+ }
+
+ // pour le compte des données dans le counter
+ :host ::ng-deep .counter {
+   float: left;
+   margin-top: 2px;
+ }

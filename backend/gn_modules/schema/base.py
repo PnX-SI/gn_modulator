@@ -24,7 +24,8 @@ column_types = [
     'date',
     'date_time',
     'boolean',
-    'uuid'
+    'uuid',
+    'json'
 ]
 
 

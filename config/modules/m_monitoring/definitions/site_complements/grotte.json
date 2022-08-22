@@ -20,6 +20,15 @@
     "profondeur": {
       "type": "number",
       "title": "profondeur"
+    },
+    "site": {
+      "type": "relation",
+      "local_key": "id_site",
+      "relation_type": "1-1",
+      "title": "sites",
+      "description": "Site associé",
+      "schema_name": "m_monitoring.site",
+      "backref": "data_grotte"
     }
   }
 }

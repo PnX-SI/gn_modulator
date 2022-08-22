@@ -196,6 +196,9 @@ class SchemaProcess():
                 schema['format'] = schema.get('format', schema.get('type'))
                 schema['type'] = 'string'
 
+            if schema.get('type') == 'json':
+                schema['type'] = 'object'
+
             return {key: self.process_json_schema(elem) for key, elem in schema.items() if key != 'required'}
 
         return schema

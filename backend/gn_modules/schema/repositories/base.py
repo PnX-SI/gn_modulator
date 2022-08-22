@@ -46,6 +46,7 @@ class SchemaRepositoriesBase():
             )
 
         Model = self.Model()
+        self.set_cruved()
 
         query = db.session.query(Model)
 
@@ -164,10 +165,14 @@ class SchemaRepositoriesBase():
             todo UN SUEL
         """
         Model = self.Model()
+        self.set_cruved()
+
         query = db.session.query(Model)
 
         # pre_filters
         query = self.process_cruved('R', Model, query)
+        query = self.process_filters(Model, params.get('prefilters', []), query)
+
 
         # filters
         query = self.process_filters(Model, params.get('filters', []), query)
@@ -186,14 +191,14 @@ class SchemaRepositoriesBase():
 
     def get_page_number(self, params, value):
 
-        if not params.get('size') and value:
+        if not params.get('page_size') and value:
             return
 
         row_number = self.get_row_number(params, value)
 
         return {
             'row_number': row_number,
-            'page': math.ceil(row_number / params.get('size'))
+            'page': math.ceil(row_number / params.get('page_size'))
         }
 
     def get_list(self, params={}):
@@ -207,30 +212,33 @@ class SchemaRepositoriesBase():
                 {'field': <s_field>, 'dir': <s_dir>}
                 ... ],
                 TODO traiter
-            - size ( LIMIT )
-            - page ( OFFSET(size, page) )
+            - page_size ( LIMIT )
+            - page ( OFFSET(page_size, page) )
         '''
+
+
 
         query_info = {
             'page': params.get('page', None),
-            'size': params.get('size', None)
+            'page_size': params.get('page_size', None)
         }
 
         # init query
         Model = self.Model()
+        self.set_cruved()
         query = db.session.query(Model)
 
         query = self.process_sorters(Model, params.get('sorters', []), query)
 
-        # CRUVED ??? TODO
-        # pre filters
+        # CRUVED et prefilters
         query = self.process_cruved('R', Model, query)
+        query = self.process_filters(Model, params.get('prefilters', []), query)
 
         # TODO distinguer filter et pre_filter search
         query_info['total'] = query.count()
 
-        if params.get('size'):
-            query_info['last_page'] = math.ceil(query_info['total'] / params.get('size'))
+        if params.get('page_size'):
+            query_info['last_page'] = math.ceil(query_info['total'] / params.get('page_size'))
 
         # filters
         query = self.process_filters(Model, params.get('filters', []), query)
@@ -246,10 +254,10 @@ class SchemaRepositoriesBase():
                 self.schema_name()
             ))
 
-        if params.get('size'):
-            query_info['last_page'] = math.ceil(query_info['filtered'] / params.get('size'))
+        if params.get('page_size'):
+            query_info['last_page'] = math.ceil(query_info['filtered'] / params.get('page_size'))
 
-        # page, size
-        query = self.process_page_size(params.get('page'), params.get('size'), params.get('value'), query)
+        # page, page_size
+        query = self.process_page_size(params.get('page'), params.get('page_size'), params.get('value'), query)
 
         return query, query_info

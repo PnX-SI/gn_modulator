@@ -24,7 +24,7 @@ export default {
   addBaseMap(mapId) {
     const map = this.getMap(mapId)
     const baseControl = {};
-    const BASEMAP = JSON.parse(JSON.stringify(this._config.appConfig().MAPCONFIG.BASEMAP));
+    const BASEMAP = JSON.parse(JSON.stringify(this._mConfig.appConfig().MAPCONFIG.BASEMAP));
 
     BASEMAP.forEach((basemap, index) => {
       const formatedBasemap = this.formatBaseMapConfig(basemap);

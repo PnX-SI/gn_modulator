@@ -2,16 +2,15 @@
   "meta": {
     "schema_name": "m_monitoring.site",
     "sql_processing": true,
-    "sql_schema_dot_table": "m_monitoring.t_base_sites",
+    "sql_schema_dot_table": "m_monitoring.t_sites",
     "genre": "M",
     "label": "site",
     "label_field_name": "site_name",
     "geometry_field_name": "site_geom",
     "unique": [
       "site_code"
-    ],
+    ]
     // "check_cruved": true,
-    "schema_complement": "m_monitoring.site_complement"
   },
   "map": {
     "popup_fields": [
@@ -33,13 +32,16 @@
       "key": "type_site",
       "type": "list_form",
       "title": "Type de site",
-      "value_field_name": "complement_name",
-      "schema_name": "m_monitoring.site_complement"
+      "value_field_name": "category_name",
+      "schema_name": "m_monitoring.site_category"
     }
   },
   "table": {
     "columns": [
-      "id_site"
+      "id_site",
+      "type_site",
+      "site_code",
+      "site_name"
     ],
     "columns_short": [
       "site_code",
@@ -78,10 +80,30 @@
       "title": "Géométrie",
       "srid": 4326
     },
-    "type_site": {
-      "type": "string",
-      "column_property": "type_complement",
-      "title": "Type de site"
+    "id_site_category": {
+      "type": "integer",
+      "title": "Catégorie de site",
+      "description": "Catégorie de site (pour pouvoir associé des champs spécifiques)",
+      "foreign_key": true,
+      "schema_name": "m_monitoring.site_category"
+    },
+    "site_category": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "local_key": "id_site_category",
+      "schema_name": "m_monitoring.site_category",
+      "title": "Catégorie de site",
+      "description": "Catégorie de site (pour pouvoir associé des champs spécifiques)"
+    },
+        // "type_site": {
+        //   "type": "string",
+        //   "column_property": "type_complement",
+        //   "title": "Type de site"
+        // },
+    "site_data": {
+      "type": "json",
+      "description": "Données additionnelles du site",
+      "title": "Données additionnelles"
     }
   },
   "form": {
@@ -93,8 +115,8 @@
       //   "key": "type_site",
       //   "type": "list_form",
       //   "title": "Type de site",
-      //   "value_field_name": "complement_name",
-      //   "schema_name": "m_monitoring.site_complement"
+      //   "value_field_name": "category_name",
+      //   "schema_name": "m_monitoring.site_category"
       // },
       {
         "key": "site_geom",

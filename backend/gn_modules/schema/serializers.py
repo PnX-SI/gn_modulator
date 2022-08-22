@@ -10,7 +10,7 @@ from geoalchemy2 import functions
 from geojson import Feature
 from marshmallow import pre_load, post_load, fields, ValidationError
 from marshmallow_sqlalchemy.convert import ModelConverter
-from shapely.geometry import asShape
+from shapely.geometry import shape
 from sqlalchemy.orm import ColumnProperty
 
 from utils_flask_sqla_geo.utilsgeometry import remove_third_dimension
@@ -39,8 +39,8 @@ class GeojsonSerializationField(fields.Field):
     # on assume ici que toutes les geometrie sont en srid local sauf indication dans value
     def _deserialize(self, value, attr, data, **kwargs):
         try:
-            shape = asShape(value)
-            two_dimension_geom = remove_third_dimension(shape)
+            shape_from_value = shape(value)
+            two_dimension_geom = remove_third_dimension(shape_from_value)
             return from_shape(
                 two_dimension_geom,
                 srid=4326
@@ -98,6 +98,9 @@ class SchemaSerializers:
         if field_type == 'geometry':
             return GeojsonSerializationField(**kwargs)
 
+        if field_type == 'json':
+            return fields.Raw(**kwargs)
+
         raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
 
     def opposite_relation_def(self, relation_def):
@@ -106,6 +109,7 @@ class SchemaSerializers:
             'relation_type': (
                 'n-1' if relation_def['relation_type'] == '1-n'
                 else '1-n' if relation_def['relation_type'] == 'n-1'
+                else '1-1' if relation_def['relation_type'] == '1-1'
                 else 'n-n'
             ),
             'schema_name': self.schema_name(),
