@@ -1,5 +1,4 @@
 {
-    "required": ["identifiant", "nom_role", "prenom_role"],
     "meta": {
         "schema_name": "user.liste",
         "autoschema": true,

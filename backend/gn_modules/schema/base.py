@@ -79,7 +79,7 @@ class SchemaBase():
             and (
                 self.properties()[key].get('required')
                 or key in self.required()
-                or key in self.pk_field_names()
+                # or key in self.pk_field_names()
             )
         )
 
@@ -168,12 +168,15 @@ class SchemaBase():
     def is_column_property(self, key):
         return (
             self.has_property(key)
-            and self.property(key).get('type') in column_types
+            and self.property(key).get('type') in column_types + ['relation']
             and self.property(key).get('column_property')
         )
 
     def is_relationship(self, key):
-        return  self.has_property(key) and self.property(key)['type'] == 'relation'
+        return  (
+            self.has_property(key)
+            and self.property(key)['type'] == 'relation'
+        )
 
     def column_keys(self, sort=False):
         column_keys = [k for k, v in self.properties().items() if self.is_column(k) ]

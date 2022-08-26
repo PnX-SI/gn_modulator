@@ -6,7 +6,7 @@
         "model_name": "Taxref",
         "genre": "F",
         "label": "taxonomie",
-        "label_field_name": "lb_nom",
+        "label_field_name": "nom_vern",
         "unique": ["cd_nom"]
     }
 }

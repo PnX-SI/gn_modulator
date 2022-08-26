@@ -97,11 +97,20 @@ export class ModulesFormService {
     if( computedLayout.disabled) {
       control.disable()
     }
+
+    // gestion des valeur par defaut
+    // ne marche pas
+    if(computedLayout.default && [null, undefined].includes(control.value)) {
+      data[computedLayout.key] = computedLayout.default;
+      control.setValue(computedLayout.default);
+    }
+
     // control pour object
     if (layout.type == "object") {
       let controlData = (data || {})[layout.key] || {};
       this.setControls(control, layout.items, controlData, globalData);
     }
+
     // control pour array
     if (layout.type == "array") {
       let controlData = (data || {})[layout.key] || [];

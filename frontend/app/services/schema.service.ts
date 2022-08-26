@@ -34,12 +34,14 @@ export class ModulesSchemaService {
       appearance: "fill",
       direction: "row",
       items: [
-        // {
-        //   type: "map",
-        //   key: schemaConfig.utils.geometry_field_name,
-        //   edit: true,
-        //   gps: true,
-        // },
+        {
+          type: "map",
+          key: schemaConfig.utils.geometry_field_name,
+          edit: true,
+          gps: true,
+          hidden: !schemaConfig?.utils.geometry_field_name,
+          flex: schemaConfig?.utils.geometry_field_name ? '1': '0'
+        },
         {
           items: [
             {
@@ -62,7 +64,7 @@ export class ModulesSchemaService {
               type: "message",
               html: "Veuillez saisir une geometrie sur la carte",
               class: "error",
-              hidden: `__f__data.${schemaConfig.utils.geometry_field_name}?.coordinates`,
+              hidden: `__f__(!${schemaConfig.utils.geometry_field_name}) || data.${schemaConfig.utils.geometry_field_name}?.coordinates`,
             },
             {
               items: schemaLayout,
@@ -113,7 +115,6 @@ export class ModulesSchemaService {
               flex: "0",
             },
             {
-              "title": "pro",
               items: schemaConfig.details.layout,
               overflow: true,
             },
@@ -136,8 +137,6 @@ export class ModulesSchemaService {
     if (!data) {
       return;
     }
-
-    const requestType = this.id(schemaName, data) ? "patch" : "post";
 
     const fields = this.getFields(schemaName, layout);
 
@@ -162,7 +161,7 @@ export class ModulesSchemaService {
   getFields(schemaName, layout) {
     const fields = this._mLayout.getLayoutFields(layout);
 
-    if (this.geometryFieldName(schemaName)) {
+    if (this.geometryFieldName(schemaName) && this.geometryFieldName(schemaName)) {
       fields.push(this.geometryFieldName(schemaName));
     }
 

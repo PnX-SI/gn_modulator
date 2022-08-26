@@ -12,43 +12,38 @@ from geonature.core.gn_permissions.tools import (
     cruved_scope_for_user_in_module,
 )
 import copy
-import datetime
 
-
-import csv
-class Line(object):
-    def __init__(self):
-        self._line = None
-
-    def write(self, line):
-        self._line = line
-
-    def read(self):
-        return self._line
-
-
-def iter_csv(data):
-    line = Line()
-    writer = csv.writer(line)
-    for csv_line in data:
-        writer.writerow(csv_line)
-        yield line.read()
 
 blueprint = Blueprint('modules', __name__)
 
+# Creation des commandes pour modules
 blueprint.cli.short_help = 'Commandes pour l''administration du module MODULES'
 for cmd in commands:
     blueprint.cli.add_command(cmd)
 
-
+# initialisation des définitions
 try:
-    SchemaMethods.init_schemas()
+    SchemaMethods.init_schemas_definitions()
+    SchemaMethods.init_schemas_models_and_serializers()
     SchemaMethods.init_routes(blueprint)
 
 except errors.SchemaError as e:
     print("Erreur de chargement des schemas:\n{}".format(e))
+except Exception as e:
+    print(e)
 
-# !!! attention restreindre les droits !!!
+
+# @current_app.before_first_request
+# def init_schemas():
+#     print("init schemas")
+#     try:
+#         SchemaMethods.init_schemas_models_and_serializers()
+#         # !!! attention restreindre les droits !!!
+#         # SchemaMethods.init_routes(blueprint)
+
+#     except errors.SchemaError as e:
+#         print("Erreur de chargement des schemas:\n{}".format(e))
+
 
 @blueprint.route('/modules_config', methods=['GET'])
 def api_modules_config():

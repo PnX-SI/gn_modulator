@@ -53,7 +53,8 @@
               "foreign_key": { "type": "boolean" },
               "schema_name": { "type": "string" },
               "title": { "type": "string"},
-              "type": { "enum": [ "integer" ] }
+              "type": { "enum": [ "integer" ] },
+              "required": { "type": "boolean"}
             },
             "required": [ "type", "foreign_key", "title", "schema_name" ],
             "additionalProperties": false
@@ -66,7 +67,8 @@
               "nomenclature_type": { "type": "string" },
               "schema_name": { "type": "string" },
               "title": { "type": "string"},
-              "type": { "enum": [ "integer"] }
+              "type": { "enum": [ "integer"] },
+              "required": { "type": "boolean"}
             },
             "required": [ "type", "schema_name", "foreign_key", "nomenclature_type", "title" ],
             "additionalProperties": false

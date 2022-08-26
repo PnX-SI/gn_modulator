@@ -103,6 +103,9 @@ export default {
     this._layersData[mapId] = this._layersData[mapId] || {};
 
     for (const [key, value] of Object.entries(layersData)) {
+      if(! value) {
+        continue
+      }
       this.removeLayers(mapId, { key });
       this.loadGeojson(mapId, key, value["geojson"], value["layerOptions"]);
       this._layersData[mapId][key] = value;
@@ -169,7 +172,9 @@ export default {
 
     // onLayersAdded : action effectuée après l'ajout des layers
     if(layerOptions.onLayersAdded) {
-      layerOptions.onLayersAdded()
+      setTimeout(() => {
+        layerOptions.onLayersAdded()
+      }, 1000)
     }
     if (layerOptions.bZoom) {
       this.zoomOnLayer(mapId, layerGroup);

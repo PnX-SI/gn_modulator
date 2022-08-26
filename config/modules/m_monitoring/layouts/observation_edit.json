@@ -1,0 +1,12 @@
+{
+  "layout_name": "m_monitoring.observation_edit",
+  "height_auto": true,
+  "direction": "row",
+  "items": [
+    {
+      "type": "object",
+      "component": "form",
+      "key": "observation"
+    }
+  ]
+}

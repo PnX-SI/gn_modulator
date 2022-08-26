@@ -48,10 +48,14 @@
 
   <!-- tabs -->
   <ng-container *ngSwitchCase="'tabs'">
-    <mat-tab-group>
+    <mat-tab-group
+    class="layout-section"
+    (selectedTabChange)="onTabChanged($event);"
+    >
       <mat-tab
         [label]="item.label || item.title || index"
         *ngFor="let item of layout.items; let index = index"
+        class="layout-section"
       >
         <modules-layout
           [data]="data"
@@ -96,43 +100,38 @@
 
   <!-- key -->
   <ng-container *ngSwitchCase="'key'">
-    <ng-container *ngIf="computedLayout.type == 'array'; else layoutObject">
-      <modules-layout-array
-        [data]="data"
-        [debug]="debug"
-        [depth]="depth"
-        [globalData]="globalData"
-        [layout]="layout"
-        [options]="options"
-        (onAction)="processAction($event)"
-      >
-      </modules-layout-array>
-    </ng-container>
-    <ng-template #layoutObject>
-      <ng-container *ngIf="computedLayout.type == 'dict'; else layoutKey">
-        <modules-layout-dict
-          [data]="data"
-          [debug]="debug"
-          [depth]="depth"
-          [globalData]="globalData"
-          [layout]="layout"
-          [options]="options"
-          (onAction)="processAction($event)"
-        ></modules-layout-dict>
-      </ng-container>
-    </ng-template>
+    <modules-layout-array
+      *ngIf="computedLayout.type == 'array'"
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth"
+      [globalData]="globalData"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
+    >
+    </modules-layout-array>
+    <modules-layout-dict
+      *ngIf="computedLayout.type == 'dict'"
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth"
+      [globalData]="globalData"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-dict>
 
-    <ng-template #layoutKey>
-      <modules-layout-key
-        [data]="data"
-        [debug]="debug"
-        [depth]="depth + 1"
-        [globalData]="globalData"
-        [layout]="layout"
-        [options]="options"
-        (onAction)="processAction($event)"
-      ></modules-layout-key>
-    </ng-template>
+    <modules-layout-key
+      *ngIf="!['dict', 'object', 'array'].includes(computedLayout.type)"
+      [data]="data"
+      [debug]="debug"
+      [depth]="depth + 1"
+      [globalData]="globalData"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
+    ></modules-layout-key>
   </ng-container>
 
   <!-- buttons -->
@@ -189,9 +188,13 @@
   <!-- object -->
   <ng-container *ngSwitchCase="'object'">
     <modules-layout-object
-      [data]="data"
-      [layout]="layout"
+      [data]="computedLayout.key ? data[computedLayout.key] : data"
       [debug]="debug"
+      [depth]="depth + 1"
+      [globalData]="globalData"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
     ></modules-layout-object>
   </ng-container>
 

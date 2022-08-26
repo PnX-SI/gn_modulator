@@ -14,6 +14,11 @@
       "unique": ["module_code"]
     },
     "properties": {
+      "id_module": {
+        "type": "integer",
+        "primary_key": true,
+        "title": "Pk"
+      },
       "module_name": {
         "type": "string",
         "title": "Module name"

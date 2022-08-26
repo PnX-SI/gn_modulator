@@ -46,6 +46,13 @@ class SchemaProcessedPropertyError(SchemaError):
     pass
 
 
+class SchemaSerializerModelIsNoneError(SchemaError):
+    '''
+        Error when a relation None during marshmallow serializer/deserializer creation
+    '''
+    pass
+
+
 class SchemaImportPKError(SchemaError):
     '''
         Error when a property marked as processed has no processing instruction

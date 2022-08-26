@@ -123,42 +123,65 @@ class SchemaModelBase():
             )
 
         if relationship_def.get('relation_type') == 'n-n':
-            kwargs['secondary'] = self.CorTable(relationship_def)
-
-        # kwargs['lazy'] = 'joined'
+            CorTable = self.CorTable(relationship_def)
+            kwargs['secondary'] = CorTable
+            if (
+                # True or
+                relationship_def.get('local_key')
+                and relationship_def.get('foreign_key')
+             ):
+                kwargs['primaryjoin'] = (
+                    getattr(self.Model(), self.pk_field_name())
+                    ==
+                    getattr(CorTable.c, relationship_def.get('local_key', self.pk_field_name()))
+                )
+                kwargs['secondaryjoin'] = (
+                    getattr(relation.Model(), relation.pk_field_name())
+                    ==
+                    getattr(CorTable.c, relationship_def.get('foreign_key', self.pk_field_name()))
+                )
 
         relationship = db.relationship(relation.Model(), **kwargs)
-
         return relationship
 
     def CorTable(self, relation_def):
+
 
         schema_dot_table = relation_def.get('schema_dot_table')
         cor_schema_name = schema_dot_table.split('.')[0]
         cor_table_name = schema_dot_table.split('.')[1]
 
-        CorTable = self.cls.get_global_cache(
-            'cor_table',
-            schema_dot_table
+        CorTable = (
+            self.cls.get_global_cache(
+                'cor_table',
+                schema_dot_table
+            )
         )
+
+        if CorTable is not None:
+            return CorTable
+
+        CorTable = self.get_cache_existing_tables(
+                schema_dot_table
+            )
+
         if CorTable is not None:
             return CorTable
 
         relation = self.cls(relation_def['schema_name'])
         local_key = self.pk_field_name()
         foreign_key = relation.pk_field_name()
-
         CorTable = db.Table(
             cor_table_name,
             db.metadata,
             db.Column(
                 local_key,
-                db.ForeignKey('{}.{}'.format(self.sql_schema_dot_table(), local_key)),
+                db.ForeignKey(f'{self.sql_schema_dot_table()}.{local_key}'),
                 primary_key=True
             ),
             db.Column(
                 foreign_key,
-                db.ForeignKey('{}.{}'.format(relation.sql_schema_dot_table(), foreign_key)),
+                db.ForeignKey(f'{relation.sql_schema_dot_table()}.{foreign_key}'),
                 primary_key=True
             ),
             schema=cor_schema_name
@@ -188,7 +211,6 @@ class SchemaModelBase():
         if Model := self.get_existing_model():
 
             return Model
-
 
         # dict_model used with type() to list properties and methods for class creation
         dict_model = {
@@ -240,21 +262,26 @@ class SchemaModelBase():
 
             relationship = self.process_relation_model(key, relationship_def, Model)
             setattr(Model, key, relationship)
-
         # process column properties
+        for key, column_property_def in self.column_properties().items():
+            setattr(
+                Model,
+                key,
+                self.process_column_property_model(key, column_property_def, Model)
+            )
 
-        for type_column_property in [
-            'nb',
-            'has',
-            'label',
-            'st_x',
-            'st_astext',
-            'st_y',
-        ]:
-            for key, column_property_def in self.columns().items():
-                if column_property_def.get('column_property') != type_column_property:
-                    continue
+        # for type_column_property in [
+        #     'nb',
+        #     'has',
+        #     'label',
+        #     'st_x',
+        #     'st_astext',
+        #     'st_y',
+        #     'max'
+        # ]:
+        # for key, column_property_def in self.columns().items():
+            # if column_property_def.get('column_property') != type_column_property:
+                # continue
 
-                setattr(Model, key, self.process_column_property_model(key, column_property_def, Model))
 
         return Model

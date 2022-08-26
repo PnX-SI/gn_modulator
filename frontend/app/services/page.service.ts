@@ -3,7 +3,6 @@ import { ModulesRouteService } from "./route.service";
 import { ModulesConfigService } from "./config.service";
 import { ModulesRequestService } from "./request.service";
 import { ModulesSchemaService } from "./schema.service";
-import { ModulesObjectService } from "./object.service";
 import { CommonService } from "@geonature_common/service/common.service";
 
 
@@ -12,7 +11,6 @@ export class ModulesPageService {
 
   _mRoute: ModulesRouteService;
   _mSchema: ModulesSchemaService;
-  _mObject: ModulesObjectService
   _mConfig: ModulesConfigService;
   _mRequest: ModulesRequestService;
 
@@ -28,7 +26,9 @@ export class ModulesPageService {
     this._mRequest = this._injector.get(ModulesRequestService);
   }
 
-  processAction(action, objectName, params: any = {}) {
+
+
+  processAction({ action, objectName, schemaName=null, value=null, data=null, layout=null}) {
     if (["details", "edit", "create", "map_list"].includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
 
@@ -44,19 +44,23 @@ export class ModulesPageService {
         );
         return;
       }
-      const id = params.id;
-      this._mRoute.navigateToPage(this.moduleCode, pageName, params);
+      this._mRoute.navigateToPage(this.moduleCode, pageName, {value});
     }
 
     if (action == "submit") {
-      this._mSchema.onSubmit(objectName, params.data, params.layout).subscribe(
+
+      this._mSchema.onSubmit(schemaName, data, layout).subscribe(
         (data) => {
           this._commonService.regularToaster(
             "success",
             `La requete a bien été effectué`
           );
-          const id = this._mSchema.id(objectName, data);
-          this.processAction("details", objectName, { value: id });
+          const value = this._mSchema.id(schemaName, data);
+          this.processAction({
+            action: "details",
+            objectName,
+            value
+        });
         },
         (error) => {
           this._commonService.regularToaster("error", `Erreur dans la requête`);
@@ -65,15 +69,15 @@ export class ModulesPageService {
     }
 
     if (action == "cancel") {
-      if (params.value) {
-        this.processAction("details", objectName, params);
+      if (value) {
+        this.processAction({action: "details", objectName, value});
       } else {
-        this.processAction("map_list", objectName, params);
+        this.processAction({action: "map_list", objectName});
       }
     }
   }
 
-  exportUrl(moduleCode, exportCode) {
+  exportUrl(moduleCode, exportCode, data) {
     const moduleConfig = this._mConfig.moduleConfig(moduleCode);
     const exportConfig = moduleConfig.exports.find(
       (c) => c.export_code == exportCode
@@ -82,9 +86,8 @@ export class ModulesPageService {
     const url = this._mRequest.url(
       `${this._mConfig.backendModuleUrl()}/export/${moduleCode}/${exportCode}`,
       {
-        prefilters:
-          this._mObject.getObjectValue(exportConfig.schema_name, "prefilters") || [],
-        filters: this._mObject.getObjectValue(exportConfig.schema_name, "filters") || [],
+        prefilters: data.prefilters,
+        filters: data.filters
       }
     );
     return url;

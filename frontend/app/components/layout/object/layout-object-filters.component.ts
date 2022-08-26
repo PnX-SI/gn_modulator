@@ -77,7 +77,7 @@ export class ModulesLayoutObjectFiltersComponent
   }
 
   applyFilters() {
-    this._mObject.setObjectValue(this.schemaName(), "filters", this.getFilters());
+    this.setObject({filters:this.getFilters()});
   }
 
   clearFilters() {

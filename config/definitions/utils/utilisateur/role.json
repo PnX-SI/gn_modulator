@@ -16,18 +16,35 @@
             ]
         },
         "unique": ["identifiant"]
+        ,
+        "relations": ["groups"]
+
     },
     "properties": {
         "password": {
             "type": "string",
             "title": "password"
         },
-        "liste": {
+        "nom_complet": {
+            "type": "string",
+            "title": "Nom complet"
+        }
+        ,
+        "listes": {
             "type": "relation",
             "relation_type": "n-n",
             "schema_name": "user.liste",
             "schema_dot_table": "utilisateurs.cor_role_liste",
-            "title": "Liste"
+            "title": "Listes"
+        },
+        "groupes": {
+            "type": "relation",
+            "relation_type": "n-n",
+            "schema_name": "user.role",
+            "schema_dot_table": "utilisateurs.cor_roles",
+            "title": "Groupes",
+            "local_key": "id_role_utilisateur",
+            "foreign_key": "id_role_groupe"
         }
     }
 }

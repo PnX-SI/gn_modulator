@@ -33,6 +33,7 @@ class ModuleBase():
 
     @classmethod
     def register_db_module(cls, module_code):
+        print(f'- Enregistrement du module {module_code}')
         schema_module = SchemaMethods('modules.module')
         module_data = cls.module_config(module_code)['module']
         module_code = module_data['module_code']
@@ -50,6 +51,8 @@ class ModuleBase():
             schema_module.update_row(module_code, module_row_data, field_name='module_code')
         except NoResultFound:
             schema_module.insert_row(module_row_data, commit=True)
+
+
 
     @classmethod
     def delete_db_module(cls, module_code):
@@ -216,6 +219,7 @@ class ModuleBase():
 
     @classmethod
     def process_module_data(cls, module_code):
+        print("- Ajout de données depuis les features")
         module_config = cls.module_config(module_code)
         data_names = module_config.get('features', [])
         for data_name in data_names:

@@ -230,7 +230,6 @@ class SchemaBaseImports:
                 # clean data
                 sm.clean_data(d)
 
-                # print('after pre process', d)
                 values = [d.get(key) for key in test_keys]
 
                 # pour visualiser quel ligne est insérée / modifiée

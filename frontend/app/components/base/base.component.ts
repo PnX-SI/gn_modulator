@@ -33,7 +33,6 @@ export class BaseComponent implements OnInit {
 
   @Input() displayTitle = false;
   @Input() displayFilters = false;
-  @Input() short: boolean = false;
   @Input() pageSize;
   @Input() actions;
 

@@ -6,14 +6,32 @@
     "genre": "F",
     "label": "visite",
     "label_field_name": "visit_date_min",
-    "unique": ["id_site", "visit_date_min"]
+    "unique": [
+      "id_site",
+      "visit_date_min"
+    ]
   },
   "properties": {
     "id_visit": {
       "type": "integer",
-      "title": "Pk du site",
+      "title": "Pk de l'observation",
       "description": "Clé primaire de la visite",
       "primary_key": true
+    },
+    "visit_uuid": {
+      "type": "uuid",
+      "title": "UUID"
+    },
+    "visit_date_min": {
+      "type": "date",
+      "title": "Date (min)",
+      "description": "Date (minimale) associée à la visite",
+      "required": true
+    },
+    "visit_date_max": {
+      "type": "date",
+      "title": "Date (max)",
+      "description": "Date (maximale) associée à la visite"
     },
     "id_site": {
       "type": "integer",
@@ -30,27 +48,137 @@
       "description": "Site associé à la visite",
       "title": "Site"
     },
-    "visit_date_min": {
-      "type": "date",
-      "title": "Date (min)",
-      "description" : "Date (minimale) associée à la visite",
+    "id_module": {
+      "type": "integer",
+      // "foreign_key": true,
+      "title": "Module",
+      "description": "Module associé à la visite"
+      // ,
+      // "schema_name": "commons.module"
+    },
+    // "module": {
+    //   "type": "relation",
+    //   "relation_type": "n-1",
+    //   "title": "Module",
+    //   "description": "Module associé à la visite",
+    //   "schema_name": "commons.module",
+    //   "local_key": "id_module"
+    // },
+    "id_digitiser": {
+      "type": "integer",
+      "foreign_key": true,
+      "schema_name": "user.role",
+      "title": "Numérisateur",
+      "description": "Personne qui a saisi la donnée"
+    },
+    "digitiser": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "schema_name": "user.role",
+      "title": "Numérisateur",
+      "description": "Personne qui a saisi la donnée",
+      "local_key": "id_digitiser"
+    },
+    "observers": {
+      "type": "relation",
+      "relation_type": "n-n",
+      "schema_name": "user.role",
+      "title": "Observateurs",
+      "description": "Observateurs liés à la visite",
+      "schema_dot_table": "m_monitoring.cor_visit_observer"
+    },
+    "id_dataset": {
+      "type": "integer",
+      "foreign_key": true,
+      "schema_name": "meta.jdd",
+      "title": "Jeu de données",
+      "description": "Jeu de données associé à la visite",
       "required": true
     },
+    "dataset": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "schema_name": "meta.jdd",
+      "title": "Jeu de données",
+      "description": "Jeu de données associé à la visite",
+      "local_key": "id_dataset"
+    },
+
     "visit_data": {
       "type": "json",
       "description": "Données additionnelles du site",
       "title": "Données additionnelles"
+    },
+    "observations": {
+      "type": "relation",
+      "relation_type": "1-n",
+      "title": "observations",
+      "foreign_key": "cd_nom",
+      "description": "Observations liées à la visite",
+      "schema_name": "m_monitoring.observation"
+    },
+    "nb_observations": {
+      "type": "integer",
+      "title": "Nombre d'observations",
+      "column_property": "nb",
+      "relation_key": "observations"
     }
+  },
+  "details": {
+    "layout": [
+      "site.site_name",
+      "visit_date_min",
+      "nb_observations",
+      "digitiser.nom_complet",
+      "dataset.dataset_name",
+      "observers.nom_complet"
+    ]
+  },
+  "form": {
+    "layout": [
+      "id_site",
+      "id_module",
+      {
+        "key": "id_digitiser",
+        "default": "__f__meta.currentUser?.id_role"
+      },
+      "visit_date_min",
+      "visit_date_max",
+      {
+        "key": "id_dataset",
+        "type": "list_form",
+        "title": "Jeu de données",
+        "schema_name": "meta.jdd",
+        "page_size": 10,
+        "reload_on_search": true
+      }
+      ,
+      {
+        "key": "observers",
+        "type": "list_form",
+        "title": "Observateurs",
+        "schema_name": "user.role",
+        "multiple": true,
+        "filters": [
+          { "field": "groupes.listes.code_liste", "type":"=", "value": "obsocctax"}
+        ]
+      }
+    ]
   },
   "table": {
     "columns": [
       "site.site_name",
-      "visit_date_min"
+      "visit_date_min",
+      "nb_observations",
+      "digitiser.nom_complet",
+      "dataset.dataset_name",
+      "observers.nom_complet"
     ],
-    "columns_short": [
-      "site.site_name",
-      "visit_date_min"
+    "sort": [
+      {
+        "column": "visit_date_min",
+        "dir": "desc"
+      }
     ]
-
   }
 }

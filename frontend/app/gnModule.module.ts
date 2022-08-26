@@ -12,7 +12,6 @@ import { PageComponent } from "./components/page.component";
 import { PageNotFoundComponent } from "./components/page-not-found.component";
 import { BaseComponent } from "./components/base/base.component";
 import { PageElementComponent } from "./components/base/page-element.component";
-import { MaterialDesignFrameworkModule } from "@ajsf/material";
 import ModulesServices from "./services/";
 import { MatTableModule } from "@angular/material/table";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -36,7 +35,6 @@ const routes: Routes = [
     GN2CommonModule,
     RouterModule.forChild(routes),
     CommonModule,
-    MaterialDesignFrameworkModule,
     MatTableModule,
     MatCheckboxModule
   ],

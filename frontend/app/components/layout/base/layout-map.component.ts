@@ -80,19 +80,18 @@ export class ModulesLayoutMapComponent
    *  data -> layoutData
    */
   postComputeLayout(dataChanged, layoutChanged): void {
-
     if (this.computedLayout.map_id) {
       this.mapId = this.computedLayout.map_id;
     }
     this._mapService.initMap(this.mapId).then((map) => {
       this._map = map;
 
-
-      if(layoutChanged) {
+      if (layoutChanged) {
         this.processDrawConfig();
       }
 
       // affichage des données
+
       if (dataChanged) {
         this._mapService.processData(this.mapId, this.data, {
           key: this.computedLayout.key,

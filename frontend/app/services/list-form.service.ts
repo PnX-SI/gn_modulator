@@ -220,9 +220,6 @@ export class ListFormService {
       .join(",");
 
     params.page_size = options.reload_on_search ? options.page_size || 10 : 0;
-
-    const url = this.url(options.api);
-
     return this._requestService
       .request("get", this.url(options.api), { params, cache: options.cache })
       .pipe(

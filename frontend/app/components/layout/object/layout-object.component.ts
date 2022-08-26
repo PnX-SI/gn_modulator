@@ -4,11 +4,11 @@ import { ModulesConfigService } from "../../../services/config.service";
 import { ModulesSchemaService } from "../../../services/schema.service";
 import { ModulesDataService } from "../../../services/data.service";
 import { ModulesPageService } from "../../../services/page.service";
-import { ModulesObjectService } from "../../../services/object.service";
 import { ModulesRouteService } from "../../../services/route.service";
 import { ModulesLayoutComponent } from "../base/layout.component";
 import { mergeMap, catchError } from "@librairies/rxjs/operators";
 import { Observable, of } from "@librairies/rxjs";
+import utils from "../../../utils";
 
 /** Composant pour afficher des objets
  * layout
@@ -38,12 +38,8 @@ export class ModulesLayoutObjectComponent
   _mData: ModulesDataService;
   _mRoute: ModulesRouteService;
   _mPage: ModulesPageService;
-  _mObject: ModulesObjectService;
 
   /** subscription pour les informations sur les objects */
-  _filtersSubscription: Subscription;
-  _prefiltersSubscription: Subscription;
-  _valueSubscription: Subscription;
 
   constructor(_injector: Injector) {
     super(_injector);
@@ -52,52 +48,8 @@ export class ModulesLayoutObjectComponent
     this._mSchema = this._injector.get(ModulesSchemaService);
     this._mRoute = this._injector.get(ModulesRouteService);
     this._mPage = this._injector.get(ModulesPageService);
-    this._mObject = this._injector.get(ModulesObjectService);
     this._name = "layout-object";
-  }
-
-  ngOnDestroy() {
-    this._filtersSubscription.unsubscribe();
-    this._valueSubscription.unsubscribe();
-    this._prefiltersSubscription.unsubscribe();
-  }
-
-  processObject() {
-    // initialise les objects et les subscription à
-    // - value
-    // - filter
-    // - TODO prefilter ?
-    if (!(this._filtersSubscription && this._valueSubscription)) {
-      // TODO une seule subscription ??
-      // this._mPage.initObject(this.objectName())
-      this._filtersSubscription = this._mObject
-        .getObjectSubject(this.objectName(), "value")
-        .subscribe((value) => {
-          this.processValue(value);
-        });
-      this._prefiltersSubscription = this._mObject
-        .getObjectSubject(this.objectName(), "prefilters")
-        .subscribe((value) => {
-          this.processPreFilters(value);
-        });
-      this._valueSubscription = this._mObject
-        .getObjectSubject(this.objectName(), "filters")
-        .subscribe((filters) => {
-          this.processFilters(filters);
-        });
-    }
-  }
-
-  processValue(value) {
-    this.postProcessLayout();
-  }
-
-  processFilters(filters) {
-    this.postProcessLayout();
-  }
-
-  processPreFilters(prefilters) {
-    this.postProcessLayout();
+    this.bPostComputeLayout = true;
   }
 
   log(...args) {
@@ -111,21 +63,32 @@ export class ModulesLayoutObjectComponent
     );
   }
 
+  postComputeLayout(dataChanged: any, layoutChanged: any): void {
+    if(!utils.fastDeepEqual(this.data.value, dataChanged.value)) {
+      this.processValue(this.data.value);
+    }
+    if(!(utils.fastDeepEqual(this.data.filters, dataChanged.filters) &&
+    utils.fastDeepEqual(this.data.filters, dataChanged.filters))) {
+      this.processFilters();
+    }
+  }
+
+  postProcessLayout() {
+    return this.processObject();
+  }
+
   /**
-   * postProcessLayout
+   * processObject()
    *  - loadConfig: chargement de la configuration du schema
    *  - processConfig: traitement de la configuration (layout etc..)
    *  - getData: chargement des données
    *  - processData: traitement des données
    */
-  postProcessLayout(): void {
+  processObject(): void {
     if (this.isProcessing) {
       return;
     }
     this.isProcessing = true;
-
-    // initialise les subscription aux données d'object (si ce n'est pas déjà fait)
-    this.processObject();
 
     // chargement de la configuration
     this._mConfig
@@ -137,12 +100,6 @@ export class ModulesLayoutObjectComponent
           this.moduleConfig = this._mConfig.moduleConfig(
             this._mPage.moduleCode
           );
-          // if (!!this._mPage.moduleCode) {
-          //   this.moduleConfig = this._mConfig.moduleConfig(
-          //     this._mPage.moduleCode
-          //   );
-          // }
-          // traitement de la configuraiton
           this.processConfig();
           return of(true);
         }),
@@ -189,7 +146,8 @@ export class ModulesLayoutObjectComponent
         title: "export",
         href: this._mPage.exportUrl(
           this._mPage.moduleCode,
-          this.computedLayout.export_code
+          this.computedLayout.export_code,
+          this.data
         ),
         description: "Exporter les données",
       };
@@ -199,15 +157,26 @@ export class ModulesLayoutObjectComponent
   // traitement des données
   // peut être redefini
   processData(data) {
+    this.processDefaults(data)
     this.schemaData = data;
   }
+
+  // traitement des valeurs par défaut
+  // dans le cas du formulaire seulement ?
+  // si data.default est défini
+  processDefaults(data) {
+    for (const [defaultKey, defaultValue] of Object.entries(this.data.defaults || {})) {
+      data[defaultKey] = defaultValue
+    }
+  }
+
 
   // récupération des données
   // peut être redefini
   getData(): Observable<any> {
     if (
       ["form", "properties"].includes(this.computedLayout.component) &&
-      this.getObjectValue()
+      this.getDataValue()
     ) {
       return this.getOneRow();
     }
@@ -220,7 +189,7 @@ export class ModulesLayoutObjectComponent
    * pour récupérer un ligne identifiées par <id> = value
    */
   getOneRow() {
-    const value = this.getObjectValue();
+    const value = this.getDataValue();
     if (!value) {
       return of(null);
     }
@@ -230,17 +199,18 @@ export class ModulesLayoutObjectComponent
       this.processedLayout
     );
 
+
     return this._mData.getOne(this.schemaName(), value, {
       fields,
     });
   }
 
   schemaName() {
-    return this._mObject.getObjectValue(this.objectName(), "schema_name");
+    return this.data.schema_name;
   }
 
   objectName() {
-    return this.computedLayout.object_name;
+    return this.data.object_name;
   }
 
   // process des actions
@@ -249,10 +219,13 @@ export class ModulesLayoutObjectComponent
     if (
       ["submit", "cancel", "edit", "details", "create"].includes(event.action)
     ) {
-      this._mPage.processAction(event.action, this.objectName(), {
+      this._mPage.processAction({
+        action: event.action,
+        objectName: this.objectName(),
+        schemaName: this.schemaName(),
+        value: event.data[this.pkFieldName()],
         data: event.data,
         layout: this.processedLayout,
-        value: event.data[this.pkFieldName()],
       });
     }
   }
@@ -267,18 +240,46 @@ export class ModulesLayoutObjectComponent
     return this._mSchema.labelFieldName(this.schemaName());
   }
 
+  setObject(data) {
+    let change = false;
+    for (const [key, value] of Object.entries(data)) {
+      if (!utils.fastDeepEqual(this.data[key], value)) {
+        change = true;
+        this.data[key] = value;
+      }
+    }
+    // s'il y a eu un changement on recalcule les layout
+    if (change) {
+      this._mLayout.reComputeLayout("set data object");
+      setTimeout(() => {
+        this._mLayout.reComputeHeight("set data object");
+      });
+    }
+  }
+
   // valeur associée à l'id de l'object
-  getObjectValue() {
-    return this._mObject.getObjectValue(this.objectName(), "value");
+  getDataValue() {
+    return this.data.value;
   }
 
   // filtres associés à l'object
-  getObjectFilters() {
-    return this._mObject.getObjectValue(this.objectName(), "filters");
+  getDataFilters() {
+    return this.data.filters;
   }
 
   // prefiltres associés à l'object
-  getObjectPreFilters() {
-    return this._mObject.getObjectValue(this.objectName(), "prefilters");
+  getDataPreFilters() {
+    return this.data.prefilters;
   }
+
+  // Quand une nouvelle valeur est définie
+  processValue(value) {
+    if(["form", "properties"].includes(this.computedLayout.component)) {
+      return this.postProcessLayout();
+    }
+  }
+
+  // quand un nouveau filtre est défini
+  processFilters() {}
+
 }

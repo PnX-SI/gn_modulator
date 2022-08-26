@@ -1,0 +1,11 @@
+{
+  "layout_name": "m_monitoring.observation_details",
+  "height_auto": true,
+  "items": [
+    {
+      "type": "object",
+      "component": "properties",
+      "key": "observation"
+    }
+  ]
+}

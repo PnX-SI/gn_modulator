@@ -9,16 +9,14 @@ from geoalchemy2.shape import to_shape, from_shape
 from geoalchemy2 import functions
 from geojson import Feature
 from marshmallow import pre_load, post_load, fields, ValidationError
-from marshmallow_sqlalchemy.convert import ModelConverter
 from shapely.geometry import shape
 from sqlalchemy.orm import ColumnProperty
 
 from utils_flask_sqla_geo.utilsgeometry import remove_third_dimension
 from geonature.utils.env import ma
 
-from .errors import SchemaProcessedPropertyError
+from .errors import SchemaProcessedPropertyError, SchemaSerializerModelIsNoneError
 from geoalchemy2.types import Geometry as GeometryType
-from geonature.utils.config import config as gn_config
 
 # store the marshmallow schema
 
@@ -68,7 +66,6 @@ class SchemaSerializers:
 
     def process_column_marshmallow(self, column_def):
         field_type = column_def.get('type')
-
         kwargs = {
             'allow_none': True
         }
@@ -101,6 +98,9 @@ class SchemaSerializers:
         if field_type == 'json':
             return fields.Raw(**kwargs)
 
+
+        print(column_def)
+        aa
         raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
 
     def opposite_relation_def(self, relation_def):
@@ -146,6 +146,8 @@ class SchemaSerializers:
         # avoid circular dependencies
 
         relation = self.cls(relation_def['schema_name'])
+        if not relation.Model():
+            return None
         exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
         relation_serializer = None
 
@@ -226,6 +228,8 @@ class SchemaSerializers:
             marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
 
         for key, column_def in self.column_properties().items():
+            if column_def['type'] == 'relation':
+                continue
             marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
 
         # if self.attr('meta.check_cruved'):
@@ -234,12 +238,14 @@ class SchemaSerializers:
             # marshmallow_schema_dict['cruved_ownership'] = 0
 
 
-        # store in cache before realtion(avoid circular dependancies)
+        # store in cache before relation (avoid circular dependancies)
         for key, relation_def in self.relationships().items():
-            marshmallow_schema_dict[key] = self.process_relation_marshmallow(relation_def)
+            relation_marshmallow = self.process_relation_marshmallow(relation_def)
+            if not relation_marshmallow:
+                return None
 
-            if relation_def.get('column_property', {}).get('type') == 'nb':
-                marshmallow_schema_dict['nb_{}'.format(key)] = fields.Integer()
+
+            marshmallow_schema_dict[key] = relation_marshmallow
 
 
         MarshmallowSchema = type(

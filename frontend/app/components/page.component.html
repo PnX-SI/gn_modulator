@@ -2,7 +2,7 @@
     - permet d'afficher le layout associé à la page
     - et de faire remonter les actions à exécuter
 -->
-<div *ngIf="pageInitialized" class="page">
+<div *ngIf="pageInitialized && data" class="page">
   <modules-layout
     *ngIf="layout"
     [layout]="layout"

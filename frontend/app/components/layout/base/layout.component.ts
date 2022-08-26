@@ -309,6 +309,7 @@ export class ModulesLayoutComponent implements OnInit {
   // action quand la taille change
   onHeightChange() {
     this.processHeightOverflow();
+    this.processHeightAuto();
   }
 
   /** pour mettre les layout avec height_auto = true à la hauteur totale de la page */
@@ -316,6 +317,10 @@ export class ModulesLayoutComponent implements OnInit {
     const elem = document.getElementById(this._id);
 
     if (!elem) {
+      return;
+    }
+
+    if(!this.computedLayout.height_auto){
       return;
     }
 
@@ -395,5 +400,9 @@ export class ModulesLayoutComponent implements OnInit {
         this.processDebug();
       }
     }
+  }
+
+  onTabChanged($event) {
+      this._mLayout.reComputeHeight('truc');
   }
 }

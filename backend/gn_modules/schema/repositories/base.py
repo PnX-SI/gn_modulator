@@ -5,9 +5,8 @@
 import math
 
 from geonature.utils.env import db
-from pyrsistent import v
 
-from sqlalchemy import cast, orm, and_, or_, not_, func, select
+from sqlalchemy import func
 
 from .. import errors
 
@@ -87,9 +86,11 @@ class SchemaRepositoriesBase():
             test if data different from model
         '''
 
+        if model is None and data is not None:
+            return True
+
         if isinstance(data, dict) and not isinstance(model, dict):
             for key, data_value in data.items():
-
                 m = self.serialize(model, fields=[key])[key]
                 if self.is_new_data(m, data_value):
                     return True

@@ -22,8 +22,7 @@ export class ModulesLayoutObjectMapComponent
   mapData;
   height;
 
-  tooltipDisplayZoomTreshold=12;
-
+  tooltipDisplayZoomTreshold = 12;
 
   constructor(_injector: Injector) {
     super(_injector);
@@ -34,9 +33,9 @@ export class ModulesLayoutObjectMapComponent
 
   processConfig() {
     this.processedLayout = {
-      type: 'map',
+      type: "map",
       map_id: this.mapId,
-    }
+    };
   }
 
   processValue(value) {
@@ -51,79 +50,84 @@ export class ModulesLayoutObjectMapComponent
 
     const layerSearcghFilters = {};
     layerSearcghFilters[this.pkFieldName()] = value;
-    const layer = this._mapService.findLayer(this.mapId, layerSearcghFilters)
-    if (! layer) {
-      console.error(`le layer (${this.pkFieldName()}==${value}) n'est pas présent`)
+    const layer = this._mapService.findLayer(this.mapId, layerSearcghFilters);
+    if (!layer) {
+      console.error(
+        `le layer (${this.pkFieldName()}==${value}) n'est pas présent`
+      );
       return;
     }
     layer.openPopup();
-  };
+  }
 
+  processFilters() {
+    return this.processObject();
+  }
 
   processData(response) {
     this.schemaData = response.data;
     this._mapService.waitForMap(this.mapId).then(() => {
-
-    // this.schemaData = response.data;
-    let geojson = response.data;
-    const label_field_name = this.schemaConfig.utils.label_field_name;
-    const pk_field_name = this.schemaConfig.utils.pk_field_name;
-    const currentZoom = this._mapService.getZoom(this.mapId);
-    const currentMapBounds = this._mapService.getMapBounds(this.mapId);
-    // this.mapData = {};
-    this.mapData = {
-      pf: {
-        geojson,
-        layerOptions: {
-          key: 'pf',
-          label: `${this.schemaConfig.display.labels}`,
-          bZoom: true,
-          onLayersAdded: () => {
-            this.processValue(this.getObjectValue())
-          },
-          onEachFeature: (feature, layer) => {
-            /** click */
-            layer.on("click", (event) => {
-              const value = event.target.feature.properties[pk_field_name];
-              this._mObject.setObjectValue(this.objectName(), "value", value);
-            });
-
-            /** tooltip */
-            const label = feature.properties[label_field_name];
-            if (label) {
-              const action = this._mapService.actionTooltipDisplayZoomThreshold(
-                this.mapId,
-                layer,
-                this.tooltipDisplayZoomTreshold,
-                false,
-                currentZoom,
-                currentMapBounds
-              );
-              layer
-                .bindTooltip(label, {
-                  direction: "top",
-                  permanent: action == "display",
-                  className: "anim-tooltip",
-                })
-                .openTooltip();
-
-              /** tooltip - zoom et emprise */
-              layer.onZoomMoveEnd = this._mapService.layerZoomMoveEndListener(
-                this.mapId,
-                layer,
-                this.tooltipDisplayZoomTreshold
-              );
-            }
-            layer
-              .bindPopup(this.popupHTML(feature.properties))
-              .on("popupopen", (event) => {
-                this.onPopupOpen(layer);
+      // this.schemaData = response.data;
+      let geojson = response.data;
+      const label_field_name = this.schemaConfig.utils.label_field_name;
+      const pk_field_name = this.schemaConfig.utils.pk_field_name;
+      const currentZoom = this._mapService.getZoom(this.mapId);
+      const currentMapBounds = this._mapService.getMapBounds(this.mapId);
+      // this.mapData = {};
+      this.mapData = {
+        pf: {
+          geojson,
+          layerOptions: {
+            key: "pf",
+            label: `${this.schemaConfig.display.labels}`,
+            bZoom: true,
+            onLayersAdded: () => {
+              this.processValue(this.getDataValue());
+            },
+            onEachFeature: (feature, layer) => {
+              /** click */
+              layer.on("click", (event) => {
+                const value = event.target.feature.properties[pk_field_name];
+                this.setObject({ value });
               });
+
+              /** tooltip */
+              const label = feature.properties[label_field_name];
+              if (label) {
+                const action =
+                  this._mapService.actionTooltipDisplayZoomThreshold(
+                    this.mapId,
+                    layer,
+                    this.tooltipDisplayZoomTreshold,
+                    false,
+                    currentZoom,
+                    currentMapBounds
+                  );
+                layer
+                  .bindTooltip(label, {
+                    direction: "top",
+                    permanent: action == "display",
+                    className: "anim-tooltip",
+                  })
+                  .openTooltip();
+
+                /** tooltip - zoom et emprise */
+                layer.onZoomMoveEnd = this._mapService.layerZoomMoveEndListener(
+                  this.mapId,
+                  layer,
+                  this.tooltipDisplayZoomTreshold
+                );
+              }
+              layer
+                .bindPopup(this.popupHTML(feature.properties))
+                .on("popupopen", (event) => {
+                  this.onPopupOpen(layer);
+                });
+            },
           },
         },
-      },
-    };
-  })
+      };
+    });
   }
 
   popupHTML(properties) {
@@ -165,22 +169,29 @@ export class ModulesLayoutObjectMapComponent
     // const fields = this.schemaConfig.table.columns.map(column => column.field);
     const fields = this.schemaConfig.map.popup_fields;
     // if(this.schemaConfig.definition.meta.check_cruved) {
-      fields.push('cruved_ownership');
+    fields.push("cruved_ownership");
     // }
-    this._mData.getOne(this.schemaName(), value, { fields })
-    .subscribe((data) => {
-      layer.setPopupContent(this.popupHTML(data));
-    });
-    this._mapService.L.DomEvent
-    .on(layer.getPopup().getElement(), 'click', (e) => {
-      const action =  e && e.target && e.target.attributes.getNamedItem('action').nodeValue;
-      if(action) {
-        this._mPage.processAction(action, this.objectName(), {value})
+    this._mData
+      .getOne(this.schemaName(), value, { fields })
+      .subscribe((data) => {
+        layer.setPopupContent(this.popupHTML(data));
+      });
+    this._mapService.L.DomEvent.on(
+      layer.getPopup().getElement(),
+      "click",
+      (e) => {
+        const action =
+          e && e.target && e.target.attributes.getNamedItem("action").nodeValue;
+        if (action) {
+          this._mPage.processAction({
+            action,
+            objectName: this.objectName(),
+            value,
+          });
+        }
       }
-    });
-
+    );
   }
-
 
   getData(): Observable<any> {
     const extendedParams = {
@@ -188,7 +199,7 @@ export class ModulesLayoutObjectMapComponent
         this.schemaConfig.utils.pk_field_name,
         this.schemaConfig.utils.label_field_name,
       ], // fields
-      filters: this.getObjectFilters() || [],
+      filters: this.getDataFilters() || [],
       as_geojson: true,
     };
     return this._mData.getList(this.schemaName(), extendedParams);

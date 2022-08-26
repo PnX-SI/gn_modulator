@@ -111,5 +111,6 @@ export class ModulesGenericFormComponent
     this.formGroup.valueChanges.subscribe((value) => {
       this.onFormGroupChange(value);
     });
+
   }
 }

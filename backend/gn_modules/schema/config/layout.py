@@ -20,6 +20,7 @@ class SchemaConfigLayout():
         # - ou alors toutes les cle de properties
 
         form_layout = self.attr('form.layout', list(self.properties().keys()))
+
         return self.process_layout(form_layout)
 
     def process_layout(self, layout):
@@ -29,7 +30,7 @@ class SchemaConfigLayout():
 
         if isinstance(layout, dict):
             if "key" in layout:
-                if "." in layout['key']:
+                if "." in layout['key'] and len(layout['key'].split('.')) == 2:
                     definition = self.property(layout['key'].split('.')[0])
                     layout['title'] = layout.get('title', definition['title'])
 

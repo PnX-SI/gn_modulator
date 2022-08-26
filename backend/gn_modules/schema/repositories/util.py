@@ -1,4 +1,4 @@
-from sqlalchemy import cast, orm, and_, or_, not_, func, select
+from sqlalchemy import orm, and_, nullslast
 from geonature.utils.env import db
 
 class SchemaRepositoriesUtil():
@@ -80,6 +80,8 @@ class SchemaRepositoriesUtil():
                 model_attribute.asc()
             )
 
+            # nullslast
+            order_by = nullslast(order_by)
             order_bys.append(order_by)
 
         return order_bys, query
@@ -96,6 +98,8 @@ class SchemaRepositoriesUtil():
             else
             model_attribute.asc()
         )
+
+        order_by = nullslast(order_by)
 
         return order_by, query
 

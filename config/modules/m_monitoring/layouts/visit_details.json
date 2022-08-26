@@ -1,0 +1,17 @@
+{
+  "layout_name": "m_monitoring.visit_details",
+  "height_auto": true,
+  "direction": "row",
+  "items": [
+    {
+      "key": "visit",
+      "type": "object",
+      "component": "properties"
+    },
+    {
+      "type": "object",
+      "component": "table",
+      "key": "observation"
+    }
+  ]
+}

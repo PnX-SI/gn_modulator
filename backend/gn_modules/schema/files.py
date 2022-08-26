@@ -360,9 +360,8 @@ class SchemaFiles():
     #                 "relation_key": complement.relation_name
     #             }
 
-
     @classmethod
-    def init_schemas(cls):
+    def init_schemas_definitions(cls):
         cls.clear_global_cache()
         cls.clear_schema_cache()
         cls.init_references()
@@ -375,6 +374,24 @@ class SchemaFiles():
         # cls.process_complement()
 
         # init models
+        # for schema_name in cls.schema_names_from_cache():
+        #     sm = cls(schema_name)
+        #     # try:
+        #     sm.Model()
+        #     # except AttributeError as e:
+        #         # raise errors.SchemaError(
+        #             # '{}: {}'.format(sm.schema_name(), e))
+
+        # for schema_name in cls.schema_names_from_cache():
+        #     sm = cls(schema_name)
+        #     sm.MarshmallowSchema()
+
+    @classmethod
+    def init_schemas_models_and_serializers(cls):
+        # print("init schema")
+        import time
+        start_time = time.time()
+
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
             # try:
@@ -383,10 +400,14 @@ class SchemaFiles():
                 # raise errors.SchemaError(
                     # '{}: {}'.format(sm.schema_name(), e))
 
+        # print("models --- %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
+
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
             sm.MarshmallowSchema()
 
+        # print("schemas --- %s seconds ---" % (time.time() - start_time))
 
     @classmethod
     def process_schema_config(cls, data, key=None):

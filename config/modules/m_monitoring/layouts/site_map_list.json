@@ -1,0 +1,37 @@
+{
+  "layout_name": "m_monitoring.site_map_list",
+  "height_auto": true,
+  "direction": "row",
+  "items": [
+    {
+      "type": "object",
+      "component": "filters",
+      "key": "site"
+    },
+    {
+      "flex": 2,
+      "type": "object",
+      "component": "map",
+      "key": "site"
+    },
+    {
+      "type": "tabs",
+      "flex": 2,
+      "items": [
+        {
+          "title":  "Sites",
+          "type": "object",
+          "component": "table",
+          "key": "site"
+        },
+        {
+          "title":  "Groupes de sites",
+          "type": "object",
+          "component": "table",
+          "key": "site_group"
+        }
+      ]
+    }
+
+  ]
+}

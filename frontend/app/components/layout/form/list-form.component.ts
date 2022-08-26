@@ -82,7 +82,6 @@ export class ModulesListFormComponent
     this.initSearch();
     this.formControl = this.options.formGroup.get(this.layout.key);
     this.isLoading=true;
-
     this._listFormService
       .initListForm(this.listFormOptions, this.formControl)
       .subscribe((infos) => {

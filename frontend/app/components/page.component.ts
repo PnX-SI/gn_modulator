@@ -1,8 +1,12 @@
 import { Component, OnInit, Injector } from "@angular/core";
 import { ModulesConfigService } from "../services/config.service";
 import { ModulesPageService } from "../services/page.service";
-import { ModulesObjectService } from "../services/object.service";
+import { ModulesLayoutService } from "../services/layout.service";
+import { AuthService, User } from "@geonature/components/auth/auth.service";
 import { ActivatedRoute } from "@angular/router";
+import { mergeMap, catchError } from "@librairies/rxjs/operators";
+import { Observable, of } from "@librairies/rxjs";
+
 import utils from "../utils";
 
 @Component({
@@ -15,16 +19,24 @@ export class PageComponent implements OnInit {
   _mConfig: ModulesConfigService;
   _route: ActivatedRoute;
   _mPage: ModulesPageService;
-  _mObject: ModulesObjectService;
+  _auth: AuthService;
+  _mLayout: ModulesLayoutService
+
+  currentUser: User;
 
   debug = false; // pour activer le mode debug (depuis les queryParams)
+
+  routeParams; // paramètre d'url
+  routeQueryParams; // query params
+
+
 
   moduleConfig; // configuration du module
   pageConfig; // configuration de la route en cours
   pageName; // nom (ou code de la page)
   moduleCode; // code du module en cours
   layout; // layout de la page (récupéré depuis pageConfig.layout_name)
-  data = {}; // data pour le layout
+  data; // data pour le layout
 
   pageInitialized: boolean; // test si la page est initialisée (pour affichage)
 
@@ -32,64 +44,97 @@ export class PageComponent implements OnInit {
     this._route = this._injector.get(ActivatedRoute);
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mPage = this._injector.get(ModulesPageService);
-    this._mObject = this._injector.get(ModulesObjectService);
+    this._auth = this._injector.get(AuthService);
+    this._mLayout = this._injector.get(ModulesLayoutService);
   }
 
   ngOnInit() {
-    // routeData => { pageName, moduleCode }
-    this._route.data.subscribe((routeData) => {
 
-      this.pageName = routeData.pageName;
-      this.moduleCode = routeData.moduleCode;
+    this.currentUser = this._auth.getCurrentUser();
+    const layoutMeta = this._mLayout.meta();
+    layoutMeta['currentUser'] = this.currentUser;
 
-      // pour pouvoir retrouver moduleCode par ailleurs
-      this._mPage.moduleCode = routeData.moduleCode;
-
-      // recupéraiton de la configuration de la page;
-      this.moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
-      this.pageConfig = this.moduleConfig.pages[this.pageName];
-
-      // initialisatio du layout
-      this.layout = {
-        layout_name: this.pageConfig.layout_name,
-      };
-
-      this._mObject.resetObjects();
-
-      // pour définir les schema_name des objects (et autres ???)
-      this._mObject.processPageObjectParams(this.moduleConfig.objects);
-
-      // lien entre les paramètres
-      // en passant par le service mPage
-      // permet de récupérer value
-      // - id de l'objet en cours ? (par ex. id d'un site)
-      // - paramètre de prefilter pour des liste d'objet (par ex. visite d'un site)
-      this._route.params.subscribe((params) => {
-        this._mObject.processPageObjectParams(this.pageConfig.params, params);
+    this._route.data
+      .pipe(
+        mergeMap((routeData) => {
+          this.processRouteData(routeData);
+          return this._route.params;
+        }),
+        mergeMap((params) => {
+          this.routeParams = params;
+          return this._route.queryParams;
+        }),
+        mergeMap((queryParams) => {
+          this.routeQueryParams = queryParams;
+          this.processRouteParams();
+          return of(true);
+        })
+      )
+      .subscribe(() => {
+        this.pageInitialized = true;
       });
-
-      // queryParams
-      // - debug: affichage graphique de la configuraiton des layouts
-      this._route.queryParams.subscribe((params) => {
-        this.debug = ![undefined, false, "false"].includes(params.debug);
-      });
-
-      this.pageInitialized = true
-    });
   }
 
-  /** TODO
-   * - à déplacer ailleurs
-   * - object_name (trouver plus pertinent)
-   * Action de page
-   * - lien vers d'autres pages
-   * - route de validation de formulaires
-   */
-  processAction(event) {
-    this._mPage.processAction(
-      event.action,
-      event.layout.object_name,
-      event.layout
+  processRouteData(routeData) {
+    // reset data
+    this.data = null;
+
+    this.pageName = routeData.pageName;
+    this.moduleCode = routeData.moduleCode;
+
+    // pour pouvoir retrouver moduleCode par ailleurs
+    this._mPage.moduleCode = routeData.moduleCode;
+
+    // recupéraiton de la configuration de la page;
+    this.moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
+    this.pageConfig = this.moduleConfig.pages[this.pageName];
+
+    // initialisatio du layout
+    this.layout = {
+      layout_name: this.pageConfig.layout_name,
+    };
+  }
+
+  // lien entre les paramètres
+  // en passant par data
+  // permet de récupérer value
+  // - id de l'objet en cours ? (par ex. id d'un site)
+  // - paramètre de prefilter pour des liste d'objet (par ex. visite d'un site)
+  processRouteParams() {
+    let data = utils.copy(this.moduleConfig.data);
+    const dataPage = utils.copy(this.pageConfig.data || {});
+
+    this.debug = ![undefined, false, "false"].includes(
+      this.routeQueryParams.debug
     );
+
+    // pour toutes les clés de data (moduleConfig.data)
+    for (const [dataKey, dataValue] of Object.entries(data)) {
+      // set object_name
+      (dataValue as any).object_name = dataKey;
+
+      // on ajoute les données data définies pour la page
+      const dataPageValue = dataPage[dataKey];
+      if (!dataPageValue) {
+        continue;
+      }
+      for (const [typeKey, typeValue] of Object.entries(dataPageValue)) {
+        (dataValue as any)[typeKey] = typeValue;
+      }
+    }
+
+    // prise en comptes des routeParams et routeQueryParams
+    for (const [paramKey, paramValue] of Object.entries(this.routeParams)) {
+      data = utils.replace(data, `:${paramKey}`, paramValue);
+    }
+
+    for (const [paramKey, paramValue] of Object.entries(
+      this.routeQueryParams
+    )) {
+      data = utils.replace(data, `:${paramKey}`, paramValue);
+    }
+
+    // pour communiquer ses données aux composants du layout
+    this.data = data;
   }
 }

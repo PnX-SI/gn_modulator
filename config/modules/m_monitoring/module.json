@@ -8,52 +8,162 @@
   },
   "schemas": [
     "m_monitoring.site",
-    // TODO refactor sql processing pour eviter de créer plusieurs fois les tables
-    // "m_monitoring.site_category",
-    "m_monitoring.visit"
-    // "m_monitoring.sc_arbre_loge",
-    // "m_monitoring.sc_grotte"
+    "m_monitoring.observation",
+    "m_monitoring.site_group",
+    "m_monitoring.site_category",
+    "m_monitoring.visit",
+    "m_monitoring.sc_arbre_loge",
+    "m_monitoring.sc_grotte"
   ],
   "features": [
     "exemples.json"
   ],
-  "objects": {
+  "data": {
     "site": {
       "schema_name": "m_monitoring.site"
     },
     "visit": {
       "schema_name": "m_monitoring.visit"
+    },
+    "site_group": {
+      "schema_name": "m_monitoring.site_group"
+    },
+    "observation": {
+      "schema_name": "m_monitoring.observation"
     }
   },
-
-  // "actions": {
-  //   "site": {
-  //     "details": "site_details",
-  //     "edit": "site_edit",
-  //     "create": "site_create",
-  //     "map_list": "site_map_list"
-  //   },
-  //   "visit": {
-  //     "details": "site_details",
-  //     "edit": "site_edit",
-  //     "create": "site_create",
-  //     "map_list": "site_map_list"
-  //   }
-  // },
   "pages": {
     "sites": {
       "url": "",
       "layout_name": "m_monitoring.site_map_list"
     },
+    "site_group_details": {
+      "url": "site_group_details/:value",
+      "layout_name": "m_monitoring.site_group_details",
+      "data": {
+        "site_group": {
+          "value": ":value"
+        },
+        "site": {
+          "prefilters": [
+            {
+              "field": "groups.id_site_group",
+              "type": "=",
+              "value": ":value"
+            }
+          ]
+        }
+      }
+    },
     "site_details": {
       "url": "site_details/:value",
       "layout_name": "m_monitoring.site_details",
-      "params": {
+      "data": {
         "site": {
           "value": ":value"
         },
         "visit": {
-         "prefilters": [{ "field": "id_site", "type": "=", "value": ":value" }]
+          "prefilters": [
+            {
+              "field": "id_site",
+              "type": "=",
+              "value": ":value"
+            }
+          ]
+        }
+      }
+    },
+    "visit_details": {
+      "url": "visit_details/:value",
+      "layout_name": "m_monitoring.visit_details",
+      "data": {
+        "visit": {
+          "value": ":value"
+        },
+        "observation": {
+          "prefilters": [
+            {
+              "field": "id_visit",
+              "type": "=",
+              "value": ":value"
+            }
+          ]
+        }
+      }
+    },
+    "observation_details": {
+      "url": "observation_details/:value",
+      "layout_name": "m_monitoring.observation_details",
+      "data": {
+        "observation": {
+          "value": ":value"
+        }
+      }
+    },
+    "site_group_edit": {
+      "url": "site_group_edit/:value",
+      "layout_name": "m_monitoring.site_group_edit",
+      "data": {
+        "site_group": {
+          "value": ":value"
+        }
+      }
+    },
+    "site_edit": {
+      "url": "site_edit/:value",
+      "layout_name": "m_monitoring.site_edit",
+      "data": {
+        "site": {
+          "value": ":value"
+        }
+      }
+    },
+    "visit_edit": {
+      "url": "visit_edit/:value",
+      "layout_name": "m_monitoring.visit_edit",
+      "data": {
+        "visit": {
+          "value": ":value"
+        }
+      }
+    },
+    "observation_edit": {
+      "url": "observation_edit/:value",
+      "layout_name": "m_monitoring.observation_edit",
+      "data": {
+        "observation": {
+          "value": ":value"
+        }
+      }
+    },
+    "site_group_create": {
+      "url": "site_group_create",
+      "layout_name": "m_monitoring.site_group_edit"
+    },
+    "site_create": {
+      "url": "site_create",
+      "layout_name": "m_monitoring.site_edit"
+    },
+    "visit_create": {
+      "url": "visit_create",
+      "layout_name": "m_monitoring.visit_edit",
+      "data": {
+        "visit": {
+          "defaults": {
+            "id_site": ":id_site",
+            "id_module": ":id_module"
+          }
+        }
+      }
+    },
+    "observation_create": {
+      "url": "observation_create",
+      "layout_name": "m_monitoring.observation_edit",
+      "data": {
+        "observation": {
+          "defaults": {
+            "id_visit": ":id_visit"
+          }
         }
       }
     }

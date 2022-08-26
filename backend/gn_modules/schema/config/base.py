@@ -37,14 +37,14 @@ class SchemaConfigBase():
         '''
         return self.attr('map', {})
 
-    def columns_table(self, short=False):
+    def columns_table(self):
         """
             config table pour tabulator : columns
         """
 
         columns = []
 
-        layout_field = 'table.columns{}'.format('_short' if short else '')
+        layout_field = 'table.columns'
         column_keys = (
             self.attr(layout_field)
             or
@@ -62,10 +62,20 @@ class SchemaConfigBase():
                 relation_def = self.relationship(key_relationship)
                 relation = self.cls(relation_def['schema_name'])
                 relation_column = relation.column(key_column)
-                column_def = {'title': relation_def['title'], 'field': key, 'headerFilter': True}
+                column_def = {
+                    'title': relation_def['title'],
+                    'field': key,
+                    'headerFilter': True,
+                    'type': relation_def['type']
+                }
             else:
                 column = self.column(key)
-                column_def = {'title': column['title'], 'field': key, 'headerFilter': True}
+                column_def = {
+                    'title': column['title'],
+                    'field': key,
+                    'headerFilter': True,
+                    'type': column['type']
+                }
 
             columns.append(column_def)
 
@@ -85,7 +95,6 @@ class SchemaConfigBase():
 
         return {
             'columns': self.columns_table(),
-            'columns_short': self.columns_table(short=True),
             'sort': self.attr('table.sort', []),
             'url': self.url('/rest/', full_url=True)
         }

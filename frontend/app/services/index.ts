@@ -9,7 +9,6 @@ import { ModulesMapService } from "./map.service";
 import { ModulesTableService } from "./table.service";
 import { ModulesSchemaService } from "./schema.service";
 import { ModulesPageService } from "./page.service";
-import { ModulesObjectService } from "./object.service";
 import { ListFormService } from "./list-form.service";
 
 
@@ -27,5 +26,4 @@ export default [
   ModulesTableService,
   ModulesPageService,
   ModulesSchemaService,
-  ModulesObjectService
 ]

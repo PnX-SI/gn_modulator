@@ -1,5 +1,28 @@
 [
   {
+    "schema_name": "meta.ca",
+    "items": [
+      {
+        "acquisition_framework_name": "m_monitoring",
+        "acquisition_framework_desc": "m_monitoring",
+        "acquisition_framework_start_date": "2022-01-01"
+      }
+    ]
+  },
+  {
+    "schema_name": "meta.jdd",
+    "items": [
+      {
+        "id_acquisition_framework": "m_monitoring",
+        "dataset_name": "m_monitoring",
+        "dataset_shortname": "m_monitoring",
+        "dataset_desc": "m_monitoring",
+        "marine_domain": false,
+        "terrestrial_domain": false
+      }
+    ]
+  },
+  {
     "schema_name": "m_monitoring.site_category",
     "items": [
       {
@@ -19,31 +42,98 @@
     ]
   },
   {
+    "schema_name": "m_monitoring.site_group",
+    "items": [
+      {
+        "site_group_name": "Site group 1",
+        "site_group_code": "SG1",
+        "id_digitiser": "admin"
+      },
+      {
+        "site_group_name": "Site group 2",
+        "site_group_code": "SG2",
+        "id_digitiser": "admin"
+      }
+    ]
+  },
+  {
     "schema_name": "m_monitoring.site",
     "items": [
       {
         "site_name": "Arbre à loge 1",
         "site_code": "AL1",
         "site_desc": "Très bel arbre à loge",
-        "site_geom": { "type": "Point", "coordinates": [3.7, 43.8]}
+        "id_digitiser": "admin",
+        "id_inventor": "admin",
+        "id_nomenclature_type_site": "4",
+        "site_geom": {
+          "type": "Point",
+          "coordinates": [
+            3.7,
+            43.8
+          ]
+        },
+        "id_site_category": "AL",
+        "groups": [
+          "SG1"
+        ]
       },
       {
         "site_name": "Arbre à loge 2",
         "site_code": "AL2",
         "site_desc": "Une autre arbre à loge",
-        "site_geom": { "type": "Point", "coordinates": [3.6, 43.9]}
+        "id_digitiser": "admin",
+        "id_inventor": "admin",
+        "id_nomenclature_type_site": "4",
+        "site_geom": {
+          "type": "Point",
+          "coordinates": [
+            3.6,
+            43.9
+          ]
+        },
+        "id_site_category": "AL",
+        "groups": [
+          "SG1"
+        ]
       },
       {
         "site_name": "Grotte 1",
         "site_code": "GR1",
         "site_desc": "Une Grotte",
-        "site_geom": { "type": "Point", "coordinates": [3.5, 43.5]}
+        "id_digitiser": "admin",
+        "id_inventor": "admin",
+        "id_nomenclature_type_site": "1",
+        "site_geom": {
+          "type": "Point",
+          "coordinates": [
+            3.5,
+            43.5
+          ]
+        },
+        "id_site_category": "GT",
+        "groups": [
+          "SG2"
+        ]
       },
       {
         "site_name": "Grotte 2",
         "site_code": "GR2",
         "site_desc": "Une autre Grotte",
-        "site_geom": { "type": "Point", "coordinates": [3.1, 44.2]}
+        "id_digitiser": "admin",
+        "id_inventor": "admin",
+        "id_nomenclature_type_site": "1",
+        "site_geom": {
+          "type": "Point",
+          "coordinates": [
+            3.1,
+            44.2
+          ]
+        },
+        "id_site_category": "GT",
+        "groups": [
+          "SG2"
+        ]
       }
     ]
   },
@@ -78,29 +168,63 @@
     "items": [
       {
         "id_site": "GR1",
-        "visit_date_min": "2022-01-01"
+        "visit_date_min": "2022-01-01",
+        "observers": [ "admin" ],
+        "id_dataset": ["m_monitoring", "m_monitoring"]
       },
       {
         "id_site": "GR1",
-        "visit_date_min": "2022-01-02"
+        "visit_date_min": "2022-01-02",
+        "observers": [ "admin" ],
+        "id_dataset": ["m_monitoring", "m_monitoring"]
       },
       {
         "id_site": "GR1",
-        "visit_date_min": "2022-01-03"
+        "visit_date_min": "2022-01-03",
+        "id_digitiser": "admin",
+        "observers": [ "admin" ],
+        "id_dataset": ["m_monitoring", "m_monitoring"]
       },
       {
         "id_site": "AL1",
-        "visit_date_min": "2022-01-01"
+        "visit_date_min": "2022-01-04",
+        "id_digitiser": "admin",
+        "observers": [ "admin" ],
+        "id_dataset": ["m_monitoring", "m_monitoring"]
       },
       {
         "id_site": "AL1",
-        "visit_date_min": "2022-01-02"
+        "visit_date_min": "2022-01-05",
+        "id_digitiser": "admin",
+        "observers": [ "admin" ],
+        "id_dataset": ["m_monitoring", "m_monitoring"]
       },
       {
         "id_site": "AL1",
-        "visit_date_min": "2022-01-03"
+        "visit_date_min": "2022-01-06",
+        "id_digitiser": "admin",
+        "observers": [ "admin" ],
+        "id_dataset": ["m_monitoring", "m_monitoring"]
       }
     ]
-  }
+  },
+  {
+    "schema_name": "m_monitoring.observation",
+    "items": [
+      {
+        "id_visit": ["AL1", "2022-01-06"],
+        "cd_nom": 361617
+      },
+      {
+        "id_visit": ["AL1", "2022-01-06"],
+        "cd_nom": 424946
+      },
+      {
+        "id_visit": ["AL1", "2022-01-06"],
+        "cd_nom": 582479
+      }
 
+
+    ]
+  }
 ]

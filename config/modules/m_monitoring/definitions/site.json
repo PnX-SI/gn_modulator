@@ -21,15 +21,15 @@
   },
   "filters": {
     "defs": {
-      "type_site": {
+      "category_name": {
         "title": "Type de site",
-        "field": "type_site",
+        "field": "site_category.category_name",
         "type": "string",
         "filter_type": "="
       }
     },
     "layout": {
-      "key": "type_site",
+      "key": "category_name",
       "type": "list_form",
       "title": "Type de site",
       "value_field_name": "category_name",
@@ -38,16 +38,18 @@
   },
   "table": {
     "columns": [
-      "id_site",
-      "type_site",
-      "site_code",
-      "site_name"
-    ],
-    "columns_short": [
+      "site_category.category_name",
       "site_code",
       "site_name",
-      "type_site"
-    ]
+      "nb_visits",
+      "last_visit_date_min"
+    ],
+      "sort": [
+        {
+          "column": "last_visit_date_min",
+          "dir": "desc"
+        }
+      ]
   },
   "required": [
     "site_code",
@@ -74,6 +76,10 @@
       "type": "string",
       "title": "Description du site"
     },
+    "site_uuid": {
+      "type": "uuid",
+      "title": "UUID"
+    },
     "site_geom": {
       "type": "geometry",
       "geometry_type": "geometry",
@@ -95,15 +101,87 @@
       "title": "Catégorie de site",
       "description": "Catégorie de site (pour pouvoir associé des champs spécifiques)"
     },
-        // "type_site": {
-        //   "type": "string",
-        //   "column_property": "type_complement",
-        //   "title": "Type de site"
-        // },
+    "id_digitiser": {
+      "type": "integer",
+      "foreign_key": true,
+      "schema_name": "user.role",
+      "title": "Numérisateur",
+      "description": "Personne qui a saisi la donnée"
+    },
+    "digitiser": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "schema_name": "user.role",
+      "title": "Numérisateur",
+      "description": "Personne qui a saisi la donnée",
+      "local_key": "id_digitiser"
+    },
+    "id_inventor": {
+      "type": "integer",
+      "foreign_key": true,
+      "schema_name": "user.role",
+      "title": "Descripteur",
+      "description": "Descripteur du site"
+    },
+    "inventor": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "schema_name": "user.role",
+      "title": "Descripteur",
+      "description": "Descripteur du site",
+      "local_key": "id_inventor"
+    },
+    "id_nomenclature_type_site": {
+      "type": "integer",
+      "foreign_key": true,
+      "schema_name": "ref_nom.nomenclature",
+      "title": "Type de site",
+      "nomenclature_type": "TYPE_SITE",
+      "description": "Nomenclature de type de site",
+      "required": true
+    },
+    "nomenclature_type_site": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "schema_name": "ref_nom.nomenclature",
+      "title": "Type de site",
+      "description": "Nomenclature de type de site",
+      "local_key": "id_nomenclature_type_site"
+    },
     "site_data": {
       "type": "json",
       "description": "Données additionnelles du site",
       "title": "Données additionnelles"
+    },
+    "visits": {
+      "type": "relation",
+      "relation_type": "1-n",
+      "schema_name": "m_monitoring.visit",
+      "foreign_key": "id_site",
+      "title": "Visites",
+      "description": "Visites associées au site"
+    },
+    "nb_visits": {
+      "type": "integer",
+      "title": "Nombre de visites",
+      "column_property": "nb",
+      "relation_key": "visits"
+    },
+    "last_visit_date_min": {
+      "title": "Dernière visite",
+      "type": "date",
+      "column_property": "max",
+      "relation_key": "visits",
+      "key": "visit_date_min",
+      "schema_name": "m_monitoring.visit"
+    },
+    "groups": {
+      "type": "relation",
+      "relation_type": "n-n",
+      "schema_name": "m_monitoring.site_group",
+      "title": "Groupes de site",
+      "description": "Groupes de sites associés au site",
+      "schema_dot_table": "m_monitoring.cor_site_group"
     }
   },
   "form": {
@@ -111,16 +189,17 @@
       "id_site",
       "site_code",
       "site_name",
-      // {
-      //   "key": "type_site",
-      //   "type": "list_form",
-      //   "title": "Type de site",
-      //   "value_field_name": "category_name",
-      //   "schema_name": "m_monitoring.site_category"
-      // },
       {
-        "key": "site_geom",
-        "hidden": true
+        "key": "id_site_category",
+        "type": "list_form",
+        "title": "Catégorie de site",
+        "schema_name": "m_monitoring.site_category"
+      },
+      {
+        "key": "id_nomenclature_type_site",
+        "type": "list_form",
+        "title": "Type de site",
+        "schema_name": "ref_nom.nomenclature"
       }
     ]
   },
@@ -129,7 +208,11 @@
       "id_site",
       "site_code",
       "site_name",
-      "type_site"
+      "type_site",
+      "digitiser.nom_role",
+      "inventor.nom_role",
+      "nomenclature_type_site.label_fr",
+      "site_category.category_name"
     ]
   }
 }

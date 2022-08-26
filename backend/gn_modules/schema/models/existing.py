@@ -1,14 +1,16 @@
 from .. import errors
 
 from pypnnomenclature.models import TNomenclatures, BibNomenclaturesTypes
-from pypnusershub.db.models import User, Organisme, Application, Profils, UserApplicationRight
+from pypnusershub.db.models import User, Organisme, Application, Profils, UserApplicationRight, UserList, cor_role_liste
 from geonature.core.gn_commons.models.base import CorModuleDataset, TModules, TMedias, BibTablesLocation
 from geonature.core.gn_meta.models import TDatasets, TAcquisitionFramework, CorAcquisitionFrameworkActor, CorDatasetActor
 from geonature.core.gn_synthese.models import Synthese
 from geonature.core.gn_permissions.models import TActions, TFilters, TObjects, CorRoleActionFilterModuleObject
 from ref_geo.models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
-from geonature.core.taxonomie.models import Taxref
-from geonature.core.users.models import CorRole, TListes
+# from gn_modules.ref_geo_models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
+# from geonature.core.taxonomie.models import Taxref
+from apptax.taxonomie.models import Taxref
+from geonature.core.users.models import CorRole
 
 from geonature.utils.env import db
 
@@ -39,11 +41,18 @@ cache_existing_models = {
     "user.organisme": Organisme,
     "user.profil": Profils,
     "user.role": User,
-    "user.liste": TListes,
+    "user.liste": UserList,
 }
 
+cache_existing_tables = {
+    "utilisateurs.cor_role_liste": cor_role_liste,
+    "utilisateurs.cor_roles": CorRole.__table__
+}
 
 class SchemaModelExisting():
+
+    def get_cache_existing_tables(self, schema_dot_table):
+        return cache_existing_tables.get(schema_dot_table)
 
     def get_model_from_schema_dot_table(self, schema_dot_table):
 

@@ -37,7 +37,6 @@ class SchemaModelColumnProperties():
     def cp_select(self, key, column_property_def, Model):
 
         column_property_type = column_property_def.get('column_property')
-
         if column_property_type == 'nb':
             return select([func.count('*')])
 
@@ -70,6 +69,13 @@ class SchemaModelColumnProperties():
 
         if column_property_type in  ['st_astext']:
             return func.st_astext(getattr(Model, column_property_def['key']))
+
+        if column_property_type in ['min', 'max']:
+            field_key = '.'.join([column_property_def['relation_key'], column_property_def['key']])
+            relation_field, _ = self.custom_getattr(Model, field_key)
+            func_min_max = getattr(func, column_property_type)
+            return select([func_min_max(relation_field)])
+
 
         # if column_property_type == 'type_complement':
         #     s_complement = self.cls(self.attr('meta.schema_complement'))
@@ -111,6 +117,5 @@ class SchemaModelColumnProperties():
         return conditions
 
     def process_column_property_model(self, key, column_property_def, Model):
-        # ici l'ordre import par ex type_complement après has
         return self.column_property_relation_x_n(key, column_property_def, Model)
 

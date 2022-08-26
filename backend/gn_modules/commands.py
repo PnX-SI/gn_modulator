@@ -78,10 +78,13 @@ def cmd_process_sql(module_code=None, schema_name=None, force=False):
     if module_code:
         module_config = ModuleMethods.module_config(module_code)
         schema_names = module_config['schemas']
+        processed_schema_names = []
+        txt_all = ""
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
-            txt, processed_schema_names = sm.sql_txt_process()
-            print(txt)
+            txt, processed_schema_names = sm.sql_txt_process(processed_schema_names)
+            txt_all += txt
+        print(txt)
 
     # ModuleMethods.create_schema_sql(module_code)
 

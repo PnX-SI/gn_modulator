@@ -213,5 +213,5 @@ class SchemaSqlBase():
                 txt_action = getattr(sm, action)()
                 if txt_action:
                     txt += '{}\n'.format(txt_action)
-        print(self.schema_name(), processed_schema_names, schema_names_to_process)
+
         return txt, processed_schema_names + schema_names_to_process

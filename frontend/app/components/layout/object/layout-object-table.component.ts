@@ -113,13 +113,24 @@ export class ModulesLayoutObjectTableComponent
   }
 
   columns() {
-    const columns = this.computedLayout.short
-      ? this.schemaConfig.table.columns_short || this.schemaConfig.table.columns
-      : this.schemaConfig.table.columns;
+    const columns = this.schemaConfig.table.columns;
     return columns.map((col) => {
       const column = utils.copy(col);
       column.headerFilter =
         column.headerFilter && this.computedLayout.display_filters;
+        // pour les dates
+        column.formatter =  (cell, formatterParams, onRendered) => {
+          if(col.type == 'date') {
+            // pour avoir les dates en français
+          let cellData = cell._cell.row.data[col.field]
+          return cellData && cellData.split('-').reverse().join('/');
+        }
+        if(col.field.includes('.')) {
+          return utils.getAttr(cell._cell.row.data, col.field)
+        }
+        return  cell._cell.row.data[col.field]
+      }
+
       return column;
     });
   }
@@ -130,14 +141,17 @@ export class ModulesLayoutObjectTableComponent
     const value = this.getRowValue(row);
 
     if (["details", "edit"].includes(action)) {
-      this._mPage.processAction(action, this.objectName(), {
+      this._mPage.processAction({
+        action,
+        objectName: this.objectName(),
         value,
       });
+
 
     }
 
     if (action == "selected") {
-      this._mObject.setObjectValue(this.objectName(), "value", value);
+      this.setObject({value})
     }
   };
 
@@ -165,11 +179,11 @@ export class ModulesLayoutObjectTableComponent
         page_size: paramsTable.size,
       };
       if (!this.computedLayout.display_filters) {
-        params.filters = this.getObjectFilters();
+        params.filters = this.getDataFilters();
       }
 
       // prefiltres
-      const prefilters = this.getObjectPreFilters();
+      const prefilters = this.getDataPreFilters();
 
       if(prefilters) {
         params.prefilters = prefilters;
@@ -198,6 +212,8 @@ export class ModulesLayoutObjectTableComponent
             }
 
             resolve(res);
+
+
             utils
               .waitForElement(
                 "counter",
@@ -206,12 +222,16 @@ export class ModulesLayoutObjectTableComponent
               .then((counterElement) => {
 
                 (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
-              });
+              },
+              (error) => {
+                console.error('waitForElement erreur')
+              })
+              ;
 
-            if (this.getObjectValue()) {
+            if (this.getDataValue()) {
               setTimeout(() => {
                 this.selectRow(
-                  this.getObjectValue(  )
+                  this.getDataValue(  )
                 );
               }, 100);
             }
@@ -246,7 +266,6 @@ export class ModulesLayoutObjectTableComponent
     if(!value) {
       return;
     }
-    this.log(value)
 
     this.table.deselectRow();
     if (!fieldName) {
@@ -267,6 +286,10 @@ export class ModulesLayoutObjectTableComponent
     this.drawTable();
   }
 
+  processFilters() {
+    this.drawTable();
+  }
+
   onHeightChange() {
     if (!this.table) {
       return;
@@ -280,21 +303,6 @@ export class ModulesLayoutObjectTableComponent
     this.tableHeight = `${elem.clientHeight}px`;
     this.table.setHeight(this.tableHeight);
   }
-
-
-  processData(data) {
-    console.log('process table data')
-  }
-
-  processFilters(filters: any): void {
-    console.log('process table filter')
-
-  }
-
-  processPreFilters(filters: any): void {
-    console.log('process table prefilter')
-  }
-
 
   getData(): Observable<any> {
     return of(true);

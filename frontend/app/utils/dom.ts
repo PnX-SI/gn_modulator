@@ -3,6 +3,10 @@ export default {
     let cpt = 100;
     return new Promise((resolve, reject) => {
       const checkExist = setInterval(function () {
+        if (!container) {
+          reject(null);
+          return;
+        }
         const elem = container.getElementById
           ? container.getElementById(id)
           : container.querySelector(`#${id}`);
