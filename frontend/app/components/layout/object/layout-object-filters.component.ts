@@ -42,6 +42,7 @@ export class ModulesLayoutObjectFiltersComponent
               type: "button",
               color: "primary",
               title: "Rechercher",
+              icon: "done",
               description:
                 "Effectuer une recherche avec les filtre définis ci-dessus",
               action: "filter",
@@ -51,6 +52,7 @@ export class ModulesLayoutObjectFiltersComponent
               type: "button",
               color: "primary",
               title: "Réinitialiser",
+              icon: 'refresh',
               description: "RAZ des filtres",
               action: "clear-filters",
             },
@@ -77,7 +79,7 @@ export class ModulesLayoutObjectFiltersComponent
   }
 
   applyFilters() {
-    this.setObject({filters:this.getFilters()});
+    this.setObject({value: null, filters:this.getFilters()});
   }
 
   clearFilters() {

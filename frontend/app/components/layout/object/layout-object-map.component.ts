@@ -50,6 +50,9 @@ export class ModulesLayoutObjectMapComponent
 
     const layerSearcghFilters = {};
     layerSearcghFilters[this.pkFieldName()] = value;
+    if(!this.pkFieldName()) {
+      return;
+    }
     const layer = this._mapService.findLayer(this.mapId, layerSearcghFilters);
     if (!layer) {
       console.error(
@@ -61,6 +64,7 @@ export class ModulesLayoutObjectMapComponent
   }
 
   processFilters() {
+    console.log('process filters')
     return this.processObject();
   }
 

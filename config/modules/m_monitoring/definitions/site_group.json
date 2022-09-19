@@ -111,7 +111,18 @@
   },
   "form": {
     "layout": [
-      "id_site",
+      {
+        "hidden": true,
+        "items": [
+          "id_site",
+          "site_group_geom",
+          {
+            "key": "id_digitiser",
+            "default": "__f__meta.currentUser?.id_role",
+            "hidden": true
+          }
+        ]
+      },
       "site_group_code",
       "site_group_name"
     ]
@@ -121,7 +132,8 @@
       "id_site_group",
       "site_group_code",
       "site_group_name",
-      "digitiser.nom_complet"
+      "digitiser.nom_complet",
+      "nb_sites"
     ]
   }
 }

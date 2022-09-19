@@ -21,11 +21,21 @@ export class ModulesLayoutObjectTableComponent
   tableHeight; // hauteur de la table
 
   _params;
+  modalDeleteLayout;
+
 
   constructor(_injector: Injector) {
     super(_injector);
     this._name = "layout-object-table";
     this.tableId = `table_${this._id}`;
+  }
+
+  postInit() {
+    this.drawTable
+  }
+
+  onRedrawElem(): void {
+    this.drawTable();
   }
 
   drawTable(): void {
@@ -108,6 +118,33 @@ export class ModulesLayoutObjectTableComponent
             : "";
         },
       },
+      {
+        headerSort: false,
+        formatter: (cell, formatterParams, onRendered) => {
+          const deleteAllowed =
+            cell._cell.row.data["cruved_ownership"] <=
+            this.moduleConfig.module.cruved["D"];
+          var html = "";
+          html += `<span class="table-icon ${
+            deleteAllowed ? "" : "disabled"
+          }"><i class='fa fa-trash' ${
+            deleteAllowed ? 'action="delete"' : ""
+          }></i></span>`;
+          return html;
+        },
+        width: 25,
+        hozAlign: "center",
+        tooltip: (cell) => {
+          const deleteAllowed =
+            cell._cell.row.data["cruved_ownership"] <=
+            this.moduleConfig.module.cruved["D"];
+          return deleteAllowed
+            ? `Supprimer ${this.schemaConfig.display.le_label} ${this.getCellValue(
+                cell
+              )}`
+            : "";
+        },
+      },
       ...this.columns(),
     ];
   }
@@ -118,18 +155,18 @@ export class ModulesLayoutObjectTableComponent
       const column = utils.copy(col);
       column.headerFilter =
         column.headerFilter && this.computedLayout.display_filters;
-        // pour les dates
-        column.formatter =  (cell, formatterParams, onRendered) => {
-          if(col.type == 'date') {
-            // pour avoir les dates en français
-          let cellData = cell._cell.row.data[col.field]
-          return cellData && cellData.split('-').reverse().join('/');
+      // pour les dates
+      column.formatter = (cell, formatterParams, onRendered) => {
+        if (col.type == "date") {
+          // pour avoir les dates en français
+          let cellData = cell._cell.row.data[col.field];
+          return cellData && cellData.split("-").reverse().join("/");
         }
-        if(col.field.includes('.')) {
-          return utils.getAttr(cell._cell.row.data, col.field)
+        if (col.field.includes(".")) {
+          return utils.getAttr(cell._cell.row.data, col.field);
         }
-        return  cell._cell.row.data[col.field]
-      }
+        return cell._cell.row.data[col.field];
+      };
 
       return column;
     });
@@ -146,12 +183,15 @@ export class ModulesLayoutObjectTableComponent
         objectName: this.objectName(),
         value,
       });
+    }
 
-
+    if (action == 'delete') {
+      console.log('open modal delete')
+      this._mLayout.openModal(this.modalDeleteLayout.modal_name, this.getRowData(row))
     }
 
     if (action == "selected") {
-      this.setObject({value})
+      this.setObject({ value });
     }
   };
 
@@ -162,8 +202,13 @@ export class ModulesLayoutObjectTableComponent
 
   getRowValue(row) {
     const pkFieldName = this.schemaConfig.utils.pk_field_name;
-    return row._row.data[pkFieldName];
+    return this.getRowData(row)[pkFieldName];
   }
+
+  getRowData(row) {
+    return row._row.data;
+  }
+
 
   ajaxRequestFunc = (url, config, paramsTable) => {
     return new Promise((resolve, reject) => {
@@ -185,7 +230,7 @@ export class ModulesLayoutObjectTableComponent
       // prefiltres
       const prefilters = this.getDataPreFilters();
 
-      if(prefilters) {
+      if (prefilters) {
         params.prefilters = prefilters;
       }
 
@@ -194,53 +239,56 @@ export class ModulesLayoutObjectTableComponent
         fields, // fields
       };
       this._params = extendedParams;
-      this._mData
-        .getList(this.schemaName(), extendedParams)
-        .subscribe(
-          (res) => {
-            // process lists
+      this._mData.getList(this.schemaName(), extendedParams).subscribe(
+        (res) => {
+          // process lists
 
-            for (const column of this.columns()) {
-              for (const d of res.data) {
-                if (column["field"].includes(".")) {
-                  let val = utils.getAttr(d, column["field"]);
-                  val = Array.isArray(val) ? val.join(", ") : val;
-                  delete d[column["field"].split(".")[0]];
-                  utils.setAttr(d, column["field"], val);
-                }
+          for (const column of this.columns()) {
+            for (const d of res.data) {
+              if (column["field"].includes(".")) {
+                let val = utils.getAttr(d, column["field"]);
+                val = Array.isArray(val) ? val.join(", ") : val;
+                delete d[column["field"].split(".")[0]];
+                utils.setAttr(d, column["field"], val);
               }
             }
+          }
 
-            resolve(res);
+          resolve(res);
+          this.onHeightChange(true);
 
-
-            utils
-              .waitForElement(
-                "counter",
-                document.querySelector(`#${this.tableId}`)
-              )
-              .then((counterElement) => {
-
-                (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
+          utils
+            .waitForElement(
+              "counter",
+              document.querySelector(`#${this.tableId}`)
+            )
+            .then(
+              (counterElement) => {
+                // (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
+                (
+                  counterElement as any
+                ).innerHTML = `<b>${res.filtered} /  ${res.total}</b>`;
               },
               (error) => {
-                console.error('waitForElement erreur')
-              })
-              ;
+                console.error("waitForElement erreur");
+              }
+            );
 
-            if (this.getDataValue()) {
-              setTimeout(() => {
-                this.selectRow(
-                  this.getDataValue(  )
-                );
-              }, 100);
-            }
-            return;
-          },
-          (fail) => {
-            reject(fail);
+          if (this.getDataValue()) {
+            setTimeout(() => {
+              this.selectRow(this.getDataValue());
+            }, 100);
           }
-        );
+
+          //
+          this.processTotalFiltered(res);
+
+          return;
+        },
+        (fail) => {
+          reject(fail);
+        }
+      );
     });
   };
 
@@ -263,7 +311,7 @@ export class ModulesLayoutObjectTableComponent
 
   selectRow(value, fieldName = null) {
     //
-    if(!value) {
+    if (!value) {
       return;
     }
 
@@ -283,6 +331,8 @@ export class ModulesLayoutObjectTableComponent
   }
 
   processConfig() {
+    this.modalDeleteLayout = this._mSchema.modalDeleteLayout(this.schemaConfig, `delete_modal_${this._id}`)
+    console.log(this.modalDeleteLayout)
     this.drawTable();
   }
 
@@ -290,18 +340,31 @@ export class ModulesLayoutObjectTableComponent
     this.drawTable();
   }
 
-  onHeightChange() {
+  onHeightChange(force = false) {
     if (!this.table) {
       return;
     }
-    this.table.setHeight("50px");
+    const docHeight = document.body.clientHeight;
 
-    const elem = document.getElementById(this._id);
-    if (!elem) {
+    // si la taille du body n'a pas changé on retourne
+    if (this.docHeightSave == docHeight && !force) {
       return;
     }
-    this.tableHeight = `${elem.clientHeight}px`;
-    this.table.setHeight(this.tableHeight);
+
+    if (this.docHeightSave > docHeight || !this.docHeightSave) {
+      this.table.setHeight("50px");
+    }
+
+    this.docHeightSave = docHeight;
+
+    setTimeout(() => {
+      const elem = document.getElementById(this._id);
+      if (!elem) {
+        return;
+      }
+      this.tableHeight = `${elem.clientHeight}px`;
+      this.table.setHeight(this.tableHeight);
+    }, 10);
   }
 
   getData(): Observable<any> {

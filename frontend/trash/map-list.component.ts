@@ -7,14 +7,14 @@ import { ModulesService } from "../../services/all.service";
   templateUrl: "map-list.component.html",
   styleUrls: [ "base.scss", "map-list.component.scss", ],
 })
-export class ModulesMapListComponent extends BaseComponent implements OnInit {
+export class ModuleslistComponent extends BaseComponent implements OnInit {
 
 
   constructor(
     _services: ModulesService
     ) {
     super(_services)
-    this._name = 'MapList'
+    this._name = 'list'
   }
 
   ngOnInit(): void {

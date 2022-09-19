@@ -3,52 +3,82 @@ import { ModulesRouteService } from "./route.service";
 import { ModulesConfigService } from "./config.service";
 import { ModulesRequestService } from "./request.service";
 import { ModulesSchemaService } from "./schema.service";
+import { ModulesLayoutService } from "./layout.service";
 import { CommonService } from "@geonature_common/service/common.service";
-
+import { of } from "@librairies/rxjs";
+import { mergeMap } from "@librairies/rxjs/operators";
 
 @Injectable()
 export class ModulesPageService {
-
   _mRoute: ModulesRouteService;
   _mSchema: ModulesSchemaService;
   _mConfig: ModulesConfigService;
   _mRequest: ModulesRequestService;
+  _mLayout: ModulesLayoutService;
 
   _commonService: CommonService;
 
   moduleCode;
+  breadcrumbs = [];
+  pageName;
+  pageParams;
+  pageQueryParams;
+  pageAllParams;
 
   constructor(private _injector: Injector) {
     this._mRoute = this._injector.get(ModulesRouteService);
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mSchema = this._injector.get(ModulesSchemaService);
+    this._mLayout = this._injector.get(ModulesLayoutService);
     this._commonService = this._injector.get(CommonService);
     this._mRequest = this._injector.get(ModulesRequestService);
   }
 
+  setCurrentPage(pageName) {
+    this.pageName = pageName;
+  }
+
+  processAction({
+    action,
+    objectName,
+    schemaName = null,
+    value = null,
+    data = null,
+    layout = null
+  }) {
+
+    const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
+    const pageConfig = moduleConfig.pages[this.pageName];
+    const parentPageName = pageConfig.parent;
 
 
-  processAction({ action, objectName, schemaName=null, value=null, data=null, layout=null}) {
-    if (["details", "edit", "create", "map_list"].includes(action)) {
+    if (["details", "edit", "create", "list"].includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
 
-      const pageName =
-        // moduleConfig.actions[objectName] &&
-        // moduleConfig.actions[objectName][action]
-        // ||
-        `${objectName}_${action}`;
+      const pageName = `${objectName}_${action}`;
       if (!pageName) {
+        this._commonService.regularToaster(
+          "error",
+          `Il n'y a pas d'action definie pour ${action}, ${objectName}`
+        );
         console.error(
           `Il n'y a pas d'action definie pour ${action}, ${objectName}`,
           moduleConfig.actions
         );
         return;
       }
-      this._mRoute.navigateToPage(this.moduleCode, pageName, {value});
+      const routeParams = { value, ...((layout as any)?.params || {}) };
+
+      // routeParams[]
+      const schemaName = moduleConfig.data[objectName].schema_name;
+
+      routeParams[this._mSchema.pkFieldName(schemaName)] = value;
+      console.log(routeParams, schemaName)
+      this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);
     }
 
+    // TODO dans la config de generic form ????
     if (action == "submit") {
-
       this._mSchema.onSubmit(schemaName, data, layout).subscribe(
         (data) => {
           this._commonService.regularToaster(
@@ -59,8 +89,8 @@ export class ModulesPageService {
           this.processAction({
             action: "details",
             objectName,
-            value
-        });
+            value,
+          });
         },
         (error) => {
           this._commonService.regularToaster("error", `Erreur dans la requête`);
@@ -68,11 +98,25 @@ export class ModulesPageService {
       );
     }
 
+    if(action == "delete") {
+      console.log('page action delete', schemaName, data)
+      this._mSchema.onDelete(schemaName, data).subscribe(() => {
+        this._commonService.regularToaster('success', "L'élement a bien été supprimé");
+        if(pageConfig.type == objectName) {
+          this._mRoute.navigateToPage(this.moduleCode, parentPageName, data); // TODO params
+        }
+        this._mLayout.closeModals()
+        this._mLayout.reDrawElem('modal delete');
+      })
+    }
+
+    // TODO clarifier
     if (action == "cancel") {
       if (value) {
-        this.processAction({action: "details", objectName, value});
+        this.processAction({ action: "details", objectName, value });
       } else {
-        this.processAction({action: "map_list", objectName});
+        console.log('cancel', parentPageName)
+        this._mRoute.navigateToPage(this.moduleCode, parentPageName, this.pageParams); // TODO params
       }
     }
   }
@@ -87,9 +131,19 @@ export class ModulesPageService {
       `${this._mConfig.backendModuleUrl()}/export/${moduleCode}/${exportCode}`,
       {
         prefilters: data.prefilters,
-        filters: data.filters
+        filters: data.filters,
       }
     );
     return url;
+  }
+
+  getBreadcrumbs() {
+    return this._mRequest.request('get',  `${this._mConfig.backendModuleUrl()}/breadcrumbs/${this.moduleCode}/${this.pageName}`, { params: this.pageAllParams} )
+    .pipe(
+      mergeMap((breadcrumbs)=> {
+        this.breadcrumbs = breadcrumbs;
+        return of(true)
+      })
+    );
   }
 }

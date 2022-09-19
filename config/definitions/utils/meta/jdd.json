@@ -9,12 +9,15 @@
     "label_field_name": "dataset_shortname",
     "genre": "M",
     "autoschema": true,
-    "relations": ["modules"]
+    "relations": ["modules", "acquisition_framework"]
     // "check_cruved": true
   },
   "properties": {
     "dataset_name": {
       "title": "Nom du jeu de données"
+    },
+    "acquisition_framework": {
+      "title": "Cadre d'acquisition"
     }
   }
 }

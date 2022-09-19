@@ -25,9 +25,6 @@ def upgrade():
         operations = pkg_resources.resource_string("gn_modules.migrations", f"data/{sql_file}").decode('utf-8')
         op.get_bind().execute(text(operations))
 
-    # Enregistrement du module en base
-    ModuleMethods.register_db_module('m_monitoring')
-
 def downgrade():
 
     # Suppression du schema associé au module m_monitoring
@@ -35,6 +32,3 @@ def downgrade():
     for sql_file in sql_files:
         operations = pkg_resources.resource_string("gn_modules.migrations", f"data/{sql_file}").decode('utf-8')
         op.get_bind().execute(text(operations))
-
-    # Suppression du module en base
-    ModuleMethods.delete_db_module('m_monitoring')

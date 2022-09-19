@@ -158,7 +158,7 @@ class SchemaAuto():
                 schema_type['srid'] = (
                     db.engine
                     .execute(f"SELECT FIND_SRID('{sql_schema_name}', '{sql_table_name}', '{column.key}')")
-                    .fetchone()[0]
+                    .scalar()
                 )
             property['srid'] = schema_type['srid']
             property['geometry_type'] = schema_type['geometry_type']

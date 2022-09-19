@@ -116,7 +116,7 @@ class SchemaApi():
         params = {
             'as_geojson': self.load_param(request.args.get('as_geojson', 'false')),
             'compress': self.load_param(request.args.get('compress', 'false')),
-            'fields': self.load_array_param(request.args.get('fields', 'null')),
+            'fields': self.load_array_param(request.args.get('fields')),
             'filters': self.load_param(request.args.get('filters', '[]')),
             'prefilters': self.load_param(request.args.get('prefilters', '[]')),
             'page': self.load_param(request.args.get('page', 'null')),

@@ -23,7 +23,7 @@ export class TestComponent implements OnInit {
   tabIndex = 0;
 
 
-  mapListId='mapList';
+  listId='list';
   mapEditId='mapEdit';
   mapDetailId='mapDetail';
   height='600px';
@@ -38,9 +38,9 @@ export class TestComponent implements OnInit {
 
   ngOnInit() {
     this.process();
-    this._services.mapService.waitForMap(this.mapListId).then((map) => {
-      (map as any).on('zoomend', () => { this.setMapQueryParams(this.mapListId) });
-      (map as any).on('moveend', () => { this.setMapQueryParams(this.mapListId) });
+    this._services.mapService.waitForMap(this.listId).then((map) => {
+      (map as any).on('zoomend', () => { this.setMapQueryParams(this.listId) });
+      (map as any).on('moveend', () => { this.setMapQueryParams(this.listId) });
     })
   }
 

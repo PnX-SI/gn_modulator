@@ -161,6 +161,13 @@ const replace = (obj, strTest, strReplace) => {
   return obj;
 };
 
+
+// renvoie la date d'aujourd'hui
+const today = () => {
+  const today = new Date();
+  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
+}
+
 const JSONStringify = (obj) => JSON.stringify(obj, null, 4);
 export default {
   fastDeepEqual,
@@ -178,5 +185,6 @@ export default {
   parseJSON,
   JSONStringify,
   replace,
+  today,
   JSON,
 };

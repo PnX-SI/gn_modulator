@@ -10,7 +10,7 @@ export default {
         const elem = container.getElementById
           ? container.getElementById(id)
           : container.querySelector(`#${id}`);
-        if (cpt > 1000) {
+        if (cpt > 500) {
           clearInterval(checkExist);
           return;
         }

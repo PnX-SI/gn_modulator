@@ -34,20 +34,20 @@
     }
   },
   "pages": {
-    "map_list": {
+    "list": {
       "label": "MONITORING",
       "url": "",
       "elements": [
         {
           "schema_name": "m_monitoring.site",
-          "type": "map_list"
+          "type": "list"
         }
       ]
     },
     "edit": {
       "label": "Édition",
       "parent": {
-        "pageName": "map_list"
+        "pageName": "list"
       },
       "url": "edit/:value",
       "elements": [
@@ -61,7 +61,7 @@
     "create": {
       "label": "Création",
       "parent": {
-        "pageName": "map_list"
+        "pageName": "list"
       },
       "url": "create",
       "elements": [
@@ -74,7 +74,7 @@
     "details": {
       "label": "Propriétés",
       "parent": {
-        "pageName": "map_list"
+        "pageName": "list"
       },
       "url": "details/:value",
       "elements": [

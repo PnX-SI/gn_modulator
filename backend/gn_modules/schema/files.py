@@ -388,7 +388,6 @@ class SchemaFiles():
 
     @classmethod
     def init_schemas_models_and_serializers(cls):
-        # print("init schema")
         import time
         start_time = time.time()
 

@@ -32,6 +32,13 @@
       "schema_name": "tax.taxref",
       "description": "Taxon lié à l'observation"
     },
+    "id_digitiser": {
+      "type": "integer",
+      "foreign_key": true,
+      "schema_name": "user.role",
+      "title": "Numérisateur",
+      "description": "Personne qui a saisi la donnée"
+    },
     "id_visit": {
       "type": "integer",
       "foreign_key": true,
@@ -70,7 +77,16 @@
   },
   "form": {
     "layout": [
-      "id_visit",
+      {
+        "hidden": true,
+        "items": [
+          "id_visit",
+          {
+            "key": "id_digitiser",
+            "default": "__f__meta.currentUser?.id_role"
+          }
+        ]
+      },
       {
         "key": "cd_nom",
         "type": "list_form",

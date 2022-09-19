@@ -7,7 +7,7 @@ import { ModulesConfigService } from "./config.service";
 import { CommonService } from "@geonature_common/service/common.service";
 import { Router } from "@angular/router";
 import { PageComponent } from "../components/page.component";
-
+import utils from "../utils"
 
 @Injectable()
 export class ModulesRouteService {
@@ -135,10 +135,23 @@ export class ModulesRouteService {
       this._commonService.regularToaster("error", `Il n'a pas de route définie pour la page ${pageName} pour le module ${moduleCode}`)
       return;
     }
-    var url = pageConfig.url;
+    var url = utils.copy(pageConfig.url);
+
+
+    var queryParams: Array<string> = [];
+    // route params
     for (const [key, value] of Object.entries(params || {})) {
-      url = url.replace(`:${key}`, value)
+      if(pageConfig.url.includes(`:${key}`)) {
+        url = url.replace(`:${key}`, value)
+      } else if (![null, undefined].includes(value as any)) {
+        queryParams.push(`${key}=${value}`);
+      }
     }
+
+    if (queryParams) {
+      url += `?${queryParams.join('&')}`;
+    }
+
     return `/modules/${moduleConfig.module.module_code.toLowerCase()}/${url}`
   }
 

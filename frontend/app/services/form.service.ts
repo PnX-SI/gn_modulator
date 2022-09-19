@@ -90,19 +90,11 @@ export class ModulesFormService {
       layout,
       data,
       globalData,
-      formGroup: null,
-      elemId: null,
+      formGroup: null
     });
     control.setValidators(this.formValidators(computedLayout));
     if( computedLayout.disabled) {
       control.disable()
-    }
-
-    // gestion des valeur par defaut
-    // ne marche pas
-    if(computedLayout.default && [null, undefined].includes(control.value)) {
-      data[computedLayout.key] = computedLayout.default;
-      control.setValue(computedLayout.default);
     }
 
     // control pour object
@@ -124,6 +116,31 @@ export class ModulesFormService {
         this.setControls(elemControl, layout.items, elem, globalData);
         control.push(elemControl);
       }
+    }
+
+    // valeurs par defaut
+    if(computedLayout.default && [null, undefined].includes(control.value)) {
+      control.setValue(computedLayout.default);
+      data[computedLayout.key] = computedLayout.default;
+    }
+
+    // ?? correction float int date etc
+    if (computedLayout.type == 'date' && ![null, undefined].includes(control.value) && !(control.value instanceof Date)) {
+      data[computedLayout.key] = new Date(control.value).toISOString().split('T')[0];
+      control.setValue(data[computedLayout.key]);
+    }
+
+    if (
+      ['integer', 'number'].includes(computedLayout.type)
+      && (![null, undefined].includes(control.value))
+      && typeof(control.value) != 'number'
+    ) {
+      const correctValue =
+      (computedLayout.type == 'integer')
+        ? parseInt(control.value)
+        : parseFloat(control.value)
+      data[computedLayout.key] = correctValue;
+      control.setValue(correctValue);
     }
   }
 

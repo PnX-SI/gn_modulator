@@ -5,6 +5,7 @@
 '''
 
 import copy
+from re import M
 from geoalchemy2.shape import to_shape, from_shape
 from geoalchemy2 import functions
 from geojson import Feature
@@ -98,9 +99,6 @@ class SchemaSerializers:
         if field_type == 'json':
             return fields.Raw(**kwargs)
 
-
-        print(column_def)
-        aa
         raise SchemaProcessedPropertyError('type {} non traité'.format(column_def['type']))
 
     def opposite_relation_def(self, relation_def):
@@ -148,8 +146,8 @@ class SchemaSerializers:
         relation = self.cls(relation_def['schema_name'])
         if not relation.Model():
             return None
+
         exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
-        relation_serializer = None
 
         relation_serializer = fields.Nested(relation.marshmallow_schema_name(), **{"exclude":exclude, "dump_default": None})
 
@@ -163,12 +161,15 @@ class SchemaSerializers:
 
         return relation_serializer
 
-    def MarshmallowSchema(self):
+    def MarshmallowSchema(self, force=False):
         '''
+            False permet de recréer le schema si besoin
         '''
 
-        if MarshmallowSchema := self.cls.get_schema_cache(self.schema_name(), 'marshmallow'):
+        if self.cls.get_schema_cache(self.schema_name(), 'marshmallow') and not force:
+            MarshmallowSchema = self.cls.get_schema_cache(self.schema_name(), 'marshmallow')
             return MarshmallowSchema
+
 
         marshmallow_meta_dict = {
             'model': self.Model(),
@@ -242,8 +243,7 @@ class SchemaSerializers:
         for key, relation_def in self.relationships().items():
             relation_marshmallow = self.process_relation_marshmallow(relation_def)
             if not relation_marshmallow:
-                return None
-
+                continue
 
             marshmallow_schema_dict[key] = relation_marshmallow
 
@@ -269,6 +269,10 @@ class SchemaSerializers:
 
             fields = None => on renvoie tous les champs
         '''
+
+
+        if not fields:
+            fields = [self.pk_field_name()]
 
         kwargs = {'only': fields} if fields else {}
 

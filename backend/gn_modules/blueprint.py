@@ -12,7 +12,7 @@ from geonature.core.gn_permissions.tools import (
     cruved_scope_for_user_in_module,
 )
 import copy
-
+from sqlalchemy.exc import InvalidRequestError
 
 blueprint = Blueprint('modules', __name__)
 
@@ -22,15 +22,19 @@ for cmd in commands:
     blueprint.cli.add_command(cmd)
 
 # initialisation des définitions
+# TODO clarifier init route, ouvrir seulement les routes necessaire
+# ou bien les ouvrir en admin ??
 try:
     SchemaMethods.init_schemas_definitions()
     SchemaMethods.init_schemas_models_and_serializers()
     SchemaMethods.init_routes(blueprint)
+    ModuleMethods.modules_config()
 
 except errors.SchemaError as e:
     print("Erreur de chargement des schemas:\n{}".format(e))
-except Exception as e:
-    print(e)
+except InvalidRequestError as e:
+    print('InvalidRequestError', e)
+
 
 
 # @current_app.before_first_request
@@ -73,6 +77,14 @@ def api_modules_config():
         'modules': modules_config,
         'layouts': SchemaMethods.get_layouts(as_dict=True)
     }
+
+@blueprint.route('breadcrumbs/<module_code>/<page_name>', methods=['GET'])
+def api_breadcrumbs(module_code, page_name):
+    '''
+        TODO breadcrumb
+    '''
+
+    return ModuleMethods.breadcrumbs(module_code, page_name, request.args.to_dict())
 
 @blueprint.route('export/<module_code>/<export_code>')
 def api_export(module_code, export_code):

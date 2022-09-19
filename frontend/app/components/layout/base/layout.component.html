@@ -31,9 +31,23 @@
     ></modules-layout>
   </ng-container>
 
+  <!-- form -->
+  <ng-container *ngSwitchCase="'form'">
+    <modules-generic-form
+      [(data)]="data"
+      (dataChange)="onDataChange($event)"
+      [debug]="debug"
+      [depth]="depth"
+      [layout]="layout"
+      [options]="options"
+      (onAction)="processAction($event)"
+    >
+    </modules-generic-form>
+  </ng-container>
+
   <!-- items -->
   <ng-container *ngSwitchCase="'items'">
-    <modules-layout-array
+    <modules-layout-items
       [ngClass]="computedLayout && computedLayout.class"
       [data]="data"
       [debug]="debug"
@@ -43,33 +57,22 @@
       [globalData]="globalData"
       [options]="options"
       (onAction)="processAction($event)"
-    ></modules-layout-array>
+    ></modules-layout-items>
   </ng-container>
 
-  <!-- tabs -->
-  <ng-container *ngSwitchCase="'tabs'">
-    <mat-tab-group
-    class="layout-section"
-    (selectedTabChange)="onTabChanged($event);"
-    >
-      <mat-tab
-        [label]="item.label || item.title || index"
-        *ngFor="let item of layout.items; let index = index"
-        class="layout-section"
-      >
-        <modules-layout
-          [data]="data"
-          [debug]="debug"
-          [depth]="depth"
-          [globalData]="globalData"
-          [layout]="item"
-          [options]="options"
-          (onAction)="processAction($event)"
-        >
-        </modules-layout>
-      </mat-tab>
-    </mat-tab-group>
-  </ng-container>
+    <!-- breadcrumb -->
+    <ng-container *ngSwitchCase="'breadcrumbs'">
+      <modules-layout-breadcrumbs
+        [ngClass]="computedLayout && computedLayout.class"
+        [data]="data"
+        [debug]="debug"
+        [depth]="depth"
+        [globalData]="globalData"
+        [layout]="layout"
+        [options]="options"
+        (onAction)="processAction($event)"
+      ></modules-layout-breadcrumbs>
+    </ng-container>
 
   <!-- section -->
   <ng-container *ngSwitchCase="'section'">
@@ -123,7 +126,7 @@
     ></modules-layout-dict>
 
     <modules-layout-key
-      *ngIf="!['dict', 'object', 'array'].includes(computedLayout.type)"
+      *ngIf="!['dict', 'array'].includes(computedLayout.type)"
       [data]="data"
       [debug]="debug"
       [depth]="depth + 1"
@@ -136,7 +139,7 @@
 
   <!-- buttons -->
   <ng-container *ngSwitchCase="'button'">
-    <div class="layout-buttons">
+    <div class="layout-buttons" [ngStyle]="computedLayout.style">
       <button
         *ngIf="!computedLayout.href"
         [matTooltip]="computedLayout.description || ''"
@@ -145,14 +148,22 @@
         [disabled]="computedLayout.disabled"
         (click)="onButtonClick()"
       >
+        <mat-icon *ngIf="computedLayout.icon">{{
+          computedLayout.icon
+        }}</mat-icon>
         {{ computedLayout.title }}
       </button>
+
       <a
         *ngIf="computedLayout.href"
         mat-raised-button
         [href]="computedLayout.href"
         color="primary"
+        matTooltip="computedLayout.description"
       >
+        <mat-icon *ngIf="computedLayout.icon">{{
+          computedLayout.icon
+        }}</mat-icon>
         {{ computedLayout.title }}
       </a>
     </div>

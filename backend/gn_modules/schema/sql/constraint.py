@@ -69,13 +69,18 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
 
             relation = self.cls(column_def['schema_name'])
 
+
+
+            on_delete_action = 'CASCADE' if self.is_required(key) else 'SET NULL'
+            print(self.schema_name(), key, on_delete_action)
+
             txt += (
                 """---- {sql_schema_name}.{sql_table_name} foreign key constraint {fk_key_field_name}
 
 ALTER TABLE {sql_schema_name}.{sql_table_name}
     ADD CONSTRAINT fk_{sql_schema_name}_{sql_table_name_short}_{rel_sql_table_name_short}_{fk_key_field_name} FOREIGN KEY ({fk_key_field_name})
     REFERENCES {rel_sql_schema_name}.{rel_sql_table_name}({rel_pk_key_field_name})
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE {on_delete_action};
 
 """).format(
                 sql_schema_name=self.sql_schema_name(),
@@ -85,7 +90,8 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
                 rel_sql_schema_name=relation.sql_schema_name(),
                 rel_sql_table_name=relation.sql_table_name(),
                 rel_sql_table_name_short=relation.sql_table_name()[0:5],
-                rel_pk_key_field_name=relation.pk_field_name()
+                rel_pk_key_field_name=relation.pk_field_name(),
+                on_delete_action=on_delete_action
             )
 
         return txt

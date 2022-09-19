@@ -157,11 +157,6 @@ class SchemaSqlBase():
             process all sql for a schema
         '''
 
-        # si le schema à déjà été traité -> on passe
-        # print(self.schema_name(), processed_schema_names)
-        # if self.schema_name() in processed_schema_names:
-        #     return
-
         self.cls.clear_global_cache('sql_table')
         if not self.sql_processing():
             return ''

@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from "@angular/core";
+import { Component, OnInit, Injector, Input } from "@angular/core";
 import { ModulesFormService } from "../../../services/form.service";
 
 import { ModulesLayoutComponent } from "./layout.component";
@@ -18,6 +18,7 @@ export class ModulesLayoutArrayComponent
   constructor(private _formService: ModulesFormService, _injector: Injector) {
     super(_injector);
     this._name = "layout-array";
+    this.bPostComputeLayout = true;
   }
 
   arrayOptions(index) {

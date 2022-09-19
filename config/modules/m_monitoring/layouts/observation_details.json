@@ -3,6 +3,10 @@
   "height_auto": true,
   "items": [
     {
+      "type": "breadcrumbs",
+      "flex": "0"
+    },
+    {
       "type": "object",
       "component": "properties",
       "key": "observation"

@@ -38,7 +38,7 @@ export class ModulesLayoutComponent implements OnInit {
   @Input() depth = 0;
 
   // disposition verticale (par défaut) ou horizontale (si direction='row') des items
-  @Input() direction: "string";
+  @Input() direction: string;
 
   // TODO
   // pour les formulaires, faire passer le formGroup (TODO par un service ?)
@@ -92,6 +92,11 @@ export class ModulesLayoutComponent implements OnInit {
   // pour les éléments avec overflow = true
   docHeightSave;
 
+  // listenPage resize
+  bListenPageResize;
+
+  computedItems;
+
   constructor(protected _injector: Injector) {
     this._name = "layout";
     this._id = Math.round(Math.random() * 1e10);
@@ -107,16 +112,22 @@ export class ModulesLayoutComponent implements OnInit {
       this.computeLayout();
     });
 
-    this._mLayout.$recomputedHeight.pipe().subscribe(() => {
+    this._mLayout.$reComputedHeight.pipe().subscribe(() => {
       this.onHeightChange();
     });
 
+    this._mLayout.$reDrawElem.pipe().subscribe(() => {
+      this.onRedrawElem();
+    });
+
     // pour les élément avec heigh_auto = true
-    this.listenPageResize();
+    // this.listenPageResize();
 
     // lorque une postInitialisation est nécessaire
     this.postInit();
   }
+
+  onRedrawElem() {};
 
   // à redefinir pour faire une action apres init
   postInit() {}
@@ -147,6 +158,9 @@ export class ModulesLayoutComponent implements OnInit {
     // à redéfinir
     this.postProcessLayout();
 
+    // resize ?
+    this.listenPageResize();
+
     // le composant est initialisé
     this.isInitialized = true;
   }
@@ -164,26 +178,40 @@ export class ModulesLayoutComponent implements OnInit {
       data: this.data,
       globalData: this.globalData,
       formGroup: this.getFormGroup(),
-      elemId: this._id,
     });
 
     // récupération des données associées à this.computedLayout.key
     this.dataKey =
-      this.layoutType == "key" &&
-      utils.getAttr(this.data, this.computedLayout.key);
+      this.layoutType == "key"
+        ? utils.getAttr(this.data, this.computedLayout.key)
+        : this.data;
 
     // pour l'affichage du debug
     // if (this.debug) {
-      this.prettyDebug = {
-        layout: this.pretty(this.computedLayout),
-        data: this.pretty(this.data),
-        dataKey: this.pretty(this.dataKey),
-      };
+    this.prettyDebug = {
+      layout: this.pretty(this.computedLayout),
+      data: this.pretty(this.data),
+      dataKey: this.pretty(this.dataKey),
+    };
     // }
 
     if (!this.computedLayout) {
       return;
     }
+
+    const items =
+      this.layoutType == "items" ? this.layout : this.layout.items || [];
+
+    this.computedItems = items.map
+      ? items.map((item) =>
+          this._mLayout.computeLayout({
+            layout: item,
+            data: this.data,
+            globalData: this.globalData,
+            formGroup: this.getFormGroup(),
+          })
+        )
+      : [];
 
     // si layout_name est défini
     // on va chercher le layout correspondant dans la config
@@ -250,8 +278,6 @@ export class ModulesLayoutComponent implements OnInit {
 
     const docHeight = document.body.clientHeight;
 
-
-
     // si la taille du body n'a pas changé on retourne
     if (this.docHeightSave == docHeight) {
       return;
@@ -291,12 +317,29 @@ export class ModulesLayoutComponent implements OnInit {
     }, 50);
   }
 
+  /**
+   * Pour gérer les élément dont on souhaite que la taille correspondent à la taille de la fenètre
+   */
   listenPageResize() {
+    // pour les composant avec computedLayout.height_auto
     if (!this.computedLayout?.height_auto) {
       return;
     }
 
-    utils.waitForElement(this._id).then(() => this.processHeightAuto());
+    // pour ne faire appel qu'une seule fois à la fonction
+    // on utilise bListenPageResize
+    if (this.bListenPageResize) {
+      return;
+    }
+
+    this.bListenPageResize = true;
+
+    // on attend l'element html pour lui donner la taille de la page
+    utils.waitForElement(this._id).then(() => {
+      this.processHeightAuto();
+    });
+
+    // on ajoute un évènement en cas de changement de la hauteur de la fenêtre
     window.addEventListener(
       "resize",
       (event) => {
@@ -315,12 +358,11 @@ export class ModulesLayoutComponent implements OnInit {
   /** pour mettre les layout avec height_auto = true à la hauteur totale de la page */
   processHeightAuto() {
     const elem = document.getElementById(this._id);
-
     if (!elem) {
       return;
     }
 
-    if(!this.computedLayout.height_auto){
+    if (!this.computedLayout.height_auto) {
       return;
     }
 
@@ -343,7 +385,8 @@ export class ModulesLayoutComponent implements OnInit {
   // a redefinir pour faire des actions après processLayout
   postProcessLayout() {}
 
-  // calcul de la margr
+  // calcul de la marge pour l'afffichage du debug
+  // - en fonction de l'input depth
   processDebug() {
     this.debugMarginLeft = `${10 * this.depth}px`;
   }
@@ -364,12 +407,18 @@ export class ModulesLayoutComponent implements OnInit {
     // open modal TODO subject ?
     if (action.modal_name) {
       this._mLayout.openModal(action.modal_name, this.data);
+      return;
+    }
+
+    if (action == "close") {
+      this._mLayout.closeModals();
+      return;
     }
 
     this.onAction.emit({
       action: this.layout.action,
       data: this.data,
-      layout: this.layout,
+      layout: this.computedLayout,
     });
   }
 
@@ -403,6 +452,6 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   onTabChanged($event) {
-      this._mLayout.reComputeHeight('truc');
+    this._mLayout.reDrawElem('tab changed')
   }
 }

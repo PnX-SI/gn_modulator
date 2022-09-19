@@ -186,9 +186,24 @@
   },
   "form": {
     "layout": [
-      "id_site",
+       {
+        "hidden": true,
+        "items": [
+          "id_site",
+          "site_geom",
+          {
+            "key": "id_digitiser",
+            "default": "__f__meta.currentUser?.id_role"
+          }
+        ]
+       },
       "site_code",
       "site_name",
+      {
+        "key": "id_digitiser",
+        "default": "__f__meta.currentUser?.id_role",
+        "hidden": true
+      },
       {
         "key": "id_site_category",
         "type": "list_form",
@@ -205,12 +220,11 @@
   },
   "details": {
     "layout": [
-      "id_site",
       "site_code",
       "site_name",
       "type_site",
-      "digitiser.nom_role",
-      "inventor.nom_role",
+      "digitiser.nom_complet ",
+      "inventor.nom_complet",
       "nomenclature_type_site.label_fr",
       "site_category.category_name"
     ]

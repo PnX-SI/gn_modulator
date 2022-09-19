@@ -32,107 +32,114 @@
       "schema_name": "m_monitoring.observation"
     }
   },
+  "tree": {
+    "site": {
+      "visit": {
+        "observation": null
+      }
+    }
+  },
   "pages": {
-    "sites": {
+    "site_list": {
       "url": "",
-      "layout_name": "m_monitoring.site_map_list"
+      "layout_name": "m_monitoring.site_list"
     },
     "site_group_details": {
-      "url": "site_group_details/:value",
+      "url": "site_group_details/:id_group_site",
       "layout_name": "m_monitoring.site_group_details",
       "data": {
         "site_group": {
-          "value": ":value"
+          "value": ":id_group_site"
         },
         "site": {
           "prefilters": [
             {
               "field": "groups.id_site_group",
               "type": "=",
-              "value": ":value"
+              "value": ":id_group_site"
             }
           ]
         }
       }
     },
     "site_details": {
-      "url": "site_details/:value",
+      "url": "site_details/:id_site",
       "layout_name": "m_monitoring.site_details",
       "data": {
         "site": {
-          "value": ":value"
+          "value": ":id_site"
         },
         "visit": {
           "prefilters": [
             {
               "field": "id_site",
               "type": "=",
-              "value": ":value"
+              "value": ":id_site"
             }
           ]
         }
       }
     },
     "visit_details": {
-      "url": "visit_details/:value",
+      "url": "visit_details/:id_visit",
       "layout_name": "m_monitoring.visit_details",
       "data": {
         "visit": {
-          "value": ":value"
+          "value": ":id_visit"
         },
         "observation": {
           "prefilters": [
             {
               "field": "id_visit",
               "type": "=",
-              "value": ":value"
+              "value": ":id_visit"
             }
           ]
         }
       }
     },
     "observation_details": {
-      "url": "observation_details/:value",
+      "url": "observation_details/:id_observation",
       "layout_name": "m_monitoring.observation_details",
       "data": {
         "observation": {
-          "value": ":value"
+          "value": ":id_observation"
         }
       }
     },
     "site_group_edit": {
-      "url": "site_group_edit/:value",
+      "url": "site_group_edit/:id_site_group",
       "layout_name": "m_monitoring.site_group_edit",
       "data": {
         "site_group": {
-          "value": ":value"
+          "value": ":id_site_group"
         }
       }
     },
     "site_edit": {
-      "url": "site_edit/:value",
+      "url": "site_edit/:id_site",
       "layout_name": "m_monitoring.site_edit",
       "data": {
         "site": {
-          "value": ":value"
+          "value": ":id_site"
         }
       }
     },
     "visit_edit": {
-      "url": "visit_edit/:value",
+      "url": "visit_edit/:id_visit",
       "layout_name": "m_monitoring.visit_edit",
       "data": {
         "visit": {
-          "value": ":value"
+          "value": ":id_visit"
         }
       }
     },
     "observation_edit": {
-      "url": "observation_edit/:value",
+      "url": "observation_edit/:id_observation",
       "layout_name": "m_monitoring.observation_edit",
       "data": {
         "observation": {
-          "value": ":value"
+          "value": ":id_observation"
         }
       }
     },

@@ -58,6 +58,7 @@ class SchemaConfigBase():
             '''
             column_def = {}
             if '.' in key:
+
                 (key_relationship, key_column) = key.split('.')
                 relation_def = self.relationship(key_relationship)
                 relation = self.cls(relation_def['schema_name'])
@@ -111,6 +112,8 @@ class SchemaConfigBase():
             "un_label": self.un_label(),
             "des_labels": self.des_labels(),
             "un_nouveau_label": self.un_nouveau_label(),
+            "du_nouveau_label": self.du_nouveau_label(),
+            "d_un_nouveau_label": self.d_un_nouveau_label(),
             "des_nouveaux_labels": self.des_nouveaux_labels(),
             "du_label": self.du_label(),
             "description": self.description(),
@@ -239,12 +242,12 @@ class SchemaConfigBase():
             else 'un '
         )
 
-    def preposition(self):
+    def preposition(self, check_voyel=True):
         '''
             du, de la, de l'
         '''
         return (
-            "de l'" if self.is_first_letter_vowel(self.label())
+            "de l'" if self.is_first_letter_vowel(self.label()) and check_voyel
             else 'de la ' if self.genre() == 'F'
             else 'du '
         )
@@ -253,37 +256,50 @@ class SchemaConfigBase():
         '''
         Renvoie le label précédé de l'article défini
         '''
-        return '{}{}'.format(self.article_def(), self.label())
+        return f'{self.article_def()}{self.label()}'
 
     def un_label(self):
         '''
         Renvoie le label précédé de l'article indéfini
         '''
-        return '{}{}'.format(self.article_undef(), self.label())
+        return f'{self.article_undef()}{self.label()}'
 
     def un_nouveau_label(self):
         '''
         Renvoie le label précédé de l'article indéfini et de self.new()
         '''
-        return '{}{}{}'.format(self.article_undef(), self.new(), self.label())
+        return f'{self.article_undef()}{self.new()}{self.label()}'
+
+    def d_un_nouveau_label(self):
+        '''
+        Renvoie le label précédé de l'article indéfini et de self.new()
+        '''
+        return f"d'{self.article_undef()}{self.new()}{self.label()}"
+
+    def du_nouveau_label(self):
+        '''
+        Renvoie le label précédé de la préposition et de self.new()
+        '''
+        return f'{self.preposition(check_voyel=False)}{self.new()}{self.label()}'
+
 
     def des_nouveaux_labels(self):
         '''
         Renvoie le labels précédé de l'article indéfini et de self.new()
         '''
-        return 'des {}{}'.format(self.news(), self.labels())
+        return f'des {self.news()} {self.labels()}'
 
     def du_label(self):
         '''
         Renvoie le label précédé de la préposition
         '''
-        return '{}{}'.format(self.preposition(), self.label())
+        return f'{self.preposition()}{self.label()}'
 
     def les_labels(self):
-        return 'les {}'.format(self.labels())
+        return f'les {self.labels()}'
 
     def des_labels(self):
-        return 'des {}'.format(self.labels())
+        return f'des {self.labels()}'
 
     def description(self):
-        return self.attr('meta.description', "Schéma '{}'".format(self.schema_name()))
+        return self.attr('meta.description', f"Schéma '{self.schema_name()}'")

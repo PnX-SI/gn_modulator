@@ -4,8 +4,8 @@ import { ModulesPageService } from "../services/page.service";
 import { ModulesLayoutService } from "../services/layout.service";
 import { AuthService, User } from "@geonature/components/auth/auth.service";
 import { ActivatedRoute } from "@angular/router";
-import { mergeMap, catchError } from "@librairies/rxjs/operators";
-import { Observable, of } from "@librairies/rxjs";
+import { mergeMap } from "@librairies/rxjs/operators";
+import { of } from "@librairies/rxjs";
 
 import utils from "../utils";
 
@@ -29,11 +29,8 @@ export class PageComponent implements OnInit {
   routeParams; // paramètre d'url
   routeQueryParams; // query params
 
-
-
   moduleConfig; // configuration du module
   pageConfig; // configuration de la route en cours
-  pageName; // nom (ou code de la page)
   moduleCode; // code du module en cours
   layout; // layout de la page (récupéré depuis pageConfig.layout_name)
   data; // data pour le layout
@@ -53,6 +50,7 @@ export class PageComponent implements OnInit {
     this.currentUser = this._auth.getCurrentUser();
     const layoutMeta = this._mLayout.meta();
     layoutMeta['currentUser'] = this.currentUser;
+    this._mPage.breadcrumbs = [];
 
     this._route.data
       .pipe(
@@ -68,6 +66,9 @@ export class PageComponent implements OnInit {
           this.routeQueryParams = queryParams;
           this.processRouteParams();
           return of(true);
+        }),
+        mergeMap(() => {
+          return this._mPage.getBreadcrumbs();
         })
       )
       .subscribe(() => {
@@ -79,7 +80,7 @@ export class PageComponent implements OnInit {
     // reset data
     this.data = null;
 
-    this.pageName = routeData.pageName;
+    this._mPage.setCurrentPage(routeData.pageName);
     this.moduleCode = routeData.moduleCode;
 
     // pour pouvoir retrouver moduleCode par ailleurs
@@ -87,7 +88,7 @@ export class PageComponent implements OnInit {
 
     // recupéraiton de la configuration de la page;
     this.moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
-    this.pageConfig = this.moduleConfig.pages[this.pageName];
+    this.pageConfig = this.moduleConfig.pages[this._mPage.pageName];
 
     // initialisatio du layout
     this.layout = {
@@ -101,12 +102,22 @@ export class PageComponent implements OnInit {
   // - id de l'objet en cours ? (par ex. id d'un site)
   // - paramètre de prefilter pour des liste d'objet (par ex. visite d'un site)
   processRouteParams() {
+
+    this._mPage.pageAllParams = {
+      ...this.routeQueryParams,
+      ...this.routeParams
+    }
+    this._mPage.pageParams = this.routeParams;
+    this._mPage.pageQueryParams = this.routeQueryParams;
+
     let data = utils.copy(this.moduleConfig.data);
     const dataPage = utils.copy(this.pageConfig.data || {});
 
     this.debug = ![undefined, false, "false"].includes(
       this.routeQueryParams.debug
     );
+
+
 
     // pour toutes les clés de data (moduleConfig.data)
     for (const [dataKey, dataValue] of Object.entries(data)) {
@@ -136,5 +147,28 @@ export class PageComponent implements OnInit {
 
     // pour communiquer ses données aux composants du layout
     this.data = data;
+
+    // resize des composants
+    setTimeout(() => this._mLayout.reComputeHeight('page'), 100);
+    setTimeout(() => this._mLayout.reComputeHeight('page'), 500);
+  }
+
+  /**
+   * TODO clarifier les process actions un peu partout
+   */
+  processAction(event) {
+    console.log('page Action', event);
+    const data = event.layout.key ? event.data[event.layout.key] : event.data;
+    if (
+      ["submit", "cancel", "edit", "details", "create"].includes(event.action)
+    ) {
+      this._mPage.processAction({
+        action: event.action,
+        objectName: data.object_name,
+        schemaName: data.schema_name,
+        data: data,
+        layout: event.layout,
+      });
+    }
   }
 }

@@ -1,29 +1,20 @@
-<ng-container *ngIf="!isInitialized; else section"></ng-container>
+<!-- Section
+  - normal
+  - fieldset
+  - tabs
+  - ?? accordeon
+-->
 
-<ng-template #section>
+<ng-container *ngIf="isInitialized">
   <div
     [ngStyle]="computedLayout.style"
     [attr.id]="_id"
     class="layout-section"
     [ngClass]="computedLayout.class"
   >
-    <ng-container *ngIf="computedLayout.type == 'form'; else sectionFieldset">
-      <modules-generic-form
-        [(data)]="data"
-        (dataChange)="onDataChange($event)"
-        [debug]="debug"
-        [depth]="depth"
-        [layout]="layout"
-        [options]="options"
-        (onAction)="processAction($event)"
-      >
-      </modules-generic-form>
-    </ng-container>
-
-    <ng-template #sectionFieldset>
-      <ng-container
-        *ngIf="computedLayout.type == 'fieldset'; else defaultSection"
-      >
+    <ng-container [ngSwitch]="computedLayout.display">
+      <!-- FieldSet-->
+      <ng-container *ngSwitchCase="'fieldset'">
         <fieldset class="fieldset">
           <legend *ngIf="computedLayout.title">
             {{ computedLayout.title }}
@@ -41,27 +32,61 @@
           ></modules-layout>
         </fieldset>
       </ng-container>
-    </ng-template>
 
-    <ng-template #defaultSection>
-      <div class="flexiflex">
-        <div class="flexiflex-tilte">
-          <h3 *ngIf="computedLayout.title">{{ computedLayout.title }}</h3>
-        </div>
+      <!-- Tabs -->
+      <ng-container *ngSwitchCase="'tabs'">
+        <mat-tab-group
+          class="layout-section"
+          (selectedTabChange)="onTabChanged($event)"
+        >
+          <ng-container
+            *ngFor="let item of computedLayout.items; let index = index"
+          >
+            <mat-tab
+              [label]="
+                computedItems[index].label ||
+                computedItems[index].title ||
+                index
+              "
+              *ngIf="!computedItems[index].hidden"
+              class="layout-section"
+            >
+              <modules-layout
+                [data]="data"
+                [debug]="debug"
+                [depth]="depth"
+                [globalData]="globalData"
+                [layout]="item"
+                [options]="options"
+                (onAction)="processAction($event)"
+              >
+              </modules-layout>
+            </mat-tab>
+          </ng-container>
+        </mat-tab-group>
+      </ng-container>
 
-        <div class="flexiflex-content">
-          <modules-layout
-            [data]="data"
-            [debug]="debug"
-            [depth]="depth + 1"
-            [direction]="computedLayout.direction"
-            [globalData]="globalData"
-            [layout]="computedLayout.items || []"
-            [options]="options"
-            (onAction)="processAction($event)"
-          ></modules-layout>
+      <!-- normal / default -->
+      <ng-container *ngSwitchDefault>
+        <div class="flexiflex">
+          <div class="flexiflex-tilte">
+            <h3 *ngIf="computedLayout.title">{{ computedLayout.title }}</h3>
+          </div>
+
+          <div class="flexiflex-content">
+            <modules-layout
+              [data]="data"
+              [debug]="debug"
+              [depth]="depth + 1"
+              [direction]="computedLayout.direction"
+              [globalData]="globalData"
+              [layout]="computedLayout.items || []"
+              [options]="options"
+              (onAction)="processAction($event)"
+            ></modules-layout>
+          </div>
         </div>
-      </div>
-    </ng-template>
+      </ng-container>
+    </ng-container>
   </div>
-</ng-template>
+</ng-container>

@@ -53,10 +53,11 @@ class SchemaBulkImports():
 
         # 1) csv -> table temporaire
         if not (cls.c_sql_schema_dot_table_exists(raw_import_table)  and keep_raw):
+            print()
             print(f'-- import csv_file {data_file_path.name} into {raw_import_table}')
             cls.bulk_import_process_csv(schema_name, data_file_path, raw_import_table)
 
-        nb_csv = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_table}").fetchone()[0]
+        nb_csv = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_table}").scalar()
 
         # 2) pre-process
         if pre_process_file_path is not None:
@@ -86,12 +87,12 @@ class SchemaBulkImports():
         cls.c_sql_exec_txt(txt_create_processed_import_view)
         cls.c_sql_exec_txt(f'SELECT * FROM {processed_import_view} LIMIT 1')
 
-        nb_processed = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {processed_import_view}").fetchone()[0]
-        nb_raw = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_view}").fetchone()[0]
-        nb_insert = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {processed_import_view} WHERE {sm.pk_field_name()} IS NULL").fetchone()[0]
+        nb_processed = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {processed_import_view}").scalar()
+        nb_raw = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_view}").scalar()
+        nb_insert = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {processed_import_view} WHERE {sm.pk_field_name()} IS NULL").scalar()
         verbose and print(cls.txt_nb_update(schema_name, processed_import_view))
-        nb_update = cls.c_sql_exec_txt(cls.txt_nb_update(schema_name, processed_import_view)).fetchone()[0]
-        nb_schema_avant = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {cls(schema_name).sql_schema_dot_table()}").fetchone()[0]
+        nb_update = cls.c_sql_exec_txt(cls.txt_nb_update(schema_name, processed_import_view)).scalar()
+        nb_schema_avant = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {cls(schema_name).sql_schema_dot_table()}").scalar()
 
         # return
         # 4) INSERT / UPDATE
@@ -100,9 +101,9 @@ class SchemaBulkImports():
         verbose and print(txt_import_view_to_insert)
         cls.c_sql_exec_txt(txt_import_view_to_insert)
 
-        nb_schema_apres = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {cls(schema_name).sql_schema_dot_table()}").fetchone()[0]
+        nb_schema_apres = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {cls(schema_name).sql_schema_dot_table()}").scalar()
 
-        print(f'-- {schema_name} CSV {nb_csv} RAW {nb_raw} PROCESSED {nb_processed} INSERT {nb_insert} UPDATE {nb_update} AVANT {nb_schema_avant} APRES {nb_schema_apres}')
+        print(f'   - {schema_name} CSV {nb_csv} RAW {nb_raw} PROCESSED {nb_processed} INSERT {nb_insert} UPDATE {nb_update} AVANT {nb_schema_avant} APRES {nb_schema_apres}')
 
         # 4-2) UPDATE
         if nb_update:

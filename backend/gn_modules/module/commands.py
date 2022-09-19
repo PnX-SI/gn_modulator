@@ -27,6 +27,10 @@ class ModuleCommands():
         #symlink
         cls.remove_migration_links(module_code)
 
+        # suppression du module en base
+        cls.delete_db_module(module_code)
+
+
     @classmethod
     def install_module(cls, module_code, force=False):
 
@@ -38,9 +42,8 @@ class ModuleCommands():
         # alembic
         db_upgrade(revision='{}@head'.format(module_code.lower()))
 
-        # pour les update du module ?
+        # pour les update du module ? # test si module existe
         cls.register_db_module(module_code)
-
 
         # process module data (nomenclature, groups ?, datasets, etc..)
         cls.process_module_data(module_code)

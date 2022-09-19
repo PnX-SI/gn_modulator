@@ -1,4 +1,5 @@
-<!-- schema-->
+<!-- object-->
+<ng-container *ngIf="computedLayout">
 <div
   *ngIf="debug && layout && computedLayout"
   class="debug"
@@ -11,9 +12,9 @@
 </div>
 
 <!-- Cas formulaire et properties-->
-<!-- <div [attr.id]="_id" [ngStyle]="computedLayout.style" class="layout-section" *ngIf="
+<div [attr.id]="_id" [ngStyle]="computedLayout.style" class="layout-section" *ngIf="
 schemaData && ['form', 'properties', 'export'].includes(computedLayout.component)
-"> -->
+">
 <modules-layout
   *ngIf="
     schemaData &&
@@ -24,9 +25,9 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.component
   [debug]="debug"
   (onAction)="processAction($event)"
 ></modules-layout>
-<!-- </div> -->
+</div>
 
-<!-- Liste-->
+<!-- Liste -->
 <modules-layout-object-table
   *ngIf="computedLayout.component == 'table'"
   [layout]="layout"
@@ -35,7 +36,7 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.component
 >
 </modules-layout-object-table>
 
-<!-- Liste-->
+<!-- Carte -->
 <modules-layout-object-map
   *ngIf="computedLayout.component == 'map'"
   [layout]="layout"
@@ -52,3 +53,4 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.component
   [data]="data"
 >
 </modules-layout-object-filters>
+</ng-container>

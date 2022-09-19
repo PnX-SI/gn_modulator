@@ -38,7 +38,6 @@ export class ModulesLayoutModalComponent
   }
 
   // postInit(): void {
-  //   this.initModal();
   // }
 
   // processLayout(): void {

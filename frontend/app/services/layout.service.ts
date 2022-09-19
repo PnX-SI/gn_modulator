@@ -18,7 +18,8 @@ export class ModulesLayoutService {
   }
 
   $reComputeLayout = new Subject();
-  $recomputedHeight = new Subject();
+  $reComputedHeight = new Subject();
+  $reDrawElem = new Subject();
   modals = {};
   $closeModals = new Subject();
 
@@ -33,6 +34,7 @@ export class ModulesLayoutService {
   }
 
   openModal(modalName, data) {
+    console.log('this.openModal', modalName, data, this.modals)
     this.modals[modalName] && this.modals[modalName].next(data);
   }
 
@@ -50,8 +52,13 @@ export class ModulesLayoutService {
   }
 
   reComputeHeight(name) {
-    this.$recomputedHeight.next(true);
+    this.$reComputedHeight.next(true);
   }
+
+  reDrawElem(name) {
+    this.$reDrawElem.next(true);
+  }
+
 
   /** Met à plat tous les layouts
    *
@@ -84,14 +91,15 @@ export class ModulesLayoutService {
       : Array.isArray(layout)
       ? "items"
       : [
+          "breadcrumbs",
           "button",
           "html",
+          "form",
           "message",
           "medias",
           "card",
           "object",
           "table",
-          "tabs",
           "map",
           "modal",
           "dict"
@@ -111,7 +119,7 @@ export class ModulesLayoutService {
   getLayoutFields(layout, baseKey = null) {
     const layoutType = this.getLayoutType(layout);
     /** section */
-    if (layoutType == "section") {
+    if (["section", "form"].includes(layoutType)) {
       return utils.flatAndRemoveDoublons(
         this.getLayoutFields(layout.items || [], baseKey)
       );
@@ -171,7 +179,7 @@ export class ModulesLayoutService {
   //  * seulement ces éléments qui sont des fonctions
   //  */
 
-  computeLayout({ layout, data, globalData, formGroup, elemId }) {
+  computeLayout({ layout, data, globalData, formGroup }) {
     if (utils.isObject(layout)) {
       const computedLayout = {};
       for (const [key, value] of Object.entries(layout)) {
@@ -182,58 +190,7 @@ export class ModulesLayoutService {
       return computedLayout;
     }
 
-    // if (Array.isArray(layout) && layout.length) {
-    //   return this.computeLayoutHeight(layout, elemId);
-    // }
-
     return layout;
-  }
-
-  computeLayoutHeight(items, elemId) {
-    const layoutIndex =
-      items && items.findIndex && items.findIndex((l) => l["overflow"]);
-    if (
-      [-1, null, undefined].includes(layoutIndex) //||
-      // !document.getElementById(`${elemId}.0`)
-    ) {
-      return items;
-    }
-
-    let elem = document.getElementById(
-      `${elemId}.${layoutIndex}`
-    ) as HTMLElement;
-
-    if (!elem) {
-      return items;
-    }
-
-    if (!items[layoutIndex]?.style?.height) {
-      items[layoutIndex].style = items[layoutIndex].style || {};
-      items[layoutIndex].style.height = "10px";
-      return;
-    }
-
-    const heightParent = elem.closest(".layout-section").clientHeight;
-
-    const heightSibblings = items
-      .map((l, ind) =>
-        document.getElementById(`${elemId}.${ind}`)
-          ? document.getElementById(`${elemId}.${ind}`).clientHeight
-          : 0
-      )
-      .filter((l, ind) => ind != layoutIndex)
-      .reduce((acc, cur) => acc + cur);
-
-    const height = heightParent - heightSibblings;
-    // const height = elem.closest("div")?.clientHeight;
-    items[layoutIndex].style = {
-      ...(items[layoutIndex].style || {}),
-      "overflow-y": "scroll",
-      height: `${height}px`,
-      // height: `100px`,
-    };
-
-    return items;
   }
 
   evalFunction(layout) {
@@ -242,7 +199,8 @@ export class ModulesLayoutService {
     if (!strFunction.includes("return ") && strFunction[0] != "{") {
       strFunction = `{ return ${strFunction} }`;
     }
-    return new Function(
+
+    const f = new Function(
       "data",
       "globalData",
       "formGroup",
@@ -250,6 +208,8 @@ export class ModulesLayoutService {
       "meta",
       strFunction
     );
+
+    return f;
   }
 
   evalLayout({ layout, data, globalData = null, formGroup = null, meta=null }) {

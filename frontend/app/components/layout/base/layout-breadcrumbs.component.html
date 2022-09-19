@@ -1,0 +1,9 @@
+<div>
+  <ng-container *ngFor="let breadcrumb; of: _mPage.breadcrumbs; let index = index; let last = last">
+    <ng-container *ngIf="index > 0"> - </ng-container>
+    <a [href]="breadcrumb.url" *ngIf="!last">
+      {{ breadcrumb.label }}
+    </a>
+    <span *ngIf="last">{{ breadcrumb.label }}</span>
+  </ng-container>
+</div>

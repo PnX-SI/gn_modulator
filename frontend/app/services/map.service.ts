@@ -4,31 +4,6 @@ import { ModulesConfigService } from "./config.service";
 import { ModulesLayoutService } from "./layout.service";
 import * as L from '@librairies/leaflet';
 import '@librairies/@geoman-io/leaflet-geoman-free';
-// import {CustomIcon} from '@geonature/utils/leaflet-icon';
-
-
-// delete L.Icon.Default.prototype['_getIconUrl'];
-// L.Icon.Default.mergeOptions(CustomIcon);
-
-// delete L.Icon.Default.prototype['_getIconUrl'];
-
-// const iconRetinaUrl = 'assets/marker-icon-2x.png';
-// const iconUrl = 'assets/marker-icon.png';
-// const shadowUrl = 'assets/marker-shadow.png';
-// const iconDefault = L.icon({
-//   iconRetinaUrl,
-//   iconUrl,
-//   shadowUrl,
-//   iconSize: [25, 41],
-//   iconAnchor: [12, 41],
-//   popupAnchor: [1, -34],
-//   tooltipAnchor: [16, -28],
-//   shadowSize: [41, 41]
-// });
-
-// delete L.Icon.Default.prototype['_getIconUrl'];
-// L.Icon.Default.mergeOptions(iconDefault);
-// L.Marker.prototype.options.icon = iconDefault;
 
 L.PM.initialize({ optIn: true }); // Property 'PM' does not exist on type 'typeof import(".../node_modules/@types/leaflet/index")'.ts(2339)
 

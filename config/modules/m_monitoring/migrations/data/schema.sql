@@ -67,6 +67,7 @@ COMMENT ON COLUMN m_monitoring.t_visits.visit_data IS 'Données additionnelles d
 CREATE TABLE m_monitoring.t_observations (
     id_observation SERIAL NOT NULL,
     cd_nom INTEGER,
+    id_digitiser INTEGER,
     id_visit INTEGER,
     observation_uuid UUID,
     observation_data JSONB
@@ -74,6 +75,7 @@ CREATE TABLE m_monitoring.t_observations (
 
 COMMENT ON COLUMN m_monitoring.t_observations.id_observation IS 'Clé primaire de l''observaiton';
 COMMENT ON COLUMN m_monitoring.t_observations.cd_nom IS 'Taxon lié à l''observation';
+COMMENT ON COLUMN m_monitoring.t_observations.id_digitiser IS 'Personne qui a saisi la donnée';
 COMMENT ON COLUMN m_monitoring.t_observations.id_visit IS 'Visite associée à l''observation';
 COMMENT ON COLUMN m_monitoring.t_observations.observation_data IS 'Données additionnelles de l''observation';
 
@@ -157,28 +159,28 @@ ALTER TABLE m_monitoring.sc_grotte
 ALTER TABLE m_monitoring.t_sites
     ADD CONSTRAINT fk_m_monitoring_t_sit_bib_s_id_site_category FOREIGN KEY (id_site_category)
     REFERENCES m_monitoring.bib_sites_category(id_category)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 ---- m_monitoring.t_sites foreign key constraint id_digitiser
 
 ALTER TABLE m_monitoring.t_sites
     ADD CONSTRAINT fk_m_monitoring_t_sit_t_rol_id_digitiser FOREIGN KEY (id_digitiser)
     REFERENCES utilisateurs.t_roles(id_role)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 ---- m_monitoring.t_sites foreign key constraint id_inventor
 
 ALTER TABLE m_monitoring.t_sites
     ADD CONSTRAINT fk_m_monitoring_t_sit_t_rol_id_inventor FOREIGN KEY (id_inventor)
     REFERENCES utilisateurs.t_roles(id_role)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 ---- m_monitoring.t_sites foreign key constraint id_nomenclature_type_site
 
 ALTER TABLE m_monitoring.t_sites
     ADD CONSTRAINT fk_m_monitoring_t_sit_t_nom_id_nomenclature_type_site FOREIGN KEY (id_nomenclature_type_site)
     REFERENCES ref_nomenclatures.t_nomenclatures(id_nomenclature)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 ---- m_monitoring.t_visits foreign key constraint id_site
@@ -186,21 +188,21 @@ ALTER TABLE m_monitoring.t_sites
 ALTER TABLE m_monitoring.t_visits
     ADD CONSTRAINT fk_m_monitoring_t_vis_t_sit_id_site FOREIGN KEY (id_site)
     REFERENCES m_monitoring.t_sites(id_site)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 ---- m_monitoring.t_visits foreign key constraint id_digitiser
 
 ALTER TABLE m_monitoring.t_visits
     ADD CONSTRAINT fk_m_monitoring_t_vis_t_rol_id_digitiser FOREIGN KEY (id_digitiser)
     REFERENCES utilisateurs.t_roles(id_role)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 ---- m_monitoring.t_visits foreign key constraint id_dataset
 
 ALTER TABLE m_monitoring.t_visits
     ADD CONSTRAINT fk_m_monitoring_t_vis_t_dat_id_dataset FOREIGN KEY (id_dataset)
     REFERENCES gn_meta.t_datasets(id_dataset)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 ---- m_monitoring.t_observations foreign key constraint cd_nom
@@ -208,14 +210,21 @@ ALTER TABLE m_monitoring.t_visits
 ALTER TABLE m_monitoring.t_observations
     ADD CONSTRAINT fk_m_monitoring_t_obs_taxre_cd_nom FOREIGN KEY (cd_nom)
     REFERENCES taxonomie.taxref(cd_nom)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE SET NULL;
+
+---- m_monitoring.t_observations foreign key constraint id_digitiser
+
+ALTER TABLE m_monitoring.t_observations
+    ADD CONSTRAINT fk_m_monitoring_t_obs_t_rol_id_digitiser FOREIGN KEY (id_digitiser)
+    REFERENCES utilisateurs.t_roles(id_role)
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 ---- m_monitoring.t_observations foreign key constraint id_visit
 
 ALTER TABLE m_monitoring.t_observations
     ADD CONSTRAINT fk_m_monitoring_t_obs_t_vis_id_visit FOREIGN KEY (id_visit)
     REFERENCES m_monitoring.t_visits(id_visit)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 ---- m_monitoring.t_site_group foreign key constraint id_digitiser
@@ -223,7 +232,7 @@ ALTER TABLE m_monitoring.t_observations
 ALTER TABLE m_monitoring.t_site_group
     ADD CONSTRAINT fk_m_monitoring_t_sit_t_rol_id_digitiser FOREIGN KEY (id_digitiser)
     REFERENCES utilisateurs.t_roles(id_role)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 ---- m_monitoring.sc_arbre_loge foreign key constraint id_site
@@ -231,7 +240,7 @@ ALTER TABLE m_monitoring.t_site_group
 ALTER TABLE m_monitoring.sc_arbre_loge
     ADD CONSTRAINT fk_m_monitoring_sc_ar_t_sit_id_site FOREIGN KEY (id_site)
     REFERENCES m_monitoring.t_sites(id_site)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 ---- m_monitoring.sc_grotte foreign key constraint id_site
@@ -239,7 +248,7 @@ ALTER TABLE m_monitoring.sc_arbre_loge
 ALTER TABLE m_monitoring.sc_grotte
     ADD CONSTRAINT fk_m_monitoring_sc_gr_t_sit_id_site FOREIGN KEY (id_site)
     REFERENCES m_monitoring.t_sites(id_site)
-    ON UPDATE CASCADE ON DELETE NO ACTION;
+    ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 ---- nomenclature check type constraints

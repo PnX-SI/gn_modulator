@@ -48,6 +48,7 @@ export default {
       return;
     }
 
+
     if (options.key && data[options.key]) {
       this.removeLayers(mapId, { key: options.key });
       this.processData(mapId, data[options.key], options);

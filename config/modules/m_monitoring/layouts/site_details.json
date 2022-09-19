@@ -11,17 +11,37 @@
     {
       "items": [
         {
+          "type": "breadcrumbs",
+          "flex": "0"
+        },
+        {
           "key": "site",
           "type": "object",
           "component": "properties"
         },
         {
-          "title": "Visites",
-          "items": {
-            "type": "object",
-            "component": "table",
-            "key": "visit"
-          }
+          "display": "tabs",
+          "items": [
+            {
+              "label": "__f__`Visites   (${data.visit.filtered}/${data.visit.total})`",
+              "items": [
+                {
+                  "key": "visit",
+                  "action": "create",
+                  "type": "button",
+                  "icon": "add",
+                  "color": "primary",
+                  "flex": "0",
+                  "params": "__f__{ return {id_site: data.site.value}}"
+                },
+                {
+                  "type": "object",
+                  "component": "table",
+                  "key": "visit"
+                }
+              ]
+            }
+          ]
         }
       ]
     }

@@ -1,5 +1,5 @@
 {
-  "layout_name": "m_monitoring.site_map_list",
+  "layout_name": "m_monitoring.site_list",
   "height_auto": true,
   "direction": "row",
   "items": [
@@ -15,23 +15,44 @@
       "key": "site"
     },
     {
-      "type": "tabs",
       "flex": 2,
       "items": [
         {
-          "title":  "Sites",
-          "type": "object",
-          "component": "table",
-          "key": "site"
+          "flex": "0",
+          "type": "breadcrumbs"
         },
         {
-          "title":  "Groupes de sites",
-          "type": "object",
-          "component": "table",
-          "key": "site_group"
+          "display": "tabs",
+          "items": [
+            {
+              "label": "__f__`Sites (${data.site.filtered}/${data.site.total})`",
+              "items": [
+                {
+                  "key": "site",
+                  "type": "button",
+                  "title": "Ajouter un nouveau site",
+                  "flex": "0",
+                  "icon": "add",
+                  "color": "primary",
+                  "action": "create"
+                },
+                {
+                  "key": "site",
+                  "type": "object",
+                  "component": "table"
+                }
+              ]
+            },
+            {
+              "label": "__f__`Groupes de site (${data.site_group?.filtered}/${data.site_group?.total})`",
+              "title": "Groupes de sites",
+              "type": "object",
+              "component": "table",
+              "key": "site_group"
+            }
+          ]
         }
       ]
     }
-
   ]
 }

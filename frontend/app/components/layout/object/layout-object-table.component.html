@@ -13,3 +13,12 @@
   <div [attr.id]="tableId"></div>
 <div>
 
+<!-- Fenêtre modal pour confirmer la suppression d'un élément -->
+<modules-layout
+[data]="[data]"
+[layout]="modalDeleteLayout"
+(onAction)="processAction($event)"
+>
+
+</modules-layout>
+

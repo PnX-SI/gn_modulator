@@ -131,18 +131,25 @@
       "nb_observations",
       "digitiser.nom_complet",
       "dataset.dataset_name",
+      "dataset.acquisition_framework.acquisition_framework_name",
       "observers.nom_complet"
     ]
   },
   "form": {
     "layout": [
-      "id_site",
-      "id_module",
       {
-        "key": "id_digitiser",
-        "default": "__f__meta.currentUser?.id_role"
+        "hidden": true,
+        "items": [
+          "id_site",
+          "id_module",
+          {
+            "key": "id_digitiser",
+            "default": "__f__meta.currentUser?.id_role",
+            "hidden": true
+          }
+        ]
       },
-      "visit_date_min",
+      { "key": "visit_date_min", "default": "__f__utils.today()"} ,
       "visit_date_max",
       {
         "key": "id_dataset",
@@ -159,6 +166,7 @@
         "title": "Observateurs",
         "schema_name": "user.role",
         "multiple": true,
+        "return_object": true,
         "filters": [
           { "field": "groupes.listes.code_liste", "type":"=", "value": "obsocctax"}
         ]

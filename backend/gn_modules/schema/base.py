@@ -79,6 +79,7 @@ class SchemaBase():
             and (
                 self.properties()[key].get('required')
                 or key in self.required()
+                or (self.properties()[key].get('primary_key') and self.properties()[key].get('foreign_key'))
                 # or key in self.pk_field_names()
             )
         )
