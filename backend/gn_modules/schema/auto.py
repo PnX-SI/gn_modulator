@@ -131,10 +131,11 @@ class SchemaAuto():
     def process_column_auto(self, column, reflected_columns, sql_schema_name, sql_table_name):
 
         type = str(column.type)
-        # try:
-        reflected_column = next(x for x in reflected_columns if x['name'] == column.key)
-        # except Exception:
-            # return
+        try:
+            reflected_column = next(x for x in reflected_columns if x['name'] == column.key)
+        except Exception as e:
+            print('erreur auto', self.schema_name(), column.key, e)
+            return
         schema_type = self.cls.c_get_type(type, 'sql', 'definition')
 
         if not schema_type:

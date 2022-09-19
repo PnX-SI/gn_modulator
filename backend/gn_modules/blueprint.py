@@ -28,7 +28,7 @@ try:
     SchemaMethods.init_schemas_definitions()
     SchemaMethods.init_schemas_models_and_serializers()
     SchemaMethods.init_routes(blueprint)
-    ModuleMethods.modules_config()
+    # ModuleMethods.modules_config()
 
 except errors.SchemaError as e:
     print("Erreur de chargement des schemas:\n{}".format(e))

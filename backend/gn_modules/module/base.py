@@ -218,7 +218,6 @@ class ModuleBase():
                 page_config['parent'] = page_parent
             elif page_root and page_root != page_name:
                 page_config['parent'] = page_root
-            print(page_name, page_config.get('parent'))
 
     @classmethod
     def process_objects_from_tree(cls, tree, objects, parent_key=None):
