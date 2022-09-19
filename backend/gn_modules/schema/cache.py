@@ -1,7 +1,5 @@
 import copy
 
-from numpy import outer
-
 '''
 cache schema
   - <schema_name>
