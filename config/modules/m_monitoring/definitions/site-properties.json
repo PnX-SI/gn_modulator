@@ -1,0 +1,219 @@
+{
+  "id_site": {
+    "type": "integer",
+    "title": "Pk du site",
+    "primary_key": true
+  },
+  "site_code": {
+    "type": "string",
+    "title": "Code du site",
+    "required": true
+  },
+  "site_name": {
+    "type": "string",
+    "title": "Nom du site",
+    "required": true
+  },
+  "site_desc": {
+    "type": "string",
+    "title": "Description du site"
+  },
+  "site_uuid": {
+    "type": "uuid",
+    "title": "UUID"
+  },
+  "site_geom": {
+    "type": "geometry",
+    "geometry_type": "geometry",
+    "title": "Géométrie du site",
+    "description": "Géométrie du site (SRID=4326)",
+    "srid": 4326,
+    "index": true,
+    "required": true
+  },
+  "site_geom_local": {
+    "type": "geometry",
+    "geometry_type": "geometry",
+    "srid": "__CONFIG.LOCAL_SRID__",
+    "title": "Geometrie locale (__CONFIG.LOCAL_SRID__)",
+    "description": "Géométrie locale site (SRID=__CONFIG.LOCAL_SRID__)",
+    "index": true,
+    "trigger": {
+      "name":"copy_geom",
+      "key": "site_geom"
+    }
+  },
+  "id_site_category": {
+    "type": "integer",
+    "title": "Catégorie de site",
+    "description": "Catégorie de site (pour pouvoir associé des champs spécifiques)",
+    "foreign_key": true,
+    "schema_name": "m_monitoring.site_category"
+  },
+  "site_category": {
+    "type": "relation",
+    "relation_type": "n-1",
+    "local_key": "id_site_category",
+    "schema_name": "m_monitoring.site_category",
+    "title": "Catégorie de site",
+    "description": "Catégorie de site (pour pouvoir associé des champs spécifiques)"
+  },
+  "id_digitiser": {
+    "type": "integer",
+    "foreign_key": true,
+    "schema_name": "user.role",
+    "title": "Numérisateur",
+    "description": "Personne qui a saisi la donnée"
+  },
+  "digitiser": {
+    "type": "relation",
+    "relation_type": "n-1",
+    "schema_name": "user.role",
+    "title": "Numérisateur",
+    "description": "Personne qui a saisi la donnée",
+    "local_key": "id_digitiser"
+  },
+  "id_inventor": {
+    "type": "integer",
+    "foreign_key": true,
+    "schema_name": "user.role",
+    "title": "Descripteur",
+    "description": "Descripteur du site"
+  },
+  "inventor": {
+    "type": "relation",
+    "relation_type": "n-1",
+    "schema_name": "user.role",
+    "title": "Descripteur",
+    "description": "Descripteur du site",
+    "local_key": "id_inventor"
+  },
+  "id_nomenclature_type_site": {
+    "type": "integer",
+    "foreign_key": true,
+    "schema_name": "ref_nom.nomenclature",
+    "title": "Type de site",
+    "nomenclature_type": "TYPE_SITE",
+    "description": "Nomenclature de type de site",
+    "required": true
+  },
+  "nomenclature_type_site": {
+    "type": "relation",
+    "relation_type": "n-1",
+    "schema_name": "ref_nom.nomenclature",
+    "title": "Type de site",
+    "description": "Nomenclature de type de site",
+    "local_key": "id_nomenclature_type_site"
+  },
+  "site_data": {
+    "type": "json",
+    "description": "Données additionnelles du site",
+    "title": "Données additionnelles"
+  },
+  "visits": {
+    "type": "relation",
+    "relation_type": "1-n",
+    "schema_name": "m_monitoring.visit",
+    "foreign_key": "id_site",
+    "title": "Visites",
+    "description": "Visites associées au site"
+  },
+  "nb_visits": {
+    "type": "integer",
+    "title": "Nombre de visites",
+    "column_property": "nb",
+    "relation_key": "visits"
+  },
+  "last_visit_date_min": {
+    "title": "Dernière visite",
+    "type": "date",
+    "column_property": "max",
+    "relation_key": "visits",
+    "key": "visit_date_min",
+    "schema_name": "m_monitoring.visit"
+  },
+  "groups": {
+    "type": "relation",
+    "relation_type": "n-n",
+    "schema_name": "m_monitoring.site_group",
+    "title": "Groupes de site",
+    "description": "Groupes de sites associés au site",
+    "schema_dot_table": "m_monitoring.cor_site_group"
+  },
+  "modules": {
+    "type": "relation",
+    "relation_type": "n-n",
+    "schema_name": "modules.module",
+    "title": "Modules",
+    "description": "Modules associé au site",
+    "schema_dot_table": "m_monitoring.cor_site_module",
+    "backref": "site"
+  },
+  "areas": {
+    "type": "relation",
+    "title": "Areas",
+    "relation_type": "n-n",
+    "schema_name": "ref_geo.area",
+    "schema_dot_table": "m_monitoring.cor_area_pf",
+    "trigger": {
+      "name": "intersect_ref_geo",
+      "key": "site_geom_local",
+      "on": "site_geom"
+    }
+  },
+  "linears": {
+    "type": "relation",
+    "title": "Linéaires",
+    "relation_type": "n-n",
+    "schema_name": "ref_geo.linear",
+    "schema_dot_table": "m_monitoring.cor_linear_pf",
+    "trigger": {
+      "name": "d_within",
+      "distance": 100,
+      "key": "site_geom_local",
+      "on": "site_geom",
+      "partition": [ "id_type" ]
+    }
+  },
+  "label_infrastructures": {
+    "type": "string",
+    "title": "Infrastructure traversée",
+    "column_property": "label",
+    "relation_key": "linears",
+    "label_key": "linear_name",
+    "filters": [
+      { "field": "linear_type.type_code", "type": "in", "value": ["RTE"] }
+    ]
+  },
+  "label_communes": {
+    "type": "string",
+    "title": "Commune(s)",
+    "column_property": "label",
+    "relation_key": "areas",
+    "label_key": "area_name",
+    "filters": [
+      { "field": "area_type.type_code", "type": "in", "value": ["COM"] }
+    ]
+  }
+  ,
+  "label_departements": {
+    "type": "string",
+    "title": "Departement(s)",
+    "column_property": "label",
+    "relation_key": "areas",
+    "label_key": "area_name",
+    "filters": [
+      { "field": "area_type.type_code", "type": "in", "value": ["DEP"] }
+    ]
+  },
+  "label_regions": {
+    "type": "string",
+    "title": "Région(s)",
+    "column_property": "label",
+    "relation_key": "areas",
+    "label_key": "area_name",
+    "filters": [
+      { "field": "area_type.type_code", "type": "in", "value": ["REG"] }
+    ]
+  }
+}

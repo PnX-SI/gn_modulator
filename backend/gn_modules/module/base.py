@@ -165,8 +165,7 @@ class ModuleBase():
                 'module_picto',
                 'module_desc',
                 'module_label',
-                'module_path',
-                "module"
+                'module_path'
             ]
         )
 

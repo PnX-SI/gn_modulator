@@ -1,0 +1,156 @@
+{
+  "_defs": {
+    "_filters_departement": [
+      "__f__{",
+      "const filters = data.region",
+      " ? [{field: 'area_code', type: 'in', value: utils.departementsForRegion(data.region.area_code)}]",
+      " : null;",
+      "return filters",
+      "}"
+    ],
+    "_filters_commune": [
+      "__f__{",
+      "  if (data.departement) {",
+      "    return [{field: 'area_code', type: 'like', value: `${data.departement.area_code}%`}]",
+      "  }",
+      "  if (data.region) {",
+      "     let filters = utils.departementsForRegion(data.region.area_code).map(departementCode => ",
+      "       [{field: 'area_code', type: 'like', value: `${departementCode}%`}, '|']);",
+      "     filters = filters.flat(); ",
+      "     filters.pop();",
+      "     return filters",
+      "  }",
+      "}"
+    ]
+  },
+  "defs": {
+    "category_name": {
+      "title": "Type de site",
+      "field": "site_category.category_name",
+      "type": "string",
+      "filter_type": "="
+    },
+    "region": {
+      "title": "Région",
+      "field": "areas.id_area",
+      "filter_type": "=",
+      "type": "integer",
+      "key": "id_area"
+    },
+    "departement": {
+      "title": "Département",
+      "field": "areas.id_area",
+      "filter_type": "=",
+      "type": "integer",
+      "key": "id_area"
+    },
+    "commune": {
+      "title": "Commune",
+      "field": "areas.id_area",
+      "filter_type": "=",
+      "type": "integer"
+    }
+  },
+  "layout": [
+    {
+      "title": "Infos sites",
+      "items": [
+        {
+          "key": "category_name",
+          "type": "list_form",
+          "title": "Type de site",
+          "value_field_name": "category_name",
+          "schema_name": "m_monitoring.site_category"
+        }
+      ]
+    },
+    {
+      "title": "Localisation",
+      "display": "fieldset",
+      "items": [
+        {
+          "key": "region",
+          "title": "Région",
+          "type": "list_form",
+          "return_object": "true",
+          "additional_fields": [
+            "area_code"
+          ],
+          "area_type": "REG",
+          "sorters": [
+            {
+              "field": "area_name",
+              "dir": "asc"
+            }
+          ]
+        },
+        {
+          "reload_on_search": true,
+          "return_object": true,
+          "key": "departement",
+          "title": "Département",
+          "type": "list_form",
+          "area_type": "DEP",
+          "additional_fields": [
+            "area_code"
+          ],
+          "sorters": [
+            {
+              "field": "area_name",
+              "dir": "asc"
+            }
+          ],
+          "filters": "_filters_departement"
+        },
+        {
+          "reload_on_search": true,
+          "key": "commune",
+          "title": "Commune",
+          "type": "list_form",
+          "area_type": "COM",
+          "filters": "_filters_commune",
+          "sorters": [
+            {
+              "field": "area_name",
+              "dir": "asc"
+            }
+          ]
+        },
+        {
+          "reload_on_search": true,
+          "key": "reservoir",
+          "title": "Réservoir (SRCE)",
+          "type": "list_form",
+          "area_type": "RESV_SRCE",
+          "sorters": [
+            {
+              "field": "area_name",
+              "dir": "asc"
+            }
+          ]
+        },
+        {
+          "title": "Infrastructure",
+          "key": "infrastructure",
+          "type": "list_form",
+          "schema_name": "ref_geo.linear_group",
+          "filters": [
+            {
+              "field": "linear_type.type_code",
+              "type": "=",
+              "value": "RTE"
+            }
+          ],
+          "sorters": [
+            {
+              "field": "group_name",
+              "dir": "asc"
+            }
+          ],
+          "data_reload_on_search": true,
+          "page_size": 10
+        }
+      ]
+    }
+  ]
+}

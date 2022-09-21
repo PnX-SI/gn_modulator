@@ -19,23 +19,6 @@
       "site_desc"
     ]
   },
-  "filters": {
-    "defs": {
-      "category_name": {
-        "title": "Type de site",
-        "field": "site_category.category_name",
-        "type": "string",
-        "filter_type": "="
-      }
-    },
-    "layout": {
-      "key": "category_name",
-      "type": "list_form",
-      "title": "Type de site",
-      "value_field_name": "category_name",
-      "schema_name": "m_monitoring.site_category"
-    }
-  },
   "table": {
     "columns": [
       "site_category.category_name",
@@ -56,158 +39,6 @@
     "site_name",
     "site_geom"
   ],
-  "properties": {
-    "id_site": {
-      "type": "integer",
-      "title": "Pk du site",
-      "primary_key": true
-    },
-    "site_code": {
-      "type": "string",
-      "title": "Code du site",
-      "required": true
-    },
-    "site_name": {
-      "type": "string",
-      "title": "Nom du site",
-      "required": true
-    },
-    "site_desc": {
-      "type": "string",
-      "title": "Description du site"
-    },
-    "site_uuid": {
-      "type": "uuid",
-      "title": "UUID"
-    },
-    "site_geom": {
-      "type": "geometry",
-      "geometry_type": "geometry",
-      "title": "Géométrie du site",
-      "description": "Géométrie du site (SRID=4326)",
-      "srid": 4326,
-      "index": true,
-      "required": true
-    },
-    "site_geom_local": {
-      "type": "geometry",
-      "geometry_type": "geometry",
-      "srid": "__CONFIG.LOCAL_SRID__",
-      "title": "Geometrie locale (__CONFIG.LOCAL_SRID__)",
-      "description": "Géométrie locale site (SRID=__CONFIG.LOCAL_SRID__)",
-      "index": true,
-      "trigger": {
-        "name":"copy_geom",
-        "key": "site_geom"
-      }
-    },
-    "id_site_category": {
-      "type": "integer",
-      "title": "Catégorie de site",
-      "description": "Catégorie de site (pour pouvoir associé des champs spécifiques)",
-      "foreign_key": true,
-      "schema_name": "m_monitoring.site_category"
-    },
-    "site_category": {
-      "type": "relation",
-      "relation_type": "n-1",
-      "local_key": "id_site_category",
-      "schema_name": "m_monitoring.site_category",
-      "title": "Catégorie de site",
-      "description": "Catégorie de site (pour pouvoir associé des champs spécifiques)"
-    },
-    "id_digitiser": {
-      "type": "integer",
-      "foreign_key": true,
-      "schema_name": "user.role",
-      "title": "Numérisateur",
-      "description": "Personne qui a saisi la donnée"
-    },
-    "digitiser": {
-      "type": "relation",
-      "relation_type": "n-1",
-      "schema_name": "user.role",
-      "title": "Numérisateur",
-      "description": "Personne qui a saisi la donnée",
-      "local_key": "id_digitiser"
-    },
-    "id_inventor": {
-      "type": "integer",
-      "foreign_key": true,
-      "schema_name": "user.role",
-      "title": "Descripteur",
-      "description": "Descripteur du site"
-    },
-    "inventor": {
-      "type": "relation",
-      "relation_type": "n-1",
-      "schema_name": "user.role",
-      "title": "Descripteur",
-      "description": "Descripteur du site",
-      "local_key": "id_inventor"
-    },
-    "id_nomenclature_type_site": {
-      "type": "integer",
-      "foreign_key": true,
-      "schema_name": "ref_nom.nomenclature",
-      "title": "Type de site",
-      "nomenclature_type": "TYPE_SITE",
-      "description": "Nomenclature de type de site",
-      "required": true
-    },
-    "nomenclature_type_site": {
-      "type": "relation",
-      "relation_type": "n-1",
-      "schema_name": "ref_nom.nomenclature",
-      "title": "Type de site",
-      "description": "Nomenclature de type de site",
-      "local_key": "id_nomenclature_type_site"
-    },
-    "site_data": {
-      "type": "json",
-      "description": "Données additionnelles du site",
-      "title": "Données additionnelles"
-    },
-    "visits": {
-      "type": "relation",
-      "relation_type": "1-n",
-      "schema_name": "m_monitoring.visit",
-      "foreign_key": "id_site",
-      "title": "Visites",
-      "description": "Visites associées au site"
-    },
-    "nb_visits": {
-      "type": "integer",
-      "title": "Nombre de visites",
-      "column_property": "nb",
-      "relation_key": "visits"
-    },
-    "last_visit_date_min": {
-      "title": "Dernière visite",
-      "type": "date",
-      "column_property": "max",
-      "relation_key": "visits",
-      "key": "visit_date_min",
-      "schema_name": "m_monitoring.visit"
-    },
-    "groups": {
-      "type": "relation",
-      "relation_type": "n-n",
-      "schema_name": "m_monitoring.site_group",
-      "title": "Groupes de site",
-      "description": "Groupes de sites associés au site",
-      "schema_dot_table": "m_monitoring.cor_site_group"
-    },
-    "modules": {
-      "type": "relation",
-      "relation_type": "n-n",
-      "schema_name": "modules.module",
-      "title": "Modules",
-      "description": "Modules associé au site",
-      "schema_dot_table": "m_monitoring.cor_site_module",
-      "backref": "site"
-    }
-  },
   "form": {
     "layout": [
       {
@@ -250,7 +81,11 @@
       "digitiser.nom_complet ",
       "inventor.nom_complet",
       "nomenclature_type_site.label_fr",
-      "site_category.category_name"
+      "site_category.category_name",
+      "label_regions",
+      "label_departements",
+      "label_communes",
+      "label_infrastructures"
     ]
   }
 }

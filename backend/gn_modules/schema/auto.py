@@ -134,7 +134,6 @@ class SchemaAuto():
         # PATCH pour les VARCHAR(<nb>)
         if 'VARCHAR(' in type:
             type = 'VARCHAR'
-        self.schema_name() == 'meta.ca' and print(column.key, type)
         try:
             reflected_column = next(x for x in reflected_columns if x['name'] == column.key)
         except Exception as e:

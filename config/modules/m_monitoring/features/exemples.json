@@ -170,41 +170,47 @@
         "id_site": "GR1",
         "visit_date_min": "2022-01-01",
         "observers": [ "admin" ],
-        "id_dataset": ["m_monitoring", "m_monitoring"]
+        "id_dataset": ["m_monitoring", "m_monitoring"],
+        "id_module": "m_monitoring"
       },
       {
         "id_site": "GR1",
         "visit_date_min": "2022-01-02",
         "observers": [ "admin" ],
-        "id_dataset": ["m_monitoring", "m_monitoring"]
+        "id_dataset": ["m_monitoring", "m_monitoring"],
+        "id_module": "m_monitoring"
       },
       {
         "id_site": "GR1",
         "visit_date_min": "2022-01-03",
         "id_digitiser": "admin",
         "observers": [ "admin" ],
-        "id_dataset": ["m_monitoring", "m_monitoring"]
+        "id_dataset": ["m_monitoring", "m_monitoring"],
+        "id_module": "m_monitoring"
       },
       {
         "id_site": "AL1",
         "visit_date_min": "2022-01-04",
         "id_digitiser": "admin",
         "observers": [ "admin" ],
-        "id_dataset": ["m_monitoring", "m_monitoring"]
+        "id_dataset": ["m_monitoring", "m_monitoring"],
+        "id_module": "m_monitoring"
       },
       {
         "id_site": "AL1",
         "visit_date_min": "2022-01-05",
         "id_digitiser": "admin",
         "observers": [ "admin" ],
-        "id_dataset": ["m_monitoring", "m_monitoring"]
+        "id_dataset": ["m_monitoring", "m_monitoring"],
+        "id_module": "m_monitoring"
       },
       {
         "id_site": "AL1",
         "visit_date_min": "2022-01-06",
         "id_digitiser": "admin",
         "observers": [ "admin" ],
-        "id_dataset": ["m_monitoring", "m_monitoring"]
+        "id_dataset": ["m_monitoring", "m_monitoring"],
+        "id_module": "m_monitoring"
       }
     ]
   },
