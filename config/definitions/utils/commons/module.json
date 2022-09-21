@@ -7,6 +7,7 @@
         "label": "module",
         "label_field_name": "module_name",
         "genre": "M",
+        "relations": ["datasets"],
         "unique": ["module_code"]
       }
 }

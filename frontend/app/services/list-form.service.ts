@@ -36,8 +36,33 @@ export class ListFormService {
       mergeMap((liste) => {
         // gestion des valeurs par defaut
         return this.processDefault(options, control, liste);
+      }),
+      mergeMap((liste) => {
+
+        this.processListeLengthisOne(options, control, liste);
+        return of(liste)
       })
     );
+  }
+
+  processListeLengthisOne(options, control, liste) {
+
+    // si
+    // - la valeur est requise
+    // - la taille de la liste est 1
+    // - il n'y a pas de valeur
+    if (! (options.required && liste.items.length == 1 && [null, undefined].includes(control.value))) {
+      return
+    }
+
+    // cas ou la liste n'a qu'une seule valeur -> par default on la choise
+    // seuelement si une valeur est requise (options.required = true)
+    if (options.required && liste.items.length == 1) {
+      const value = liste.items[0];
+      const controlValue = options.return_object ? value : value[options.value_field_name];
+      control.patchValue(controlValue);
+    }
+
   }
 
   /**
@@ -47,18 +72,19 @@ export class ListFormService {
    */
   processDefault(options, control, liste) {
     // si pas de defaut, on ne fait rien
-    if (!options.default) {
+
+    // si on a déjà une valeur => retour
+    if (![null, undefined].includes(control.value)) {
       return of(liste);
     }
 
-    // si on a déjà une valeur => retour
-    if (control.value) {
+    if (!options.default) {
       return of(liste);
     }
 
     // recherche de la valeur dans la liste
     // recherce de la valeur par api et ajout dans la liste
-    let value = liste.items.find((item) =>
+    const value = liste.items.find((item) =>
       Object.entries(options.default).every(
         ([key, value]) => item[key] == value
       )
@@ -70,8 +96,8 @@ export class ListFormService {
       );
       return of(liste);
     }
-    value = options.return_object ? value : value[options.value_field_name];
-    control.patchValue(value);
+    const controlValue = options.return_object ? value : value[options.value_field_name];
+    control.patchValue(controlValue);
 
     return of(liste);
   }

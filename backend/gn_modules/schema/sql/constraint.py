@@ -72,7 +72,6 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
 
 
             on_delete_action = 'CASCADE' if self.is_required(key) else 'SET NULL'
-            print(self.schema_name(), key, on_delete_action)
 
             txt += (
                 """---- {sql_schema_name}.{sql_table_name} foreign key constraint {fk_key_field_name}

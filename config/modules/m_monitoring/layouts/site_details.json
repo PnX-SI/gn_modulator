@@ -23,7 +23,7 @@
           "display": "tabs",
           "items": [
             {
-              "label": "__f__`Visites   (${data.visit.filtered}/${data.visit.total})`",
+              "label": "__f__`Visites (${data.visit.filtered}/${data.visit.total})`",
               "items": [
                 {
                   "key": "visit",

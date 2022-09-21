@@ -9,7 +9,7 @@ backend/gn_modules/migrations/data/m_*
 
 #!migrations/data/*.sql
 backend/gn_modules/migrations/versions/*
-!backend/gn_modules/migrations/versions/*_gn_modules.py
+!backend/gn_modules/migrations/versions/    *_gn_modules.py
 
 !.gitkeep
 

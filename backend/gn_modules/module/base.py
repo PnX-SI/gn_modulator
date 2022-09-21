@@ -158,7 +158,17 @@ class ModuleBase():
         if not module_schema.sql_table_exists():
             return {}
         query, _ = module_schema.get_list({})
-        modules_dict = module_schema.serialize_list(query.all())
+        modules_dict = module_schema.serialize_list(
+            query.all(),
+            fields=[
+                'module_code',
+                'module_picto',
+                'module_desc',
+                'module_label',
+                'module_path',
+                "module"
+            ]
+        )
 
         for module in modules_dict:
             modules_db[module['module_code']] = module
@@ -200,6 +210,8 @@ class ModuleBase():
         for page_name, page_config in module_config['pages'].items():
             if page_config['url'] == "":
                 page_root = page_name
+                page_config['root'] = True
+
 
         # gestion des pages
         # assignation de key et parent (et type ????) shema_name etc ???
@@ -218,6 +230,7 @@ class ModuleBase():
                 page_config['parent'] = page_parent
             elif page_root and page_root != page_name:
                 page_config['parent'] = page_root
+
 
     @classmethod
     def process_objects_from_tree(cls, tree, objects, parent_key=None):
@@ -378,3 +391,25 @@ class ModuleBase():
 
         return parent_breadcrumbs + breadcrumb
 
+
+    @classmethod
+    def test_module_dependencies(cls, module_code):
+        '''
+            test si les modules dont dépend un module sont installés
+        '''
+
+        module_config = cls.module_config(module_code)
+
+        dependencies = module_config.get('dependencies', [])
+        db_installed_modules = cls.modules_db()
+
+        test_dependencies = True
+
+        for dep in dependencies:
+            if db_installed_modules.get(dep) is None:
+                print(dep, db_installed_modules.keys())
+                print(f"-- Dependance(s) manquantes")
+                print(f"  - module '{dep}'")
+                test_dependencies = False
+
+        return test_dependencies

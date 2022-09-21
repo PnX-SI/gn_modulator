@@ -97,7 +97,6 @@ class SchemaAuto():
                 continue
 
             property = self.process_relation_auto(relation_key, relation)
-
             if property:
                 properties[relation_key] = property
 
@@ -131,6 +130,11 @@ class SchemaAuto():
     def process_column_auto(self, column, reflected_columns, sql_schema_name, sql_table_name):
 
         type = str(column.type)
+
+        # PATCH pour les VARCHAR(<nb>)
+        if 'VARCHAR(' in type:
+            type = 'VARCHAR'
+        self.schema_name() == 'meta.ca' and print(column.key, type)
         try:
             reflected_column = next(x for x in reflected_columns if x['name'] == column.key)
         except Exception as e:
@@ -139,14 +143,11 @@ class SchemaAuto():
         schema_type = self.cls.c_get_type(type, 'sql', 'definition')
 
         if not schema_type:
+            print(
+                f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
+            )
             raise SchemaAutoError(
-                "{}.{}.{} : Le type sql {} n'a pas de correspondance"
-                .format(
-                    sql_schema_name,
-                    sql_table_name,
-                    column.key,
-                    column.type
-                )
+                f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
             )
 
         property = {

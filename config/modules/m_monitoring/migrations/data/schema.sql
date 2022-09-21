@@ -283,6 +283,30 @@ ALTER TABLE m_monitoring.cor_site_group
     ADD CONSTRAINT fk_m_monitoring_cor_site_group_id_site_group FOREIGN KEY (id_site_group)
     REFERENCES m_monitoring.t_site_group (id_site_group)
     ON UPDATE CASCADE ON DELETE CASCADE;
+-- cor m_monitoring.cor_site_module
+
+CREATE TABLE IF NOT EXISTS m_monitoring.cor_site_module (
+    id_site INTEGER NOT NULL NOT NULL,
+    id_module INTEGER NOT NULL NOT NULL
+);
+
+
+---- m_monitoring.cor_site_module primary keys contraints
+
+ALTER TABLE m_monitoring.cor_site_module
+    ADD CONSTRAINT pk_m_monitoring_cor_site_module_id_site_id_module PRIMARY KEY (id_site, id_module);
+
+---- m_monitoring.cor_site_module foreign keys contraints
+
+ALTER TABLE m_monitoring.cor_site_module
+    ADD CONSTRAINT fk_m_monitoring_cor_site_module_id_site FOREIGN KEY (id_site)
+    REFERENCES m_monitoring.t_sites (id_site)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE m_monitoring.cor_site_module
+    ADD CONSTRAINT fk_m_monitoring_cor_site_module_id_module FOREIGN KEY (id_module)
+    REFERENCES gn_modules.t_module_complements (id_module)
+    ON UPDATE CASCADE ON DELETE CASCADE;
 
 -- cor m_monitoring.cor_visit_observer
 

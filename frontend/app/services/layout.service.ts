@@ -11,7 +11,7 @@ export class ModulesLayoutService {
 
   // pour pouvoir faire passer des infos au layout
   // - par exemple sur l'utilisateur courant ou autres
-  _meta:any = {};
+  meta:any = {};
 
   constructor(private _injector: Injector) {
     this._mConfig = this._injector.get(ModulesConfigService);
@@ -23,9 +23,6 @@ export class ModulesLayoutService {
   modals = {};
   $closeModals = new Subject();
 
-  meta() {
-    return this._meta;
-  }
 
   initModal(modalName) {
     if (!this.modals[modalName]) {
@@ -184,7 +181,7 @@ export class ModulesLayoutService {
       const computedLayout = {};
       for (const [key, value] of Object.entries(layout)) {
         computedLayout[key] = this.isStrFunction(value)
-          ? this.evalLayout({ layout: value, data, globalData, formGroup, meta: this._meta })
+          ? this.evalLayout({ layout: value, data, globalData, formGroup, meta: this.meta })
           : value;
       }
       return computedLayout;

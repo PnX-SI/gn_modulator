@@ -72,7 +72,12 @@ export class ModulesLayoutObjectComponent
     if(!(utils.fastDeepEqual(this.data.filters, this.dataSave?.filters))) {
           this.processFilters();
     }
+    if(!(utils.fastDeepEqual(this.data.filters, this.dataSave?.prefilters))) {
+      this.processPreFilters();
+}
+
   }
+
 
   postProcessLayout() {
     return this.processObject();
@@ -178,7 +183,9 @@ export class ModulesLayoutObjectComponent
   // dans le cas du formulaire seulement ?
   // si data.default est défini
   processDefaults(data) {
+    console.log('defaults')
     for (const [defaultKey, defaultValue] of Object.entries(this.data.defaults || {})) {
+      console.log('ururu', defaultKey, defaultValue)
       data[defaultKey] = defaultValue;
     }
   }
@@ -293,5 +300,8 @@ export class ModulesLayoutObjectComponent
 
   // quand un nouveau filtre est défini
   processFilters() {}
+
+    // quand un nouveau prefiltre est défini
+    processPreFilters() {}
 
 }

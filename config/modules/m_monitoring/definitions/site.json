@@ -44,12 +44,12 @@
       "nb_visits",
       "last_visit_date_min"
     ],
-      "sort": [
-        {
-          "column": "last_visit_date_min",
-          "dir": "desc"
-        }
-      ]
+    "sort": [
+      {
+        "column": "last_visit_date_min",
+        "dir": "desc"
+      }
+    ]
   },
   "required": [
     "site_code",
@@ -83,8 +83,23 @@
     "site_geom": {
       "type": "geometry",
       "geometry_type": "geometry",
-      "title": "Géométrie",
-      "srid": 4326
+      "title": "Géométrie du site",
+      "description": "Géométrie du site (SRID=4326)",
+      "srid": 4326,
+      "index": true,
+      "required": true
+    },
+    "site_geom_local": {
+      "type": "geometry",
+      "geometry_type": "geometry",
+      "srid": "__CONFIG.LOCAL_SRID__",
+      "title": "Geometrie locale (__CONFIG.LOCAL_SRID__)",
+      "description": "Géométrie locale site (SRID=__CONFIG.LOCAL_SRID__)",
+      "index": true,
+      "trigger": {
+        "name":"copy_geom",
+        "key": "site_geom"
+      }
     },
     "id_site_category": {
       "type": "integer",
@@ -182,11 +197,20 @@
       "title": "Groupes de site",
       "description": "Groupes de sites associés au site",
       "schema_dot_table": "m_monitoring.cor_site_group"
+    },
+    "modules": {
+      "type": "relation",
+      "relation_type": "n-n",
+      "schema_name": "modules.module",
+      "title": "Modules",
+      "description": "Modules associé au site",
+      "schema_dot_table": "m_monitoring.cor_site_module",
+      "backref": "site"
     }
   },
   "form": {
     "layout": [
-       {
+      {
         "hidden": true,
         "items": [
           "id_site",
@@ -196,7 +220,7 @@
             "default": "__f__meta.currentUser?.id_role"
           }
         ]
-       },
+      },
       "site_code",
       "site_name",
       {

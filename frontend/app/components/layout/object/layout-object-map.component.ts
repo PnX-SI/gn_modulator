@@ -64,9 +64,16 @@ export class ModulesLayoutObjectMapComponent
   }
 
   processFilters() {
-    console.log('process filters')
+    this.log('process filter', this.data)
     return this.processObject();
   }
+
+  processPreFilters() {
+    this.log('process prefilter', this.data)
+
+    return this.processObject();
+  }
+
 
   processData(response) {
     this.schemaData = response.data;
@@ -204,6 +211,7 @@ export class ModulesLayoutObjectMapComponent
         this.schemaConfig.utils.label_field_name,
       ], // fields
       filters: this.getDataFilters() || [],
+      prefilters: this.getDataPreFilters() || [],
       as_geojson: true,
     };
     return this._mData.getList(this.schemaName(), extendedParams);

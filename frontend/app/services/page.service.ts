@@ -21,9 +21,10 @@ export class ModulesPageService {
   moduleCode;
   breadcrumbs = [];
   pageName;
-  pageParams;
-  pageQueryParams;
-  pageAllParams;
+  // pageParams;
+  // pageQueryParams;
+  // pageAllParams;
+  params;
 
   constructor(private _injector: Injector) {
     this._mRoute = this._injector.get(ModulesRouteService);
@@ -67,14 +68,15 @@ export class ModulesPageService {
         );
         return;
       }
-      const routeParams = { value, ...((layout as any)?.params || {}) };
-
+      // const routeParams = { value, ...((layout as any)?.params || {}) };
+      const routeParams = {};
       // routeParams[]
       const schemaName = moduleConfig.data[objectName].schema_name;
 
       routeParams[this._mSchema.pkFieldName(schemaName)] = value;
       console.log(routeParams, schemaName)
-      this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);
+      // this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);
+      this._mRoute.navigateToPage(this.moduleCode, pageName, {...this.params, ...routeParams });
     }
 
     // TODO dans la config de generic form ????
@@ -102,11 +104,12 @@ export class ModulesPageService {
       console.log('page action delete', schemaName, data)
       this._mSchema.onDelete(schemaName, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
-        if(pageConfig.type == objectName) {
-          this._mRoute.navigateToPage(this.moduleCode, parentPageName, data); // TODO params
-        }
         this._mLayout.closeModals()
         this._mLayout.reDrawElem('modal delete');
+
+        if(pageConfig.type != 'details' && !pageConfig.root) {
+          this._mRoute.navigateToPage(this.moduleCode, parentPageName, data); // TODO params
+        }
       })
     }
 
@@ -116,7 +119,7 @@ export class ModulesPageService {
         this.processAction({ action: "details", objectName, value });
       } else {
         console.log('cancel', parentPageName)
-        this._mRoute.navigateToPage(this.moduleCode, parentPageName, this.pageParams); // TODO params
+        this._mRoute.navigateToPage(this.moduleCode, parentPageName, this.params); // TODO params
       }
     }
   }
@@ -138,7 +141,7 @@ export class ModulesPageService {
   }
 
   getBreadcrumbs() {
-    return this._mRequest.request('get',  `${this._mConfig.backendModuleUrl()}/breadcrumbs/${this.moduleCode}/${this.pageName}`, { params: this.pageAllParams} )
+    return this._mRequest.request('get',  `${this._mConfig.backendModuleUrl()}/breadcrumbs/${this.moduleCode}/${this.pageName}`, { params: this.params} )
     .pipe(
       mergeMap((breadcrumbs)=> {
         this.breadcrumbs = breadcrumbs;

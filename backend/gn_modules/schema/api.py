@@ -103,6 +103,7 @@ class SchemaApi():
             - filters
             - prefilters
             - fields
+            - field_name
             - sorters
             - page
             - page_size
@@ -117,6 +118,7 @@ class SchemaApi():
             'as_geojson': self.load_param(request.args.get('as_geojson', 'false')),
             'compress': self.load_param(request.args.get('compress', 'false')),
             'fields': self.load_array_param(request.args.get('fields')),
+            'field_name':  self.load_param(request.args.get('field_name', 'null')),
             'filters': self.load_param(request.args.get('filters', '[]')),
             'prefilters': self.load_param(request.args.get('prefilters', '[]')),
             'page': self.load_param(request.args.get('page', 'null')),

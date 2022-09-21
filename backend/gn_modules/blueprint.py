@@ -12,7 +12,9 @@ from geonature.core.gn_permissions.tools import (
     cruved_scope_for_user_in_module,
 )
 import copy
-from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.exc import (
+    InvalidRequestError, NoForeignKeysError
+)
 
 blueprint = Blueprint('modules', __name__)
 
@@ -33,8 +35,9 @@ try:
 except errors.SchemaError as e:
     print("Erreur de chargement des schemas:\n{}".format(e))
 except InvalidRequestError as e:
-    print('InvalidRequestError', e)
-
+    print(e)
+except NoForeignKeysError as e:
+    print(e)
 
 
 # @current_app.before_first_request

@@ -36,11 +36,17 @@ class ModuleCommands():
 
         print('Installation du module {}'.format(module_code))
 
+        # test si les dépendances sont installées
+        if not cls.test_module_dependencies(module_code):
+            return
+
         # mise en place des liens symboliques
         cls.make_migration_links(module_code)
 
         # alembic
-        db_upgrade(revision='{}@head'.format(module_code.lower()))
+        # - test if migration file(s) exist(s)
+        if cls.migration_files(module_code):
+            db_upgrade(revision='{}@head'.format(module_code.lower()))
 
         # pour les update du module ? # test si module existe
         cls.register_db_module(module_code)

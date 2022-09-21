@@ -46,7 +46,8 @@ cache_existing_models = {
 
 cache_existing_tables = {
     "utilisateurs.cor_role_liste": cor_role_liste,
-    "utilisateurs.cor_roles": CorRole.__table__
+    "utilisateurs.cor_roles": CorRole.__table__,
+    "gn_commons.cor_module_dataset": CorModuleDataset.__table__
 }
 
 class SchemaModelExisting():

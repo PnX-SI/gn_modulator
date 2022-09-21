@@ -64,10 +64,13 @@ class ModuleMigration():
         data_dir = cls.migrations_dir(module_code) / 'data'
         data_link = cls.migrations_dir() / 'data' / module_code.lower()
 
+
+
         if data_link.exists():
             data_link.unlink()
 
-        data_link.symlink_to(data_dir)
+        if data_dir.exists():
+            data_link.symlink_to(data_dir)
 
         print("- Création des liens symboliques vers 'gn_modules/migrations' (data et versions)")
 
