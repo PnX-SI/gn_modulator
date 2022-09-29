@@ -40,6 +40,7 @@ export class ModulesLayoutArrayComponent
         this.data,
         this.globalData
       );
+      this._mLayout.reComputeLayout('');
     } else {
       this.emitAction(action);
     }
@@ -53,5 +54,7 @@ export class ModulesLayoutArrayComponent
       this.data,
       this.globalData
     );
+    // pour forcer le check de la validation ??
+    this._mLayout.reComputeLayout('');    
   }
 }

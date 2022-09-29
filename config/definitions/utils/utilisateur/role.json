@@ -23,13 +23,19 @@
     "properties": {
         "password": {
             "type": "string",
-            "title": "password"
+            "title": "password",
+            "load_only": true
         },
         "nom_complet": {
             "type": "string",
             "title": "Nom complet"
-        }
-        ,
+        },
+        "_password": {
+            "load_only": true
+        },
+        "_password_plus": {
+            "load_only": true  
+        },
         "listes": {
             "type": "relation",
             "relation_type": "n-n",

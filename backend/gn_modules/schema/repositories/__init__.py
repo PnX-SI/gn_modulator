@@ -1,7 +1,7 @@
 from .base import SchemaRepositoriesBase
 from .cruved import SchemaRepositoriesCruved
 from .filters import SchemaRepositoriesFilters
-from .util import SchemaRepositoriesUtil
+from .utils import SchemaRepositoriesUtil
 
 
 class SchemaRepositories(

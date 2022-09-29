@@ -83,18 +83,20 @@ export class ModulesLayoutMapComponent
     if (this.computedLayout.map_id) {
       this.mapId = this.computedLayout.map_id;
     }
-    this._mapService.initMap(this.mapId).then((map) => {
+    this._mapService.initMap(this.mapId, { zoom: this.layout.zoom}).then((map) => {
       this._map = map;
 
       if (layoutChanged) {
         this.processDrawConfig();
+        
       }
-
+      
       // affichage des données
 
       if (dataChanged) {
         this._mapService.processData(this.mapId, this.data, {
           key: this.computedLayout.key,
+          zoom: this.computedLayout.zoom,
         });
 
         return;
@@ -109,6 +111,7 @@ export class ModulesLayoutMapComponent
       ) {
         // TODO faire un layer
         this._map.$editedLayer.next(this.data[this.computedLayout.key]);
+        this._mapService.zoomOnLayer(this.mapId, this.data[this.computedLayout.key])
       }
     });
   }
@@ -131,5 +134,9 @@ export class ModulesLayoutMapComponent
     this._mapService.waitForMap(this.mapId).then((map) => {
       map.invalidateSize();
     });
+  }
+  
+  refreshData(objectName: any): void {
+    
   }
 }

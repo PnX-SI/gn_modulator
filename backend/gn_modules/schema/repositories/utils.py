@@ -24,7 +24,7 @@ class SchemaRepositoriesUtil():
 
             TODO gerer plusieurs '.'
             exemple
-            http://localhost:8000/modules/schemas.sipaf.pf/rest/?page=1&page_size=13&sorters=[{%22field%22:%22id_pf%22,%22dir%22:%22asc%22}]&filters=[{%22field%22:%22areas.type.coe_type%22,%22type%22:%22=%22,%22value%22:%22DEP%22}]&fields=[%22id_pf%22,%22nom_pf%22,%22cruved_ownership%22]
+            http://localhost:8000/modules/schemas.sipaf.pf/rest/?page=1&page_size=13&sorters=[{%22field%22:%22id_pf%22,%22dir%22:%22asc%22}]&filters=[{%22field%22:%22areas.type.coe_type%22,%22type%22:%22=%22,%22value%22:%22DEP%22}]&fields=[%22id_pf%22,%22nom_pf%22,%22ownership%22]
         '''
 
         if '.' not in field_name:
@@ -48,12 +48,10 @@ class SchemaRepositoriesUtil():
             relation_entity = relationship.mapper.entity
 
             if query is not None and condition is None:
-                relation_entity = orm.aliased(relation_entity)
-                try:
-                    query = query.join(relation_entity, relationship)
-                except Exception:
-                    pass
-                # query = query.options(orm.joinedload(relationship))
+                # on fait un alias
+                relation_entity = orm.aliased( relationship.mapper.entity)
+                
+                query = query.join(relation_entity, relationship)
 
             elif condition:
                 # TODO gérer les alias si filtres un peu plus tordus ??
@@ -103,16 +101,16 @@ class SchemaRepositoriesUtil():
 
         return order_by, query
 
-    def process_sorters(self, Model, sorters, query):
-        '''
-            process sorters (ORDER BY)
-        '''
+    # def process_sorters(self, Model, sorters, query):
+    #     '''
+    #         process sorters (ORDER BY)
+    #     '''
 
-        for sorter in sorters:
-            order_by, query = self.get_sorter(Model, sorter, query)
-            query = query.order_by(order_by)
+    #     for sorter in sorters:
+    #         order_by, query = self.get_sorter(Model, sorter, query)
+    #         query = query.order_by(order_by)
 
-        return query
+    #     return query
 
         # order_bys, query = self.get_sorters(Model, sorters, query)
         # if order_bys:

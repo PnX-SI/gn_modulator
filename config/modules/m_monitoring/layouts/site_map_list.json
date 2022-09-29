@@ -42,14 +42,15 @@
                   "component": "table"
                 }
               ]
-            },
-            {
-              "label": "__f__`Groupes de site (${data.site_group?.filtered}/${data.site_group?.total})`",
-              "title": "Groupes de sites",
-              "type": "object",
-              "component": "table",
-              "key": "site_group"
             }
+              ,
+              {
+                "label": "__f__`Groupes de site (${data.site_group?.filtered}/${data.site_group?.total})`",
+                "title": "Groupes de sites",
+                "type": "object",
+                "component": "table",
+                "key": "site_group"
+              }
           ]
         }
       ]

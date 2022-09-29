@@ -228,3 +228,12 @@ div.layout-items > div {
 :host ::ng-deep .mat-tab-body-wrapper {
   height: 100%;
 }
+
+.breadcrumb-home {
+  position: relative;
+  top: 4px;
+}
+
+.card-image {
+  cursor: pointer; 
+}

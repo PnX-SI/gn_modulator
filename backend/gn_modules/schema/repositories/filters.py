@@ -17,7 +17,7 @@ from sqlalchemy.sql.functions import ReturnTypeFromArgs
 class unaccent(ReturnTypeFromArgs):
     pass
 
-filter_types = ['like', 'ilike', '=', 'in', '>e', '<', '>=', '>=']
+filter_types = ['like', 'ilike', '=', 'in', '>e', '<', '>=', '>=', '!=']
 
 
 class SchemaRepositoriesFilters():
@@ -46,6 +46,7 @@ class SchemaRepositoriesFilters():
         filters_processed, query = self.process_filter_array(Model, filters, query)
 
         if filters_processed is not None:
+            query = query.filter(filters_processed)
             return query.filter(filters_processed)
 
         return query
@@ -163,8 +164,8 @@ class SchemaRepositoriesFilters():
 
         elif f_type == '>':
             filter_out = (model_attribute > f_value)
-        elif f_type == '!=':
-            filter_out = getattr(model_attribute, 'isnot')(f_value)
+        # elif f_type == '!=':
+        #     filter_out = getattr(model_attribute, 'isnot')(f_value)
 
         elif f_type == '>=':
             filter_out = (model_attribute >= f_value)
@@ -182,8 +183,8 @@ class SchemaRepositoriesFilters():
             )
 
         elif f_type == '!=':
-            filter_out != (
-                cast(model_attribute, db.String) == (str(f_value))
+            filter_out = (
+                cast(model_attribute, db.String) != (str(f_value))
             )
 
 

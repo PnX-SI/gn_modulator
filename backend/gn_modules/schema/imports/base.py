@@ -254,7 +254,7 @@ class SchemaBaseImports:
             # erreur de validation des données
             except jsonschema.exceptions.ValidationError as e:
                 msg_error = (
-                    '{values} : {key}={quote}{value}{quote} ({msg}) (j)'
+                    '{values} : {key}={quote}{value}{quote} ({msg}) (json schema)'
                     .format(
                         values=', '.join(values),
                         key='.'.join(e.path),
@@ -268,7 +268,7 @@ class SchemaBaseImports:
             except marshmallow.exceptions.ValidationError as e:
                 key = list(e.messages.keys())[0]
                 msg_error = (
-                    '{values} : {key}={quote}{value}{quote} ({msg}) (m)'
+                    '{values} : {key}={quote}{value}{quote} ({msg}) (marshmallow schema)'
                     .format(
                         values=', '.join(values),
                         key=key,
@@ -328,6 +328,9 @@ class SchemaBaseImports:
 
     @classmethod
     def txt_data_info(cls, info, details=False):
+        '''
+        '''
+        
         txt = ''
         detail_updates = cls.log_data_info_detail(info, 'updates', details=details)
         detail_inserts = cls.log_data_info_detail(info, 'inserts', details=details)
@@ -342,7 +345,7 @@ class SchemaBaseImports:
         # txt += '{}'.format(detail_inserts)
 
         txt = (
-            '  - {schema_name:45}    #:{nb_items:4}    I:{nb_inserts:4}    U:{nb_updates:4}    E:{nb_errors:4}'
+            '    - {schema_name:45}    #:{nb_items:4}    I:{nb_inserts:4}    U:{nb_updates:4}    E:{nb_errors:4}'
             .format(
                 schema_name=info['schema_name'],
                 nb_items=len(info['items']),
@@ -353,15 +356,18 @@ class SchemaBaseImports:
         )
 
         for info_error in info['errors']:
-            txt += '\n    - {}'.format(info_error['error'])
+            txt += '\n      - {}'.format(info_error['error'])
 
         return txt
 
     @classmethod
     def txt_data_infos(cls, infos_file, details=False):
+        '''
+        '''
+        
         txt_list = []
         for schema_name, info_file_value in infos_file.items():
-            txt = '- {}'.format(schema_name, len(info_file_value))
+            txt = '  - {}'.format(schema_name, len(info_file_value))
             for info in info_file_value:
                 txt += '\n{}'.format(cls.txt_data_info(info, details=details))
             txt_list.append(txt)

@@ -83,6 +83,7 @@ export class ModulesPageService {
     if (action == "submit") {
       this._mSchema.onSubmit(schemaName, data, layout).subscribe(
         (data) => {
+          this._mLayout.stopActionProcessing('');
           this._commonService.regularToaster(
             "success",
             `La requete a bien été effectué`
@@ -105,10 +106,11 @@ export class ModulesPageService {
       this._mSchema.onDelete(schemaName, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
         this._mLayout.closeModals()
-        this._mLayout.reDrawElem('modal delete');
+        this._mLayout.refreshData(objectName);
 
         if(pageConfig.type != 'details' && !pageConfig.root) {
           this._mRoute.navigateToPage(this.moduleCode, parentPageName, data); // TODO params
+        } else {
         }
       })
     }

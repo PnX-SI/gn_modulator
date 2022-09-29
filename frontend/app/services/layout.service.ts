@@ -20,6 +20,8 @@ export class ModulesLayoutService {
   $reComputeLayout = new Subject();
   $reComputedHeight = new Subject();
   $reDrawElem = new Subject();
+  $refreshData = new Subject();
+  $stopActionProcessing = new Subject();
   modals = {};
   $closeModals = new Subject();
 
@@ -31,7 +33,6 @@ export class ModulesLayoutService {
   }
 
   openModal(modalName, data) {
-    console.log('this.openModal', modalName, data, this.modals)
     this.modals[modalName] && this.modals[modalName].next(data);
   }
 
@@ -56,7 +57,16 @@ export class ModulesLayoutService {
     this.$reDrawElem.next(true);
   }
 
+  refreshData(objectName) {
+    this.$refreshData.next(objectName);
+  }
 
+
+  stopActionProcessing(name) {
+    this.$stopActionProcessing.next(true);
+  }
+
+  
   /** Met à plat tous les layouts
    *
    * TODO array
@@ -135,6 +145,7 @@ export class ModulesLayoutService {
         this.getLayoutFields(layout.items, newBaseKey)
       );
     }
+    
     /** key */
     const keys = [layout.key];
 

@@ -8,6 +8,7 @@
         "label_field_name": "module_name",
         "genre": "M",
         "relations": ["datasets"],
-        "unique": ["module_code"]
+        "unique": ["module_code"],
+        "check_cruved": false
       }
 }

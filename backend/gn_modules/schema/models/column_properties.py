@@ -6,23 +6,7 @@ from .. import errors
 class SchemaModelColumnProperties():
     '''
     '''
-    pass
 
-    def cruved_ownership(self, id_role, id_organism):
-        '''
-            TODO
-            attention le modèle peut être redéfini si plusieurs utilisateur demandent la route en meme temsp
-            à placer dans g / session ????
-        '''
-        return column_property(
-            case(
-                [
-                    (self.Model().actors.any(id_role=id_role), 1),
-                    (self.Model().actors.any(id_organism=id_organism), 2),
-                ],
-                else_=3
-            )
-        )
 
     def column_property_relation_x_n(self, key, column_property_def, Model):
         # a passer en argument

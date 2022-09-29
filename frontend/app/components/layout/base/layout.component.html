@@ -152,6 +152,8 @@
           computedLayout.icon
         }}</mat-icon>
         {{ computedLayout.title }}
+        <mat-icon *ngIf="actionProcessing"><mat-spinner color="accent" diameter="20">
+        </mat-spinner></mat-icon>
       </button>
 
       <a

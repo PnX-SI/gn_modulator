@@ -1,9 +1,35 @@
+<!-- template pour l'affichage du breadcrumb-->
 <div>
-  <ng-container *ngFor="let breadcrumb; of: _mPage.breadcrumbs; let index = index; let last = last">
-    <ng-container *ngIf="index > 0"> - </ng-container>
-    <a [href]="breadcrumb.url" *ngIf="!last">
-      {{ breadcrumb.label }}
-    </a>
-    <span *ngIf="last">{{ breadcrumb.label }}</span>
+  <!-- on affiche les élements de la liste 
+    des breadcrub de la page (mPage.breadcrumbs)-->
+  <ng-container
+    *ngFor="
+      let breadcrumb of _mPage.breadcrumbs;
+      let index = index;
+      let first = first;
+      let last = last
+    "
+  >
+    <!-- premier element -> icone 'home' -->
+    <ng-container *ngIf="first">
+      <a class="breadcrumb-home" [href]="breadcrumb.url" *ngIf="!last">
+        <mat-icon>home</mat-icon>
+      </a>
+    </ng-container>
+
+    <!-- elements suivants ->  lien avec label -->
+    <ng-container *ngIf="!first">
+      <a [href]="breadcrumb.url" *ngIf="!last">
+        {{ breadcrumb.label }}
+      </a>
+    </ng-container>
+
+    <!-- dernier élément -> texte simple (page en cours) -->
+    <ng-container *ngIf="last"
+      ><span>
+        {{ breadcrumb.label }}
+      </span>
+    </ng-container>
+    <ng-container *ngIf="!last"> / </ng-container>
   </ng-container>
 </div>

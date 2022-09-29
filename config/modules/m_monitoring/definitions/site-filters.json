@@ -67,6 +67,7 @@
     {
       "title": "Localisation",
       "display": "fieldset",
+      // "hidden": true,
       "items": [
         {
           "key": "region",
@@ -109,19 +110,6 @@
           "type": "list_form",
           "area_type": "COM",
           "filters": "_filters_commune",
-          "sorters": [
-            {
-              "field": "area_name",
-              "dir": "asc"
-            }
-          ]
-        },
-        {
-          "reload_on_search": true,
-          "key": "reservoir",
-          "title": "Réservoir (SRCE)",
-          "type": "list_form",
-          "area_type": "RESV_SRCE",
           "sorters": [
             {
               "field": "area_name",

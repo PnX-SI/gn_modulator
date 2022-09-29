@@ -1,6 +1,6 @@
 -- process schema : m_monitoring.site
 --
--- and dependancies : m_monitoring.site_category, m_monitoring.visit, m_monitoring.observation, m_monitoring.site_group, m_monitoring.sc_arbre_loge, m_monitoring.sc_grotte
+-- and dependancies : m_monitoring.site_category, m_monitoring.visit, m_monitoring.observation, m_monitoring.site_group, m_monitoring.actor, m_monitoring.sc_arbre_loge, m_monitoring.sc_grotte
 
 
 ---- sql schema m_monitoring
@@ -99,6 +99,17 @@ COMMENT ON COLUMN m_monitoring.t_site_group.id_site_group IS 'Clé primaire du g
 COMMENT ON COLUMN m_monitoring.t_site_group.id_digitiser IS 'Personne qui a saisi la donnée';
 COMMENT ON COLUMN m_monitoring.t_site_group.site_group_data IS 'Données additionnelles du  groupe de site';
 
+---- table m_monitoring.cor_site_actor
+
+CREATE TABLE m_monitoring.cor_site_actor (
+    id_actor SERIAL NOT NULL,
+    id_site INTEGER NOT NULL,
+    id_organism INTEGER,
+    id_role INTEGER,
+    id_nomenclature_type_actor INTEGER NOT NULL
+);
+
+
 ---- table m_monitoring.sc_arbre_loge
 
 CREATE TABLE m_monitoring.sc_arbre_loge (
@@ -143,6 +154,12 @@ ALTER TABLE m_monitoring.t_observations
 
 ALTER TABLE m_monitoring.t_site_group
     ADD CONSTRAINT pk_m_monitoring_t_site_group_id_site_group PRIMARY KEY (id_site_group);
+
+
+---- m_monitoring.cor_site_actor primary key constraint
+
+ALTER TABLE m_monitoring.cor_site_actor
+    ADD CONSTRAINT pk_m_monitoring_cor_site_actor_id_actor PRIMARY KEY (id_actor);
 
 
 ---- m_monitoring.sc_arbre_loge primary key constraint
@@ -245,6 +262,35 @@ ALTER TABLE m_monitoring.t_site_group
     ON UPDATE CASCADE ON DELETE SET NULL;
 
 
+---- m_monitoring.cor_site_actor foreign key constraint id_site
+
+ALTER TABLE m_monitoring.cor_site_actor
+    ADD CONSTRAINT fk_m_monitoring_cor_s_t_sit_id_site FOREIGN KEY (id_site)
+    REFERENCES m_monitoring.t_sites(id_site)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+---- m_monitoring.cor_site_actor foreign key constraint id_organism
+
+ALTER TABLE m_monitoring.cor_site_actor
+    ADD CONSTRAINT fk_m_monitoring_cor_s_bib_o_id_organism FOREIGN KEY (id_organism)
+    REFERENCES utilisateurs.bib_organismes(id_organisme)
+    ON UPDATE CASCADE ON DELETE SET NULL;
+
+---- m_monitoring.cor_site_actor foreign key constraint id_role
+
+ALTER TABLE m_monitoring.cor_site_actor
+    ADD CONSTRAINT fk_m_monitoring_cor_s_t_rol_id_role FOREIGN KEY (id_role)
+    REFERENCES utilisateurs.t_roles(id_role)
+    ON UPDATE CASCADE ON DELETE SET NULL;
+
+---- m_monitoring.cor_site_actor foreign key constraint id_nomenclature_type_actor
+
+ALTER TABLE m_monitoring.cor_site_actor
+    ADD CONSTRAINT fk_m_monitoring_cor_s_t_nom_id_nomenclature_type_actor FOREIGN KEY (id_nomenclature_type_actor)
+    REFERENCES ref_nomenclatures.t_nomenclatures(id_nomenclature)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+
 ---- m_monitoring.sc_arbre_loge foreign key constraint id_site
 
 ALTER TABLE m_monitoring.sc_arbre_loge
@@ -266,6 +312,14 @@ ALTER TABLE m_monitoring.sc_grotte
 ALTER TABLE m_monitoring.t_sites
         ADD CONSTRAINT check_nom_type_m_monitoring_t_sites_id_ite_typite
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_type_site,'TYPE_SITE'))
+        NOT VALID;
+
+
+---- nomenclature check type constraints
+
+ALTER TABLE m_monitoring.cor_site_actor
+        ADD CONSTRAINT check_nom_type_m_monitoring_cor_site_actor_id_tor_pf_tor
+        CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_type_actor,'PF_TYPE_ACTOR'))
         NOT VALID;
 
 

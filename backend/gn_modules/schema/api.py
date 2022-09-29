@@ -5,7 +5,7 @@
 import json
 import copy
 from flask.views import MethodView
-from flask import request, jsonify, Response
+from flask import request, jsonify, Response, current_app
 from functools import wraps
 import csv
 from geonature.core.gn_permissions import decorators as permissions
@@ -211,7 +211,7 @@ class SchemaApi():
             params = self.parse_request_args(request)
             query, query_info = self.get_list(params)
             res_list = query.all()
-            return {
+            out = {
                 **query_info,
                 'data': self.serialize_list(
                     res_list,
@@ -219,6 +219,8 @@ class SchemaApi():
                     as_geojson=params.get('as_geojson'),
                 )
             }
+
+            return out
 
         def get_export(self_mv, module_code, export_code):
             '''

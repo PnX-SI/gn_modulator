@@ -97,6 +97,8 @@ export class ModulesLayoutComponent implements OnInit {
 
   computedItems;
 
+  actionProcessing; // pour les spinners
+  
   constructor(protected _injector: Injector) {
     this._name = "layout";
     this._id = Math.round(Math.random() * 1e10);
@@ -108,18 +110,27 @@ export class ModulesLayoutComponent implements OnInit {
     this.processLayout();
 
     // subscription pour recalculer le layout
-    this._mLayout.$reComputeLayout.pipe().subscribe(() => {
+    this._mLayout.$reComputeLayout.subscribe(() => {
       this.computeLayout();
     });
 
-    this._mLayout.$reComputedHeight.pipe().subscribe(() => {
+    this._mLayout.$refreshData.subscribe((objectName) => {
+      this.refreshData(objectName);
+    });
+    
+    this._mLayout.$reComputedHeight.subscribe(() => {
       this.onHeightChange();
     });
 
-    this._mLayout.$reDrawElem.pipe().subscribe(() => {
+    this._mLayout.$reDrawElem.subscribe(() => {
       this.onRedrawElem();
     });
 
+    this._mLayout.$stopActionProcessing.subscribe(() => {
+      this.actionProcessing = false;
+    });
+
+    
     // pour les élément avec heigh_auto = true
     // this.listenPageResize();
 
@@ -234,8 +245,12 @@ export class ModulesLayoutComponent implements OnInit {
       this.layoutFromName = layoutFromName;
     }
 
-    // this.processHeightOverflow();
+    if (this.computedLayout.overflow) {
+      this.processHeightOverflow();
+    }
 
+    
+    
     /** pour éviter de déclencher postComputeLayout s'il n'y a pas de changmeent effectif */
     if (!this.bPostComputeLayout) {
       return;
@@ -264,18 +279,21 @@ export class ModulesLayoutComponent implements OnInit {
     // sauvegarde des données pour la prochaine comparaison
     this.dataSave = dataCopy;
     this.computedLayoutSave = computedLayoutCopy;
+    
   }
 
   // pour gérer les composant avec overflow = true
   processHeightOverflow() {
-    if (!this.computedLayout?.overflow) {
+
+    if (!(this.computedLayout?.overflow || this.layout?.overflow)) {
       return;
     }
+    
     const elem = document.getElementById(this._id);
     if (!elem) {
       return;
     }
-
+    
     const docHeight = document.body.clientHeight;
 
     // si la taille du body n'a pas changé on retourne
@@ -285,16 +303,17 @@ export class ModulesLayoutComponent implements OnInit {
 
     // si on a reduit la fenetre
     // -> on remet à 0
+
     if (this.docHeightSave > docHeight || !this.docHeightSave) {
       this.computedLayout.style = {
         ...(this.computedLayout.style || {}),
-        height: "100px",
+        height: "200px",
         "overflow-y": "scroll",
       };
 
       this.layout.style = {
         ...(this.layout.style || {}),
-        height: `100px`,
+        height: `200px`,
         "overflow-y": "scroll",
       };
     }
@@ -309,12 +328,14 @@ export class ModulesLayoutComponent implements OnInit {
         height: `${height}px`,
         "overflow-y": "scroll",
       };
+        console.log('after over', height)
+      
       this.computedLayout.style = {
         ...(this.computedLayout.style || {}),
         height: `${height}px`,
         "overflow-y": "scroll",
       };
-    }, 50);
+    }, 200);
   }
 
   /**
@@ -351,39 +372,44 @@ export class ModulesLayoutComponent implements OnInit {
 
   // action quand la taille change
   onHeightChange() {
+    // this.processHeightAuto();
     this.processHeightOverflow();
-    this.processHeightAuto();
   }
 
   /** pour mettre les layout avec height_auto = true à la hauteur totale de la page */
   processHeightAuto() {
+    if (!this.computedLayout.height_auto) {
+      return;
+    }
+
     const elem = document.getElementById(this._id);
     if (!elem) {
       return;
     }
 
-    if (!this.computedLayout.height_auto) {
-      return;
-    }
 
     const elementHeight = elem && `${elem.clientHeight}px`;
     const bodyHeight = `${document.body.clientHeight - elem.offsetTop}px`;
 
     // si la taille de l'élément correspond à la taille de la page
     // -> on ne fait rien
-    if (elementHeight == bodyHeight) {
+
+    if (elementHeight == bodyHeight && this.computedLayout.style.height == bodyHeight) {
       return;
     }
 
     this.computedLayout.style = this.computedLayout.style || {};
     this.computedLayout.style.height = bodyHeight;
-    setTimeout(() => {
-      this._mLayout.reComputeHeight(this._name);
-    }, 10);
+
+    this.layout.style = this.layout.style || {};
+    this.layout.style.height = bodyHeight;
+    
+    this._mLayout.reComputeHeight('auto');
   }
 
   // a redefinir pour faire des actions après processLayout
-  postProcessLayout() {}
+  postProcessLayout() {
+  }
 
   // calcul de la marge pour l'afffichage du debug
   // - en fonction de l'input depth
@@ -415,6 +441,7 @@ export class ModulesLayoutComponent implements OnInit {
       return;
     }
 
+    this.actionProcessing = true;
     this.onAction.emit({
       action: this.layout.action,
       data: this.data,
@@ -453,5 +480,9 @@ export class ModulesLayoutComponent implements OnInit {
 
   onTabChanged($event) {
     this._mLayout.reDrawElem('tab changed')
+  }
+  
+  refreshData(objectName) {
+    
   }
 }

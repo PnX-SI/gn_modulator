@@ -72,25 +72,21 @@ export class PageComponent implements OnInit {
         // route data
         mergeMap((routeData) => {
           this.processRouteData(routeData);
-          console.log('routeData')
           return this._route.params;
         }),
         // url params
         mergeMap((params) => {
           this.routeParams = params;
-          console.log('routeParams')
           return this._route.queryParams;
         }),
         // url queryParams
         mergeMap((queryParams) => {
           this.routeQueryParams = queryParams;
-          console.log('routeQueryParams')
           return this.getModuleParams();
         }),
         // moduile params
         mergeMap((moduleParams) => {
           this.moduleParams = moduleParams;
-          console.log('moduleParams')
           this.processParams();
           return this._mPage.getBreadcrumbs();
         })
@@ -222,15 +218,13 @@ export class PageComponent implements OnInit {
 
     // resize des composants
     // TODO à affiner
-    setTimeout(() => this._mLayout.reComputeHeight('page'), 100);
-    setTimeout(() => this._mLayout.reComputeHeight('page'), 500);
+    // setTimeout(() => this._mLayout.reComputeHeight('page'), 500);
   }
 
   /**
    * TODO clarifier les process actions un peu partout
    */
   processAction(event) {
-    console.log('page Action', event);
     const data = event.layout.key ? event.data[event.layout.key] : event.data;
     if (
       ["submit", "cancel", "edit", "details", "create"].includes(event.action)

@@ -8,9 +8,9 @@ const defautDrawOptions = {
   drawCircle: false,
   drawCircleMarker: false,
   drawRectangle: false,
-  drawPolygon: false,
+  drawPolygon: true,
   drawText: false,
-  drawPolyline: false,
+  drawPolyline: true,
   dragMode: false,
   cutPolygon: false,
   removalMode: false,
@@ -44,7 +44,6 @@ export default {
   //   map.pm.addControls(drawOptions);
   // },
 
-
   /**
    *  options: {
    *    edit: si l'edition est permise
@@ -58,14 +57,19 @@ export default {
 
     // gestion des options de geoman
     const drawOptions = options.edit
-      ? (options.drawOptions || defautDrawOptions)
+      ? options.drawOptions || defautDrawOptions
       : hiddenDrawOptions;
 
-    if(!utils.fastDeepEqual(drawOptions, map.drawOptions)) {
+    if (options.edit && options.geometry_type) {
+      drawOptions.drawMarker = options.geometry_type == "geometry" || options.geometry_type.includes("point")
+      drawOptions.drawPolygon = options.geometry_type == "geometry" || options.geometry_type.includes("polygon")
+      drawOptions.drawPolyline = options.geometry_type == "geometry" || options.geometry_type.includes("linestring")
+    }
+
+    if (!utils.fastDeepEqual(drawOptions, map.drawOptions)) {
       map.drawOptions = drawOptions;
       map.pm.addControls(drawOptions);
     }
-
 
     // init $editedLayer
     if (!map.$editedLayer) {
@@ -75,14 +79,13 @@ export default {
     // gps
     if (options.gps && !map.gps) {
       map.gps = true;
-      this.addMapControl(mapId, 'gps')
+      this.addMapControl(mapId, "gps");
     }
-
   },
 
   /** pour faire le liens entre les évènement de geoman (pm:create, pm:edit)
    * et l'observable map.$editedLayer
-  */
+   */
   initEditedLayer(mapId) {
     const map = this.getMap(mapId);
     if (!map) return;
@@ -101,5 +104,4 @@ export default {
       });
     });
   },
-
 };

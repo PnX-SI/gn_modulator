@@ -75,7 +75,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     // const fields = this.schemaConfig.table.columns.map(column => column.field);
     const fields = this.schemaConfig.map.popup_fields;
     // if(this.schemaConfig.definition.meta.check_cruved) {
-      fields.push('cruved_ownership');
+      fields.push('ownership');
     // }
     this._services.mData.getOne(this.schemaName, value, { fields })
     .subscribe((data) => {
@@ -184,7 +184,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     var propertiesHTML="";
     propertiesHTML += '<ul>\n'
     propertiesHTML += popupFields
-      .filter(fieldKey => fieldKey != "cruved_ownership")
+      .filter(fieldKey => fieldKey != "ownership")
       .map( fieldKey => {
         // gerer les '.'
         const fieldKeyLabel = fieldKey.split('.')[0]
@@ -196,7 +196,7 @@ export class BaseMapComponent extends BaseComponent implements OnInit {
     propertiesHTML += '</ul>\n'
 
     const htmlDetails = '<button action="details">Details</button>'
-    const condEdit = properties['cruved_ownership'] <= this.moduleConfig.module.cruved['U'];
+    const condEdit = properties['ownership'] <= this.moduleConfig.module.cruved['U'];
     const htmlEdit = condEdit
       ? '<button action="edit">Éditer</button>'
       : '';

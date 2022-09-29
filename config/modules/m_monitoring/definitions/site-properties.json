@@ -136,7 +136,7 @@
     "type": "relation",
     "relation_type": "n-n",
     "schema_name": "m_monitoring.site_group",
-    "title": "Groupes de site",
+    "title": "Groupes de sites",
     "description": "Groupes de sites associés au site",
     "schema_dot_table": "m_monitoring.cor_site_group"
   },
@@ -215,5 +215,13 @@
     "filters": [
       { "field": "area_type.type_code", "type": "in", "value": ["REG"] }
     ]
+  },
+  "actors": {
+    "type": "relation",
+    "relation_type": "1-n",
+    "foreign_key": "id_site",
+    "schema_name": "m_monitoring.actor",
+    "title": "Acteurs",
+    "description": "Les acteurs liés au site"
   }
 }

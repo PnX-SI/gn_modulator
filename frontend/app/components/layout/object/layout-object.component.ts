@@ -52,7 +52,6 @@ export class ModulesLayoutObjectComponent
     this.bPostComputeLayout = true;
   }
 
-
   log(...args) {
     console.log(
       this._name,
@@ -66,18 +65,16 @@ export class ModulesLayoutObjectComponent
   }
 
   postComputeLayout(dataChanged: any, layoutChanged: any): void {
-    if(!utils.fastDeepEqual(this.data.value, this.dataSave?.value)) {
+    if (!utils.fastDeepEqual(this.data.value, this.dataSave?.value)) {
       this.processValue(this.data.value);
     }
-    if(!(utils.fastDeepEqual(this.data.filters, this.dataSave?.filters))) {
-          this.processFilters();
+    if (!utils.fastDeepEqual(this.data.filters, this.dataSave?.filters)) {
+      this.processFilters();
     }
-    if(!(utils.fastDeepEqual(this.data.filters, this.dataSave?.prefilters))) {
+    if (!utils.fastDeepEqual(this.data.prefilters, this.dataSave?.prefilters)) {
       this.processPreFilters();
-}
-
+    }
   }
-
 
   postProcessLayout() {
     return this.processObject();
@@ -122,7 +119,6 @@ export class ModulesLayoutObjectComponent
       )
       .subscribe((response) => {
         if (response) {
-
           this.processTotalFiltered(response);
 
           // traitement des données
@@ -134,10 +130,10 @@ export class ModulesLayoutObjectComponent
   }
 
   processTotalFiltered(response) {
-    if(![null, undefined].includes(response.total)) {
+    if (![null, undefined].includes(response.total)) {
       this.data.total = response.total;
       this.data.filtered = response.filtered;
-      this._mLayout.reComputeLayout('totalfilter');
+      this._mLayout.reComputeLayout("totalfilter");
     }
   }
 
@@ -145,7 +141,10 @@ export class ModulesLayoutObjectComponent
   processConfig() {
     // cas du formulaire
     if (this.computedLayout.component == "form") {
-      this.processedLayout = this._mSchema.processFormLayout(this.schemaConfig, this.moduleConfig);
+      this.processedLayout = this._mSchema.processFormLayout(
+        this.schemaName(),
+        this.moduleConfig
+      );
     }
 
     // cas des details ou propriété
@@ -175,7 +174,7 @@ export class ModulesLayoutObjectComponent
   // traitement des données
   // peut être redefini
   processData(data) {
-    this.processDefaults(data)
+    this.processDefaults(data);
     this.schemaData = data;
   }
 
@@ -183,13 +182,12 @@ export class ModulesLayoutObjectComponent
   // dans le cas du formulaire seulement ?
   // si data.default est défini
   processDefaults(data) {
-    console.log('defaults')
-    for (const [defaultKey, defaultValue] of Object.entries(this.data.defaults || {})) {
-      console.log('ururu', defaultKey, defaultValue)
+    for (const [defaultKey, defaultValue] of Object.entries(
+      this.data.defaults || {}
+    )) {
       data[defaultKey] = defaultValue;
     }
   }
-
 
   // récupération des données
   // peut être redefini
@@ -236,7 +234,9 @@ export class ModulesLayoutObjectComponent
   // TODO à clarifier avec page.element ??
   processAction(event) {
     if (
-      ["submit", "cancel", "edit", "details", "create", "delete"].includes(event.action)
+      ["submit", "cancel", "edit", "details", "create", "delete"].includes(
+        event.action
+      )
     ) {
       this._mPage.processAction({
         action: event.action,
@@ -270,9 +270,9 @@ export class ModulesLayoutObjectComponent
     // s'il y a eu un changement on recalcule les layout
     if (change) {
       this._mLayout.reComputeLayout("set data object");
-      setTimeout(() => {
-        this._mLayout.reComputeHeight("set data object");
-      });
+      // setTimeout(() => {
+        // this._mLayout.reComputeHeight("set data object");
+      // });
     }
   }
 
@@ -293,7 +293,7 @@ export class ModulesLayoutObjectComponent
 
   // Quand une nouvelle valeur est définie
   processValue(value) {
-    if(["form", "properties"].includes(this.computedLayout.component)) {
+    if (["form", "properties"].includes(this.computedLayout.component)) {
       return this.postProcessLayout();
     }
   }
@@ -301,7 +301,8 @@ export class ModulesLayoutObjectComponent
   // quand un nouveau filtre est défini
   processFilters() {}
 
-    // quand un nouveau prefiltre est défini
-    processPreFilters() {}
+  // quand un nouveau prefiltre est défini
+  processPreFilters() {}
+  
 
 }

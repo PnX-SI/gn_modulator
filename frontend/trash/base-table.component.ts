@@ -44,7 +44,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
     return new Promise((resolve, reject) => {
       const fields = this.columns().map((column) => column.field);
 
-      fields.push("cruved_ownership");
+      fields.push("ownership");
 
       if (!fields.includes(this.schemaConfig.utils.pk_field_name)) {
         fields.push(this.schemaConfig.utils.pk_field_name);
@@ -155,7 +155,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
         headerSort: false,
         formatter: (cell, formatterParams, onRendered) => {
           const editAllowed =
-            cell._cell.row.data["cruved_ownership"] <=
+            cell._cell.row.data["ownership"] <=
             this.moduleConfig.module.cruved["U"];
           var html = "";
           html += `<span class="table-icon ${
@@ -169,7 +169,7 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
         hozAlign: "center",
         tooltip: (cell) => {
           const editAllowed =
-            cell._cell.row.data["cruved_ownership"] <=
+            cell._cell.row.data["ownership"] <=
             this.moduleConfig.module.cruved["U"];
           return editAllowed
             ? `Éditer ${this.schemaConfig.display.le_label} ${this.getCellValue(

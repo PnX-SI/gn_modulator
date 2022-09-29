@@ -65,6 +65,7 @@ export class ModulesLayoutObjectFiltersComponent
   processAction(event) {
     event.action == "filter" && this.applyFilters();
     event.action == "clear-filters" && this.clearFilters();
+    this._mLayout.stopActionProcessing("");
   }
 
   getFilters() {

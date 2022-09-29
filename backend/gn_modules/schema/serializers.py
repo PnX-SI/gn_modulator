@@ -67,9 +67,16 @@ class SchemaSerializers:
 
     def process_column_marshmallow(self, column_def):
         field_type = column_def.get('type')
+
         kwargs = {
             'allow_none': True
         }
+
+        if column_def.get('load_only'):
+            kwargs['load_only'] = True
+
+        if column_def.get('dump_only'):
+            kwargs['dump_only'] = True
 
         if column_def.get('primary_key'):
             return fields.Integer(**kwargs)
@@ -130,7 +137,7 @@ class SchemaSerializers:
             and relation_def.get('foreign_key') == relation_def_test.get('foreign_key')
         )
 
-    def excluded_realions(self, relation_def_test):
+    def excluded_relations(self, relation_def_test):
         return [
             key
             for key, relation_def in self.relationships().items()
@@ -147,7 +154,7 @@ class SchemaSerializers:
         if not relation.Model():
             return None
 
-        exclude = relation.excluded_realions(self.opposite_relation_def(relation_def))
+        exclude = relation.excluded_relations(self.opposite_relation_def(relation_def))
 
         relation_serializer = fields.Nested(relation.marshmallow_schema_name(), **{"exclude":exclude, "dump_default": None})
 
@@ -170,6 +177,8 @@ class SchemaSerializers:
             MarshmallowSchema = self.cls.get_schema_cache(self.schema_name(), 'marshmallow')
             return MarshmallowSchema
 
+        if not self.Model():
+            return None
 
         marshmallow_meta_dict = {
             'model': self.Model(),
@@ -185,9 +194,13 @@ class SchemaSerializers:
         @pre_load
         def pre_load_make_object(self_marshmallow, data, **kwargs):
 
+            print('\n\npreload', self.schema_name(), data)
+            if self.schema_name() == 'm_sipaf.pf':
+                print(self.Model().actors)
+            
             for key in self.pk_field_names():
                 if key in data and data[key] is None:
-                    print('marsh remove pk null', key)
+                    print('\nmarsh remove pk null\n', key)
                     data.pop(key, None)
 
             # # pour les champs null avec default defini dans les proprietés
@@ -234,9 +247,10 @@ class SchemaSerializers:
             marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
 
         # if self.attr('meta.check_cruved'):
-        marshmallow_schema_dict['cruved_ownership'] = fields.Integer(metadata={'dumps_only': True})
+        marshmallow_schema_dict['ownership'] = fields.Integer(metadata={'dumps_only': True})
+        marshmallow_schema_dict['row_number'] = fields.Integer(metadata={'dumps_only': True})
         # else:
-            # marshmallow_schema_dict['cruved_ownership'] = 0
+            # marshmallow_schema_dict['ownership'] = 0
 
 
         # store in cache before relation (avoid circular dependancies)
@@ -308,7 +322,19 @@ class SchemaSerializers:
                 fields.append(geometry_field_name)
 
         marshmallowSchema = self.MarshmallowSchema()(**kwargs)
-        data_list = marshmallowSchema.dump(m_list, many=True)
+        data_list = marshmallowSchema.dump(map(lambda x : x[0] if isinstance(x, tuple) else x, m_list), many=True)
+
+
+        # pour gérer les champs supplémentaire (ownership, row_number, etc....)
+        if len(data_list) and isinstance(m_list[0], tuple):
+
+            keys = list(m_list[0].keys())
+            if  len(keys) > 1:
+                keys = keys[1:]
+
+                for index, res in enumerate(m_list):
+                    for key in keys:
+                        data_list[index][key] = getattr(res, key)
 
         if as_geojson:
 

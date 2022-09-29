@@ -1,17 +1,16 @@
 <ng-container *ngIf="!isInitialized; else card"></ng-container>
 
 <ng-template #card>
-  <mat-card
-    [href]="computedLayout.href"
-    [ngClass]="computedLayout && computedLayout.class"
-  >
-    <mat-card-content class="card-content" [routerLink]="computedLayout.href">
+  <mat-card [ngClass]="computedLayout && computedLayout.class">
+    <mat-card-content class="card-content">
+      <a [routerLink]="computedLayout.href">
       <img
         mat-card-image
         class="card-image"
         [src]="computedLayout.img"
         alt="img"
       />
+    </a>
       <mat-card-title class="card-title">{{
         computedLayout.title
       }}</mat-card-title>

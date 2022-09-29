@@ -45,18 +45,18 @@
       "layout_name": "m_monitoring.site_list"
     },
     "site_group_details": {
-      "url": "site_group_details/:id_group_site",
+      "url": "site_group_details/:id_site_group",
       "layout_name": "m_monitoring.site_group_details",
       "data": {
         "site_group": {
-          "value": ":id_group_site"
+          "value": ":id_site_group"
         },
         "site": {
           "prefilters": [
             {
               "field": "groups.id_site_group",
               "type": "=",
-              "value": ":id_group_site"
+              "value": ":id_site_group"
             }
           ]
         }

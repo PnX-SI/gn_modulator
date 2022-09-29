@@ -43,7 +43,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
     }
 
     // if(this.schemaConfig.definition.meta.check_cruved) {
-      fields.push('cruved_ownership');
+      fields.push('ownership');
     // }
 
     return this._services.mData.getOne(this.schemaName, this.value, {
@@ -58,7 +58,7 @@ export class BasePropertiesComponent extends BaseComponent implements OnInit {
   processData(data) {
     this.data = data;
     this.bEditAllowed =
-      data["cruved_ownership"] <= this.moduleConfig.module.cruved["U"];
+      data["ownership"] <= this.moduleConfig.module.cruved["U"];
     this.setComponentTitle();
     this.processedLayout = {
       height_auto: true,

@@ -29,20 +29,19 @@
           (onAction)="processAction($event)"
         ></modules-layout>
       </div>
-    </div>
-
-    <div>
-      <button
-        *ngIf="options.form"
-        mat-mini-fab
-        color="primary"
-        aria-label="Example icon button with a menu icon"
-        [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
-        (click)="addArrayElement()"
-        (onAction)="processAction($event)"
-      >
-        <mat-icon>add</mat-icon>
-      </button>
+      <div>
+        <button
+          *ngIf="options.form"
+          mat-mini-fab
+          color="primary"
+          aria-label="Example icon button with a menu icon"
+          [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
+          (click)="addArrayElement()"
+          (onAction)="processAction($event)"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
     </div>
   </fieldset>
 </ng-container>
@@ -51,7 +50,6 @@
 <ng-template #layoutArraySimple>
   <ng-container>
     <h3>{{ computedLayout.title }} ({{ data && data[layout.key]?.length }})</h3>
-
     <div
       [ngClass]="{
         'layout-row': computedLayout.direction == 'row',
@@ -73,9 +71,21 @@
           (onAction)="processAction($event)"
         ></modules-layout>
       </div>
+      <div style="flex: 0">
+        <button
+          *ngIf="options.form"
+          mat-mini-fab
+          color="primary"
+          aria-label="Example icon button with a menu icon"
+          [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
+          (click)="addArrayElement()"
+          (onAction)="processAction($event)"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
     </div>
-
-    <div>
+    <!-- <div style="flex: 0">
       <button
         *ngIf="options.form"
         mat-mini-fab
@@ -87,6 +97,6 @@
       >
         <mat-icon>add</mat-icon>
       </button>
-    </div>
+    </div> -->
   </ng-container>
 </ng-template>

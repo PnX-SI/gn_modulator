@@ -409,6 +409,28 @@ class SchemaFiles():
         # print("schemas --- %s seconds ---" % (time.time() - start_time))
 
     @classmethod
+    def reinit_marshmallow_schemas(cls):
+        '''
+            methode pour reinitialiser les schemas
+            par exemple pour un install après une migration
+            et pour l'installation de données complémentaire exemple
+            on a besoin de refaire les schema qui n'ont pas pu être fait correctement car des tables n'existaient pas
+            (pas de model pour les relations -> schema non operationel pour ces relation)
+        '''
+        for schema_name in cls.schema_names_from_cache():
+            cls.set_schema_cache(schema_name, 'marshmallow', None)
+
+        for schema_name in cls.schema_names_from_cache():
+            sm = cls(schema_name)
+            sm.Model()
+
+
+        for schema_name in cls.schema_names_from_cache():
+            sm = cls(schema_name)
+            sm.MarshmallowSchema()
+
+
+    @classmethod
     def process_schema_config(cls, data, key=None):
         '''
             transforme les element commençant par '__CONFIG.' et terminant par '__' par leur valeur correspondante dans

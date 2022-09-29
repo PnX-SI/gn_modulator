@@ -20,6 +20,7 @@ export class ModulesLayoutObjectTableComponent
   tab = document.createElement("div"); // element
   tableHeight; // hauteur de la table
 
+  firstDraw;
   _params;
   modalDeleteLayout;
 
@@ -31,11 +32,10 @@ export class ModulesLayoutObjectTableComponent
   }
 
   postInit() {
-    this.drawTable
   }
 
   onRedrawElem(): void {
-    this.drawTable();
+    this.onHeightChange(true)
   }
 
   drawTable(): void {
@@ -81,7 +81,7 @@ export class ModulesLayoutObjectTableComponent
         headerSort: false,
         formatter: (cell, formatterParams, onRendered) => {
           var html = "";
-          html += `<span class="table-icon"><i class='fa fa-eye table-icon' action="details"></i></span>`;
+          html += `<span class="table-icon" action="details"><i class='fa fa-eye table-icon action' action="details"></i></span>`;
           return html;
         },
         width: 30,
@@ -95,12 +95,12 @@ export class ModulesLayoutObjectTableComponent
         headerSort: false,
         formatter: (cell, formatterParams, onRendered) => {
           const editAllowed =
-            cell._cell.row.data["cruved_ownership"] <=
+            cell._cell.row.data["ownership"] <=
             this.moduleConfig.module.cruved["U"];
           var html = "";
           html += `<span class="table-icon ${
-            editAllowed ? "" : "disabled"
-          }"><i class='fa fa-pencil' ${
+            editAllowed ? '' : "disabled"
+          }"><i class='fa fa-pencil action' ${
             editAllowed ? 'action="edit"' : ""
           }></i></span>`;
           return html;
@@ -109,7 +109,7 @@ export class ModulesLayoutObjectTableComponent
         hozAlign: "center",
         tooltip: (cell) => {
           const editAllowed =
-            cell._cell.row.data["cruved_ownership"] <=
+            cell._cell.row.data["ownership"] <=
             this.moduleConfig.module.cruved["U"];
           return editAllowed
             ? `Éditer ${this.schemaConfig.display.le_label} ${this.getCellValue(
@@ -122,12 +122,12 @@ export class ModulesLayoutObjectTableComponent
         headerSort: false,
         formatter: (cell, formatterParams, onRendered) => {
           const deleteAllowed =
-            cell._cell.row.data["cruved_ownership"] <=
+            cell._cell.row.data["ownership"] <=
             this.moduleConfig.module.cruved["D"];
           var html = "";
           html += `<span class="table-icon ${
             deleteAllowed ? "" : "disabled"
-          }"><i class='fa fa-trash' ${
+          }"><i class='fa fa-trash action' ${
             deleteAllowed ? 'action="delete"' : ""
           }></i></span>`;
           return html;
@@ -136,7 +136,7 @@ export class ModulesLayoutObjectTableComponent
         hozAlign: "center",
         tooltip: (cell) => {
           const deleteAllowed =
-            cell._cell.row.data["cruved_ownership"] <=
+            cell._cell.row.data["ownership"] <=
             this.moduleConfig.module.cruved["D"];
           return deleteAllowed
             ? `Supprimer ${this.schemaConfig.display.le_label} ${this.getCellValue(
@@ -173,8 +173,11 @@ export class ModulesLayoutObjectTableComponent
   }
 
   onRowClick = (e, row) => {
-    const action =
-      utils.getAttr(e, "target.attributes.action.nodeValue") || "selected";
+    let action = utils.getAttr(e, "target.attributes.action.nodeValue") 
+      ? utils.getAttr(e, "target.attributes.action.nodeValue")
+      : e.target.getElementsByClassName('action')
+      ? utils.getAttr(e.target.getElementsByClassName('action')[0], 'attributes.action.nodeValue')
+      :  'selected';
     const value = this.getRowValue(row);
 
     if (["details", "edit"].includes(action)) {
@@ -186,7 +189,6 @@ export class ModulesLayoutObjectTableComponent
     }
 
     if (action == 'delete') {
-      console.log('open modal delete')
       this._mLayout.openModal(this.modalDeleteLayout.modal_name, this.getRowData(row))
     }
 
@@ -214,7 +216,7 @@ export class ModulesLayoutObjectTableComponent
     return new Promise((resolve, reject) => {
       const fields = this.columns().map((column) => column.field);
 
-      fields.push("cruved_ownership");
+      fields.push("ownership");
 
       if (!fields.includes(this.schemaConfig.utils.pk_field_name)) {
         fields.push(this.schemaConfig.utils.pk_field_name);
@@ -332,7 +334,6 @@ export class ModulesLayoutObjectTableComponent
 
   processConfig() {
     this.modalDeleteLayout = this._mSchema.modalDeleteLayout(this.schemaConfig, `delete_modal_${this._id}`)
-    console.log(this.modalDeleteLayout)
     this.drawTable();
   }
 
@@ -369,5 +370,12 @@ export class ModulesLayoutObjectTableComponent
 
   getData(): Observable<any> {
     return of(true);
+  }
+  
+  refreshData(objectName: any): void {
+    
+    if (objectName == this.data.object_name) {
+      this.drawTable()
+    }
   }
 }

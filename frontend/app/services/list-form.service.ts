@@ -224,7 +224,9 @@ export class ListFormService {
     params.filters = [...(options.filters || [])];
     if (options.schema_name) {
       params.filters = [...params.filters, ...(options.schema_filters || [])];
+      params.sorters = params.sorters || options.sorters || [];
 
+      
       if (options.reload_on_search && options.search) {
         params.filters.push({
           field: options.label_field_name,

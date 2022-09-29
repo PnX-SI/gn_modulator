@@ -4,7 +4,7 @@ from . import errors
 from ..schema import SchemaMethods
 from flask_migrate import upgrade as db_upgrade, downgrade as db_downgrade
 from sqlalchemy.orm.exc import NoResultFound
-
+from geonature.utils.env import db
 class ModuleCommands():
 
     @classmethod
@@ -22,6 +22,7 @@ class ModuleCommands():
             print("Le module n'est pas enregistré")
 
         # alembic
+        db.session.commit() # pour eviter les locks ???
         db_downgrade(revision='{}@base'.format(module_code.lower()))
 
         #symlink
@@ -46,12 +47,15 @@ class ModuleCommands():
         # alembic
         # - test if migration file(s) exist(s)
         if cls.migration_files(module_code):
+            db.session.commit() # pour eviter les locks ???
             db_upgrade(revision='{}@head'.format(module_code.lower()))
 
         # pour les update du module ? # test si module existe
         cls.register_db_module(module_code)
 
         # process module data (nomenclature, groups ?, datasets, etc..)
+        print('reinit des schemas')
+        SchemaMethods.reinit_marshmallow_schemas()
         cls.process_module_data(module_code)
 
         # assets

@@ -64,7 +64,7 @@ class SchemaModelBase():
     def process_existing_column_model(self, key, column_def, column_model):
         pass
 
-    def process_column_model(self, column_def):
+    def process_column_model(self, key, column_def):
         '''
         '''
         # get field_options
@@ -80,8 +80,12 @@ class SchemaModelBase():
         if column_def.get('foreign_key'):
             relation = self.cls(column_def['schema_name'])
             foreign_key = '{}.{}'.format(relation.sql_schema_dot_table(), relation.pk_field_name())
-            field_args.append(db.ForeignKey(foreign_key))
-
+            if self.is_required(key):
+                print(self.schema_name(), key, 'fk cascade')
+                field_args.append(db.ForeignKey(foreign_key, ondelete="CASCADE", onupdate="CASCADE"))
+            else:
+                field_args.append(db.ForeignKey(foreign_key))
+                
         # process type
         db_type = self.get_db_type(column_def)
 
@@ -108,6 +112,18 @@ class SchemaModelBase():
 
         if relationship_def.get('relation_type') == '1-1':
             kwargs['uselist'] = False
+
+
+        if relationship_def.get('relation_type') == '1-n':
+            # test si obligatoire
+            rel = self.cls(relationship_def['schema_name'])
+            
+            # foreign_column = rel.property(relationship_def['foreign_key'])
+            if rel.is_required(relationship_def['foreign_key']):
+                print(self.schema_name(), '1-n cascade', key, relationship_def['foreign_key'],rel.is_required(relationship_def['foreign_key']))
+                kwargs['cascade'] = "all, delete, delete-orphan"
+            # if foreign_column.requi
+
 
         if relationship_def.get('relation_type') == 'n-1':
             kwargs['foreign_keys'] = getattr(Model, relationship_def['local_key'])
@@ -242,12 +258,12 @@ class SchemaModelBase():
                 if key in base_schema.column_keys() and key != base_schema.pk_field_name():
                     continue
 
-            dict_model[key] = self.process_column_model(column_def)
+            dict_model[key] = self.process_column_model(key, column_def)
 
         Model = type(self.model_name(), (ModelBaseClass,), dict_model)
 
         # patch cruved
-        Model.cruved_ownership = 0
+        Model.ownership = 0
 
         # store in cache before relations (avoid circular dependancies)
         self.cls.set_schema_cache(self.schema_name(), 'model', Model)

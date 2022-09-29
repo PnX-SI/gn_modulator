@@ -27,8 +27,11 @@ export class ModulesSchemaService {
     this._mLayout = this._injector.get(ModulesLayoutService);
   }
 
-  processFormLayout(schemaConfig, moduleConfig) {
+  processFormLayout(schemaName, moduleConfig) {
+    const schemaConfig = this.schemaConfig(schemaName);
     const schemaLayout = schemaConfig.form.layout;
+    const geometryType = this.geometryType(schemaName)
+    const geometryFieldName = this.geometryFieldName(schemaName)
     return {
       type: "form",
       appearance: "fill",
@@ -36,11 +39,13 @@ export class ModulesSchemaService {
       items: [
         {
           type: "map",
-          key: schemaConfig.utils.geometry_field_name,
+          key: geometryFieldName,
           edit: true,
+          geometry_type: geometryType,
           gps: true,
-          hidden: !schemaConfig.utils.geometry_field_name,
-          flex: schemaConfig?.utils.geometry_field_name ? "1" : "0",
+          hidden: !geometryFieldName,
+          flex: geometryFieldName ? "1" : "0",
+          zoom: 15
         },
         {
           items: [
@@ -54,6 +59,12 @@ export class ModulesSchemaService {
             //   "json": "__f__formGroup.value",
             //   'flex': '0'
             // },
+            // {
+            //   "type": "message",
+            //   "json": "__f__formGroup.value",
+            //   'flex': '0'
+            // },
+
             {
               type: "breadcrumbs",
               flex: "0",
@@ -123,7 +134,7 @@ export class ModulesSchemaService {
                     modal_name: "delete",
                   },
 
-                  hidden: `__f__data.cruved_ownership > ${moduleConfig.module.cruved["D"]} || !data.${schemaConfig.utils.pk_field_name}`,
+                  hidden: `__f__data.ownership > ${moduleConfig.module.cruved["D"]} || !data.${schemaConfig.utils.pk_field_name}`,
                 },
                 this.modalDeleteLayout(schemaConfig)
               ],
@@ -184,7 +195,7 @@ export class ModulesSchemaService {
           title: "Éditer",
           description: `Editer ${schemaConfig.display.le_label}`,
           action: "edit",
-          hidden: `__f__data.cruved_ownership > ${moduleConfig.module.cruved["U"]}`,
+          hidden: `__f__data.ownership > ${moduleConfig.module.cruved["U"]}`,
           flex: "0",
         },
       ],
@@ -249,6 +260,12 @@ export class ModulesSchemaService {
 
   geometryFieldName(schemaName) {
     return this.schemaConfig(schemaName).utils.geometry_field_name;
+  }
+
+  geometryType(schemaName) {
+    return this.geometryFieldName(schemaName)
+      ? this.schemaConfig(schemaName).definition.properties[this.geometryFieldName(schemaName)].geometry_type
+      : null;
   }
 
   labelFieldName(schemaName) {

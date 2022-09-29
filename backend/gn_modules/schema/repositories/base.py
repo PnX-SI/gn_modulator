@@ -2,12 +2,13 @@
     SchemaMethods : sqlalchemy queries processing
 '''
 
+from dataclasses import field
 import math
 
 from geonature.utils.env import db
 
-from sqlalchemy import func
-
+from sqlalchemy import func, select, alias
+from sqlalchemy.orm import defer
 from .. import errors
 
 
@@ -45,7 +46,6 @@ class SchemaRepositoriesBase():
             )
 
         Model = self.Model()
-        self.set_cruved()
 
         query = db.session.query(Model)
 
@@ -63,7 +63,7 @@ class SchemaRepositoriesBase():
 
         return query
 
-    def insert_row(self, data, commit=True):
+    def insert_row(self, data):
         '''
             insert new row with data
         '''
@@ -75,8 +75,7 @@ class SchemaRepositoriesBase():
         m = self.Model()()
         self.unserialize(m, data)
         db.session.add(m)
-        if commit:
-            db.session.commit()
+        db.session.commit()
 
         return m
 
@@ -147,6 +146,7 @@ class SchemaRepositoriesBase():
         if not self.is_new_data(m, data):
             return m, False
 
+        db.session.flush()
         self.unserialize(m, data)
         db.session.commit()
 
@@ -161,34 +161,53 @@ class SchemaRepositoriesBase():
         db.session.commit()
         return m
 
-    def get_row_number(self, params, value):
-        """
-            todo UN SUEL
-        """
-        Model = self.Model()
-        self.set_cruved()
+    def process_query_columns(self, params, query, order_by):
+        '''
+            permet d'ajouter de colonnes selon les besoin
+            - ownership pour cruved (toujours?)
+            - row_number (si dans fields)
+        '''
 
+        fields = params.get('fields', [])
+
+        # cruved
+        if 'ownership' in fields:
+            query = self.add_column_ownership(query)
+
+        # row_number
+        if 'row_number' in fields:
+            query = query.add_columns(
+                func.row_number()
+                .over(order_by=order_by)
+                .label('row_number')
+            )
+
+        return query
+
+
+
+    def get_row_number(self, params, value):
+
+        Model = self.Model()
         query = db.session.query(Model)
 
-        # pre_filters
-        query = self.process_cruved('R', Model, query)
+        params['fields'] = [self.pk_field_name(), 'row_number']
+
+        order_bys, query = self.get_sorters(Model, params.get('sorters', []), query)
+        query = self.process_query_columns(params, query, order_bys)
+        
+        query = self.process_cruved_filter('R', 'MODULE ?? TODO', query)
         query = self.process_filters(Model, params.get('prefilters', []), query)
-
-
-        # filters
         query = self.process_filters(Model, params.get('filters', []), query)
-
-        # sorters ?? redondant avec row_number order_by ?
-        query = self.process_sorters(Model, params.get('sorters', []), query)
-
-        # query row number
-        order_by, query = self.get_sorters(Model, params.get('sorters', []), query)
-        query = query.add_columns(func.row_number().over(order_by=order_by))
-        sub_query = query.subquery()
-        field_name = self.pk_field_name()
-        res = db.session.query(sub_query).filter(getattr(sub_query.c, field_name) == value).one()
-
-        return res[-1]
+ 
+        subquery = query.subquery()
+ 
+        res = (
+            db.session.query(subquery)
+            .filter(getattr(subquery.c, self.pk_field_name()) == value)
+            .one()
+        )
+        return res.row_number
 
     def get_page_number(self, params, value):
 
@@ -217,8 +236,6 @@ class SchemaRepositoriesBase():
             - page ( OFFSET(page_size, page) )
         '''
 
-
-
         query_info = {
             'page': params.get('page', None),
             'page_size': params.get('page_size', None)
@@ -226,37 +243,92 @@ class SchemaRepositoriesBase():
 
         # init query
         Model = self.Model()
-        self.set_cruved()
+
+        model_pk_field = getattr(Model, self.pk_field_name())
+
+        # essayer de ne mettre que les colonnes ???
+
+        # query_fields = []
+        # for field in params['fields']:
+        #     if field in ['ownership', 'row_number']:
+        #         continue
+        #     model_attribute, query = self.custom_getattr(Model, field)
+        #     query_fields.append(model_attribute)
+
+        # query = db.session.query(*query_fields)
         query = db.session.query(Model)
 
-        query = self.process_sorters(Model, params.get('sorters', []), query)
 
-        # CRUVED et prefilters
-        query = self.process_cruved('R', Model, query)
+        # optimisation de la requete pour ne pas appeler tous les champs
+        # test
+        fields = params.get('fields', [])
+        if not self.pk_field_name() in fields:
+            fields.append(self.pk_field_name())
+
+        if self.schema_name() in ['modules.module', 'commons.modules']:
+            fields.append('type')
+            
+        defered_fields = [
+            defer(getattr(Model, key))
+            for key in self.column_properties_keys()
+            if key not in fields
+        ]
+
+        defered_fields += [
+            defer(getattr(Model, key))
+            for key in self.column_keys()
+            if key not in fields
+        ]
+
+        for defered_field in defered_fields:
+            try:
+                query = query.options(defered_field)
+            except:
+                pass    
+        
+        order_bys, query = self.get_sorters(Model, params.get('sorters', []), query)
+
+        # process query columns
+        # ajout de colonnes
+        # - cruved
+        # - row_number
+        # - enlever les colonnes non demandées ????
+        query = self.process_query_columns(params, query, order_bys)
+
+        # prefilters
+
+        # - CRUVED : process_cruved
+        #   - ajout de la colonne ownership
+        #   - filtre selon le cruved
+
+        query = self.process_cruved_filter('R', 'MODULE ?? TODO', query)
+
         query = self.process_filters(Model, params.get('prefilters', []), query)
-
-        # TODO distinguer filter et pre_filter search
-        query_info['total'] = query.count()
+         
+        query_info['total'] = (
+            query
+                .with_entities(model_pk_field)
+                .group_by(model_pk_field)
+                .count()
+        )
 
         if params.get('page_size'):
             query_info['last_page'] = math.ceil(query_info['total'] / params.get('page_size'))
 
         # filters
         query = self.process_filters(Model, params.get('filters', []), query)
+        
+        query_info['filtered'] = (
+            query
+                .with_entities(model_pk_field)
+                .group_by(model_pk_field)
+                .count()
+        )
 
-        # TODO distinguer filter et filter search
-
-        query_info['filtered'] = query.count()
-
-        if query_info['filtered'] > query_info['total']:
-            raise Exception('Pb filtered {} > total {} pour get_list {}'.format(
-                query_info['filtered'],
-                query_info['total'],
-                self.schema_name()
-            ))
+        query = query.order_by(*(tuple(order_bys)))
 
         if params.get('page_size'):
-            query_info['last_page'] = math.ceil(query_info['filtered'] / params.get('page_size'))
+            query_info['last_page'] = math.ceil(query_info['total'] / params.get('page_size'))
 
         # page, page_size
         query = self.process_page_size(params.get('page'), params.get('page_size'), params.get('value'), query)

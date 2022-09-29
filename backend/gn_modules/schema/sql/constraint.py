@@ -72,6 +72,7 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
 
 
             on_delete_action = 'CASCADE' if self.is_required(key) else 'SET NULL'
+            # on_delete_action = 'NO ACTION'
 
             txt += (
                 """---- {sql_schema_name}.{sql_table_name} foreign key constraint {fk_key_field_name}
@@ -116,6 +117,7 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
         ADD CONSTRAINT {constraint_name}
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique({nomenclature_field_name},'{NOMENCLATURE_TYPE}'))
         NOT VALID;
+
 """).format(
                 sql_schema_name=sql_schema_name,
                 sql_table_name=sql_table_name,

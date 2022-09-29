@@ -23,18 +23,18 @@ def cmd_init_module(module_code, force=False, reinstall=False):
     ModuleMethods.init_module(module_code, force)
 
 
-@click.command('reinit')
-@click.argument('module_code')
-@click.option('-f', '--force', is_flag=True)
-@with_appcontext
-def cmd_reinit_module(module_code, force=False):
-    '''
-        commande d'initialisation du module
-    '''
+# @click.command('reinit')
+# @click.argument('module_code')
+# @click.option('-f', '--force', is_flag=True)
+# @with_appcontext
+# def cmd_reinit_module(module_code, force=False):
+#     '''
+#         commande d'initialisation du module
+#     '''
 
-    ModuleMethods.remove_module(module_code, force)
-    ModuleMethods.init_module(module_code, force)
-    ModuleMethods.install_module(module_code, force)
+#     ModuleMethods.remove_module(module_code, force)
+#     ModuleMethods.init_module(module_code, force)
+#     ModuleMethods.install_module(module_code, force)
 
 
 @click.command('install')
@@ -160,7 +160,7 @@ def cmd_import_bulk_data(schema_name=None, import_file_path=None, data_file_path
 
 commands = [
     cmd_init_module,
-    cmd_reinit_module,
+    # cmd_reinit_module,
     cmd_install_module,
     cmd_remove_module,
     cmd_doc_schema,

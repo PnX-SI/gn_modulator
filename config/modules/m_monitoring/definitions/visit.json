@@ -127,6 +127,7 @@
   "details": {
     "layout": [
       "site.site_name",
+      "module.module_label",
       "visit_date_min",
       "nb_observations",
       "digitiser.nom_complet",

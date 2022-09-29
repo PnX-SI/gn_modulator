@@ -9,8 +9,8 @@
     "geometry_field_name": "site_geom",
     "unique": [
       "site_code"
-    ]
-    // "check_cruved": true,
+    ],
+    "check_cruved": true
   },
   "map": {
     "popup_fields": [
@@ -70,6 +70,28 @@
         "type": "list_form",
         "title": "Type de site",
         "schema_name": "ref_nom.nomenclature"
+      },
+      {
+        "display": "fieldset",
+        "type": "array",
+        "key": "actors",
+        "items": {
+          "direction": "row",
+          "items": [
+            {
+              "key": "id_role",
+              "type": "list_form"
+            },
+            {
+              "key": "id_organism",
+              "type": "list_form"
+            },
+            {
+              "key": "id_nomenclature_type_actor",
+              "type": "list_form"
+            }
+          ]
+        }
       }
     ]
   },

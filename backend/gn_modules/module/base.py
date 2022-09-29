@@ -53,7 +53,7 @@ class ModuleBase():
         try:
             schema_module.update_row(module_code, module_row_data, field_name='module_code')
         except NoResultFound:
-            schema_module.insert_row(module_row_data, commit=True)
+            schema_module.insert_row(module_row_data)
 
 
 
@@ -157,7 +157,9 @@ class ModuleBase():
         module_schema = SchemaMethods('modules.module')
         if not module_schema.sql_table_exists():
             return {}
+
         query, _ = module_schema.get_list({})
+
         modules_dict = module_schema.serialize_list(
             query.all(),
             fields=[
@@ -385,8 +387,6 @@ class ModuleBase():
             # racine du module on met le nom du module
             breadcrumb = [{ "url": url_page, "label": f"{module_config['module']['module_label']}"}]
             parent_breadcrumbs = [ {"url": "#/modules/", "label": "Modules"} ]
-
-
 
         return parent_breadcrumbs + breadcrumb
 

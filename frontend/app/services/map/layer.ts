@@ -3,6 +3,7 @@
  * destinées à ModulesMapService
  */
 
+import map from ".";
 import utils from "../../utils";
 
 const defaultLayerOptions = {
@@ -73,6 +74,16 @@ export default {
     layer.key = options.key;
     this.getMap(mapId)._layers;
     this.getMap(mapId).addLayer(layer);
+    
+    console.log('process geometry', data, options, layer);
+    
+    if (data.type == 'Point') {
+      this.setCenter(mapId, utils.copy(data.coordinates).reverse())      
+    }
+    if (data.type != 'Point') {
+      this.zoomOnLayer(mapId, layer) 
+    }
+
   },
 
   processLayersData(mapId, layersData) {
@@ -183,6 +194,7 @@ export default {
   },
 
   zoomOnLayer(mapId, layer) {
+    console.log("zoom", layer)
     if (!layer) {
       return;
     }

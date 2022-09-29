@@ -147,7 +147,7 @@ export class ModulesLayoutObjectMapComponent
     var propertiesHTML = "";
     propertiesHTML += "<ul>\n";
     propertiesHTML += popupFields
-      .filter((fieldKey) => fieldKey != "cruved_ownership")
+      .filter((fieldKey) => fieldKey != "ownership")
       .map((fieldKey) => {
         // gerer les '.'
         const fieldKeyLabel = fieldKey.split(".")[0];
@@ -161,7 +161,7 @@ export class ModulesLayoutObjectMapComponent
 
     const htmlDetails = '<button action="details">Details</button>';
     const condEdit =
-      properties["cruved_ownership"] <= this.moduleConfig.module.cruved["U"];
+      properties["ownership"] <= this.moduleConfig.module.cruved["U"];
     const htmlEdit = condEdit ? '<button action="edit">Éditer</button>' : "";
 
     const html = `
@@ -180,7 +180,7 @@ export class ModulesLayoutObjectMapComponent
     // const fields = this.schemaConfig.table.columns.map(column => column.field);
     const fields = this.schemaConfig.map.popup_fields;
     // if(this.schemaConfig.definition.meta.check_cruved) {
-    fields.push("cruved_ownership");
+    fields.push("ownership");
     // }
     this._mData
       .getOne(this.schemaName(), value, { fields })
@@ -215,5 +215,11 @@ export class ModulesLayoutObjectMapComponent
       as_geojson: true,
     };
     return this._mData.getList(this.schemaName(), extendedParams);
+  }
+  
+  refreshData(objectName: any): void {
+    if (objectName == this.data.object_name) {
+      this.postProcessLayout()
+    }
   }
 }

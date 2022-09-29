@@ -138,7 +138,7 @@
             "properties": {
               "type": { "enum": [ "geometry" ]},
               "srid": { "type": "integer" },
-              "geometry_type": { "enum": [ "geometry", "point" ] },
+              "geometry_type": { "enum": [ "geometry", "point", "polygon", "linestring" ] },
               "title": { "type": "string"},
               "description": { "type": "string"},
               "index": { "type": "boolean"},

@@ -77,7 +77,7 @@ export class ModulesMapService {
   layerZoomMoveEndListener = mapMethods.layer.layerZoomMoveEndListener;
   actionTooltipDisplayZoomThreshold = mapMethods.layer.actionTooltipDisplayZoomThreshold;
   findLayer = mapMethods.layer.findLayer;
-
+  zoomOnLayer = mapMethods.layer.zoomOnLayer;
   /** ./map/draw */
 
   // initDraw = mapMethods.draw.initDraw;
