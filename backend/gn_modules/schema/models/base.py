@@ -81,7 +81,6 @@ class SchemaModelBase():
             relation = self.cls(column_def['schema_name'])
             foreign_key = '{}.{}'.format(relation.sql_schema_dot_table(), relation.pk_field_name())
             if self.is_required(key):
-                print(self.schema_name(), key, 'fk cascade')
                 field_args.append(db.ForeignKey(foreign_key, ondelete="CASCADE", onupdate="CASCADE"))
             else:
                 field_args.append(db.ForeignKey(foreign_key))
@@ -120,7 +119,6 @@ class SchemaModelBase():
             
             # foreign_column = rel.property(relationship_def['foreign_key'])
             if rel.is_required(relationship_def['foreign_key']):
-                print(self.schema_name(), '1-n cascade', key, relationship_def['foreign_key'],rel.is_required(relationship_def['foreign_key']))
                 kwargs['cascade'] = "all, delete, delete-orphan"
             # if foreign_column.requi
 

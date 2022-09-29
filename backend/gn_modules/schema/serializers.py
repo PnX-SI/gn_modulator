@@ -193,10 +193,6 @@ class SchemaSerializers:
 
         @pre_load
         def pre_load_make_object(self_marshmallow, data, **kwargs):
-
-            print('\n\npreload', self.schema_name(), data)
-            if self.schema_name() == 'm_sipaf.pf':
-                print(self.Model().actors)
             
             for key in self.pk_field_names():
                 if key in data and data[key] is None:
