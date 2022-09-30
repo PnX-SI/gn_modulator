@@ -168,7 +168,11 @@ def cmd_import_data(data_name):
 
     infos = {}  
     for data_name in data_names:
-        infos[data_name] = SchemaMethods.process_data(data_name)
+        try: 
+            infos[data_name] = SchemaMethods.process_data(data_name)
+        except Exception as e:
+            print(str(e))
+            return
     
     SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
     

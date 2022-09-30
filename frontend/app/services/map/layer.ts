@@ -261,7 +261,6 @@ export default {
         layer.key = key;
         if (bring_to_front) {
           setTimeout(() => {
-            console.log("bring to front", key, bring_to_front);
             layer.bringToFront();
           }, 500);
         }

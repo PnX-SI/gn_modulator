@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "schema_name": "m_monitoring.site_group",
+    "sql_processing": true,
+    "sql_schema_dot_table": "m_monitoring.t_site_group",
+    "genre": "M",
+    "label": "groupe de sites",
+    "labels": "groupes de sites",
+    "label_field_name": "site_group_name",
+    "geometry_field_name": "site_group_geom",
+    "unique": [
+      "site_group_code"
+    ]
+    // "check_cruved": true,
+  },
+  "map": {
+    "popup_fields": [
+      "site_group_name",
+      "site_group_code",
+      "site_group_desc"
+    ]
+  },
+  "filters": {
+    "defs": {
+    },
+    "layout": {
+    }
+  },
+  "table": {
+    "columns": [
+      "site_group_code",
+      "site_group_name",
+      "nb_sites"
+    ],
+    "sort": [
+      {
+        "column": "site_group_code",
+        "dir": "desc"
+      }
+    ]
+  },
+  "required": [
+    "site_group_code",
+    "site_group_name"
+  ],
+  "properties": {
+    "id_site_group": {
+      "type": "integer",
+      "title": "Pk du group de site",
+      "description": "Clé primaire du group de site",
+      "primary_key": true
+    },
+    "site_group_code": {
+      "type": "string",
+      "title": "Code du site",
+      "required": true
+    },
+    "site_group_name": {
+      "type": "string",
+      "title": "Nom du groupe de site",
+      "required": true
+    },
+    "site_group_desc": {
+      "type": "string",
+      "title": "Description du groupe de site"
+    },
+    "id_digitiser": {
+      "type": "integer",
+      "foreign_key": true,
+      "schema_name": "user.role",
+      "title": "Numérisateur",
+      "description": "Personne qui a saisi la donnée"
+    },
+    "digitiser": {
+      "type": "relation",
+      "relation_type": "n-1",
+      "schema_name": "user.role",
+      "title": "Numérisateur",
+      "description": "Personne qui a saisi la donnée",
+      "local_key": "id_digitiser"
+    },
+    "site_group_uuid": {
+      "type": "uuid",
+      "title": "UUID"
+    },
+    "site_group_geom": {
+      "type": "geometry",
+      "geometry_type": "geometry",
+      "title": "Géométrie du groupe de site",
+      "srid": 4326
+    },
+    "site_group_data": {
+      "type": "json",
+      "description": "Données additionnelles du  groupe de site",
+      "title": "Données additionnelles"
+    },
+    "sites": {
+      "type": "relation",
+      "relation_type": "n-n",
+      "schema_name": "m_monitoring.site",
+      "title": "Sites",
+      "description": "Sites associés au groupe de site",
+      "schema_dot_table": "m_monitoring.cor_site_group"
+    },
+    "nb_sites": {
+      "type": "integer",
+      "title": "Nombre de sites",
+      "column_property": "nb",
+      "relation_key": "sites"
+    }
+  },
+  "form": {
+    "layout": [
+      {
+        "hidden": true,
+        "items": [
+          "id_site",
+          "site_group_geom",
+          {
+            "key": "id_digitiser",
+            "default": "__f__meta.currentUser?.id_role",
+            "hidden": true
+          }
+        ]
+      },
+      "site_group_code",
+      "site_group_name"
+    ]
+  },
+  "details": {
+    "layout": [
+      "id_site_group",
+      "site_group_code",
+      "site_group_name",
+      "digitiser.nom_complet",
+      "nb_sites"
+    ]
+  }
+}

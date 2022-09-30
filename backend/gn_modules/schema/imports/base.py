@@ -87,8 +87,7 @@ class SchemaBaseImports:
         data = cls.get_data(data_name)
 
         if not data:
-            print(f"La données demandée {data_name} n'existe pas")
-            return
+            raise(Exception(f"La données demandée {data_name} n'existe pas"))
 
         data_file_path = data['file_path']
 

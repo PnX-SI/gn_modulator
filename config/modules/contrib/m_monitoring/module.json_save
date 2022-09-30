@@ -1,0 +1,89 @@
+{
+  "module": {
+    "module_code": "m_monitoring",
+    "module_label": "Module(s) de suivi",
+    "module_desc": "Vers une version 2 du module monitoring",
+    "module_picto": "fa-puzzle-piece",
+    "active_frontend": true
+  },
+  "schemas": [
+    "m_monitoring.site",
+    "m_monitoring.site_complement",
+    "m_monitoring.sc_arbre_loge",
+    "m_monitoring.sc_grotte"
+  ],
+  "features": [
+    "exemples.json"
+  ],
+  "actions": {
+    "edit": {
+      "type": "link",
+      "pageName": "edit"
+    },
+    "details": {
+      "type": "link",
+      "pageName": "details"
+    },
+
+    "create": {
+      "type": "link",
+      "pageName": "create"
+    },
+    "export": {
+      "type": "export"
+    }
+  },
+  "pages": {
+    "list": {
+      "label": "MONITORING",
+      "url": "",
+      "elements": [
+        {
+          "schema_name": "m_monitoring.site",
+          "type": "list"
+        }
+      ]
+    },
+    "edit": {
+      "label": "Édition",
+      "parent": {
+        "pageName": "list"
+      },
+      "url": "edit/:value",
+      "elements": [
+        {
+          "type": "form",
+          "schema_name": "m_monitoring.site",
+          "zoom": "15"
+        }
+      ]
+    },
+    "create": {
+      "label": "Création",
+      "parent": {
+        "pageName": "list"
+      },
+      "url": "create",
+      "elements": [
+        {
+          "type": "form",
+          "schema_name": "m_monitoring.site"
+        }
+      ]
+    },
+    "details": {
+      "label": "Propriétés",
+      "parent": {
+        "pageName": "list"
+      },
+      "url": "details/:value",
+      "elements": [
+        {
+          "zoom": "15",
+          "type": "properties",
+          "schema_name": "m_monitoring.site"
+        }
+      ]
+    }
+  }
+}

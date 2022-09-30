@@ -1,0 +1,44 @@
+{
+  "layout_name": "m_monitoring.visit_details",
+  "height_auto": true,
+  "direction": "row",
+  "items": [
+    {
+      "key": "visit",
+      "type": "object",
+      "display": "properties"
+    },
+    {
+      "items": [
+        {
+          "type": "breadcrumbs",
+          "flex": "0"
+        },
+        {
+          "display": "tabs",
+          "items": [
+            {
+              "label": "__f__`Observations (${data.observation.filtered}/${data.observation.total})`",
+              "items": [
+                {
+                  "type": "button",
+                  "icon": "add",
+                  "action": "create",
+                  "key": "observation",
+                  "color": "primary",
+                  "params": "__f__{return { id_visit: data.visit.value}}",
+                  "flex": "0"
+                },
+                {
+                  "type": "object",
+                  "display": "table",
+                  "key": "observation"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

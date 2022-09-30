@@ -1,0 +1,1 @@
+DROP SCHEMA IF EXISTS m_monitoring CASCADE;
