@@ -1,8 +1,8 @@
 {
   "module": {
     "module_code": "m_monitoring",
-    "module_label": "Module(s) de suivi",
-    "module_desc": "Vers une version 2 du module monitoring",
+    "module_label": "Gestionnaire de sites",
+    "module_desc": "Module de gestion de sites. (Vers une version 2 du module monitoring)",
     "module_picto": "fa-puzzle-piece",
     "active_frontend": true
   },
