@@ -287,14 +287,19 @@ class ModuleBase():
 
     @classmethod
     def process_module_data(cls, module_code):
-        print("- Ajout de données depuis les features")
+
         module_config = cls.module_config(module_code)
         data_names = module_config.get('features', [])
+
+        if not data_names:
+            return
+
+        print("- Ajout de données depuis les features")
+
         for data_name in data_names:
             infos = {}
             infos[data_name] = SchemaMethods.process_data(data_name)
             SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
-        pass
 
     @classmethod
     def process_module_assets(cls, module_code):

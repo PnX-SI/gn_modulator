@@ -54,7 +54,6 @@ class ModuleCommands():
         cls.register_db_module(module_code)
 
         # process module data (nomenclature, groups ?, datasets, etc..)
-        print('reinit des schemas')
         SchemaMethods.reinit_marshmallow_schemas()
         cls.process_module_data(module_code)
 
