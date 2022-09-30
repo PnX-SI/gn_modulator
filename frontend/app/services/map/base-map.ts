@@ -18,6 +18,9 @@ export default {
         delete baseMap[attr];
       }
     }
+    
+    
+    console.log(baseMap)
     return baseMap;
   },
 
@@ -28,6 +31,7 @@ export default {
 
     BASEMAP.forEach((basemap, index) => {
       const formatedBasemap = this.formatBaseMapConfig(basemap);
+      console.log(formatedBasemap.options)
       if (basemap.service === 'wms') {
         baseControl[formatedBasemap.name] = L.tileLayer.wms(
           formatedBasemap.url,

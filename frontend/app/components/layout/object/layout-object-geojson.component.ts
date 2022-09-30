@@ -83,16 +83,18 @@ export class ModulesLayoutObjectGeoJSONComponent
       
       const layerStyle = this.computedLayout.style || this.data.map?.style;
       const paneName = this.computedLayout.pane || this.data.map?.pane || `P1`;
+      const bZoom = this.computedLayout.zoom || this.data.map?.zoom;
       const bring_to_front = this.computedLayout.bring_to_front || this.data.map?.bring_to_front
+      console.log(this.data)
       this.mapData =
         {
           geojson,
           layerOptions: {
             bring_to_front,
             pane: paneName,
+            zoom: bZoom,
             key: this.computedLayout.key,
             label: `${this.schemaConfig.display.labels}`,
-            bZoom: true,
             style: layerStyle,
             onLayersAdded: () => {
               this.processValue(this.getDataValue());

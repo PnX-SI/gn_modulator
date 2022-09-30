@@ -9,7 +9,8 @@
         {
           "type": "object",
           "display": "geojson",
-          "key": "site_group"
+          "key": "site_group",
+          "zoom": true
         },
         {
           "type": "object",

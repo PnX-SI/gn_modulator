@@ -177,13 +177,14 @@ export class PageComponent implements OnInit {
       ...this.routeParams,
       ...this.moduleParams
     }
-
     // pour pouvoir accéder au paramètres pour le calcul des layouts
     this._mLayout.meta['params'] = this._mPage.params;
 
     let data = utils.copy(this.moduleConfig.data);
     const dataPage = utils.copy(this.pageConfig.data || {});
 
+    console.log(dataPage)
+    
     // gestion du paramètre debug
     this.debug = ![undefined, false, "false"].includes(
       this.routeQueryParams.debug
@@ -216,6 +217,7 @@ export class PageComponent implements OnInit {
 
     // pour communiquer les données aux composants du layout
     this.data = data;
+    console.log('init data', data)
 
     // resize des composants
     // TODO à affiner

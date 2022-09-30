@@ -74,12 +74,16 @@ export default {
     this.getMap(mapId)._layers;
     this.getMap(mapId).addLayer(layer);
 
+    if (options.zoom) {
+      
     if (data.type == "Point") {
       this.setCenter(mapId, utils.copy(data.coordinates).reverse());
     }
     if (data.type != "Point") {
       this.zoomOnLayer(mapId, layer);
     }
+  }
+    
   },
 
   processLayersData(mapId, layersData) {
@@ -184,7 +188,7 @@ export default {
         layerOptions.onLayersAdded();
       }, 1000);
     }
-    if (layerOptions.bZoom) {
+    if (layerOptions.zoom) {
       this.zoomOnLayer(mapId, layerGroup);
     }
   },
@@ -228,6 +232,7 @@ export default {
       bring_to_front = null,
     } = {}
   ): any {
+  
     const geojsonLayer = this.L.geoJSON(geojson, {
       pane,
       style: (feature) => {
