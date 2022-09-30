@@ -2,7 +2,7 @@ conf_schema_gn_module.toml
 egg.info
 node_modules
 
-config/modules/externals
+config/modules/externals/*
 # !config/modules/contrib/*
 
 backend/gn_modules/migrations/data/m_*
