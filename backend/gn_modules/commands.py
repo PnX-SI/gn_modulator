@@ -157,6 +157,21 @@ def cmd_import_bulk_data(schema_name=None, import_file_path=None, data_file_path
 
     return True
 
+@click.command('data')
+@click.argument('data_name')
+def cmd_import_data(data_name):
+    '''
+        importe des feature depuis un fichier (data) (.json) referencé par la clé 'data_name'        
+    '''
+
+    data_names = data_name.split(",")
+
+    infos = {}  
+    for data_name in data_names:
+        infos[data_name] = SchemaMethods.process_data(data_name)
+    
+    SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
+    
 
 commands = [
     cmd_init_module,
@@ -166,5 +181,6 @@ commands = [
     cmd_doc_schema,
     cmd_process_all,
     cmd_process_sql,
+    cmd_import_data,
     cmd_import_bulk_data
 ]

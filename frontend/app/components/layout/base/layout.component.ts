@@ -99,10 +99,13 @@ export class ModulesLayoutComponent implements OnInit {
 
   actionProcessing; // pour les spinners
   
+  utils; // pour acceder à utils dans les templates
+  
   constructor(protected _injector: Injector) {
     this._name = "layout";
     this._id = Math.round(Math.random() * 1e10);
     this._mLayout = _injector.get(ModulesLayoutService);
+    this.utils = utils;
   }
 
   ngOnInit() {
@@ -328,7 +331,6 @@ export class ModulesLayoutComponent implements OnInit {
         height: `${height}px`,
         "overflow-y": "scroll",
       };
-        console.log('after over', height)
       
       this.computedLayout.style = {
         ...(this.computedLayout.style || {}),

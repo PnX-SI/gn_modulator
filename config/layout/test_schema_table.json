@@ -3,7 +3,7 @@
     "height_auto": true,
     "type": "schema",
     "schema_name": "m_sipaf.pf",
-    "component": "table",
+    "display": "table",
     "display_filters": true,
     "value": 100,
     "module_code": "m_sipaf"

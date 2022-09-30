@@ -140,6 +140,11 @@ const lowerUnaccent = (str) =>
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase();
 
+    
+    const capitalize = s => {
+      return s && s[0].toUpperCase() + s.slice(1)
+    }
+    
 // remplacer dans strTest, strReplace dans un dict, array, string
 const replace = (obj, strTest, strReplace) => {
   if (isObject(obj)) {
@@ -186,5 +191,6 @@ export default {
   JSONStringify,
   replace,
   today,
+  capitalize,
   JSON,
 };

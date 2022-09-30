@@ -24,18 +24,21 @@ export class ModulesLayoutObjectTableComponent
   _params;
   modalDeleteLayout;
 
-
   constructor(_injector: Injector) {
     super(_injector);
     this._name = "layout-object-table";
     this.tableId = `table_${this._id}`;
   }
 
-  postInit() {
-  }
+  postInit() {}
 
   onRedrawElem(): void {
-    this.onHeightChange(true)
+    const elem = document.getElementById(this._id);
+    console.log("table redraw", elem?.children.length);
+
+    this.onHeightChange(true);
+    this.setCount();
+    
   }
 
   drawTable(): void {
@@ -99,7 +102,7 @@ export class ModulesLayoutObjectTableComponent
             this.moduleConfig.module.cruved["U"];
           var html = "";
           html += `<span class="table-icon ${
-            editAllowed ? '' : "disabled"
+            editAllowed ? "" : "disabled"
           }"><i class='fa fa-pencil action' ${
             editAllowed ? 'action="edit"' : ""
           }></i></span>`;
@@ -139,9 +142,9 @@ export class ModulesLayoutObjectTableComponent
             cell._cell.row.data["ownership"] <=
             this.moduleConfig.module.cruved["D"];
           return deleteAllowed
-            ? `Supprimer ${this.schemaConfig.display.le_label} ${this.getCellValue(
-                cell
-              )}`
+            ? `Supprimer ${
+                this.schemaConfig.display.le_label
+              } ${this.getCellValue(cell)}`
             : "";
         },
       },
@@ -173,11 +176,14 @@ export class ModulesLayoutObjectTableComponent
   }
 
   onRowClick = (e, row) => {
-    let action = utils.getAttr(e, "target.attributes.action.nodeValue") 
+    let action = utils.getAttr(e, "target.attributes.action.nodeValue")
       ? utils.getAttr(e, "target.attributes.action.nodeValue")
-      : e.target.getElementsByClassName('action')
-      ? utils.getAttr(e.target.getElementsByClassName('action')[0], 'attributes.action.nodeValue')
-      :  'selected';
+      : e.target.getElementsByClassName("action").length
+      ? utils.getAttr(
+          e.target.getElementsByClassName("action")[0],
+          "attributes.action.nodeValue"
+        )
+      : "selected";
     const value = this.getRowValue(row);
 
     if (["details", "edit"].includes(action)) {
@@ -188,8 +194,11 @@ export class ModulesLayoutObjectTableComponent
       });
     }
 
-    if (action == 'delete') {
-      this._mLayout.openModal(this.modalDeleteLayout.modal_name, this.getRowData(row))
+    if (action == "delete") {
+      this._mLayout.openModal(
+        this.modalDeleteLayout.modal_name,
+        this.getRowData(row)
+      );
     }
 
     if (action == "selected") {
@@ -210,7 +219,6 @@ export class ModulesLayoutObjectTableComponent
   getRowData(row) {
     return row._row.data;
   }
-
 
   ajaxRequestFunc = (url, config, paramsTable) => {
     return new Promise((resolve, reject) => {
@@ -259,23 +267,6 @@ export class ModulesLayoutObjectTableComponent
           resolve(res);
           this.onHeightChange(true);
 
-          utils
-            .waitForElement(
-              "counter",
-              document.querySelector(`#${this.tableId}`)
-            )
-            .then(
-              (counterElement) => {
-                // (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
-                (
-                  counterElement as any
-                ).innerHTML = `<b>${res.filtered} /  ${res.total}</b>`;
-              },
-              (error) => {
-                console.error("waitForElement erreur");
-              }
-            );
-
           if (this.getDataValue()) {
             setTimeout(() => {
               this.selectRow(this.getDataValue());
@@ -284,6 +275,7 @@ export class ModulesLayoutObjectTableComponent
 
           //
           this.processTotalFiltered(res);
+          this.setCount();
 
           return;
         },
@@ -293,6 +285,22 @@ export class ModulesLayoutObjectTableComponent
       );
     });
   };
+
+  setCount() {
+    utils
+      .waitForElement("counter", document.querySelector(`#${this.tableId}`))
+      .then(
+        (counterElement) => {
+          // (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
+          (
+            counterElement as any
+          ).innerHTML = `<b>${this.data.filtered} /  ${this.data.total}</b>`;
+        },
+        (error) => {
+          console.error("waitForElement erreur");
+        }
+      );
+  }
 
   processValue(value) {
     if (!value) {
@@ -333,7 +341,10 @@ export class ModulesLayoutObjectTableComponent
   }
 
   processConfig() {
-    this.modalDeleteLayout = this._mSchema.modalDeleteLayout(this.schemaConfig, `delete_modal_${this._id}`)
+    this.modalDeleteLayout = this._mSchema.modalDeleteLayout(
+      this.schemaConfig,
+      `delete_modal_${this._id}`
+    );
     this.drawTable();
   }
 
@@ -371,11 +382,10 @@ export class ModulesLayoutObjectTableComponent
   getData(): Observable<any> {
     return of(true);
   }
-  
+
   refreshData(objectName: any): void {
-    
     if (objectName == this.data.object_name) {
-      this.drawTable()
+      this.drawTable();
     }
   }
 }

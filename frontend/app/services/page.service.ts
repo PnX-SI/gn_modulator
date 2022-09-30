@@ -74,7 +74,6 @@ export class ModulesPageService {
       const schemaName = moduleConfig.data[objectName].schema_name;
 
       routeParams[this._mSchema.pkFieldName(schemaName)] = value;
-      console.log(routeParams, schemaName)
       // this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);
       this._mRoute.navigateToPage(this.moduleCode, pageName, {...this.params, ...routeParams });
     }
@@ -102,7 +101,6 @@ export class ModulesPageService {
     }
 
     if(action == "delete") {
-      console.log('page action delete', schemaName, data)
       this._mSchema.onDelete(schemaName, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
         this._mLayout.closeModals()
@@ -120,7 +118,6 @@ export class ModulesPageService {
       if (value) {
         this.processAction({ action: "details", objectName, value });
       } else {
-        console.log('cancel', parentPageName)
         this._mRoute.navigateToPage(this.moduleCode, parentPageName, this.params); // TODO params
       }
     }

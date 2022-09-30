@@ -4,27 +4,54 @@
   "direction": "row",
   "items": [
     {
-      "type": "object",
-      "component": "map",
-      "key": "site_group"
+      "type": "map",
+      "items": [
+        {
+          "type": "object",
+          "display": "geojson",
+          "key": "site_group"
+        },
+        {
+          "type": "object",
+          "display": "geojson",
+          "key": "site"
+        }
+      ]
     },
     {
       "items": [
         {
-          "key": "site_group",
-          "type": "object",
-          "component": "properties"
+          "type": "breadcrumbs",
+          "flex": "0"
         },
         {
-          "title": "Sites",
-          "items": {
-            "type": "object",
-            "component": "table",
-            "key": "site"
-          }
+          "key": "site_group",
+          "type": "object",
+          "display": "properties"
+        },
+        {
+          "display": "tabs",
+          "items": [
+            {
+              "label": "__f__`Sites (${data.site.filtered}/${data.site.total})`",
+              "items": {
+                "type": "object",
+                "display": "table",
+                "key": "site"
+              }
+            },
+            {
+              "label": "__f__`Visites (${data.visit.filtered}/${data.visit.total})`",
+              "items": {
+                "type": "object",
+                "display": "table",
+                "key": "visit"
+              }
+              
+            }
+          ]
         }
       ]
     }
   ]
-
 }

@@ -80,10 +80,12 @@ export class ModulesLayoutMapComponent
    *  data -> layoutData
    */
   postComputeLayout(dataChanged, layoutChanged): void {
-    if (this.computedLayout.map_id) {
-      this.mapId = this.computedLayout.map_id;
-    }
-    this._mapService.initMap(this.mapId, { zoom: this.layout.zoom}).then((map) => {
+    // if (this.options.mapId) {
+      // this.mapId = this.options.mapId;
+    // }
+    this.options = this.options || {};
+    this.options.mapId = this.mapId;
+    this._mapService.initMap(this.mapId, { zoom: this.computedLayout.zoom }).then((map) => {
       this._map = map;
 
       if (layoutChanged) {
@@ -93,11 +95,11 @@ export class ModulesLayoutMapComponent
       
       // affichage des données
 
-      if (dataChanged) {
+      if (dataChanged && this.computedLayout.key) {
         this._mapService.processData(this.mapId, this.data, {
           key: this.computedLayout.key,
           zoom: this.computedLayout.zoom,
-        });
+        }); 
 
         return;
       }

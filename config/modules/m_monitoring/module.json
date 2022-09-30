@@ -15,18 +15,26 @@
     "m_monitoring.sc_arbre_loge",
     "m_monitoring.sc_grotte"
   ],
-  "features": [
-    "exemples.json"
-  ],
+  // "features": [
+  //   "exemples.json"
+  // ],
   "data": {
     "site": {
-      "schema_name": "m_monitoring.site"
+      "schema_name": "m_monitoring.site",
+      "map": {
+        "bring_to_front": "true"
+      }
     },
     "visit": {
       "schema_name": "m_monitoring.visit"
     },
     "site_group": {
-      "schema_name": "m_monitoring.site_group"
+      "schema_name": "m_monitoring.site_group",
+      "map": {
+        "style": {
+          "color": "red"
+        }
+      }
     },
     "observation": {
       "schema_name": "m_monitoring.observation"
@@ -55,6 +63,15 @@
           "prefilters": [
             {
               "field": "groups.id_site_group",
+              "type": "=",
+              "value": ":id_site_group"
+            }
+          ]
+        },
+        "visit": {
+          "prefilters": [
+            {
+              "field": "site.groups.id_site_group",
               "type": "=",
               "value": ":id_site_group"
             }

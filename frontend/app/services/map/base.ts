@@ -82,6 +82,7 @@ export default {
     if (!this.getMap(mapId)) {
       return;
     }
+    this.getMap(mapId).invalidateSize();
     this.getMap(mapId).panTo(this.computeCenter(center));
   },
 
@@ -167,6 +168,24 @@ export default {
           map.on("moveend", fnMapZoomMoveEnd);
           map.on("zoomend", fnMapZoomMoveEnd);
 
+          
+          /** coords on rigth click */
+          map.on("contextmenu", (event: any) => {      
+            console.log(event.latlng)
+            map.coordinatesTxt = `${event.latlng.lng}, ${event.latlng.lat}`
+            console.log(this.coordinatesTxt);
+            navigator.clipboard.writeText(
+              `${event.latlng.lng}, ${event.latlng.lat}`
+            )        
+          });
+      
+          // init panes
+          for (let i=1; i<=10; i+=1) {
+            const paneName = `P${i}`;
+            map.createPane(paneName)
+            map.getPane(paneName).style.zIndex = 600 + i;
+          }
+          
           map.isInitialized = true;
           resolve(map);
         }, 100);

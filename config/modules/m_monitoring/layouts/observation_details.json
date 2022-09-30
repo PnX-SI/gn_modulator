@@ -8,7 +8,7 @@
     },
     {
       "type": "object",
-      "component": "properties",
+      "display": "properties",
       "key": "observation"
     }
   ]

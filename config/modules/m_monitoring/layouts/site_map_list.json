@@ -5,14 +5,25 @@
   "items": [
     {
       "type": "object",
-      "component": "filters",
+      "display": "filters",
       "key": "site"
     },
     {
       "flex": 2,
-      "type": "object",
-      "component": "map",
-      "key": "site"
+      "type": "map",
+      "items": [
+        {
+          "type": "object",
+          "display": "geojson",
+          "key": "site"
+        }
+          ,
+          {
+            "type": "object",
+            "display": "geojson",
+            "key": "site_group"
+          }
+      ]
     },
     {
       "flex": 2,
@@ -39,7 +50,7 @@
                 {
                   "key": "site",
                   "type": "object",
-                  "component": "table"
+                  "display": "table"
                 }
               ]
             }
@@ -48,7 +59,7 @@
                 "label": "__f__`Groupes de site (${data.site_group?.filtered}/${data.site_group?.total})`",
                 "title": "Groupes de sites",
                 "type": "object",
-                "component": "table",
+                "display": "table",
                 "key": "site_group"
               }
           ]

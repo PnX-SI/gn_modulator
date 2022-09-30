@@ -56,7 +56,7 @@ export class ModulesLayoutObjectComponent
     console.log(
       this._name,
       this.layout && this.layout.type,
-      this.layout.component,
+      this.layout.diplay,
       this.data.object_name,
       this.data.schema_name,
       this._id,
@@ -140,7 +140,7 @@ export class ModulesLayoutObjectComponent
   /** Traitement de la configuration */
   processConfig() {
     // cas du formulaire
-    if (this.computedLayout.component == "form") {
+    if (this.computedLayout.display == "form") {
       this.processedLayout = this._mSchema.processFormLayout(
         this.schemaName(),
         this.moduleConfig
@@ -148,7 +148,7 @@ export class ModulesLayoutObjectComponent
     }
 
     // cas des details ou propriété
-    if (this.computedLayout.component == "properties") {
+    if (this.computedLayout.display == "properties") {
       this.processedLayout = this._mSchema.processPropertiesLayout(
         this.schemaConfig,
         this.moduleConfig
@@ -156,7 +156,7 @@ export class ModulesLayoutObjectComponent
     }
 
     // export ??
-    if (this.computedLayout.component == "export") {
+    if (this.computedLayout.display == "export") {
       this.processedLayout = {
         type: "button",
         title: "export",
@@ -185,7 +185,9 @@ export class ModulesLayoutObjectComponent
     for (const [defaultKey, defaultValue] of Object.entries(
       this.data.defaults || {}
     )) {
-      data[defaultKey] = defaultValue;
+      if(!((defaultValue as any).length && (defaultValue as any)[0] == ':')) {
+        data[defaultKey] = defaultValue;
+      }
     }
   }
 
@@ -193,7 +195,7 @@ export class ModulesLayoutObjectComponent
   // peut être redefini
   getData(): Observable<any> {
     if (
-      ["form", "properties"].includes(this.computedLayout.component) &&
+      ["form", "properties"].includes(this.computedLayout.display) &&
       this.getDataValue()
     ) {
       return this.getOneRow();
@@ -293,7 +295,7 @@ export class ModulesLayoutObjectComponent
 
   // Quand une nouvelle valeur est définie
   processValue(value) {
-    if (["form", "properties"].includes(this.computedLayout.component)) {
+    if (["form", "properties"].includes(this.computedLayout.display)) {
       return this.postProcessLayout();
     }
   }

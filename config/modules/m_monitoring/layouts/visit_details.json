@@ -6,7 +6,7 @@
     {
       "key": "visit",
       "type": "object",
-      "component": "properties"
+      "display": "properties"
     },
     {
       "items": [
@@ -31,7 +31,7 @@
                 },
                 {
                   "type": "object",
-                  "component": "table",
+                  "display": "table",
                   "key": "observation"
                 }
               ]

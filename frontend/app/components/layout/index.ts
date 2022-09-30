@@ -11,7 +11,7 @@ import { ModulesLayoutDictComponent } from "./base/layout-dict.component";
 import { ModulesLayoutMediasComponent } from "./base/layout-medias.component";
 import { ModulesLayoutObjectComponent } from "./object/layout-object.component";
 import { ModulesLayoutObjectTableComponent } from "./object/layout-object-table.component";
-import { ModulesLayoutObjectMapComponent } from "./object/layout-object-map.component";
+import { ModulesLayoutObjectGeoJSONComponent } from "./object/layout-object-geojson.component";
 import { ModulesLayoutObjectFiltersComponent } from "./object/layout-object-filters.component";
 import { ModulesGenericFormComponent } from "./form/generic-form.component";
 import { ModulesFormElementComponent } from "./form/form-element.component";
@@ -30,7 +30,7 @@ export default [
   ModulesLayoutMediasComponent,
   ModulesLayoutMapComponent,
   ModulesLayoutObjectComponent,
-  ModulesLayoutObjectMapComponent,
+  ModulesLayoutObjectGeoJSONComponent,
   ModulesLayoutObjectTableComponent,
   ModulesLayoutObjectFiltersComponent,
   ModulesListFormComponent,

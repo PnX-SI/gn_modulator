@@ -4,9 +4,14 @@
   "direction": "row",
   "items": [
     {
-      "type": "object",
-      "component": "map",
-      "key": "site"
+      "type": "map",
+      "items": [
+        {
+          "type": "object",
+          "display": "geojson",
+          "key": "site"
+        }
+      ]
     },
     {
       "items": [
@@ -17,7 +22,7 @@
         {
           "key": "site",
           "type": "object",
-          "component": "properties"
+          "display": "properties"
         },
         {
           "display": "tabs",
@@ -36,7 +41,7 @@
                 },
                 {
                   "type": "object",
-                  "component": "table",
+                  "display": "table",
                   "key": "visit"
                 }
               ]

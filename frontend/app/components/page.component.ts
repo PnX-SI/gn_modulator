@@ -129,6 +129,7 @@ export class PageComponent implements OnInit {
             const keyValue = Object.keys(resValue as any)[0]
             moduleParams[resKey] = (resValue as any)[keyValue];
           }
+          
           return of(moduleParams);
         })
       )

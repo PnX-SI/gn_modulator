@@ -1,15 +1,22 @@
 {
-    "type": "array",
-    "items": {
-        "type": "object",
-        "properties": {
-            "schema_name": {
-                "type": "string"
-            },
+    "properties": {
+        "schema_name": {
+            "type": "string"
+        },
+        "items": {
+            "type": "array",
             "items": {
-                "type": "array",
-                "items": {
-                    "type": "object"
+                "type": "object",
+                "properties": {
+                    "schema_name": {
+                        "type": "string"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    }
                 }
             }
         }

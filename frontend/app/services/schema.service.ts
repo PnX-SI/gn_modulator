@@ -45,7 +45,7 @@ export class ModulesSchemaService {
           gps: true,
           hidden: !geometryFieldName,
           flex: geometryFieldName ? "1" : "0",
-          zoom: 15
+          zoom: 12
         },
         {
           items: [
@@ -59,12 +59,6 @@ export class ModulesSchemaService {
             //   "json": "__f__formGroup.value",
             //   'flex': '0'
             // },
-            // {
-            //   "type": "message",
-            //   "json": "__f__formGroup.value",
-            //   'flex': '0'
-            // },
-
             {
               type: "breadcrumbs",
               flex: "0",

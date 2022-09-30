@@ -6,19 +6,19 @@
   [ngStyle]="{ 'margin-left': debugMarginLeft }"
 >
   <b>{{ layoutType }}</b> - {{ computedLayout.object_name }} -
-  {{ computedLayout.component }} <br />
+  {{ computedLayout.display }} <br />
   <span [matTooltip]="prettyDebug.data">data</span>
   <span [matTooltip]="prettyDebug.layout">layout</span>
 </div>
 
 <!-- Cas formulaire et properties-->
 <div [attr.id]="_id" [ngStyle]="computedLayout.style" class="layout-section" *ngIf="
-schemaData && ['form', 'properties', 'export'].includes(computedLayout.component)
+schemaData && ['form', 'properties', 'export'].includes(computedLayout.display)
 ">
 <modules-layout
   *ngIf="
     schemaData &&
-    ['form', 'properties', 'export'].includes(computedLayout.component)
+    ['form', 'properties', 'export'].includes(computedLayout.display)
   "
   [layout]="processedLayout"
   [data]="schemaData"
@@ -29,7 +29,7 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.component
 
 <!-- Liste -->
 <modules-layout-object-table
-  *ngIf="computedLayout.component == 'table'"
+  *ngIf="computedLayout.display == 'table'"
   [layout]="layout"
   [debug]="debug"
   [data]="data"
@@ -37,17 +37,18 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.component
 </modules-layout-object-table>
 
 <!-- Carte -->
-<modules-layout-object-map
-  *ngIf="computedLayout.component == 'map'"
+<modules-layout-object-geojson
+  *ngIf="computedLayout.display == 'geojson'"
   [layout]="layout"
   [debug]="debug"
   [data]="data"
+  [options]="options"
 >
-</modules-layout-object-map>
+</modules-layout-object-geojson>
 
 <!-- Filtres-->
 <modules-layout-object-filters
-  *ngIf="computedLayout.component == 'filters'"
+  *ngIf="computedLayout.display == 'filters'"
   [layout]="layout"
   [debug]="debug"
   [data]="data"

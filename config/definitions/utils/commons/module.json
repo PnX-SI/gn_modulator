@@ -10,5 +10,16 @@
         "relations": ["datasets"],
         "unique": ["module_code"],
         "check_cruved": false
+      },
+      "properties": {
+        "module_label": {
+          "title": "Nom du module"
+        },
+        "module_code": {
+          "title": "Code du module"
+        },
+        "module_desc": {
+          "title": "Description du module"
+        } 
       }
 }

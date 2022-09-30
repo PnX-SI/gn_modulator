@@ -49,7 +49,6 @@ export default {
       return;
     }
 
-
     if (options.key && data[options.key]) {
       this.removeLayers(mapId, { key: options.key });
       this.processData(mapId, data[options.key], options);
@@ -74,16 +73,13 @@ export default {
     layer.key = options.key;
     this.getMap(mapId)._layers;
     this.getMap(mapId).addLayer(layer);
-    
-    console.log('process geometry', data, options, layer);
-    
-    if (data.type == 'Point') {
-      this.setCenter(mapId, utils.copy(data.coordinates).reverse())      
-    }
-    if (data.type != 'Point') {
-      this.zoomOnLayer(mapId, layer) 
-    }
 
+    if (data.type == "Point") {
+      this.setCenter(mapId, utils.copy(data.coordinates).reverse());
+    }
+    if (data.type != "Point") {
+      this.zoomOnLayer(mapId, layer);
+    }
   },
 
   processLayersData(mapId, layersData) {
@@ -115,8 +111,8 @@ export default {
     this._layersData[mapId] = this._layersData[mapId] || {};
 
     for (const [key, value] of Object.entries(layersData)) {
-      if(! value) {
-        continue
+      if (!value) {
+        continue;
       }
       this.removeLayers(mapId, { key });
       this.loadGeojson(mapId, key, value["geojson"], value["layerOptions"]);
@@ -183,10 +179,10 @@ export default {
     layerGroup.addLayer(currentGeojson);
 
     // onLayersAdded : action effectuée après l'ajout des layers
-    if(layerOptions.onLayersAdded) {
+    if (layerOptions.onLayersAdded) {
       setTimeout(() => {
-        layerOptions.onLayersAdded()
-      }, 1000)
+        layerOptions.onLayersAdded();
+      }, 1000);
     }
     if (layerOptions.bZoom) {
       this.zoomOnLayer(mapId, layerGroup);
@@ -194,7 +190,6 @@ export default {
   },
 
   zoomOnLayer(mapId, layer) {
-    console.log("zoom", layer)
     if (!layer) {
       return;
     }
@@ -207,12 +202,18 @@ export default {
       }
 
       let bounds = layer.getBounds();
+
       if (!Object.keys(bounds).length) {
         return;
       }
 
+      if (utils.fastDeepEqual(bounds._northEast, bounds._southWest)) {
+        this.setCenter(mapId, bounds._northEast);
+        return;
+      }
+
       map.fitBounds(layer.getBounds());
-    }, 200);
+    }, 100);
   },
 
   createlayersFromGeojson(
@@ -223,9 +224,12 @@ export default {
       style = null,
       type = null,
       key = null,
+      pane = null,
+      bring_to_front = null,
     } = {}
   ): any {
     const geojsonLayer = this.L.geoJSON(geojson, {
+      pane,
       style: (feature) => {
         switch (feature.geometry.type) {
           // No color nor opacity for linestrings
@@ -249,12 +253,18 @@ export default {
       },
       pointToLayer: (feature, latlng) => {
         if (type == "marker") {
-          return this.L.marker(latlng);
+          return this.L.marker(latlng, { pane });
         }
-        return this.L.circleMarker(latlng);
+        return this.L.circleMarker(latlng, { pane });
       },
       onEachFeature: (feature, layer) => {
         layer.key = key;
+        if (bring_to_front) {
+          setTimeout(() => {
+            console.log("bring to front", key, bring_to_front);
+            layer.bringToFront();
+          }, 500);
+        }
         if (!!onEachFeature) {
           return onEachFeature(feature, layer);
         }

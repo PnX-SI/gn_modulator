@@ -2,7 +2,7 @@
   "layout": {
     "type": "schema",
     "schema_name": "m_sipaf.pf",
-    "component": "form",
+    "display": "form",
     "value": 100,
     "module_code": "m_sipaf"
   },

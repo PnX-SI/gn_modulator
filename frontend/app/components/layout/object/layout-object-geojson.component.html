@@ -1,0 +1,8 @@
+<!-- schema-->
+<div
+  *ngIf="debug && layout && computedLayout"
+  class="debug"
+  [ngStyle]="{ 'margin-left': debugMarginLeft }"
+>
+  <b>{{ layoutType }}</b> - {{ computedLayout.object_name }} -
+</div>

@@ -1,15 +1,15 @@
-import { Component, OnInit, Injector } from "@angular/core";
+import { Component, OnInit, Injector, Input } from "@angular/core";
 import { ModulesMapService } from "../../../services/map.service";
 import { ModulesLayoutObjectComponent } from "./layout-object.component";
 import { Observable } from "@librairies/rxjs";
 import utils from "../../../utils";
 
 @Component({
-  selector: "modules-layout-object-map",
-  templateUrl: "layout-object-map.component.html",
-  styleUrls: ["../../base/base.scss", "layout-object-map.component.scss"],
+  selector: "modules-layout-object-geojson",
+  templateUrl: "layout-object-geojson.component.html",
+  styleUrls: ["../../base/base.scss", "layout-object-geojson.component.scss"],
 })
-export class ModulesLayoutObjectMapComponent
+export class ModulesLayoutObjectGeoJSONComponent
   extends ModulesLayoutObjectComponent
   implements OnInit
 {
@@ -26,16 +26,12 @@ export class ModulesLayoutObjectMapComponent
 
   constructor(_injector: Injector) {
     super(_injector);
-    this._name = "layout-object-map";
-    this.mapId = `map_${this._id}`;
+    this._name = "layout-object-geojson";
     this._mapService = this._injector.get(ModulesMapService);
   }
 
   processConfig() {
-    this.processedLayout = {
-      type: "map",
-      map_id: this.mapId,
-    };
+    this.mapId = this.options.mapId
   }
 
   processValue(value) {
@@ -84,14 +80,20 @@ export class ModulesLayoutObjectMapComponent
       const pk_field_name = this.schemaConfig.utils.pk_field_name;
       const currentZoom = this._mapService.getZoom(this.mapId);
       const currentMapBounds = this._mapService.getMapBounds(this.mapId);
-      // this.mapData = {};
-      this.mapData = {
-        pf: {
+      
+      const layerStyle = this.computedLayout.style || this.data.map?.style;
+      const paneName = this.computedLayout.pane || this.data.map?.pane || `P1`;
+      const bring_to_front = this.computedLayout.bring_to_front || this.data.map?.bring_to_front
+      this.mapData =
+        {
           geojson,
           layerOptions: {
-            key: "pf",
+            bring_to_front,
+            pane: paneName,
+            key: this.computedLayout.key,
             label: `${this.schemaConfig.display.labels}`,
             bZoom: true,
+            style: layerStyle,
             onLayersAdded: () => {
               this.processValue(this.getDataValue());
             },
@@ -136,13 +138,18 @@ export class ModulesLayoutObjectMapComponent
                 });
             },
           },
-        },
       };
+      const d = {};
+      d[this.computedLayout.key] = this.mapData;
+      this._mapService.processData(this.mapId, d, {
+        // key: this.computedLayout.key,
+        zoom: this.computedLayout.zoom,
+      });
     });
   }
 
   popupHTML(properties) {
-    const label = properties[this.labelFieldName()];
+    const label = `<b>${this.utils.capitalize(this.schemaConfig.display.label)}</b>: ${properties[this.labelFieldName()]}`;
     const popupFields = this.schemaConfig.map.popup_fields || [];
     var propertiesHTML = "";
     propertiesHTML += "<ul>\n";
@@ -192,7 +199,7 @@ export class ModulesLayoutObjectMapComponent
       "click",
       (e) => {
         const action =
-          e && e.target && e.target.attributes.getNamedItem("action").nodeValue;
+          e && e.target && e.target.attributes.getNamedItem("action")?.nodeValue;
         if (action) {
           this._mPage.processAction({
             action,

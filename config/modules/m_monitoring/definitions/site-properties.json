@@ -147,7 +147,7 @@
     "title": "Modules",
     "description": "Modules associé au site",
     "schema_dot_table": "m_monitoring.cor_site_module",
-    "backref": "site"
+    "backref": "sites"
   },
   "areas": {
     "type": "relation",

@@ -132,14 +132,16 @@ export class ModulesFormService {
 
     if (
       ['integer', 'number'].includes(computedLayout.type)
-      && (![null, undefined].includes(control.value))
+      && (!([null, undefined].includes(control.value)))
       && typeof(control.value) != 'number'
     ) {
       const correctValue =
       (computedLayout.type == 'integer')
         ? parseInt(control.value)
         : parseFloat(control.value)
-      data[computedLayout.key] = correctValue;
+
+        data[computedLayout.key] = correctValue;
+      
       control.setValue(correctValue);
     }
   }

@@ -16,7 +16,9 @@
     "popup_fields": [
       "site_name",
       "site_code",
-      "site_desc"
+      "site_desc",
+      "nomenclature_type_site.label_fr",
+      "site_category.category_name"
     ]
   },
   "table": {

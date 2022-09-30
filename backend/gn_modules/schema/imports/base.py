@@ -21,7 +21,7 @@ from .. import errors
 class SchemaBaseImports:
 
     @classmethod
-    def load_and_validate_data(cls, data_file_path):
+    def validate_feature_data(cls, data):
         '''
             - charge des données depuis un fichier json
             - recupère le schéma associé depuis schema_name
@@ -29,16 +29,6 @@ class SchemaBaseImports:
             - retourne la données
         '''
 
-        # lecture des fichiers data et schema
-
-        # data_path = cls.data_path(data_name) / '{}.json'.format(data_name)
-        # if data_path.is_dir():
-        #     for root, dirs, files in os.walk(data_path, followlinks=True):
-        #         for f in files:
-        #             if f.endswith('.json'):
-        #                 cls.load_and_validate_data
-
-        data = cls.load_json_file(data_file_path)
 
         schema = cls.get_global_cache('reference', 'data')
 
@@ -55,14 +45,56 @@ class SchemaBaseImports:
         return str(data_file_path).replace(str(cls.config_directory() / 'data') + '/', '')
 
     @classmethod
-    def process_data(cls, data_file_path):
+    def init_datas(cls):
+        '''
+            renvoie la liste des fichiers de données
+        '''
+
+        
+        for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
+            for file in filter(
+                lambda f: f.endswith('.json'),
+                files
+            ):
+                file_path = Path(root) / file
+                data = cls.load_json_file(file_path)
+                    
+                   
+                
+                if not (isinstance(data, dict) and data.get('data_name')):
+                    continue
+
+                if not cls.validate_feature_data(data):
+                    continue
+
+                data['file_path'] = file_path
+                cls.set_global_cache('data', data.get('data_name'), data)                    
+
+
+    @classmethod
+    def get_data(cls, data_name):
+        return cls.get_global_cache('data', data_name)
+
+
+    @classmethod
+    def process_data(cls, data_name):
         '''
         '''
 
-        data = cls.load_and_validate_data(data_file_path)
+        cls.init_datas()
+        
+
+        data = cls.get_data(data_name)
+
+        if not data:
+            print(f"La données demandée {data_name} n'existe pas")
+            return
+
+        data_file_path = data['file_path']
+
         infos = []
 
-        for data_item in data:
+        for data_item in data['items']:
             info = cls.process_data_item(data_item, data_file_path)
 
             infos.append({
