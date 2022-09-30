@@ -292,8 +292,7 @@ class ModuleBase():
         data_names = module_config.get('features', [])
         for data_name in data_names:
             infos = {}
-            file_path = Path(module_config['module_dir_path']) / 'features/{}'.format(data_name)
-            infos[data_name] = SchemaMethods.process_data(file_path)
+            infos[data_name] = SchemaMethods.process_data(data_name)
             SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
         pass
 
