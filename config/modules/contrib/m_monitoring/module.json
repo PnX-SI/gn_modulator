@@ -38,6 +38,9 @@
     },
     "observation": {
       "schema_name": "m_monitoring.observation"
+    },
+    "module": {
+      "schema_name": "modules.module"
     }
   },
   "tree": {
@@ -97,6 +100,15 @@
           "prefilters": [
             {
               "field": "id_site",
+              "type": "=",
+              "value": ":id_site"
+            }
+          ]
+        },
+        "module": {
+          "prefilters": [
+            {
+              "field": "sites.id_site",
               "type": "=",
               "value": ":id_site"
             }

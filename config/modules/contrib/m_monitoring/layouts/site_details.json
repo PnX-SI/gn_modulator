@@ -45,6 +45,16 @@
                   "key": "visit"
                 }
               ]
+            },
+            {
+              "label": "__f__`Protocoles (${data.module.filtered}/${data.module.total})`",
+              "items": [
+                {
+                  "type": "object",
+                  "display": "table",
+                  "key": "module"
+                }
+              ]
             }
           ]
         }

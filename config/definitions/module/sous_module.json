@@ -46,7 +46,13 @@
 
       ]
     },
-
+    "table": {
+      "columns": [
+        "module_code",
+        "module_name",
+        "module_desc"
+      ]
+    },
     "details": {
       "layout": [
         "module_code",
