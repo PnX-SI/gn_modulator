@@ -9,7 +9,7 @@
         {
           "type": "object",
           "key": "site",
-          "diplay": "geojson"
+          "display": "geojson"
         }
       ]
     },
