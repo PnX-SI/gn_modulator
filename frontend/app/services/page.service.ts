@@ -21,6 +21,7 @@ export class ModulesPageService {
   moduleCode;
   breadcrumbs = [];
   pageName;
+  pageConfig;
   // pageParams;
   // pageQueryParams;
   // pageAllParams;
@@ -35,8 +36,9 @@ export class ModulesPageService {
     this._mRequest = this._injector.get(ModulesRequestService);
   }
 
-  setCurrentPage(pageName) {
+  setCurrentPage(pageName, pageConfig) {
     this.pageName = pageName;
+    this.pageConfig = pageConfig;
   }
 
   processAction({

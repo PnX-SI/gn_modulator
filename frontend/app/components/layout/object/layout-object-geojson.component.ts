@@ -60,13 +60,10 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   processFilters() {
-    this.log('process filter', this.data)
     return this.processObject();
   }
 
   processPreFilters() {
-    this.log('process prefilter', this.data)
-
     return this.processObject();
   }
 
@@ -83,9 +80,9 @@ export class ModulesLayoutObjectGeoJSONComponent
       
       const layerStyle = this.computedLayout.style || this.data.map?.style;
       const paneName = this.computedLayout.pane || this.data.map?.pane || `P1`;
-      const bZoom = this.computedLayout.zoom || this.data.map?.zoom;
+      const bZoom = this.computedLayout.zoom || this.data.map.zoom || this._mPage.pageConfig.key == this.data.object_name;
+      
       const bring_to_front = this.computedLayout.bring_to_front || this.data.map?.bring_to_front
-      console.log(this.data)
       this.mapData =
         {
           geojson,

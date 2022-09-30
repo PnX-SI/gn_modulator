@@ -80,6 +80,35 @@
           ]
         }
       ]
+    },
+    {
+      "schema_name": "m_monitoring.visit",
+      "items": [
+        {
+          "id_site": "TEST_1",
+          "visit_date_min": "2022-01-01",
+          "observers": [
+            "admin"
+          ],
+          "id_dataset": [
+            "m_protocol_test",
+            "m_protocol_test"
+          ],
+          "id_module": "m_protocol_test"
+        }
+      ]
+    },
+    {
+      "schema_name": "m_monitoring.observation",
+      "items": [
+        {
+          "id_visit": [
+            "TEST_1",
+            "2022-01-01"
+          ],
+          "cd_nom": 361617
+        }
+      ]
     }
   ]
 }

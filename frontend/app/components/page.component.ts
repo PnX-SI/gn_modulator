@@ -149,7 +149,6 @@ export class PageComponent implements OnInit {
     // reset data
     this.data = null;
 
-    this._mPage.setCurrentPage(routeData.pageName);
     this.moduleCode = routeData.moduleCode;
 
     // pour pouvoir retrouver moduleCode par ailleurs
@@ -157,7 +156,9 @@ export class PageComponent implements OnInit {
 
     // recupéraiton de la configuration de la page;
     this.moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
-    this.pageConfig = this.moduleConfig.pages[this._mPage.pageName];
+    this.pageConfig = this.moduleConfig.pages[routeData.pageName];
+    
+    this._mPage.setCurrentPage(routeData.pageName, this.pageConfig);
 
     // initialisatio du layout
     this.layout = {
@@ -183,8 +184,6 @@ export class PageComponent implements OnInit {
     let data = utils.copy(this.moduleConfig.data);
     const dataPage = utils.copy(this.pageConfig.data || {});
 
-    console.log(dataPage)
-    
     // gestion du paramètre debug
     this.debug = ![undefined, false, "false"].includes(
       this.routeQueryParams.debug
@@ -217,7 +216,6 @@ export class PageComponent implements OnInit {
 
     // pour communiquer les données aux composants du layout
     this.data = data;
-    console.log('init data', data)
 
     // resize des composants
     // TODO à affiner
