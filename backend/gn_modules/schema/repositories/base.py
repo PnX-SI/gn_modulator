@@ -265,7 +265,7 @@ class SchemaRepositoriesBase():
         if not self.pk_field_name() in fields:
             fields.append(self.pk_field_name())
 
-        if self.schema_name() in ['modules.module', 'commons.modules']:
+        if self.schema_name() in ['commons.module', 'commons.modules']:
             fields.append('type')
             
         defered_fields = [

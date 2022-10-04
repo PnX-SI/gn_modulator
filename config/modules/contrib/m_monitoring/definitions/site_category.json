@@ -6,9 +6,9 @@
   "genre": "F",
   "label": "categorie des sites",
   "labels": "categories des sites",
-  "label_field_name": "category_name",
+  "label_field_name": "name",
   "unique": [
-      "category_code"
+      "code"
     ]
   },
   "properties": {
@@ -17,17 +17,17 @@
       "title": "Pk du site",
       "primary_key": true
     },
-    "category_name": {
+    "name": {
       "type": "string",
       "title": "Nom du complément de site",
       "required": true
     },
-    "category_code": {
+    "code": {
       "type": "string",
       "title": "Code du complément de site",
       "required": true
     },
-    "category_desc": {
+    "description": {
       "type": "string",
       "title": "Description du complément de site",
       "required": true

@@ -40,7 +40,7 @@
       "schema_name": "m_monitoring.observation"
     },
     "module": {
-      "schema_name": "modules.module"
+      "schema_name": "commons.module"
     }
   },
   "tree": {

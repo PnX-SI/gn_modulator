@@ -8,7 +8,7 @@
     "geometry_field_name": "geom",
     "genre": "M",
     "autoschema": true,
-    "relations": ["linear_type", "groups"],
+    "relations": ["type", "groups"],
     "unique": ["id_type", "linear_code"]
   }
 }

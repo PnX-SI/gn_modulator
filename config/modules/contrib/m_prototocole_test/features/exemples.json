@@ -42,9 +42,9 @@
       "schema_name": "m_monitoring.site",
       "items": [
         {
-          "site_name": "Site test 1",
-          "site_code": "TEST_1",
-          "site_desc": "Le site test 1",
+          "name": "Site test 1",
+          "code": "TEST_1",
+          "description": "Le site test 1",
           "id_digitiser": "admin",
           "id_inventor": "admin",
           "id_nomenclature_type_site": "4",
@@ -61,9 +61,9 @@
           ]
         },
         {
-          "site_name": "Site test 2",
-          "site_code": "TEST_2",
-          "site_desc": "Le site test 2",
+          "name": "Site test 2",
+          "code": "TEST_2",
+          "description": "Le site test 2",
           "id_digitiser": "admin",
           "id_inventor": "admin",
           "id_nomenclature_type_site": "4",

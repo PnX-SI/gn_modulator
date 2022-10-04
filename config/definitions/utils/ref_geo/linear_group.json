@@ -5,10 +5,10 @@
     "model_name": "LLinearGroups",
     "label": "Groupe de linéaire",
     "labels": "Groupes de linéaires",
-    "label_field_name": "group_name",
+    "label_field_name": "name",
     "genre": "M",
-    "relation": ["linear_type"],
+    "relation": ["linears"],
     "autoschema": true,
-    "unique": ["group_code"]
+    "unique": ["code"]
   }
 }

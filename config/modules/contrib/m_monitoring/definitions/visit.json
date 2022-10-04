@@ -53,7 +53,7 @@
       "relation_type": "n-1",
       "title": "Protocole",
       "description": "Protocole associé à la visite",
-      "schema_name": "modules.module",
+      "schema_name": "commons.module",
       "local_key": "id_module"
     },
     "id_digitiser": {
@@ -90,7 +90,7 @@
     "id_module": {
       "type": "integer",
       "foreign_key": true,
-      "schema_name": "modules.module",
+      "schema_name": "commons.module",
       "title": "Protocole",
       "description": "Protocole associé à la visite",
       "required": true
@@ -104,7 +104,7 @@
       "local_key": "id_dataset"
     },
 
-    "visit_data": {
+    "data": {
       "type": "json",
       "description": "Données additionnelles du site",
       "title": "Données additionnelles"
@@ -126,7 +126,7 @@
   },
   "details": {
     "layout": [
-      "site.site_name",
+      "site.name",
       "module.module_label",
       "visit_date_min",
       "nb_observations",
@@ -177,14 +177,14 @@
         "key": "id_module",
         "type": "list_form",
         "title": "Protocole",
-        "schema_name": "modules.module",
+        "schema_name": "commons.module",
         "filters": "__f__[{field: 'sites.id_site', type: '=', value: data.id_site}]"
       }
     ]
   },
   "table": {
     "columns": [
-      "site.site_name",
+      "site.name",
       "visit_date_min",
       "nb_observations",
       "digitiser.nom_complet",

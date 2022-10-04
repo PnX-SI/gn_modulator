@@ -84,7 +84,7 @@ class SchemaModelBase():
                 field_args.append(db.ForeignKey(foreign_key, ondelete="CASCADE", onupdate="CASCADE"))
             else:
                 field_args.append(db.ForeignKey(foreign_key))
-                
+
         # process type
         db_type = self.get_db_type(column_def)
 
@@ -116,7 +116,7 @@ class SchemaModelBase():
         if relationship_def.get('relation_type') == '1-n':
             # test si obligatoire
             rel = self.cls(relationship_def['schema_name'])
-            
+
             # foreign_column = rel.property(relationship_def['foreign_key'])
             if rel.is_required(relationship_def['foreign_key']):
                 kwargs['cascade'] = "all, delete, delete-orphan"
@@ -235,26 +235,12 @@ class SchemaModelBase():
         }
 
         ModelBaseClass = db.Model
-        if self.attr('meta.extends'):
-            dict_model['__mapper_args__'] = {
-                'polymorphic_identity': self.attr('meta.extends.type'),
-            }
-            base_schema = self.cls(self.attr('meta.extends.schema_name'))
-            ModelBaseClass = base_schema.Model()
-
-        if self.attr('meta.extends'):
-            base_schema = self.cls(self.attr('meta.extends.schema_name'))
 
         # process properties
         for key, column_def in self.columns().items():
 
             if column_def.get('column_property') is not None:
                 continue
-
-            if self.attr('meta.extends'):
-                base_schema = self.cls(self.attr('meta.extends.schema_name'))
-                if key in base_schema.column_keys() and key != base_schema.pk_field_name():
-                    continue
 
             dict_model[key] = self.process_column_model(key, column_def)
 
@@ -269,10 +255,6 @@ class SchemaModelBase():
         # process relations
 
         for key, relationship_def in self.relationships().items():
-            if self.attr('meta.extends'):
-                base_schema = self.cls(self.attr('meta.extends.schema_name'))
-                if key in base_schema.column_keys():
-                    continue
 
             relationship = self.process_relation_model(key, relationship_def, Model)
             setattr(Model, key, relationship)

@@ -58,7 +58,7 @@
       "description": "Visite associée à l'observation",
       "title": "Visite"
     },
-    "observation_data": {
+    "data": {
       "type": "json",
       "description": "Données additionnelles de l'observation",
       "title": "Données additionnelles"
@@ -70,7 +70,7 @@
       "cd_nom",
       "visite.visit_date_min",
       "taxon.nom_vern",
-      "visite.site.site_name",
+      "visite.site.name",
       "visite.dataset.dataset_name",
       "visite.observers.nom_complet"
     ]

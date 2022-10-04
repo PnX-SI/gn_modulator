@@ -6,18 +6,18 @@
     "genre": "M",
     "label": "groupe de sites",
     "labels": "groupes de sites",
-    "label_field_name": "site_group_name",
-    "geometry_field_name": "site_group_geom",
+    "label_field_name": "name",
+    "geometry_field_name": "geom",
     "unique": [
-      "site_group_code"
+      "code"
     ]
     // "check_cruved": true,
   },
   "map": {
     "popup_fields": [
-      "site_group_name",
-      "site_group_code",
-      "site_group_desc"
+      "name",
+      "code",
+      "description"
     ]
   },
   "filters": {
@@ -28,20 +28,20 @@
   },
   "table": {
     "columns": [
-      "site_group_code",
-      "site_group_name",
+      "code",
+      "name",
       "nb_sites"
     ],
     "sort": [
       {
-        "column": "site_group_code",
+        "column": "code",
         "dir": "desc"
       }
     ]
   },
   "required": [
-    "site_group_code",
-    "site_group_name"
+    "code",
+    "name"
   ],
   "properties": {
     "id_site_group": {
@@ -50,17 +50,17 @@
       "description": "Clé primaire du group de site",
       "primary_key": true
     },
-    "site_group_code": {
+    "code": {
       "type": "string",
       "title": "Code du site",
       "required": true
     },
-    "site_group_name": {
+    "name": {
       "type": "string",
       "title": "Nom du groupe de site",
       "required": true
     },
-    "site_group_desc": {
+    "description": {
       "type": "string",
       "title": "Description du groupe de site"
     },
@@ -83,13 +83,13 @@
       "type": "uuid",
       "title": "UUID"
     },
-    "site_group_geom": {
+    "geom": {
       "type": "geometry",
       "geometry_type": "geometry",
       "title": "Géométrie du groupe de site",
       "srid": 4326
     },
-    "site_group_data": {
+    "data": {
       "type": "json",
       "description": "Données additionnelles du  groupe de site",
       "title": "Données additionnelles"
@@ -115,7 +115,7 @@
         "hidden": true,
         "items": [
           "id_site",
-          "site_group_geom",
+          "geom",
           {
             "key": "id_digitiser",
             "default": "__f__meta.currentUser?.id_role",
@@ -123,15 +123,15 @@
           }
         ]
       },
-      "site_group_code",
-      "site_group_name"
+      "code",
+      "name"
     ]
   },
   "details": {
     "layout": [
       "id_site_group",
-      "site_group_code",
-      "site_group_name",
+      "code",
+      "name",
       "digitiser.nom_complet",
       "nb_sites"
     ]

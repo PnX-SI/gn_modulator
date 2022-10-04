@@ -38,6 +38,8 @@ except InvalidRequestError as e:
     print(e)
 except NoForeignKeysError as e:
     print(e)
+except Exception as e:
+    print(e)
 
 
 # @current_app.before_first_request

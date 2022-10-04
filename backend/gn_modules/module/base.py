@@ -37,7 +37,7 @@ class ModuleBase():
     @classmethod
     def register_db_module(cls, module_code):
         print(f'- Enregistrement du module {module_code}')
-        schema_module = SchemaMethods('modules.module')
+        schema_module = SchemaMethods('commons.module')
         module_data = cls.module_config(module_code)['module']
         module_code = module_data['module_code']
         module_row_data = {
@@ -65,7 +65,7 @@ class ModuleBase():
     # @classmethod
     # def register_or_update_module(cls, module_code):
 
-    #     schema_module = SchemaMethods('modules.module')
+    #     schema_module = SchemaMethods('commons.module')
     #     module_data = cls.module_config(module_code)['module']
     #     module_code = module_data['module_code']
     #     module_row_data = {
@@ -154,7 +154,7 @@ class ModuleBase():
     def modules_db(cls):
 
         modules_db = {}
-        module_schema = SchemaMethods('modules.module')
+        module_schema = SchemaMethods('commons.module')
         if not module_schema.sql_table_exists():
             return {}
 
@@ -265,10 +265,7 @@ class ModuleBase():
 
         for module_code in modules_db:
             if module_code not in modules_files:
-                raise errors.ModuleDbError(
-                    'Le module {} est en base et non trouvé dans les fichiers'
-                    .format(module_code)
-                )
+                continue
 
         for module_code, module_config in modules_files.items():
             module_db = modules_db.get(module_code, {})

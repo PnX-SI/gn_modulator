@@ -11,34 +11,34 @@ CREATE SCHEMA IF NOT EXISTS m_monitoring;
 
 CREATE TABLE m_monitoring.t_sites (
     id_site SERIAL NOT NULL,
-    site_code VARCHAR NOT NULL,
-    site_name VARCHAR NOT NULL,
-    site_desc VARCHAR,
-    site_uuid UUID,
-    site_geom GEOMETRY(GEOMETRY, 4326) NOT NULL,
-    site_geom_local GEOMETRY(GEOMETRY, 2154),
+    code VARCHAR NOT NULL,
+    name VARCHAR NOT NULL,
+    description VARCHAR,
+    uuid UUID,
+    geom GEOMETRY(GEOMETRY, 4326) NOT NULL,
+    geom_local GEOMETRY(GEOMETRY, 2154),
     id_site_category INTEGER,
     id_digitiser INTEGER,
     id_inventor INTEGER,
     id_nomenclature_type_site INTEGER NOT NULL,
-    site_data JSONB
+    data JSONB
 );
 
-COMMENT ON COLUMN m_monitoring.t_sites.site_geom IS 'Géométrie du site (SRID=4326)';
-COMMENT ON COLUMN m_monitoring.t_sites.site_geom_local IS 'Géométrie locale site (SRID=2154)';
+COMMENT ON COLUMN m_monitoring.t_sites.geom IS 'Géométrie du site (SRID=4326)';
+COMMENT ON COLUMN m_monitoring.t_sites.geom_local IS 'Géométrie locale site (SRID=2154)';
 COMMENT ON COLUMN m_monitoring.t_sites.id_site_category IS 'Catégorie de site (pour pouvoir associé des champs spécifiques)';
 COMMENT ON COLUMN m_monitoring.t_sites.id_digitiser IS 'Personne qui a saisi la donnée';
 COMMENT ON COLUMN m_monitoring.t_sites.id_inventor IS 'Descripteur du site';
 COMMENT ON COLUMN m_monitoring.t_sites.id_nomenclature_type_site IS 'Nomenclature de type de site';
-COMMENT ON COLUMN m_monitoring.t_sites.site_data IS 'Données additionnelles du site';
+COMMENT ON COLUMN m_monitoring.t_sites.data IS 'Données additionnelles du site';
 
 ---- table m_monitoring.bib_sites_category
 
 CREATE TABLE m_monitoring.bib_sites_category (
     id_category SERIAL NOT NULL,
-    category_name VARCHAR NOT NULL,
-    category_code VARCHAR NOT NULL,
-    category_desc VARCHAR NOT NULL
+    name VARCHAR NOT NULL,
+    code VARCHAR NOT NULL,
+    description VARCHAR NOT NULL
 );
 
 
@@ -53,7 +53,7 @@ CREATE TABLE m_monitoring.t_visits (
     id_digitiser INTEGER,
     id_dataset INTEGER NOT NULL,
     id_module INTEGER NOT NULL,
-    visit_data JSONB
+    data JSONB
 );
 
 COMMENT ON COLUMN m_monitoring.t_visits.id_visit IS 'Clé primaire de la visite';
@@ -63,7 +63,7 @@ COMMENT ON COLUMN m_monitoring.t_visits.id_site IS 'Site associé à la visite';
 COMMENT ON COLUMN m_monitoring.t_visits.id_digitiser IS 'Personne qui a saisi la donnée';
 COMMENT ON COLUMN m_monitoring.t_visits.id_dataset IS 'Jeu de données associé à la visite';
 COMMENT ON COLUMN m_monitoring.t_visits.id_module IS 'Protocole associé à la visite';
-COMMENT ON COLUMN m_monitoring.t_visits.visit_data IS 'Données additionnelles du site';
+COMMENT ON COLUMN m_monitoring.t_visits.data IS 'Données additionnelles du site';
 
 ---- table m_monitoring.t_observations
 
@@ -73,31 +73,31 @@ CREATE TABLE m_monitoring.t_observations (
     id_digitiser INTEGER,
     id_visit INTEGER,
     observation_uuid UUID,
-    observation_data JSONB
+    data JSONB
 );
 
 COMMENT ON COLUMN m_monitoring.t_observations.id_observation IS 'Clé primaire de l''observaiton';
 COMMENT ON COLUMN m_monitoring.t_observations.cd_nom IS 'Taxon lié à l''observation';
 COMMENT ON COLUMN m_monitoring.t_observations.id_digitiser IS 'Personne qui a saisi la donnée';
 COMMENT ON COLUMN m_monitoring.t_observations.id_visit IS 'Visite associée à l''observation';
-COMMENT ON COLUMN m_monitoring.t_observations.observation_data IS 'Données additionnelles de l''observation';
+COMMENT ON COLUMN m_monitoring.t_observations.data IS 'Données additionnelles de l''observation';
 
 ---- table m_monitoring.t_site_group
 
 CREATE TABLE m_monitoring.t_site_group (
     id_site_group SERIAL NOT NULL,
-    site_group_code VARCHAR NOT NULL,
-    site_group_name VARCHAR NOT NULL,
-    site_group_desc VARCHAR,
+    code VARCHAR NOT NULL,
+    name VARCHAR NOT NULL,
+    description VARCHAR,
     id_digitiser INTEGER,
     site_group_uuid UUID,
-    site_group_geom GEOMETRY(GEOMETRY, 4326),
-    site_group_data JSONB
+    geom GEOMETRY(GEOMETRY, 4326),
+    data JSONB
 );
 
 COMMENT ON COLUMN m_monitoring.t_site_group.id_site_group IS 'Clé primaire du group de site';
 COMMENT ON COLUMN m_monitoring.t_site_group.id_digitiser IS 'Personne qui a saisi la donnée';
-COMMENT ON COLUMN m_monitoring.t_site_group.site_group_data IS 'Données additionnelles du  groupe de site';
+COMMENT ON COLUMN m_monitoring.t_site_group.data IS 'Données additionnelles du  groupe de site';
 
 ---- table m_monitoring.cor_site_actor
 
@@ -228,7 +228,7 @@ ALTER TABLE m_monitoring.t_visits
 
 ALTER TABLE m_monitoring.t_visits
     ADD CONSTRAINT fk_m_monitoring_t_vis_t_mod_id_module FOREIGN KEY (id_module)
-    REFERENCES gn_modules.t_module_complements(id_module)
+    REFERENCES gn_commons.t_modules(id_module)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
 
@@ -315,12 +315,14 @@ ALTER TABLE m_monitoring.t_sites
         NOT VALID;
 
 
+
 ---- nomenclature check type constraints
 
 ALTER TABLE m_monitoring.cor_site_actor
         ADD CONSTRAINT check_nom_type_m_monitoring_cor_site_actor_id_tor_pf_tor
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_type_actor,'PF_TYPE_ACTOR'))
         NOT VALID;
+
 
 
 -- cor m_monitoring.cor_site_group
@@ -369,7 +371,7 @@ ALTER TABLE m_monitoring.cor_site_module
 
 ALTER TABLE m_monitoring.cor_site_module
     ADD CONSTRAINT fk_m_monitoring_cor_site_module_id_module FOREIGN KEY (id_module)
-    REFERENCES gn_modules.t_module_complements (id_module)
+    REFERENCES gn_commons.t_modules (id_module)
     ON UPDATE CASCADE ON DELETE CASCADE;
 -- cor m_monitoring.cor_area_pf
 
@@ -449,29 +451,29 @@ ALTER TABLE m_monitoring.cor_visit_observer
 -- Triggers
 
 
-CREATE OR REPLACE FUNCTION m_monitoring.fn_tri_insert_t_sites_copy_site_geom_to_site_geom_local()
+CREATE OR REPLACE FUNCTION m_monitoring.fn_tri_insert_t_sites_copy_geom_to_geom_local()
     RETURNS trigger AS
         $BODY$
             DECLARE
             BEGIN
-                NEW.site_geom_local := ST_TRANSFORM(NEW.site_geom, 2154);
+                NEW.geom_local := ST_TRANSFORM(NEW.geom, 2154);
                 RETURN NEW;
             END;
         $BODY$
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE TRIGGER m_monitoring_tri_insert_t_sites_copy_site_geom_to_site_geom_local
+CREATE TRIGGER m_monitoring_tri_insert_t_sites_copy_geom_to_geom_local
     BEFORE INSERT ON m_monitoring.t_sites
     FOR EACH ROW
-        EXECUTE PROCEDURE m_monitoring.fn_tri_insert_t_sites_copy_site_geom_to_site_geom_local();
+        EXECUTE PROCEDURE m_monitoring.fn_tri_insert_t_sites_copy_geom_to_geom_local();
 
-CREATE TRIGGER m_monitoring_tri_update_t_sites_copy_site_geom_to_site_geom_local
-    BEFORE UPDATE OF site_geom ON m_monitoring.t_sites
+CREATE TRIGGER m_monitoring_tri_update_t_sites_copy_geom_to_geom_local
+    BEFORE UPDATE OF geom ON m_monitoring.t_sites
     FOR EACH ROW
-        EXECUTE PROCEDURE m_monitoring.fn_tri_insert_t_sites_copy_site_geom_to_site_geom_local();
+        EXECUTE PROCEDURE m_monitoring.fn_tri_insert_t_sites_copy_geom_to_geom_local();
 
----- Trigger intersection m_monitoring.t_sites.site_geom_local avec le ref_geo
+---- Trigger intersection m_monitoring.t_sites.geom_local avec le ref_geo
 
 
 CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_area_pf_on_each_statement()
@@ -480,7 +482,7 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_area_pf_on_each_stat
             DECLARE
             BEGIN
                 WITH geom_test AS (
-                    SELECT ST_TRANSFORM(t.site_geom_local, 2154) as site_geom_local,
+                    SELECT ST_TRANSFORM(t.geom_local, 2154) as geom_local,
                     t.id_site
                     FROM NEW as t
                 )
@@ -493,13 +495,13 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_area_pf_on_each_stat
                     t.id_site
                     FROM geom_test t
                     JOIN ref_geo.l_areas a
-                        ON public.ST_INTERSECTS(t.site_geom_local, a.geom)
+                        ON public.ST_INTERSECTS(t.geom_local, a.geom)
                         WHERE
                             a.enable IS TRUE
                             AND (
-                                ST_GeometryType(t.site_geom_local) = 'ST_Point'
+                                ST_GeometryType(t.geom_local) = 'ST_Point'
                                 OR
-                                NOT public.ST_TOUCHES(t.site_geom_local,a.geom)
+                                NOT public.ST_TOUCHES(t.geom_local,a.geom)
                             );
                 RETURN NULL;
             END;
@@ -521,13 +523,13 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_area_pf_on_row()
                     t.id_site
                 FROM ref_geo.l_areas a
                 JOIN m_monitoring.t_sites t
-                    ON public.ST_INTERSECTS(ST_TRANSFORM(t.site_geom_local, 2154), a.geom)
+                    ON public.ST_INTERSECTS(ST_TRANSFORM(t.geom_local, 2154), a.geom)
                 WHERE
                     a.enable IS TRUE
                     AND t.id_site = NEW.id_site
                     AND (
-                        ST_GeometryType(t.site_geom_local) = 'ST_Point'
-                        OR NOT public.ST_TOUCHES(ST_TRANSFORM(t.site_geom_local, 2154), a.geom)
+                        ST_GeometryType(t.geom_local) = 'ST_Point'
+                        OR NOT public.ST_TOUCHES(ST_TRANSFORM(t.geom_local, 2154), a.geom)
                     )
                 ;
                 RETURN NULL;
@@ -550,12 +552,12 @@ CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_area_pf()
                     t.id_site
                 FROM ref_geo.l_areas a
                 JOIN m_monitoring.t_sites t
-                    ON public.ST_INTERSECTS(ST_TRANSFORM(t.site_geom_local, 2154), a.geom)
+                    ON public.ST_INTERSECTS(ST_TRANSFORM(t.geom_local, 2154), a.geom)
                 WHERE
                     a.enable IS TRUE
                     AND (
-                        ST_GeometryType(t.site_geom_local) = 'ST_Point'
-                        OR NOT public.ST_TOUCHES(ST_TRANSFORM(t.site_geom_local, 2154), a.geom)
+                        ST_GeometryType(t.geom_local) = 'ST_Point'
+                        OR NOT public.ST_TOUCHES(ST_TRANSFORM(t.geom_local, 2154), a.geom)
                     )
                 ;
                 RETURN NULL;
@@ -571,11 +573,11 @@ CREATE TRIGGER trg_insert_m_monitoring_cor_area_pf
         EXECUTE PROCEDURE m_monitoring.fct_trig_insert_cor_area_pf_on_each_statement();
 
 CREATE TRIGGER trg_update_m_monitoring_cor_area_pf
-    AFTER UPDATE OF site_geom ON m_monitoring.t_sites
+    AFTER UPDATE OF geom ON m_monitoring.t_sites
     FOR EACH ROW
         EXECUTE PROCEDURE m_monitoring.fct_trig_update_cor_area_pf_on_row();
 
----- Trigger m_monitoring.t_sites.site_geom_local avec une distance de 100 avec ref_geo.l_linears.id_linear
+---- Trigger m_monitoring.t_sites.geom_local avec une distance de 100 avec ref_geo.l_linears.id_linear
 
 
 CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_linear_pf_on_each_statement()
@@ -594,9 +596,9 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_linear_pf_on_each_st
                         ROW_NUMBER() OVER (PARTITION BY t.id_site, id_type) As rank
                         FROM NEW AS t
                         JOIN ref_geo.l_linears l
-                            ON ST_DWITHIN(t.site_geom_local, l.geom, 100)
+                            ON ST_DWITHIN(t.geom_local, l.geom, 100)
                         WHERE l.enable = TRUE
-                        ORDER BY t.site_geom_local <-> l.geom
+                        ORDER BY t.geom_local <-> l.geom
                 )
                 SELECT
                     id_linear,
@@ -626,11 +628,11 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_linear_pf_on_row()
                         ROW_NUMBER() OVER (PARTITION BY t.id_site, id_type) As rank
                         FROM m_monitoring.t_sites AS t
                         JOIN ref_geo.l_linears l
-                            ON ST_DWITHIN(t.site_geom_local, l.geom, 100)
+                            ON ST_DWITHIN(t.geom_local, l.geom, 100)
                         WHERE
                             t.id_site = NEW.id_site
                             AND l.enable = TRUE
-                        ORDER BY t.site_geom_local <-> l.geom
+                        ORDER BY t.geom_local <-> l.geom
                 )
                 SELECT
                     id_linear,
@@ -660,9 +662,9 @@ CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_linear_pf()
                         ROW_NUMBER() OVER (PARTITION BY t.id_site, id_type) As rank
                         FROM m_monitoring.t_sites AS t
                         JOIN ref_geo.l_linears l
-                            ON ST_DWITHIN(t.site_geom_local, l.geom, 100)
+                            ON ST_DWITHIN(t.geom_local, l.geom, 100)
                         WHERE l.enable = TRUE
-                        ORDER BY t.site_geom_local <-> l.geom
+                        ORDER BY t.geom_local <-> l.geom
                 )
                 SELECT
                     id_linear,
@@ -683,7 +685,7 @@ CREATE TRIGGER trg_insert_m_monitoring_cor_linear_pf
         EXECUTE PROCEDURE m_monitoring.fct_trig_insert_cor_linear_pf_on_each_statement();
 
 CREATE TRIGGER trg_update_m_monitoring_cor_linear_pf
-    AFTER UPDATE OF site_geom ON m_monitoring.t_sites
+    AFTER UPDATE OF geom ON m_monitoring.t_sites
     FOR EACH ROW
         EXECUTE PROCEDURE m_monitoring.fct_trig_update_cor_linear_pf_on_row();
 
@@ -692,12 +694,12 @@ CREATE TRIGGER trg_update_m_monitoring_cor_linear_pf
 -- Indexes
 
 
-CREATE INDEX m_monitoring_t_sites_site_geom_idx
+CREATE INDEX m_monitoring_t_sites_geom_idx
     ON m_monitoring.t_sites
-    USING GIST (site_geom);
-CREATE INDEX m_monitoring_t_sites_site_geom_local_idx
+    USING GIST (geom);
+CREATE INDEX m_monitoring_t_sites_geom_local_idx
     ON m_monitoring.t_sites
-    USING GIST (site_geom_local);
+    USING GIST (geom_local);
 
 -- process schema : m_monitoring.observation
 

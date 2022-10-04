@@ -50,7 +50,7 @@ class SchemaBaseImports:
             renvoie la liste des fichiers de données
         '''
 
-        
+
         for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
             for file in filter(
                 lambda f: f.endswith('.json'),
@@ -58,9 +58,7 @@ class SchemaBaseImports:
             ):
                 file_path = Path(root) / file
                 data = cls.load_json_file(file_path)
-                    
-                   
-                
+
                 if not (isinstance(data, dict) and data.get('data_name')):
                     continue
 
@@ -68,7 +66,7 @@ class SchemaBaseImports:
                     continue
 
                 data['file_path'] = file_path
-                cls.set_global_cache('data', data.get('data_name'), data)                    
+                cls.set_global_cache('data', data.get('data_name'), data)
 
 
     @classmethod
@@ -82,7 +80,7 @@ class SchemaBaseImports:
         '''
 
         cls.init_datas()
-        
+
 
         data = cls.get_data(data_name)
 
@@ -237,7 +235,6 @@ class SchemaBaseImports:
         cls.clear_global_cache('import_pk_keys')
         schema_name = data_item['schema_name']
         sm = cls(schema_name)
-
         v_updates = []
         v_inserts = []
         v_errors = []
@@ -361,7 +358,7 @@ class SchemaBaseImports:
     def txt_data_info(cls, info, details=False):
         '''
         '''
-        
+
         txt = ''
         detail_updates = cls.log_data_info_detail(info, 'updates', details=details)
         detail_inserts = cls.log_data_info_detail(info, 'inserts', details=details)
@@ -395,7 +392,7 @@ class SchemaBaseImports:
     def txt_data_infos(cls, infos_file, details=False):
         '''
         '''
-        
+
         txt_list = []
         for schema_name, info_file_value in infos_file.items():
             txt = '  - {}'.format(schema_name, len(info_file_value))

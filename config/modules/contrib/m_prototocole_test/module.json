@@ -18,7 +18,7 @@
   },
   "data": {
     "module": {
-      "schema_name": "modules.module"
+      "schema_name": "commons.module"
     },
     "jdd": {
       "schema_name": "meta.jdd",

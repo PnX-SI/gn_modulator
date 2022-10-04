@@ -136,13 +136,6 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
             if column_def.get('column_property') is not None:
                 continue
 
-            if self.attr('meta.extends'):
-                base_schema_name = self.attr('meta.extends.schema_name')
-                base_schema = self.cls(base_schema_name)
-                if key in base_schema.column_keys() and key != base_schema.pk_field_name():
-                    continue
-
-
             sql_type = self.get_sql_type(column_def, required=self.is_required(key))
             sql_default = self.sql_default(column_def)
             txt += (

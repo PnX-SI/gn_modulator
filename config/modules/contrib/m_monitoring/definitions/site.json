@@ -5,27 +5,27 @@
     "sql_schema_dot_table": "m_monitoring.t_sites",
     "genre": "M",
     "label": "site",
-    "label_field_name": "site_name",
-    "geometry_field_name": "site_geom",
+    "label_field_name": "name",
+    "geometry_field_name": "geom",
     "unique": [
-      "site_code"
+      "code"
     ],
     "check_cruved": true
   },
   "map": {
     "popup_fields": [
-      "site_name",
-      "site_code",
-      "site_desc",
+      "name",
+      "code",
+      "description",
       "nomenclature_type_site.label_fr",
-      "site_category.category_name"
+      "category.name"
     ]
   },
   "table": {
     "columns": [
-      "site_category.category_name",
-      "site_code",
-      "site_name",
+      "category.name",
+      "code",
+      "name",
       "nb_visits",
       "last_visit_date_min"
     ],
@@ -37,9 +37,9 @@
     ]
   },
   "required": [
-    "site_code",
-    "site_name",
-    "site_geom"
+    "code",
+    "name",
+    "geom"
   ],
   "form": {
     "layout": [
@@ -47,15 +47,15 @@
         "hidden": true,
         "items": [
           "id_site",
-          "site_geom",
+          "geom",
           {
             "key": "id_digitiser",
             "default": "__f__meta.currentUser?.id_role"
           }
         ]
       },
-      "site_code",
-      "site_name",
+      "code",
+      "name",
       {
         "key": "id_digitiser",
         "default": "__f__meta.currentUser?.id_role",
@@ -99,13 +99,13 @@
   },
   "details": {
     "layout": [
-      "site_code",
-      "site_name",
+      "code",
+      "name",
       "type_site",
       "digitiser.nom_complet ",
       "inventor.nom_complet",
       "nomenclature_type_site.label_fr",
-      "site_category.category_name",
+      "category.name",
       "label_regions",
       "label_departements",
       "label_communes",

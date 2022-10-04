@@ -174,20 +174,6 @@ class SchemaFiles():
         if self.autoschema():
             self.definition = self.get_autoschema()
 
-        if self.attr('meta.extends'):
-            base_schema_name = self.attr('meta.extends.schema_name')
-            base_schema = self.cls(base_schema_name)
-            properties = copy.deepcopy(base_schema.properties())
-            properties.update(self.definition.get('properties', {}))
-
-            # la clé primaire du schema de base est à la fois
-            #  - une clé primaire du schema
-            #  - et une clé étrangère vers le schema de base
-
-            properties[base_schema.pk_field_name()]['foreign_key'] = True
-            properties[base_schema.pk_field_name()]["schema_name"] = base_schema_name
-            self.definition['properties'] = properties
-
         self.json_schema = self.get_json_schema()
         self.validation_schema = self.process_validation_schema(copy.deepcopy(self.json_schema))
 

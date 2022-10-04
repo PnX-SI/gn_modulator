@@ -24,9 +24,9 @@
     ]
   },
   "defs": {
-    "category_name": {
+    "name": {
       "title": "Type de site",
-      "field": "site_category.category_name",
+      "field": "category.name",
       "type": "string",
       "filter_type": "="
     },
@@ -56,10 +56,10 @@
       "title": "Infos sites",
       "items": [
         {
-          "key": "category_name",
+          "key": "name",
           "type": "list_form",
           "title": "Type de site",
-          "value_field_name": "category_name",
+          "value_field_name": "name",
           "schema_name": "m_monitoring.site_category"
         }
       ]
@@ -124,14 +124,14 @@
           "schema_name": "ref_geo.linear_group",
           "filters": [
             {
-              "field": "linear_type.type_code",
+              "field": "linears.type.type_code",
               "type": "=",
               "value": "RTE"
             }
           ],
           "sorters": [
             {
-              "field": "group_name",
+              "field": "name",
               "dir": "asc"
             }
           ],
