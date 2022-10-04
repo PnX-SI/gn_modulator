@@ -167,8 +167,6 @@ class SchemaApi():
                 config_path : 'elem1/elem2' => return config['elem1']['elem2']
             '''
 
-            # if request.args.get('reload'):
-                # self.reload()
             config = None
 
             # gerer les erreurs de config
@@ -181,8 +179,10 @@ class SchemaApi():
         def get_rest(self_mv, value=None):
 
             if value:
-
-                return get_one_rest(value)
+                try:
+                    return get_one_rest(value)
+                except SchemaUnsufficientCruvedRigth as e:
+                    return f"Vous n'avez pas les droits suffisants pour accéder à cette requête (schema_name: {self.schema_name()}, module_code: {module_code})"
 
             else:
                 return get_list_rest()
@@ -353,7 +353,7 @@ class SchemaApi():
         )
         return MV.as_view(self.view_name(view_type))
 
-    def register_api(self, bp):
+    def register_api(self, bp, options={}):
         '''
             Fonction qui enregistre une api pour un schema
 
@@ -415,7 +415,7 @@ class SchemaApi():
 
     @classmethod
     def init_routes(cls, blueprint):
-        for schema_name, sm in cls.get_schema_cache('*', 'schema').items():
+        for schema_name, sm in cls.get_schema_cache(object_type='schema').items():
             sm.register_api(blueprint)
 
 # except Exception as e:

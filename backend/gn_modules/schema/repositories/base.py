@@ -143,6 +143,8 @@ class SchemaRepositoriesBase():
 
         m = self.get_row(value, field_name=field_name)
 
+        # Tester ici le droit au CRUVED
+
         if not self.is_new_data(m, data):
             return m, False
 

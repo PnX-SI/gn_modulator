@@ -65,9 +65,12 @@ class SchemaCache():
         clear_dict(cache_schemas)
 
     @classmethod
-    def get_schema_cache(cls, schema_name, object_type=None):
+    def get_schema_cache(cls, schema_name=None, object_type=None):
 
-        if schema_name == '*':
+        if schema_name is None and object_type is None:
+            return None
+
+        if schema_name is None:
             return {
                 k: (
                     v.get(object_type) if object_type
@@ -78,10 +81,10 @@ class SchemaCache():
 
         out = cache_schemas.get(schema_name, {})
 
-        out = (
-            out.get(object_type) if object_type
-            else out
-        )
+        if object_type is None:
+            return out
+
+        return out.get(object_type)
 
         return out
 

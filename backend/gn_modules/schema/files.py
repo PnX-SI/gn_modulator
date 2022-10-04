@@ -293,7 +293,7 @@ class SchemaFiles():
 
         # check schema_name s in properties
         check_schema_names = True
-        for schema_name, definition in cls.get_schema_cache('*', 'definition').items():
+        for schema_name, definition in cls.get_schema_cache(object_type='definition').items():
             check_schema_names= cls.check_schema_names(schema_name, definition) and check_schema_names
 
         return check_schema_names

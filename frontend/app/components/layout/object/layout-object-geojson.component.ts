@@ -56,6 +56,7 @@ export class ModulesLayoutObjectGeoJSONComponent
       );
       return;
     }
+    layer.bringToFront();
     layer.openPopup();
   }
 

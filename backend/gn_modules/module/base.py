@@ -46,7 +46,6 @@ class ModuleBase():
             'module_picto': module_data['module_picto'],
             'active_frontend': module_data['active_frontend'],
             'module_code': module_code,
-            'module_name': module_code,
             'module_path': 'modules/{}'.format(module_code.lower()),
             'active_backend': False,
         }
@@ -61,40 +60,6 @@ class ModuleBase():
     def delete_db_module(cls, module_code):
         schema_module = SchemaMethods('commons.module')
         schema_module.delete_row(module_code, field_name='module_code')
-
-    # @classmethod
-    # def register_or_update_module(cls, module_code):
-
-    #     schema_module = SchemaMethods('commons.module')
-    #     module_data = cls.module_config(module_code)['module']
-    #     module_code = module_data['module_code']
-    #     module_row_data = {
-    #         'module_label': module_data['module_label'],
-    #         'module_desc': module_data['module_desc'],
-    #         'module_picto': module_data['module_picto'],
-    #         'active_frontend': module_data['active_frontend'],
-    #         'module_code': module_code,
-    #         'module_name': module_code,
-    #         'module_path': 'modules/{}'.format(module_code.lower()),
-    #         'active_backend': False,
-    #     }
-
-    #     try:
-    #         _, b_update = schema_module.update_row(module_code, module_row_data, field_name='module_code')
-
-    #         print("Le module {} existe déjà".format(module_code))
-    #         if b_update:
-    #             print('Mise à jour')
-    #         return
-
-    #     except NoResultFound:
-    #         pass
-
-    #         schema_module.insert_row(module_row_data)
-
-    #         print('Le module {} à bien été enregistré'.format(module_code))
-    #         return
-
 
     @classmethod
     def create_schema_sql(cls, module_code, force=False):
