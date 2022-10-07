@@ -30,7 +30,7 @@ export class ModulesLayoutObjectFiltersComponent
           flex: "0",
         },
         {
-          items: this.schemaConfig.filters.form.layout,
+          items: this.objectConfig.filters.form.layout,
           overflow: true,
         },
         {
@@ -69,10 +69,10 @@ export class ModulesLayoutObjectFiltersComponent
   }
 
   getFilters() {
-    const filterDefs = this.schemaConfig.filters.defs;
+    const filterDefs = this.objectConfig.filters.defs;
     return Object.entries(this.filterValues)
-      .filter(([key, value]) => ![null, undefined].includes(value))
-      .map(([key, value]) => ({
+      .filter(([key, value]:any) => ![null, undefined].includes(value))
+      .map(([key, value]:any) => ({
         field: filterDefs[key].field,
         type: filterDefs[key].filter_type,
         value: filterDefs[key].key ? value[filterDefs[key].key] : value,

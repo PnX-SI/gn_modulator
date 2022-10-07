@@ -8,6 +8,7 @@ from flask.views import MethodView
 from flask import request, jsonify, Response, current_app
 from functools import wraps
 import csv
+import math
 from geonature.core.gn_permissions import decorators as permissions
 from geonature.utils.config import config
 
@@ -66,7 +67,8 @@ class SchemaApi():
         '''
         return self.attr('meta.view_name', 'api_{}_{}'.format(view_type, self.schema_name('snake_case')))
 
-    def base_url(self):
+    @classmethod
+    def base_url(cls):
         '''
         base url (may differ with apps (GN, UH, TH, ...))
 
@@ -92,7 +94,7 @@ class SchemaApi():
         )
 
         if full_url:
-            url = '{}{}'.format(self.base_url(), url)
+            url = '{}{}'.format(self.cls.base_url(), url)
 
         return url
 
@@ -104,7 +106,7 @@ class SchemaApi():
             - prefilters
             - fields
             - field_name
-            - sorters
+            - sort
             - page
             - page_size
 
@@ -123,9 +125,10 @@ class SchemaApi():
             'prefilters': self.load_param(request.args.get('prefilters', '[]')),
             'page': self.load_param(request.args.get('page', 'null')),
             'page_size': self.load_param(request.args.get('page_size', 'null')),
-            'sorters': self.load_param(request.args.get('sorters', '[]')),
+            'sort': self.load_array_param(request.args.get('sort')),
             "value": self.load_param(request.args.get('value', 'null')),
             'as_csv': self.load_param(request.args.get('as_csv', 'false')),
+            'cruved_type': self.load_param(request.args.get('cruved_type', 'null'))
         }
 
         return params
@@ -140,8 +143,6 @@ class SchemaApi():
 
         return param.split(',')
 
-
-
     def load_param(self, param):
         if param == 'undefined':
             return None
@@ -152,29 +153,11 @@ class SchemaApi():
         except Exception:
             return param
 
-    def schema_api_dict(self):
+    def schema_api_dict(self, module_code, options):
         '''
+        options : dict
+            - prefilters
         '''
-
-        def get_page_number(self_mv, value):
-            params = self.parse_request_args(request)
-            return self.get_page_number(params, value)
-
-        def get_config(self_mv, config_path):
-            '''
-                return config or config part
-
-                config_path : 'elem1/elem2' => return config['elem1']['elem2']
-            '''
-
-            config = None
-
-            # gerer les erreurs de config
-            try:
-                config = self.config()
-            except SchemaLoadError as e:
-                return str(e), 500
-            return self.process_dict_path(config, config_path)
 
         def get_rest(self_mv, value=None):
 
@@ -191,11 +174,13 @@ class SchemaApi():
             params = self.parse_request_args(request)
 
             try:
-
                 m = self.get_row(
                     value,
                     field_name=params.get('field_name'),
-                )
+                    module_code=module_code,
+                    cruved_type='R',
+                    params=params
+                ).one()
 
             except SchemaUnsufficientCruvedRigth as e:
                 return 'Erreur Cruved : {}'.format(str(e)), 403
@@ -209,8 +194,27 @@ class SchemaApi():
         def get_list_rest():
 
             params = self.parse_request_args(request)
-            query, query_info = self.get_list(params)
-            res_list = query.all()
+            count_total = (
+                self.query_list(module_code, 'R', params, 'total')
+                .count()
+            )
+            query_info = {
+                'page': params.get('page') or 1,
+                'page_size': params.get('page_size', None),
+                'total': count_total,
+                'filtered': (
+                    self.query_list(module_code, 'R', params, 'filtered')
+                    .count()
+                ),
+                'last_page': (
+                    math.ceil(count_total / params.get('page_size'))
+                    if params.get('page_size')
+                    else 1
+                )
+            }
+            query_list = self.query_list(module_code, params.get('cruved_type') or 'R', params)
+            print(query_list)
+            res_list = query_list.all()
             out = {
                 **query_info,
                 'data': self.serialize_list(
@@ -221,49 +225,6 @@ class SchemaApi():
             }
 
             return out
-
-        def get_export(self_mv, module_code, export_code):
-            '''
-            TODO
-            pour l'instant csv
-            ajouter json, geosjon, shape, etc...
-            recupérer les paramètres de route depuis la config ???
-
-            '''
-
-            return f"export {module_code} {export_code}"
-
-            params = self.parse_request_args(request)
-            query, query_info = self.get_list(params)
-            res_list = query.all()
-
-            out = {
-                **query_info,
-                'data': self.serialize_list(
-                    res_list,
-                    fields=params.get('fields'),
-                    as_geojson=params.get('as_geojson'),
-                )
-            }
-
-            if not out['data']:
-                return '', 404
-            data_csv = []
-            keys = list(params.get('fields', out['data'][0].keys()))
-            data_csv.append(self.process_csv_keys(keys))
-            data_csv += [
-                [
-                    self.process_csv_data(key, d)
-                    for key in keys
-                ] for d in out['data']
-            ]
-
-            if params.get('as_csv') == 'test':
-                return jsonify(data_csv)
-
-            response = Response(iter_csv(data_csv), mimetype='text/csv')
-            response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
-            return response
 
         def post_rest(self_mv):
 
@@ -289,7 +250,13 @@ class SchemaApi():
             field_name = request.args.get('field_name')
 
             try:
-                m, _ = self.update_row(value, data, field_name)
+                m, _ = self.update_row(
+                    value,
+                    data,
+                    field_name=field_name,
+                    module_code=module_code,
+                    params=options
+                )
 
             except SchemaUnsufficientCruvedRigth as e:
                 return 'Erreur Cruved : {}'.format(str(e)), 403
@@ -305,7 +272,13 @@ class SchemaApi():
             field_name = request.args.get('field_name')
             params = self.parse_request_args(request)
 
-            m = self.get_row(value, field_name=field_name)
+            m = self.get_row(
+                value,
+                field_name=field_name,
+                module_code=module_code,
+                cruved_type='D',
+                params = options
+            ).one()
             dict_out = self.serialize(
                 m,
                 fields=params.get('fields'),
@@ -322,38 +295,28 @@ class SchemaApi():
 
         return {
             'rest': {
-                'get': permissions.login_required(get_rest),
-                'post': permissions.login_required(post_rest),
-                'patch': permissions.login_required(patch_rest),
-                'delete': permissions.login_required(delete_rest)
-            },
-            'config': {
-                'get': permissions.login_required(get_config)
-            },
-            'page_number': {
-                'get': permissions.login_required(get_page_number)
+                'get': permissions.check_cruved_scope('R', module_code=module_code)(get_rest),
+                'post': permissions.check_cruved_scope('C', module_code=module_code)(post_rest),
+                'patch': permissions.check_cruved_scope('U', module_code=module_code)(patch_rest),
+                'delete': permissions.check_cruved_scope('D', module_code=module_code)(delete_rest)
             }
-            # 'export': {
-            #     'get': permissions.login_required(get_export)
-            # }
-
         }
 
-    def view_func(self, view_type):
+    def schema_view_func(self, view_type, module_code, options):
         '''
             c'est ici que ce gère le CRUVED pour l'accès aux routes
         '''
 
-        view_func = self.schema_api_dict()[view_type]
+        schema_api_dict = self.schema_api_dict(module_code, options)[view_type]
 
         MV = type(
             self.method_view_name(view_type),
             (MethodView,),
-            view_func
+            schema_api_dict
         )
         return MV.as_view(self.view_name(view_type))
 
-    def register_api(self, bp, options={}):
+    def register_api(self, bp, module_code, object_name, options={}):
         '''
             Fonction qui enregistre une api pour un schema
 
@@ -361,63 +324,31 @@ class SchemaApi():
                 -comment gérer la config pour limiter les routes selon le cruved
         '''
 
+        cruved = options.get('cruved', '')
+
         # rest api
-        view_func_rest = self.view_func('rest')
-        bp.add_url_rule(self.url('/rest/'), defaults={'value': None}, view_func=view_func_rest, methods=['GET'])
-        bp.add_url_rule(self.url('/rest/'), view_func=view_func_rest, methods=['POST'])
-        bp.add_url_rule(self.url('/rest/<value>'), view_func=view_func_rest, methods=['GET', 'PATCH', 'DELETE'])
+        view_func_rest = self.schema_view_func('rest', module_code, options)
 
-        # config
-        view_func_config = self.view_func('config')
-        bp.add_url_rule(self.url('/config/'), defaults={'config_path': None}, view_func=view_func_config, methods=['GET'])
-        bp.add_url_rule(self.url('/config/<path:config_path>'), view_func=view_func_config, methods=['GET'])
+        methods = []
 
-        # page_number
-        view_func_page_number = self.view_func('page_number')
-        bp.add_url_rule(self.url('/page_number/<value>'), view_func=view_func_page_number, methods=['GET'])
+        # on ouvre toujours la route de liste quand register api est appelé
+        bp.add_url_rule(f'/{object_name}/', defaults={'value': None}, view_func=view_func_rest, methods=['GET'])
 
-        # get export
-        # view_func_export = self.view_func('export')
-        # bp.add_url_rule(self.url('/export/<string:module_code>/<string:export_code>'), view_func=view_func_export, methods=['GET'])
+        # create : POST
+        if 'C' in cruved:
+            bp.add_url_rule(f'/{object_name}/', view_func=view_func_rest, methods=['POST'])
 
-    def process_dict_path(self, d, dict_path):
-        '''
-            return dict or dict part according to path
-            process error if needed
-        '''
+        # read : GET (one)
+        if 'R' in cruved:
+            methods.append('GET')
 
-        if not dict_path:
-            return d
+        # update : PATCH
+        if 'U' in cruved:
+            methods.append('PATCH')
 
-        p_error = []
-        out = copy.deepcopy(d)
-        for p in dict_path.split('/'):
-            if p:
-                # gestion des indices des listes
-                try:
-                    p = int(p)
-                except Exception:
-                    pass
-                try:
-                    out = out[p]
-                    p_error.append(p)
-                except Exception:
-                    path_error = '/'.join(p_error)
-                    txt_error = "La chemin demandé <b>{}/{}</b> n'est pas correct\n".format(path_error, p)
-                    if type(out) is dict and out.keys():
-                        txt_error += "<br><br>Vous pouvez choisir un chemin parmi :"
-                        for key in sorted(list(out.keys())):
-                            url_key = self.url('/config/' + path_error + "/" + key, full_url=True)
-                            txt_error += '<br> - <a href="{}">{}{}</a>'.format(url_key, path_error + '/' if path_error else '', key)
-                    return txt_error, 500
+        # delete : DELETE
+        if 'D' in cruved:
+            methods.append('DELETE')
 
-        return jsonify(out)
-
-    @classmethod
-    def init_routes(cls, blueprint):
-        for schema_name, sm in cls.get_schema_cache(object_type='schema').items():
-            sm.register_api(blueprint)
-
-# except Exception as e:
-    # print('Erreur durant la création des routes pour {} : {}'.format(schema_name, str(e)))
-    # raise(e)
+        if methods:
+            bp.add_url_rule(f'/{object_name}/<value>', view_func=view_func_rest, methods=methods)

@@ -75,7 +75,7 @@ class SchemaBaseImports:
 
 
     @classmethod
-    def process_data(cls, data_name):
+    def process_features(cls, data_name):
         '''
         '''
 
@@ -156,7 +156,7 @@ class SchemaBaseImports:
             return None
 
         try:
-            m = sm_rel.get_row(rel_test_values, rel_test_keys)
+            m = sm_rel.get_row(rel_test_values, rel_test_keys).one()
             pk = getattr(m, sm_rel.pk_field_name())
             self.cls.set_global_cache('import_pk_keys', cache_key, pk)
             return pk

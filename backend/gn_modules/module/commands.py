@@ -24,13 +24,11 @@ class ModuleCommands():
         # alembic
         db.session.commit() # pour eviter les locks ???
         db_downgrade(revision='{}@base'.format(module_code.lower()))
-
-        #symlink
-        cls.remove_migration_links(module_code)
-
         # suppression du module en base
         cls.delete_db_module(module_code)
 
+        #symlink
+        cls.remove_migration_links(module_code)
 
     @classmethod
     def install_module(cls, module_code, force=False):
@@ -55,7 +53,7 @@ class ModuleCommands():
 
         # process module data (nomenclature, groups ?, datasets, etc..)
         SchemaMethods.reinit_marshmallow_schemas()
-        cls.process_module_data(module_code)
+        cls.process_module_features(module_code)
 
         # assets
         cls.process_module_assets(module_code)

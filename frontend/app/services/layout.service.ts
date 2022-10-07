@@ -11,7 +11,7 @@ export class ModulesLayoutService {
 
   // pour pouvoir faire passer des infos au layout
   // - par exemple sur l'utilisateur courant ou autres
-  meta:any = {};
+  meta: any = {};
 
   constructor(private _injector: Injector) {
     this._mConfig = this._injector.get(ModulesConfigService);
@@ -24,7 +24,6 @@ export class ModulesLayoutService {
   $stopActionProcessing = new Subject();
   modals = {};
   $closeModals = new Subject();
-
 
   initModal(modalName) {
     if (!this.modals[modalName]) {
@@ -41,8 +40,7 @@ export class ModulesLayoutService {
   }
 
   getLayoutFromName(layoutName) {
-    return this._mConfig.getLayout(layoutName);
-    // from config ??
+    return this._mConfig.layout(layoutName);
   }
 
   reComputeLayout(name) {
@@ -61,12 +59,10 @@ export class ModulesLayoutService {
     this.$refreshData.next(objectName);
   }
 
-
   stopActionProcessing(name) {
     this.$stopActionProcessing.next(true);
   }
 
-  
   /** Met à plat tous les layouts
    *
    * TODO array
@@ -109,7 +105,7 @@ export class ModulesLayoutService {
           "table",
           "map",
           "modal",
-          "dict"
+          "dict",
         ].includes(layout.type)
       ? layout.type
       : layout.key
@@ -145,7 +141,7 @@ export class ModulesLayoutService {
         this.getLayoutFields(layout.items, newBaseKey)
       );
     }
-    
+
     /** key */
     const keys = [layout.key];
 
@@ -192,7 +188,13 @@ export class ModulesLayoutService {
       const computedLayout = {};
       for (const [key, value] of Object.entries(layout)) {
         computedLayout[key] = this.isStrFunction(value)
-          ? this.evalLayout({ layout: value, data, globalData, formGroup, meta: this.meta })
+          ? this.evalLayout({
+              layout: value,
+              data,
+              globalData,
+              formGroup,
+              meta: this.meta,
+            })
           : value;
       }
       return computedLayout;
@@ -220,7 +222,13 @@ export class ModulesLayoutService {
     return f;
   }
 
-  evalLayout({ layout, data, globalData = null, formGroup = null, meta=null }) {
+  evalLayout({
+    layout,
+    data,
+    globalData = null,
+    formGroup = null,
+    meta = null,
+  }) {
     if (this.isStrFunction(layout) && !data) {
       return null;
     }
@@ -234,7 +242,13 @@ export class ModulesLayoutService {
     }
 
     if (this.isStrFunction(layout)) {
-      const val = this.evalFunction(layout)(data, globalData, formGroup, utils, meta);
+      const val = this.evalFunction(layout)(
+        data,
+        globalData,
+        formGroup,
+        utils,
+        meta
+      );
       return val !== undefined ? val : null; // on veut eviter le undefined
     }
     return layout;

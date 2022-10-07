@@ -57,6 +57,8 @@ class SchemaRepositoriesCruved():
         if not hasattr(g, 'current_user'):
             return query
 
+
+
         user_cruved = get_scopes_by_action(module_code=module_code)
 
         query = query.filter(self.expression_ownership() <= user_cruved.get(cruved_type))

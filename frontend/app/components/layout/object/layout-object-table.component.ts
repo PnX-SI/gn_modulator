@@ -51,13 +51,13 @@ export class ModulesLayoutObjectTableComponent
       height: this.tableHeight || "200px",
       ajaxRequestFunc: this.ajaxRequestFunc,
       columns: this.columnsTable(),
-      ajaxURL: this.schemaConfig.table.url,
+      ajaxURL: this.objectConfig.table.url,
       paginationSize:
-        this.computedLayout.page_size || this.schemaConfig.utils.page_size,
+        this.computedLayout.page_size || this.objectConfig.utils.page_size,
       pagination: "remote",
       headerFilterLiveFilterDelay: 600,
       ajaxSorting: true,
-      initialSort: utils.copy(this.schemaConfig.table.sort) || [],
+      initialSort: utils.copy(this.objectConfig.table.sort) || [],
       // {column:this.pkFieldName(), dir:"asc"}, //sort by this first
       selectable: 1,
       columnMinWidth: 20,
@@ -91,7 +91,7 @@ export class ModulesLayoutObjectTableComponent
         hozAlign: "center",
         tooltip: (cell) =>
           `Afficher les détail ${
-            this.schemaConfig.display.du_label
+            this.objectConfig.display.du_label
           } ${this.getCellValue(cell)}`,
       },
       {
@@ -99,7 +99,7 @@ export class ModulesLayoutObjectTableComponent
         formatter: (cell, formatterParams, onRendered) => {
           const editAllowed =
             cell._cell.row.data["ownership"] <=
-            this.moduleConfig.module.cruved["U"];
+            this._mPage.moduleConfig.cruved["U"];
           var html = "";
           html += `<span class="table-icon ${
             editAllowed ? "" : "disabled"
@@ -113,9 +113,9 @@ export class ModulesLayoutObjectTableComponent
         tooltip: (cell) => {
           const editAllowed =
             cell._cell.row.data["ownership"] <=
-            this.moduleConfig.module.cruved["U"];
+            this._mPage.moduleConfig.cruved["U"];
           return editAllowed
-            ? `Éditer ${this.schemaConfig.display.le_label} ${this.getCellValue(
+            ? `Éditer ${this.objectConfig.display.le_label} ${this.getCellValue(
                 cell
               )}`
             : "";
@@ -126,7 +126,7 @@ export class ModulesLayoutObjectTableComponent
         formatter: (cell, formatterParams, onRendered) => {
           const deleteAllowed =
             cell._cell.row.data["ownership"] <=
-            this.moduleConfig.module.cruved["D"];
+            this._mPage.moduleConfig.cruved["D"];
           var html = "";
           html += `<span class="table-icon ${
             deleteAllowed ? "" : "disabled"
@@ -140,10 +140,10 @@ export class ModulesLayoutObjectTableComponent
         tooltip: (cell) => {
           const deleteAllowed =
             cell._cell.row.data["ownership"] <=
-            this.moduleConfig.module.cruved["D"];
+            this._mPage.moduleConfig.cruved["D"];
           return deleteAllowed
             ? `Supprimer ${
-                this.schemaConfig.display.le_label
+                this.objectConfig.display.le_label
               } ${this.getCellValue(cell)}`
             : "";
         },
@@ -153,7 +153,7 @@ export class ModulesLayoutObjectTableComponent
   }
 
   columns() {
-    const columns = this.schemaConfig.table.columns;
+    const columns = this.objectConfig.table.columns;
     return columns.map((col) => {
       const column = utils.copy(col);
       column.headerFilter =
@@ -207,12 +207,12 @@ export class ModulesLayoutObjectTableComponent
   };
 
   getCellValue(cell) {
-    const pkFieldName = this.schemaConfig.utils.pk_field_name;
+    const pkFieldName = this.objectConfig.utils.pk_field_name;
     return cell._cell.row.data[pkFieldName];
   }
 
   getRowValue(row) {
-    const pkFieldName = this.schemaConfig.utils.pk_field_name;
+    const pkFieldName = this.objectConfig.utils.pk_field_name;
     return this.getRowData(row)[pkFieldName];
   }
 
@@ -226,8 +226,8 @@ export class ModulesLayoutObjectTableComponent
 
       fields.push("ownership");
 
-      if (!fields.includes(this.schemaConfig.utils.pk_field_name)) {
-        fields.push(this.schemaConfig.utils.pk_field_name);
+      if (!fields.includes(this.objectConfig.utils.pk_field_name)) {
+        fields.push(this.objectConfig.utils.pk_field_name);
       }
       const params = {
         ...paramsTable,
@@ -249,7 +249,7 @@ export class ModulesLayoutObjectTableComponent
         fields, // fields
       };
       this._params = extendedParams;
-      this._mData.getList(this.schemaName(), extendedParams).subscribe(
+      this._mData.getList(this.moduleCode(), this.objectName(), extendedParams).subscribe(
         (res) => {
           // process lists
 
@@ -311,12 +311,12 @@ export class ModulesLayoutObjectTableComponent
     }
 
     // TODO une seule requete pour les getPageNumber et setPage ??
-    this._mData
-      .getPageNumber(this.schemaName(), value, this._params)
-      .subscribe((res) => {
-        // set Page
-        this.table.setPage(res.page);
-      });
+    // this._mData
+    //   .getPageNumber(this.schemaName(), value, this._params)
+    //   .subscribe((res) => {
+    //     // set Page
+    //     this.table.setPage(res.page);
+    //   });
   }
 
   selectRow(value, fieldName = null) {
@@ -342,7 +342,7 @@ export class ModulesLayoutObjectTableComponent
 
   processConfig() {
     this.modalDeleteLayout = this._mSchema.modalDeleteLayout(
-      this.schemaConfig,
+      this.objectConfig,
       `delete_modal_${this._id}`
     );
     this.drawTable();

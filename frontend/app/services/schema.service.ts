@@ -27,11 +27,12 @@ export class ModulesSchemaService {
     this._mLayout = this._injector.get(ModulesLayoutService);
   }
 
-  processFormLayout(schemaName, moduleConfig) {
-    const schemaConfig = this.schemaConfig(schemaName);
-    const schemaLayout = schemaConfig.form.layout;
-    const geometryType = this.geometryType(schemaName)
-    const geometryFieldName = this.geometryFieldName(schemaName)
+  processFormLayout(moduleCode, objectName) {
+    const objectConfig = this.objectConfig(moduleCode, objectName);
+    const moduleConfig = this._mConfig.moduleConfig(moduleCode);
+    const schemaLayout = objectConfig.form.layout;
+    const geometryType = this.geometryType(moduleCode, objectName);
+    const geometryFieldName = this.geometryFieldName(moduleCode, objectName);
     return {
       type: "form",
       appearance: "fill",
@@ -45,7 +46,7 @@ export class ModulesSchemaService {
           gps: true,
           hidden: !geometryFieldName,
           flex: geometryFieldName ? "1" : "0",
-          zoom: 12
+          zoom: 12,
         },
         {
           items: [
@@ -66,14 +67,14 @@ export class ModulesSchemaService {
             {
               title: [
                 "__f__{",
-                `  const id = data.${schemaConfig.utils.pk_field_name};`,
+                `  const id = data.${objectConfig.utils.pk_field_name};`,
                 "  return id",
                 "    ? `Modification " +
-                  schemaConfig.display.du_label +
+                  objectConfig.display.du_label +
                   " ${data." +
-                  schemaConfig.utils.label_field_name +
+                  objectConfig.utils.label_field_name +
                   "}`",
-                `    : "Création ${schemaConfig.display.d_un_nouveau_label}";`,
+                `    : "Création ${objectConfig.display.d_un_nouveau_label}";`,
                 "}",
               ],
               flex: "0",
@@ -83,9 +84,9 @@ export class ModulesSchemaService {
               type: "message",
               html: `__f__"Veuillez saisir une geometrie sur la carte"`,
               class: "error",
-              hidden: `__f__${!schemaConfig.utils
+              hidden: `__f__${!objectConfig.utils
                 .geometry_field_name} || data.${
-                schemaConfig.utils.geometry_field_name
+                objectConfig.utils.geometry_field_name
               }?.coordinates`,
             },
             {
@@ -128,9 +129,9 @@ export class ModulesSchemaService {
                     modal_name: "delete",
                   },
 
-                  hidden: `__f__data.ownership > ${moduleConfig.module.cruved["D"]} || !data.${schemaConfig.utils.pk_field_name}`,
+                  hidden: `__f__data.ownership > ${moduleConfig.cruved["D"]} || !data.${objectConfig.utils.pk_field_name}`,
                 },
-                this.modalDeleteLayout(schemaConfig)
+                this.modalDeleteLayout(objectConfig),
               ],
             },
           ],
@@ -139,7 +140,7 @@ export class ModulesSchemaService {
     };
   }
 
-  modalDeleteLayout(schemaConfig, modalName = null) {
+  modalDeleteLayout(objectConfig, modalName = null) {
     return {
       type: "modal",
       modal_name: modalName || "delete",
@@ -161,35 +162,37 @@ export class ModulesSchemaService {
           color: "primary",
         },
       ],
-    }
+    };
   }
 
-  processPropertiesLayout(schemaConfig, moduleConfig) {
+  processPropertiesLayout(moduleCode, objectName) {
+    const objectConfig = this.objectConfig(moduleCode, objectName);
+    const moduleConfig = this._mConfig.moduleConfig(moduleCode);
     return {
       // direction: "row",
       items: [
         // {
         //   type: "map",
-        //   key: schemaConfig.utils.geometry_field_name,
-        //   hidden: !schemaConfig.utils.geometry_field_name
+        //   key: objectConfig.utils.geometry_field_name,
+        //   hidden: !objectConfig.utils.geometry_field_name
         // },
         // {
         //   items: [
         {
-          title: `__f__"Propriétés ${schemaConfig.display.du_label} " + data.${schemaConfig.utils.label_field_name}`,
+          title: `__f__"Propriétés ${objectConfig.display.du_label} " + data.${objectConfig.utils.label_field_name}`,
           flex: "0",
         },
         {
-          items: schemaConfig.details.layout,
+          items: objectConfig.details.layout,
           overflow: true,
         },
         {
           type: "button",
           color: "primary",
           title: "Éditer",
-          description: `Editer ${schemaConfig.display.le_label}`,
+          description: `Editer ${objectConfig.display.le_label}`,
           action: "edit",
-          hidden: `__f__data.ownership > ${moduleConfig.module.cruved["U"]}`,
+          hidden: `__f__data.ownership > ${moduleConfig.cruved["U"]}`,
           flex: "0",
         },
       ],
@@ -198,75 +201,78 @@ export class ModulesSchemaService {
     };
   }
 
-  onSubmit(schemaName, data, layout) {
+  onSubmit(moduleCode, objectName, data, layout) {
     if (!data) {
       return;
     }
 
-    const fields = this.getFields(schemaName, layout);
+    const fields = this.getFields(moduleCode, objectName, layout);
 
     const processedData = this._mForm.processData(data, layout);
 
-    const request = this.id(schemaName, data)
-      ? this._mData.patch(
-          schemaName,
-          this.id(schemaName, data),
-          processedData,
-          {
-            fields,
-          }
-        )
-      : this._mData.post(schemaName, processedData, {
+    const id = this.id(moduleCode, objectName, data);
+
+    const request = id
+      ? this._mData.patch(moduleCode, objectName, id, processedData, {
+          fields,
+        })
+      : this._mData.post(moduleCode, objectName, processedData, {
           fields,
         });
 
     return request;
   }
 
-  onDelete(schemaName, data) {
-    return this._mData.delete(schemaName, this.id(schemaName, data));
+  onDelete(moduleCode, objectName, data) {
+    return this._mData.delete(
+      moduleCode,
+      objectName,
+      this.id(moduleCode, objectName, data)
+    );
   }
 
-  getFields(schemaName, layout) {
+  getFields(moduleCode, objectName, layout) {
     const fields = this._mLayout.getLayoutFields(layout);
 
     if (
-      this.geometryFieldName(schemaName) &&
-      this.geometryFieldName(schemaName)
+      this.geometryFieldName(moduleCode, objectName) &&
+      this.geometryFieldName(moduleCode, objectName)
     ) {
-      fields.push(this.geometryFieldName(schemaName));
+      fields.push(this.geometryFieldName(moduleCode, objectName));
     }
 
-    if (!fields.includes(this.pkFieldName(schemaName))) {
-      fields.push(this.pkFieldName(schemaName));
+    if (!fields.includes(this.pkFieldName(moduleCode, objectName))) {
+      fields.push(this.pkFieldName(moduleCode, objectName));
     }
 
     return fields;
   }
 
-  schemaConfig(schemaName) {
-    return this._mConfig.schemaConfig(schemaName);
+  objectConfig(moduleCode, objectName) {
+    return this._mConfig.objectConfig(moduleCode, objectName);
   }
 
-  pkFieldName(schemaName) {
-    return this.schemaConfig(schemaName)?.utils.pk_field_name;
+  pkFieldName(moduleCode, objectName) {
+    return this.objectConfig(moduleCode, objectName)?.utils.pk_field_name;
   }
 
-  geometryFieldName(schemaName) {
-    return this.schemaConfig(schemaName).utils.geometry_field_name;
+  geometryFieldName(moduleCode, objectName) {
+    return this.objectConfig(moduleCode, objectName).utils.geometry_field_name;
   }
 
-  geometryType(schemaName) {
-    return this.geometryFieldName(schemaName)
-      ? this.schemaConfig(schemaName).definition.properties[this.geometryFieldName(schemaName)].geometry_type
+  geometryType(moduleCode, objectName) {
+    return this.geometryFieldName(moduleCode, objectName)
+      ? this.objectConfig(moduleCode, objectName).definition.properties[
+          this.geometryFieldName(moduleCode, objectName)
+        ].geometry_type
       : null;
   }
 
-  labelFieldName(schemaName) {
-    return this.schemaConfig(schemaName).utils.label_field_name;
+  labelFieldName(moduleCode, objectName) {
+    return this.objectConfig(moduleCode, objectName).utils.label_field_name;
   }
 
-  id(schemaName, data) {
-    return data[this.pkFieldName(schemaName)];
+  id(moduleCode, objectName, data) {
+    return data[this.pkFieldName(moduleCode, objectName)];
   }
 }

@@ -129,7 +129,7 @@
     "type": "date",
     "column_property": "max",
     "relation_key": "visits",
-    "key": "visit_date_min",
+    "key": "date_min",
     "schema_name": "m_monitoring.visit"
   },
   "groups": {

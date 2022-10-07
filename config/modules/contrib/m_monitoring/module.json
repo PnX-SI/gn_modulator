@@ -20,15 +20,18 @@
   // ],
   "data": {
     "site": {
+      "cruved": "CRUD",
       "schema_name": "m_monitoring.site",
       "map": {
         "bring_to_front": "true"
       }
     },
     "visit": {
+      "cruved": "CRUD",
       "schema_name": "m_monitoring.visit"
     },
     "site_group": {
+      "cruved": "CRUD",
       "schema_name": "m_monitoring.site_group",
       "map": {
         "style": {
@@ -37,10 +40,15 @@
       }
     },
     "observation": {
+      "cruved": "CRUD",
       "schema_name": "m_monitoring.observation"
     },
     "module": {
+      "cruved": "CRUD",
       "schema_name": "commons.module"
+    },
+    "category": {
+      "schema_name": "m_monitoring.site_category"
     }
   },
   "tree": {

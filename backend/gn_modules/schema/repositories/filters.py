@@ -44,7 +44,6 @@ class SchemaRepositoriesFilters():
         '''
 
         filters_processed, query = self.process_filter_array(Model, filters, query)
-
         if filters_processed is not None:
             query = query.filter(filters_processed)
             return query.filter(filters_processed)
@@ -57,7 +56,7 @@ class SchemaRepositoriesFilters():
 
             traite un liste qui peux contenir
                 - des listes (traitement récursif)
-                - des filtres : { field : <f_field>, type: <f_type>, value: <f_value>}
+                - des filtres : { field : <f_field>, type: <filter_type>, value: <filter_value>}
                 - des operateurs :
                     - '!' : négation, unitaire
                     - '*' : et
@@ -125,7 +124,7 @@ class SchemaRepositoriesFilters():
                     cur_filter = loop_filter
         return cur_filter, query
 
-    def get_filter(self, Model, f, query=None, condition=None):
+    def get_filter(self, Model, filter, query=None, condition=None):
         '''
             get filter
 
@@ -136,66 +135,66 @@ class SchemaRepositoriesFilters():
 
         filter_out = None
 
-        f_field = f['field']
-        f_type = f['type']
-        f_value = f.get('value', None)
+        filter_field = filter['field']
+        filter_type = filter['type']
+        filter_value = filter.get('value', None)
 
-        model_attribute, query = self.custom_getattr(Model, f_field, query, condition)
+        model_attribute, query = self.custom_getattr(Model, filter_field, query, condition)
 
         # si besoin de redefinir type
 
         # pour ilike et like, on teste sans tenir compte des accents
         # si un '%' est présent => on le garde tel quel
         # sinon on ajoute '%' en début et fin
-        if f_type in ['like', 'ilike']:
-            f_value_unaccent = unidecode.unidecode(f_value)
-            f_value_unaccent = (
-                f_value_unaccent if '%' in f_value_unaccent
-                else f'%{f_value_unaccent}%'
+        if filter_type in ['like', 'ilike']:
+            filter_value_unaccent = unidecode.unidecode(filter_value)
+            filter_value_unaccent = (
+                filter_value_unaccent if '%' in filter_value_unaccent
+                else f'%{filter_value_unaccent}%'
             )
             filter_out = (
                 getattr(
                     unaccent(
                         cast(model_attribute, db.String)
                     ),
-                    f_type
-                )(f_value_unaccent)
+                    filter_type
+                )(filter_value_unaccent)
             )
 
-        elif f_type == '>':
-            filter_out = (model_attribute > f_value)
-        # elif f_type == '!=':
-        #     filter_out = getattr(model_attribute, 'isnot')(f_value)
+        elif filter_type == '>':
+            filter_out = (model_attribute > filter_value)
+        # elif filter_type == '!=':
+        #     filter_out = getattr(model_attribute, 'isnot')(filter_value)
 
-        elif f_type == '>=':
-            filter_out = (model_attribute >= f_value)
-        elif f_type == '<':
-            filter_out = (model_attribute < f_value)
-        elif f_type == '<=':
-            filter_out = (model_attribute <= f_value)
+        elif filter_type == '>=':
+            filter_out = (model_attribute >= filter_value)
+        elif filter_type == '<':
+            filter_out = (model_attribute < filter_value)
+        elif filter_type == '<=':
+            filter_out = (model_attribute <= filter_value)
 
-        elif f_type == '=':
+        elif filter_type == '=':
             filter_out = (
                 or_(
-                    model_attribute == f_value,
-                    cast(model_attribute, db.String) == (str(f_value))
+                    model_attribute == filter_value,
+                    cast(model_attribute, db.String) == (str(filter_value))
                 )
             )
 
-        elif f_type == '!=':
+        elif filter_type == '!=':
             filter_out = (
-                cast(model_attribute, db.String) != (str(f_value))
+                cast(model_attribute, db.String) != (str(filter_value))
             )
 
 
-        elif f_type == 'in':
+        elif filter_type == 'in':
             filter_out = (
                 cast(model_attribute, db.String)
                 .in_(
-                    [str(x) for x in f_value]
+                    [str(x) for x in filter_value]
                     # map(
                     #     lambda x: str(x),
-                    #     f_value
+                    #     filter_value
                     # )
                 )
             )
@@ -203,7 +202,7 @@ class SchemaRepositoriesFilters():
         else:
             raise SchemaRepositoryFilterTypeError(
                 "Le type de filtre {} n'est pas géré"
-                .format(f_type)
+                .format(filter_type)
             )
 
         return filter_out, query

@@ -50,7 +50,7 @@ class SchemaRepositoriesUtil():
             if query is not None and condition is None:
                 # on fait un alias
                 relation_entity = orm.aliased( relationship.mapper.entity)
-                
+
                 query = query.join(relation_entity, relationship)
 
             elif condition:
@@ -59,13 +59,16 @@ class SchemaRepositoriesUtil():
 
             return self.custom_getattr(relation_entity, col, query, condition)
 
-    def get_sorters(self, Model, sorters, query):
+    def get_sorters(self, Model, sort, query):
         order_bys = []
 
-        for s in sorters:
+        for s in sort:
 
-            s_field = s['field']
-            s_dir = s['dir']
+            s_dir = '+'
+            s_field = s
+            if s[-1] in ['+-']:
+                s_field = s[:-1]
+                s_dir = s[-1]
 
             model_attribute, query = self.custom_getattr(Model, s_field, query)
 
@@ -73,7 +76,7 @@ class SchemaRepositoriesUtil():
                 continue
 
             order_by = (
-                model_attribute.desc() if s_dir == 'desc'
+                model_attribute.desc() if s_dir == '-'
                 else
                 model_attribute.asc()
             )
@@ -101,39 +104,11 @@ class SchemaRepositoriesUtil():
 
         return order_by, query
 
-    # def process_sorters(self, Model, sorters, query):
-    #     '''
-    #         process sorters (ORDER BY)
-    #     '''
-
-    #     for sorter in sorters:
-    #         order_by, query = self.get_sorter(Model, sorter, query)
-    #         query = query.order_by(order_by)
-
-    #     return query
-
-        # order_bys, query = self.get_sorters(Model, sorters, query)
-        # if order_bys:
-        #     query = query.order_by(*(tuple(order_bys)))
-        # return query
-
-
-    # def get_row_number_from_value(self, value, query):
-
-    #     field_name = self.pk_field_name()
-    #     # res = query.filter(getattr(self.Model(), field_name) == value).one()
-    #     # query.row_number().over()
-    #     res = query.filter(getattr(self.Model(), field_name) == value).one()
-
-    #     return res
-
-    def process_page_size(self, page, page_size, value, query):
+    def process_page_size(self, page, page_size, query):
         '''
         LIMIT et OFFSET
         '''
 
-        # if value:
-        #     row_number = self.get_row_number_from_value(value, query)
         if page_size and int(page_size) > 0:
             query = query.limit(page_size)
 

@@ -86,7 +86,7 @@
       "items": [
         {
           "id_site": "TEST_1",
-          "visit_date_min": "2022-01-01",
+          "date_min": "2022-01-01",
           "observers": [
             "admin"
           ],

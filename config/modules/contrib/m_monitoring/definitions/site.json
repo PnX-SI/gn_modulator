@@ -65,13 +65,14 @@
         "key": "id_site_category",
         "type": "list_form",
         "title": "Catégorie de site",
-        "schema_name": "m_monitoring.site_category"
+        "object_name": "m_monitoring.site_category",
+        "module_code": "m_monitoring"
       },
       {
         "key": "id_nomenclature_type_site",
         "type": "list_form",
         "title": "Type de site",
-        "schema_name": "ref_nom.nomenclature"
+        "object_name": "ref_nom.nomenclature"
       },
       {
         "display": "fieldset",
@@ -82,11 +83,13 @@
           "items": [
             {
               "key": "id_role",
-              "type": "list_form"
+              "type": "list_form",
+              "object_name": "user.role"
             },
             {
               "key": "id_organism",
-              "type": "list_form"
+              "type": "list_form",
+              "object_name": "user.organisme"
             },
             {
               "key": "id_nomenclature_type_actor",

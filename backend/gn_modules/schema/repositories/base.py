@@ -17,7 +17,7 @@ class SchemaRepositoriesBase():
         class for sqlalchemy query processing
     '''
 
-    def get_row(self, value, field_name=None, b_get_one=True):
+    def get_row(self, value, field_name=None, module_code='MODULES', cruved_type='R', params= {}, query_type='all'):
         '''
             return query get one row (Model.<field_name> == value)
 
@@ -32,6 +32,8 @@ class SchemaRepositoriesBase():
             db.session.query(Model).filter(<field_name> == value).one()
         '''
 
+        Model = self.Model()
+
         if not field_name:
             field_name = self.pk_field_name()
 
@@ -45,21 +47,13 @@ class SchemaRepositoriesBase():
                 'get_row : les input value et field_name n''ont pas la même taille'
             )
 
-        Model = self.Model()
-
-        query = db.session.query(Model)
+        query = self.query_list(module_code, cruved_type, params, query_type=query_type)
 
         for index, val in enumerate(values):
             f_name = field_names[index]
-            # patch si la valeur est une chaine de caractère ??
-            # if self.column(f_name)['type'] == "integer" and val is not None:
-                # val = int(val)
 
             modelValue, query = self.custom_getattr(Model, f_name, query)
             query = query.filter(modelValue == val)
-
-        if b_get_one:
-            return query.one()
 
         return query
 
@@ -132,7 +126,7 @@ class SchemaRepositoriesBase():
 
         return False
 
-    def update_row(self, value, data, field_name=None):
+    def update_row(self, value, data, field_name=None, module_code="MODULES", params={}):
         '''
             update row (Model.<field_name> == value) with data
 
@@ -141,9 +135,18 @@ class SchemaRepositoriesBase():
 
         self.validate_data(data)
 
-        m = self.get_row(value, field_name=field_name)
-
-        # Tester ici le droit au CRUVED
+        m = (
+            self
+            .get_row(
+                value,
+                field_name=field_name,
+                module_code=module_code,
+                cruved_type='U',
+                params=params,
+                query_type='update'
+            )
+            .one()
+        )
 
         if not self.is_new_data(m, data):
             return m, False
@@ -154,11 +157,22 @@ class SchemaRepositoriesBase():
 
         return m, True
 
-    def delete_row(self, value, field_name=None):
+    def delete_row(self, value, field_name=None, module_code='MODULES', params={}):
         '''
             delete row (Model.<field_name> == value)
         '''
-        m = self.get_row(value, field_name=field_name, b_get_one=False)
+        m = (
+            self
+            .get_row(
+                value,
+                field_name=field_name,
+                module_code=module_code,
+                cruved_type='U',
+                params=params,
+                query_type='delete'
+            )
+        )
+        m.one()
         m.delete()
         db.session.commit()
         return m
@@ -186,98 +200,25 @@ class SchemaRepositoriesBase():
 
         return query
 
-
-
-    def get_row_number(self, params, value):
-
-        Model = self.Model()
-        query = db.session.query(Model)
-
-        params['fields'] = [self.pk_field_name(), 'row_number']
-
-        order_bys, query = self.get_sorters(Model, params.get('sorters', []), query)
-        query = self.process_query_columns(params, query, order_bys)
-        
-        query = self.process_cruved_filter('R', 'MODULE ?? TODO', query)
-        query = self.process_filters(Model, params.get('prefilters', []), query)
-        query = self.process_filters(Model, params.get('filters', []), query)
- 
-        subquery = query.subquery()
- 
-        res = (
-            db.session.query(subquery)
-            .filter(getattr(subquery.c, self.pk_field_name()) == value)
-            .one()
-        )
-        return res.row_number
-
-    def get_page_number(self, params, value):
-
-        if not params.get('page_size') and value:
-            return
-
-        row_number = self.get_row_number(params, value)
-
-        return {
-            'row_number': row_number,
-            'page': math.ceil(row_number / params.get('page_size'))
-        }
-
-    def get_list(self, params={}):
+    def defer_fields(self, query, params={}):
         '''
-            process request for list of rows
-            - params : dict
-            - filters ( WHERE ) : [ ...
-                {'field': <f_field>, 'type': <f_type>, 'value', <f_value>}
-                ... ],
-            - sorters ( ORDER BY ): [ ...
-                {'field': <s_field>, 'dir': <s_dir>}
-                ... ],
-                TODO traiter
-            - page_size ( LIMIT )
-            - page ( OFFSET(page_size, page) )
+            pour n'avoir dans la requête que les champs demandés
         '''
-
-        query_info = {
-            'page': params.get('page', None),
-            'page_size': params.get('page_size', None)
-        }
-
-        # init query
-        Model = self.Model()
-
-        model_pk_field = getattr(Model, self.pk_field_name())
-
-        # essayer de ne mettre que les colonnes ???
-
-        # query_fields = []
-        # for field in params['fields']:
-        #     if field in ['ownership', 'row_number']:
-        #         continue
-        #     model_attribute, query = self.custom_getattr(Model, field)
-        #     query_fields.append(model_attribute)
-
-        # query = db.session.query(*query_fields)
-        query = db.session.query(Model)
-
-
-        # optimisation de la requete pour ne pas appeler tous les champs
-        # test
         fields = params.get('fields', [])
         if not self.pk_field_name() in fields:
             fields.append(self.pk_field_name())
 
         if self.schema_name() in ['commons.module', 'commons.modules']:
             fields.append('type')
-            
+
         defered_fields = [
-            defer(getattr(Model, key))
+            defer(getattr(self.Model(), key))
             for key in self.column_properties_keys()
             if key not in fields
         ]
 
         defered_fields += [
-            defer(getattr(Model, key))
+            defer(getattr(self.Model(), key))
             for key in self.column_keys()
             if key not in fields
         ]
@@ -286,53 +227,55 @@ class SchemaRepositoriesBase():
             try:
                 query = query.options(defered_field)
             except:
-                pass    
-        
-        order_bys, query = self.get_sorters(Model, params.get('sorters', []), query)
+                pass
+        return query
 
-        # process query columns
-        # ajout de colonnes
-        # - cruved
-        # - row_number
-        # - enlever les colonnes non demandées ????
+    def query_list(self, module_code='MODULES', cruved_type='R', params={}, query_type=None):
+
+        Model = self.Model()
+        model_pk_field = getattr(Model, self.pk_field_name())
+        query = db.session.query(Model)
+
+        # simplifier la requete
+        query = self.defer_fields(query, params)
+
+        order_bys, query = self.get_sorters(Model, params.get('sort', []), query)
+
+        # ajout colonnes row_number, ownership (cruved)
         query = self.process_query_columns(params, query, order_bys)
 
-        # prefilters
-
-        # - CRUVED : process_cruved
-        #   - ajout de la colonne ownership
-        #   - filtre selon le cruved
-
-        query = self.process_cruved_filter('R', 'MODULE ?? TODO', query)
-
+        # prefiltrage
+        # - prefiltrage CRUVED
+        query = self.process_cruved_filter(cruved_type, module_code, query)
+        # - prefiltrage params
         query = self.process_filters(Model, params.get('prefilters', []), query)
-         
-        query_info['total'] = (
-            query
-                .with_entities(model_pk_field)
-                .group_by(model_pk_field)
-                .count()
-        )
 
-        if params.get('page_size'):
-            query_info['last_page'] = math.ceil(query_info['total'] / params.get('page_size'))
+        # requete pour count 'total'
+        if query_type == 'total':
+            return (
+                query
+                    .with_entities(model_pk_field)
+                    .group_by(model_pk_field)
+            )
 
-        # filters
+        # filtrage
         query = self.process_filters(Model, params.get('filters', []), query)
-        
-        query_info['filtered'] = (
-            query
-                .with_entities(model_pk_field)
-                .group_by(model_pk_field)
-                .count()
-        )
 
+        # requete pour count 'filtered'
+        if query_type == 'filtered':
+            return (
+                query
+                    .with_entities(model_pk_field)
+                    .group_by(model_pk_field)
+            )
+
+        if query_type in ['update', 'delete']:
+            return query
+
+        # sort
         query = query.order_by(*(tuple(order_bys)))
 
-        if params.get('page_size'):
-            query_info['last_page'] = math.ceil(query_info['total'] / params.get('page_size'))
+        # limit offset
+        query = self.process_page_size(params.get('page'), params.get('page_size'), query)
 
-        # page, page_size
-        query = self.process_page_size(params.get('page'), params.get('page_size'), params.get('value'), query)
-
-        return query, query_info
+        return query

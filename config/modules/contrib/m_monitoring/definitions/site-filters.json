@@ -60,7 +60,8 @@
           "type": "list_form",
           "title": "Type de site",
           "value_field_name": "name",
-          "schema_name": "m_monitoring.site_category"
+          "object_name": "category",
+          "module_code": "m_monitoring"
         }
       ]
     },
@@ -78,12 +79,7 @@
             "area_code"
           ],
           "area_type": "REG",
-          "sorters": [
-            {
-              "field": "area_name",
-              "dir": "asc"
-            }
-          ]
+          "sort": "area_name"
         },
         {
           "reload_on_search": true,
@@ -95,12 +91,7 @@
           "additional_fields": [
             "area_code"
           ],
-          "sorters": [
-            {
-              "field": "area_name",
-              "dir": "asc"
-            }
-          ],
+          "sort": "area_name",
           "filters": "_filters_departement"
         },
         {
@@ -110,18 +101,13 @@
           "type": "list_form",
           "area_type": "COM",
           "filters": "_filters_commune",
-          "sorters": [
-            {
-              "field": "area_name",
-              "dir": "asc"
-            }
-          ]
+          "sort": "area_name"
         },
         {
           "title": "Infrastructure",
           "key": "infrastructure",
           "type": "list_form",
-          "schema_name": "ref_geo.linear_group",
+          "object_name": "ref_geo.linear_group",
           "filters": [
             {
               "field": "linears.type.type_code",
@@ -129,12 +115,7 @@
               "value": "RTE"
             }
           ],
-          "sorters": [
-            {
-              "field": "name",
-              "dir": "asc"
-            }
-          ],
+          "sort": "name",
           "data_reload_on_search": true,
           "page_size": 10
         }

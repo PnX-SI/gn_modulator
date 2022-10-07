@@ -74,8 +74,8 @@ export class ModulesLayoutObjectGeoJSONComponent
     this._mapService.waitForMap(this.mapId).then(() => {
       // this.schemaData = response.data;
       let geojson = response.data;
-      const label_field_name = this.schemaConfig.utils.label_field_name;
-      const pk_field_name = this.schemaConfig.utils.pk_field_name;
+      const label_field_name = this.objectConfig.utils.label_field_name;
+      const pk_field_name = this.objectConfig.utils.pk_field_name;
       const currentZoom = this._mapService.getZoom(this.mapId);
       const currentMapBounds = this._mapService.getMapBounds(this.mapId);
       
@@ -92,7 +92,7 @@ export class ModulesLayoutObjectGeoJSONComponent
             pane: paneName,
             zoom: bZoom,
             key: this.computedLayout.key,
-            label: `${this.schemaConfig.display.labels}`,
+            label: `${this.objectConfig.display.labels}`,
             style: layerStyle,
             onLayersAdded: () => {
               this.processValue(this.getDataValue());
@@ -149,8 +149,8 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   popupHTML(properties) {
-    const label = `<b>${this.utils.capitalize(this.schemaConfig.display.label)}</b>: ${properties[this.labelFieldName()]}`;
-    const popupFields = this.schemaConfig.map.popup_fields || [];
+    const label = `<b>${this.utils.capitalize(this.objectConfig.display.label)}</b>: ${properties[this.labelFieldName()]}`;
+    const popupFields = this.objectConfig.map.popup_fields || [];
     var propertiesHTML = "";
     propertiesHTML += "<ul>\n";
     propertiesHTML += popupFields
@@ -159,7 +159,7 @@ export class ModulesLayoutObjectGeoJSONComponent
         // gerer les '.'
         const fieldKeyLabel = fieldKey.split(".")[0];
         const fieldLabel =
-          this.schemaConfig.definition.properties[fieldKeyLabel].title;
+          this.objectConfig.definition.properties[fieldKeyLabel].title;
         const fieldValue = utils.getAttr(properties, fieldKey);
         return `<li>${fieldLabel} : ${fieldValue}</li>`;
       })
@@ -168,7 +168,7 @@ export class ModulesLayoutObjectGeoJSONComponent
 
     const htmlDetails = '<button action="details">Details</button>';
     const condEdit =
-      properties["ownership"] <= this.moduleConfig.module.cruved["U"];
+      properties["ownership"] <= this._mPage.moduleConfig.cruved["U"];
     const htmlEdit = condEdit ? '<button action="edit">Éditer</button>' : "";
 
     const html = `
@@ -184,13 +184,13 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
-    // const fields = this.schemaConfig.table.columns.map(column => column.field);
-    const fields = this.schemaConfig.map.popup_fields;
-    // if(this.schemaConfig.definition.meta.check_cruved) {
+    // const fields = this.objectConfig.table.columns.map(column => column.field);
+    const fields = this.objectConfig.map.popup_fields;
+    // if(this.objectConfig.definition.meta.check_cruved) {
     fields.push("ownership");
     // }
     this._mData
-      .getOne(this.schemaName(), value, { fields })
+      .getOne(this.moduleCode(), this.objectName(), value, { fields })
       .subscribe((data) => {
         layer.setPopupContent(this.popupHTML(data));
       });
@@ -214,14 +214,14 @@ export class ModulesLayoutObjectGeoJSONComponent
   getData(): Observable<any> {
     const extendedParams = {
       fields: [
-        this.schemaConfig.utils.pk_field_name,
-        this.schemaConfig.utils.label_field_name,
+        this.objectConfig.utils.pk_field_name,
+        this.objectConfig.utils.label_field_name,
       ], // fields
       filters: this.getDataFilters() || [],
       prefilters: this.getDataPreFilters() || [],
       as_geojson: true,
     };
-    return this._mData.getList(this.schemaName(), extendedParams);
+    return this._mData.getList(this.moduleCode(), this.objectName(), extendedParams);
   }
   
   refreshData(objectName: any): void {

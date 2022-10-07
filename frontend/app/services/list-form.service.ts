@@ -38,31 +38,36 @@ export class ListFormService {
         return this.processDefault(options, control, liste);
       }),
       mergeMap((liste) => {
-
         this.processListeLengthisOne(options, control, liste);
-        return of(liste)
+        return of(liste);
       })
     );
   }
 
   processListeLengthisOne(options, control, liste) {
-
     // si
     // - la valeur est requise
     // - la taille de la liste est 1
     // - il n'y a pas de valeur
-    if (! (options.required && liste.items.length == 1 && [null, undefined].includes(control.value))) {
-      return
+    if (
+      !(
+        options.required &&
+        liste.items.length == 1 &&
+        [null, undefined].includes(control.value)
+      )
+    ) {
+      return;
     }
 
     // cas ou la liste n'a qu'une seule valeur -> par default on la choise
     // seuelement si une valeur est requise (options.required = true)
     if (options.required && liste.items.length == 1) {
       const value = liste.items[0];
-      const controlValue = options.return_object ? value : value[options.value_field_name];
+      const controlValue = options.return_object
+        ? value
+        : value[options.value_field_name];
       control.patchValue(controlValue);
     }
-
   }
 
   /**
@@ -96,14 +101,16 @@ export class ListFormService {
       );
       return of(liste);
     }
-    const controlValue = options.return_object ? value : value[options.value_field_name];
+    const controlValue = options.return_object
+      ? value
+      : value[options.value_field_name];
     control.patchValue(controlValue);
 
     return of(liste);
   }
 
   /**
-   * Si schema_name est défini dans les options
+   * Si object_name est défini dans les options
    *
    * récupération de la config du schéma pour
    *  - api
@@ -111,7 +118,7 @@ export class ListFormService {
    *  - labelFieldName
    */
   initConfig(options) {
-    return this.processSchemaConfig(options).pipe(
+    return this.processObjectConfig(options).pipe(
       mergeMap(() => {
         options.label_field_name = options.label_field_name || "label";
         options.value_field_name = options.value_field_name || "value";
@@ -124,14 +131,14 @@ export class ListFormService {
    * ajoute les éléments par défaut pour un schéma donné
    * api, value_field_name, label_field_name, title_field_name, etc....
    */
-  processSchemaConfig(options) {
+  processObjectConfig(options) {
     /** patch
      * - nomenclature_type
      * - area_type
      **/
-    let schemaFilters = [];
+    let schemaFilters: Array<any> = [];
     if (options.nomenclature_type) {
-      options.schema_name = "ref_nom.nomenclature";
+      options.object_name = "ref_nom.nomenclature";
       schemaFilters.push({
         field: "nomenclature_type.mnemonique",
         type: "=",
@@ -140,7 +147,7 @@ export class ListFormService {
       options.cache = true;
     }
     if (options.area_type) {
-      options.schema_name = "ref_geo.area";
+      options.object_name = "ref_geo.area";
       schemaFilters.push({
         field: "area_type.type_code",
         type: "=",
@@ -148,32 +155,36 @@ export class ListFormService {
       });
     }
 
-    if (!options.schema_name) {
+    if (!options.object_name) {
+      console.log('reject', options)
       return of(true);
     }
-    return this._mConfig.loadConfig(options.schema_name).pipe(
-      mergeMap(() => {
-        options.api =
-          options.api ||
-          this._mConfig.schemaConfig(options.schema_name).utils.urls.rest;
-        options.value_field_name =
-          options.value_field_name ||
-          this._mConfig.schemaConfig(options.schema_name).utils
-            .value_field_name;
-        options.label_field_name =
-          options.label_field_name ||
-          this._mConfig.schemaConfig(options.schema_name).utils
-            .label_field_name;
-        options.title_field_name =
-          options.title_field_name ||
-          this._mConfig.schemaConfig(options.schema_name).utils
-            .title_field_name;
-        options.page_size = options.cache ? null : options.page_size || 10;
-        options.items_path = "data";
-        options.schema_filters = schemaFilters;
-        return of(true);
-      })
+
+    
+    const moduleCode = options.module_code || 'MODULES';
+    console.log(moduleCode, options.object_name, schemaFilters)
+
+
+    const objectConfig = this._mConfig.objectConfig(
+      moduleCode,
+      options.object_name
     );
+    console.log(moduleCode, options.object_name)
+    const objectUrl = this._mConfig.objectUrl(
+      moduleCode,
+      options.object_name
+    );
+    options.api = options.api || objectUrl;
+    options.value_field_name =
+      options.value_field_name || objectConfig.utils.value_field_name;
+    options.label_field_name =
+      options.label_field_name || objectConfig.utils.label_field_name;
+    options.title_field_name =
+      options.title_field_name || objectConfig.utils.title_field_name;
+    options.page_size = options.cache ? null : options.page_size || 10;
+    options.items_path = "data";
+    options.schema_filters = schemaFilters;
+    return of(true);
   }
 
   /**
@@ -222,11 +233,10 @@ export class ListFormService {
     const params = options.params || {};
 
     params.filters = [...(options.filters || [])];
-    if (options.schema_name) {
+    if (options.object_name) {
       params.filters = [...params.filters, ...(options.schema_filters || [])];
-      params.sorters = params.sorters || options.sorters || [];
+      params.sort = params.sort || options.sort;
 
-      
       if (options.reload_on_search && options.search) {
         params.filters.push({
           field: options.label_field_name,

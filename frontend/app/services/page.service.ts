@@ -18,8 +18,9 @@ export class ModulesPageService {
 
   _commonService: CommonService;
 
-  moduleCode;
   breadcrumbs = [];
+  moduleCode;
+  moduleConfig;
   pageName;
   pageConfig;
   // pageParams;
@@ -44,7 +45,6 @@ export class ModulesPageService {
   processAction({
     action,
     objectName,
-    schemaName = null,
     value = null,
     data = null,
     layout = null
@@ -75,21 +75,21 @@ export class ModulesPageService {
       // routeParams[]
       const schemaName = moduleConfig.data[objectName].schema_name;
 
-      routeParams[this._mSchema.pkFieldName(schemaName)] = value;
+      routeParams[this._mSchema.pkFieldName(this.moduleCode, objectName)] = value;
       // this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);
       this._mRoute.navigateToPage(this.moduleCode, pageName, {...this.params, ...routeParams });
     }
 
     // TODO dans la config de generic form ????
     if (action == "submit") {
-      this._mSchema.onSubmit(schemaName, data, layout).subscribe(
+      this._mSchema.onSubmit(this.moduleCode, objectName, data, layout).subscribe(
         (data) => {
           this._mLayout.stopActionProcessing('');
           this._commonService.regularToaster(
             "success",
             `La requete a bien été effectué`
           );
-          const value = this._mSchema.id(schemaName, data);
+          const value = this._mSchema.id(this.moduleCode, objectName, data);
           this.processAction({
             action: "details",
             objectName,
@@ -103,7 +103,7 @@ export class ModulesPageService {
     }
 
     if(action == "delete") {
-      this._mSchema.onDelete(schemaName, data).subscribe(() => {
+      this._mSchema.onDelete(this.moduleCode, objectName, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
         this._mLayout.closeModals()
         this._mLayout.refreshData(objectName);
@@ -149,5 +149,10 @@ export class ModulesPageService {
         return of(true)
       })
     );
+  }
+  
+  reset() {
+    this.breadcrumbs = [];
+    this.moduleCode = null;
   }
 }

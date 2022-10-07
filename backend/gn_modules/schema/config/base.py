@@ -12,7 +12,21 @@ class SchemaConfigBase():
     '''
     config used by frontend
     '''
+
     def config(self):
+        return {
+            'display': self.config_display(),
+            'utils': self.config_utils(),
+            'form': self.config_form(),
+            'table': self.config_table(),
+            'map': self.config_map(),
+            'filters': self.config_filters(),
+            'details': self.config_details(),
+            'definition': self.definition,
+            
+        }
+
+    def config_old(self):
         '''
         frontend config
         '''

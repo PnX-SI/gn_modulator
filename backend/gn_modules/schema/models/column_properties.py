@@ -85,9 +85,10 @@ class SchemaModelColumnProperties():
     def column_property_util_relation_where_conditions(self, key, column_property_def, Model):
 
         relation, _ = self.custom_getattr(Model, column_property_def['relation_key'])
+        rel = self.cls(self.property(column_property_def['relation_key'])['schema_name'])
         conditions = relation
         if column_property_def.get('filters') is not None:
-            condition_filters, conditions = self.process_filter_array(
+            condition_filters, conditions = rel.process_filter_array(
                 relation.mapper.entity,
                 column_property_def.get('filters'),
                 query=conditions,

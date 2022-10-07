@@ -26,8 +26,7 @@ export class ModulesLayoutObjectComponent
   extends ModulesLayoutComponent
   implements OnInit
 {
-  schemaConfig; // configuration du schema TODO à enlever??
-  moduleConfig; // configuration du module TODO à enlever??
+  objectConfig; // configuration du schema TODO à enlever??
 
   schemaData; // données relative au schema, récupérées par getData
   processedLayout; // layout pour form / details / etc..
@@ -93,31 +92,14 @@ export class ModulesLayoutObjectComponent
     }
     this.isProcessing = true;
 
-    // chargement de la configuration
-    this._mConfig
-      .loadConfig(this.schemaName())
-      .pipe(
-        mergeMap((schemaConfig) => {
-          this.schemaConfig = schemaConfig;
+    this.objectConfig = this._mConfig.objectConfig(
+      this._mPage.moduleCode,
+      this.objectName()
+    );
 
-          this.moduleConfig = this._mConfig.moduleConfig(
-            this._mPage.moduleCode
-          );
-          this.processConfig();
-          return of(true);
-        }),
-
-        mergeMap(() => {
-          // recupération des données
-          return this.getData();
-        }),
-        // gestion des erreurs
-        catchError((error) => {
-          this.isProcessing = false;
-          return of(false);
-        })
-      )
-      .subscribe((response) => {
+    this.processConfig();
+    this.getData().subscribe(
+      (response) => {
         if (response) {
           this.processTotalFiltered(response);
 
@@ -126,7 +108,13 @@ export class ModulesLayoutObjectComponent
         }
         // traitement terminé
         this.isProcessing = false;
-      });
+      },
+      (error) => {
+        console.error(error);
+        this.isProcessing = false;
+        return of(false);
+      }
+    );
   }
 
   processTotalFiltered(response) {
@@ -142,16 +130,16 @@ export class ModulesLayoutObjectComponent
     // cas du formulaire
     if (this.computedLayout.display == "form") {
       this.processedLayout = this._mSchema.processFormLayout(
-        this.schemaName(),
-        this.moduleConfig
+        this._mPage.moduleCode,
+        this.objectName()
       );
     }
 
     // cas des details ou propriété
     if (this.computedLayout.display == "properties") {
       this.processedLayout = this._mSchema.processPropertiesLayout(
-        this.schemaConfig,
-        this.moduleConfig
+        this._mPage.moduleCode,
+        this.objectName()
       );
     }
 
@@ -185,7 +173,7 @@ export class ModulesLayoutObjectComponent
     for (const [defaultKey, defaultValue] of Object.entries(
       this.data.defaults || {}
     )) {
-      if(!((defaultValue as any).length && (defaultValue as any)[0] == ':')) {
+      if (!((defaultValue as any).length && (defaultValue as any)[0] == ":")) {
         data[defaultKey] = defaultValue;
       }
     }
@@ -215,13 +203,18 @@ export class ModulesLayoutObjectComponent
     }
 
     const fields = this._mSchema.getFields(
-      this.schemaName(),
+      this.moduleCode(),
+      this.objectName(),
       this.processedLayout
     );
 
-    return this._mData.getOne(this.schemaName(), value, {
+    return this._mData.getOne(this.moduleCode(), this.objectName(), value, {
       fields,
     });
+  }
+
+  moduleCode() {
+    return this._mPage.moduleCode;
   }
 
   schemaName() {
@@ -243,7 +236,6 @@ export class ModulesLayoutObjectComponent
       this._mPage.processAction({
         action: event.action,
         objectName: this.objectName(),
-        schemaName: this.schemaName(),
         value: event.data[this.pkFieldName()],
         data: event.data,
         layout: this.processedLayout,
@@ -253,12 +245,12 @@ export class ModulesLayoutObjectComponent
 
   // champ de clé primaire
   pkFieldName() {
-    return this._mSchema.pkFieldName(this.schemaName());
+    return this._mSchema.pkFieldName(this.moduleCode(), this.objectName());
   }
 
   // champ pour le label
   labelFieldName() {
-    return this._mSchema.labelFieldName(this.schemaName());
+    return this._mSchema.labelFieldName(this.moduleCode(), this.objectName());
   }
 
   setObject(data) {
@@ -273,7 +265,7 @@ export class ModulesLayoutObjectComponent
     if (change) {
       this._mLayout.reComputeLayout("set data object");
       // setTimeout(() => {
-        // this._mLayout.reComputeHeight("set data object");
+      // this._mLayout.reComputeHeight("set data object");
       // });
     }
   }
@@ -305,6 +297,4 @@ export class ModulesLayoutObjectComponent
 
   // quand un nouveau prefiltre est défini
   processPreFilters() {}
-  
-
 }

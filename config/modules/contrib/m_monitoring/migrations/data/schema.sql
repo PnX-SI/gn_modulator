@@ -46,9 +46,9 @@ CREATE TABLE m_monitoring.bib_sites_category (
 
 CREATE TABLE m_monitoring.t_visits (
     id_visit SERIAL NOT NULL,
-    visit_uuid UUID,
-    visit_date_min DATE NOT NULL,
-    visit_date_max DATE,
+    uuid UUID,
+    date_min DATE NOT NULL,
+    date_max DATE,
     id_site INTEGER,
     id_digitiser INTEGER,
     id_dataset INTEGER NOT NULL,
@@ -57,8 +57,8 @@ CREATE TABLE m_monitoring.t_visits (
 );
 
 COMMENT ON COLUMN m_monitoring.t_visits.id_visit IS 'Clé primaire de la visite';
-COMMENT ON COLUMN m_monitoring.t_visits.visit_date_min IS 'Date (minimale) associée à la visite';
-COMMENT ON COLUMN m_monitoring.t_visits.visit_date_max IS 'Date (maximale) associée à la visite';
+COMMENT ON COLUMN m_monitoring.t_visits.date_min IS 'Date (minimale) associée à la visite';
+COMMENT ON COLUMN m_monitoring.t_visits.date_max IS 'Date (maximale) associée à la visite';
 COMMENT ON COLUMN m_monitoring.t_visits.id_site IS 'Site associé à la visite';
 COMMENT ON COLUMN m_monitoring.t_visits.id_digitiser IS 'Personne qui a saisi la donnée';
 COMMENT ON COLUMN m_monitoring.t_visits.id_dataset IS 'Jeu de données associé à la visite';

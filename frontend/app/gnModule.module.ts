@@ -10,8 +10,6 @@ import layoutComponents from "./components/layout"
 import { ModulesIndexComponent } from "./components/index.component";
 import { PageComponent } from "./components/page.component";
 import { PageNotFoundComponent } from "./components/page-not-found.component";
-import { BaseComponent } from "./components/base/base.component";
-import { PageElementComponent } from "./components/base/page-element.component";
 import ModulesServices from "./services/";
 import { MatTableModule } from "@angular/material/table";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -23,10 +21,8 @@ const routes: Routes = [
 ];
 @NgModule({
   declarations: [
-    BaseComponent,
     ModulesIndexComponent,
     PageComponent,
-    PageElementComponent,
     PageNotFoundComponent,
     TestLayoutComponent,
     ...layoutComponents,

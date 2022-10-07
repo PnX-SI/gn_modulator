@@ -359,23 +359,6 @@ class SchemaFiles():
 
         cls.process_backrefs()
 
-        # init complement ??
-        # ici on ajoute les relations dans les definitions
-        # cls.process_complement()
-
-        # init models
-        # for schema_name in cls.schema_names_from_cache():
-        #     sm = cls(schema_name)
-        #     # try:
-        #     sm.Model()
-        #     # except AttributeError as e:
-        #         # raise errors.SchemaError(
-        #             # '{}: {}'.format(sm.schema_name(), e))
-
-        # for schema_name in cls.schema_names_from_cache():
-        #     sm = cls(schema_name)
-        #     sm.MarshmallowSchema()
-
     @classmethod
     def init_schemas_models_and_serializers(cls):
         import time

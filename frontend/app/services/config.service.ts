@@ -3,8 +3,8 @@ import { Injectable } from "@angular/core";
 import { AppConfig } from "@geonature_config/app.config";
 import { ModuleConfig } from "../module.config";
 
-import { of, Observable } from "@librairies/rxjs";
-import { mergeMap, catchError } from "@librairies/rxjs/operators";
+import { of, forkJoin } from "@librairies/rxjs";
+import { mergeMap } from "@librairies/rxjs/operators";
 import { ModulesRequestService } from "./request.service";
 import utils from "../utils";
 @Injectable()
@@ -19,9 +19,14 @@ export class ModulesConfigService {
 
   /** Configuration */
 
-  init() {}
+  init() {
+    return forkJoin({
+      config: this.getModulesConfig(),
+      layout: this.getLayouts(),
+    });
+  }
 
-  getModules() {
+  getModulesConfig() {
     const modulesConfig = utils.getAttr(this._config, "modules");
 
     if (Object.keys(this._config.modules).length) {
@@ -32,8 +37,7 @@ export class ModulesConfigService {
       .request("get", `${this.backendModuleUrl()}/modules_config`)
       .pipe(
         mergeMap((modulesConfig) => {
-          this._config.layouts = modulesConfig.layouts;
-          this._config.modules = modulesConfig.modules;
+          this._config.modules = modulesConfig;
           return of(this._config.modules);
         })
       );
@@ -49,62 +53,34 @@ export class ModulesConfigService {
     );
   }
 
-  /**
-   * attempts to get config from cache (this._config) and fetch schemaConfig from backend
-   *
-   * @param schemaName
-   * @param forceLoad : fetch even if schemaConfig already in cache (this._config)
-   * @returns schemaConfig
-   */
-  loadConfig(schemaName, forceLoad = false): Observable<any> {
-    // 1 - attempts to get config from cache (this._config)
-
-    const schemaConfig = this._config["schemas"][schemaName];
-    // && this._config['schemas']
-    // && this._config['schemas'][schemaName]
-
-    //   - if forceLoad is True : fetch config
-    if (schemaConfig && !forceLoad) {
-      return of(schemaConfig);
-    }
-
-    // 2 - Fetch config from backend
-
-    const urlConfig = `${this.backendModuleUrl()}/${schemaName}/config/`;
-
-    /**
-     * Fetch schemaConfig and store in _config[schemaName]
-     */
-    // on s'assure de récupérer les modules
-    return this.getModules().pipe(
-      mergeMap(() => {
-        return this._requestService.request("get", urlConfig, {
-          params: { reload: true },
-        });
-      }),
-      mergeMap((schemaConfig) => {
-        this._config["schemas"][schemaName] = schemaConfig;
-        return of(schemaConfig);
-      })
-    );
-  }
-
-  /**
-   * Returns schemaConfig
-   *
-   * @param schemaName
-   * @returns
-   */
-  schemaConfig(schemaName) {
-    return this._config["schemas"][schemaName];
+  objectConfig(moduleCode, objectName) {
+    return this._config["modules"][moduleCode || "MODULES"]["definitions"][
+      objectName
+    ];
   }
 
   moduleConfig(moduleCode) {
     return this._config["modules"][moduleCode];
   }
 
-  getLayout(layoutName) {
+  modulesConfig() {
+    return this._config["modules"];
+  }
+
+  
+  layout(layoutName) {
     return this._config["layouts"][layoutName];
+  }
+
+  getLayouts() {
+    return Object.keys(this._config.layouts).length
+      ? of(this._config.layout)
+      : this._requestService
+          .request("get", `${this.backendModuleUrl()}/layouts`)
+          .pipe(mergeMap((layouts) => {
+            this._config.layouts = layouts
+            return of(this._config.layout);
+          }));
   }
 
   /** Backend Url et static dir ??*/
@@ -127,5 +103,11 @@ export class ModulesConfigService {
 
   assetsDirectory() {
     return this.backendUrl() + "/static/external_assets/modules";
+  }
+
+  objectUrl(moduleCode, objectName, value = null) {
+    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectName}/${
+      value || ""
+    }`;
   }
 }

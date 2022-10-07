@@ -20,8 +20,9 @@ export class ModulesIndexComponent implements OnInit {
 
   }
   ngOnInit() {
-    this._mConfig.getModules()
-      .subscribe( (modules) => {
+    this._mConfig.init()
+      .subscribe( () => {
+        const modules = this._mConfig.modulesConfig();
         this.modules = Object.values(modules);
         this.layout={
           title: "Liste des modules",

@@ -21,8 +21,8 @@ export class PageComponent implements OnInit {
   _route: ActivatedRoute;
   _mPage: ModulesPageService;
   _auth: AuthService;
-  _mLayout: ModulesLayoutService
-  _mData: ModulesDataService
+  _mLayout: ModulesLayoutService;
+  _mData: ModulesDataService;
 
   currentUser: User; // utilisateur courant
 
@@ -30,12 +30,12 @@ export class PageComponent implements OnInit {
 
   routeParams; // paramètre d'url
   routeQueryParams; // query params
-
   moduleParams; // paramètre du module
 
-  moduleConfig; // configuration du module
-  pageConfig; // configuration de la route en cours
-  moduleCode; // code du module en cours
+  // moduleConfig; // configuration du module
+  // pageConfig; // configuration de la route en cours
+  // moduleCode; // code du module en cours
+
   layout; // layout de la page (récupéré depuis pageConfig.layout_name)
   data; // data pour le layout
 
@@ -51,24 +51,28 @@ export class PageComponent implements OnInit {
   }
 
   ngOnInit() {
-
     // récupération de l'utilisateur courant
     this.currentUser = this._auth.getCurrentUser();
 
     // - on le place dans layout.meta pour pouvoir s'en servir dans le calcul des layouts
-    this._mLayout.meta['currentUser'] = this.currentUser;
+    this._mLayout.meta["currentUser"] = this.currentUser;
 
-
-    // reset du breadcrumb
+    // reset de page service (breadcrump etc .....)
+    this._mPage.reset();
     this._mPage.breadcrumbs = [];
 
     // process
+    // - init config
     // - route data
     // - route params
     // - route query params
     // - breadcrumbs
-    this._route.data
+    this._mConfig
+      .init()
       .pipe(
+        mergeMap(() => {
+          return this._route.data;
+        }),
         // route data
         mergeMap((routeData) => {
           this.processRouteData(routeData);
@@ -101,39 +105,42 @@ export class PageComponent implements OnInit {
    * un id_module à partir d'un module_code
    */
   getModuleParams() {
-
-    if (!this.moduleConfig.params) {
-      return of({})
+    if (!this._mPage.moduleConfig.params) {
+      return of({});
     }
 
     const moduleParams = {};
 
-    const moduleParamsConfig: any = this.moduleConfig.params || {};
+    const moduleParamsConfig: any = this._mPage.moduleConfig.params || {};
 
     // dictionnaire des observable pour le forkJoin
-    const getOnes = {}
+    const getOnes = {};
 
     // traitement de chaque paramètre à résoudre
     for (const [keyParam, paramConfig] of Object.entries(moduleParamsConfig)) {
-      const schemaName = (paramConfig as any).schema_name || this.moduleConfig.data[(paramConfig as any).object_name].schema_name;
+      const schemaName =
+        (paramConfig as any).schema_name ||
+        this._mPage.moduleConfig.data[(paramConfig as any).object_name]
+          .schema_name;
       const fieldName = (paramConfig as any).field_name;
       const value = (paramConfig as any).value;
       const fields = (paramConfig as any).fields || keyParam;
-      getOnes[keyParam] = this._mData.getOne(schemaName, value, {field_name: fieldName, fields})
+      getOnes[keyParam] = this._mData.getOne(schemaName, value, {
+        field_name: fieldName,
+        fields,
+      });
     }
 
-    return forkJoin(getOnes)
-      .pipe(
-        concatMap((res) => {
-          for (const [resKey, resValue] of Object.entries(res)) {
-            const keyValue = Object.keys(resValue as any)[0]
-            moduleParams[resKey] = (resValue as any)[keyValue];
-          }
-          
-          return of(moduleParams);
-        })
-      )
+    return forkJoin(getOnes).pipe(
+      concatMap((res) => {
+        for (const [resKey, resValue] of Object.entries(res)) {
+          const keyValue = Object.keys(resValue as any)[0];
+          moduleParams[resKey] = (resValue as any)[keyValue];
+        }
 
+        return of(moduleParams);
+      })
+    );
   }
 
   /**
@@ -149,20 +156,18 @@ export class PageComponent implements OnInit {
     // reset data
     this.data = null;
 
-    this.moduleCode = routeData.moduleCode;
-
-    // pour pouvoir retrouver moduleCode par ailleurs
     this._mPage.moduleCode = routeData.moduleCode;
 
     // recupéraiton de la configuration de la page;
-    this.moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
-    this.pageConfig = this.moduleConfig.pages[routeData.pageName];
-    
-    this._mPage.setCurrentPage(routeData.pageName, this.pageConfig);
+    this._mPage.moduleConfig = this._mConfig.moduleConfig(
+      this._mPage.moduleCode
+    );
+    this._mPage.pageName = routeData.pageName;
+    this._mPage.pageConfig = this._mPage.moduleConfig.pages[routeData.pageName];
 
     // initialisatio du layout
     this.layout = {
-      layout_name: this.pageConfig.layout_name,
+      layout_name: this._mPage.pageConfig.layout_name,
     };
   }
 
@@ -172,17 +177,16 @@ export class PageComponent implements OnInit {
   // - id de l'objet en cours ? (par ex. id d'un site)
   // - paramètre de prefilter pour des liste d'objet (par ex. visite d'un site)
   processParams() {
-
     this._mPage.params = {
       ...this.routeQueryParams,
       ...this.routeParams,
-      ...this.moduleParams
-    }
+      ...this.moduleParams,
+    };
     // pour pouvoir accéder au paramètres pour le calcul des layouts
-    this._mLayout.meta['params'] = this._mPage.params;
+    this._mLayout.meta["params"] = this._mPage.params;
 
-    let data = utils.copy(this.moduleConfig.data);
-    const dataPage = utils.copy(this.pageConfig.data || {});
+    let data = utils.copy(this._mPage.moduleConfig.data);
+    const dataPage = utils.copy(this._mPage.pageConfig.data || {});
 
     // gestion du paramètre debug
     this.debug = ![undefined, false, "false"].includes(
@@ -209,7 +213,6 @@ export class PageComponent implements OnInit {
     // par exemple on va remplacer ':id_site' par la valeurs indexée par la clé id_site
     // dans le dictionnaire params crée à partir des paramètre des routes (urlParams + queryParams)
 
-
     for (const [paramKey, paramValue] of Object.entries(this._mPage.params)) {
       data = utils.replace(data, `:${paramKey}`, paramValue);
     }
@@ -233,7 +236,6 @@ export class PageComponent implements OnInit {
       this._mPage.processAction({
         action: event.action,
         objectName: data.object_name,
-        schemaName: data.schema_name,
         data: data,
         layout: event.layout,
       });

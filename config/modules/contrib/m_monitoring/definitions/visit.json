@@ -5,10 +5,10 @@
     "sql_schema_dot_table": "m_monitoring.t_visits",
     "genre": "F",
     "label": "visite",
-    "label_field_name": "visit_date_min",
+    "label_field_name": "date_min",
     "unique": [
       "id_site",
-      "visit_date_min"
+      "date_min"
     ]
   },
   "properties": {
@@ -18,17 +18,17 @@
       "description": "Clé primaire de la visite",
       "primary_key": true
     },
-    "visit_uuid": {
+    "uuid": {
       "type": "uuid",
       "title": "UUID"
     },
-    "visit_date_min": {
+    "date_min": {
       "type": "date",
       "title": "Date (min)",
       "description": "Date (minimale) associée à la visite",
       "required": true
     },
-    "visit_date_max": {
+    "date_max": {
       "type": "date",
       "title": "Date (max)",
       "description": "Date (maximale) associée à la visite"
@@ -103,7 +103,6 @@
       "description": "Jeu de données associé à la visite",
       "local_key": "id_dataset"
     },
-
     "data": {
       "type": "json",
       "description": "Données additionnelles du site",
@@ -128,7 +127,7 @@
     "layout": [
       "site.name",
       "module.module_label",
-      "visit_date_min",
+      "date_min",
       "nb_observations",
       "digitiser.nom_complet",
       "dataset.dataset_name",
@@ -150,8 +149,8 @@
           }
         ]
       },
-      { "key": "visit_date_min", "default": "__f__utils.today()"} ,
-      "visit_date_max",
+      { "key": "date_min", "default": "__f__utils.today()"} ,
+      "date_max",
       {
         "key": "id_dataset",
         "type": "list_form",
@@ -185,7 +184,7 @@
   "table": {
     "columns": [
       "site.name",
-      "visit_date_min",
+      "date_min",
       "nb_observations",
       "digitiser.nom_complet",
       "dataset.dataset_name",
@@ -193,7 +192,7 @@
     ],
     "sort": [
       {
-        "column": "visit_date_min",
+        "column": "date_min",
         "dir": "desc"
       }
     ]

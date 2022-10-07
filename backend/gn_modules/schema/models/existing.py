@@ -98,7 +98,7 @@ class SchemaModelExisting():
                 self.process_existing_column_model(key, column_def, getattr(Model, key))
                 # continue
             else:
-                setattr(Model, key, self.process_column_model(column_def))
+                setattr(Model, key, self.process_column_model(key, column_def))
 
         # store in cache before relation (avoid circular dependancies)
         self.cls.set_schema_cache(self.schema_name(), 'model', Model)

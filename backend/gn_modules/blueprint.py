@@ -1,17 +1,11 @@
 
+from distutils.command.config import config
+from email.policy import default
 from flask import Blueprint, request, jsonify, g, current_app, Response
 from gn_modules.module import ModuleMethods
 from pyrsistent import v
 from .commands import commands
 from .schema import SchemaMethods, errors
-from utils_flask_sqla.generic import GenericTable
-from geonature.utils.env import db
-from utils_flask_sqla.generic import serializeQuery
-from utils_flask_sqla.response import to_csv_resp
-from geonature.core.gn_permissions.tools import (
-    cruved_scope_for_user_in_module,
-)
-import copy
 from sqlalchemy.exc import (
     InvalidRequestError, NoForeignKeysError
 )
@@ -23,65 +17,52 @@ blueprint.cli.short_help = 'Commandes pour l''administration du module MODULES'
 for cmd in commands:
     blueprint.cli.add_command(cmd)
 
+try:
+    ModuleMethods.init_modules()
+    SchemaMethods.init_schemas_models_and_serializers()
+    print('init ok')
+except Exception as e:
+    print('Erreur initialisation', str(e))
+
+
+# ModuleMethods.process_commons_api(blueprint)
+
 # initialisation des définitions
 # TODO clarifier init route, ouvrir seulement les routes necessaire
 # ou bien les ouvrir en admin ??
-try:
-    SchemaMethods.init_schemas_definitions()
-    SchemaMethods.init_schemas_models_and_serializers()
-    SchemaMethods.init_routes(blueprint)
+# try:
+    # print('init definitions')
+    # SchemaMethods.init_schemas_definitions()
+    # print('init models')
+    # SchemaMethods.init_schemas_models_and_serializers()
+    # print('end')
+
+    # SchemaMethods.init_routes(blueprint)
     # ModuleMethods.modules_config()
 
-except errors.SchemaError as e:
-    print("Erreur de chargement des schemas:\n{}".format(e))
-except InvalidRequestError as e:
-    print(e)
-except NoForeignKeysError as e:
-    print(e)
-except Exception as e:
-    print(e)
+# except errors.SchemaError as e:
+#     print("Erreur de chargement des schemas:\n{}".format(e))
+# except InvalidRequestError as e:
+#     print(e)
+# except NoForeignKeysError as e:
+#     print(e)
+# except Exception as e:
+#     print(e)
 
 
-# @current_app.before_first_request
-# def init_schemas():
-#     print("init schemas")
-#     try:
-#         SchemaMethods.init_schemas_models_and_serializers()
-#         # !!! attention restreindre les droits !!!
-#         # SchemaMethods.init_routes(blueprint)
+# route qui renvoie la configuration des modules
+# fait office d'initialisation ?
+@blueprint.route('/modules_config/<path:config_path>', methods=['GET'])
+@blueprint.route('/modules_config/', methods=['GET'], defaults={'config_path': None})
+def api_modules_config(config_path):
 
-#     except errors.SchemaError as e:
-#         print("Erreur de chargement des schemas:\n{}".format(e))
+    modules_config = ModuleMethods.modules_config_with_rigths()
 
-
-@blueprint.route('/modules_config', methods=['GET'])
-def api_modules_config():
-
-    modules_config = copy.deepcopy(ModuleMethods.modules_config())
-
-    # pour ne pas exposer module_dir_path
-    for key, module_config in modules_config.items():
-        module_config.pop('module_dir_path')
-
-    if not hasattr(g, 'current_user'):
-        return modules_config
-
-    # on calcule le cruved ici pour ne pas interférer avec le cache
-    for key, module_config in modules_config.items():
-        module_config['module']['cruved'] = {
-            k: int(v)
-            for k, v in cruved_scope_for_user_in_module(
-                g.current_user.id_role,
-                module_code=module_config['module']['module_code']
-            )[0].items()
-        }
-
-
-
-    return {
-        'modules': modules_config,
-        'layouts': SchemaMethods.get_layouts(as_dict=True)
-    }
+    return ModuleMethods.process_dict_path(
+        modules_config,
+        config_path,
+        SchemaMethods.base_url() + '/modules_config/'
+    )
 
 @blueprint.route('breadcrumbs/<module_code>/<page_name>', methods=['GET'])
 def api_breadcrumbs(module_code, page_name):
@@ -113,4 +94,4 @@ def api_layout():
         Renvoie la liste des layouts
     '''
 
-    return jsonify(SchemaMethods.get_layouts())
+    return jsonify(SchemaMethods.get_layouts(as_dict=True))

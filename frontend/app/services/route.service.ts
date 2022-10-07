@@ -49,9 +49,10 @@ export class ModulesRouteService {
 
       this.routesLoadedSubject = new Subject<boolean>();
 
-      return this._mConfig.getModules()
+      return this._mConfig.init()
       .pipe(
-        mergeMap((modulesConfig) => {
+        mergeMap(() => {
+          const modulesConfig = this._mConfig.modulesConfig();
           // recupération des routes de 'modules'
           const routesModules = this.getRoutesModules();
 

@@ -20,62 +20,49 @@ export class ModulesDataService {
    * On souhaite s'assurer que la config est bien chargée
    * pour l'élément demandé
    */
-  dataRequest(schemaName, method, routeName, options: any): Observable<any> {
+  dataRequest(method, moduleCode, objectName, options: any): Observable<any> {
     // on gère ici le paramètre fields
     // - si c'est une chaine de caractère => on le transforme en string
     if (Array.isArray(options?.params?.fields)) {
       options.params.fields = options.params.fields.join(",");
     }
-    return this._mConfig.loadConfig(schemaName).pipe(
-      mergeMap((schemaConfig) => {
-        const url = `${
-          this._mConfig.schemaConfig(schemaName).utils.urls[routeName]
-        }${options.value || ""}`;
-        return this._requestService.request(method, url, {
-          params: options.params,
-          data: options.data,
-        });
-      })
-    );
+    const url = this._mConfig.objectUrl(moduleCode, objectName, options.value);
+    return this._requestService.request(method, url, {
+      params: options.params,
+      data: options.data,
+    });
   }
 
-  getList(schemaName, params = {}) {
-    return this.dataRequest(schemaName, "get", "rest", {
+  getList(moduleCode, objectName, params = {}) {
+    return this.dataRequest("get", moduleCode, objectName, {
       params,
     });
   }
 
-  getOne(schemaName, value, params = {}) {
-    return this.dataRequest(schemaName, "get", "rest", {
+  getOne(moduleCode, objectName, value, params = {}) {
+    return this.dataRequest("get", moduleCode, objectName, {
       value,
       params,
     });
   }
 
-  post(schemaName, data, params = {}) {
-    return this.dataRequest(schemaName, "post", "rest", {
+  post(moduleCode, objectName, data, params = {}) {
+    return this.dataRequest("post", moduleCode, objectName, {
       params,
       data,
     });
   }
 
-  patch(schemaName, value, data, params = {}) {
-    return this.dataRequest(schemaName, "patch", "rest", {
+  patch(moduleCode, objectName, value, data, params = {}) {
+    return this.dataRequest("patch", moduleCode, objectName, {
       value,
       params,
       data,
     });
   }
 
-  delete(schemaName, value, params = {}) {
-    return this.dataRequest(schemaName, "delete", "rest", {
-      value,
-      params,
-    });
-  }
-
-  getPageNumber(schemaName, value, params) {
-    return this.dataRequest(schemaName, "get", "page_number", {
+  delete(moduleCode, objectName, value, params = {}) {
+    return this.dataRequest("delete", moduleCode, objectName, {
       value,
       params,
     });

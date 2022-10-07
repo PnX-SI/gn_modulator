@@ -68,7 +68,7 @@
     "layout": [
       "id_visit",
       "cd_nom",
-      "visite.visit_date_min",
+      "visite.date_min",
       "taxon.nom_vern",
       "visite.site.name",
       "visite.dataset.dataset_name",
@@ -100,7 +100,7 @@
   "table": {
     "columns": [
       "cd_nom",
-      "visite.visit_date_min",
+      "visite.date_min",
       "taxon.nom_vern"
     ]
   }
