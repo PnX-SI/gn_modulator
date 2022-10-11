@@ -156,7 +156,13 @@ class SchemaBaseImports:
             return None
 
         try:
-            m = sm_rel.get_row(rel_test_values, rel_test_keys).one()
+            print(sm_rel.schema_name(), rel_test_keys, rel_test_values)
+            print('get_row')
+            m = sm_rel.get_row(
+                rel_test_values,
+                rel_test_keys,
+                params={} # sinon bug et utilise un param précédent ????
+            ).one()
             pk = getattr(m, sm_rel.pk_field_name())
             self.cls.set_global_cache('import_pk_keys', cache_key, pk)
             return pk
@@ -179,6 +185,7 @@ class SchemaBaseImports:
                 or (key in self.relationship_keys())
             ):
                 continue
+
             d[key] = self.get_foreign_key(key, d[key])
 
     def copy_keys(self, d):
@@ -241,10 +248,12 @@ class SchemaBaseImports:
 
         test_keys = sm.attr('meta.unique')
 
+        print(schema_name)
         items = cls.get_data_item(data_item, file_path)
 
         i = 0
         for d in items:
+            print(d)
             i = i + 1
             # validate_data
             try:
@@ -269,7 +278,8 @@ class SchemaBaseImports:
                     m, b_update = sm.update_row(
                         values,
                         d,
-                        test_keys
+                        test_keys,
+                        params={}
                     )
                     if b_update:
                         v_updates.append(value)

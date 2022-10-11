@@ -174,14 +174,78 @@ class ModulesConfig():
         for key, module_config in modules_config.items():
             cache_modules_config[key] = module_config
 
-        # pour chaque module va traiter la variable data
-        # et les differents object qu'elle contient afin d'avoir
-        # - les api
-        # - les définitions
+
         for key in modules_config:
             cls.process_module_data(key)
 
+
+        for key in modules_config:
+            cls.process_module_params(key)
+
+        for key in modules_config:
+            cls.process_module_api(key)
+
         return modules_config
+
+    @classmethod
+    def process_module_params(cls, module_code):
+        '''
+            résolution de tous les champs contenus dans module_config['params']
+        '''
+        module_config = cls.module_config(module_code)
+        params = module_config.get('params') or {}
+        data =  module_config.get('data') or {}
+        processed_params = {}
+
+        for key_param, param_config in params.items():
+            schema_name = (
+                module_config['data'][param_config['object_name']].get('schema_name') 
+                or
+                param_config['object_name']
+            )
+
+            sm = SchemaMethods(schema_name)
+
+            m = (
+                sm
+                .get_row(param_config['value'], param_config['field_name'])
+                .one()
+            )
+
+            processed_value = getattr(m, key_param)
+
+            processed_params[key_param] = processed_value
+
+        module_config['params'] = processed_params
+
+        processed_data = None
+
+        for param_key, param_value in processed_params.items():
+            processed_data = cls.replace_in_dict(data, f':{param_key}', param_value)
+
+        if processed_data:
+            module_config['data'] = processed_data
+
+
+    @classmethod
+    def replace_in_dict(cls, data, field_name, value):
+
+        if isinstance(data, dict):
+            return {
+                key: cls.replace_in_dict(val, field_name, value)
+                for key, val in data.items()
+            }
+
+        if isinstance(data, list):
+            return [ cls.replace_in_dict(item, field_name, value) for item in data]
+
+        if isinstance(data, str):
+            if data == field_name:
+                return value
+            if field_name in data:
+                return data.replace(field_name, value)
+
+        return data
 
     @classmethod
     def process_module_data(cls, module_code):
@@ -189,18 +253,29 @@ class ModulesConfig():
 
         module_config['definitions'] = {}
 
-        bp = Blueprint(module_code, __name__)
-
         for object_name, object_definition in module_config['data'].items():
-            if not object_definition.get('schema_name'):
-                object_definition['schema_name']=object_name
+            object_definition = object_definition
+            object_definition['schema_name'] = object_definition.get('schema_name', object_name)
             sm = SchemaMethods(object_definition['schema_name'])
             module_config['definitions'][object_name] = sm.config()
 
+
+    @classmethod
+    def process_module_api(cls, module_code):
+        module_config = cls.module_config(module_code)
+
+        bp = Blueprint(module_code, __name__)
+        for object_name, object_definition in module_config['data'].items():
+            sm = SchemaMethods(object_definition['schema_name'])
+
             # ouverture des routes
-            sm.register_api(bp, module_code, object_name, object_definition)
+            sm.register_api(bp, module_code, object_name, copy.deepcopy(object_definition))
+
+            if 'prefilters' in  object_definition:
+                del object_definition['prefilters']
 
         current_app.register_blueprint(bp, url_prefix=f'/{module_code.lower()}')
+
 
     @classmethod
     def modules_config_with_rigths(cls):

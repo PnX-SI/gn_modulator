@@ -98,7 +98,7 @@ class SchemaApi():
 
         return url
 
-    def parse_request_args(self, request):
+    def parse_request_args(self, request, options={}):
         '''
             TODO !!! à refaire avec repo get_list
             parse request flask element
@@ -131,6 +131,9 @@ class SchemaApi():
             'cruved_type': self.load_param(request.args.get('cruved_type', 'null'))
         }
 
+        if 'prefilters' in options:
+            params['prefilters'] = options['prefilters'] + params['prefilters']
+
         return params
 
     def load_array_param(self, param):
@@ -159,6 +162,7 @@ class SchemaApi():
             - prefilters
         '''
 
+
         def get_rest(self_mv, value=None):
 
             if value:
@@ -171,7 +175,7 @@ class SchemaApi():
                 return get_list_rest()
 
         def get_one_rest(value):
-            params = self.parse_request_args(request)
+            params = self.parse_request_args(request, options)
 
             try:
                 m = self.get_row(
@@ -193,7 +197,7 @@ class SchemaApi():
 
         def get_list_rest():
 
-            params = self.parse_request_args(request)
+            params = self.parse_request_args(request, options)
             count_total = (
                 self.query_list(module_code, 'R', params, 'total')
                 .count()
@@ -212,6 +216,10 @@ class SchemaApi():
                     else 1
                 )
             }
+
+            # pour gérer les prefiltres définis dans la config du module (data)
+            #
+
             query_list = self.query_list(module_code, params.get('cruved_type') or 'R', params)
             res_list = query_list.all()
             out = {
@@ -228,7 +236,7 @@ class SchemaApi():
         def post_rest(self_mv):
 
             data = request.get_json()
-            params = self.parse_request_args(request)
+            params = self.parse_request_args(request, options)
 
             try:
                 m = self.insert_row(data)
@@ -245,7 +253,7 @@ class SchemaApi():
         def patch_rest(self_mv, value):
 
             data = request.get_json()
-            params = self.parse_request_args(request)
+            params = self.parse_request_args(request, options)
 
             try:
                 m, _ = self.update_row(
@@ -267,7 +275,7 @@ class SchemaApi():
 
         def delete_rest(self_mv, value):
 
-            params = self.parse_request_args(request)
+            params = self.parse_request_args(request, options)
 
             m = self.get_row(
                 value,
@@ -294,7 +302,7 @@ class SchemaApi():
             '''
             '''
 
-            params = self.parse_request_args(request)
+            params = self.parse_request_args(request, options)
             return {
                 'page': self.get_page_number(
                     value,
@@ -341,6 +349,8 @@ class SchemaApi():
 
         cruved = options.get('cruved', '')
 
+
+
         # rest api
         view_func_rest = self.schema_view_func('rest', module_code, options)
         view_func_page_number = self.schema_view_func('page_number', module_code, options)
@@ -357,8 +367,8 @@ class SchemaApi():
             bp.add_url_rule(f'/{object_name}/', view_func=view_func_rest, methods=['POST'])
 
         # read : GET (one)
-        if 'R' in cruved:
-            methods.append('GET')
+        # if 'R' in cruved:
+        methods.append('GET')
 
         # update : PATCH
         if 'U' in cruved:

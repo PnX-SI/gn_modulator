@@ -48,7 +48,7 @@
           "id_digitiser": "admin",
           "id_inventor": "admin",
           "id_nomenclature_type_site": "4",
-          "site_geom": {
+          "geom": {
             "type": "Point",
             "coordinates": [
               3.75,
@@ -67,7 +67,7 @@
           "id_digitiser": "admin",
           "id_inventor": "admin",
           "id_nomenclature_type_site": "4",
-          "site_geom": {
+          "geom": {
             "type": "Point",
             "coordinates": [
               3.76,

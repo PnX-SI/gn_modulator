@@ -89,7 +89,7 @@ export class ModulesRequestService {
         return '';
     }
     let queryParams = Object.entries(params)
-      .filter(([k, v]) => ![null, undefined].includes(v))
+      .filter(([k, v]) => ![null, undefined, ''].includes((v as any)))
       .map(([k, v])=> {
         let sParam;
         if(Object(v) === v) {

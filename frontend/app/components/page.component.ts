@@ -86,11 +86,7 @@ export class PageComponent implements OnInit {
         // url queryParams
         mergeMap((queryParams) => {
           this.routeQueryParams = queryParams;
-          return this.getModuleParams();
-        }),
-        // moduile params
-        mergeMap((moduleParams) => {
-          this.moduleParams = moduleParams;
+          this.moduleParams = this._mPage.moduleConfig.params || {};
           this.processParams();
           return this._mPage.getBreadcrumbs();
         })
@@ -98,49 +94,6 @@ export class PageComponent implements OnInit {
       .subscribe(() => {
         this.pageInitialized = true;
       });
-  }
-
-  /**
-   * Pour récupérer des données comme
-   * un id_module à partir d'un module_code
-   */
-  getModuleParams() {
-    if (!this._mPage.moduleConfig.params) {
-      return of({});
-    }
-
-    const moduleParams = {};
-
-    const moduleParamsConfig: any = this._mPage.moduleConfig.params || {};
-
-    // dictionnaire des observable pour le forkJoin
-    const getOnes = {};
-
-    // traitement de chaque paramètre à résoudre
-    for (const [keyParam, paramConfig] of Object.entries(moduleParamsConfig)) {
-      const schemaName =
-        (paramConfig as any).schema_name ||
-        this._mPage.moduleConfig.data[(paramConfig as any).object_name]
-          .schema_name;
-      const fieldName = (paramConfig as any).field_name;
-      const value = (paramConfig as any).value;
-      const fields = (paramConfig as any).fields || keyParam;
-      getOnes[keyParam] = this._mData.getOne(schemaName, value, {
-        field_name: fieldName,
-        fields,
-      });
-    }
-
-    return forkJoin(getOnes).pipe(
-      concatMap((res) => {
-        for (const [resKey, resValue] of Object.entries(res)) {
-          const keyValue = Object.keys(resValue as any)[0];
-          moduleParams[resKey] = (resValue as any)[keyValue];
-        }
-
-        return of(moduleParams);
-      })
-    );
   }
 
   /**
@@ -182,6 +135,7 @@ export class PageComponent implements OnInit {
       ...this.routeParams,
       ...this.moduleParams,
     };
+
     // pour pouvoir accéder au paramètres pour le calcul des layouts
     this._mLayout.meta["params"] = this._mPage.params;
 

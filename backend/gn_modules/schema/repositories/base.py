@@ -19,8 +19,9 @@ class SchemaRepositoriesBase():
 
 
     def value_filters(self, value, field_name=None):
-     if not field_name:
-        field_name = self.pk_field_name()
+
+        if not field_name:
+            field_name = self.pk_field_name()
 
         # value et field_name peuvent être des listes
         # pour la suite nous traitons tout comme des listes
@@ -55,9 +56,10 @@ class SchemaRepositoriesBase():
 
             db.session.query(Model).filter(<field_name> == value).one()
         '''
+        print('get_row', self.schema_name(), params)
 
-        params['filters'] += self.value_filters(value, field_name)
-
+        value_filters = self.value_filters(value, field_name)
+        params['filters'] = params.get('filters', []) + value_filters
         query = self.query_list(module_code, cruved_type, params, query_type=query_type)
 
         return query
@@ -275,7 +277,6 @@ class SchemaRepositoriesBase():
             )
 
         if query_type in ['update', 'delete', 'page_number']:
-            print('PAGE_NUMBER')
             return query
 
         # sort

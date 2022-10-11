@@ -229,7 +229,7 @@ export class ModulesLayoutObjectTableComponent
       const params = {
         ...paramsTable,
         page_size: paramsTable.size,
-        sort: paramsTable.sorters.map(s => `${s.field}${s.dir=='desc' ? '-' : '+'}`).join(',')
+        sort: paramsTable.sorters.filter(s => s.field).map(s => `${s.field}${s.dir=='desc' ? '-' : ''}`).join(',')
       };
       if (!this.computedLayout.display_filters) {
         params.filters = this.getDataFilters();
@@ -247,6 +247,8 @@ export class ModulesLayoutObjectTableComponent
         fields, // fields
       };
       this._params = extendedParams;
+      delete extendedParams['sorters'];
+      console.log(extendedParams)
       this._mData
         .getList(this.moduleCode(), this.objectName(), extendedParams)
         .subscribe(
