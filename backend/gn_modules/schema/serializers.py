@@ -294,8 +294,19 @@ class SchemaSerializers:
         data = (
             self.MarshmallowSchema()
             (**kwargs)
-            .dump(m)
+            .dump(m[0] if isinstance(m, tuple) else m)
         )
+
+        # pour gérer les champs supplémentaire (ownership, row_number, etc....)
+        if isinstance(m, tuple):
+
+            keys = list(m.keys())
+            if  len(keys) > 1:
+                keys = keys[1:]
+
+                for key in keys:
+                    data[key] = getattr(m, key)
+
 
         if as_geojson:
             return self.as_geojson(data, geometry_field_name)

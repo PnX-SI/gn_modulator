@@ -17,6 +17,30 @@ class SchemaRepositoriesBase():
         class for sqlalchemy query processing
     '''
 
+
+    def value_filters(self, value, field_name=None):
+     if not field_name:
+        field_name = self.pk_field_name()
+
+        # value et field_name peuvent être des listes
+        # pour la suite nous traitons tout comme des listes
+        values = value if isinstance(value, list) else [value]
+        field_names = field_name if isinstance(field_name, list) else [field_name]
+
+        if len(values) != len(field_names):
+            raise errors.SchemaRepositoryError(
+                'get_row : les input value et field_name n''ont pas la même taille'
+            )
+
+        value_filters = []
+        # ici jouer sur filters avant le one
+        for index, val in enumerate(values):
+            f_name = field_names[index]
+            value_filters.append({ 'field': f_name, "type": "=", "value": val })
+
+        return value_filters
+
+
     def get_row(self, value, field_name=None, module_code='MODULES', cruved_type='R', params= {}, query_type='all'):
         '''
             return query get one row (Model.<field_name> == value)
@@ -32,28 +56,9 @@ class SchemaRepositoriesBase():
             db.session.query(Model).filter(<field_name> == value).one()
         '''
 
-        Model = self.Model()
-
-        if not field_name:
-            field_name = self.pk_field_name()
-
-        # value et field_name peuvent être des listes
-        # pour la suite nous traitons tout comme des listes
-        values = value if isinstance(value, list) else [value]
-        field_names = field_name if isinstance(field_name, list) else [field_name]
-
-        if len(values) != len(field_names):
-            raise errors.SchemaRepositoryError(
-                'get_row : les input value et field_name n''ont pas la même taille'
-            )
+        params['filters'] += self.value_filters(value, field_name)
 
         query = self.query_list(module_code, cruved_type, params, query_type=query_type)
-
-        for index, val in enumerate(values):
-            f_name = field_names[index]
-
-            modelValue, query = self.custom_getattr(Model, f_name, query)
-            query = query.filter(modelValue == val)
 
         return query
 
@@ -269,7 +274,8 @@ class SchemaRepositoriesBase():
                     .group_by(model_pk_field)
             )
 
-        if query_type in ['update', 'delete']:
+        if query_type in ['update', 'delete', 'page_number']:
+            print('PAGE_NUMBER')
             return query
 
         # sort
@@ -279,3 +285,25 @@ class SchemaRepositoriesBase():
         query = self.process_page_size(params.get('page'), params.get('page_size'), query)
 
         return query
+
+    def get_page_number(self, value, module_code, cruved_type, params):
+
+        params['fields'] = ['row_number']
+
+        query_list = self.query_list(module_code, cruved_type, params, 'page_number')
+
+        sub_query = query_list.subquery()
+
+        # value_filters = self.value_filters(value, params.get('field_name'))
+        # filters, sub_query = self.process_filters(self.Model(), value_filters, sub_query)
+
+        row_number = (
+            db.session.query(sub_query.c.row_number)
+            .filter(getattr(sub_query.c, self.pk_field_name()) == value)
+            .one()
+            [0]
+        )
+
+        page_number = math.ceil(row_number / params.get('page_size'))
+
+        return page_number

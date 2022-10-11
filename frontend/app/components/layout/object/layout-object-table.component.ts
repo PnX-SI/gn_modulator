@@ -34,11 +34,8 @@ export class ModulesLayoutObjectTableComponent
 
   onRedrawElem(): void {
     const elem = document.getElementById(this._id);
-    console.log("table redraw", elem?.children.length);
-
     this.onHeightChange(true);
     this.setCount();
-    
   }
 
   drawTable(): void {
@@ -232,6 +229,7 @@ export class ModulesLayoutObjectTableComponent
       const params = {
         ...paramsTable,
         page_size: paramsTable.size,
+        sort: paramsTable.sorters.map(s => `${s.field}${s.dir=='desc' ? '-' : '+'}`).join(',')
       };
       if (!this.computedLayout.display_filters) {
         params.filters = this.getDataFilters();
@@ -249,40 +247,42 @@ export class ModulesLayoutObjectTableComponent
         fields, // fields
       };
       this._params = extendedParams;
-      this._mData.getList(this.moduleCode(), this.objectName(), extendedParams).subscribe(
-        (res) => {
-          // process lists
+      this._mData
+        .getList(this.moduleCode(), this.objectName(), extendedParams)
+        .subscribe(
+          (res) => {
+            // process lists
 
-          for (const column of this.columns()) {
-            for (const d of res.data) {
-              if (column["field"].includes(".")) {
-                let val = utils.getAttr(d, column["field"]);
-                val = Array.isArray(val) ? val.join(", ") : val;
-                delete d[column["field"].split(".")[0]];
-                utils.setAttr(d, column["field"], val);
+            for (const column of this.columns()) {
+              for (const d of res.data) {
+                if (column["field"].includes(".")) {
+                  let val = utils.getAttr(d, column["field"]);
+                  val = Array.isArray(val) ? val.join(", ") : val;
+                  delete d[column["field"].split(".")[0]];
+                  utils.setAttr(d, column["field"], val);
+                }
               }
             }
+
+            resolve(res);
+            this.onHeightChange(true);
+
+            if (this.getDataValue()) {
+              setTimeout(() => {
+                this.selectRow(this.getDataValue());
+              }, 100);
+            }
+
+            //
+            this.processTotalFiltered(res);
+            this.setCount();
+
+            return;
+          },
+          (fail) => {
+            reject(fail);
           }
-
-          resolve(res);
-          this.onHeightChange(true);
-
-          if (this.getDataValue()) {
-            setTimeout(() => {
-              this.selectRow(this.getDataValue());
-            }, 100);
-          }
-
-          //
-          this.processTotalFiltered(res);
-          this.setCount();
-
-          return;
-        },
-        (fail) => {
-          reject(fail);
-        }
-      );
+        );
     });
   };
 
@@ -306,17 +306,18 @@ export class ModulesLayoutObjectTableComponent
     if (!value) {
       return;
     }
+
     if (this.selectRow(value)) {
-      return;
+      // return;
     }
 
     // TODO une seule requete pour les getPageNumber et setPage ??
-    // this._mData
-    //   .getPageNumber(this.schemaName(), value, this._params)
-    //   .subscribe((res) => {
-    //     // set Page
-    //     this.table.setPage(res.page);
-    //   });
+    this._mData
+      .getPageNumber(this.moduleCode(), this.objectName(), value, this._params)
+      .subscribe((res) => {
+        // set Page
+        this.table.setPage(res.page);
+      });
   }
 
   selectRow(value, fieldName = null) {

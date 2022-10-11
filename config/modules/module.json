@@ -1,0 +1,18 @@
+{
+  "module": {
+    "module_code": "MODULES",
+    "module_label": "Module de module",
+    "module_desc": "Ne permet pas de compter les patates",
+    "module_picto": "fa-puzzle-piece",
+    "active_frontend": false
+  },
+  "data": {
+    "ref_geo.area": {
+    },
+    "ref_geo.linear_group": {
+    },
+    "user.role": {},
+    "user.organisme": {},
+    "ref_nom.nomenclature": {}
+  }
+}

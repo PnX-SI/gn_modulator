@@ -160,16 +160,12 @@ export class ListFormService {
       return of(true);
     }
 
-    
     const moduleCode = options.module_code || 'MODULES';
-    console.log(moduleCode, options.object_name, schemaFilters)
-
 
     const objectConfig = this._mConfig.objectConfig(
       moduleCode,
       options.object_name
     );
-    console.log(moduleCode, options.object_name)
     const objectUrl = this._mConfig.objectUrl(
       moduleCode,
       options.object_name

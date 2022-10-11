@@ -105,8 +105,8 @@ export class ModulesConfigService {
     return this.backendUrl() + "/static/external_assets/modules";
   }
 
-  objectUrl(moduleCode, objectName, value = null) {
-    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectName}/${
+  objectUrl(moduleCode, objectName, value = "", urlSuffix="") {
+    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectName}/${urlSuffix}${
       value || ""
     }`;
   }

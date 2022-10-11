@@ -245,11 +245,15 @@ export class BaseTableComponent extends BaseComponent implements OnInit {
       return;
     }
     // this.table.setData();
+    
+    const getRowNumberParams = utils.copy(this._params);
+    getRowNumberParams.fields += ",row_number";
     this._services.mData
-      .getPageNumber(this.schemaName, value, this._params)
+      .getOne(this.moduleCode(), this.objectName(), value, this._params)
       .subscribe((res) => {
         // set Page
-        this.table.setPage(res.page);
+        console.log(res)
+        // this.table.setPage(res.);
       });
   }
 

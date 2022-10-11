@@ -64,19 +64,19 @@ class SchemaRepositoriesUtil():
 
         for s in sort:
 
-            s_dir = '+'
-            s_field = s
-            if s[-1] in ['+-']:
-                s_field = s[:-1]
-                s_dir = s[-1]
+            sort_dir = '+'
+            sort_field = s
+            if s[-1] in '+-':
+                sort_field = s[:-1]
+                sort_dir = s[-1]
 
-            model_attribute, query = self.custom_getattr(Model, s_field, query)
+            model_attribute, query = self.custom_getattr(Model, sort_field, query)
 
             if model_attribute is None:
                 continue
 
             order_by = (
-                model_attribute.desc() if s_dir == '-'
+                model_attribute.desc() if sort_dir == '-'
                 else
                 model_attribute.asc()
             )
@@ -89,13 +89,13 @@ class SchemaRepositoriesUtil():
 
     def get_sorter(self, Model, sorter, query):
 
-        s_field = sorter['field']
-        s_dir = sorter['dir']
+        sort_field = sorter['field']
+        sort_dir = sorter['dir']
 
-        model_attribute, query = self.custom_getattr(Model, s_field, query)
+        model_attribute, query = self.custom_getattr(Model, sort_field, query)
 
         order_by = (
-            model_attribute.desc() if s_dir == 'desc'
+            model_attribute.desc() if sort_dir == 'desc'
             else
             model_attribute.asc()
         )

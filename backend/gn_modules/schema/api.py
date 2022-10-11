@@ -213,7 +213,6 @@ class SchemaApi():
                 )
             }
             query_list = self.query_list(module_code, params.get('cruved_type') or 'R', params)
-            print(query_list)
             res_list = query_list.all()
             out = {
                 **query_info,
@@ -247,13 +246,12 @@ class SchemaApi():
 
             data = request.get_json()
             params = self.parse_request_args(request)
-            field_name = request.args.get('field_name')
 
             try:
                 m, _ = self.update_row(
                     value,
                     data,
-                    field_name=field_name,
+                    field_name=params.get('field_name'),
                     module_code=module_code,
                     params=options
                 )
@@ -269,12 +267,11 @@ class SchemaApi():
 
         def delete_rest(self_mv, value):
 
-            field_name = request.args.get('field_name')
             params = self.parse_request_args(request)
 
             m = self.get_row(
                 value,
-                field_name=field_name,
+                field_name=params.get('field_name'),
                 module_code=module_code,
                 cruved_type='D',
                 params = options
@@ -286,12 +283,27 @@ class SchemaApi():
             )
 
             try:
-                self.delete_row(value, field_name=field_name)
+                self.delete_row(value, field_name=params.get('field_name'))
 
             except SchemaUnsufficientCruvedRigth as e:
                 return 'Erreur Cruved : {}'.format(str(e)), 403
 
             return dict_out
+
+        def get_page_number(self_mv, value):
+            '''
+            '''
+
+            params = self.parse_request_args(request)
+            return {
+                'page': self.get_page_number(
+                    value,
+                    module_code,
+                    params.get('cruved_type') or 'R',
+                    params
+                )
+            }
+
 
         return {
             'rest': {
@@ -299,6 +311,9 @@ class SchemaApi():
                 'post': permissions.check_cruved_scope('C', module_code=module_code)(post_rest),
                 'patch': permissions.check_cruved_scope('U', module_code=module_code)(patch_rest),
                 'delete': permissions.check_cruved_scope('D', module_code=module_code)(delete_rest)
+            },
+            'page_number': {
+                'get': permissions.check_cruved_scope('R', module_code=module_code)(get_page_number)
             }
         }
 
@@ -328,11 +343,14 @@ class SchemaApi():
 
         # rest api
         view_func_rest = self.schema_view_func('rest', module_code, options)
+        view_func_page_number = self.schema_view_func('page_number', module_code, options)
 
         methods = []
 
         # on ouvre toujours la route de liste quand register api est appelé
         bp.add_url_rule(f'/{object_name}/', defaults={'value': None}, view_func=view_func_rest, methods=['GET'])
+
+        bp.add_url_rule(f'/{object_name}/page_number/<value>', view_func=view_func_page_number, methods=['GET'])
 
         # create : POST
         if 'C' in cruved:

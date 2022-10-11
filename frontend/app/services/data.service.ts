@@ -26,7 +26,12 @@ export class ModulesDataService {
     if (Array.isArray(options?.params?.fields)) {
       options.params.fields = options.params.fields.join(",");
     }
-    const url = this._mConfig.objectUrl(moduleCode, objectName, options.value);
+    const url = this._mConfig.objectUrl(
+      moduleCode,
+      objectName,
+      options.value,
+      options.urlSuffix,
+    );
     return this._requestService.request(method, url, {
       params: options.params,
       data: options.data,
@@ -43,6 +48,14 @@ export class ModulesDataService {
     return this.dataRequest("get", moduleCode, objectName, {
       value,
       params,
+    });
+  }
+
+  getPageNumber(moduleCode, objectName, value, params = {}) {
+    return this.dataRequest("get", moduleCode, objectName, {
+      value,
+      params,
+      urlSuffix: "page_number/",
     });
   }
 
@@ -67,5 +80,4 @@ export class ModulesDataService {
       params,
     });
   }
-
 }
