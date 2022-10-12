@@ -69,31 +69,13 @@
       "data": {
         "site_group": {
           "value": ":id_site_group",
-          "prefilters": [
-            {
-              "field": "id_site_group",
-              "type": "=",
-              "value": ":id_site_group"
-            }
-          ]
+          "prefilters": "id_site_group_=_:id_site_group"
         },
         "site": {
-          "prefilters": [
-            {
-              "field": "groups.id_site_group",
-              "type": "=",
-              "value": ":id_site_group"
-            }
-          ]
+          "prefilters": "groups.id_site_group_=_:id_site_group"
         },
         "visit": {
-          "prefilters": [
-            {
-              "field": "site.groups.id_site_group",
-              "type": "=",
-              "value": ":id_site_group"
-            }
-          ]
+          "prefilters": "site.groups.id_site_group_=_:id_site_group"
         }
       }
     },
@@ -105,22 +87,10 @@
           "value": ":id_site"
         },
         "visit": {
-          "prefilters": [
-            {
-              "field": "id_site",
-              "type": "=",
-              "value": ":id_site"
-            }
-          ]
+          "prefilters": "id_site_=_:id_site"
         },
         "module": {
-          "prefilters": [
-            {
-              "field": "sites.id_site",
-              "type": "=",
-              "value": ":id_site"
-            }
-          ]
+          "prefilters": "sites.id_site_=_:id_site"
         }
       }
     },
@@ -132,13 +102,7 @@
           "value": ":id_visit"
         },
         "observation": {
-          "prefilters": [
-            {
-              "field": "id_visit",
-              "type": "=",
-              "value": ":id_visit"
-            }
-          ]
+          "prefilters": "id_visit_=_:id_visit"
         }
       }
     },

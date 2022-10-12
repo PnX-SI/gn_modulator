@@ -34,19 +34,16 @@
     },
     "site": {
       "schema_name": "m_monitoring.site",
-      "prefilters": [
-        {
-          "field": "modules.id_module",
-          "type": "=",
-          "value": ":id_module"
-        }
-      ]
+      "prefilters": "modules.id_module_=_:id_module"
     },
     "visit": {
-      "schema_name": "m_monitoring.visit"
+      "schema_name": "m_monitoring.visit",
+      "prefilters": "module.id_module_=_:id_module"
+
     },
     "observation": {
-      "schema_name": "m_monitoring.observation"
+      "schema_name": "m_monitoring.observation",
+      "prefilters": "visit.module.id_module_=_:id_module"
     }
   },
   "tree": {
@@ -86,13 +83,7 @@
           "value": ":id_site"
         },
         "visit": {
-          "prefilters": [
-            {
-              "field": "id_site",
-              "type": "=",
-              "value": ":id_site"
-            }
-          ]
+          "prefilters": "id_site_=_:id_site"
         }
       }
     },
@@ -124,13 +115,7 @@
           "value": ":id_visit"
         },
         "observation": {
-          "prefilters": [
-            {
-              "field": "id_visit",
-              "type": "=",
-              "value": ":id_visit"
-            }
-          ]
+          "prefilters": "id_visit_=_:id_visit"
         }
       }
     },
