@@ -9,5 +9,20 @@
     "autoschema": true,
     "relations": ["area_type"],
     "unique": ["id_type", "area_code"]
+  },
+  "properties": {
+    "name_code": {
+      "type": "string",
+      "column_property": "concat",
+      "title": "Code et nom",
+      "label": "<area_name> (<area_code>)"
+    },
+    "code_name": {
+      "type": "string",
+      "column_property": "concat",
+      "title": "Nom et code",
+      "label": "<area_code> <area_name>"
+    }
+
   }
 }

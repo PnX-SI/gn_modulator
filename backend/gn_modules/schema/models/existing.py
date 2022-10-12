@@ -109,5 +109,14 @@ class SchemaModelExisting():
 
             setattr(Model, key, self.process_relation_model(key, relation_def, Model))
 
+        # process column properties
+        for key, column_property_def in self.column_properties().items():
+            print(self.schema_name(), key, column_property_def)
+            setattr(
+                Model,
+                key,
+                self.process_column_property_model(key, column_property_def, Model)
+            )
+
         return Model
 # from ..cache import cache_schemas

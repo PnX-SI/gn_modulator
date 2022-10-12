@@ -179,15 +179,6 @@ export class ListFormService {
    *
    * recupère une liste depuis options
    *
-   * si options.api est defini
-   * - get api
-   * - params
-   *  - filtres : [
-   *    // recherche
-   *    - { field: options.label_field_name, type: 'ilike', value: options.search}
-   *    // ne pas redemander les valeurs selectionées
-   *    - '!', { field: options.label_field_name, type: 'ilike', value: options.search}
-   *  ]
    *
    * TODO process all cases
    *
@@ -218,23 +209,21 @@ export class ListFormService {
   getItemsFromApi(options, value): Observable<any> {
     // TODO test si cela ne vient pas d'être fait ?
     const params = options.params || {};
-    console.log('filters', options.filters)
-    params.filters = options.filters || '';
+    console.log("filters", options.filters);
+    params.filters = options.filters || "";
     if (options.object_name) {
-      params.filters = [params.filters, (options.schema_filters || [])].flat();
-      params.filters = [params.filters, (options.schema_filters || [])].flat();
+      params.filters = [params.filters, options.schema_filters || []]
+        .flat()
+        .filter((f) => !!f);
       params.sort = params.sort || options.sort;
 
       if (options.reload_on_search && options.search) {
-        console.log(params.filters)
-        params.filters.push(
-          `${options.label_field_name}_ilike_${options.search}`
-        );
+        console.log(params.filters);
+        params.filters.push(`${options.label_field_name}_~_${options.search}`);
       }
-
     }
 
-    params.filters = utils.processFilterArray(params.filters)
+    params.filters = utils.processFilterArray(params.filters);
 
     params.fields = utils
       .removeDoublons(

@@ -85,9 +85,10 @@ class SchemaAuto():
             col = getattr(Model, k)
             if (not isinstance(col.property, ColumnProperty)) or k in columns:
                 continue
+            print(self.schema_name(), k)
             properties[k] = {
                 "type": "string",
-                "column_property": "label",
+                # "column_property": "label",
                 "title": k,
             }
 

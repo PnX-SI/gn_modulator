@@ -21,7 +21,7 @@ try:
     ModuleMethods.init_modules()
     SchemaMethods.init_schemas_models_and_serializers()
     print('init ok')
-except Exception as e:
+except NoForeignKeysError as e:
     print('Erreur initialisation', str(e))
 
 

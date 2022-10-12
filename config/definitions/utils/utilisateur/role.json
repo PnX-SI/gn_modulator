@@ -34,7 +34,7 @@
             "load_only": true
         },
         "_password_plus": {
-            "load_only": true  
+            "load_only": true
         },
         "listes": {
             "type": "relation",

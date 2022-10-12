@@ -194,7 +194,7 @@ class SchemaRepositoriesFilters():
 
         index_min = None
         filter_type_min = None
-        for filter_type in [ '=', '<', '>', '>=', '<=', 'like', 'ilike', 'in' ]:
+        for filter_type in [ '=', '<', '>', '>=', '<=', 'like', 'ilike', 'in', '~' ]:
             try:
                 index = str_filter.index(f'_{filter_type}_')
             except ValueError:
@@ -240,35 +240,39 @@ class SchemaRepositoriesFilters():
 
         model_attribute, query = self.custom_getattr(Model, filter_field, query, condition)
 
-        # si besoin de redefinir type
-
-        # pour ilike et like, on teste sans tenir compte des accents
-        # si un '%' est présent => on le garde tel quel
-        # sinon on ajoute '%' en début et fin
         if filter_type in ['like', 'ilike']:
-            filter_value_unaccent = unidecode.unidecode(filter_value)
-            filter_value_unaccent = (
-                filter_value_unaccent if '%' in filter_value_unaccent
-                else f'%{filter_value_unaccent}%'
-            )
             filter_out = (
                 getattr(
                     unaccent(
                         cast(model_attribute, db.String)
                     ),
                     filter_type
-                )(filter_value_unaccent)
+                )(filter_value)
             )
+
+        elif filter_type == '~':
+            filter_value_unaccent = unidecode.unidecode(filter_value)
+            filters_out = []
+            for v in filter_value_unaccent.split(' '):
+                filters_out.append(
+                    getattr(
+                        unaccent(
+                            cast(model_attribute, db.String)
+                        ),
+                        'ilike'
+                    )(f'%{v}%')
+                )
+            filter_out = and_(*filters_out)
 
         elif filter_type == '>':
             filter_out = (model_attribute > filter_value)
-        # elif filter_type == '!=':
-        #     filter_out = getattr(model_attribute, 'isnot')(filter_value)
 
         elif filter_type == '>=':
             filter_out = (model_attribute >= filter_value)
+
         elif filter_type == '<':
             filter_out = (model_attribute < filter_value)
+
         elif filter_type == '<=':
             filter_out = (model_attribute <= filter_value)
 

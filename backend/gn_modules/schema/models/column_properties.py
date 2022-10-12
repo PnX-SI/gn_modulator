@@ -1,5 +1,5 @@
 from sqlalchemy.orm import column_property
-from sqlalchemy import func, select, case, exists, and_ , literal_column, cast, column, text
+from sqlalchemy import func, literal, select, case, exists, and_ , literal_column, cast, column, text
 from geonature.utils.env import db
 from .. import errors
 
@@ -50,6 +50,35 @@ class SchemaModelColumnProperties():
                 getattr(func, column_property_type)
                 (func.st_centroid(getattr(Model, column_property_def['key'])))
             )
+
+        if column_property_type == 'concat':
+            # label = '<area_code> <area_name>'
+            # 1 => ['<area_code>', '', '<area_name>']
+            # 2 => map getattr
+            # 3 *dans concat
+            print(column_property_def['label'])
+            label = column_property_def['label']
+            index = 0
+            items = []
+            items2 = []
+            txt = ''
+            while index <= len(label):
+                if index == len(label) or label[index] == '<':
+                    if txt:
+                        items.append(literal(txt))
+                        items2.append(txt)
+                        txt = ''
+                elif label[index] == '>':
+                    model_attribute, _ = self.custom_getattr(Model, txt)
+                    items2.append(txt)
+                    items.append(model_attribute)
+                    txt=''
+                else:
+                    txt += label[index]
+                index += 1
+            print(items)
+            print(items2)
+            return func.concat(*items)
 
         if column_property_type in  ['st_astext']:
             return func.st_astext(getattr(Model, column_property_def['key']))

@@ -88,7 +88,8 @@
           "additional_fields": [
             "area_code"
           ],
-          "sort": "area_name",
+          "label_field_name": "code_name",
+          "sort": "code_name",
           "filters": "_filters_departement"
         },
         {
@@ -97,6 +98,7 @@
           "title": "Commune",
           "type": "list_form",
           "area_type": "COM",
+          "label_field_name": "name_code",
           "filters": "_filters_commune",
           "sort": "area_name"
         },
