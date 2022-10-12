@@ -139,37 +139,28 @@ export class ListFormService {
     let schemaFilters: Array<any> = [];
     if (options.nomenclature_type) {
       options.object_name = "ref_nom.nomenclature";
-      schemaFilters.push({
-        field: "nomenclature_type.mnemonique",
-        type: "=",
-        value: options.nomenclature_type,
-      });
+      schemaFilters.push(
+        `nomenclature_type.mnemonique_=_${options.nomenclature_type}`
+      );
       options.cache = true;
     }
     if (options.area_type) {
       options.object_name = "ref_geo.area";
-      schemaFilters.push({
-        field: "area_type.type_code",
-        type: "=",
-        value: options.area_type,
-      });
+      schemaFilters.push(`area_type.type_code_=_${options.area_type}`);
     }
 
     if (!options.object_name) {
-      console.log('reject', options)
+      console.log("reject", options);
       return of(true);
     }
 
-    const moduleCode = options.module_code || 'MODULES';
+    const moduleCode = options.module_code || "MODULES";
 
     const objectConfig = this._mConfig.objectConfig(
       moduleCode,
       options.object_name
     );
-    const objectUrl = this._mConfig.objectUrl(
-      moduleCode,
-      options.object_name
-    );
+    const objectUrl = this._mConfig.objectUrl(moduleCode, options.object_name);
     options.api = options.api || objectUrl;
     options.value_field_name =
       options.value_field_name || objectConfig.utils.value_field_name;
@@ -227,20 +218,23 @@ export class ListFormService {
   getItemsFromApi(options, value): Observable<any> {
     // TODO test si cela ne vient pas d'être fait ?
     const params = options.params || {};
-
-    params.filters = [...(options.filters || [])];
+    console.log('filters', options.filters)
+    params.filters = options.filters || '';
     if (options.object_name) {
-      params.filters = [...params.filters, ...(options.schema_filters || [])];
+      params.filters = [params.filters, (options.schema_filters || [])].flat();
+      params.filters = [params.filters, (options.schema_filters || [])].flat();
       params.sort = params.sort || options.sort;
 
       if (options.reload_on_search && options.search) {
-        params.filters.push({
-          field: options.label_field_name,
-          type: "ilike",
-          value: options.search,
-        });
+        console.log(params.filters)
+        params.filters.push(
+          `${options.label_field_name}_ilike_${options.search}`
+        );
       }
+
     }
+
+    params.filters = utils.processFilterArray(params.filters)
 
     params.fields = utils
       .removeDoublons(

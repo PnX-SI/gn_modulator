@@ -243,7 +243,7 @@ class ModulesConfig():
             if data == field_name:
                 return value
             if field_name in data:
-                return data.replace(field_name, value)
+                return data.replace(field_name, str(value))
 
         return data
 

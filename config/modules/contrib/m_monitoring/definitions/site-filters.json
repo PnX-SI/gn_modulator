@@ -2,23 +2,20 @@
   "_defs": {
     "_filters_departement": [
       "__f__{",
-      "const filters = data.region",
-      " ? [{field: 'area_code', type: 'in', value: utils.departementsForRegion(data.region.area_code)}]",
-      " : null;",
-      "return filters",
+      "return data.region",
+      " ? `area_code_in_${utils.departementsForRegion(data.region.area_code).join(';')}`",
+      " : null",
       "}"
     ],
     "_filters_commune": [
       "__f__{",
       "  if (data.departement) {",
-      "    return [{field: 'area_code', type: 'like', value: `${data.departement.area_code}%`}]",
+      "    return `area_code_like_${data.departement.area_code}`",
       "  }",
       "  if (data.region) {",
-      "     let filters = utils.departementsForRegion(data.region.area_code).map(departementCode => ",
-      "       [{field: 'area_code', type: 'like', value: `${departementCode}%`}, '|']);",
-      "     filters = filters.flat(); ",
-      "     filters.pop();",
-      "     return filters",
+      "     return utils.departementsForRegion(data.region.area_code)",
+      "       .map(departementCode => `area_code_like_${departementCode}`)",
+      "       .join(',|,')",
       "  }",
       "}"
     ]
@@ -108,13 +105,7 @@
           "key": "infrastructure",
           "type": "list_form",
           "object_name": "ref_geo.linear_group",
-          "filters": [
-            {
-              "field": "linears.type.type_code",
-              "type": "=",
-              "value": "RTE"
-            }
-          ],
+          "filters": "linears.type.type_code_=_RTE",
           "sort": "name",
           "data_reload_on_search": true,
           "page_size": 10

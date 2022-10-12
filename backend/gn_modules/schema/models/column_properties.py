@@ -90,7 +90,7 @@ class SchemaModelColumnProperties():
         if column_property_def.get('filters') is not None:
             condition_filters, conditions = rel.process_filter_array(
                 relation.mapper.entity,
-                column_property_def.get('filters'),
+                self.parse_filters(column_property_def.get('filters')),
                 query=conditions,
                 condition=True
             )

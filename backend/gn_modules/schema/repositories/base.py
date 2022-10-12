@@ -56,7 +56,6 @@ class SchemaRepositoriesBase():
 
             db.session.query(Model).filter(<field_name> == value).one()
         '''
-        print('get_row', self.schema_name(), params)
 
         value_filters = self.value_filters(value, field_name)
         params['filters'] = params.get('filters', []) + value_filters

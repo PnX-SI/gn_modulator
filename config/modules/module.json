@@ -13,6 +13,7 @@
     },
     "user.role": {},
     "user.organisme": {},
-    "ref_nom.nomenclature": {}
+    "ref_nom.nomenclature": {},
+    "commons.module": {}
   }
 }

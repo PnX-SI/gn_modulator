@@ -140,11 +140,10 @@ const lowerUnaccent = (str) =>
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase();
 
-    
-    const capitalize = s => {
-      return s && s[0].toUpperCase() + s.slice(1)
-    }
-    
+const capitalize = (s) => {
+  return s && s[0].toUpperCase() + s.slice(1);
+};
+
 // remplacer dans strTest, strReplace dans un dict, array, string
 const replace = (obj, strTest, strReplace) => {
   if (isObject(obj)) {
@@ -166,12 +165,25 @@ const replace = (obj, strTest, strReplace) => {
   return obj;
 };
 
-
 // renvoie la date d'aujourd'hui
 const today = () => {
   const today = new Date();
-  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
-}
+  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+};
+
+const processFilterArray = (filters) => {
+  const filtersOut = filters
+    .map((f) =>
+      isObject(f)
+        ? f.type == "in"
+          ? `${f.field}_${f.type}_${f.value.join(";")}`
+          : `${f.field}_${f.type}_${f.value}`
+        : f
+    )
+    .join(",");
+    console.log(filters, filtersOut)
+    return filtersOut
+};
 
 const JSONStringify = (obj) => JSON.stringify(obj, null, 4);
 export default {
@@ -188,6 +200,7 @@ export default {
   unaccent,
   lowerUnaccent,
   parseJSON,
+  processFilterArray,
   JSONStringify,
   replace,
   today,

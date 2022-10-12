@@ -5,6 +5,7 @@ import { mergeMap } from "@librairies/rxjs/operators";
 import { ModulesConfigService } from "./config.service";
 import { ModulesRequestService } from "./request.service";
 import { HttpClient } from "@angular/common/http";
+import utils from "../utils";
 
 @Injectable()
 export class ModulesDataService {
@@ -26,6 +27,13 @@ export class ModulesDataService {
     if (Array.isArray(options?.params?.fields)) {
       options.params.fields = options.params.fields.join(",");
     }
+    if (Array.isArray(options?.params?.filters)) {
+      options.params.filters = utils.processFilterArray(options.params.filters);
+    }
+    if (Array.isArray(options?.params?.prefilters)) {
+      options.params.prefilters = utils.processFilterArray(options.params.prefilters);
+    }
+
     const url = this._mConfig.objectUrl(
       moduleCode,
       objectName,

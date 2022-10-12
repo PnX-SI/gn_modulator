@@ -181,9 +181,7 @@
     "column_property": "label",
     "relation_key": "linears",
     "label_key": "linear_name",
-    "filters": [
-      { "field": "type.type_code", "type": "=", "value": "RTE" }
-    ]
+    "filters": "type.type_code_=_RTE"
   },
   "label_communes": {
     "type": "string",
@@ -191,9 +189,7 @@
     "column_property": "label",
     "relation_key": "areas",
     "label_key": "area_name",
-    "filters": [
-      { "field": "area_type.type_code", "type": "=", "value": "COM" }
-    ]
+    "filters": "area_type.type_code_=_COM"
   }
   ,
   "label_departements": {
@@ -202,9 +198,7 @@
     "column_property": "label",
     "relation_key": "areas",
     "label_key": "area_name",
-    "filters": [
-      { "field": "area_type.type_code", "type": "=", "value": "DEP" }
-    ]
+    "filters": "area_type.type_code_=_DEP"
   },
   "label_regions": {
     "type": "string",
@@ -212,9 +206,7 @@
     "column_property": "label",
     "relation_key": "areas",
     "label_key": "area_name",
-    "filters": [
-      { "field": "area_type.type_code", "type": "=", "value": "REG" }
-    ]
+    "filters": "area_type.type_code_=_REG"
   },
   "actors": {
     "type": "relation",
