@@ -325,7 +325,7 @@ export class ModulesLayoutObjectTableComponent
     }
 
     if (this.selectRow(value)) {
-      // return;
+      return;
     }
 
     // TODO une seule requete pour les getPageNumber et setPage ??
