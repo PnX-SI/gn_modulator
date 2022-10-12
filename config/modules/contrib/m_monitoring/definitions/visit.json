@@ -188,11 +188,6 @@
       "dataset.dataset_name",
       "observers.nom_complet"
     ],
-    "sort": [
-      {
-        "column": "date_min",
-        "dir": "desc"
-      }
-    ]
+    "sort": "date_min-"
   }
 }

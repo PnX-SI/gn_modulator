@@ -32,12 +32,7 @@
       "name",
       "nb_sites"
     ],
-    "sort": [
-      {
-        "column": "code",
-        "dir": "desc"
-      }
-    ]
+    "sort": "code"
   },
   "required": [
     "code",

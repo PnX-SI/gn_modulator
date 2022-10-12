@@ -29,12 +29,7 @@
       "nb_visits",
       "last_visit_date_min"
     ],
-    "sort": [
-      {
-        "column": "last_visit_date_min",
-        "dir": "desc"
-      }
-    ]
+    "sort": "last_visit_date_min-"
   },
   "required": [
     "code",

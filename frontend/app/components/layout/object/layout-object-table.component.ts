@@ -39,6 +39,18 @@ export class ModulesLayoutObjectTableComponent
   }
 
   drawTable(): void {
+    const sortTable = this.objectConfig.table.sort
+      ? this.objectConfig.table.sort.split(",").map((sort) => {
+          let column = sort,
+            dir = "asc";
+          if (sort[sort.length - 1] == "-") {
+            column = sort.substring(0, sort.length - 1);
+            dir = "desc";
+          }
+          return { column, dir };
+        })
+      : [];
+
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
       locale: "fr",
@@ -54,7 +66,7 @@ export class ModulesLayoutObjectTableComponent
       pagination: "remote",
       headerFilterLiveFilterDelay: 600,
       ajaxSorting: true,
-      initialSort: utils.copy(this.objectConfig.table.sort) || [],
+      initialSort: sortTable,
       // {column:this.pkFieldName(), dir:"asc"}, //sort by this first
       selectable: 1,
       columnMinWidth: 20,
@@ -229,7 +241,10 @@ export class ModulesLayoutObjectTableComponent
       const params = {
         ...paramsTable,
         page_size: paramsTable.size,
-        sort: paramsTable.sorters.filter(s => s.field).map(s => `${s.field}${s.dir=='desc' ? '-' : ''}`).join(',')
+        sort: paramsTable.sorters
+          .filter((s) => s.field)
+          .map((s) => `${s.field}${s.dir == "desc" ? "-" : ""}`)
+          .join(","),
       };
       if (!this.computedLayout.display_filters) {
         params.filters = this.getDataFilters();
@@ -247,8 +262,8 @@ export class ModulesLayoutObjectTableComponent
         fields, // fields
       };
       this._params = extendedParams;
-      delete extendedParams['sorters'];
-      console.log(extendedParams)
+      delete extendedParams["sorters"];
+      console.log(extendedParams);
       this._mData
         .getList(this.moduleCode(), this.objectName(), extendedParams)
         .subscribe(
