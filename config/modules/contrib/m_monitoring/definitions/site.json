@@ -78,13 +78,11 @@
           "items": [
             {
               "key": "id_role",
-              "type": "list_form",
-              "object_name": "user.role"
+              "type": "list_form"
             },
             {
               "key": "id_organism",
-              "type": "list_form",
-              "object_name": "user.organisme"
+              "type": "list_form"
             },
             {
               "key": "id_nomenclature_type_actor",
