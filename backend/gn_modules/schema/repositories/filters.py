@@ -145,6 +145,9 @@ class SchemaRepositoriesFilters():
             traite une liste de chaine de caractères représentant des filtres
         '''
 
+        if not filters:
+            return []
+
         if isinstance(filters, str):
             return self.parse_filters(filters.split(','))
 

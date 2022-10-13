@@ -121,12 +121,8 @@ class SchemaApi():
             'compress': self.load_param(request.args.get('compress', 'false')),
             'fields': self.load_array_param(request.args.get('fields')),
             'field_name':  self.load_param(request.args.get('field_name', 'null')),
-            'filters': self.parse_filters(
-                self.load_array_param(request.args.get('filters'))
-            ),
-            'prefilters': self.parse_filters(
-                self.load_array_param(request.args.get('prefilters'))
-            ),
+            'filters': self.parse_filters(request.args.get('filters')),
+            'prefilters': self.parse_filters(request.args.get('prefilters')),
             'page': self.load_param(request.args.get('page', 'null')),
             'page_size': self.load_param(request.args.get('page_size', 'null')),
             'sort': self.load_array_param(request.args.get('sort')),
@@ -136,10 +132,11 @@ class SchemaApi():
         }
 
         if 'prefilters' in options:
-            if isinstance(options['prefilters'], str):
-                options['prefilters'] = options['prefilters'].split(',')
-
-            params['prefilters'] = options['prefilters'] + params['prefilters']
+            params['prefilters'] = (
+                self.parse_filters(options['prefilters'])
+                +
+                params['prefilters']
+            )
 
         return params
 
