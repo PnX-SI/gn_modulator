@@ -110,7 +110,7 @@ class SchemaConfigBase():
 
         return {
             'columns': self.columns_table(),
-            'sort': self.attr('table.sort', []),
+            'sort': self.attr('table.sort', ''),
             'url': self.url('/rest/', full_url=True)
         }
 
