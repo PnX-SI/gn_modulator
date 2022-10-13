@@ -140,7 +140,7 @@ export class ModulesSchemaService {
     };
   }
 
-  modalDeleteLayout(objectConfig, modalName = null) {
+  modalDeleteLayout(objectConfig, modalName:any = null) {
     return {
       type: "modal",
       modal_name: modalName || "delete",

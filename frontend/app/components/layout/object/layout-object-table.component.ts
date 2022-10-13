@@ -1,6 +1,7 @@
 import { Component, OnInit, Injector } from "@angular/core";
 import { ModulesLayoutObjectComponent } from "./layout-object.component";
 import { Observable, of } from "@librairies/rxjs";
+import { ModulesTableService } from "../../../services/table.service";
 import tabulatorLangs from "../../base/table/tabulator-langs";
 import Tabulator from "tabulator-tables";
 import utils from "../../../utils";
@@ -20,37 +21,26 @@ export class ModulesLayoutObjectTableComponent
   tab = document.createElement("div"); // element
   tableHeight; // hauteur de la table
 
-  firstDraw;
   _params;
   modalDeleteLayout;
+
+  _mTable: ModulesTableService;
 
   constructor(_injector: Injector) {
     super(_injector);
     this._name = "layout-object-table";
+    this._mTable = this._injector.get(ModulesTableService);
     this.tableId = `table_${this._id}`;
   }
 
   postInit() {}
 
   onRedrawElem(): void {
-    const elem = document.getElementById(this._id);
     this.onHeightChange(true);
     this.setCount();
   }
 
   drawTable(): void {
-    const sortTable = this.objectConfig.table.sort
-      ? this.objectConfig.table.sort.split(",").map((sort) => {
-          let column = sort,
-            dir = "asc";
-          if (sort[sort.length - 1] == "-") {
-            column = sort.substring(0, sort.length - 1);
-            dir = "desc";
-          }
-          return { column, dir };
-        })
-      : [];
-
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
       locale: "fr",
@@ -59,15 +49,14 @@ export class ModulesLayoutObjectTableComponent
       ajaxFiltering: true,
       height: this.tableHeight || "200px",
       ajaxRequestFunc: this.ajaxRequestFunc,
-      columns: this.columnsTable(),
+      columns: this._mTable.columnsTable(this.computeLayout, this.objectConfig, this._mPage.moduleConfig),
       ajaxURL: this.objectConfig.table.url,
       paginationSize:
         this.computedLayout.page_size || this.objectConfig.utils.page_size,
       pagination: "remote",
       headerFilterLiveFilterDelay: 600,
       ajaxSorting: true,
-      initialSort: sortTable,
-      // {column:this.pkFieldName(), dir:"asc"}, //sort by this first
+      initialSort: this._mTable.getSorters(this.objectConfig),
       selectable: 1,
       columnMinWidth: 20,
       footerElement: `<span class="counter" id=counter></span>`,
@@ -75,114 +64,13 @@ export class ModulesLayoutObjectTableComponent
       rowClick: this.onRowClick,
     });
 
-    utils.waitForElement(this.tableId).then((elem) => {
+    utils.waitForElement(this.tableId).then((elem: any) => {
       elem.appendChild(this.tab);
       this.isProcessing = false;
     });
   }
 
-  /**
-   * Definition des colonnes
-   *
-   * ajout des bouttons voir / éditer (selon les droits ?)
-   */
-  columnsTable() {
-    //column definition in the columns array
-    return [
-      {
-        headerSort: false,
-        formatter: (cell, formatterParams, onRendered) => {
-          var html = "";
-          html += `<span class="table-icon" action="details"><i class='fa fa-eye table-icon action' action="details"></i></span>`;
-          return html;
-        },
-        width: 30,
-        hozAlign: "center",
-        tooltip: (cell) =>
-          `Afficher les détail ${
-            this.objectConfig.display.du_label
-          } ${this.getCellValue(cell)}`,
-      },
-      {
-        headerSort: false,
-        formatter: (cell, formatterParams, onRendered) => {
-          const editAllowed =
-            cell._cell.row.data["ownership"] <=
-            this._mPage.moduleConfig.cruved["U"];
-          var html = "";
-          html += `<span class="table-icon ${
-            editAllowed ? "" : "disabled"
-          }"><i class='fa fa-pencil action' ${
-            editAllowed ? 'action="edit"' : ""
-          }></i></span>`;
-          return html;
-        },
-        width: 25,
-        hozAlign: "center",
-        tooltip: (cell) => {
-          const editAllowed =
-            cell._cell.row.data["ownership"] <=
-            this._mPage.moduleConfig.cruved["U"];
-          return editAllowed
-            ? `Éditer ${this.objectConfig.display.le_label} ${this.getCellValue(
-                cell
-              )}`
-            : "";
-        },
-      },
-      {
-        headerSort: false,
-        formatter: (cell, formatterParams, onRendered) => {
-          const deleteAllowed =
-            cell._cell.row.data["ownership"] <=
-            this._mPage.moduleConfig.cruved["D"];
-          var html = "";
-          html += `<span class="table-icon ${
-            deleteAllowed ? "" : "disabled"
-          }"><i class='fa fa-trash action' ${
-            deleteAllowed ? 'action="delete"' : ""
-          }></i></span>`;
-          return html;
-        },
-        width: 25,
-        hozAlign: "center",
-        tooltip: (cell) => {
-          const deleteAllowed =
-            cell._cell.row.data["ownership"] <=
-            this._mPage.moduleConfig.cruved["D"];
-          return deleteAllowed
-            ? `Supprimer ${
-                this.objectConfig.display.le_label
-              } ${this.getCellValue(cell)}`
-            : "";
-        },
-      },
-      ...this.columns(),
-    ];
-  }
 
-  columns() {
-    const columns = this.objectConfig.table.columns;
-    return columns.map((col) => {
-      const column = utils.copy(col);
-      column.headerFilter =
-        column.headerFilter && this.computedLayout.display_filters;
-      // pour les dates
-      column.formatter = (cell, formatterParams, onRendered) => {
-        if (col.type == "date") {
-          // pour avoir les dates en français
-          let cellData = cell._cell.row.data[col.field];
-          return cellData && cellData.split("-").reverse().join("/");
-        }
-        if (col.field.includes(".")) {
-          return utils.getAttr(cell._cell.row.data, col.field);
-        }
-        return cell._cell.row.data[col.field];
-      };
-
-      return column;
-    });
-  }
 
   onRowClick = (e, row) => {
     let action = utils.getAttr(e, "target.attributes.action.nodeValue")
@@ -215,11 +103,6 @@ export class ModulesLayoutObjectTableComponent
     }
   };
 
-  getCellValue(cell) {
-    const pkFieldName = this.objectConfig.utils.pk_field_name;
-    return cell._cell.row.data[pkFieldName];
-  }
-
   getRowValue(row) {
     const pkFieldName = this.objectConfig.utils.pk_field_name;
     return this.getRowData(row)[pkFieldName];
@@ -231,7 +114,7 @@ export class ModulesLayoutObjectTableComponent
 
   ajaxRequestFunc = (url, config, paramsTable) => {
     return new Promise((resolve, reject) => {
-      const fields = this.columns().map((column) => column.field);
+      const fields = this._mTable.columns(this.computedLayout, this.objectConfig).map((column) => column.field);
 
       fields.push("ownership");
 
@@ -268,8 +151,7 @@ export class ModulesLayoutObjectTableComponent
         .subscribe(
           (res) => {
             // process lists
-
-            for (const column of this.columns()) {
+            for (const column of this._mTable.columns(this.computedLayout, this.objectConfig)) {
               for (const d of res.data) {
                 if (column["field"].includes(".")) {
                   let val = utils.getAttr(d, column["field"]);
@@ -336,7 +218,7 @@ export class ModulesLayoutObjectTableComponent
       });
   }
 
-  selectRow(value, fieldName = null) {
+  selectRow(value, fieldName: any = null) {
     //
     if (!value) {
       return;

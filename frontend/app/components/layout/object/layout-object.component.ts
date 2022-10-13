@@ -1,12 +1,10 @@
 import { Component, OnInit, Injector } from "@angular/core";
-import { Subscription } from "rxjs/Subscription";
 import { ModulesConfigService } from "../../../services/config.service";
 import { ModulesSchemaService } from "../../../services/schema.service";
 import { ModulesDataService } from "../../../services/data.service";
 import { ModulesPageService } from "../../../services/page.service";
 import { ModulesRouteService } from "../../../services/route.service";
 import { ModulesLayoutComponent } from "../base/layout.component";
-import { mergeMap, catchError } from "@librairies/rxjs/operators";
 import { Observable, of } from "@librairies/rxjs";
 import utils from "../../../utils";
 
