@@ -15,6 +15,7 @@
     "user.organisme": {},
     "ref_nom.nomenclature": {},
     "commons.module": {},
-    "meta.jdd": {}
+    "meta.jdd": {},
+    "tax.taxref": {}
   }
 }
