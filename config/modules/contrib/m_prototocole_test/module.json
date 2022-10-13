@@ -19,11 +19,12 @@
   "data": {
     "module": {
       "schema_name": "commons.module",
-      "cruved": "U"
+      "cruved": "RU"
     },
     "jdd": {
       "schema_name": "meta.jdd",
-      "prefilters": "modules.id_module_=_:id_module"
+      "prefilters": "modules.id_module_=_:id_module",
+      "cruved": "R"
     },
     "site": {
       "schema_name": "m_monitoring.site",
@@ -165,8 +166,4 @@
       }
     }
   }
-  // ,
-  // "features": [
-  //   "exemples.json"
-  // ]
 }

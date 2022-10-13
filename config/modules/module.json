@@ -8,14 +8,28 @@
   },
   "data": {
     "ref_geo.area": {
+      "cruved": "R"
     },
     "ref_geo.linear_group": {
+      "cruved": "R"
     },
-    "user.role": {},
-    "user.organisme": {},
-    "ref_nom.nomenclature": {},
-    "commons.module": {},
-    "meta.jdd": {},
-    "tax.taxref": {}
+    "user.role": {
+      "cruved": "R"
+    },
+    "user.organisme": {
+      "cruved": "R"
+    },
+    "ref_nom.nomenclature": {
+      "cruved": "R"
+    },
+    "commons.module": {
+      "cruved": "R"
+    },
+    "meta.jdd": {
+      "cruved": "R"
+    },
+    "tax.taxref": {
+      "cruved": "R"
+    }
   }
 }

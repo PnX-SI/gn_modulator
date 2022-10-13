@@ -219,7 +219,7 @@ class SchemaApi():
                     query_type='filtered')
                 .count()
             )
-            
+
             query_info = {
                 'page': params.get('page') or 1,
                 'page_size': params.get('page_size', None),
@@ -366,34 +366,28 @@ class SchemaApi():
 
         cruved = options.get('cruved', '')
 
-
-
         # rest api
         view_func_rest = self.schema_view_func('rest', module_code, options)
         view_func_page_number = self.schema_view_func('page_number', module_code, options)
 
         methods = []
 
-        # on ouvre toujours la route de liste quand register api est appelé
-        bp.add_url_rule(f'/{object_name}/', defaults={'value': None}, view_func=view_func_rest, methods=['GET'])
-
-        bp.add_url_rule(f'/{object_name}/page_number/<value>', view_func=view_func_page_number, methods=['GET'])
+        # read: GET (liste et one_row)
+        if 'R' in cruved:
+            bp.add_url_rule(f'/{object_name}/', defaults={'value': None}, view_func=view_func_rest, methods=['GET'])
+            bp.add_url_rule(f'/{object_name}/<value>', view_func=view_func_rest, methods=['GET'])
+            bp.add_url_rule(f'/{object_name}/page_number/<value>', view_func=view_func_page_number, methods=['GET'])
 
         # create : POST
         if 'C' in cruved:
             bp.add_url_rule(f'/{object_name}/', view_func=view_func_rest, methods=['POST'])
 
-        # read : GET (one)
-        # if 'R' in cruved:
-        methods.append('GET')
-
         # update : PATCH
         if 'U' in cruved:
-            methods.append('PATCH')
+            bp.add_url_rule(f'/{object_name}/', view_func=view_func_rest, methods=['PATCH'])
 
         # delete : DELETE
         if 'D' in cruved:
-            methods.append('DELETE')
+            bp.add_url_rule(f'/{object_name}/', view_func=view_func_rest, methods=['DELELTE'])
 
-        if methods:
-            bp.add_url_rule(f'/{object_name}/<value>', view_func=view_func_rest, methods=methods)
+

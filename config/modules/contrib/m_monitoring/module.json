@@ -15,9 +15,6 @@
     "m_monitoring.sc_arbre_loge",
     "m_monitoring.sc_grotte"
   ],
-  // "features": [
-  //   "exemples.json"
-  // ],
   "data": {
     "site": {
       "cruved": "CRUD",
@@ -44,10 +41,11 @@
       "schema_name": "m_monitoring.observation"
     },
     "module": {
-      "cruved": "CRUD",
+      "cruved": "R",
       "schema_name": "commons.module"
     },
     "category": {
+      "cruved": "R",
       "schema_name": "m_monitoring.site_category"
     }
   },
