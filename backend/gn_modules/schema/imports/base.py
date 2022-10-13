@@ -248,7 +248,6 @@ class SchemaBaseImports:
 
         test_keys = sm.attr('meta.unique')
 
-        print(schema_name)
         items = cls.get_data_item(data_item, file_path)
 
         i = 0

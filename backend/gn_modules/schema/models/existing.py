@@ -111,7 +111,6 @@ class SchemaModelExisting():
 
         # process column properties
         for key, column_property_def in self.column_properties().items():
-            print(self.schema_name(), key, column_property_def)
             setattr(
                 Model,
                 key,

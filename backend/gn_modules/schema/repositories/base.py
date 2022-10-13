@@ -59,8 +59,12 @@ class SchemaRepositoriesBase():
 
         value_filters = self.value_filters(value, field_name)
         params['filters'] = params.get('filters', []) + value_filters
-        query = self.query_list(module_code, cruved_type, params, query_type=query_type)
-
+        query = self.query_list(
+            module_code=module_code,
+            cruved_type=cruved_type,
+            params=params,
+            query_type=query_type
+        )
         return query
 
     def insert_row(self, data):
@@ -173,13 +177,15 @@ class SchemaRepositoriesBase():
                 value,
                 field_name=field_name,
                 module_code=module_code,
-                cruved_type='U',
+                cruved_type='D',
                 params=params,
                 query_type='delete'
             )
         )
+        # pour être sûr qu'il n'y a qu'une seule ligne de supprimée
         m.one()
-        m.delete()
+        # https://stackoverflow.com/questions/49794899/flask-sqlalchemy-delete-query-failing-with-could-not-evaluate-current-criteria?noredirect=1&lq=1
+        m.delete(synchronize_session=False)
         db.session.commit()
         return m
 
