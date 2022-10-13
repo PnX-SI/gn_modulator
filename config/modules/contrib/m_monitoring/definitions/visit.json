@@ -158,7 +158,7 @@
         "schema_name": "meta.jdd",
         "page_size": 10,
         "reload_on_search": true,
-        "filters": "__f__`modules.id_module_=_${data.id_module}`]"
+        "filters": "__f__data.id_module && `modules.id_module_=_${data.id_module}`"
       }
       ,
       {
@@ -175,7 +175,7 @@
         "type": "list_form",
         "title": "Protocole",
         "schema_name": "commons.module",
-        "filters": "__f__`sites.id_site_=_${data.id_site}`]"
+        "filters": "__f__`sites.id_site_=_${data.id_site}`"
       }
     ]
   },

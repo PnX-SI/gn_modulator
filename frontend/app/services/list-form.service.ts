@@ -163,6 +163,7 @@ export class ListFormService {
       moduleCode,
       options.object_name
     );
+
     const objectUrl = this._mConfig.objectUrl(moduleCode, options.object_name);
     options.api = options.api || objectUrl;
     options.value_field_name =
