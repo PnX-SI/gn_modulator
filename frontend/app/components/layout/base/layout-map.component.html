@@ -21,7 +21,7 @@
 </div>
 
 <div class="map-container" [ngStyle]="{ height: '100%', position: 'relative' }">
-  <div *ngIf="isProcessing" class="processing">
+  <div *ngIf="_map?.isProcessing" class="processing">
     <div>
       <mat-spinner></mat-spinner>
     </div>
@@ -30,7 +30,7 @@
   <div [ngStyle]="{ height: '100%' }" class="map">
     <div [attr.id]="mapId" [ngStyle]="{ height: '100%' }"></div>
   </div>
-  
+
   <div class="coordinates" *ngIf="_map?.coordinatesTxt"> {{ _map?.coordinatesTxt }}</div>
-  
+
 </div>

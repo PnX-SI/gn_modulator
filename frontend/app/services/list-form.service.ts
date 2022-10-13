@@ -150,7 +150,6 @@ export class ListFormService {
     }
 
     if (!options.object_name) {
-      console.log("reject", options);
       return of(true);
     }
 
@@ -209,7 +208,6 @@ export class ListFormService {
   getItemsFromApi(options, value): Observable<any> {
     // TODO test si cela ne vient pas d'être fait ?
     const params = options.params || {};
-    console.log("filters", options.filters);
     params.filters = options.filters || "";
     if (options.object_name) {
       params.filters = [params.filters, options.schema_filters || []]
@@ -218,7 +216,6 @@ export class ListFormService {
       params.sort = params.sort || options.sort;
 
       if (options.reload_on_search && options.search) {
-        console.log(params.filters);
         params.filters.push(`${options.label_field_name}_~_${options.search}`);
       }
     }

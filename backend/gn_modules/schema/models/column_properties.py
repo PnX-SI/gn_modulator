@@ -56,7 +56,6 @@ class SchemaModelColumnProperties():
             # 1 => ['<area_code>', '', '<area_name>']
             # 2 => map getattr
             # 3 *dans concat
-            print(column_property_def['label'])
             label = column_property_def['label']
             index = 0
             items = []
@@ -76,8 +75,6 @@ class SchemaModelColumnProperties():
                 else:
                     txt += label[index]
                 index += 1
-            print(items)
-            print(items2)
             return func.concat(*items)
 
         if column_property_type in  ['st_astext']:
@@ -88,23 +85,6 @@ class SchemaModelColumnProperties():
             relation_field, _ = self.custom_getattr(Model, field_key)
             func_min_max = getattr(func, column_property_type)
             return select([func_min_max(relation_field)])
-
-
-        # if column_property_type == 'type_complement':
-        #     s_complement = self.cls(self.attr('meta.schema_complement'))
-        #     query, _ = s_complement.get_list()
-        #     complements_case = []
-        #     for complement in query.all():
-        #         if hasattr(Model, f'has_{complement.relation_name}'):
-        #             complements_case.append((getattr(Model, f'has_{complement.relation_name}'), complement.complement_name))
-
-        #     return case(
-        #         complements_case,
-        #         else_=None
-        #     )
-
-            # return func.st_y(getattr(Model, column_property_def['key']))
-
 
         raise errors.SchemaModelColumnPropertyError(
             'La column_property {} {} est mal définie'

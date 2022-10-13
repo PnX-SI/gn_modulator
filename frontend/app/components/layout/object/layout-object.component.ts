@@ -91,7 +91,6 @@ export class ModulesLayoutObjectComponent
       return;
     }
     this.isProcessing = true;
-
     this.objectConfig = this._mConfig.objectConfig(
       this._mPage.moduleCode,
       this.objectName()

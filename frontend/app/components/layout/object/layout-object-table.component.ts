@@ -263,7 +263,6 @@ export class ModulesLayoutObjectTableComponent
       };
       this._params = extendedParams;
       delete extendedParams["sorters"];
-      console.log(extendedParams);
       this._mData
         .getList(this.moduleCode(), this.objectName(), extendedParams)
         .subscribe(

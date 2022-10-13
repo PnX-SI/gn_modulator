@@ -181,7 +181,6 @@ const processFilterArray = (filters) => {
         : f
     )
     .join(",");
-    console.log(filters, filtersOut)
     return filtersOut
 };
 

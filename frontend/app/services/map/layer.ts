@@ -197,7 +197,7 @@ export default {
     if (!layer) {
       return;
     }
-    const map = this.getMap(mapId, layer.getBounds);
+    const map = this.getMap(mapId);
 
     setTimeout(() => {
       if (!layer.getBounds) {
@@ -358,4 +358,10 @@ export default {
       lastMapBounds = mapBounds;
     };
   },
+
+  setProcessing(mapId, bIsProcessing) {
+    this.waitForMap(mapId).then(map => {
+      map.isProcessing = bIsProcessing;
+    })
+  }
 };

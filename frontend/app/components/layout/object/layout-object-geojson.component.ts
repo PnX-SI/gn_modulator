@@ -78,11 +78,11 @@ export class ModulesLayoutObjectGeoJSONComponent
       const pk_field_name = this.objectConfig.utils.pk_field_name;
       const currentZoom = this._mapService.getZoom(this.mapId);
       const currentMapBounds = this._mapService.getMapBounds(this.mapId);
-      
+
       const layerStyle = this.computedLayout.style || this.data.map?.style;
       const paneName = this.computedLayout.pane || this.data.map?.pane || `P1`;
       const bZoom = this.computedLayout.zoom || this.data.map?.zoom || this._mPage.pageConfig.key == this.data.object_name;
-      
+
       const bring_to_front = this.computedLayout.bring_to_front || this.data.map?.bring_to_front
       this.mapData =
         {
@@ -96,6 +96,7 @@ export class ModulesLayoutObjectGeoJSONComponent
             style: layerStyle,
             onLayersAdded: () => {
               this.processValue(this.getDataValue());
+              this._mapService.setProcessing(this.mapId, false);
             },
             onEachFeature: (feature, layer) => {
               /** click */
@@ -184,11 +185,8 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
-    // const fields = this.objectConfig.table.columns.map(column => column.field);
     const fields = this.objectConfig.map.popup_fields;
-    // if(this.objectConfig.definition.meta.check_cruved) {
     fields.push("ownership");
-    // }
     this._mData
       .getOne(this.moduleCode(), this.objectName(), value, { fields })
       .subscribe((data) => {
@@ -212,6 +210,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   getData(): Observable<any> {
+    this._mapService.setProcessing(this.mapId, true);
     const extendedParams = {
       fields: [
         this.objectConfig.utils.pk_field_name,
@@ -223,7 +222,6 @@ export class ModulesLayoutObjectGeoJSONComponent
     };
     return this._mData.getList(this.moduleCode(), this.objectName(), extendedParams);
   }
-  
   refreshData(objectName: any): void {
     if (objectName == this.data.object_name) {
       this.postProcessLayout()

@@ -266,18 +266,4 @@ class SchemaModelBase():
                 self.process_column_property_model(key, column_property_def, Model)
             )
 
-        # for type_column_property in [
-        #     'nb',
-        #     'has',
-        #     'label',
-        #     'st_x',
-        #     'st_astext',
-        #     'st_y',
-        #     'max'
-        # ]:
-        # for key, column_property_def in self.columns().items():
-            # if column_property_def.get('column_property') != type_column_property:
-                # continue
-
-
         return Model
