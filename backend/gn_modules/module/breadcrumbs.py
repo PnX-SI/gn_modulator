@@ -7,7 +7,7 @@ class ModulesBreadCrumbs():
         '''
             Renvoie le breadcrumb pour un module et une page
         '''
-
+        print(module_code, page_name, data)
         # recupération de la config de la page
         module_config = cls.module_config(module_code)
         page_config = module_config['pages'][page_name]
@@ -23,6 +23,7 @@ class ModulesBreadCrumbs():
         # url
         url_page = page_config['url']
         for key, value in data.items():
+            print('url page', url_page, key, value)
             url_page = url_page.replace(f':{key}', str(value))
 
         # full url
@@ -63,7 +64,7 @@ class ModulesBreadCrumbs():
 
             if ':' in parent_page_url and data.get(sm.pk_field_name()):
                 data_parent_key = parent_page_url.split(':')[1]
-                m = sm.get_row(data[sm.pk_field_name()])
+                m = sm.get_row(data[sm.pk_field_name()], params={}).one()
 
                 data_parent = sm.serialize(
                     m,
