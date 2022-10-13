@@ -50,7 +50,7 @@
       "type": "uuid",
       "title": "UUID"
     },
-    "visite": {
+    "visit": {
       "type": "relation",
       "relation_type": "n-1",
       "schema_name": "m_monitoring.visit",
@@ -68,11 +68,11 @@
     "layout": [
       "id_visit",
       "cd_nom",
-      "visite.date_min",
+      "visit.date_min",
       "taxon.nom_vern",
-      "visite.site.name",
-      "visite.dataset.dataset_name",
-      "visite.observers.nom_complet"
+      "visit.site.name",
+      "visit.dataset.dataset_name",
+      "visit.observers.nom_complet"
     ]
   },
   "form": {
@@ -100,7 +100,7 @@
   "table": {
     "columns": [
       "cd_nom",
-      "visite.date_min",
+      "visit.date_min",
       "taxon.nom_vern"
     ]
   }
