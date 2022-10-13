@@ -203,17 +203,28 @@ class SchemaApi():
 
             params = self.parse_request_args(request, options)
             count_total = (
-                self.query_list(module_code, 'R', params, 'total')
+                self.query_list(
+                    module_code=module_code,
+                    cruved_type='R',
+                    params=params,
+                    query_type='total')
                 .count()
             )
+
+            count_filtered = (
+                self.query_list(
+                    module_code=module_code,
+                    cruved_type='R',
+                    params=params,
+                    query_type='filtered')
+                .count()
+            )
+            
             query_info = {
                 'page': params.get('page') or 1,
                 'page_size': params.get('page_size', None),
                 'total': count_total,
-                'filtered': (
-                    self.query_list(module_code, 'R', params, 'filtered')
-                    .count()
-                ),
+                'filtered': count_filtered,
                 'last_page': (
                     math.ceil(count_total / params.get('page_size'))
                     if params.get('page_size')
@@ -221,10 +232,12 @@ class SchemaApi():
                 )
             }
 
-            # pour gérer les prefiltres définis dans la config du module (data)
-            #
+            query_list = self.query_list(
+                module_code=module_code,
+                cruved_type=params.get('cruved_type') or 'R',
+                params=params
+            )
 
-            query_list = self.query_list(module_code, params.get('cruved_type') or 'R', params)
             res_list = query_list.all()
             out = {
                 **query_info,
@@ -265,7 +278,7 @@ class SchemaApi():
                     data,
                     field_name=params.get('field_name'),
                     module_code=module_code,
-                    params=options
+                    params=params
                 )
 
             except SchemaUnsufficientCruvedRigth as e:
@@ -286,7 +299,7 @@ class SchemaApi():
                 field_name=params.get('field_name'),
                 module_code=module_code,
                 cruved_type='D',
-                params = options
+                params = params
             ).one()
             dict_out = self.serialize(
                 m,

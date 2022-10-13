@@ -257,8 +257,10 @@ class SchemaRepositoriesBase():
         query = self.process_query_columns(params, query, order_bys)
 
         # prefiltrage
+
         # - prefiltrage CRUVED
         query = self.process_cruved_filter(cruved_type, module_code, query)
+
         # - prefiltrage params
         query = self.process_filters(Model, params.get('prefilters', []), query)
 
