@@ -39,5 +39,12 @@
       "module_label",
       "module_desc"
     ]
+  },
+  "table": {
+    "columns": [
+      "module_code",
+      "module_label",
+      "module_desc"
+    ]
   }
 }
