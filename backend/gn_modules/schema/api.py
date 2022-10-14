@@ -199,7 +199,7 @@ class SchemaApi():
                 as_geojson=params.get('as_geojson'),
             )
 
-        def get_list_rest():
+        def get_query_infos():
 
             params = self.parse_request_args(request, options)
             count_total = (
@@ -219,18 +219,40 @@ class SchemaApi():
                     query_type='filtered')
                 .count()
             )
+            page=1
+            last_page = (
+                math.ceil(count_total / params.get('page_size'))
+                if params.get('page_size')
+                else 1
+            )
+            url_next=''
+            url_previous=''
+            page_size = params.get('page_size', None)
 
-            query_info = {
-                'page': params.get('page') or 1,
-                'page_size': params.get('page_size', None),
+            if params.get('page'):
+                page = params.get('page') or 1
+                if page != 1:
+                    url_previous = request.url.replace(f'page={page}', f'page={page-1}')
+                if page != last_page:
+                    url_next = request.url.replace(f'page={page}', f'page={page+1}')
+
+            query_infos = {
+                'page': page,
+                'next': url_next,
+                'previous': url_previous,
+                'page_size': page_size,
                 'total': count_total,
                 'filtered': count_filtered,
-                'last_page': (
-                    math.ceil(count_total / params.get('page_size'))
-                    if params.get('page_size')
-                    else 1
-                )
+                'last_page': last_page
             }
+
+            return query_infos
+
+
+        def get_list_rest():
+
+            params = self.parse_request_args(request, options)
+            query_infos = get_query_infos()
 
             query_list = self.query_list(
                 module_code=module_code,
@@ -240,7 +262,7 @@ class SchemaApi():
 
             res_list = query_list.all()
             out = {
-                **query_info,
+                **query_infos,
                 'data': self.serialize_list(
                     res_list,
                     fields=params.get('fields'),
