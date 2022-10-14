@@ -36,7 +36,6 @@ export class ModulesIndexComponent implements OnInit {
                 flex: 'inherit',
                 title: module.module.module_label,
                 description: module.module.module_desc,
-                // href: this._mConfig.urlApplication() + "/#/" + module.module.module_path,
                 href: "/" + module.module.module_path,
                 img: this._mConfig.assetsDirectory() + '/' + module.module.module_code.toLowerCase() + "/module.jpg",
                 type: 'card',
