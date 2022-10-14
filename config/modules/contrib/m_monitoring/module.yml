@@ -1,18 +1,9 @@
----
 module:
   module_code: m_monitoring
   module_label: Gestionnaire de sites
   module_desc: Module de gestion de sites. (Vers une version 2 du module monitoring)
   module_picto: fa-puzzle-piece
   active_frontend: true
-schemas:
-- m_monitoring.site
-- m_monitoring.observation
-- m_monitoring.site_group
-- m_monitoring.site_category
-- m_monitoring.visit
-- m_monitoring.sc_arbre_loge
-- m_monitoring.sc_grotte
 objects:
   site:
     cruved: CRUD

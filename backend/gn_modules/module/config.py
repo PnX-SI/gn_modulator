@@ -174,7 +174,7 @@ class ModulesConfig():
             cache_modules_config[key] = module_config
 
         for key in modules_config:
-            cls.process_module_data(key)
+            cls.process_module_objects(key)
 
         for key in modules_config:
             cls.process_module_params(key)
@@ -244,7 +244,7 @@ class ModulesConfig():
         return data
 
     @classmethod
-    def process_module_data(cls, module_code):
+    def process_module_objects(cls, module_code):
         module_config = cls.module_config(module_code)
 
         module_config['definitions'] = {}
@@ -252,9 +252,12 @@ class ModulesConfig():
         for object_name, object_definition in module_config['objects'].items():
             object_definition = object_definition
             object_definition['schema_name'] = object_definition.get('schema_name', object_name)
+            object_definition['object_name'] = object_name
             sm = SchemaMethods(object_definition['schema_name'])
-            module_config['definitions'][object_name] = sm.config()
+            module_config['definitions'][object_name] = sm.config(object_definition)
 
+        # schemas on liste
+        module_config['schemas'] = list(module_config['definitions'].keys())
 
     @classmethod
     def process_module_api(cls, module_code):

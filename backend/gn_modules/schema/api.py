@@ -59,13 +59,15 @@ class SchemaApi():
 
     '''
 
-    def method_view_name(self, view_type=''):
-        return self.attr('meta.method_view_name', 'MV{}{}'.format(view_type.title(), self.schema_name('pascal_case')))
+    def method_view_name(self, module_code, object_name, view_type):
+        object_name_undot = object_name.replace('.', '_')
+        return f'MV_{module_code}_{object_name_undot}_{view_type}'
 
-    def view_name(self, view_type):
+    def view_name(self, module_code, object_name, view_type):
         '''
         '''
-        return self.attr('meta.view_name', 'api_{}_{}'.format(view_type, self.schema_name('snake_case')))
+        object_name_undot = object_name.replace('.', '_')
+        return f'MV_{module_code}_{object_name_undot}_{view_type}'
 
     @classmethod
     def base_url(cls):
@@ -372,11 +374,11 @@ class SchemaApi():
         schema_api_dict = self.schema_api_dict(module_code, options)[view_type]
 
         MV = type(
-            self.method_view_name(view_type),
+            self.method_view_name(module_code, options['object_name'], view_type),
             (MethodView,),
             schema_api_dict
         )
-        return MV.as_view(self.view_name(view_type))
+        return MV.as_view(self.view_name(module_code, options['object_name'], view_type))
 
     def register_api(self, bp, module_code, object_name, options={}):
         '''
@@ -391,8 +393,6 @@ class SchemaApi():
         # rest api
         view_func_rest = self.schema_view_func('rest', module_code, options)
         view_func_page_number = self.schema_view_func('page_number', module_code, options)
-
-        methods = []
 
         # read: GET (liste et one_row)
         if 'R' in cruved:
