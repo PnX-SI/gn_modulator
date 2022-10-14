@@ -16,7 +16,7 @@ class ModulesBreadCrumbs():
         page_key = page_config['key']
 
         # schema name
-        schema_name = module_config['data'][page_key]['schema_name']
+        schema_name = module_config['objects'][page_key]['schema_name']
         sm = SchemaMethods(schema_name)
 
         # url

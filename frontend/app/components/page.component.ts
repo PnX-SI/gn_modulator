@@ -139,7 +139,7 @@ export class PageComponent implements OnInit {
     // pour pouvoir accéder au paramètres pour le calcul des layouts
     this._mLayout.meta["params"] = this._mPage.params;
 
-    let data = utils.copy(this._mPage.moduleConfig.data);
+    let data = utils.copy(this._mPage.moduleConfig.objects);
     const dataPage = utils.copy(this._mPage.pageConfig.data || {});
 
     // gestion du paramètre debug
@@ -147,7 +147,7 @@ export class PageComponent implements OnInit {
       this.routeQueryParams.debug
     );
 
-    // pour toutes les clés de data (moduleConfig.data)
+    // pour toutes les clés de data (moduleConfig.objects)
     for (const [objectName, objectConfig] of Object.entries(data)) {
       // set object_name
       (objectConfig as any).object_name = objectName;

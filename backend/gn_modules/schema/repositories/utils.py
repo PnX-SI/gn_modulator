@@ -70,7 +70,6 @@ class SchemaRepositoriesUtil():
                 sort_field = s[:-1]
                 sort_dir = s[-1]
 
-            print(  )
             model_attribute, query = self.custom_getattr(Model, sort_field, query)
 
             if model_attribute is None:

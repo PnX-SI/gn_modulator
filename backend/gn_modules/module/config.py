@@ -190,12 +190,12 @@ class ModulesConfig():
         '''
         module_config = cls.module_config(module_code)
         params = module_config.get('params') or {}
-        data =  module_config.get('data') or {}
+        objects =  module_config['objects'] or {}
         processed_params = {}
 
         for key_param, param_config in params.items():
             schema_name = (
-                module_config['data'][param_config['object_name']].get('schema_name')
+                module_config['objects'][param_config['object_name']].get('schema_name')
                 or
                 param_config['object_name']
             )
@@ -214,13 +214,13 @@ class ModulesConfig():
 
         module_config['params'] = processed_params
 
-        processed_data = None
+        processed_objects = None
 
         for param_key, param_value in processed_params.items():
-            processed_data = cls.replace_in_dict(data, f':{param_key}', param_value)
+            processed_objects = cls.replace_in_dict(objects, f':{param_key}', param_value)
 
-        if processed_data:
-            module_config['data'] = processed_data
+        if processed_objects:
+            module_config['objects'] = processed_objects
 
 
     @classmethod
@@ -249,7 +249,7 @@ class ModulesConfig():
 
         module_config['definitions'] = {}
 
-        for object_name, object_definition in module_config['data'].items():
+        for object_name, object_definition in module_config['objects'].items():
             object_definition = object_definition
             object_definition['schema_name'] = object_definition.get('schema_name', object_name)
             sm = SchemaMethods(object_definition['schema_name'])
@@ -261,7 +261,7 @@ class ModulesConfig():
         module_config = cls.module_config(module_code)
 
         bp = Blueprint(module_code, __name__)
-        for object_name, object_definition in module_config['data'].items():
+        for object_name, object_definition in module_config['objects'].items():
             sm = SchemaMethods(object_definition['schema_name'])
 
             # ouverture des routes

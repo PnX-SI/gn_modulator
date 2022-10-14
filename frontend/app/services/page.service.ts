@@ -73,7 +73,7 @@ export class ModulesPageService {
       // const routeParams = { value, ...((layout as any)?.params || {}) };
       const routeParams = {};
       // routeParams[]
-      const schemaName = moduleConfig.data[objectName].schema_name;
+      const schemaName = moduleConfig.objects[objectName].schema_name;
 
       routeParams[this._mSchema.pkFieldName(this.moduleCode, objectName)] = value;
       // this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);
@@ -150,7 +150,7 @@ export class ModulesPageService {
       })
     );
   }
-  
+
   reset() {
     this.breadcrumbs = [];
     this.moduleCode = null;

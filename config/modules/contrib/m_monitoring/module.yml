@@ -13,7 +13,7 @@ schemas:
 - m_monitoring.visit
 - m_monitoring.sc_arbre_loge
 - m_monitoring.sc_grotte
-data:
+objects:
   site:
     cruved: CRUD
     schema_name: m_monitoring.site
@@ -48,7 +48,7 @@ pages:
   site_group_details:
     url: site_group_details/:id_site_group
     layout_name: m_monitoring.site_group_details
-    data:
+    objects:
       site_group:
         value: ":id_site_group"
         prefilters: id_site_group_=_:id_site_group
@@ -59,7 +59,7 @@ pages:
   site_details:
     url: site_details/:id_site
     layout_name: m_monitoring.site_details
-    data:
+    objects:
       site:
         value: ":id_site"
       visit:
@@ -69,7 +69,7 @@ pages:
   visit_details:
     url: visit_details/:id_visit
     layout_name: m_monitoring.visit_details
-    data:
+    objects:
       visit:
         value: ":id_visit"
       observation:
@@ -77,31 +77,31 @@ pages:
   observation_details:
     url: observation_details/:id_observation
     layout_name: m_monitoring.observation_details
-    data:
+    objects:
       observation:
         value: ":id_observation"
   site_group_edit:
     url: site_group_edit/:id_site_group
     layout_name: m_monitoring.site_group_edit
-    data:
+    objects:
       site_group:
         value: ":id_site_group"
   site_edit:
     url: site_edit/:id_site
     layout_name: m_monitoring.site_edit
-    data:
+    objects:
       site:
         value: ":id_site"
   visit_edit:
     url: visit_edit/:id_visit
     layout_name: m_monitoring.visit_edit
-    data:
+    objects:
       visit:
         value: ":id_visit"
   observation_edit:
     url: observation_edit/:id_observation
     layout_name: m_monitoring.observation_edit
-    data:
+    objects:
       observation:
         value: ":id_observation"
   site_group_create:
@@ -113,7 +113,7 @@ pages:
   visit_create:
     url: visit_create
     layout_name: m_monitoring.visit_edit
-    data:
+    objects:
       visit:
         defaults:
           id_site: ":id_site"
@@ -121,7 +121,7 @@ pages:
   observation_create:
     url: observation_create
     layout_name: m_monitoring.observation_edit
-    data:
+    objects:
       observation:
         defaults:
           id_visit: ":id_visit"

@@ -11,7 +11,7 @@ params:
         object_name: module
         value: m_protocol_test
         field_name: module_code
-data:
+objects:
     module:
         schema_name: commons.module
         cruved: RU
@@ -40,19 +40,19 @@ pages:
     module_details:
         url: ''
         layout_name: m_protocol_test.module_details
-        data:
+        objects:
             module:
                 value: ':id_module'
     module_edit:
         url: module_edit
         layout_name: m_protocol_test.module_edit
-        data:
+        objects:
             module:
                 value: ':id_module'
     site_details:
         url: 'site_details/:id_site'
         layout_name: m_protocol_test.site_details
-        data:
+        objects:
             site:
                 value: ':id_site'
             visit:
@@ -60,7 +60,7 @@ pages:
     site_edit:
         url: 'site_edit/:id_site'
         layout_name: m_protocol_test.site_edit
-        data:
+        objects:
             site:
                 value: ':id_site'
     site_create:
@@ -73,7 +73,7 @@ pages:
     visit_details:
         url: 'visit_details/:id_visit'
         layout_name: m_protocol_test.visit_details
-        data:
+        objects:
             visit:
                 value: ':id_visit'
             observation:
@@ -81,13 +81,13 @@ pages:
     visit_edit:
         url: 'visit_edit/:id_visit'
         layout_name: m_protocol_test.visit_edit
-        data:
+        objects:
             visit:
                 value: ':id_visit'
     visit_create:
         url: visit_create
         layout_name: m_protocol_test.visit_edit
-        data:
+        objects:
             visit:
                 defaults:
                     id_ module: ':id_module'
@@ -95,19 +95,19 @@ pages:
     observation_details:
         url: 'observation_details/:id_observation'
         layout_name: m_protocol_test.observation_details
-        data:
+        objects:
             observation:
                 value: ':id_observation'
     observation_edit:
         url: 'observation_edit/:id_observation'
         layout_name: m_protocol_test.observation_edit
-        data:
+        objects:
             observation:
                 value: ':id_observation'
     observation_create:
         url: observation_create
         layout_name: m_protocol_test.observation_edit
-        data:
+        objects:
             observation:
                 defaults:
                     id_visit: ':id_visit'

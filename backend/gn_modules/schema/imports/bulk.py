@@ -53,7 +53,6 @@ class SchemaBulkImports():
 
         # 1) csv -> table temporaire
         if not (cls.c_sql_schema_dot_table_exists(raw_import_table)  and keep_raw):
-            print()
             print(f'-- import csv_file {data_file_path.name} into {raw_import_table}')
             cls.bulk_import_process_csv(schema_name, data_file_path, raw_import_table)
 
