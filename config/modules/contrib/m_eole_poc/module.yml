@@ -1,0 +1,40 @@
+module:
+  module_code: m_eole
+  module_label: Modules de suivi éolien
+  module_desc: POC pour le projet suivi éolien
+  module_picto: fa-puzzle-piece
+  active_frontend: true
+
+objects:
+  site_group:
+    cruved: CRUD
+    schema_name: m_monitoring.site_group
+    label: 'Parc éolien'
+    labels: 'Parcs éolien'
+  gites:
+    cruved: CRUD
+    schema_name: m_monitoring.site
+    label: Gîte chiroptère
+    labels: Gîtes chiroptère
+    prefilters: category.code = GIT
+  eolienne:
+    cruved: CRUD
+    schema_name: m_monitoring.site
+    label: Éolienne
+    genre: F
+    prefilters: category.code = EOL
+  visite:
+    cruved: CRUD
+    schema_name: m_monitoring.site
+  protocole:
+    cruved: R
+    schema_name: commons.module
+  observation:
+    cruved: CRUD
+    schema_name: m_monitoring.observation
+
+features:
+  - m_eole.data
+
+
+

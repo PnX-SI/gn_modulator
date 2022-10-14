@@ -1,0 +1,13 @@
+data_name: m_eole.data
+items:
+    -
+        schema_name: m_monitoring.site_category
+        items:
+            -
+                name: Éolienne
+                code: EOL
+                description: Éolienne
+            -
+                name: Gîte chiroptère
+                code: GIT
+                description: Gîte à chiroptère
