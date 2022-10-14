@@ -23,7 +23,7 @@ export class ModulesIndexComponent implements OnInit {
     this._mConfig.init()
       .subscribe( () => {
         const modules = this._mConfig.modulesConfig();
-        this.modules = Object.values(modules);
+        this.modules = Object.values(modules).filter(m => (m as any).module.module_code != 'MODULES');
         this.layout={
           title: "Liste des modules",
           class: "modules",
