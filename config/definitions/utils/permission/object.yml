@@ -1,0 +1,10 @@
+meta:
+    schema_name: perm.object
+    autoschema: true
+    model_name: TObjects
+    sql_schema_dot_table: gn_permissions.t_objects
+    label: object
+    label_field_name: label_object
+    genre: M
+    unique:
+        - code_object

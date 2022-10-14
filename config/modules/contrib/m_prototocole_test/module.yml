@@ -1,0 +1,113 @@
+module:
+    module_code: m_protocol_test
+    module_label: Test (MV2)
+    module_desc: Protocole de test pour monitoringV2
+    module_picto: fa-puzzle-piece
+    active_frontend: true
+dependencies:
+    - m_monitoring
+params:
+    id_module:
+        object_name: module
+        value: m_protocol_test
+        field_name: module_code
+data:
+    module:
+        schema_name: commons.module
+        cruved: RU
+    jdd:
+        schema_name: meta.jdd
+        prefilters: 'modules.id_module_=_:id_module'
+        cruved: R
+    site:
+        schema_name: m_monitoring.site
+        prefilters: 'modules.id_module_=_:id_module'
+        cruved: CRUD
+    visit:
+        schema_name: m_monitoring.visit
+        prefilters: 'module.id_module_=_:id_module'
+        cruved: CRUD
+    observation:
+        schema_name: m_monitoring.observation
+        prefilters: 'visit.module.id_module_=_:id_module'
+        cruved: CRUD
+tree:
+    module:
+        site:
+            visit:
+                observation: null
+pages:
+    module_details:
+        url: ''
+        layout_name: m_protocol_test.module_details
+        data:
+            module:
+                value: ':id_module'
+    module_edit:
+        url: module_edit
+        layout_name: m_protocol_test.module_edit
+        data:
+            module:
+                value: ':id_module'
+    site_details:
+        url: 'site_details/:id_site'
+        layout_name: m_protocol_test.site_details
+        data:
+            site:
+                value: ':id_site'
+            visit:
+                prefilters: 'id_site_=_:id_site'
+    site_edit:
+        url: 'site_edit/:id_site'
+        layout_name: m_protocol_test.site_edit
+        data:
+            site:
+                value: ':id_site'
+    site_create:
+        url: site_create
+        layout_name: m_protocol_test.site_edit
+        defaults:
+            modules:
+                -
+                    id_module: ':id_module'
+    visit_details:
+        url: 'visit_details/:id_visit'
+        layout_name: m_protocol_test.visit_details
+        data:
+            visit:
+                value: ':id_visit'
+            observation:
+                prefilters: 'id_visit_=_:id_visit'
+    visit_edit:
+        url: 'visit_edit/:id_visit'
+        layout_name: m_protocol_test.visit_edit
+        data:
+            visit:
+                value: ':id_visit'
+    visit_create:
+        url: visit_create
+        layout_name: m_protocol_test.visit_edit
+        data:
+            visit:
+                defaults:
+                    id_ module: ':id_module'
+                    id_site: ':id_site'
+    observation_details:
+        url: 'observation_details/:id_observation'
+        layout_name: m_protocol_test.observation_details
+        data:
+            observation:
+                value: ':id_observation'
+    observation_edit:
+        url: 'observation_edit/:id_observation'
+        layout_name: m_protocol_test.observation_edit
+        data:
+            observation:
+                value: ':id_observation'
+    observation_create:
+        url: observation_create
+        layout_name: m_protocol_test.observation_edit
+        data:
+            observation:
+                defaults:
+                    id_visit: ':id_visit'

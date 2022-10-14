@@ -10,7 +10,7 @@ import utils from "../../../utils";
 
 /** Composant pour afficher des objets
  * layout
- *  - object_name: référence à object défini dans module.json
+ *  - object_name: référence à object défini dans module.yml
  *  - component:
  *    - map, table: liste d'object sur une carte
  *    - properties, form: pour 1 object (d'id=value)

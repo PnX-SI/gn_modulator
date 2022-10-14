@@ -1,5 +1,5 @@
 '''
-    SchemaData methode pour gerer les données depuis des fichiers.json
+    SchemaData methode pour gerer les données depuis des fichiers .yml
     par exemple la nomenclature
 '''
 
@@ -53,7 +53,7 @@ class SchemaBaseImports:
 
         for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
             for file in filter(
-                lambda f: f.endswith('.json'),
+                lambda f: f.endswith('.yml'),
                 files
             ):
                 file_path = Path(root) / file
@@ -220,8 +220,8 @@ class SchemaBaseImports:
 
     @classmethod
     def get_data_items_from_file(cls, data_file):
-        if data_file.suffix == '.json':
-            return cls.load_json_file(data_file)
+        if data_file.suffix == '.yml':
+            return cls.load_yml_file(data_file)
         else:
             raise errors.SchemaError(
                 "Le fichier {} n'est pas valide"

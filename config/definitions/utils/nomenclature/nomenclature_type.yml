@@ -1,0 +1,18 @@
+required:
+    - mnemonique
+meta:
+    schema_name: ref_nom.type
+    autoschema: true
+    unique:
+        - mnemonique
+    import:
+        copy:
+            label_default:
+                - label_fr
+            definition_default:
+                - definition_fr
+    model_name: BibNomenclaturesTypes
+    sql_schema_dot_table: ref_nomenclatures.bib_nomenclatures_types
+    genre: F
+    label: nomenclature
+    label_field_name: label_fr

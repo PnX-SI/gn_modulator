@@ -1,0 +1,47 @@
+required:
+    - identifiant
+    - nom_role
+    - prenom_role
+meta:
+    schema_name: user.role
+    autoschema: true
+    model_name: User
+    sql_schema_dot_table: utilisateurs.t_roles
+    label: utilisateur
+    label_field_name: nom_role
+    genre: M
+    table:
+        columns:
+            - nom_role
+            - prenom_role
+            - organisme.nom_organisme
+    unique:
+        - identifiant
+    relations:
+        - groups
+properties:
+    password:
+        type: string
+        title: password
+        load_only: true
+    nom_complet:
+        type: string
+        title: Nom complet
+    _password:
+        load_only: true
+    _password_plus:
+        load_only: true
+    listes:
+        type: relation
+        relation_type: n-n
+        schema_name: user.liste
+        schema_dot_table: utilisateurs.cor_role_liste
+        title: Listes
+    groupes:
+        type: relation
+        relation_type: n-n
+        schema_name: user.role
+        schema_dot_table: utilisateurs.cor_roles
+        title: Groupes
+        local_key: id_role_utilisateur
+        foreign_key: id_role_groupe

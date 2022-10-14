@@ -77,13 +77,16 @@ class SchemaAuto():
 
             if not hasattr(Model, column.key):
                 continue
-            properties[column.key] = self.process_column_auto(column, reflected_columns, sql_schema_name, sql_table_name)
+            column_auto = self.process_column_auto(column, reflected_columns, sql_schema_name, sql_table_name)
+            if column_auto:
+                properties[column.key] = column_auto
 
         # column properties
         columns = [c.key for c in Model.__table__.columns]
+
         for k in Model.__mapper__.attrs.keys():
             col = getattr(Model, k)
-            if (not isinstance(col.property, ColumnProperty)) or k in columns:
+            if (not isinstance(col.property, ColumnProperty)) or (k in columns):
                 continue
             properties[k] = {
                 "type": "string",
@@ -137,7 +140,7 @@ class SchemaAuto():
         try:
             reflected_column = next(x for x in reflected_columns if x['name'] == column.key)
         except Exception as e:
-            print('erreur auto', self.schema_name(), column.key, e)
+            # print('erreur auto', self.schema_name(), column.key, e)
             return
         schema_type = self.cls.c_get_type(type, 'sql', 'definition')
 

@@ -1,0 +1,10 @@
+layout_name: m_monitoring.observation_details
+height_auto: true
+items:
+    -
+        type: breadcrumbs
+        flex: '0'
+    -
+        type: object
+        display: properties
+        key: observation

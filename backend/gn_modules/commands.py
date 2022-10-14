@@ -23,20 +23,6 @@ def cmd_init_module(module_code, force=False, reinstall=False):
     ModuleMethods.init_module(module_code, force)
 
 
-# @click.command('reinit')
-# @click.argument('module_code')
-# @click.option('-f', '--force', is_flag=True)
-# @with_appcontext
-# def cmd_reinit_module(module_code, force=False):
-#     '''
-#         commande d'initialisation du module
-#     '''
-
-#     ModuleMethods.remove_module(module_code, force)
-#     ModuleMethods.init_module(module_code, force)
-#     ModuleMethods.install_module(module_code, force)
-
-
 @click.command('install')
 @click.argument('module_code')
 @click.option('-f', '--force', is_flag=True)
@@ -102,19 +88,6 @@ def cmd_process_sql(module_code=None, schema_name=None, force=False):
             txt_all += txt
         print(txt)
 
-    # ModuleMethods.create_schema_sql(module_code)
-
-
-# @click.command('sql_schema')
-# @click.argument('module_code')
-# @click.option('-f', '--force', is_flag=True)
-# @with_appcontext
-# def cmd_process_sql(module_code, force=False):
-#     '''
-#     '''
-
-#     ModuleMethods.create_schema_sql(module_code, force)
-
 
 @click.command('doc')
 @click.argument('schema_name')
@@ -161,18 +134,18 @@ def cmd_import_bulk_data(schema_name=None, import_file_path=None, data_file_path
 @click.argument('data_name')
 def cmd_import_features(data_name):
     '''
-        importe des feature depuis un fichier (data) (.json) referencé par la clé 'data_name'        
+        importe des feature depuis un fichier (data) (.yml) referencé par la clé 'data_name'
     '''
 
     data_names = data_name.split(",")
 
-    infos = {}  
+    infos = {}
     for data_name in data_names:
         print('import', data_name)
         infos[data_name] = SchemaMethods.process_features(data_name)
-    
+
     SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
-    
+
 
 commands = [
     cmd_init_module,

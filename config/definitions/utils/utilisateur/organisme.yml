@@ -1,0 +1,20 @@
+required:
+    - nom_organisme
+meta:
+    schema_name: user.organisme
+    autoschema: true
+    sql_schema_dot_table: utilisateurs.bib_organismes
+    model_name: Organisme
+    genre: M
+    label: organisme
+    label_field_name: nom_organisme
+    unique:
+        - nom_organisme
+properties:
+    id_organisme:
+        type: integer
+        label: ID organisme
+        primary_key: true
+    nom_organisme:
+        type: string
+        label: Nom organisme

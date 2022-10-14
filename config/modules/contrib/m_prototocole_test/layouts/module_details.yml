@@ -1,0 +1,45 @@
+layout_name: m_protocol_test.module_details
+height_auto: true
+direction: row
+items:
+    -
+        type: map
+        items:
+            -
+                type: object
+                key: site
+                display: geojson
+    -
+        items:
+            -
+                type: breadcrumbs
+                flex: '0'
+            -
+                key: module
+                type: object
+                display: properties
+            -
+                display: tabs
+                items:
+                    -
+                        label: '__f__`Sites (${data.site.filtered}/${data.site.total})`'
+                        items:
+                            -
+                                key: site
+                                action: create
+                                type: button
+                                icon: add
+                                color: primary
+                                flex: '0'
+                                params: '__f__{ return {id_module: data.module.value}}'
+                            -
+                                type: object
+                                display: table
+                                key: site
+                    -
+                        label: '__f__`Jeu de données  (${data.jdd.filtered}/${data.jdd.total})`'
+                        items:
+                            -
+                                type: object
+                                display: table
+                                key: jdd

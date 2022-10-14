@@ -8,6 +8,7 @@ from pathlib import Path
 import os
 import re
 import json
+import yaml
 import copy
 import jsonschema
 from ref_geo.utils import get_local_srid
@@ -51,8 +52,8 @@ class SchemaFiles():
         if schema_path_short[0] == '/':
             schema_path_short = schema_path_short[1:]
 
-        # on retire .json
-        schema_path_short = schema_path_short.replace('.json', '')
+        # on retire .yml
+        schema_path_short = schema_path_short.replace('.yml', '')
 
         schema_name = ".".join(schema_path_short.split('/'))
 
@@ -65,7 +66,7 @@ class SchemaFiles():
         '''
         base_dir = cls.config_directory()
         schema_path = base_dir / (
-            "{}.json"
+            "{}.yml"
             .format(
                 "/".join(schema_name.split("."))
             )
@@ -77,22 +78,22 @@ class SchemaFiles():
     def file_path(cls, schema_name, post_name=None):
         file_path = cls.schema_path_from_name(schema_name)
         if post_name:
-            file_path = Path(str(file_path).replace('.json', '-{}.json'.format(post_name)))
+            file_path = Path(str(file_path).replace('.yml', '-{}.yml'.format(post_name)))
         return file_path
 
     @classmethod
     def c_sample(cls, schema_name):
         try:
-            return cls.load_json_file_from_path(cls.file_path(schema_name, 'sample'))
+            return cls.load_yml_file_from_path(cls.file_path(schema_name, 'sample'))
         except Exception as e:
             print(e)
         return None
 
     @classmethod
-    def load_json_file_from_name(cls, schema_name):
+    def load_yml_file_from_name(cls, schema_name):
 
         file_path = cls.schema_path_from_name(schema_name)
-        return cls.load_json_file(file_path)
+        return cls.load_yml_file(file_path)
 
     @classmethod
     def get_key_file_paths(cls, file_path):
@@ -101,7 +102,7 @@ class SchemaFiles():
         for root, dirs, files in os.walk(file_path.parent):
             for file in filter(
                 lambda f: (
-                    f.suffix == '.json'
+                    f.suffix == '.yml'
                     and f.stem.startswith(file_name)
                     and len(f.stem.split('-')) == 2
                 ),
@@ -120,36 +121,47 @@ class SchemaFiles():
         return key_file_paths
 
     @classmethod
-    def load_json_file(cls, file_path, load_keys=False):
+    def load_yml_file(cls, file_path, load_keys=False):
         '''
-            Read json file and return data
+            Read yml file and return data
 
             TODO process error
         '''
         if load_keys:
-            data = cls.load_json_file(file_path)
+            data = cls.load_yml_file(file_path)
             # get all files
 
             for key, key_file_path in cls.get_key_file_paths(file_path).items():
-                data[key] = cls.load_json_file(key_file_path)
+                data[key] = cls.load_yml_file(key_file_path)
 
             return data
 
         try:
             with open(file_path) as f:
-                # remove comments ()
-                s = ''
-                for line in f:
-                    if line.strip().startswith('//') or line.strip().startswith('#'):
-                        continue
-                    s += line
+                schema = yaml.load(f, yaml.CLoader)
+                return schema
+        except FileNotFoundError:
+            raise errors.SchemaLoadError("File not found : {}".format(file_path))
+        except yaml.YAMLError as e:
+            raise errors.SchemaLoadError("YAML : error in file {} : {}".format(str(file_path).replace(str(cls.config_directory()), ''), str(e)))
 
-                schema = json.loads(s)
+    @classmethod
+    def load_json_file(cls, file_path):
+        '''
+            Read json file and return data
+
+            TODO process error
+        '''
+
+        try:
+            with open(file_path) as f:
+                schema = json.loads(f.read())
                 return schema
         except FileNotFoundError:
             raise errors.SchemaLoadError("File not found : {}".format(file_path))
         except json.JSONDecodeError as e:
             raise errors.SchemaLoadError("Json : error in file {} : {}".format(str(file_path).replace(str(cls.config_directory()), ''), str(e)))
+
 
     def load(self):
         '''
@@ -198,8 +210,8 @@ class SchemaFiles():
         '''
             retourne le chemin du fichier de données associé à data_name
             data_name:
-                - 'test' => <gn_module>/config/data/test.json
-                - 'test.exemple' => <gn_module>/config/data/test/exemple.json
+                - 'test' => <gn_module>/config/data/test.yml
+                - 'test.exemple' => <gn_module>/config/data/test/exemple.yml
             ou du dossier le cas écheant
         '''
 
@@ -214,12 +226,12 @@ class SchemaFiles():
         if data_path.is_dir():
             return data_path
 
-        file_path = Path(str(data_path) + '.json')
+        file_path = Path(str(data_path) + '.yml')
         if file_path.is_file():
             return file_path
 
         raise errors.SchemaDataPathError(
-            'Le paramètre data_name={}, ne correspond à aucun fichier ou répertoire existant {}(.json)'
+            'Le paramètre data_name={}, ne correspond à aucun fichier ou répertoire existant {}(.yml)'
             .format(data_name, data_path)
         )
 
@@ -262,7 +274,7 @@ class SchemaFiles():
 
     @classmethod
     def get_definition_from_file_path(cls, file_path):
-        definition = cls.load_json_file(file_path, load_keys=True)
+        definition = cls.load_yml_file(file_path, load_keys=True)
         definition = cls.process_schema_config(definition)
 
         try:
@@ -284,7 +296,7 @@ class SchemaFiles():
 
         for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
             for file in filter(
-                lambda f: 'definitions' in root and f.endswith('.json') and '-' not in f,
+                lambda f: 'definitions' in root and f.endswith('.yml') and '-' not in f,
                 files
             ):
                 definition = cls.get_definition_from_file_path(Path(root) / file)
@@ -503,11 +515,11 @@ class SchemaFiles():
         layouts = []
         for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
             for file in filter(
-                lambda f: f.endswith('.json'),
+                lambda f: f.endswith('.yml'),
                 files
             ):
                 file_path = Path(root) / file
-                layout = cls.load_json_file(file_path)
+                layout = cls.load_yml_file(file_path)
                 if not (isinstance(layout, dict) and layout.get('layout_name')):
                     continue
                 # layout['layout_name'] = layout.get('layout_name', file_path.stem)
@@ -526,4 +538,4 @@ class SchemaFiles():
             return out
 
         return layouts
-        
+

@@ -1,0 +1,102 @@
+meta:
+    schema_name: m_monitoring.site_group
+    sql_processing: true
+    sql_schema_dot_table: m_monitoring.t_site_group
+    genre: M
+    label: groupe de sites
+    labels: groupes de sites
+    label_field_name: name
+    geometry_field_name: geom
+    unique:
+        - code
+map:
+    popup_fields:
+        - name
+        - code
+        - description
+filters:
+    defs: {}
+    layout: {}
+table:
+    columns:
+        - code
+        - name
+        - nb_sites
+    sort: code
+required:
+    - code
+    - name
+properties:
+    id_site_group:
+        type: integer
+        title: Pk du group de site
+        description: Clé primaire du group de site
+        primary_key: true
+    code:
+        type: string
+        title: Code du site
+        required: true
+    name:
+        type: string
+        title: Nom du groupe de site
+        required: true
+    description:
+        type: string
+        title: Description du groupe de site
+    id_digitiser:
+        type: integer
+        foreign_key: true
+        schema_name: user.role
+        title: Numérisateur
+        description: Personne qui a saisi la donnée
+    digitiser:
+        type: relation
+        relation_type: n-1
+        schema_name: user.role
+        title: Numérisateur
+        description: Personne qui a saisi la donnée
+        local_key: id_digitiser
+    site_group_uuid:
+        type: uuid
+        title: UUID
+    geom:
+        type: geometry
+        geometry_type: geometry
+        title: Géométrie du groupe de site
+        srid: 4326
+    data:
+        type: json
+        description: Données additionnelles du  groupe de site
+        title: Données additionnelles
+    sites:
+        type: relation
+        relation_type: n-n
+        schema_name: m_monitoring.site
+        title: Sites
+        description: Sites associés au groupe de site
+        schema_dot_table: m_monitoring.cor_site_group
+    nb_sites:
+        type: integer
+        title: Nombre de sites
+        column_property: nb
+        relation_key: sites
+form:
+    layout:
+        -
+            hidden: true
+            items:
+                - id_site
+                - geom
+                -
+                    key: id_digitiser
+                    default: __f__meta.currentUser?.id_role
+                    hidden: true
+        - code
+        - name
+details:
+    layout:
+        - id_site_group
+        - code
+        - name
+        - digitiser.nom_complet
+        - nb_sites

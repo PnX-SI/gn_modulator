@@ -1,0 +1,28 @@
+meta:
+    schema_name: m_monitoring.sc_grotte
+    sql_processing: true
+    sql_schema_dot_table: m_monitoring.sc_grotte
+    genre: M
+    label: Donnée grotte
+    labels: Données grotte
+    label_field_name: id_site
+    unique:
+        - id_site
+properties:
+    id_site:
+        type: integer
+        title: Pk du site
+        primary_key: true
+        foreign_key: true
+        schema_name: m_monitoring.site
+    profondeur:
+        type: number
+        title: profondeur
+    site:
+        type: relation
+        local_key: id_site
+        relation_type: 1-1
+        title: sites
+        description: Site associé
+        schema_name: m_monitoring.site
+        backref: data_grotte

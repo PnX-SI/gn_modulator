@@ -1,0 +1,18 @@
+meta:
+    schema_name: syn.synthese
+    autoschema: true
+    sql_schema_dot_table: gn_synthese.synthese
+    model_name: Synthese
+    genre: M
+    label: element de la synthese
+    labels: elements de la synthese
+    label_field_name: cd_nom
+    geometry_field_name: the_geom_4326
+    table:
+        columns:
+            - id_synthese
+            - cd_nom
+            - taxon.lb_nom
+    unique:
+        - id_source
+        - entity_source_pk_value

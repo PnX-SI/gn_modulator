@@ -19,7 +19,7 @@ class TestModulesData:
             se passe bien pour tous les fichiers de <gn_module>/config/data
         '''
 
-        # test de tous les dossier <data_type> et de tous les fichiers >data_name>.json
+        # test de tous les dossier <data_type> et de tous les fichiers >data_name>.yml
         for root, dirs, files in os.walk(SchemaMethods.config_directory() / 'data', followlinks=True):
 
             for f in filter(lambda f: f.endswith('.json'), files):

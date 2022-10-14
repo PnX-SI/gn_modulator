@@ -12,7 +12,7 @@ class SchemaBulkImports():
             les différents fichiers à importer
         '''
 
-        data = cls.load_json_file(import_file_path)
+        data = cls.load_yml_file(import_file_path)
 
         for d in data:
             data_file_path = Path(import_file_path).parent / d['data']

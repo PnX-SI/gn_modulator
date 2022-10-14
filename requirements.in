@@ -2,3 +2,4 @@ jsonschema
 utils-flask-sqlalchemy>=0.2.6
 unidecode
 py7zr
+pyyaml

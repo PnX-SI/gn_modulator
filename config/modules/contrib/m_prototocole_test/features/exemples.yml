@@ -1,0 +1,81 @@
+data_name: m_protocol_test.exemples
+items:
+    -
+        schema_name: meta.ca
+        items:
+            -
+                acquisition_framework_name: m_protocol_test
+                acquisition_framework_desc: m_protocol_test
+                acquisition_framework_start_date: '2022-01-01'
+    -
+        schema_name: meta.jdd
+        items:
+            -
+                id_acquisition_framework: m_protocol_test
+                dataset_name: m_protocol_test
+                dataset_shortname: m_protocol_test
+                dataset_desc: m_protocol_test
+                marine_domain: false
+                terrestrial_domain: false
+    -
+        schema_name: commons.module
+        items:
+            -
+                module_code: m_protocol_test
+                datasets:
+                    -
+                        - m_protocol_test
+                        - m_protocol_test
+    -
+        schema_name: m_monitoring.site
+        items:
+            -
+                name: Site test 1
+                code: TEST_1
+                description: Le site test 1
+                id_digitiser: admin
+                id_inventor: admin
+                id_nomenclature_type_site: '4'
+                geom:
+                    type: Point
+                    coordinates:
+                        - 3.75
+                        - 43.81
+                id_site_category: AL
+                modules:
+                    - m_protocol_test
+            -
+                name: Site test 2
+                code: TEST_2
+                description: Le site test 2
+                id_digitiser: admin
+                id_inventor: admin
+                id_nomenclature_type_site: '4'
+                geom:
+                    type: Point
+                    coordinates:
+                        - 3.76
+                        - 43.71
+                id_site_category: AL
+                modules:
+                    - m_protocol_test
+    -
+        schema_name: m_monitoring.visit
+        items:
+            -
+                id_site: TEST_1
+                date_min: '2022-01-01'
+                observers:
+                    - admin
+                id_dataset:
+                    - m_protocol_test
+                    - m_protocol_test
+                id_module: m_protocol_test
+    -
+        schema_name: m_monitoring.observation
+        items:
+            -
+                id_visit:
+                    - TEST_1
+                    - '2022-01-01'
+                cd_nom: 361617

@@ -58,18 +58,18 @@ class ModulesConfig():
     @classmethod
     def modules_config_files(cls):
         '''
-            Récupère les information des modules depuis les fichiers 'module.json'
+            Récupère les information des modules depuis les fichiers 'module.yml'
         '''
 
         # parcours des fichiers
         module_files = {}
         for root, dirs, files in os.walk(SchemaMethods.config_directory(), followlinks=True):
             for file in filter(
-                lambda f: 'config/modules' in root and f == 'module.json',
+                lambda f: 'config/modules' in root and f == 'module.yml',
                 files
             ):
                 file_path = Path(root) / file
-                module_file = SchemaMethods.load_json_file(file_path, load_keys=True)
+                module_file = SchemaMethods.load_yml_file(file_path, load_keys=True)
                 module_file['module_dir_path'] = str(file_path.parent)
 
                 # gestion de la hierarchie entre les pages
@@ -136,7 +136,7 @@ class ModulesConfig():
     def modules_config(cls):
         '''
         renvoie la configuration des modules
-            - fichier module.json
+            - fichier module.yml
             - données de la base (gn_commons.t_modules, m_modules.t_module_groups, ...)
         '''
 
@@ -160,7 +160,6 @@ class ModulesConfig():
             if module_code not in modules_config_files:
                 continue
 
-
         for module_code, module_config in modules_config_files.items():
 
             module_db = modules_config_db.get(module_code, {})
@@ -174,17 +173,14 @@ class ModulesConfig():
         for key, module_config in modules_config.items():
             cache_modules_config[key] = module_config
 
-
         for key in modules_config:
             cls.process_module_data(key)
-
 
         for key in modules_config:
             cls.process_module_params(key)
 
         for key in modules_config:
             cls.process_module_api(key)
-
         return modules_config
 
     @classmethod
@@ -199,7 +195,7 @@ class ModulesConfig():
 
         for key_param, param_config in params.items():
             schema_name = (
-                module_config['data'][param_config['object_name']].get('schema_name') 
+                module_config['data'][param_config['object_name']].get('schema_name')
                 or
                 param_config['object_name']
             )
