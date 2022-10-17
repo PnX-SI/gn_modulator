@@ -189,6 +189,8 @@ class ModulesConfig():
             résolution de tous les champs contenus dans module_config['params']
         '''
         module_config = cls.module_config(module_code)
+        if not module_config['registred']:
+            return
         params = module_config.get('params') or {}
         objects =  module_config['objects'] or {}
         processed_params = {}
@@ -262,6 +264,8 @@ class ModulesConfig():
     @classmethod
     def process_module_api(cls, module_code):
         module_config = cls.module_config(module_code)
+        if not module_config['registred']:
+            return
 
         bp = Blueprint(module_code, __name__)
         for object_name, object_definition in module_config['objects'].items():
