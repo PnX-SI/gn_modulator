@@ -155,28 +155,28 @@ label_infrastructures:
     column_property: label
     relation_key: linears
     label_key: linear_name
-    filters: type.type_code_=_RTE
+    filters: type.type_code = RTE
 label_communes:
     type: string
     title: Commune(s)
     column_property: label
     relation_key: areas
     label_key: area_name
-    filters: area_type.type_code_=_COM
+    filters: area_type.type_code = COM
 label_departements:
     type: string
     title: Departement(s)
     column_property: label
     relation_key: areas
     label_key: area_name
-    filters: area_type.type_code_=_DEP
+    filters: area_type.type_code = DEP
 label_regions:
     type: string
     title: Région(s)
     column_property: label
     relation_key: areas
     label_key: area_name
-    filters: area_type.type_code_=_REG
+    filters: area_type.type_code = REG
 actors:
     type: relation
     relation_type: 1-n

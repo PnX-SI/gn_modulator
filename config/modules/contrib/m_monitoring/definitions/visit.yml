@@ -135,7 +135,7 @@ form:
             schema_name: meta.jdd
             page_size: 10
             reload_on_search: true
-            filters: '__f__data.id_module && `modules.id_module_=_${data.id_module}`'
+            filters: '__f__data.id_module && `modules.id_module = ${data.id_module}`'
         -
             key: observers
             type: list_form
@@ -143,13 +143,13 @@ form:
             schema_name: user.role
             multiple: true
             return_object: true
-            filters: groupes.listes.code_liste_=_obsocctax
+            filters: groupes.listes.code_liste = obsocctax
         -
             key: id_module
             type: list_form
             title: Protocole
             schema_name: commons.module
-            filters: '__f__`sites.id_site_=_${data.id_site}`'
+            filters: '__f__`sites.id_site = ${data.id_site}`'
 table:
     columns:
         - site.name

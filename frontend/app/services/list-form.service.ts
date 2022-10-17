@@ -140,13 +140,13 @@ export class ListFormService {
     if (options.nomenclature_type) {
       options.object_name = "ref_nom.nomenclature";
       schemaFilters.push(
-        `nomenclature_type.mnemonique_=_${options.nomenclature_type}`
+        `nomenclature_type.mnemonique = ${options.nomenclature_type}`
       );
       options.cache = true;
     }
     if (options.area_type) {
       options.object_name = "ref_geo.area";
-      schemaFilters.push(`area_type.type_code_=_${options.area_type}`);
+      schemaFilters.push(`area_type.type_code = ${options.area_type}`);
     }
 
     if (options.schema_name && !options.object_name) {
@@ -221,7 +221,7 @@ export class ListFormService {
       params.sort = params.sort || options.sort;
 
       if (options.reload_on_search && options.search) {
-        params.filters.push(`${options.label_field_name}_~_${options.search}`);
+        params.filters.push(`${options.label_field_name} ~ ${options.search}`);
       }
     }
 

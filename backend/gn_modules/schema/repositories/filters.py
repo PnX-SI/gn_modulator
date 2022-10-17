@@ -17,9 +17,6 @@ from sqlalchemy.sql.functions import ReturnTypeFromArgs
 class unaccent(ReturnTypeFromArgs):
     pass
 
-filter_types = ['like', 'ilike', '=', 'in', '>e', '<', '>=', '>=', '!=']
-
-
 class SchemaRepositoriesFilters():
     '''
         repositories - filters
@@ -199,7 +196,7 @@ class SchemaRepositoriesFilters():
         filter_type_min = None
         for filter_type in [ '=', '<', '>', '>=', '<=', 'like', 'ilike', 'in', '~' ]:
             try:
-                index = str_filter.index(f'_{filter_type}_')
+                index = str_filter.index(f' {filter_type} ')
             except ValueError:
                 continue
 

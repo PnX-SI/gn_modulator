@@ -17,19 +17,19 @@ objects:
         cruved: RU
     jdd:
         schema_name: meta.jdd
-        prefilters: 'modules.id_module_=_:id_module'
+        prefilters: 'modules.id_module = :id_module'
         cruved: R
     site:
         schema_name: m_monitoring.site
-        prefilters: 'modules.id_module_=_:id_module'
+        prefilters: 'modules.id_module = :id_module'
         cruved: CRUD
     visit:
         schema_name: m_monitoring.visit
-        prefilters: 'module.id_module_=_:id_module'
+        prefilters: 'module.id_module = :id_module'
         cruved: CRUD
     observation:
         schema_name: m_monitoring.observation
-        prefilters: 'visit.module.id_module_=_:id_module'
+        prefilters: 'visit.module.id_module = :id_module'
         cruved: CRUD
 tree:
     module:
@@ -56,7 +56,7 @@ pages:
             site:
                 value: ':id_site'
             visit:
-                prefilters: 'id_site_=_:id_site'
+                prefilters: 'id_site = :id_site'
     site_edit:
         url: 'site_edit/:id_site'
         layout_name: m_protocol_test.site_edit
@@ -77,7 +77,7 @@ pages:
             visit:
                 value: ':id_visit'
             observation:
-                prefilters: 'id_visit_=_:id_visit'
+                prefilters: 'id_visit = :id_visit'
     visit_edit:
         url: 'visit_edit/:id_visit'
         layout_name: m_protocol_test.visit_edit
