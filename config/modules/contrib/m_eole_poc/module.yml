@@ -1,3 +1,4 @@
+#
 module:
   module_code: m_eole
   module_label: Modules de suivi éolien
@@ -5,24 +6,40 @@ module:
   module_picto: fa-puzzle-piece
   active_frontend: true
 
+dependencies:
+    - m_monitoring
+
 objects:
-  site_group:
+  parc:
     cruved: CRUD
     schema_name: m_monitoring.site_group
-    label: 'Parc éolien'
-    labels: 'Parcs éolien'
-  gites:
+    label: Parc éolien
+    labels: Parcs éolien
+    prefilters: modules.id_module = :id_module
+  gite:
     cruved: CRUD
     schema_name: m_monitoring.site
     label: Gîte chiroptère
     labels: Gîtes chiroptère
-    prefilters: category.code = GIT
+    prefilters:
+      - category.code = GIT
+      - modules.id_module = :id_module
+    map:
+      style:
+        color: red
+      bring_to_front: true
   eolienne:
     cruved: CRUD
     schema_name: m_monitoring.site
     label: Éolienne
     genre: F
-    prefilters: category.code = EOL
+    prefilters:
+      - category.code = EOL
+      - modules.id_module = :id_module
+    map:
+      style:
+        color: green
+      bring_to_front: true
   visite:
     cruved: CRUD
     schema_name: m_monitoring.site
@@ -33,8 +50,19 @@ objects:
     cruved: CRUD
     schema_name: m_monitoring.observation
 
+params:
+  id_module:
+    schema_name: commons.module
+    value: m_eole
+    field_name: module_code
+
+tree:
+  parc:
+
+pages:
+  parc_list:
+    url: ''
+    layout_name: m_eole.parc_list
+
 features:
   - m_eole.data
-
-
-
