@@ -166,9 +166,8 @@ export default {
 
           /** coords on rigth click */
           map.on('contextmenu', (event: any) => {
-            console.log(event.latlng);
             map.coordinatesTxt = `${event.latlng.lng}, ${event.latlng.lat}`;
-            console.log(this.coordinatesTxt);
+            console.log(map.coordinatesTxt);
             navigator.clipboard.writeText(`${event.latlng.lng}, ${event.latlng.lat}`);
           });
 
