@@ -1,12 +1,12 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-import { AppConfig } from "@geonature_config/app.config";
-import { ModuleConfig } from "../module.config";
+import { AppConfig } from '@geonature_config/app.config';
+import { ModuleConfig } from '../module.config';
 
-import { of, forkJoin } from "@librairies/rxjs";
-import { mergeMap } from "@librairies/rxjs/operators";
-import { ModulesRequestService } from "./request.service";
-import utils from "../utils";
+import { of, forkJoin } from '@librairies/rxjs';
+import { mergeMap } from '@librairies/rxjs/operators';
+import { ModulesRequestService } from './request.service';
+import utils from '../utils';
 @Injectable()
 export class ModulesConfigService {
   private _config: any = {
@@ -27,60 +27,52 @@ export class ModulesConfigService {
   }
 
   getModulesConfig() {
-    const modulesConfig = utils.getAttr(this._config, "modules");
+    const modulesConfig = utils.getAttr(this._config, 'modules');
 
     if (Object.keys(this._config.modules).length) {
       return of(this._config.modules);
     }
 
-    return this._requestService
-      .request("get", `${this.backendModuleUrl()}/modules_config`)
-      .pipe(
-        mergeMap((modulesConfig) => {
-          this._config.modules = modulesConfig;
-          return of(this._config.modules);
-        })
-      );
+    return this._requestService.request('get', `${this.backendModuleUrl()}/modules_config`).pipe(
+      mergeMap((modulesConfig) => {
+        this._config.modules = modulesConfig;
+        return of(this._config.modules);
+      })
+    );
   }
 
   /**
    * Renvoie l'ensemble des groupes de schema
    */
   getSchemaGroups() {
-    return this._requestService.request(
-      "get",
-      `${this.backendModuleUrl()}/groups`
-    );
+    return this._requestService.request('get', `${this.backendModuleUrl()}/groups`);
   }
 
   objectConfig(moduleCode, objectName) {
-    return this._config["modules"][moduleCode || "MODULES"]["definitions"][
-      objectName
-    ];
+    return this._config['modules'][moduleCode || 'MODULES']['definitions'][objectName];
   }
 
   moduleConfig(moduleCode) {
-    return this._config["modules"][moduleCode];
+    return this._config['modules'][moduleCode];
   }
 
   modulesConfig() {
-    return this._config["modules"];
+    return this._config['modules'];
   }
 
-  
   layout(layoutName) {
-    return this._config["layouts"][layoutName];
+    return this._config['layouts'][layoutName];
   }
 
   getLayouts() {
     return Object.keys(this._config.layouts).length
       ? of(this._config.layout)
-      : this._requestService
-          .request("get", `${this.backendModuleUrl()}/layouts`)
-          .pipe(mergeMap((layouts) => {
-            this._config.layouts = layouts
+      : this._requestService.request('get', `${this.backendModuleUrl()}/layouts`).pipe(
+          mergeMap((layouts) => {
+            this._config.layouts = layouts;
             return of(this._config.layout);
-          }));
+          })
+        );
   }
 
   /** Backend Url et static dir ??*/
@@ -102,12 +94,12 @@ export class ModulesConfigService {
   }
 
   assetsDirectory() {
-    return this.backendUrl() + "/static/external_assets/modules";
+    return this.backendUrl() + '/static/external_assets/modules';
   }
 
-  objectUrl(moduleCode, objectName, value = "", urlSuffix="") {
+  objectUrl(moduleCode, objectName, value = '', urlSuffix = '') {
     return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectName}/${urlSuffix}${
-      value || ""
+      value || ''
     }`;
   }
 }

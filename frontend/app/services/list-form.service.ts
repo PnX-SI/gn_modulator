@@ -1,11 +1,10 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-import { of, Observable } from "@librairies/rxjs";
-import { mergeMap } from "@librairies/rxjs/operators";
-import { ModulesRequestService } from "./request.service";
-import { ModulesConfigService } from "./config.service";
-import { ModulesDataService } from "./data.service";
-import utils from "./../utils";
+import { of, Observable } from '@librairies/rxjs';
+import { mergeMap } from '@librairies/rxjs/operators';
+import { ModulesRequestService } from './request.service';
+import { ModulesConfigService } from './config.service';
+import utils from './../utils';
 @Injectable()
 export class ListFormService {
   /**
@@ -13,7 +12,7 @@ export class ListFormService {
    * depuis https://stackoverflow.com/questions/10687099/how-to-test-if-a-url-string-is-absolute-or-relative
    */
 
-  regexpUrlAbsolute = new RegExp("^(?:[a-z]+:)?//", "i");
+  regexpUrlAbsolute = new RegExp('^(?:[a-z]+:)?//', 'i');
 
   constructor(
     private _requestService: ModulesRequestService,
@@ -50,11 +49,7 @@ export class ListFormService {
     // - la taille de la liste est 1
     // - il n'y a pas de valeur
     if (
-      !(
-        options.required &&
-        liste.items.length == 1 &&
-        [null, undefined].includes(control.value)
-      )
+      !(options.required && liste.items.length == 1 && [null, undefined].includes(control.value))
     ) {
       return;
     }
@@ -63,9 +58,7 @@ export class ListFormService {
     // seuelement si une valeur est requise (options.required = true)
     if (options.required && liste.items.length == 1) {
       const value = liste.items[0];
-      const controlValue = options.return_object
-        ? value
-        : value[options.value_field_name];
+      const controlValue = options.return_object ? value : value[options.value_field_name];
       control.patchValue(controlValue);
     }
   }
@@ -90,20 +83,14 @@ export class ListFormService {
     // recherche de la valeur dans la liste
     // recherce de la valeur par api et ajout dans la liste
     const value = liste.items.find((item) =>
-      Object.entries(options.default).every(
-        ([key, value]) => item[key] == value
-      )
+      Object.entries(options.default).every(([key, value]) => item[key] == value)
     );
     if (!value) {
       // message, erreur ?
-      console.error(
-        `Pas de valeur trouvée pour ${JSON.stringify(options.default)}`
-      );
+      console.error(`Pas de valeur trouvée pour ${JSON.stringify(options.default)}`);
       return of(liste);
     }
-    const controlValue = options.return_object
-      ? value
-      : value[options.value_field_name];
+    const controlValue = options.return_object ? value : value[options.value_field_name];
     control.patchValue(controlValue);
 
     return of(liste);
@@ -120,8 +107,8 @@ export class ListFormService {
   initConfig(options) {
     return this.processObjectConfig(options).pipe(
       mergeMap(() => {
-        options.label_field_name = options.label_field_name || "label";
-        options.value_field_name = options.value_field_name || "value";
+        options.label_field_name = options.label_field_name || 'label';
+        options.value_field_name = options.value_field_name || 'value';
         return of(true);
       })
     );
@@ -138,42 +125,34 @@ export class ListFormService {
      **/
     let schemaFilters: Array<any> = [];
     if (options.nomenclature_type) {
-      options.object_name = "ref_nom.nomenclature";
-      schemaFilters.push(
-        `nomenclature_type.mnemonique = ${options.nomenclature_type}`
-      );
+      options.object_name = 'ref_nom.nomenclature';
+      schemaFilters.push(`nomenclature_type.mnemonique = ${options.nomenclature_type}`);
       options.cache = true;
     }
     if (options.area_type) {
-      options.object_name = "ref_geo.area";
+      options.object_name = 'ref_geo.area';
       schemaFilters.push(`area_type.type_code = ${options.area_type}`);
     }
 
     if (options.schema_name && !options.object_name) {
-      options.object_name = options.schema_name
+      options.object_name = options.schema_name;
     }
 
     if (!options.object_name) {
       return of(true);
     }
 
-    const moduleCode = options.module_code || "MODULES";
+    const moduleCode = options.module_code || 'MODULES';
 
-    const objectConfig = this._mConfig.objectConfig(
-      moduleCode,
-      options.object_name
-    );
+    const objectConfig = this._mConfig.objectConfig(moduleCode, options.object_name);
 
     const objectUrl = this._mConfig.objectUrl(moduleCode, options.object_name);
     options.api = options.api || objectUrl;
-    options.value_field_name =
-      options.value_field_name || objectConfig.utils.value_field_name;
-    options.label_field_name =
-      options.label_field_name || objectConfig.utils.label_field_name;
-    options.title_field_name =
-      options.title_field_name || objectConfig.utils.title_field_name;
+    options.value_field_name = options.value_field_name || objectConfig.utils.value_field_name;
+    options.label_field_name = options.label_field_name || objectConfig.utils.label_field_name;
+    options.title_field_name = options.title_field_name || objectConfig.utils.title_field_name;
     options.page_size = options.cache ? null : options.page_size || 10;
-    options.items_path = "data";
+    options.items_path = 'data';
     options.schema_filters = schemaFilters;
     return of(true);
   }
@@ -202,9 +181,7 @@ export class ListFormService {
   }
 
   url(api) {
-    return this.regexpUrlAbsolute.test(api)
-      ? api
-      : `${this._mConfig.backendUrl()}/${api}`;
+    return this.regexpUrlAbsolute.test(api) ? api : `${this._mConfig.backendUrl()}/${api}`;
   }
 
   /**
@@ -213,11 +190,9 @@ export class ListFormService {
   getItemsFromApi(options, value): Observable<any> {
     // TODO test si cela ne vient pas d'être fait ?
     const params = options.params || {};
-    params.filters = options.filters || "";
+    params.filters = options.filters || '';
     if (options.object_name) {
-      params.filters = [params.filters, options.schema_filters || []]
-        .flat()
-        .filter((f) => !!f);
+      params.filters = [params.filters, options.schema_filters || []].flat().filter((f) => !!f);
       params.sort = params.sort || options.sort;
 
       if (options.reload_on_search && options.search) {
@@ -236,11 +211,11 @@ export class ListFormService {
           ...(options.additional_fields || []),
         ].filter((e) => !!e)
       )
-      .join(",");
+      .join(',');
 
     params.page_size = options.reload_on_search ? options.page_size || 10 : 0;
     return this._requestService
-      .request("get", this.url(options.api), { params, cache: options.cache })
+      .request('get', this.url(options.api), { params, cache: options.cache })
       .pipe(
         mergeMap((res) => {
           const items = this.processItems(

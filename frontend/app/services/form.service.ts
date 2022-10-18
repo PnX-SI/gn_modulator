@@ -1,24 +1,17 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import {
-  FormArray,
-  FormGroup,
   FormBuilder,
-  FormControl,
   Validators,
   ValidatorFn,
   ValidationErrors,
   AbstractControl,
-} from "@angular/forms";
-import { ModulesLayoutService } from "./layout.service";
-import utils from "../utils";
-import form from "../utils/form";
+} from '@angular/forms';
+import { ModulesLayoutService } from './layout.service';
+import utils from '../utils';
 
 @Injectable()
 export class ModulesFormService {
-  constructor(
-    private _formBuilder: FormBuilder,
-    private _mLayout: ModulesLayoutService
-  ) {}
+  constructor(private _formBuilder: FormBuilder, private _mLayout: ModulesLayoutService) {}
 
   /** Configuration */
 
@@ -40,7 +33,7 @@ export class ModulesFormService {
     if (![undefined, null].includes(layout.max)) {
       validators.push(Validators.max(layout.max));
     }
-    if (layout.type == "integer") {
+    if (layout.type == 'integer') {
       validators.push(this.integerValidator());
     }
 
@@ -48,10 +41,10 @@ export class ModulesFormService {
   }
 
   formDefinition(layout) {
-    if (layout.type == "array") {
+    if (layout.type == 'array') {
       return this.formArray(layout);
     }
-    if (layout.type == "object") {
+    if (layout.type == 'object') {
       return this.formGroup(layout.items);
     }
 
@@ -85,26 +78,26 @@ export class ModulesFormService {
   /** configure un control en fonction d'un layout */
   setControl(formControl, layout, data, globalData) {
     let control = formControl.get(layout.key);
-    console.assert(!!control, {key: layout.key, control: Object.keys(formControl.value)})
+    console.assert(!!control, { key: layout.key, control: Object.keys(formControl.value) });
     let computedLayout = this._mLayout.computeLayout({
       layout,
       data,
       globalData,
-      formGroup: null
+      formGroup: null,
     });
     control.setValidators(this.formValidators(computedLayout));
-    if( computedLayout.disabled) {
-      control.disable()
+    if (computedLayout.disabled) {
+      control.disable();
     }
 
     // control pour object
-    if (layout.type == "object") {
+    if (layout.type == 'object') {
       let controlData = (data || {})[layout.key] || {};
       this.setControls(control, layout.items, controlData, globalData);
     }
 
     // control pour array
-    if (layout.type == "array") {
+    if (layout.type == 'array') {
       let controlData = (data || {})[layout.key] || [];
       if (controlData.length == control.value.length) {
         return;
@@ -119,29 +112,31 @@ export class ModulesFormService {
     }
 
     // valeurs par defaut
-    if(computedLayout.default && [null, undefined].includes(control.value)) {
+    if (computedLayout.default && [null, undefined].includes(control.value)) {
       control.setValue(computedLayout.default);
       data[computedLayout.key] = computedLayout.default;
     }
 
     // ?? correction float int date etc
-    if (computedLayout.type == 'date' && ![null, undefined].includes(control.value) && !(control.value instanceof Date)) {
+    if (
+      computedLayout.type == 'date' &&
+      ![null, undefined].includes(control.value) &&
+      !(control.value instanceof Date)
+    ) {
       data[computedLayout.key] = new Date(control.value).toISOString().split('T')[0];
       control.setValue(data[computedLayout.key]);
     }
 
     if (
-      ['integer', 'number'].includes(computedLayout.type)
-      && (!([null, undefined].includes(control.value)))
-      && typeof(control.value) != 'number'
+      ['integer', 'number'].includes(computedLayout.type) &&
+      ![null, undefined].includes(control.value) &&
+      typeof control.value != 'number'
     ) {
       const correctValue =
-      (computedLayout.type == 'integer')
-        ? parseInt(control.value)
-        : parseFloat(control.value)
+        computedLayout.type == 'integer' ? parseInt(control.value) : parseFloat(control.value);
 
-        data[computedLayout.key] = correctValue;
-      
+      data[computedLayout.key] = correctValue;
+
       control.setValue(correctValue);
     }
   }
@@ -190,10 +185,8 @@ export class ModulesFormService {
    * en nombre ??? */
   processData(data, layout) {
     for (let elem of this._mLayout.flatLayout(layout)) {
-      if (elem.key && elem.type == "number") {
-        data[elem.key] = data[elem.key]
-          ? parseFloat(data[elem.key])
-          : data[elem.key];
+      if (elem.key && elem.type == 'number') {
+        data[elem.key] = data[elem.key] ? parseFloat(data[elem.key]) : data[elem.key];
       }
     }
     return data;

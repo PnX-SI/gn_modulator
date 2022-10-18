@@ -9,26 +9,34 @@ from geonature.utils.env import db as db
 
 class JSONClient(testing.FlaskClient):
     def open(self, *args, **kwargs):
-        headers = kwargs.pop('headers', Headers())
-        if 'Accept' not in headers:
-            headers.extend(Headers({
-                'Accept': 'application/json, text/plain, */*',
-            }))
-        if 'Content-Type' not in headers and 'data' in kwargs:
-            kwargs['data'] = json.dumps(kwargs['data'])
-            headers.extend(Headers({
-                'Content-Type': 'application/json',
-            }))
-        kwargs['headers'] = headers
+        headers = kwargs.pop("headers", Headers())
+        if "Accept" not in headers:
+            headers.extend(
+                Headers(
+                    {
+                        "Accept": "application/json, text/plain, */*",
+                    }
+                )
+            )
+        if "Content-Type" not in headers and "data" in kwargs:
+            kwargs["data"] = json.dumps(kwargs["data"])
+            headers.extend(
+                Headers(
+                    {
+                        "Content-Type": "application/json",
+                    }
+                )
+            )
+        kwargs["headers"] = headers
         return super().open(*args, **kwargs)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def app():
     app = create_app()
     app.testing = True
     app.test_client_class = JSONClient
-    app.config['SERVER_NAME'] = 'test.geonature.fr'  # required by url_for
+    app.config["SERVER_NAME"] = "test.geonature.fr"  # required by url_for
 
     with app.app_context():
         """
@@ -43,7 +51,8 @@ def app():
         yield app
         transaction.rollback()  # rollback all database changes
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope="function")
 def temporary_transaction(app):
     """
     We start two nested transaction (SAVEPOINT):
@@ -73,5 +82,3 @@ def temporary_transaction(app):
 
     inner_transaction.rollback()  # probably rollback not so much
     outer_transaction.rollback()  # rollback all changes made during this test
-
-

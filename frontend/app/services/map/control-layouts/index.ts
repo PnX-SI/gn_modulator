@@ -1,5 +1,5 @@
-import layout_gps from './gps'
+import layout_gps from './gps';
 
 export default {
-  gps: layout_gps
-}
+  gps: layout_gps,
+};

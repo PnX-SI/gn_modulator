@@ -1,19 +1,13 @@
-
-from distutils.command.config import config
-from email.policy import default
-from flask import Blueprint, request, jsonify, g, current_app, Response
+from flask import Blueprint, request, jsonify
 from gn_modules.module import ModuleMethods
-from pyrsistent import v
 from .commands import commands
-from .schema import SchemaMethods, errors
-from sqlalchemy.exc import (
-    InvalidRequestError, NoForeignKeysError
-)
+from .schema import SchemaMethods
+from sqlalchemy.exc import NoForeignKeysError
 
-blueprint = Blueprint('modules', __name__)
+blueprint = Blueprint("modules", __name__)
 
 # Creation des commandes pour modules
-blueprint.cli.short_help = 'Commandes pour l''administration du module MODULES'
+blueprint.cli.short_help = "Commandes pour l' administration du module MODULES"
 for cmd in commands:
     blueprint.cli.add_command(cmd)
 
@@ -21,7 +15,7 @@ try:
     ModuleMethods.init_modules()
     SchemaMethods.init_schemas_models_and_serializers()
 except NoForeignKeysError as e:
-    print('Erreur initialisation', str(e))
+    print("Erreur initialisation", str(e))
 
 
 # ModuleMethods.process_commons_api(blueprint)
@@ -30,14 +24,14 @@ except NoForeignKeysError as e:
 # TODO clarifier init route, ouvrir seulement les routes necessaire
 # ou bien les ouvrir en admin ??
 # try:
-    # print('init definitions')
-    # SchemaMethods.init_schemas_definitions()
-    # print('init models')
-    # SchemaMethods.init_schemas_models_and_serializers()
-    # print('end')
+# print('init definitions')
+# SchemaMethods.init_schemas_definitions()
+# print('init models')
+# SchemaMethods.init_schemas_models_and_serializers()
+# print('end')
 
-    # SchemaMethods.init_routes(blueprint)
-    # ModuleMethods.modules_config()
+# SchemaMethods.init_routes(blueprint)
+# ModuleMethods.modules_config()
 
 # except errors.SchemaError as e:
 #     print("Erreur de chargement des schemas:\n{}".format(e))
@@ -51,46 +45,46 @@ except NoForeignKeysError as e:
 
 # route qui renvoie la configuration des modules
 # fait office d'initialisation ?
-@blueprint.route('/modules_config/<path:config_path>', methods=['GET'])
-@blueprint.route('/modules_config/', methods=['GET'], defaults={'config_path': None})
+@blueprint.route("/modules_config/<path:config_path>", methods=["GET"])
+@blueprint.route("/modules_config/", methods=["GET"], defaults={"config_path": None})
 def api_modules_config(config_path):
 
     modules_config = ModuleMethods.modules_config_with_rigths()
 
     return ModuleMethods.process_dict_path(
-        modules_config,
-        config_path,
-        SchemaMethods.base_url() + '/modules_config/'
+        modules_config, config_path, SchemaMethods.base_url() + "/modules_config/"
     )
 
-@blueprint.route('breadcrumbs/<module_code>/<page_name>', methods=['GET'])
+
+@blueprint.route("breadcrumbs/<module_code>/<page_name>", methods=["GET"])
 def api_breadcrumbs(module_code, page_name):
-    '''
-        TODO breadcrumb
-    '''
+    """
+    TODO breadcrumb
+    """
 
     return ModuleMethods.breadcrumbs(module_code, page_name, request.args.to_dict())
 
-@blueprint.route('export/<module_code>/<export_code>')
+
+@blueprint.route("export/<module_code>/<export_code>")
 def api_export(module_code, export_code):
-    '''
-        TODO proprer
-    '''
+    """
+    TODO proprer
+    """
     module_config = ModuleMethods.module_config(module_code)
 
-    export = next(x for x in module_config['exports'] if x['export_code'] == export_code)
+    export = next(
+        x for x in module_config["exports"] if x["export_code"] == export_code
+    )
 
-    sm = SchemaMethods(export['schema_name'])
+    sm = SchemaMethods(export["schema_name"])
 
     return sm.process_export(export)
 
 
-
-
-@blueprint.route('/layouts/', methods=['GET'])
+@blueprint.route("/layouts/", methods=["GET"])
 def api_layout():
-    '''
-        Renvoie la liste des layouts
-    '''
+    """
+    Renvoie la liste des layouts
+    """
 
     return jsonify(SchemaMethods.get_layouts(as_dict=True))

@@ -10,8 +10,8 @@ class SchemaRepositories(
     SchemaRepositoriesFilters,
     SchemaRepositoriesUtil,
 ):
-    '''
-        classe  qui regroupe les methode repositories
-    '''
+    """
+    classe  qui regroupe les methode repositories
+    """
 
     __abstract__ = True

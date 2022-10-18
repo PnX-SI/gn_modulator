@@ -1,6 +1,6 @@
 import copy
 
-'''
+"""
 cache schema
   - <schema_name>
         - definition
@@ -10,16 +10,18 @@ cache schema
         TODO !!
         - validation
         - schema ou form ??
-'''
+"""
 cache_schemas = {}
 
 
-'''
+"""
     - references
     - sql_table
     - etc...
-'''
+"""
+
 cache_global = {}
+
 
 def clear_dict(d):
     if not d:
@@ -29,17 +31,14 @@ def clear_dict(d):
     for key in d_keys:
         del d[key]
 
-class SchemaCache():
 
+class SchemaCache:
     @classmethod
     def clear_global_cache(cls, object_type=None):
-        '''
-            TODO recursif ??
-        '''
-        d = (
-            cache_global.get(object_type) if object_type
-            else cache_global
-        )
+        """
+        TODO recursif ??
+        """
+        d = cache_global.get(object_type) if object_type else cache_global
 
         clear_dict(d)
 
@@ -47,10 +46,7 @@ class SchemaCache():
     def get_global_cache(cls, object_type, key=None):
 
         out = cache_global.get(object_type, {})
-        return (
-            out.get(key) if key
-            else out
-        )
+        return out.get(key) if key else out
 
     @classmethod
     def set_global_cache(cls, object_type, key, value):
@@ -59,9 +55,9 @@ class SchemaCache():
 
     @classmethod
     def clear_schema_cache(cls):
-        '''
-            TODO recursif ??
-        '''
+        """
+        TODO recursif ??
+        """
         clear_dict(cache_schemas)
 
     @classmethod
@@ -72,10 +68,7 @@ class SchemaCache():
 
         if schema_name is None:
             return {
-                k: (
-                    v.get(object_type) if object_type
-                    else v
-                )
+                k: (v.get(object_type) if object_type else v)
                 for k, v in cache_schemas.items()
             }
 

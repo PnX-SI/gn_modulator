@@ -1,73 +1,72 @@
-'''
+"""
     sql table
-'''
+"""
 
-from email.policy import default
-from sqlalchemy import column
 
-class SchemaSqlTable():
-    '''
-        sql table and correlation table
-    '''
+class SchemaSqlTable:
+    """
+    sql table and correlation table
+    """
 
     def sql_txt_process_correlations(self):
-        '''
-            fonction qui cree les table de correlation associée
-        '''
+        """
+        fonction qui cree les table de correlation associée
+        """
 
-        txt = ''
+        txt = ""
         for key, relation_def in self.relationships().items():
             txt += self.sql_txt_process_correlation(relation_def)
 
         return txt
 
     def sql_txt_process_correlation(self, relation_def):
-        '''
-            fonction qui cree les table de correlation associée
-        '''
-        txt = ''
+        """
+        fonction qui cree les table de correlation associée
+        """
+        txt = ""
 
-        if not relation_def['relation_type'] == 'n-n':
+        if not relation_def["relation_type"] == "n-n":
             return txt
 
-        if self.cls.get_global_cache('sql_table', relation_def['schema_dot_table']):
+        if self.cls.get_global_cache("sql_table", relation_def["schema_dot_table"]):
             return txt
 
-        self.cls.set_global_cache('sql_table', relation_def['schema_dot_table'], True)
+        self.cls.set_global_cache("sql_table", relation_def["schema_dot_table"], True)
 
         local_key = self.pk_field_name()
-        local_key_type = self.get_sql_type(self.column(local_key), cor_table=True, required=True)
+        local_key_type = self.get_sql_type(
+            self.column(local_key), cor_table=True, required=True
+        )
         local_table_name = self.sql_table_name()
         local_schema_name = self.sql_schema_name()
 
-        relation = self.cls(relation_def['schema_name'])
+        relation = self.cls(relation_def["schema_name"])
         foreign_key = relation.pk_field_name()
-        foreign_key_type = relation.get_sql_type(relation.column(foreign_key), cor_table=True, required=True)
+        foreign_key_type = relation.get_sql_type(
+            relation.column(foreign_key), cor_table=True, required=True
+        )
         foreign_table_name = relation.sql_table_name()
         foreign_schema_name = relation.sql_schema_name()
 
-        cor_schema_dot_table = relation_def['schema_dot_table']
-        cor_schema_name = cor_schema_dot_table.split('.')[0]
-        cor_table_name = cor_schema_dot_table.split('.')[1]
+        cor_schema_dot_table = relation_def["schema_dot_table"]
+        cor_schema_name = cor_schema_dot_table.split(".")[0]
+        cor_table_name = cor_schema_dot_table.split(".")[1]
 
         txt_args = {
-            'cor_schema_name': cor_schema_name,
-            'cor_table_name': cor_table_name,
-            'cor_schema_dot_table': cor_schema_dot_table,
-
-            'local_key': local_key,
-            'local_key_type': local_key_type,
-            'local_schema_name': local_schema_name,
-            'local_table_name': local_table_name,
-
-            'foreign_key': foreign_key,
-            'foreign_key_type': foreign_key_type,
-            'foreign_schema_name': foreign_schema_name,
-            'foreign_table_name': foreign_table_name,
+            "cor_schema_name": cor_schema_name,
+            "cor_table_name": cor_table_name,
+            "cor_schema_dot_table": cor_schema_dot_table,
+            "local_key": local_key,
+            "local_key_type": local_key_type,
+            "local_schema_name": local_schema_name,
+            "local_table_name": local_table_name,
+            "foreign_key": foreign_key,
+            "foreign_key_type": foreign_key_type,
+            "foreign_schema_name": foreign_schema_name,
+            "foreign_table_name": foreign_table_name,
         }
 
-        txt += (
-            """-- cor {cor_schema_dot_table}
+        txt += """-- cor {cor_schema_dot_table}
 
 CREATE TABLE IF NOT EXISTS {cor_schema_dot_table} (
     {local_key} {local_key_type} NOT NULL,
@@ -91,60 +90,54 @@ ALTER TABLE {cor_schema_dot_table}
     ADD CONSTRAINT fk_{cor_schema_name}_{cor_table_name}_{foreign_key} FOREIGN KEY ({foreign_key})
     REFERENCES {foreign_schema_name}.{foreign_table_name} ({foreign_key})
     ON UPDATE CASCADE ON DELETE CASCADE;
-"""
-            .format(**txt_args)
+""".format(
+            **txt_args
         )
 
-        if relation_def.get('nomenclature_type'):
+        if relation_def.get("nomenclature_type"):
             txt += self.sql_txt_nomenclature_type_constraint(
-                txt_args['cor_schema_name'],
-                txt_args['cor_table_name'],
-                'id_nomenclature',
-                relation_def.get('nomenclature_type')
+                txt_args["cor_schema_name"],
+                txt_args["cor_table_name"],
+                "id_nomenclature",
+                relation_def.get("nomenclature_type"),
             )
         return txt
 
     def sql_txt_create_table(self):
-        '''
-            fonction qui produit le texte sql pour la creation d'une table
+        """
+        fonction qui produit le texte sql pour la creation d'une table
 
-            types :
-                - integer -> INTEGER ou SERIAL
-                - string -> VARCHAR
+        types :
+            - integer -> INTEGER ou SERIAL
+            - string -> VARCHAR
 
-            contraintes :
-                - pk_field_name
+        contraintes :
+            - pk_field_name
 
-            TODO
-            - fk ?? etape 2
-        '''
+        TODO
+        - fk ?? etape 2
+        """
 
-        txt = ''
+        txt = ""
 
-        txt = (
-            """---- table {sql_schema_name}.{sql_table_name}
+        txt = """---- table {sql_schema_name}.{sql_table_name}
 
 CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
-                sql_schema_name=self.sql_schema_name(),
-                sql_table_name=self.sql_table_name()
-            )
+            sql_schema_name=self.sql_schema_name(), sql_table_name=self.sql_table_name()
         )
 
         # liste des champs
         for key, column_def in self.columns().items():
 
-            if column_def.get('column_property') is not None:
+            if column_def.get("column_property") is not None:
                 continue
 
             sql_type = self.get_sql_type(column_def, required=self.is_required(key))
             sql_default = self.sql_default(column_def)
-            txt += (
-                '\n    {} {}{},'
-                .format(
-                    key,
-                    sql_type,
-                    ' NOT NULL DEFAULT {}'.format(sql_default) if sql_default else ''
-                )
+            txt += "\n    {} {}{},".format(
+                key,
+                sql_type,
+                " NOT NULL DEFAULT {}".format(sql_default) if sql_default else "",
             )
 
         # TODO relations et clés étrangères
@@ -153,7 +146,7 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
         #  - suppresion de la dernière virgule
         #  - fermeture de la parenthèse
         #  - point virgule final
-        txt = txt[:-1] + '\n);\n\n'
+        txt = txt[:-1] + "\n);\n\n"
 
         txt += self.sql_txt_comments()
 
@@ -161,20 +154,17 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
 
     def sql_txt_comments(self):
 
-        txt = ''
+        txt = ""
 
         for key, column_def in self.columns().items():
 
-            if column_def.get('description') is None:
+            if column_def.get("description") is None:
                 continue
-            txt += (
-                "COMMENT ON COLUMN {sql_schema_name}.{sql_table_name}.{key} IS '{description}';\n"
-                .format(
-                    sql_schema_name=self.sql_schema_name(),
-                    sql_table_name=self.sql_table_name(),
-                    key=key,
-                    description=column_def['description'].replace("'", "''")
-                )
+            txt += "COMMENT ON COLUMN {sql_schema_name}.{sql_table_name}.{key} IS '{description}';\n".format(
+                sql_schema_name=self.sql_schema_name(),
+                sql_table_name=self.sql_table_name(),
+                key=key,
+                description=column_def["description"].replace("'", "''"),
             )
 
         return txt

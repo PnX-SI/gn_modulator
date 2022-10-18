@@ -1,15 +1,15 @@
-import { Component, OnInit, Injector } from "@angular/core";
-import { ModulesLayoutObjectComponent } from "./layout-object.component";
-import { Observable, of } from "@librairies/rxjs";
-import { ModulesTableService } from "../../../services/table.service";
-import tabulatorLangs from "../../base/table/tabulator-langs";
-import Tabulator from "tabulator-tables";
-import utils from "../../../utils";
+import { Component, OnInit, Injector } from '@angular/core';
+import { ModulesLayoutObjectComponent } from './layout-object.component';
+import { Observable, of } from '@librairies/rxjs';
+import { ModulesTableService } from '../../../services/table.service';
+import tabulatorLangs from '../../base/table/tabulator-langs';
+import Tabulator from 'tabulator-tables';
+import utils from '../../../utils';
 
 @Component({
-  selector: "modules-layout-object-table",
-  templateUrl: "layout-object-table.component.html",
-  styleUrls: ["../../base/base.scss", "layout-object-table.component.scss"],
+  selector: 'modules-layout-object-table',
+  templateUrl: 'layout-object-table.component.html',
+  styleUrls: ['../../base/base.scss', 'layout-object-table.component.scss'],
 })
 export class ModulesLayoutObjectTableComponent
   extends ModulesLayoutObjectComponent
@@ -18,7 +18,7 @@ export class ModulesLayoutObjectTableComponent
   tableId; // identifiant HTML pour la table;
   counterId; // identifiant HTML pour afficher le counter de données dans le footer;
   table; // object tabulator
-  tab = document.createElement("div"); // element
+  tab = document.createElement('div'); // element
   tableHeight; // hauteur de la table
 
   _params;
@@ -28,7 +28,7 @@ export class ModulesLayoutObjectTableComponent
 
   constructor(_injector: Injector) {
     super(_injector);
-    this._name = "layout-object-table";
+    this._name = 'layout-object-table';
     this._mTable = this._injector.get(ModulesTableService);
     this.tableId = `table_${this._id}`;
   }
@@ -43,17 +43,20 @@ export class ModulesLayoutObjectTableComponent
   drawTable(): void {
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
-      locale: "fr",
-      layout: "fitColumns",
-      placeholder: "Pas de donnée disponible",
+      locale: 'fr',
+      layout: 'fitColumns',
+      placeholder: 'Pas de donnée disponible',
       ajaxFiltering: true,
-      height: this.tableHeight || "200px",
+      height: this.tableHeight || '200px',
       ajaxRequestFunc: this.ajaxRequestFunc,
-      columns: this._mTable.columnsTable(this.computeLayout, this.objectConfig, this._mPage.moduleConfig),
+      columns: this._mTable.columnsTable(
+        this.computeLayout,
+        this.objectConfig,
+        this._mPage.moduleConfig
+      ),
       ajaxURL: this.objectConfig.table.url,
-      paginationSize:
-        this.computedLayout.page_size || this.objectConfig.utils.page_size,
-      pagination: "remote",
+      paginationSize: this.computedLayout.page_size || this.objectConfig.utils.page_size,
+      pagination: 'remote',
       headerFilterLiveFilterDelay: 600,
       ajaxSorting: true,
       initialSort: this._mTable.getSorters(this.objectConfig),
@@ -70,20 +73,15 @@ export class ModulesLayoutObjectTableComponent
     });
   }
 
-
-
   onRowClick = (e, row) => {
-    let action = utils.getAttr(e, "target.attributes.action.nodeValue")
-      ? utils.getAttr(e, "target.attributes.action.nodeValue")
-      : e.target.getElementsByClassName("action").length
-      ? utils.getAttr(
-          e.target.getElementsByClassName("action")[0],
-          "attributes.action.nodeValue"
-        )
-      : "selected";
+    let action = utils.getAttr(e, 'target.attributes.action.nodeValue')
+      ? utils.getAttr(e, 'target.attributes.action.nodeValue')
+      : e.target.getElementsByClassName('action').length
+      ? utils.getAttr(e.target.getElementsByClassName('action')[0], 'attributes.action.nodeValue')
+      : 'selected';
     const value = this.getRowValue(row);
 
-    if (["details", "edit"].includes(action)) {
+    if (['details', 'edit'].includes(action)) {
       this._mPage.processAction({
         action,
         objectName: this.objectName(),
@@ -91,14 +89,11 @@ export class ModulesLayoutObjectTableComponent
       });
     }
 
-    if (action == "delete") {
-      this._mLayout.openModal(
-        this.modalDeleteLayout.modal_name,
-        this.getRowData(row)
-      );
+    if (action == 'delete') {
+      this._mLayout.openModal(this.modalDeleteLayout.modal_name, this.getRowData(row));
     }
 
-    if (action == "selected") {
+    if (action == 'selected') {
       this.setObject({ value });
     }
   };
@@ -114,9 +109,11 @@ export class ModulesLayoutObjectTableComponent
 
   ajaxRequestFunc = (url, config, paramsTable) => {
     return new Promise((resolve, reject) => {
-      const fields = this._mTable.columns(this.computedLayout, this.objectConfig).map((column) => column.field);
+      const fields = this._mTable
+        .columns(this.computedLayout, this.objectConfig)
+        .map((column) => column.field);
 
-      fields.push("ownership");
+      fields.push('ownership');
 
       if (!fields.includes(this.objectConfig.utils.pk_field_name)) {
         fields.push(this.objectConfig.utils.pk_field_name);
@@ -126,8 +123,8 @@ export class ModulesLayoutObjectTableComponent
         page_size: paramsTable.size,
         sort: paramsTable.sorters
           .filter((s) => s.field)
-          .map((s) => `${s.field}${s.dir == "desc" ? "-" : ""}`)
-          .join(","),
+          .map((s) => `${s.field}${s.dir == 'desc' ? '-' : ''}`)
+          .join(','),
       };
       if (!this.computedLayout.display_filters) {
         params.filters = this.getDataFilters();
@@ -145,59 +142,53 @@ export class ModulesLayoutObjectTableComponent
         fields, // fields
       };
       this._params = extendedParams;
-      delete extendedParams["sorters"];
-      this._mData
-        .getList(this.moduleCode(), this.objectName(), extendedParams)
-        .subscribe(
-          (res) => {
-            // process lists
-            for (const column of this._mTable.columns(this.computedLayout, this.objectConfig)) {
-              for (const d of res.data) {
-                if (column["field"].includes(".")) {
-                  let val = utils.getAttr(d, column["field"]);
-                  val = Array.isArray(val) ? val.join(", ") : val;
-                  delete d[column["field"].split(".")[0]];
-                  utils.setAttr(d, column["field"], val);
-                }
+      delete extendedParams['sorters'];
+      this._mData.getList(this.moduleCode(), this.objectName(), extendedParams).subscribe(
+        (res) => {
+          // process lists
+          for (const column of this._mTable.columns(this.computedLayout, this.objectConfig)) {
+            for (const d of res.data) {
+              if (column['field'].includes('.')) {
+                let val = utils.getAttr(d, column['field']);
+                val = Array.isArray(val) ? val.join(', ') : val;
+                delete d[column['field'].split('.')[0]];
+                utils.setAttr(d, column['field'], val);
               }
             }
-
-            resolve(res);
-            this.onHeightChange(true);
-
-            if (this.getDataValue()) {
-              setTimeout(() => {
-                this.selectRow(this.getDataValue());
-              }, 100);
-            }
-
-            //
-            this.processTotalFiltered(res);
-            this.setCount();
-
-            return;
-          },
-          (fail) => {
-            reject(fail);
           }
-        );
+
+          resolve(res);
+          this.onHeightChange(true);
+
+          if (this.getDataValue()) {
+            setTimeout(() => {
+              this.selectRow(this.getDataValue());
+            }, 100);
+          }
+
+          //
+          this.processTotalFiltered(res);
+          this.setCount();
+
+          return;
+        },
+        (fail) => {
+          reject(fail);
+        }
+      );
     });
   };
 
   setCount() {
-    utils
-      .waitForElement("counter", document.querySelector(`#${this.tableId}`))
-      .then(
-        (counterElement) => {
-          // (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
-          (
-            counterElement as any
-          ).innerHTML = `<b>${this.data.filtered} /  ${this.data.total}</b>`;
-        },
-        (error) => {
-          console.error("waitForElement erreur");
-        }
-      );
+    utils.waitForElement('counter', document.querySelector(`#${this.tableId}`)).then(
+      (counterElement) => {
+        // (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
+        (counterElement as any).innerHTML = `<b>${this.data.filtered} /  ${this.data.total}</b>`;
+      },
+      (error) => {
+        console.error('waitForElement erreur');
+      }
+    );
   }
 
   processValue(value) {
@@ -228,9 +219,7 @@ export class ModulesLayoutObjectTableComponent
     if (!fieldName) {
       fieldName = this.pkFieldName();
     }
-    const row = this.table
-      .getRows()
-      .find((row) => row.getData()[fieldName] == value);
+    const row = this.table.getRows().find((row) => row.getData()[fieldName] == value);
 
     if (row) {
       this.table.selectRow(row);
@@ -263,7 +252,7 @@ export class ModulesLayoutObjectTableComponent
     }
 
     if (this.docHeightSave > docHeight || !this.docHeightSave) {
-      this.table.setHeight("50px");
+      this.table.setHeight('50px');
     }
 
     this.docHeightSave = docHeight;

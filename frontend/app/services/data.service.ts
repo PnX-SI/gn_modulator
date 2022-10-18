@@ -1,11 +1,10 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-import { Observable } from "@librairies/rxjs";
-import { mergeMap } from "@librairies/rxjs/operators";
-import { ModulesConfigService } from "./config.service";
-import { ModulesRequestService } from "./request.service";
-import { HttpClient } from "@angular/common/http";
-import utils from "../utils";
+import { Observable } from '@librairies/rxjs';
+import { ModulesConfigService } from './config.service';
+import { ModulesRequestService } from './request.service';
+import { HttpClient } from '@angular/common/http';
+import utils from '../utils';
 
 @Injectable()
 export class ModulesDataService {
@@ -25,7 +24,7 @@ export class ModulesDataService {
     // on gère ici le paramètre fields
     // - si c'est une chaine de caractère => on le transforme en string
     if (Array.isArray(options?.params?.fields)) {
-      options.params.fields = options.params.fields.join(",");
+      options.params.fields = options.params.fields.join(',');
     }
     if (Array.isArray(options?.params?.filters)) {
       options.params.filters = utils.processFilterArray(options.params.filters);
@@ -34,12 +33,7 @@ export class ModulesDataService {
       options.params.prefilters = utils.processFilterArray(options.params.prefilters);
     }
 
-    const url = this._mConfig.objectUrl(
-      moduleCode,
-      objectName,
-      options.value,
-      options.urlSuffix,
-    );
+    const url = this._mConfig.objectUrl(moduleCode, objectName, options.value, options.urlSuffix);
     return this._requestService.request(method, url, {
       params: options.params,
       data: options.data,
@@ -47,35 +41,35 @@ export class ModulesDataService {
   }
 
   getList(moduleCode, objectName, params = {}) {
-    return this.dataRequest("get", moduleCode, objectName, {
+    return this.dataRequest('get', moduleCode, objectName, {
       params,
     });
   }
 
   getOne(moduleCode, objectName, value, params = {}) {
-    return this.dataRequest("get", moduleCode, objectName, {
+    return this.dataRequest('get', moduleCode, objectName, {
       value,
       params,
     });
   }
 
   getPageNumber(moduleCode, objectName, value, params = {}) {
-    return this.dataRequest("get", moduleCode, objectName, {
+    return this.dataRequest('get', moduleCode, objectName, {
       value,
       params,
-      urlSuffix: "page_number/",
+      urlSuffix: 'page_number/',
     });
   }
 
   post(moduleCode, objectName, data, params = {}) {
-    return this.dataRequest("post", moduleCode, objectName, {
+    return this.dataRequest('post', moduleCode, objectName, {
       params,
       data,
     });
   }
 
   patch(moduleCode, objectName, value, data, params = {}) {
-    return this.dataRequest("patch", moduleCode, objectName, {
+    return this.dataRequest('patch', moduleCode, objectName, {
       value,
       params,
       data,
@@ -83,7 +77,7 @@ export class ModulesDataService {
   }
 
   delete(moduleCode, objectName, value, params = {}) {
-    return this.dataRequest("delete", moduleCode, objectName, {
+    return this.dataRequest('delete', moduleCode, objectName, {
       value,
       params,
     });
