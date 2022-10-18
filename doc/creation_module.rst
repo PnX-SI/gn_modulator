@@ -61,14 +61,54 @@ Dictionnaire définissant la configuration du module, avec les clés suivantes:
         active_frontend: true
 
 - **objects**
-
-  - permet de les données qui vont être manipulée dans ce module
-      - pour chaque clé on va définir
-          - *schema_name*: définie la table
-          - *cruved*: quelles sont les api qui vont être ouvertes et pour quels type d'action
-          - *label*, *labels*, *genre*: permet de redéfinir le nom de l'objet en question (et le genre (``M`` ou ``F``) si besoin)
-          - *prefilters*:
+    - permet de les données qui vont être manipulée dans ce module
+        - pour chaque clé on va définir
+            - **schema_name**: définie la table
+            - **cruved**: quelles sont les api qui vont être ouvertes et pour quels type d'action
+            - **prefilters**:
                 - par exemple pour les gîtes on souhaite avoir seulement les sites de catégorie ``gîtes``
-                - ``prefilters: category.code_=_GIT``
+                - ``prefilters: category.code = GIT``
                 - l'api créée pour cet object (et ce module) appliquera toujours les pré-filtres definis ic
+            - **label**: redéfinition du nom de l'objet
+            - **labels**: redéfinition du nom (pluriel de l'objet
+            - **genre**: ``'M'|'F'`` redéfinition du genre de l'object (masculin / féminin)
+            - **map**:
+                - **style**: style css des layers
+                    - **color**
+                - **bring_to_front**: *boolean*, si l'on souhaite ramener ces éléments au premier plan
 
+::
+
+    objects:
+        site_group:
+                cruved: CRUD
+                schema_name: m_monitoring.site_group
+                label: 'Parc éolien'
+                labels: 'Parcs éolien'
+        gites:
+            cruved: CRUD
+            schema_name: m_monitoring.site
+            label: Gîte chiroptère
+            labels: Gîtes chiroptère
+            prefilters: category.code = GIT
+        eolienne:
+            cruved: CRUD
+            schema_name: m_monitoring.site
+            label: Éolienne
+            genre: F
+            prefilters: category.code = EOL
+
+- **tree**: un dictionnaire qui défini une hiérachie entre les pages, classiquement
+
+::
+    site:
+        visite:
+            observation:
+
+- **pages**: la définition des pages qui composent le module_label
+
+::
+    pages:
+        parc_list:
+            url: ''
+            layout_name: m_eole.parc_list
