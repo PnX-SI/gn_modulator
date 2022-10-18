@@ -161,7 +161,8 @@ class SchemaSqlBase:
 
         self.cls.clear_global_cache("sql_table")
         if not self.sql_processing():
-            return ""
+            processed_schema_names.append(self.schema_name())
+            return "", processed_schema_names
 
         schema_names_to_process = []
         for name in self.dependencies():

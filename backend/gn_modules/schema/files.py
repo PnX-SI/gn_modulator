@@ -320,7 +320,6 @@ class SchemaFiles:
         """
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
-
             for relation_key, relation_def in sm.relationships().items():
                 if not relation_def.get("backref"):
                     continue

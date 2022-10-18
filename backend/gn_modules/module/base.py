@@ -44,13 +44,14 @@ class ModuleBase:
     @classmethod
     def delete_db_module(cls, module_code):
         schema_module = SchemaMethods("commons.module")
-        schema_module.delete_row(module_code, field_name="module_code")
+        schema_module.delete_row(module_code, field_name="module_code", params={})
 
     @classmethod
     def create_schema_sql(cls, module_code, force=False):
 
         module_config = cls.module_config(module_code)
         schema_names = module_config["schemas"]
+
         txt = ""
 
         processed_schema_names = []

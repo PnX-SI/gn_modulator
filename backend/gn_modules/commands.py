@@ -50,9 +50,8 @@ def cmd_remove_module(module_code, force=False):
 
 @click.command("process_all")
 @click.argument("module_code")
-@click.option("-f", "--force", is_flag=True)
 @with_appcontext
-def cmd_process_all(module_code, force=False):
+def cmd_process_all(module_code):
     """ """
 
     ModuleMethods.remove_migration_links(module_code)

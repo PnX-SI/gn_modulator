@@ -130,6 +130,10 @@ class SchemaApi:
                 self.parse_filters(options["prefilters"]) + params["prefilters"]
             )
 
+        print(options["prefilters"])
+        print()
+        print(self.parse_filters(options["prefilters"]))
+
         return params
 
     def load_array_param(self, param):

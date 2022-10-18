@@ -42,7 +42,8 @@ class SchemaAuto:
         schema_dot_table = self.sql_schema_dot_table()
 
         if not self.cls.c_sql_schema_dot_table_exists(schema_dot_table):
-            raise SchemaAutoError("La table {} n'existe pas".format(schema_dot_table))
+            schema_definition['properties'] = {}
+            return schema_definition
 
         Model = (
             self.cls.get_schema_cache(self.schema_name(), "model")

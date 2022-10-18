@@ -101,7 +101,6 @@ class ModulesConfig:
         # gestion des pages
         # assignation de key et parent (et type ????) shema_name etc ???
         for page_name, page_config in module_config["pages"].items():
-
             page_key = "_".join(page_name.split("_")[:-1])
             page_type = page_name.split("_")[-1]
 
@@ -196,16 +195,20 @@ class ModulesConfig:
 
         for key_param, param_config in params.items():
             schema_name = (
-                module_config["objects"][param_config["object_name"]].get("schema_name")
+                param_config.get("schema_name")
+                or module_config["objects"][param_config["object_name"]].get(
+                    "schema_name"
+                )
                 or param_config["object_name"]
             )
 
             sm = SchemaMethods(schema_name)
 
-            m = sm.get_row(param_config["value"], param_config["field_name"]).one()
+            m = sm.get_row(
+                param_config["value"], param_config["field_name"], params={}
+            ).one()
 
             processed_value = getattr(m, key_param)
-
             processed_params[key_param] = processed_value
 
         module_config["params"] = processed_params
@@ -245,18 +248,18 @@ class ModulesConfig:
         module_config = cls.module_config(module_code)
 
         module_config["definitions"] = {}
+        module_config["schemas"] = []
 
         for object_name, object_definition in module_config["objects"].items():
             object_definition = object_definition
             object_definition["schema_name"] = object_definition.get(
                 "schema_name", object_name
             )
+            if object_definition["schema_name"] not in module_config["schemas"]:
+                module_config["schemas"].append(object_definition["schema_name"])
             object_definition["object_name"] = object_name
             sm = SchemaMethods(object_definition["schema_name"])
             module_config["definitions"][object_name] = sm.config(object_definition)
-
-        # schemas on liste
-        module_config["schemas"] = list(module_config["definitions"].keys())
 
     @classmethod
     def process_module_api(cls, module_code):

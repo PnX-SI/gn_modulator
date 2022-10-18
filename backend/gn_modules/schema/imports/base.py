@@ -47,7 +47,7 @@ class SchemaBaseImports:
         for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
             for file in filter(lambda f: f.endswith(".yml"), files):
                 file_path = Path(root) / file
-                data = cls.load_json_file(file_path)
+                data = cls.load_yml_file(file_path)
 
                 if not (isinstance(data, dict) and data.get("data_name")):
                     continue
@@ -137,8 +137,6 @@ class SchemaBaseImports:
             return None
 
         try:
-            print(sm_rel.schema_name(), rel_test_keys, rel_test_values)
-            print("get_row")
             m = sm_rel.get_row(
                 rel_test_values,
                 rel_test_keys,
@@ -228,7 +226,6 @@ class SchemaBaseImports:
 
         i = 0
         for d in items:
-            print(d)
             i = i + 1
             # validate_data
             try:

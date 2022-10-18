@@ -6,9 +6,7 @@ from geonature.utils.env import db
 
 class ModuleCommands:
     @classmethod
-    def remove_module(cls, module_code):
-
-        print("Suppression du module {}".format(module_code))
+    def remove_module(cls, module_code, force=False):
 
         try:
             module_config = cls.module_config(module_code)
@@ -19,23 +17,70 @@ class ModuleCommands:
         if not module_config["registred"]:
             print("Le module n'est pas enregistré")
 
+        print("Suppression du module {}".format(module_code))
+
+        # suppression des modules depandant du module en cours
+        module_deps_installed = [
+            module_dep_code
+            for module_dep_code, module_child_config in cls.modules_config().items()
+            if (
+                module_code in module_child_config.get("dependencies", [])
+                and module_child_config["registred"]
+            )
+        ]
+
+        if module_deps_installed and not force:
+            print(
+                f"Il y a des modules installés qui dependent du module à supprimer {module_code}"
+            )
+            print("- " + ", ".join(module_deps_installed))
+            print(f"Afin de pouvoir supprimer le module {module_code} vous pouvez")
+            print("  - soit supprimer au préalable des modules ci dessus")
+            print(
+                "  - ou bien relancer la commande avec l'options -f (--force) pour supprimer automatiquement les modules dépendants"
+            )
+            return
+
+        for module_dep_code in module_deps_installed:
+            cls.remove_module(module_dep_code, force)
+
         # alembic
         db.session.commit()  # pour eviter les locks ???
-        db_downgrade(revision="{}@base".format(module_code.lower()))
+
+        if cls.migration_files(module_code):
+            db_downgrade(revision=f"{module_code.lower()}@base")
+
         # suppression du module en base
+        print("- suppression du module {} en base".format(module_code))
+
         cls.delete_db_module(module_code)
 
         # symlink
         cls.remove_migration_links(module_code)
 
     @classmethod
-    def install_module(cls, module_code):
+    def install_module(cls, module_code, force=False):
 
         print("Installation du module {}".format(module_code))
 
         # test si les dépendances sont installées
-        if not cls.test_module_dependencies(module_code):
-            return
+        module_config = cls.module_config(module_code)
+        for module_dep_code in module_config.get("dependencies", []):
+            module_dep_config = cls.module_config(module_dep_code)
+            if not module_dep_config["registred"]:
+                if not force:
+                    print(
+                        f"Le module {module_code} depend du module {module_dep_code} qui n'est pas installé"
+                    )
+                    print("Vous pouvez")
+                    print(
+                        f"    - soit installer le module {module_dep_code} au préalable,"
+                    )
+                    print(
+                        "    - soit relancer la commande avec l'option -f (--force) pour permettre l'installation automatique des dépendances"
+                    )
+                    return
+                cls.install_module(module_dep_code, force)
 
         # mise en place des liens symboliques
         cls.make_migration_links(module_code)
@@ -44,7 +89,7 @@ class ModuleCommands:
         # - test if migration file(s) exist(s)
         if cls.migration_files(module_code):
             db.session.commit()  # pour eviter les locks ???
-            db_upgrade(revision="{}@head".format(module_code.lower()))
+            db_upgrade(revision=f"{module_code.lower()}@head")
 
         # pour les update du module ? # test si module existe
         cls.register_db_module(module_code)
