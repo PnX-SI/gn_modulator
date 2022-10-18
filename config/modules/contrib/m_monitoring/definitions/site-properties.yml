@@ -131,7 +131,7 @@ areas:
     title: Areas
     relation_type: n-n
     schema_name: ref_geo.area
-    schema_dot_table: m_monitoring.cor_area_pf
+    schema_dot_table: m_monitoring.cor_area_site
     trigger:
         name: intersect_ref_geo
         key: geom_local
@@ -141,7 +141,7 @@ linears:
     title: Linéaires
     relation_type: n-n
     schema_name: ref_geo.linear
-    schema_dot_table: m_monitoring.cor_linear_pf
+    schema_dot_table: m_monitoring.cor_linear_site
     trigger:
         name: d_within
         distance: 100

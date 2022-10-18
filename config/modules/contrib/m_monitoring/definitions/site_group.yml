@@ -1,102 +1,144 @@
 meta:
-    schema_name: m_monitoring.site_group
-    sql_processing: true
-    sql_schema_dot_table: m_monitoring.t_site_group
-    genre: M
-    label: groupe de sites
-    labels: groupes de sites
-    label_field_name: name
-    geometry_field_name: geom
-    unique:
-        - code
+  schema_name: m_monitoring.site_group
+  sql_processing: true
+  sql_schema_dot_table: m_monitoring.t_site_group
+  genre: M
+  label: groupe de sites
+  labels: groupes de sites
+  label_field_name: name
+  geometry_field_name: geom
+  unique:
+    - code
 map:
-    popup_fields:
-        - name
-        - code
-        - description
+  popup_fields:
+    - name
+    - code
+    - description
 filters:
-    defs: {}
-    layout: {}
+  defs: {}
+  layout: {}
 table:
-    columns:
-        - code
-        - name
-        - nb_sites
-    sort: code
-required:
+  columns:
     - code
     - name
+    - nb_sites
+  sort: code
+required:
+  - code
+  - name
 properties:
-    id_site_group:
-        type: integer
-        title: Pk du group de site
-        description: Clé primaire du group de site
-        primary_key: true
-    code:
-        type: string
-        title: Code du site
-        required: true
-    name:
-        type: string
-        title: Nom du groupe de site
-        required: true
-    description:
-        type: string
-        title: Description du groupe de site
-    id_digitiser:
-        type: integer
-        foreign_key: true
-        schema_name: user.role
-        title: Numérisateur
-        description: Personne qui a saisi la donnée
-    digitiser:
-        type: relation
-        relation_type: n-1
-        schema_name: user.role
-        title: Numérisateur
-        description: Personne qui a saisi la donnée
-        local_key: id_digitiser
-    site_group_uuid:
-        type: uuid
-        title: UUID
-    geom:
-        type: geometry
-        geometry_type: geometry
-        title: Géométrie du groupe de site
-        srid: 4326
-    data:
-        type: json
-        description: Données additionnelles du  groupe de site
-        title: Données additionnelles
-    sites:
-        type: relation
-        relation_type: n-n
-        schema_name: m_monitoring.site
-        title: Sites
-        description: Sites associés au groupe de site
-        schema_dot_table: m_monitoring.cor_site_group
-    nb_sites:
-        type: integer
-        title: Nombre de sites
-        column_property: nb
-        relation_key: sites
+  id_site_group:
+    type: integer
+    title: Pk du group de site
+    description: Clé primaire du group de site
+    primary_key: true
+  code:
+    type: string
+    title: Code du site
+    required: true
+  name:
+    type: string
+    title: Nom du groupe de site
+    required: true
+  description:
+    type: string
+    title: Description du groupe de site
+  id_digitiser:
+    type: integer
+    foreign_key: true
+    schema_name: user.role
+    title: Numérisateur
+    description: Personne qui a saisi la donnée
+  digitiser:
+    type: relation
+    relation_type: n-1
+    schema_name: user.role
+    title: Numérisateur
+    description: Personne qui a saisi la donnée
+    local_key: id_digitiser
+  site_group_uuid:
+    type: uuid
+    title: UUID
+  geom:
+    type: geometry
+    geometry_type: geometry
+    title: Géométrie du groupe de site
+    srid: 4326
+  geom_local:
+    type: geometry
+    geometry_type: geometry
+    srid: __CONFIG.LOCAL_SRID__
+    title: Geometrie locale (__CONFIG.LOCAL_SRID__)
+    description: Géométrie locale site (SRID=__CONFIG.LOCAL_SRID__)
+    index: true
+    trigger:
+        name: copy_geom
+        key: geom
+
+  data:
+    type: json
+    description: Données additionnelles du  groupe de site
+    title: Données additionnelles
+  sites:
+    type: relation
+    relation_type: n-n
+    schema_name: m_monitoring.site
+    title: Sites
+    description: Sites associés au groupe de site
+    schema_dot_table: m_monitoring.cor_site_group
+  nb_sites:
+    type: integer
+    title: Nombre de sites
+    column_property: nb
+    relation_key: sites
+  modules:
+    type: relation
+    relation_type: n-n
+    schema_name: commons.module
+    title: Modules
+    description: Modules associé au groupe de site
+    schema_dot_table: m_monitoring.cor_site_group_module
+    backref: sites_group
+  areas:
+    type: relation
+    title: Areas
+    relation_type: n-n
+    schema_name: ref_geo.area
+    schema_dot_table: m_monitoring.cor_area_site_group
+    trigger:
+      name: intersect_ref_geo
+      key: geom_local
+      "on": geom
+  linears:
+    type: relation
+    title: Linéaires
+    relation_type: n-n
+    schema_name: ref_geo.linear
+    schema_dot_table: m_monitoring.cor_linear_site_group
+    trigger:
+      name: d_within
+      distance: 100
+      key: geom_local
+      "on": geom
+      partition:
+        - id_type
+
 form:
-    layout:
-        -
-            hidden: true
-            items:
-                - id_site
-                - geom
-                -
-                    key: id_digitiser
-                    default: __f__meta.currentUser?.id_role
-                    hidden: true
-        - code
-        - name
+  layout:
+    - hidden: true
+      items:
+        - id_site
+        - geom
+        - key: id_digitiser
+          default: __f__meta.currentUser?.id_role
+          hidden: true
+    - code
+    - name
+
 details:
-    layout:
-        - id_site_group
-        - code
-        - name
-        - digitiser.nom_complet
-        - nb_sites
+  layout:
+    - id_site_group
+    - code
+    - name
+    - digitiser.nom_complet
+    - nb_sites

@@ -1,6 +1,6 @@
 -- process schema : m_monitoring.site
 --
--- and dependancies : m_monitoring.site_category, m_monitoring.visit, m_monitoring.observation, m_monitoring.site_group, m_monitoring.actor, m_monitoring.sc_arbre_loge, m_monitoring.sc_grotte
+-- and dependancies : m_monitoring.site_category, m_monitoring.visit, m_monitoring.site_group, m_monitoring.observation, m_monitoring.actor, m_monitoring.sc_grotte, m_monitoring.sc_arbre_loge
 
 
 ---- sql schema m_monitoring
@@ -65,6 +65,25 @@ COMMENT ON COLUMN m_monitoring.t_visits.id_dataset IS 'Jeu de données associé 
 COMMENT ON COLUMN m_monitoring.t_visits.id_module IS 'Protocole associé à la visite';
 COMMENT ON COLUMN m_monitoring.t_visits.data IS 'Données additionnelles du site';
 
+---- table m_monitoring.t_site_group
+
+CREATE TABLE m_monitoring.t_site_group (
+    id_site_group SERIAL NOT NULL,
+    code VARCHAR NOT NULL,
+    name VARCHAR NOT NULL,
+    description VARCHAR,
+    id_digitiser INTEGER,
+    site_group_uuid UUID,
+    geom GEOMETRY(GEOMETRY, 4326),
+    geom_local GEOMETRY(GEOMETRY, 2154),
+    data JSONB
+);
+
+COMMENT ON COLUMN m_monitoring.t_site_group.id_site_group IS 'Clé primaire du group de site';
+COMMENT ON COLUMN m_monitoring.t_site_group.id_digitiser IS 'Personne qui a saisi la donnée';
+COMMENT ON COLUMN m_monitoring.t_site_group.geom_local IS 'Géométrie locale site (SRID=2154)';
+COMMENT ON COLUMN m_monitoring.t_site_group.data IS 'Données additionnelles du  groupe de site';
+
 ---- table m_monitoring.t_observations
 
 CREATE TABLE m_monitoring.t_observations (
@@ -82,23 +101,6 @@ COMMENT ON COLUMN m_monitoring.t_observations.id_digitiser IS 'Personne qui a sa
 COMMENT ON COLUMN m_monitoring.t_observations.id_visit IS 'Visite associée à l''observation';
 COMMENT ON COLUMN m_monitoring.t_observations.data IS 'Données additionnelles de l''observation';
 
----- table m_monitoring.t_site_group
-
-CREATE TABLE m_monitoring.t_site_group (
-    id_site_group SERIAL NOT NULL,
-    code VARCHAR NOT NULL,
-    name VARCHAR NOT NULL,
-    description VARCHAR,
-    id_digitiser INTEGER,
-    site_group_uuid UUID,
-    geom GEOMETRY(GEOMETRY, 4326),
-    data JSONB
-);
-
-COMMENT ON COLUMN m_monitoring.t_site_group.id_site_group IS 'Clé primaire du group de site';
-COMMENT ON COLUMN m_monitoring.t_site_group.id_digitiser IS 'Personne qui a saisi la donnée';
-COMMENT ON COLUMN m_monitoring.t_site_group.data IS 'Données additionnelles du  groupe de site';
-
 ---- table m_monitoring.cor_site_actor
 
 CREATE TABLE m_monitoring.cor_site_actor (
@@ -110,19 +112,19 @@ CREATE TABLE m_monitoring.cor_site_actor (
 );
 
 
----- table m_monitoring.sc_arbre_loge
-
-CREATE TABLE m_monitoring.sc_arbre_loge (
-    id_site SERIAL NOT NULL,
-    hauteur FLOAT
-);
-
-
 ---- table m_monitoring.sc_grotte
 
 CREATE TABLE m_monitoring.sc_grotte (
     id_site SERIAL NOT NULL,
     profondeur FLOAT
+);
+
+
+---- table m_monitoring.sc_arbre_loge
+
+CREATE TABLE m_monitoring.sc_arbre_loge (
+    id_site SERIAL NOT NULL,
+    hauteur FLOAT
 );
 
 
@@ -144,16 +146,16 @@ ALTER TABLE m_monitoring.t_visits
     ADD CONSTRAINT pk_m_monitoring_t_visits_id_visit PRIMARY KEY (id_visit);
 
 
----- m_monitoring.t_observations primary key constraint
-
-ALTER TABLE m_monitoring.t_observations
-    ADD CONSTRAINT pk_m_monitoring_t_observations_id_observation PRIMARY KEY (id_observation);
-
-
 ---- m_monitoring.t_site_group primary key constraint
 
 ALTER TABLE m_monitoring.t_site_group
     ADD CONSTRAINT pk_m_monitoring_t_site_group_id_site_group PRIMARY KEY (id_site_group);
+
+
+---- m_monitoring.t_observations primary key constraint
+
+ALTER TABLE m_monitoring.t_observations
+    ADD CONSTRAINT pk_m_monitoring_t_observations_id_observation PRIMARY KEY (id_observation);
 
 
 ---- m_monitoring.cor_site_actor primary key constraint
@@ -162,16 +164,16 @@ ALTER TABLE m_monitoring.cor_site_actor
     ADD CONSTRAINT pk_m_monitoring_cor_site_actor_id_actor PRIMARY KEY (id_actor);
 
 
----- m_monitoring.sc_arbre_loge primary key constraint
-
-ALTER TABLE m_monitoring.sc_arbre_loge
-    ADD CONSTRAINT pk_m_monitoring_sc_arbre_loge_id_site PRIMARY KEY (id_site);
-
-
 ---- m_monitoring.sc_grotte primary key constraint
 
 ALTER TABLE m_monitoring.sc_grotte
     ADD CONSTRAINT pk_m_monitoring_sc_grotte_id_site PRIMARY KEY (id_site);
+
+
+---- m_monitoring.sc_arbre_loge primary key constraint
+
+ALTER TABLE m_monitoring.sc_arbre_loge
+    ADD CONSTRAINT pk_m_monitoring_sc_arbre_loge_id_site PRIMARY KEY (id_site);
 
 
 ---- m_monitoring.t_sites foreign key constraint id_site_category
@@ -232,6 +234,14 @@ ALTER TABLE m_monitoring.t_visits
     ON UPDATE CASCADE ON DELETE CASCADE;
 
 
+---- m_monitoring.t_site_group foreign key constraint id_digitiser
+
+ALTER TABLE m_monitoring.t_site_group
+    ADD CONSTRAINT fk_m_monitoring_t_sit_t_rol_id_digitiser FOREIGN KEY (id_digitiser)
+    REFERENCES utilisateurs.t_roles(id_role)
+    ON UPDATE CASCADE ON DELETE SET NULL;
+
+
 ---- m_monitoring.t_observations foreign key constraint cd_nom
 
 ALTER TABLE m_monitoring.t_observations
@@ -251,14 +261,6 @@ ALTER TABLE m_monitoring.t_observations
 ALTER TABLE m_monitoring.t_observations
     ADD CONSTRAINT fk_m_monitoring_t_obs_t_vis_id_visit FOREIGN KEY (id_visit)
     REFERENCES m_monitoring.t_visits(id_visit)
-    ON UPDATE CASCADE ON DELETE SET NULL;
-
-
----- m_monitoring.t_site_group foreign key constraint id_digitiser
-
-ALTER TABLE m_monitoring.t_site_group
-    ADD CONSTRAINT fk_m_monitoring_t_sit_t_rol_id_digitiser FOREIGN KEY (id_digitiser)
-    REFERENCES utilisateurs.t_roles(id_role)
     ON UPDATE CASCADE ON DELETE SET NULL;
 
 
@@ -291,18 +293,18 @@ ALTER TABLE m_monitoring.cor_site_actor
     ON UPDATE CASCADE ON DELETE CASCADE;
 
 
----- m_monitoring.sc_arbre_loge foreign key constraint id_site
-
-ALTER TABLE m_monitoring.sc_arbre_loge
-    ADD CONSTRAINT fk_m_monitoring_sc_ar_t_sit_id_site FOREIGN KEY (id_site)
-    REFERENCES m_monitoring.t_sites(id_site)
-    ON UPDATE CASCADE ON DELETE CASCADE;
-
-
 ---- m_monitoring.sc_grotte foreign key constraint id_site
 
 ALTER TABLE m_monitoring.sc_grotte
     ADD CONSTRAINT fk_m_monitoring_sc_gr_t_sit_id_site FOREIGN KEY (id_site)
+    REFERENCES m_monitoring.t_sites(id_site)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+---- m_monitoring.sc_arbre_loge foreign key constraint id_site
+
+ALTER TABLE m_monitoring.sc_arbre_loge
+    ADD CONSTRAINT fk_m_monitoring_sc_ar_t_sit_id_site FOREIGN KEY (id_site)
     REFERENCES m_monitoring.t_sites(id_site)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -373,52 +375,52 @@ ALTER TABLE m_monitoring.cor_site_module
     ADD CONSTRAINT fk_m_monitoring_cor_site_module_id_module FOREIGN KEY (id_module)
     REFERENCES gn_commons.t_modules (id_module)
     ON UPDATE CASCADE ON DELETE CASCADE;
--- cor m_monitoring.cor_area_pf
+-- cor m_monitoring.cor_area_site
 
-CREATE TABLE IF NOT EXISTS m_monitoring.cor_area_pf (
+CREATE TABLE IF NOT EXISTS m_monitoring.cor_area_site (
     id_site INTEGER NOT NULL NOT NULL,
     id_area INTEGER NOT NULL NOT NULL
 );
 
 
----- m_monitoring.cor_area_pf primary keys contraints
+---- m_monitoring.cor_area_site primary keys contraints
 
-ALTER TABLE m_monitoring.cor_area_pf
-    ADD CONSTRAINT pk_m_monitoring_cor_area_pf_id_site_id_area PRIMARY KEY (id_site, id_area);
+ALTER TABLE m_monitoring.cor_area_site
+    ADD CONSTRAINT pk_m_monitoring_cor_area_site_id_site_id_area PRIMARY KEY (id_site, id_area);
 
----- m_monitoring.cor_area_pf foreign keys contraints
+---- m_monitoring.cor_area_site foreign keys contraints
 
-ALTER TABLE m_monitoring.cor_area_pf
-    ADD CONSTRAINT fk_m_monitoring_cor_area_pf_id_site FOREIGN KEY (id_site)
+ALTER TABLE m_monitoring.cor_area_site
+    ADD CONSTRAINT fk_m_monitoring_cor_area_site_id_site FOREIGN KEY (id_site)
     REFERENCES m_monitoring.t_sites (id_site)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE m_monitoring.cor_area_pf
-    ADD CONSTRAINT fk_m_monitoring_cor_area_pf_id_area FOREIGN KEY (id_area)
+ALTER TABLE m_monitoring.cor_area_site
+    ADD CONSTRAINT fk_m_monitoring_cor_area_site_id_area FOREIGN KEY (id_area)
     REFERENCES ref_geo.l_areas (id_area)
     ON UPDATE CASCADE ON DELETE CASCADE;
--- cor m_monitoring.cor_linear_pf
+-- cor m_monitoring.cor_linear_site
 
-CREATE TABLE IF NOT EXISTS m_monitoring.cor_linear_pf (
+CREATE TABLE IF NOT EXISTS m_monitoring.cor_linear_site (
     id_site INTEGER NOT NULL NOT NULL,
     id_linear INTEGER NOT NULL NOT NULL
 );
 
 
----- m_monitoring.cor_linear_pf primary keys contraints
+---- m_monitoring.cor_linear_site primary keys contraints
 
-ALTER TABLE m_monitoring.cor_linear_pf
-    ADD CONSTRAINT pk_m_monitoring_cor_linear_pf_id_site_id_linear PRIMARY KEY (id_site, id_linear);
+ALTER TABLE m_monitoring.cor_linear_site
+    ADD CONSTRAINT pk_m_monitoring_cor_linear_site_id_site_id_linear PRIMARY KEY (id_site, id_linear);
 
----- m_monitoring.cor_linear_pf foreign keys contraints
+---- m_monitoring.cor_linear_site foreign keys contraints
 
-ALTER TABLE m_monitoring.cor_linear_pf
-    ADD CONSTRAINT fk_m_monitoring_cor_linear_pf_id_site FOREIGN KEY (id_site)
+ALTER TABLE m_monitoring.cor_linear_site
+    ADD CONSTRAINT fk_m_monitoring_cor_linear_site_id_site FOREIGN KEY (id_site)
     REFERENCES m_monitoring.t_sites (id_site)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE m_monitoring.cor_linear_pf
-    ADD CONSTRAINT fk_m_monitoring_cor_linear_pf_id_linear FOREIGN KEY (id_linear)
+ALTER TABLE m_monitoring.cor_linear_site
+    ADD CONSTRAINT fk_m_monitoring_cor_linear_site_id_linear FOREIGN KEY (id_linear)
     REFERENCES ref_geo.l_linears (id_linear)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -445,6 +447,79 @@ ALTER TABLE m_monitoring.cor_visit_observer
 ALTER TABLE m_monitoring.cor_visit_observer
     ADD CONSTRAINT fk_m_monitoring_cor_visit_observer_id_role FOREIGN KEY (id_role)
     REFERENCES utilisateurs.t_roles (id_role)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+-- cor m_monitoring.cor_site_group_module
+
+CREATE TABLE IF NOT EXISTS m_monitoring.cor_site_group_module (
+    id_site_group INTEGER NOT NULL NOT NULL,
+    id_module INTEGER NOT NULL NOT NULL
+);
+
+
+---- m_monitoring.cor_site_group_module primary keys contraints
+
+ALTER TABLE m_monitoring.cor_site_group_module
+    ADD CONSTRAINT pk_m_monitoring_cor_site_group_module_id_site_group_id_module PRIMARY KEY (id_site_group, id_module);
+
+---- m_monitoring.cor_site_group_module foreign keys contraints
+
+ALTER TABLE m_monitoring.cor_site_group_module
+    ADD CONSTRAINT fk_m_monitoring_cor_site_group_module_id_site_group FOREIGN KEY (id_site_group)
+    REFERENCES m_monitoring.t_site_group (id_site_group)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE m_monitoring.cor_site_group_module
+    ADD CONSTRAINT fk_m_monitoring_cor_site_group_module_id_module FOREIGN KEY (id_module)
+    REFERENCES gn_commons.t_modules (id_module)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+-- cor m_monitoring.cor_area_site_group
+
+CREATE TABLE IF NOT EXISTS m_monitoring.cor_area_site_group (
+    id_site_group INTEGER NOT NULL NOT NULL,
+    id_area INTEGER NOT NULL NOT NULL
+);
+
+
+---- m_monitoring.cor_area_site_group primary keys contraints
+
+ALTER TABLE m_monitoring.cor_area_site_group
+    ADD CONSTRAINT pk_m_monitoring_cor_area_site_group_id_site_group_id_area PRIMARY KEY (id_site_group, id_area);
+
+---- m_monitoring.cor_area_site_group foreign keys contraints
+
+ALTER TABLE m_monitoring.cor_area_site_group
+    ADD CONSTRAINT fk_m_monitoring_cor_area_site_group_id_site_group FOREIGN KEY (id_site_group)
+    REFERENCES m_monitoring.t_site_group (id_site_group)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE m_monitoring.cor_area_site_group
+    ADD CONSTRAINT fk_m_monitoring_cor_area_site_group_id_area FOREIGN KEY (id_area)
+    REFERENCES ref_geo.l_areas (id_area)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+-- cor m_monitoring.cor_linear_site_group
+
+CREATE TABLE IF NOT EXISTS m_monitoring.cor_linear_site_group (
+    id_site_group INTEGER NOT NULL NOT NULL,
+    id_linear INTEGER NOT NULL NOT NULL
+);
+
+
+---- m_monitoring.cor_linear_site_group primary keys contraints
+
+ALTER TABLE m_monitoring.cor_linear_site_group
+    ADD CONSTRAINT pk_m_monitoring_cor_linear_site_group_id_site_group_id_linear PRIMARY KEY (id_site_group, id_linear);
+
+---- m_monitoring.cor_linear_site_group foreign keys contraints
+
+ALTER TABLE m_monitoring.cor_linear_site_group
+    ADD CONSTRAINT fk_m_monitoring_cor_linear_site_group_id_site_group FOREIGN KEY (id_site_group)
+    REFERENCES m_monitoring.t_site_group (id_site_group)
+    ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE m_monitoring.cor_linear_site_group
+    ADD CONSTRAINT fk_m_monitoring_cor_linear_site_group_id_linear FOREIGN KEY (id_linear)
+    REFERENCES ref_geo.l_linears (id_linear)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
 
@@ -476,7 +551,7 @@ CREATE TRIGGER m_monitoring_tri_update_t_sites_copy_geom_to_geom_local
 ---- Trigger intersection m_monitoring.t_sites.geom_local avec le ref_geo
 
 
-CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_area_pf_on_each_statement()
+CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_area_site_on_each_statement()
     RETURNS trigger AS
         $BODY$
             DECLARE
@@ -486,7 +561,7 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_area_pf_on_each_stat
                     t.id_site
                     FROM NEW as t
                 )
-                INSERT INTO m_monitoring.cor_area_pf (
+                INSERT INTO m_monitoring.cor_area_site (
                     id_area,
                     id_site
                 )
@@ -509,12 +584,12 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_area_pf_on_each_stat
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_area_pf_on_row()
+CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_area_site_on_row()
     RETURNS trigger AS
         $BODY$
             BEGIN
-                DELETE FROM m_monitoring.cor_area_pf WHERE id_site = NEW.id_site;
-                INSERT INTO m_monitoring.cor_area_pf (
+                DELETE FROM m_monitoring.cor_area_site WHERE id_site = NEW.id_site;
+                INSERT INTO m_monitoring.cor_area_site (
                     id_area,
                     id_site
                 )
@@ -538,12 +613,12 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_area_pf_on_row()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_area_pf()
+CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_area_site()
     RETURNS INTEGER AS
         $BODY$
             BEGIN
-                DELETE FROM m_monitoring.cor_area_pf;
-                INSERT INTO m_monitoring.cor_area_pf (
+                DELETE FROM m_monitoring.cor_area_site;
+                INSERT INTO m_monitoring.cor_area_site (
                     id_area,
                     id_site
                 )
@@ -566,26 +641,26 @@ CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_area_pf()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE TRIGGER trg_insert_m_monitoring_cor_area_pf
+CREATE TRIGGER trg_insert_m_monitoring_cor_area_site
     AFTER INSERT ON m_monitoring.t_sites
     REFERENCING NEW TABLE AS NEW
     FOR EACH STATEMENT
-        EXECUTE PROCEDURE m_monitoring.fct_trig_insert_cor_area_pf_on_each_statement();
+        EXECUTE PROCEDURE m_monitoring.fct_trig_insert_cor_area_site_on_each_statement();
 
-CREATE TRIGGER trg_update_m_monitoring_cor_area_pf
+CREATE TRIGGER trg_update_m_monitoring_cor_area_site
     AFTER UPDATE OF geom ON m_monitoring.t_sites
     FOR EACH ROW
-        EXECUTE PROCEDURE m_monitoring.fct_trig_update_cor_area_pf_on_row();
+        EXECUTE PROCEDURE m_monitoring.fct_trig_update_cor_area_site_on_row();
 
 ---- Trigger m_monitoring.t_sites.geom_local avec une distance de 100 avec ref_geo.l_linears.id_linear
 
 
-CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_linear_pf_on_each_statement()
+CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_linear_site_on_each_statement()
     RETURNS trigger AS
         $BODY$
             DECLARE
             BEGIN
-                INSERT INTO m_monitoring.cor_linear_pf (
+                INSERT INTO m_monitoring.cor_linear_site (
                     id_linear,
                     id_site
                 )
@@ -612,12 +687,12 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_linear_pf_on_each_st
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_linear_pf_on_row()
+CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_linear_site_on_row()
     RETURNS trigger AS
         $BODY$
             BEGIN
-                DELETE FROM m_monitoring.cor_linear_pf WHERE id_site = NEW.id_site;
-                INSERT INTO m_monitoring.cor_linear_pf (
+                DELETE FROM m_monitoring.cor_linear_site WHERE id_site = NEW.id_site;
+                INSERT INTO m_monitoring.cor_linear_site (
                     id_linear,
                     id_site
                 )
@@ -646,12 +721,12 @@ CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_linear_pf_on_row()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_linear_pf()
+CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_linear_site()
     RETURNS INTEGER AS
         $BODY$
             BEGIN
-                DELETE FROM m_monitoring.cor_linear_pf;
-                INSERT INTO m_monitoring.cor_linear_pf (
+                DELETE FROM m_monitoring.cor_linear_site;
+                INSERT INTO m_monitoring.cor_linear_site (
                     id_linear,
                     id_site
                 )
@@ -678,16 +753,259 @@ CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_linear_pf()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE TRIGGER trg_insert_m_monitoring_cor_linear_pf
+CREATE TRIGGER trg_insert_m_monitoring_cor_linear_site
     AFTER INSERT ON m_monitoring.t_sites
     REFERENCING NEW TABLE AS NEW
     FOR EACH STATEMENT
-        EXECUTE PROCEDURE m_monitoring.fct_trig_insert_cor_linear_pf_on_each_statement();
+        EXECUTE PROCEDURE m_monitoring.fct_trig_insert_cor_linear_site_on_each_statement();
 
-CREATE TRIGGER trg_update_m_monitoring_cor_linear_pf
+CREATE TRIGGER trg_update_m_monitoring_cor_linear_site
     AFTER UPDATE OF geom ON m_monitoring.t_sites
     FOR EACH ROW
-        EXECUTE PROCEDURE m_monitoring.fct_trig_update_cor_linear_pf_on_row();
+        EXECUTE PROCEDURE m_monitoring.fct_trig_update_cor_linear_site_on_row();
+
+
+
+-- Triggers
+
+
+CREATE OR REPLACE FUNCTION m_monitoring.fn_tri_insert_t_site_group_copy_geom_to_geom_local()
+    RETURNS trigger AS
+        $BODY$
+            DECLARE
+            BEGIN
+                NEW.geom_local := ST_TRANSFORM(NEW.geom, 2154);
+                RETURN NEW;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE TRIGGER m_monitoring_tri_insert_t_site_group_copy_geom_to_geom_local
+    BEFORE INSERT ON m_monitoring.t_site_group
+    FOR EACH ROW
+        EXECUTE PROCEDURE m_monitoring.fn_tri_insert_t_site_group_copy_geom_to_geom_local();
+
+CREATE TRIGGER m_monitoring_tri_update_t_site_group_copy_geom_to_geom_local
+    BEFORE UPDATE OF geom ON m_monitoring.t_site_group
+    FOR EACH ROW
+        EXECUTE PROCEDURE m_monitoring.fn_tri_insert_t_site_group_copy_geom_to_geom_local();
+
+---- Trigger intersection m_monitoring.t_site_group.geom_local avec le ref_geo
+
+
+CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_area_site_group_on_each_statement()
+    RETURNS trigger AS
+        $BODY$
+            DECLARE
+            BEGIN
+                WITH geom_test AS (
+                    SELECT ST_TRANSFORM(t.geom_local, 2154) as geom_local,
+                    t.id_site_group
+                    FROM NEW as t
+                )
+                INSERT INTO m_monitoring.cor_area_site_group (
+                    id_area,
+                    id_site_group
+                )
+                SELECT
+                    a.id_area,
+                    t.id_site_group
+                    FROM geom_test t
+                    JOIN ref_geo.l_areas a
+                        ON public.ST_INTERSECTS(t.geom_local, a.geom)
+                        WHERE
+                            a.enable IS TRUE
+                            AND (
+                                ST_GeometryType(t.geom_local) = 'ST_Point'
+                                OR
+                                NOT public.ST_TOUCHES(t.geom_local,a.geom)
+                            );
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_area_site_group_on_row()
+    RETURNS trigger AS
+        $BODY$
+            BEGIN
+                DELETE FROM m_monitoring.cor_area_site_group WHERE id_site_group = NEW.id_site_group;
+                INSERT INTO m_monitoring.cor_area_site_group (
+                    id_area,
+                    id_site_group
+                )
+                SELECT
+                    a.id_area,
+                    t.id_site_group
+                FROM ref_geo.l_areas a
+                JOIN m_monitoring.t_site_group t
+                    ON public.ST_INTERSECTS(ST_TRANSFORM(t.geom_local, 2154), a.geom)
+                WHERE
+                    a.enable IS TRUE
+                    AND t.id_site_group = NEW.id_site_group
+                    AND (
+                        ST_GeometryType(t.geom_local) = 'ST_Point'
+                        OR NOT public.ST_TOUCHES(ST_TRANSFORM(t.geom_local, 2154), a.geom)
+                    )
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_area_site_group()
+    RETURNS INTEGER AS
+        $BODY$
+            BEGIN
+                DELETE FROM m_monitoring.cor_area_site_group;
+                INSERT INTO m_monitoring.cor_area_site_group (
+                    id_area,
+                    id_site_group
+                )
+                SELECT
+                    a.id_area,
+                    t.id_site_group
+                FROM ref_geo.l_areas a
+                JOIN m_monitoring.t_site_group t
+                    ON public.ST_INTERSECTS(ST_TRANSFORM(t.geom_local, 2154), a.geom)
+                WHERE
+                    a.enable IS TRUE
+                    AND (
+                        ST_GeometryType(t.geom_local) = 'ST_Point'
+                        OR NOT public.ST_TOUCHES(ST_TRANSFORM(t.geom_local, 2154), a.geom)
+                    )
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE TRIGGER trg_insert_m_monitoring_cor_area_site_group
+    AFTER INSERT ON m_monitoring.t_site_group
+    REFERENCING NEW TABLE AS NEW
+    FOR EACH STATEMENT
+        EXECUTE PROCEDURE m_monitoring.fct_trig_insert_cor_area_site_group_on_each_statement();
+
+CREATE TRIGGER trg_update_m_monitoring_cor_area_site_group
+    AFTER UPDATE OF geom ON m_monitoring.t_site_group
+    FOR EACH ROW
+        EXECUTE PROCEDURE m_monitoring.fct_trig_update_cor_area_site_group_on_row();
+
+---- Trigger m_monitoring.t_site_group.geom_local avec une distance de 100 avec ref_geo.l_linears.id_linear
+
+
+CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_insert_cor_linear_site_group_on_each_statement()
+    RETURNS trigger AS
+        $BODY$
+            DECLARE
+            BEGIN
+                INSERT INTO m_monitoring.cor_linear_site_group (
+                    id_linear,
+                    id_site_group
+                )
+                WITH t_match AS (
+                    SELECT
+                        l.id_linear,
+                        t.id_site_group,
+                        ROW_NUMBER() OVER (PARTITION BY t.id_site_group, id_type) As rank
+                        FROM NEW AS t
+                        JOIN ref_geo.l_linears l
+                            ON ST_DWITHIN(t.geom_local, l.geom, 100)
+                        WHERE l.enable = TRUE
+                        ORDER BY t.geom_local <-> l.geom
+                )
+                SELECT
+                    id_linear,
+                    id_site_group
+                    FROM t_match
+                    WHERE rank = 1
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE OR REPLACE FUNCTION m_monitoring.fct_trig_update_cor_linear_site_group_on_row()
+    RETURNS trigger AS
+        $BODY$
+            BEGIN
+                DELETE FROM m_monitoring.cor_linear_site_group WHERE id_site_group = NEW.id_site_group;
+                INSERT INTO m_monitoring.cor_linear_site_group (
+                    id_linear,
+                    id_site_group
+                )
+                WITH t_match AS (
+                    SELECT
+                        l.id_linear,
+                        t.id_site_group,
+                        ROW_NUMBER() OVER (PARTITION BY t.id_site_group, id_type) As rank
+                        FROM m_monitoring.t_site_group AS t
+                        JOIN ref_geo.l_linears l
+                            ON ST_DWITHIN(t.geom_local, l.geom, 100)
+                        WHERE
+                            t.id_site_group = NEW.id_site_group
+                            AND l.enable = TRUE
+                        ORDER BY t.geom_local <-> l.geom
+                )
+                SELECT
+                    id_linear,
+                    id_site_group
+                    FROM t_match
+                    WHERE rank = 1
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE OR REPLACE FUNCTION m_monitoring.process_all_cor_linear_site_group()
+    RETURNS INTEGER AS
+        $BODY$
+            BEGIN
+                DELETE FROM m_monitoring.cor_linear_site_group;
+                INSERT INTO m_monitoring.cor_linear_site_group (
+                    id_linear,
+                    id_site_group
+                )
+                WITH t_match AS (
+                    SELECT
+                        l.id_linear,
+                        t.id_site_group,
+                        ROW_NUMBER() OVER (PARTITION BY t.id_site_group, id_type) As rank
+                        FROM m_monitoring.t_site_group AS t
+                        JOIN ref_geo.l_linears l
+                            ON ST_DWITHIN(t.geom_local, l.geom, 100)
+                        WHERE l.enable = TRUE
+                        ORDER BY t.geom_local <-> l.geom
+                )
+                SELECT
+                    id_linear,
+                    id_site_group
+                    FROM t_match
+                    WHERE rank = 1
+                ;
+                RETURN NULL;
+            END;
+        $BODY$
+    LANGUAGE plpgsql VOLATILE
+    COST 100;
+
+CREATE TRIGGER trg_insert_m_monitoring_cor_linear_site_group
+    AFTER INSERT ON m_monitoring.t_site_group
+    REFERENCING NEW TABLE AS NEW
+    FOR EACH STATEMENT
+        EXECUTE PROCEDURE m_monitoring.fct_trig_insert_cor_linear_site_group_on_each_statement();
+
+CREATE TRIGGER trg_update_m_monitoring_cor_linear_site_group
+    AFTER UPDATE OF geom ON m_monitoring.t_site_group
+    FOR EACH ROW
+        EXECUTE PROCEDURE m_monitoring.fct_trig_update_cor_linear_site_group_on_row();
 
 
 
@@ -701,21 +1019,23 @@ CREATE INDEX m_monitoring_t_sites_geom_local_idx
     ON m_monitoring.t_sites
     USING GIST (geom_local);
 
--- process schema : m_monitoring.observation
+
+-- Indexes
+
+
+CREATE INDEX m_monitoring_t_site_group_geom_local_idx
+    ON m_monitoring.t_site_group
+    USING GIST (geom_local);
+
+-- process schema : m_monitoring.visit
 
 
 -- process schema : m_monitoring.site_group
 
 
+-- process schema : m_monitoring.observation
+
+
 -- process schema : m_monitoring.site_category
-
-
--- process schema : m_monitoring.visit
-
-
--- process schema : m_monitoring.sc_arbre_loge
-
-
--- process schema : m_monitoring.sc_grotte
 
 
