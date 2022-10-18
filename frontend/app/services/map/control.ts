@@ -1,7 +1,7 @@
 /**
  * Les controls pour la carte
  */
-import controlConfigs from "./control-layouts";
+import controlConfigs from './control-layouts';
 
 export default {
   _controls: {}, // pour pouvoir acceder aux controls
@@ -12,10 +12,7 @@ export default {
    * ajoute un control sur la carte
    * - gps
    */
-  addControl(
-    mapId,
-    { controlId, label, onClick, position = "topleft", controlLogoUrl }
-  ) {
+  addControl(mapId, { controlId, label, onClick, position = 'topleft', controlLogoUrl }) {
     const map = this.getMap(mapId);
     if (!map) {
       return;
@@ -32,20 +29,20 @@ export default {
       },
       onAdd: (map) => {
         const customControl = this.L.DomUtil.create(
-          "div",
-          "leaflet-bar leaflet-control leaflet-control-custom"
+          'div',
+          'leaflet-bar leaflet-control leaflet-control-custom'
         );
         customControl.id = controlId;
-        customControl.style.width = "34px";
-        customControl.style.height = "34px";
-        customControl.style.lineHeight = "30px";
-        customControl.style.backgroundColor = "white";
-        customControl.style.cursor = "pointer";
-        customControl.style.border = "2px solid rgba(0,0,0,0.2)";
+        customControl.style.width = '34px';
+        customControl.style.height = '34px';
+        customControl.style.lineHeight = '30px';
+        customControl.style.backgroundColor = 'white';
+        customControl.style.cursor = 'pointer';
+        customControl.style.border = '2px solid rgba(0,0,0,0.2)';
         customControl.style.backgroundImage = controlLogoUrl;
-        customControl.style.backgroundRepeat = "no-repeat";
-        customControl.style.backgroundPosition = "7px";
-        customControl.style.textAlign = "center";
+        customControl.style.backgroundRepeat = 'no-repeat';
+        customControl.style.backgroundPosition = '7px';
+        customControl.style.textAlign = 'center';
         customControl.innerHTML = label ? `<b>${label}</b>` : null;
         customControl.onclick = () => {
           if (onClick) {
@@ -82,10 +79,12 @@ export default {
     if (!map) return;
 
     // si le controle existe deja on retourne
-    if (map._controls && map._controls[controlId]) return
+    if (map._controls && map._controls[controlId]) return;
 
-    const controlConfig = this._controlConfigs[controlId]
-    if (!(controlConfig)) { return };
+    const controlConfig = this._controlConfigs[controlId];
+    if (!controlConfig) {
+      return;
+    }
 
     // ajout du controle
     this.addControl(mapId, {

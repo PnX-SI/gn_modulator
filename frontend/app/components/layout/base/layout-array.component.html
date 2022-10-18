@@ -1,9 +1,7 @@
 <!-- array -->
 
 <!-- array fieldset -->
-<ng-container
-  *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple"
->
+<ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple">
   <fieldset class="fieldset">
     <legend *ngIf="computedLayout.title">
       {{ computedLayout.title }} ({{ data && data[layout.key]?.length }})

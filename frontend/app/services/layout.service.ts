@@ -1,8 +1,7 @@
-import { Injectable, Injector } from "@angular/core";
-import utils from "../utils";
-import layer from "./map/layer";
-import { Subject } from "@librairies/rxjs";
-import { ModulesConfigService } from "../services/config.service";
+import { Injectable, Injector } from '@angular/core';
+import utils from '../utils';
+import { Subject } from '@librairies/rxjs';
+import { ModulesConfigService } from '../services/config.service';
 
 @Injectable()
 export class ModulesLayoutService {
@@ -74,10 +73,10 @@ export class ModulesLayoutService {
         .filter((x) => !!x);
     }
     if (utils.isObject(layout)) {
-      if ("key" in layout && layout.key) {
+      if ('key' in layout && layout.key) {
         return layout;
       }
-      if ("items" in layout) {
+      if ('items' in layout) {
         return this.flatLayout(layout.items);
       }
     }
@@ -92,27 +91,27 @@ export class ModulesLayoutService {
     const layoutType = !layout
       ? null
       : Array.isArray(layout)
-      ? "items"
+      ? 'items'
       : [
-          "breadcrumbs",
-          "button",
-          "html",
-          "form",
-          "message",
-          "medias",
-          "card",
-          "object",
-          "table",
-          "map",
-          "modal",
-          "dict",
+          'breadcrumbs',
+          'button',
+          'html',
+          'form',
+          'message',
+          'medias',
+          'card',
+          'object',
+          'table',
+          'map',
+          'modal',
+          'dict',
         ].includes(layout.type)
       ? layout.type
       : layout.key
-      ? "key"
+      ? 'key'
       : layout.layout_name
-      ? "name"
-      : "section";
+      ? 'name'
+      : 'section';
     return layoutType;
   }
 
@@ -122,37 +121,29 @@ export class ModulesLayoutService {
   getLayoutFields(layout, baseKey = null) {
     const layoutType = this.getLayoutType(layout);
     /** section */
-    if (["section", "form"].includes(layoutType)) {
-      return utils.flatAndRemoveDoublons(
-        this.getLayoutFields(layout.items || [], baseKey)
-      );
+    if (['section', 'form'].includes(layoutType)) {
+      return utils.flatAndRemoveDoublons(this.getLayoutFields(layout.items || [], baseKey));
     }
 
     /** items */
-    if (layoutType == "items") {
-      return utils.flatAndRemoveDoublons(
-        layout.map((l) => this.getLayoutFields(l, baseKey))
-      );
+    if (layoutType == 'items') {
+      return utils.flatAndRemoveDoublons(layout.map((l) => this.getLayoutFields(l, baseKey)));
     }
     /** key - array ou object */
-    if (layoutType == "key" && ["array", "dict"].includes(layout.type)) {
+    if (layoutType == 'key' && ['array', 'dict'].includes(layout.type)) {
       const newBaseKey = baseKey ? `${baseKey}.${layout.key}` : layout.key;
-      return utils.flatAndRemoveDoublons(
-        this.getLayoutFields(layout.items, newBaseKey)
-      );
+      return utils.flatAndRemoveDoublons(this.getLayoutFields(layout.items, newBaseKey));
     }
 
     /** key */
     const keys = [layout.key];
 
-    return keys
-      .filter((k) => !!k)
-      .map((key) => (baseKey ? `${baseKey}.${key}` : key));
+    return keys.filter((k) => !!k).map((key) => (baseKey ? `${baseKey}.${key}` : key));
   }
 
   isStrFunction(layout) {
-    return typeof layout == "string"
-      ? "__f__" == layout.substr(0, 5)
+    return typeof layout == 'string'
+      ? '__f__' == layout.substr(0, 5)
       : Array.isArray(layout) && layout.length
       ? this.isStrFunction(layout[0])
       : false;
@@ -204,31 +195,18 @@ export class ModulesLayoutService {
   }
 
   evalFunction(layout) {
-    let strFunction = Array.isArray(layout) ? layout.join("") : layout;
+    let strFunction = Array.isArray(layout) ? layout.join('') : layout;
     strFunction = strFunction.substr(5);
-    if (!strFunction.includes("return ") && strFunction[0] != "{") {
+    if (!strFunction.includes('return ') && strFunction[0] != '{') {
       strFunction = `{ return ${strFunction} }`;
     }
 
-    const f = new Function(
-      "data",
-      "globalData",
-      "formGroup",
-      "utils",
-      "meta",
-      strFunction
-    );
+    const f = new Function('data', 'globalData', 'formGroup', 'utils', 'meta', strFunction);
 
     return f;
   }
 
-  evalLayout({
-    layout,
-    data,
-    globalData = null,
-    formGroup = null,
-    meta = null,
-  }) {
+  evalLayout({ layout, data, globalData = null, formGroup = null, meta = null }) {
     if (this.isStrFunction(layout) && !data) {
       return null;
     }
@@ -237,18 +215,12 @@ export class ModulesLayoutService {
       return layout;
     }
 
-    if (typeof layout == "function") {
+    if (typeof layout == 'function') {
       return layout({ data });
     }
 
     if (this.isStrFunction(layout)) {
-      const val = this.evalFunction(layout)(
-        data,
-        globalData,
-        formGroup,
-        utils,
-        meta
-      );
+      const val = this.evalFunction(layout)(data, globalData, formGroup, utils, meta);
       return val !== undefined ? val : null; // on veut eviter le undefined
     }
     return layout;

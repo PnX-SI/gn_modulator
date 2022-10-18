@@ -1,8 +1,8 @@
-import { Observable, Subject, BehaviorSubject } from "@librairies/rxjs";
-import utils from "../../utils";
+import { BehaviorSubject } from '@librairies/rxjs';
+import utils from '../../utils';
 
 const defautDrawOptions = {
-  position: "topleft",
+  position: 'topleft',
   drawMarker: true,
   editMode: true,
   drawCircle: false,
@@ -56,14 +56,15 @@ export default {
     if (!map) return;
 
     // gestion des options de geoman
-    const drawOptions = options.edit
-      ? options.drawOptions || defautDrawOptions
-      : hiddenDrawOptions;
+    const drawOptions = options.edit ? options.drawOptions || defautDrawOptions : hiddenDrawOptions;
 
     if (options.edit && options.geometry_type) {
-      drawOptions.drawMarker = options.geometry_type == "geometry" || options.geometry_type.includes("point")
-      drawOptions.drawPolygon = options.geometry_type == "geometry" || options.geometry_type.includes("polygon")
-      drawOptions.drawPolyline = options.geometry_type == "geometry" || options.geometry_type.includes("linestring")
+      drawOptions.drawMarker =
+        options.geometry_type == 'geometry' || options.geometry_type.includes('point');
+      drawOptions.drawPolygon =
+        options.geometry_type == 'geometry' || options.geometry_type.includes('polygon');
+      drawOptions.drawPolyline =
+        options.geometry_type == 'geometry' || options.geometry_type.includes('linestring');
     }
 
     if (!utils.fastDeepEqual(drawOptions, map.drawOptions)) {
@@ -79,7 +80,7 @@ export default {
     // gps
     if (options.gps && !map.gps) {
       map.gps = true;
-      this.addMapControl(mapId, "gps");
+      this.addMapControl(mapId, 'gps');
     }
   },
 
@@ -91,7 +92,7 @@ export default {
     if (!map) return;
 
     map.$editedLayer = new BehaviorSubject(null);
-    map.on("pm:create", (event) => {
+    map.on('pm:create', (event) => {
       // remove previous layer if needed
       if (map.$editedLayer.getValue()) {
         // on efface le layer avant d'en afficher un nouveau
@@ -99,7 +100,7 @@ export default {
       }
       map.$editedLayer.next(event.layer);
       // on edit
-      event.layer.on("pm:edit", ({ layer }) => {
+      event.layer.on('pm:edit', ({ layer }) => {
         map.$editedLayer.next(layer);
       });
     });

@@ -3,8 +3,7 @@
  * destinées à ModulesMapService
  */
 
-import map from ".";
-import utils from "../../utils";
+import utils from '../../utils';
 
 const defaultLayerOptions = {
   bZoom: false,
@@ -23,15 +22,15 @@ export default {
    */
   getDataType(data) {
     if (data.coordinates && data.type) {
-      return "geometry";
+      return 'geometry';
     }
 
-    if (data.type == "Feature") {
-      return "feature";
+    if (data.type == 'Feature') {
+      return 'feature';
     }
 
     if (utils.isObject(data) && Object.keys(data).length) {
-      return "dict";
+      return 'dict';
     }
   },
 
@@ -54,11 +53,11 @@ export default {
       this.processData(mapId, data[options.key], options);
       return;
     }
-    if (dataType == "geometry") {
+    if (dataType == 'geometry') {
       this.processGeometry(mapId, data, options);
       return;
     }
-    if (dataType == "dict") {
+    if (dataType == 'dict') {
       this.processLayersData(mapId, data);
       return;
     }
@@ -75,15 +74,13 @@ export default {
     this.getMap(mapId).addLayer(layer);
 
     if (options.zoom) {
-      
-    if (data.type == "Point") {
-      this.setCenter(mapId, utils.copy(data.coordinates).reverse());
+      if (data.type == 'Point') {
+        this.setCenter(mapId, utils.copy(data.coordinates).reverse());
+      }
+      if (data.type != 'Point') {
+        this.zoomOnLayer(mapId, layer);
+      }
     }
-    if (data.type != "Point") {
-      this.zoomOnLayer(mapId, layer);
-    }
-  }
-    
   },
 
   processLayersData(mapId, layersData) {
@@ -119,7 +116,7 @@ export default {
         continue;
       }
       this.removeLayers(mapId, { key });
-      this.loadGeojson(mapId, key, value["geojson"], value["layerOptions"]);
+      this.loadGeojson(mapId, key, value['geojson'], value['layerOptions']);
       this._layersData[mapId][key] = value;
     }
   },
@@ -148,10 +145,7 @@ export default {
 
   layerValue(layer, key) {
     return (
-      layer[key] ||
-      (layer.feature &&
-        layer.feature.properties &&
-        layer.feature.properties[key])
+      layer[key] || (layer.feature && layer.feature.properties && layer.feature.properties[key])
     );
   },
 
@@ -162,9 +156,7 @@ export default {
     return this.layers(mapId).filter((layer) => {
       return Object.entries(filters).every(([key, value]) => {
         const layerValue = this.layerValue(layer, key);
-        return Array.isArray(value)
-          ? value.includes(layerValue)
-          : value == layerValue;
+        return Array.isArray(value) ? value.includes(layerValue) : value == layerValue;
       });
     });
   },
@@ -232,24 +224,23 @@ export default {
       bring_to_front = null,
     } = {}
   ): any {
-  
     const geojsonLayer = this.L.geoJSON(geojson, {
       pane,
       style: (feature) => {
         switch (feature.geometry.type) {
           // No color nor opacity for linestrings
-          case "LineString":
+          case 'LineString':
             return style
               ? style
               : {
-                  color: "#3388ff",
+                  color: '#3388ff',
                   weight: 3,
                 };
           default:
             return style
               ? style
               : {
-                  color: "#3388ff",
+                  color: '#3388ff',
                   fill: true,
                   fillOpacity: 0.2,
                   weight: 3,
@@ -257,7 +248,7 @@ export default {
         }
       },
       pointToLayer: (feature, latlng) => {
-        if (type == "marker") {
+        if (type == 'marker') {
           return this.L.marker(latlng, { pane });
         }
         return this.L.circleMarker(latlng, { pane });
@@ -300,13 +291,10 @@ export default {
 
     const condZoomChanged =
       !lastZoomLevel ||
-      (zoomLevel < tooltipDisplayZoomTreshold &&
-        lastZoomLevel >= tooltipDisplayZoomTreshold) ||
-      (zoomLevel >= tooltipDisplayZoomTreshold &&
-        lastZoomLevel <= tooltipDisplayZoomTreshold);
+      (zoomLevel < tooltipDisplayZoomTreshold && lastZoomLevel >= tooltipDisplayZoomTreshold) ||
+      (zoomLevel >= tooltipDisplayZoomTreshold && lastZoomLevel <= tooltipDisplayZoomTreshold);
 
-    const condMapBoundsChanged =
-      !mapBounds || !utils.fastDeepEqual(mapBounds, lastMapBounds);
+    const condMapBoundsChanged = !mapBounds || !utils.fastDeepEqual(mapBounds, lastMapBounds);
 
     if (!(condZoomChanged || condMapBoundsChanged)) {
       return;
@@ -316,9 +304,9 @@ export default {
     const condZoom = zoomLevel >= tooltipDisplayZoomTreshold;
     /** Les cas ou l'on doit effacer le tooltip */
     if (tooltipDisplayed && !(condInBounds && condZoom)) {
-      return "hide";
+      return 'hide';
     } else if (!tooltipDisplayed && condZoom && condInBounds) {
-      return "display";
+      return 'display';
     }
   },
 
@@ -344,12 +332,12 @@ export default {
         lastMapBounds
       );
 
-      if (action == "display") {
+      if (action == 'display') {
         const tooltip = layer.getTooltip();
         layer.unbindTooltip().bindTooltip(tooltip, { permanent: true });
       }
 
-      if (action == "hide") {
+      if (action == 'hide') {
         const tooltip = layer.getTooltip();
         layer.unbindTooltip().bindTooltip(tooltip, { permanent: false });
       }
@@ -360,8 +348,8 @@ export default {
   },
 
   setProcessing(mapId, bIsProcessing) {
-    this.waitForMap(mapId).then(map => {
+    this.waitForMap(mapId).then((map) => {
       map.isProcessing = bIsProcessing;
-    })
-  }
+    });
+  },
 };

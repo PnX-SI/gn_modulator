@@ -1,12 +1,12 @@
-import { Injectable, Injector } from "@angular/core";
-import { ModulesRouteService } from "./route.service";
-import { ModulesConfigService } from "./config.service";
-import { ModulesRequestService } from "./request.service";
-import { ModulesSchemaService } from "./schema.service";
-import { ModulesLayoutService } from "./layout.service";
-import { CommonService } from "@geonature_common/service/common.service";
-import { of } from "@librairies/rxjs";
-import { mergeMap } from "@librairies/rxjs/operators";
+import { Injectable, Injector } from '@angular/core';
+import { ModulesRouteService } from './route.service';
+import { ModulesConfigService } from './config.service';
+import { ModulesRequestService } from './request.service';
+import { ModulesSchemaService } from './schema.service';
+import { ModulesLayoutService } from './layout.service';
+import { CommonService } from '@geonature_common/service/common.service';
+import { of } from '@librairies/rxjs';
+import { mergeMap } from '@librairies/rxjs/operators';
 
 @Injectable()
 export class ModulesPageService {
@@ -42,26 +42,18 @@ export class ModulesPageService {
     this.pageConfig = pageConfig;
   }
 
-  processAction({
-    action,
-    objectName,
-    value = null,
-    data = null,
-    layout = null
-  }) {
-
+  processAction({ action, objectName, value = null, data = null, layout = null }) {
     const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
     const pageConfig = moduleConfig.pages[this.pageName];
     const parentPageName = pageConfig.parent;
 
-
-    if (["details", "edit", "create", "list"].includes(action)) {
+    if (['details', 'edit', 'create', 'list'].includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
 
       const pageName = `${objectName}_${action}`;
       if (!pageName) {
         this._commonService.regularToaster(
-          "error",
+          'error',
           `Il n'y a pas d'action definie pour ${action}, ${objectName}`
         );
         console.error(
@@ -77,48 +69,45 @@ export class ModulesPageService {
 
       routeParams[this._mSchema.pkFieldName(this.moduleCode, objectName)] = value;
       // this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);
-      this._mRoute.navigateToPage(this.moduleCode, pageName, {...this.params, ...routeParams });
+      this._mRoute.navigateToPage(this.moduleCode, pageName, { ...this.params, ...routeParams });
     }
 
     // TODO dans la config de generic form ????
-    if (action == "submit") {
+    if (action == 'submit') {
       this._mSchema.onSubmit(this.moduleCode, objectName, data, layout).subscribe(
         (data) => {
           this._mLayout.stopActionProcessing('');
-          this._commonService.regularToaster(
-            "success",
-            `La requete a bien été effectué`
-          );
+          this._commonService.regularToaster('success', `La requete a bien été effectué`);
           const value = this._mSchema.id(this.moduleCode, objectName, data);
           this.processAction({
-            action: "details",
+            action: 'details',
             objectName,
             value,
           });
         },
         (error) => {
-          this._commonService.regularToaster("error", `Erreur dans la requête`);
+          this._commonService.regularToaster('error', `Erreur dans la requête`);
         }
       );
     }
 
-    if(action == "delete") {
+    if (action == 'delete') {
       this._mSchema.onDelete(this.moduleCode, objectName, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
-        this._mLayout.closeModals()
+        this._mLayout.closeModals();
         this._mLayout.refreshData(objectName);
 
-        if(pageConfig.type != 'details' && !pageConfig.root) {
+        if (pageConfig.type != 'details' && !pageConfig.root) {
           this._mRoute.navigateToPage(this.moduleCode, parentPageName, data); // TODO params
         } else {
         }
-      })
+      });
     }
 
     // TODO clarifier
-    if (action == "cancel") {
+    if (action == 'cancel') {
       if (value) {
-        this.processAction({ action: "details", objectName, value });
+        this.processAction({ action: 'details', objectName, value });
       } else {
         this._mRoute.navigateToPage(this.moduleCode, parentPageName, this.params); // TODO params
       }
@@ -127,9 +116,7 @@ export class ModulesPageService {
 
   exportUrl(moduleCode, exportCode, data) {
     const moduleConfig = this._mConfig.moduleConfig(moduleCode);
-    const exportConfig = moduleConfig.exports.find(
-      (c) => c.export_code == exportCode
-    );
+    const exportConfig = moduleConfig.exports.find((c) => c.export_code == exportCode);
 
     const url = this._mRequest.url(
       `${this._mConfig.backendModuleUrl()}/export/${moduleCode}/${exportCode}`,
@@ -142,13 +129,18 @@ export class ModulesPageService {
   }
 
   getBreadcrumbs() {
-    return this._mRequest.request('get',  `${this._mConfig.backendModuleUrl()}/breadcrumbs/${this.moduleCode}/${this.pageName}`, { params: this.params} )
-    .pipe(
-      mergeMap((breadcrumbs)=> {
-        this.breadcrumbs = breadcrumbs;
-        return of(true)
-      })
-    );
+    return this._mRequest
+      .request(
+        'get',
+        `${this._mConfig.backendModuleUrl()}/breadcrumbs/${this.moduleCode}/${this.pageName}`,
+        { params: this.params }
+      )
+      .pipe(
+        mergeMap((breadcrumbs) => {
+          this.breadcrumbs = breadcrumbs;
+          return of(true);
+        })
+      );
   }
 
   reset() {

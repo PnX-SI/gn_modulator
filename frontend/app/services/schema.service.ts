@@ -1,15 +1,8 @@
-import { Injectable, Injector } from "@angular/core";
-
-import { HttpClient } from "@angular/common/http";
-
-import { Observable, Subject, of } from "@librairies/rxjs";
-import { mergeMap, concatMap } from "@librairies/rxjs/operators";
-
-import { CommonService } from "@geonature_common/service/common.service";
-import { ModulesDataService } from "./data.service";
-import { ModulesFormService } from "./form.service";
-import { ModulesConfigService } from "./config.service";
-import { ModulesLayoutService } from "./layout.service";
+import { Injectable, Injector } from '@angular/core';
+import { ModulesDataService } from './data.service';
+import { ModulesFormService } from './form.service';
+import { ModulesConfigService } from './config.service';
+import { ModulesLayoutService } from './layout.service';
 
 @Injectable()
 export class ModulesSchemaService {
@@ -34,18 +27,18 @@ export class ModulesSchemaService {
     const geometryType = this.geometryType(moduleCode, objectName);
     const geometryFieldName = this.geometryFieldName(moduleCode, objectName);
     return {
-      type: "form",
-      appearance: "fill",
-      direction: "row",
+      type: 'form',
+      appearance: 'fill',
+      direction: 'row',
       items: [
         {
-          type: "map",
+          type: 'map',
           key: geometryFieldName,
           edit: true,
           geometry_type: geometryType,
           gps: true,
           hidden: !geometryFieldName,
-          flex: geometryFieldName ? "1" : "0",
+          flex: geometryFieldName ? '1' : '0',
           zoom: 12,
         },
         {
@@ -61,31 +54,30 @@ export class ModulesSchemaService {
             //   'flex': '0'
             // },
             {
-              type: "breadcrumbs",
-              flex: "0",
+              type: 'breadcrumbs',
+              flex: '0',
             },
             {
               title: [
-                "__f__{",
+                '__f__{',
                 `  const id = data.${objectConfig.utils.pk_field_name};`,
-                "  return id",
-                "    ? `Modification " +
+                '  return id',
+                '    ? `Modification ' +
                   objectConfig.display.du_label +
-                  " ${data." +
+                  ' ${data.' +
                   objectConfig.utils.label_field_name +
-                  "}`",
+                  '}`',
                 `    : "Création ${objectConfig.display.d_un_nouveau_label}";`,
-                "}",
+                '}',
               ],
-              flex: "0",
+              flex: '0',
             },
             {
-              flex: "0",
-              type: "message",
+              flex: '0',
+              type: 'message',
               html: `__f__"Veuillez saisir une geometrie sur la carte"`,
-              class: "error",
-              hidden: `__f__${!objectConfig.utils
-                .geometry_field_name} || data.${
+              class: 'error',
+              hidden: `__f__${!objectConfig.utils.geometry_field_name} || data.${
                 objectConfig.utils.geometry_field_name
               }?.coordinates`,
             },
@@ -94,42 +86,42 @@ export class ModulesSchemaService {
               overflow: true,
             },
             {
-              flex: "0",
-              direction: "row",
+              flex: '0',
+              direction: 'row',
               items: [
                 {
-                  flex: "0",
-                  type: "button",
-                  color: "primary",
-                  title: "Valider",
-                  icon: "done",
-                  description: "Enregistrer le contenu du formulaire",
-                  action: "submit",
-                  disabled: "__f__!(formGroup.valid )",
+                  flex: '0',
+                  type: 'button',
+                  color: 'primary',
+                  title: 'Valider',
+                  icon: 'done',
+                  description: 'Enregistrer le contenu du formulaire',
+                  action: 'submit',
+                  disabled: '__f__!(formGroup.valid )',
                 },
                 {
-                  flex: "0",
-                  type: "button",
-                  color: "primary",
-                  title: "Annuler",
-                  icon: "refresh",
+                  flex: '0',
+                  type: 'button',
+                  color: 'primary',
+                  title: 'Annuler',
+                  icon: 'refresh',
                   description: "Annuler l'édition",
-                  action: "cancel",
+                  action: 'cancel',
                 },
                 {
                   // comment le mettre à gauche
-                  flex: "0",
-                  type: "button",
-                  color: "warn",
-                  title: "Supprimer",
-                  icon: "delete",
-                  description: "Supprimer le passage à faune",
+                  flex: '0',
+                  type: 'button',
+                  color: 'warn',
+                  title: 'Supprimer',
+                  icon: 'delete',
+                  description: 'Supprimer le passage à faune',
                   action: {
-                    type: "modal",
-                    modal_name: "delete",
+                    type: 'modal',
+                    modal_name: 'delete',
                   },
 
-                  hidden: `__f__data.ownership > ${moduleConfig.cruved["D"]} || !data.${objectConfig.utils.pk_field_name}`,
+                  hidden: `__f__data.ownership > ${moduleConfig.cruved['D']} || !data.${objectConfig.utils.pk_field_name}`,
                 },
                 this.modalDeleteLayout(objectConfig),
               ],
@@ -140,26 +132,26 @@ export class ModulesSchemaService {
     };
   }
 
-  modalDeleteLayout(objectConfig, modalName:any = null) {
+  modalDeleteLayout(objectConfig, modalName: any = null) {
     return {
-      type: "modal",
-      modal_name: modalName || "delete",
+      type: 'modal',
+      modal_name: modalName || 'delete',
       title: `Confirmer la suppression de l'élément`,
-      direction: "row",
+      direction: 'row',
       items: [
         {
-          type: "button",
-          title: "Suppression",
-          action: "delete",
-          icon: "delete",
-          color: "warn",
+          type: 'button',
+          title: 'Suppression',
+          action: 'delete',
+          icon: 'delete',
+          color: 'warn',
         },
         {
-          type: "button",
-          title: "Annuler",
-          action: "close",
-          icon: "refresh",
-          color: "primary",
+          type: 'button',
+          title: 'Annuler',
+          action: 'close',
+          icon: 'refresh',
+          color: 'primary',
         },
       ],
     };
@@ -180,20 +172,20 @@ export class ModulesSchemaService {
         //   items: [
         {
           title: `__f__"Propriétés ${objectConfig.display.du_label} " + data.${objectConfig.utils.label_field_name}`,
-          flex: "0",
+          flex: '0',
         },
         {
           items: objectConfig.details.layout,
           overflow: true,
         },
         {
-          type: "button",
-          color: "primary",
-          title: "Éditer",
+          type: 'button',
+          color: 'primary',
+          title: 'Éditer',
           description: `Editer ${objectConfig.display.le_label}`,
-          action: "edit",
-          hidden: `__f__data.ownership > ${moduleConfig.cruved["U"]}`,
-          flex: "0",
+          action: 'edit',
+          hidden: `__f__data.ownership > ${moduleConfig.cruved['U']}`,
+          flex: '0',
         },
       ],
       // },
@@ -224,11 +216,7 @@ export class ModulesSchemaService {
   }
 
   onDelete(moduleCode, objectName, data) {
-    return this._mData.delete(
-      moduleCode,
-      objectName,
-      this.id(moduleCode, objectName, data)
-    );
+    return this._mData.delete(moduleCode, objectName, this.id(moduleCode, objectName, data));
   }
 
   getFields(moduleCode, objectName, layout) {

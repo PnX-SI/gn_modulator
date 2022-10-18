@@ -1,12 +1,12 @@
-import * as fastDeepEqual from "@librairies/fast-deep-equal/es6";
-import _ from "lodash";
+import * as fastDeepEqual from '@librairies/fast-deep-equal/es6';
+import _ from 'lodash';
 
 // const fastDeepEqual = (obj1, obj2) => {
 //   return fastDeepEqual_(obj1, obj2) || fastDeepEqual_(copy(obj1), copy(obj2))
 // }
 
 const isObject = (obj) => {
-  return typeof obj === "object" && !Array.isArray(obj) && obj !== null;
+  return typeof obj === 'object' && !Array.isArray(obj) && obj !== null;
 };
 
 const copy = (obj) => {
@@ -30,9 +30,9 @@ const getAttr = (obj, paths) => {
     return obj.map((elem) => getAttr(elem, paths));
   }
 
-  const vPaths = paths.split(".");
+  const vPaths = paths.split('.');
   const path = vPaths.shift();
-  const nextPaths = vPaths.join(".");
+  const nextPaths = vPaths.join('.');
   const inter = obj[path];
 
   return getAttr(inter, nextPaths);
@@ -57,9 +57,9 @@ const condAttr = (obj, paths, value) => {
     return cond;
   }
 
-  const vPaths = paths.split(".");
+  const vPaths = paths.split('.');
   const path = vPaths.shift();
-  const nextPaths = vPaths.join(".");
+  const nextPaths = vPaths.join('.');
   const inter = obj[path];
 
   const cond = condAttr(inter, nextPaths, value);
@@ -88,9 +88,9 @@ const filterAttr = (obj, paths, value) => {
     return obj.filter((elem) => condAttr(elem, paths, value));
   }
 
-  const vPaths = paths.split(".");
+  const vPaths = paths.split('.');
   const path = vPaths.shift();
-  const nextPaths = vPaths.join(".");
+  const nextPaths = vPaths.join('.');
   const inter = obj[path];
 
   obj[path] = filterAttr(inter, nextPaths, value);
@@ -100,7 +100,7 @@ const filterAttr = (obj, paths, value) => {
 
 const setAttr = (obj, paths, value) => {
   var inter = obj;
-  const v_path = Object.entries(paths.split("."));
+  const v_path = Object.entries(paths.split('.'));
   for (const [index, path] of v_path) {
     if (index < v_path.length - 1) {
       inter[path] = inter[path] || {};
@@ -131,13 +131,13 @@ const flatAndRemoveDoublons = (array) => {
   return removeDoublons(flat(array));
 };
 
-const unaccent = (str) => str.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+const unaccent = (str) => str.normalize('NFD').replace(/\p{Diacritic}/gu, '');
 
 const lowerUnaccent = (str) =>
   str &&
   str
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
     .toLowerCase();
 
 const capitalize = (s) => {
@@ -158,7 +158,7 @@ const replace = (obj, strTest, strReplace) => {
     return obj.map((elem) => replace(elem, strTest, strReplace));
   }
 
-  if (typeof obj == "string") {
+  if (typeof obj == 'string') {
     return obj.replace(strTest, strReplace);
   }
 
@@ -175,13 +175,13 @@ const processFilterArray = (filters) => {
   const filtersOut = filters
     .map((f) =>
       isObject(f)
-        ? f.type == "in"
-          ? `${f.field}_${f.type}_${f.value.join(";")}`
-          : `${f.field}_${f.type}_${f.value}`
+        ? f.type == 'in'
+          ? `${f.field} ${f.type} ${f.value.join(';')}`
+          : `${f.field} ${f.type} ${f.value}`
         : f
     )
-    .join(",");
-    return filtersOut
+    .join(',');
+  return filtersOut;
 };
 
 const JSONStringify = (obj) => JSON.stringify(obj, null, 4);

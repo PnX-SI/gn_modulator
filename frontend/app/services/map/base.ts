@@ -1,8 +1,7 @@
-import utils from "../../utils";
-import * as L from "@librairies/leaflet";
+import utils from '../../utils';
+import * as L from '@librairies/leaflet';
 
 export default {
-
   waitForMap(mapId, maxRetries = null): Promise<L.map> {
     let index = 1;
     return new Promise((resolve, reject) => {
@@ -56,11 +55,11 @@ export default {
   },
 
   computeGeometryCenter(geom) {
-    if (["Polygon", "LineString"].includes(geom.type)) {
+    if (['Polygon', 'LineString'].includes(geom.type)) {
       const centroid = this.getCentroid(geom.coordinates[0]);
       return L.latLng(centroid[1], centroid[0]);
     }
-    if (["Point"].includes(geom.type)) {
+    if (['Point'].includes(geom.type)) {
       return L.latLng(geom.coordinates[1], geom.coordinates[0]);
     }
   },
@@ -125,12 +124,9 @@ export default {
     return this.getMap(mapId) && this.getMap(mapId).getBounds();
   },
 
-  initMap(
-    mapId,
-    { zoom = null, center = null, bEdit = null, drawOptions = null } = {}
-  ) {
-    if(this._pendingMaps[mapId]) {
-      return this.waitForMap(mapId)
+  initMap(mapId, { zoom = null, center = null, bEdit = null, drawOptions = null } = {}) {
+    if (this._pendingMaps[mapId]) {
+      return this.waitForMap(mapId);
     }
     this._pendingMaps[mapId] = true;
 
@@ -148,7 +144,7 @@ export default {
         setTimeout(() => {
           /** zoom scale */
 
-          this.L.control.zoom({ position: "topright" }).addTo(map);
+          this.L.control.zoom({ position: 'topright' }).addTo(map);
           this.L.control.scale().addTo(map);
 
           /** set baseMaps (from geonature config) */
@@ -165,27 +161,24 @@ export default {
             });
           };
 
-          map.on("moveend", fnMapZoomMoveEnd);
-          map.on("zoomend", fnMapZoomMoveEnd);
+          map.on('moveend', fnMapZoomMoveEnd);
+          map.on('zoomend', fnMapZoomMoveEnd);
 
-          
           /** coords on rigth click */
-          map.on("contextmenu", (event: any) => {      
-            console.log(event.latlng)
-            map.coordinatesTxt = `${event.latlng.lng}, ${event.latlng.lat}`
+          map.on('contextmenu', (event: any) => {
+            console.log(event.latlng);
+            map.coordinatesTxt = `${event.latlng.lng}, ${event.latlng.lat}`;
             console.log(this.coordinatesTxt);
-            navigator.clipboard.writeText(
-              `${event.latlng.lng}, ${event.latlng.lat}`
-            )        
+            navigator.clipboard.writeText(`${event.latlng.lng}, ${event.latlng.lat}`);
           });
-      
+
           // init panes
-          for (let i=1; i<=10; i+=1) {
+          for (let i = 1; i <= 10; i += 1) {
             const paneName = `P${i}`;
-            map.createPane(paneName)
+            map.createPane(paneName);
             map.getPane(paneName).style.zIndex = 600 + i;
           }
-          
+
           map.isInitialized = true;
           resolve(map);
         }, 100);

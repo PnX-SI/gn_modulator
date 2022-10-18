@@ -11,5 +11,5 @@ export default {
   ...utilsCommons,
   ...utilsDom,
   ...utilsForm,
-  ...utilsRefGeo
-}
+  ...utilsRefGeo,
+};

@@ -6,15 +6,15 @@ import {
   EventEmitter,
   Output,
   Injector,
-} from "@angular/core";
-import { ModulesLayoutService } from "../../../services/layout.service";
-import utils from "../../../utils";
+} from '@angular/core';
+import { ModulesLayoutService } from '../../../services/layout.service';
+import utils from '../../../utils';
 
 /** Composant de base pour les layouts */
 @Component({
-  selector: "modules-layout",
-  templateUrl: "layout.component.html",
-  styleUrls: ["../../base/base.scss", "layout.component.scss"],
+  selector: 'modules-layout',
+  templateUrl: 'layout.component.html',
+  styleUrls: ['../../base/base.scss', 'layout.component.scss'],
 })
 export class ModulesLayoutComponent implements OnInit {
   // @Output() layoutChange = new EventEmitter<any>();
@@ -63,7 +63,7 @@ export class ModulesLayoutComponent implements OnInit {
   /** margin for debug display
    * help with debugging nested layout
    */
-  debugMarginLeft = "0px";
+  debugMarginLeft = '0px';
 
   /** Type de layout
    */
@@ -98,11 +98,11 @@ export class ModulesLayoutComponent implements OnInit {
   computedItems;
 
   actionProcessing; // pour les spinners
-  
+
   utils; // pour acceder à utils dans les templates
-  
+
   constructor(protected _injector: Injector) {
-    this._name = "layout";
+    this._name = 'layout';
     this._id = Math.round(Math.random() * 1e10);
     this._mLayout = _injector.get(ModulesLayoutService);
     this.utils = utils;
@@ -120,7 +120,7 @@ export class ModulesLayoutComponent implements OnInit {
     this._mLayout.$refreshData.subscribe((objectName) => {
       this.refreshData(objectName);
     });
-    
+
     this._mLayout.$reComputedHeight.subscribe(() => {
       this.onHeightChange();
     });
@@ -133,7 +133,6 @@ export class ModulesLayoutComponent implements OnInit {
       this.actionProcessing = false;
     });
 
-    
     // pour les élément avec heigh_auto = true
     // this.listenPageResize();
 
@@ -141,7 +140,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.postInit();
   }
 
-  onRedrawElem() {};
+  onRedrawElem() {}
 
   // à redefinir pour faire une action apres init
   postInit() {}
@@ -183,8 +182,7 @@ export class ModulesLayoutComponent implements OnInit {
   // pour prendre en compte les paramètre qui sont des functions
   computeLayout() {
     // calcul du type de layout
-    this.layoutType =
-      this.layoutType || this._mLayout.getLayoutType(this.layout);
+    this.layoutType = this.layoutType || this._mLayout.getLayoutType(this.layout);
 
     // calcul du layout
     this.computedLayout = this._mLayout.computeLayout({
@@ -196,9 +194,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     // récupération des données associées à this.computedLayout.key
     this.dataKey =
-      this.layoutType == "key"
-        ? utils.getAttr(this.data, this.computedLayout.key)
-        : this.data;
+      this.layoutType == 'key' ? utils.getAttr(this.data, this.computedLayout.key) : this.data;
 
     // pour l'affichage du debug
     // if (this.debug) {
@@ -213,8 +209,7 @@ export class ModulesLayoutComponent implements OnInit {
       return;
     }
 
-    const items =
-      this.layoutType == "items" ? this.layout : this.layout.items || [];
+    const items = this.layoutType == 'items' ? this.layout : this.layout.items || [];
 
     this.computedItems = items.map
       ? items.map((item) =>
@@ -231,15 +226,13 @@ export class ModulesLayoutComponent implements OnInit {
     // on va chercher le layout correspondant dans la config
     // TODO (gérer ça en backend)
     if (this.computedLayout.layout_name && !this.layoutFromName) {
-      const layoutFromName = this._mLayout.getLayoutFromName(
-        this.computedLayout.layout_name
-      );
+      const layoutFromName = this._mLayout.getLayoutFromName(this.computedLayout.layout_name);
 
       // message d'erreur pour indiquer que l'on a pas trouvé le layout
       if (!layoutFromName) {
         this.layoutFromName = {
-          type: "message",
-          class: "error",
+          type: 'message',
+          class: 'error',
           html: `Pas de layout trouvé pour le <i>layout_name</i> <b>${this.computedLayout.layout_name}</b>`,
         };
         return;
@@ -252,8 +245,6 @@ export class ModulesLayoutComponent implements OnInit {
       this.processHeightOverflow();
     }
 
-    
-    
     /** pour éviter de déclencher postComputeLayout s'il n'y a pas de changmeent effectif */
     if (!this.bPostComputeLayout) {
       return;
@@ -263,17 +254,9 @@ export class ModulesLayoutComponent implements OnInit {
     const dataCopy = utils.copy(this.data);
     const computedLayoutCopy = utils.copy(this.computedLayout);
     const dataChanged = !utils.fastDeepEqual(this.dataSave, dataCopy);
-    const layoutChanged = !utils.fastDeepEqual(
-      this.computedLayoutSave,
-      computedLayoutCopy
-    );
+    const layoutChanged = !utils.fastDeepEqual(this.computedLayoutSave, computedLayoutCopy);
 
-    if (
-      this.computedLayoutSave &&
-      this.dataSave &&
-      !layoutChanged &&
-      !dataChanged
-    ) {
+    if (this.computedLayoutSave && this.dataSave && !layoutChanged && !dataChanged) {
       return;
     }
 
@@ -282,21 +265,19 @@ export class ModulesLayoutComponent implements OnInit {
     // sauvegarde des données pour la prochaine comparaison
     this.dataSave = dataCopy;
     this.computedLayoutSave = computedLayoutCopy;
-    
   }
 
   // pour gérer les composant avec overflow = true
   processHeightOverflow() {
-
     if (!(this.computedLayout?.overflow || this.layout?.overflow)) {
       return;
     }
-    
+
     const elem = document.getElementById(this._id);
     if (!elem) {
       return;
     }
-    
+
     const docHeight = document.body.clientHeight;
 
     // si la taille du body n'a pas changé on retourne
@@ -310,32 +291,32 @@ export class ModulesLayoutComponent implements OnInit {
     if (this.docHeightSave > docHeight || !this.docHeightSave) {
       this.computedLayout.style = {
         ...(this.computedLayout.style || {}),
-        height: "200px",
-        "overflow-y": "scroll",
+        height: '200px',
+        'overflow-y': 'scroll',
       };
 
       this.layout.style = {
         ...(this.layout.style || {}),
         height: `200px`,
-        "overflow-y": "scroll",
+        'overflow-y': 'scroll',
       };
     }
 
     this.docHeightSave = docHeight;
 
     setTimeout(() => {
-      const parent = elem.closest("div.layout-item");
+      const parent = elem.closest('div.layout-item');
       const height = parent?.clientHeight;
       this.layout.style = {
         ...(this.layout.style || {}),
         height: `${height}px`,
-        "overflow-y": "scroll",
+        'overflow-y': 'scroll',
       };
-      
+
       this.computedLayout.style = {
         ...(this.computedLayout.style || {}),
         height: `${height}px`,
-        "overflow-y": "scroll",
+        'overflow-y': 'scroll',
       };
     }, 200);
   }
@@ -364,7 +345,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     // on ajoute un évènement en cas de changement de la hauteur de la fenêtre
     window.addEventListener(
-      "resize",
+      'resize',
       (event) => {
         this.processHeightAuto();
       },
@@ -389,7 +370,6 @@ export class ModulesLayoutComponent implements OnInit {
       return;
     }
 
-
     const elementHeight = elem && `${elem.clientHeight}px`;
     const bodyHeight = `${document.body.clientHeight - elem.offsetTop}px`;
 
@@ -405,13 +385,12 @@ export class ModulesLayoutComponent implements OnInit {
 
     this.layout.style = this.layout.style || {};
     this.layout.style.height = bodyHeight;
-    
+
     this._mLayout.reComputeHeight('auto');
   }
 
   // a redefinir pour faire des actions après processLayout
-  postProcessLayout() {
-  }
+  postProcessLayout() {}
 
   // calcul de la marge pour l'afffichage du debug
   // - en fonction de l'input depth
@@ -438,7 +417,7 @@ export class ModulesLayoutComponent implements OnInit {
       return;
     }
 
-    if (action == "close") {
+    if (action == 'close') {
       this._mLayout.closeModals();
       return;
     }
@@ -452,39 +431,35 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   processAction(event) {
-    if (event.type == "data-change") {
+    if (event.type == 'data-change') {
       this.computeLayout();
     }
     this.emitAction(event);
   }
 
   pretty(obj) {
-    return JSON.stringify(obj, null, "____  ");
+    return JSON.stringify(obj, null, '____  ');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     for (const [key, change] of Object.entries(changes)) {
-      if (
-        utils.fastDeepEqual(change["currentValue"], change["previousValue"])
-      ) {
+      if (utils.fastDeepEqual(change['currentValue'], change['previousValue'])) {
         continue;
       }
 
-      if (["layout", "data", "globalData"].includes(key)) {
+      if (['layout', 'data', 'globalData'].includes(key)) {
         this.processLayout();
       }
 
-      if (key == "debug") {
+      if (key == 'debug') {
         this.processDebug();
       }
     }
   }
 
   onTabChanged($event) {
-    this._mLayout.reDrawElem('tab changed')
+    this._mLayout.reDrawElem('tab changed');
   }
-  
-  refreshData(objectName) {
-    
-  }
+
+  refreshData(objectName) {}
 }

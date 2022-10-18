@@ -1,4 +1,4 @@
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup } from '@angular/forms';
 
 const getFormErrors = (form) => {
   if (form instanceof FormControl) {
@@ -23,7 +23,7 @@ const getFormErrors = (form) => {
 };
 
 const prettyFormErrors = (form) => {
-  return JSON.stringify(getFormErrors(form), null, '____')
-}
+  return JSON.stringify(getFormErrors(form), null, '____');
+};
 
 export default { getFormErrors, prettyFormErrors };

@@ -1,12 +1,12 @@
-import { Component, OnInit, Injector } from "@angular/core";
-import { ModulesConfigService } from "../../../services/config.service";
-import { ModulesSchemaService } from "../../../services/schema.service";
-import { ModulesDataService } from "../../../services/data.service";
-import { ModulesPageService } from "../../../services/page.service";
-import { ModulesRouteService } from "../../../services/route.service";
-import { ModulesLayoutComponent } from "../base/layout.component";
-import { Observable, of } from "@librairies/rxjs";
-import utils from "../../../utils";
+import { Component, OnInit, Injector } from '@angular/core';
+import { ModulesConfigService } from '../../../services/config.service';
+import { ModulesSchemaService } from '../../../services/schema.service';
+import { ModulesDataService } from '../../../services/data.service';
+import { ModulesPageService } from '../../../services/page.service';
+import { ModulesRouteService } from '../../../services/route.service';
+import { ModulesLayoutComponent } from '../base/layout.component';
+import { Observable, of } from '@librairies/rxjs';
+import utils from '../../../utils';
 
 /** Composant pour afficher des objets
  * layout
@@ -16,14 +16,11 @@ import utils from "../../../utils";
  *    - properties, form: pour 1 object (d'id=value)
  */
 @Component({
-  selector: "modules-layout-object",
-  templateUrl: "layout-object.component.html",
-  styleUrls: ["../../base/base.scss", "layout-object.component.scss"],
+  selector: 'modules-layout-object',
+  templateUrl: 'layout-object.component.html',
+  styleUrls: ['../../base/base.scss', 'layout-object.component.scss'],
 })
-export class ModulesLayoutObjectComponent
-  extends ModulesLayoutComponent
-  implements OnInit
-{
+export class ModulesLayoutObjectComponent extends ModulesLayoutComponent implements OnInit {
   objectConfig; // configuration du schema TODO à enlever??
 
   schemaData; // données relative au schema, récupérées par getData
@@ -45,7 +42,7 @@ export class ModulesLayoutObjectComponent
     this._mSchema = this._injector.get(ModulesSchemaService);
     this._mRoute = this._injector.get(ModulesRouteService);
     this._mPage = this._injector.get(ModulesPageService);
-    this._name = "layout-object";
+    this._name = 'layout-object';
     this.bPostComputeLayout = true;
   }
 
@@ -89,10 +86,7 @@ export class ModulesLayoutObjectComponent
       return;
     }
     this.isProcessing = true;
-    this.objectConfig = this._mConfig.objectConfig(
-      this._mPage.moduleCode,
-      this.objectName()
-    );
+    this.objectConfig = this._mConfig.objectConfig(this._mPage.moduleCode, this.objectName());
 
     this.processConfig();
     this.getData().subscribe(
@@ -118,14 +112,14 @@ export class ModulesLayoutObjectComponent
     if (![null, undefined].includes(response.total)) {
       this.data.total = response.total;
       this.data.filtered = response.filtered;
-      this._mLayout.reComputeLayout("totalfilter");
+      this._mLayout.reComputeLayout('totalfilter');
     }
   }
 
   /** Traitement de la configuration */
   processConfig() {
     // cas du formulaire
-    if (this.computedLayout.display == "form") {
+    if (this.computedLayout.display == 'form') {
       this.processedLayout = this._mSchema.processFormLayout(
         this._mPage.moduleCode,
         this.objectName()
@@ -133,7 +127,7 @@ export class ModulesLayoutObjectComponent
     }
 
     // cas des details ou propriété
-    if (this.computedLayout.display == "properties") {
+    if (this.computedLayout.display == 'properties') {
       this.processedLayout = this._mSchema.processPropertiesLayout(
         this._mPage.moduleCode,
         this.objectName()
@@ -141,17 +135,17 @@ export class ModulesLayoutObjectComponent
     }
 
     // export ??
-    if (this.computedLayout.display == "export") {
+    if (this.computedLayout.display == 'export') {
       this.processedLayout = {
-        type: "button",
-        title: "export",
-        icon: "file_download",
+        type: 'button',
+        title: 'export',
+        icon: 'file_download',
         href: this._mPage.exportUrl(
           this._mPage.moduleCode,
           this.computedLayout.export_code,
           this.data
         ),
-        description: "Exporter les données",
+        description: 'Exporter les données',
       };
     }
   }
@@ -167,10 +161,8 @@ export class ModulesLayoutObjectComponent
   // dans le cas du formulaire seulement ?
   // si data.default est défini
   processDefaults(data) {
-    for (const [defaultKey, defaultValue] of Object.entries(
-      this.data.defaults || {}
-    )) {
-      if (!((defaultValue as any).length && (defaultValue as any)[0] == ":")) {
+    for (const [defaultKey, defaultValue] of Object.entries(this.data.defaults || {})) {
+      if (!((defaultValue as any).length && (defaultValue as any)[0] == ':')) {
         data[defaultKey] = defaultValue;
       }
     }
@@ -179,10 +171,7 @@ export class ModulesLayoutObjectComponent
   // récupération des données
   // peut être redefini
   getData(): Observable<any> {
-    if (
-      ["form", "properties"].includes(this.computedLayout.display) &&
-      this.getDataValue()
-    ) {
+    if (['form', 'properties'].includes(this.computedLayout.display) && this.getDataValue()) {
       return this.getOneRow();
     }
     return of({});
@@ -225,11 +214,7 @@ export class ModulesLayoutObjectComponent
   // process des actions
   // TODO à clarifier avec page.element ??
   processAction(event) {
-    if (
-      ["submit", "cancel", "edit", "details", "create", "delete"].includes(
-        event.action
-      )
-    ) {
+    if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,
         objectName: this.objectName(),
@@ -260,7 +245,7 @@ export class ModulesLayoutObjectComponent
     }
     // s'il y a eu un changement on recalcule les layout
     if (change) {
-      this._mLayout.reComputeLayout("set data object");
+      this._mLayout.reComputeLayout('set data object');
       // setTimeout(() => {
       // this._mLayout.reComputeHeight("set data object");
       // });
@@ -284,7 +269,7 @@ export class ModulesLayoutObjectComponent
 
   // Quand une nouvelle valeur est définie
   processValue(value) {
-    if (["form", "properties"].includes(this.computedLayout.display)) {
+    if (['form', 'properties'].includes(this.computedLayout.display)) {
       return this.postProcessLayout();
     }
   }

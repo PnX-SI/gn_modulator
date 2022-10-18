@@ -1,8 +1,6 @@
-
 import * as L from '@librairies/leaflet';
 
 export default {
-
   formatBaseMapConfig(baseMap) {
     // tslint:disable-next-line:forin
     for (let attr in baseMap) {
@@ -22,7 +20,7 @@ export default {
   },
 
   addBaseMap(mapId) {
-    const map = this.getMap(mapId)
+    const map = this.getMap(mapId);
     const baseControl = {};
     const BASEMAP = JSON.parse(JSON.stringify(this._mConfig.appConfig().MAPCONFIG.BASEMAP));
 
@@ -44,6 +42,5 @@ export default {
       }
     });
     L.control.layers(baseControl).addTo(map);
-  }
-
-}
+  },
+};

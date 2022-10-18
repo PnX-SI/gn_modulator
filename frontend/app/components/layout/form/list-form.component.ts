@@ -1,37 +1,22 @@
-import { Component, OnInit, Input, Injector } from "@angular/core";
-import { ListFormService } from "../../../services/list-form.service";
-import { ModulesLayoutComponent } from "../base/layout.component";
-import { ModulesLayoutService } from "../../../services/layout.service";
-import { FormArray, FormGroup, AbstractControl } from "@angular/forms";
+import { Component, OnInit, Input, Injector } from '@angular/core';
+import { ListFormService } from '../../../services/list-form.service';
+import { ModulesLayoutComponent } from '../base/layout.component';
+import { AbstractControl } from '@angular/forms';
 
-import {
-  mergeMap,
-  startWith,
-  pairwise,
-  switchMap,
-  debounceTime,
-  distinctUntilChanged,
-} from "@librairies/rxjs/operators";
-import { of, Subject } from "@librairies/rxjs";
+import { debounceTime, distinctUntilChanged } from '@librairies/rxjs/operators';
+import { Subject } from '@librairies/rxjs';
 
-import utils from "../../../utils";
+import utils from '../../../utils';
 
 @Component({
-  selector: "modules-list-form",
-  templateUrl: "list-form.component.html",
-  styleUrls: ["../../base/base.scss", "list-form.component.scss"],
+  selector: 'modules-list-form',
+  templateUrl: 'list-form.component.html',
+  styleUrls: ['../../base/base.scss', 'list-form.component.scss'],
 })
-export class ModulesListFormComponent
-  extends ModulesLayoutComponent
-  implements OnInit
-{
-
-  constructor(
-    private _listFormService: ListFormService,
-    _injector: Injector,
-  ) {
+export class ModulesListFormComponent extends ModulesLayoutComponent implements OnInit {
+  constructor(private _listFormService: ListFormService, _injector: Injector) {
     super(_injector);
-    this._name = "list_form";
+    this._name = 'list_form';
     this.bPostComputeLayout = true;
   }
 
@@ -43,7 +28,7 @@ export class ModulesListFormComponent
   /** fonction de comparaison pour mat-select */
   compareFn;
 
-  search = "";
+  search = '';
   searchSubject: Subject<string>;
   searchSubscription = null;
   isLoading = false;
@@ -56,49 +41,43 @@ export class ModulesListFormComponent
     this.searchSubject = this.searchSubject || new Subject();
     this.searchSubscription && this.searchSubscription.unsubscribe();
     this.searchSubscription = this.searchSubject
-      .pipe(
-        distinctUntilChanged(),
-        debounceTime(400 * this.listFormOptions.reload_on_search)
-      )
+      .pipe(distinctUntilChanged(), debounceTime(400 * this.listFormOptions.reload_on_search))
       .subscribe((search) => {
         this.processSearchChanged(search);
       });
   }
 
-
   getCompareFn = (return_object, value_field_name) => (a, b) => {
-    return a && b && return_object
-        ? a[value_field_name] ==
-            b[value_field_name]
-        : a == b;
-  }
+    return a && b && return_object ? a[value_field_name] == b[value_field_name] : a == b;
+  };
   /** initialisation du composant select */
   // postProcessLayout(): void {
 
   // }
 
   processListFormConfig() {
-    this.listFormOptions = utils.copy(this.computedLayout)
+    this.listFormOptions = utils.copy(this.computedLayout);
     this.initSearch();
     this.formControl = this.options.formGroup.get(this.layout.key);
-    this.isLoading=true;
+    this.isLoading = true;
     this._listFormService
       .initListForm(this.listFormOptions, this.formControl)
       .subscribe((infos) => {
-        this.compareFn = this.getCompareFn(this.listFormOptions.return_object, this.listFormOptions.value_field_name);
+        this.compareFn = this.getCompareFn(
+          this.listFormOptions.return_object,
+          this.listFormOptions.value_field_name
+        );
         this.items = infos.items;
         this.nbItems = infos.nbItems;
         this.itemsSave = utils.copy(infos.items);
-        this.isLoading=false;
+        this.isLoading = false;
         // mettre à jour l'affichage des données
-
       });
   }
 
   /** */
   postComputeLayout(dataChanged, layoutChanged): void {
-
-    if(layoutChanged) {
+    if (layoutChanged) {
       this.processListFormConfig();
     }
   }
@@ -111,10 +90,11 @@ export class ModulesListFormComponent
   /** processus de recherche dans les items */
   processSearchChanged(search) {
     if (this.listFormOptions.reload_on_search) {
-    // server side search ??
+      // server side search ??
       this.listFormOptions.search = search;
       this.isLoading = true;
-      this._listFormService.getSelectList(this.listFormOptions, this.formControl.value)
+      this._listFormService
+        .getSelectList(this.listFormOptions, this.formControl.value)
         .subscribe((infos) => {
           this.items = infos.items;
           this.nbItems = infos.nbItems;
@@ -128,14 +108,12 @@ export class ModulesListFormComponent
 
   /** Local search */
   localSearch(search) {
-    if ([null, undefined, ""].includes(search)) {
+    if ([null, undefined, ''].includes(search)) {
       return this.itemsSave;
     }
     const searchLowerUnaccent = utils.lowerUnaccent(search);
     return this.itemsSave.filter((item) => {
-      const label = utils.lowerUnaccent(
-        item[this.listFormOptions.label_field_name]
-      );
+      const label = utils.lowerUnaccent(item[this.listFormOptions.label_field_name]);
       return label.includes(searchLowerUnaccent);
     });
   }

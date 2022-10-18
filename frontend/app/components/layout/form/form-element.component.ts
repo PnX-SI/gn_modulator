@@ -1,22 +1,10 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  SimpleChanges,
-  OnChanges,
-  Injector,
-} from "@angular/core";
-import { FormGroup } from "@angular/forms";
-import { ModulesLayoutService } from "../../../services/layout.service";
-import utils from "../../../utils";
-import { ModulesLayoutComponent } from "../base/layout.component";
+import { Component, OnInit, OnChanges, Injector } from '@angular/core';
+import { ModulesLayoutComponent } from '../base/layout.component';
 
 @Component({
-  selector: "modules-form-element",
-  templateUrl: "form-element.component.html",
-  styleUrls: ["form-element.component.scss", "../../base/base.scss"],
+  selector: 'modules-form-element',
+  templateUrl: 'form-element.component.html',
+  styleUrls: ['form-element.component.scss', '../../base/base.scss'],
 })
 export class ModulesFormElementComponent
   extends ModulesLayoutComponent
@@ -27,11 +15,11 @@ export class ModulesFormElementComponent
 
   constructor(_injector: Injector) {
     super(_injector);
-    this._name = "form_element";
+    this._name = 'form_element';
   }
 
   postProcessLayout(): void {
-    if (this.computedLayout.type == "dyn_form") {
+    if (this.computedLayout.type == 'dyn_form') {
       this.formDef = this._mLayout.toFormDef(this.computedLayout);
     }
   }
@@ -41,25 +29,17 @@ export class ModulesFormElementComponent
   }
 
   onInputChange() {
-    if (this.computedLayout.type == "number") {
+    if (this.computedLayout.type == 'number') {
       this.options.formGroup
         .get(this.layout.key)
-        .patchValue(
-          parseFloat(this.options.formGroup.get(this.layout.key).value)
-        );
-      this.data[this.layout.key] = this.options.formGroup.get(
-        this.layout.key
-      ).value;
+        .patchValue(parseFloat(this.options.formGroup.get(this.layout.key).value));
+      this.data[this.layout.key] = this.options.formGroup.get(this.layout.key).value;
     }
-    if (this.computedLayout.type == "integer") {
+    if (this.computedLayout.type == 'integer') {
       this.options.formGroup
         .get(this.layout.key)
-        .patchValue(
-          parseInt(this.options.formGroup.get(this.layout.key).value)
-        );
-      this.data[this.layout.key] = this.options.formGroup.get(
-        this.layout.key
-      ).value;
+        .patchValue(parseInt(this.options.formGroup.get(this.layout.key).value));
+      this.data[this.layout.key] = this.options.formGroup.get(this.layout.key).value;
     }
 
     this.computedLayout.change && this.computedLayout.change();

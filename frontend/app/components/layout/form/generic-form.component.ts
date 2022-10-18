@@ -1,18 +1,15 @@
-import { Component, OnInit, Injector } from "@angular/core";
-import { ModulesFormService } from "../../../services/form.service";
-import { FormGroup } from "@angular/forms";
+import { Component, OnInit, Injector } from '@angular/core';
+import { ModulesFormService } from '../../../services/form.service';
+import { FormGroup } from '@angular/forms';
 
-import { ModulesLayoutComponent } from "../base/layout.component";
+import { ModulesLayoutComponent } from '../base/layout.component';
 
 @Component({
-  selector: "modules-generic-form",
-  templateUrl: "generic-form.component.html",
-  styleUrls: ["../../base/base.scss", "generic-form.component.scss"],
+  selector: 'modules-generic-form',
+  templateUrl: 'generic-form.component.html',
+  styleUrls: ['../../base/base.scss', 'generic-form.component.scss'],
 })
-export class ModulesGenericFormComponent
-  extends ModulesLayoutComponent
-  implements OnInit
-{
+export class ModulesGenericFormComponent extends ModulesLayoutComponent implements OnInit {
   /** Mise en page du formulaire */
 
   listenToChanges: boolean;
@@ -24,7 +21,7 @@ export class ModulesGenericFormComponent
   constructor(_injector: Injector) {
     super(_injector);
     this._formService = this._injector.get(ModulesFormService);
-    this._name = "form";
+    this._name = 'form';
     this.bPostComputeLayout = true;
   }
 
@@ -52,27 +49,17 @@ export class ModulesGenericFormComponent
       return;
     }
     this.listenToChanges = false;
-    this._formService.setControls(
-      this.formGroup,
-      this.layout,
-      this.data,
-      this.globalData
-    );
+    this._formService.setControls(this.formGroup, this.layout, this.data, this.globalData);
     this.listenToChanges = true;
   }
 
   onFormGroupChange(value) {
-    if (
-      !this.listenToChanges ||
-      this._formService.isEqual(this.formGroup.value, this.data)
-    ) {
+    if (!this.listenToChanges || this._formService.isEqual(this.formGroup.value, this.data)) {
       return;
     }
     const dataChanged = {};
     for (let key of Object.keys(this.formGroup.value)) {
-      if (
-        !this._formService.isEqual(this.formGroup.value[key], this.data[key])
-      ) {
+      if (!this._formService.isEqual(this.formGroup.value[key], this.data[key])) {
         dataChanged[key] = this.formGroup.value[key];
       }
     }
@@ -81,8 +68,8 @@ export class ModulesGenericFormComponent
     this._formService.updateData(this.data, this.formGroup.value);
 
     this.updateForm();
-    this.emitAction({ type: "data-change" });
-    this._mLayout.reComputeLayout("form");
+    this.emitAction({ type: 'data-change' });
+    this._mLayout.reComputeLayout('form');
 
     this.computedLayout.change && this.computedLayout.change(dataChanged);
   }
@@ -99,18 +86,12 @@ export class ModulesGenericFormComponent
     this.options = {
       ...this.options,
       form: true,
-      appearance: this.layout.appearance || "fill",
+      appearance: this.layout.appearance || 'fill',
       formGroup: this.formGroup,
     };
-    this._formService.setControls(
-      this.formGroup,
-      this.layout,
-      this.data,
-      this.globalData
-    );
+    this._formService.setControls(this.formGroup, this.layout, this.data, this.globalData);
     this.formGroup.valueChanges.subscribe((value) => {
       this.onFormGroupChange(value);
     });
-
   }
 }

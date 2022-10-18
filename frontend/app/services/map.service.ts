@@ -1,30 +1,23 @@
-import { Injectable } from "@angular/core";
-
-import { ModulesConfigService } from "./config.service";
-import { ModulesLayoutService } from "./layout.service";
+import { Injectable } from '@angular/core';
+import { ModulesConfigService } from './config.service';
+import { ModulesLayoutService } from './layout.service';
 import * as L from '@librairies/leaflet';
 import '@librairies/@geoman-io/leaflet-geoman-free';
 
 L.PM.initialize({ optIn: true }); // Property 'PM' does not exist on type 'typeof import(".../node_modules/@types/leaflet/index")'.ts(2339)
 
-
-import mapMethods from './map'
+import mapMethods from './map';
 
 @Injectable()
 export class ModulesMapService {
-
-  constructor(
-    private _mConfig: ModulesConfigService,
-    private _mLayout: ModulesLayoutService
-  ) {
+  constructor(private _mConfig: ModulesConfigService, private _mLayout: ModulesLayoutService) {
     /** on récupère touts les méthodes definies dans les fichiers du répertoire ./map/ */
     for (const methods of Object.values(mapMethods)) {
       for (const [key, value] of Object.entries(methods)) {
-        this[key]=value
+        this[key] = value;
       }
     }
   }
-
 
   /** map cache: {..., <mapId>: map,...} */
   _maps = {};
@@ -34,21 +27,17 @@ export class ModulesMapService {
   _layersData = {};
 
   /** Leaflet */
-  L=L;
+  L = L;
 
   /** Configuration */
 
-  init() {
-  }
-
+  init() {}
 
   /** Methodes pour la carte*/
-
 
   /**
    * methodes depuis les fichiers de ./map/
    */
-
 
   /** ./map/base */
 
@@ -64,11 +53,9 @@ export class ModulesMapService {
   setCenter = mapMethods.base.setCenter;
   setZoom = mapMethods.base.setZoom;
 
-
   /** ./map/baseMap */
 
   addBaseMap = mapMethods.base_map.addBaseMap;
-
 
   /** ./map/layers */
 
@@ -84,5 +71,5 @@ export class ModulesMapService {
   setDrawConfig = mapMethods.draw.setDrawConfig;
 
   /** ./map/control */
-  addControl = mapMethods.control.addControl
+  addControl = mapMethods.control.addControl;
 }

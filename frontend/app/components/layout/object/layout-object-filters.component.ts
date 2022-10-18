@@ -1,11 +1,11 @@
-import { Component, OnInit, Injector } from "@angular/core";
-import { ModulesLayoutObjectComponent } from "./layout-object.component";
-import utils from "../../../utils";
+import { Component, OnInit, Injector } from '@angular/core';
+import { ModulesLayoutObjectComponent } from './layout-object.component';
+import utils from '../../../utils';
 
 @Component({
-  selector: "modules-layout-object-filters",
-  templateUrl: "layout-object-filters.component.html",
-  styleUrls: ["../../base/base.scss", "layout-object-filters.component.scss"],
+  selector: 'modules-layout-object-filters',
+  templateUrl: 'layout-object-filters.component.html',
+  styleUrls: ['../../base/base.scss', 'layout-object-filters.component.scss'],
 })
 export class ModulesLayoutObjectFiltersComponent
   extends ModulesLayoutObjectComponent
@@ -13,48 +13,46 @@ export class ModulesLayoutObjectFiltersComponent
 {
   filterValues: any = {};
 
-
   constructor(_injector: Injector) {
     super(_injector);
-    this._name = "layout-object-filters";
+    this._name = 'layout-object-filters';
   }
 
   processConfig(): void {
     this.processedLayout = {
       height_auto: true,
-      type: "form",
-      appearance: "outline",
+      type: 'form',
+      appearance: 'outline',
       items: [
         {
-          title: "Filtres",
-          flex: "0",
+          title: 'Filtres',
+          flex: '0',
         },
         {
           items: this.objectConfig.filters.form.layout,
           overflow: true,
         },
         {
-          flex: "0",
-          direction: "row",
+          flex: '0',
+          direction: 'row',
           items: [
             {
-              flex: "0",
-              type: "button",
-              color: "primary",
-              title: "Rechercher",
-              icon: "done",
-              description:
-                "Effectuer une recherche avec les filtre définis ci-dessus",
-              action: "filter",
+              flex: '0',
+              type: 'button',
+              color: 'primary',
+              title: 'Rechercher',
+              icon: 'done',
+              description: 'Effectuer une recherche avec les filtre définis ci-dessus',
+              action: 'filter',
             },
             {
-              flex: "0",
-              type: "button",
-              color: "primary",
-              title: "Réinitialiser",
+              flex: '0',
+              type: 'button',
+              color: 'primary',
+              title: 'Réinitialiser',
               icon: 'refresh',
-              description: "RAZ des filtres",
-              action: "clear-filters",
+              description: 'RAZ des filtres',
+              action: 'clear-filters',
             },
           ],
         },
@@ -63,16 +61,16 @@ export class ModulesLayoutObjectFiltersComponent
   }
 
   processAction(event) {
-    event.action == "filter" && this.applyFilters();
-    event.action == "clear-filters" && this.clearFilters();
-    this._mLayout.stopActionProcessing("");
+    event.action == 'filter' && this.applyFilters();
+    event.action == 'clear-filters' && this.clearFilters();
+    this._mLayout.stopActionProcessing('');
   }
 
   getFilters() {
     const filterDefs = this.objectConfig.filters.defs;
     return Object.entries(this.filterValues)
-      .filter(([key, value]:any) => ![null, undefined].includes(value))
-      .map(([key, value]:any) => ({
+      .filter(([key, value]: any) => ![null, undefined].includes(value))
+      .map(([key, value]: any) => ({
         field: filterDefs[key].field,
         type: filterDefs[key].filter_type,
         value: filterDefs[key].key ? value[filterDefs[key].key] : value,
@@ -80,7 +78,7 @@ export class ModulesLayoutObjectFiltersComponent
   }
 
   applyFilters() {
-    this.setObject({value: null, filters:this.getFilters()});
+    this.setObject({ value: null, filters: this.getFilters() });
   }
 
   clearFilters() {

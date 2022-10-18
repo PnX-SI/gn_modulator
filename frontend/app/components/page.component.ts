@@ -1,19 +1,17 @@
-import { Component, OnInit, Injector } from "@angular/core";
-import { ModulesConfigService } from "../services/config.service";
-import { ModulesPageService } from "../services/page.service";
-import { ModulesDataService } from "../services/data.service";
-import { ModulesLayoutService } from "../services/layout.service";
-import { AuthService, User } from "@geonature/components/auth/auth.service";
-import { ActivatedRoute } from "@angular/router";
-import { mergeMap, concatMap } from "@librairies/rxjs/operators";
-import { of, forkJoin } from "@librairies/rxjs";
-
-import utils from "../utils";
+import { Component, OnInit, Injector } from '@angular/core';
+import { ModulesConfigService } from '../services/config.service';
+import { ModulesPageService } from '../services/page.service';
+import { ModulesDataService } from '../services/data.service';
+import { ModulesLayoutService } from '../services/layout.service';
+import { AuthService, User } from '@geonature/components/auth/auth.service';
+import { ActivatedRoute } from '@angular/router';
+import { mergeMap } from '@librairies/rxjs/operators';
+import utils from '../utils';
 
 @Component({
-  selector: "modules-page",
-  templateUrl: "page.component.html",
-  styleUrls: ["base/base.scss", "page.component.scss"],
+  selector: 'modules-page',
+  templateUrl: 'page.component.html',
+  styleUrls: ['base/base.scss', 'page.component.scss'],
 })
 export class PageComponent implements OnInit {
   // services
@@ -55,7 +53,7 @@ export class PageComponent implements OnInit {
     this.currentUser = this._auth.getCurrentUser();
 
     // - on le place dans layout.meta pour pouvoir s'en servir dans le calcul des layouts
-    this._mLayout.meta["currentUser"] = this.currentUser;
+    this._mLayout.meta['currentUser'] = this.currentUser;
 
     // reset de page service (breadcrump etc .....)
     this._mPage.reset();
@@ -112,9 +110,7 @@ export class PageComponent implements OnInit {
     this._mPage.moduleCode = routeData.moduleCode;
 
     // recupéraiton de la configuration de la page;
-    this._mPage.moduleConfig = this._mConfig.moduleConfig(
-      this._mPage.moduleCode
-    );
+    this._mPage.moduleConfig = this._mConfig.moduleConfig(this._mPage.moduleCode);
     this._mPage.pageName = routeData.pageName;
     this._mPage.pageConfig = this._mPage.moduleConfig.pages[routeData.pageName];
 
@@ -137,15 +133,13 @@ export class PageComponent implements OnInit {
     };
 
     // pour pouvoir accéder au paramètres pour le calcul des layouts
-    this._mLayout.meta["params"] = this._mPage.params;
+    this._mLayout.meta['params'] = this._mPage.params;
 
     let data = utils.copy(this._mPage.moduleConfig.objects);
     const dataPage = utils.copy(this._mPage.pageConfig.data || {});
 
     // gestion du paramètre debug
-    this.debug = ![undefined, false, "false"].includes(
-      this.routeQueryParams.debug
-    );
+    this.debug = ![undefined, false, 'false'].includes(this.routeQueryParams.debug);
 
     // pour toutes les clés de data (moduleConfig.objects)
     for (const [objectName, objectConfig] of Object.entries(data)) {
@@ -184,9 +178,7 @@ export class PageComponent implements OnInit {
    */
   processAction(event) {
     const data = event.layout.key ? event.data[event.layout.key] : event.data;
-    if (
-      ["submit", "cancel", "edit", "details", "create"].includes(event.action)
-    ) {
+    if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,
         objectName: data.object_name,
