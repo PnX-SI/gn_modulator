@@ -3,10 +3,12 @@ name: pytest
 on:
   push:
     branches:
-      - test
+      - develop
+      - main
   pull_request:
     branches:
-      - test
+      - develop
+      - main
 
 jobs:
   build:
