@@ -1,5 +1,41 @@
 data_name: m_eole.exemples
 items:
+  - schema_name: meta.ca
+    items:
+      - acquisition_framework_name: ca_chiro
+        acquisition_framework_desc: ca_chiro
+        acquisition_framework_start_date: '2022-01-01'
+  - schema_name: meta.jdd
+    items:
+      - id_acquisition_framework: ca_chiro
+        dataset_name: jdd_chiro_mortalite
+        dataset_shortname: jdd_chiro_mortalite
+        dataset_desc: jdd_chiro_mortalite
+        marine_domain: false
+        terrestrial_domain: false
+  - schema_name: commons.module
+    items:
+    - module_code: m_chiro_mortalite
+      module_label: Suivi de mortalité (Chiroptère)
+      module_desc: Suivi de mortalité (Chiroptère)
+      module_path: modules/m_chiro_mortalite
+      datasets:
+        - - ca_chiro
+          - jdd_chiro_mortalite
+      active_frontend: false
+      active_backend: false
+    - module_code: m_chiro_persistance
+      module_label: Test de persistance (Chiroptère)
+      module_desc: Test de persistance (Chiroptère)
+      module_path: modules/m_chiro_persistance
+      active_frontend: false
+      active_backend: false
+    - module_code: m_chiro_prospection_gite
+      module_label: Prospection de gîte (Chiroptère)
+      module_desc: Prospection de gîte (Chiroptère)
+      module_path: modules/m_chiro_prospection_gite
+      active_frontend: false
+      active_backend: false
   - schema_name: m_monitoring.site_group
     items:
       - name: Parc éolien Balsiège
@@ -49,8 +85,7 @@ items:
           - m_eole
   - schema_name: m_monitoring.site
     items:
-      -
-        name: Éolienne 6m
+      - name: Éolienne 6m
         code: BALS_E6
         description: Éolienne diamètre 6
         id_digitiser: admin
@@ -66,8 +101,9 @@ items:
           - PE_BALS
         modules:
           - m_eole
-      -
-        name: Éolienne 3m
+          - m_chiro_mortalite
+          - m_chiro_persistance
+      - name: Éolienne 3m
         code: BALS_E3
         description: Éolienne diamètre 3
         id_digitiser: admin
@@ -83,8 +119,9 @@ items:
           - PE_BALS
         modules:
           - m_eole
-      -
-        name: Éolienne 10m
+          - m_chiro_mortalite
+          - m_chiro_persistance
+      - name: Éolienne 10m
         code: BALS_E10
         description: Éolienne diamètre 10
         id_digitiser: admin
@@ -100,8 +137,9 @@ items:
           - PE_BALS
         modules:
           - m_eole
-      -
-        name: Éolienne 5m
+          - m_chiro_mortalite
+          - m_chiro_persistance
+      - name: Éolienne 5m
         code: MEND_E5
         description: Éolienne diamètre 5
         id_digitiser: admin
@@ -117,8 +155,9 @@ items:
           - PE_MEND
         modules:
           - m_eole
-      -
-        name: Éolienne 50m
+          - m_chiro_mortalite
+          - m_chiro_persistance
+      - name: Éolienne 50m
         code: MEND_E50
         description: Éolienne diamètre 50
         id_digitiser: admin
@@ -134,8 +173,9 @@ items:
           - PE_MEND
         modules:
           - m_eole
-      -
-        name: Gîte Mende 1
+          - m_chiro_mortalite
+          - m_chiro_persistance
+      - name: Gîte Mende 1
         code: MEND_G1
         description: Ruine
         id_digitiser: admin
@@ -151,8 +191,8 @@ items:
           - PE_MEND
         modules:
           - m_eole
-      -
-        name: Gîte Mende 2
+          - m_chiro_prospection_gite
+      - name: Gîte Mende 2
         code: MEND_G2
         description: Grotte
         id_digitiser: admin
@@ -168,3 +208,16 @@ items:
           - PE_MEND
         modules:
           - m_eole
+          - m_chiro_prospection_gite
+  - schema_name: m_monitoring.visit
+    items:
+      -
+        id_site: BALS_E3
+        date_min: '2022-01-01'
+        observers:
+            - admin
+        id_dataset:
+          - ca_chiro
+          - jdd_chiro_mortalite
+        id_module: m_chiro_mortalite
+
