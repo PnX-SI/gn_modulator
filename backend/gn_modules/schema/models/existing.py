@@ -1,12 +1,39 @@
-from .. import errors
-
 from pypnnomenclature.models import TNomenclatures, BibNomenclaturesTypes
-from pypnusershub.db.models import User, Organisme, Application, Profils, UserApplicationRight, UserList, cor_role_liste
-from geonature.core.gn_commons.models.base import CorModuleDataset, TModules, TMedias, BibTablesLocation
-from geonature.core.gn_meta.models import TDatasets, TAcquisitionFramework, CorAcquisitionFrameworkActor, CorDatasetActor
+from pypnusershub.db.models import (
+    User,
+    Organisme,
+    Application,
+    Profils,
+    UserApplicationRight,
+    UserList,
+    cor_role_liste,
+)
+from geonature.core.gn_commons.models.base import (
+    CorModuleDataset,
+    TModules,
+    TMedias,
+    BibTablesLocation,
+)
+from geonature.core.gn_meta.models import (
+    TDatasets,
+    TAcquisitionFramework,
+    CorDatasetActor,
+)
 from geonature.core.gn_synthese.models import Synthese
-from geonature.core.gn_permissions.models import TActions, TFilters, TObjects, CorRoleActionFilterModuleObject
-from ref_geo.models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
+from geonature.core.gn_permissions.models import (
+    TActions,
+    TFilters,
+    TObjects,
+    CorRoleActionFilterModuleObject,
+)
+from ref_geo.models import (
+    LAreas,
+    BibAreasTypes,
+    BibLinearsTypes,
+    LLinears,
+    TLinearGroups,
+)
+
 # from gn_modules.ref_geo_models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
 # from geonature.core.taxonomie.models import Taxref
 from apptax.taxonomie.models import Taxref
@@ -47,11 +74,11 @@ cache_existing_models = {
 cache_existing_tables = {
     "utilisateurs.cor_role_liste": cor_role_liste,
     "utilisateurs.cor_roles": CorRole.__table__,
-    "gn_commons.cor_module_dataset": CorModuleDataset.__table__
+    "gn_commons.cor_module_dataset": CorModuleDataset.__table__,
 }
 
-class SchemaModelExisting():
 
+class SchemaModelExisting:
     def get_cache_existing_tables(self, schema_dot_table):
         return cache_existing_tables.get(schema_dot_table)
 
@@ -69,9 +96,8 @@ class SchemaModelExisting():
             sql_table_name = Model.__tablename__
             sql_schema_name = Model.__table__.schema
 
-            if '{}.{}'.format(sql_schema_name, sql_table_name) == schema_dot_table:
+            if "{}.{}".format(sql_schema_name, sql_table_name) == schema_dot_table:
                 return Model
-
 
     def search_existing_model(self):
         Model = None
@@ -82,8 +108,7 @@ class SchemaModelExisting():
         return Model
 
     def get_existing_model(self):
-        '''
-        '''
+        """ """
         Model = cache_existing_models.get(self.schema_name())
 
         if not Model:
@@ -101,7 +126,7 @@ class SchemaModelExisting():
                 setattr(Model, key, self.process_column_model(key, column_def))
 
         # store in cache before relation (avoid circular dependancies)
-        self.cls.set_schema_cache(self.schema_name(), 'model', Model)
+        self.cls.set_schema_cache(self.schema_name(), "model", Model)
 
         for key, relation_def in self.relationships().items():
             if hasattr(Model, key):
@@ -114,8 +139,7 @@ class SchemaModelExisting():
             setattr(
                 Model,
                 key,
-                self.process_column_property_model(key, column_property_def, Model)
+                self.process_column_property_model(key, column_property_def, Model),
             )
 
         return Model
-# from ..cache import cache_schemas

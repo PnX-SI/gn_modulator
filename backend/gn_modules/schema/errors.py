@@ -1,132 +1,155 @@
-'''
+"""
     Exceptions for schemas
-'''
+"""
+
 
 class SchemaError(Exception):
     pass
 
+
 class SchemaNameError(SchemaError):
-    '''
-        schema not found
-    '''
+    """
+    schema not found
+    """
+
     pass
 
 
 class SchemaLoadError(SchemaError):
-    '''
-        Error when loading a schema
-    '''
+    """
+    Error when loading a schema
+    """
+
     pass
 
+
 class SchemaValidationError(SchemaError):
-    '''
-        Error when schema validation is wrong
-    '''
+    """
+    Error when schema validation is wrong
+    """
+
     pass
 
 
 class SchemaSqlError(SchemaError):
-    '''
-        Error in schema sql text processing
-    '''
+    """
+    Error in schema sql text processing
+    """
+
     pass
 
 
 class SchemaUnautorizedSqlError(SchemaSqlError):
-    '''
-        Error when we try to exec an sql code on an unautorized schema
-    '''
+    """
+    Error when we try to exec an sql code on an unautorized schema
+    """
+
     pass
 
 
 class SchemaProcessedPropertyError(SchemaError):
-    '''
-        Error when a property marked as processed has no processing instruction
-    '''
+    """
+    Error when a property marked as processed has no processing instruction
+    """
+
     pass
 
 
 class SchemaSerializerModelIsNoneError(SchemaError):
-    '''
-        Error when a relation None during marshmallow serializer/deserializer creation
-    '''
+    """
+    Error when a relation None during marshmallow serializer/deserializer creation
+    """
+
     pass
 
 
 class SchemaImportPKError(SchemaError):
-    '''
-        Error when a property marked as processed has no processing instruction
-    '''
+    """
+    Error when a property marked as processed has no processing instruction
+    """
+
     pass
 
 
 class SchemaRelationError(SchemaError):
-    '''
-        Error when a property marked as processed has no processing instruction
-    '''
+    """
+    Error when a property marked as processed has no processing instruction
+    """
+
     pass
 
 
 class SchemaRepositoryError(SchemaError):
-    '''
-        Error in a repositroy process
-    '''
+    """
+    Error in a repositroy process
+    """
+
     pass
 
 
 class SchemaRepositoryFilterError(SchemaRepositoryError):
-    '''
-        Error when a filter is not correctly defined
-    '''
+    """
+    Error when a filter is not correctly defined
+    """
+
     pass
 
 
 class SchemaRepositoryFilterTypeError(SchemaRepositoryError):
-    '''
-        Error when a filter is not correctly defined
-    '''
+    """
+    Error when a filter is not correctly defined
+    """
+
     pass
 
 
 class SchemaProcessConfigError(SchemaError):
-    '''
-        Error when a filter is not correctly defined
-    '''
+    """
+    Error when a filter is not correctly defined
+    """
+
     pass
 
 
 class SchemaDataTypeError(SchemaError):
-    '''
-        process_data : data_type is not valid
-    '''
+    """
+    process_data : data_type is not valid
+    """
+
     pass
 
 
 class SchemaDataPathError(SchemaError):
-    '''
-        process_data : data_path is not correct
-    '''
+    """
+    process_data : data_path is not correct
+    """
+
     pass
 
+
 class SchemaLayoutError(SchemaError):
-    '''
-        process_config layout
-    '''
+    """
+    process_config layout
+    """
+
     pass
 
 
 class SchemaAutoError(SchemaError):
-    '''
-        Schema Auto Generation Error
-    '''
+    """
+    Schema Auto Generation Error
+    """
+
     pass
 
 
 class SchemaUnsufficientCruvedRigth(SchemaError):
-    '''
-        When cruved is not enougth
-    '''
+    """
+    When cruved is not enougth
+    """
+
     pass
+
 
 class SchemaModelColumnPropertyError(SchemaError):
     pass

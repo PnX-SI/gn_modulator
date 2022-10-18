@@ -1,9 +1,7 @@
-'''
+"""
     SchemaMethods : file (save /load) methods for schemas
-'''
+"""
 
-from dataclasses import dataclass
-from operator import length_hint
 from pathlib import Path
 import os
 import re
@@ -13,17 +11,15 @@ import copy
 import jsonschema
 from ref_geo.utils import get_local_srid
 from geonature.utils.env import GN_EXTERNAL_MODULE, db
-
 from geonature.utils.config import config as gn_config
 from gn_modules import MODULE_CODE
-
-from . import errors, SchemaBase
+from . import errors
 
 GN_MODULES_DIR = GN_EXTERNAL_MODULE / MODULE_CODE.lower()
-class SchemaFiles():
-    '''
-    '''
 
+
+class SchemaFiles:
+    """ """
 
     @classmethod
     def modules_directory(self):
@@ -31,46 +27,40 @@ class SchemaFiles():
 
     @classmethod
     def config_directory(self):
-        return GN_MODULES_DIR / 'config'
+        return GN_MODULES_DIR / "config"
 
     @classmethod
     def migrations_directory(self):
-        return GN_MODULES_DIR / 'backend/gn_modules/migrations'
-
+        return GN_MODULES_DIR / "backend/gn_modules/migrations"
 
     @classmethod
     def schema_name_from_path(cls, schema_path):
-        '''
-            Renvoie name à partir de schema_path et base_dir
-        '''
+        """
+        Renvoie name à partir de schema_path et base_dir
+        """
         base_dir = cls.config_directory()
 
         # on retire base_dir
-        schema_path_short = str(schema_path).replace(str(base_dir), '')
+        schema_path_short = str(schema_path).replace(str(base_dir), "")
 
         # on retire le '/' du début s'il existe
-        if schema_path_short[0] == '/':
+        if schema_path_short[0] == "/":
             schema_path_short = schema_path_short[1:]
 
         # on retire .yml
-        schema_path_short = schema_path_short.replace('.yml', '')
+        schema_path_short = schema_path_short.replace(".yml", "")
 
-        schema_name = ".".join(schema_path_short.split('/'))
+        schema_name = ".".join(schema_path_short.split("/"))
 
         return schema_name
 
     @classmethod
     def schema_path_from_name(cls, schema_name):
-        '''
-            Renvoie le chemin d'un schema à partir de son nom
-        '''
+        """
+        Renvoie le chemin d'un schema à partir de son nom
+        """
         base_dir = cls.config_directory()
-        schema_path = base_dir / (
-            "{}.yml"
-            .format(
-                "/".join(schema_name.split("."))
-            )
-        )
+        schema_path = base_dir / ("{}.yml".format("/".join(schema_name.split("."))))
 
         return schema_path
 
@@ -78,13 +68,15 @@ class SchemaFiles():
     def file_path(cls, schema_name, post_name=None):
         file_path = cls.schema_path_from_name(schema_name)
         if post_name:
-            file_path = Path(str(file_path).replace('.yml', '-{}.yml'.format(post_name)))
+            file_path = Path(
+                str(file_path).replace(".yml", "-{}.yml".format(post_name))
+            )
         return file_path
 
     @classmethod
     def c_sample(cls, schema_name):
         try:
-            return cls.load_yml_file_from_path(cls.file_path(schema_name, 'sample'))
+            return cls.load_yml_file_from_path(cls.file_path(schema_name, "sample"))
         except Exception as e:
             print(e)
         return None
@@ -102,17 +94,14 @@ class SchemaFiles():
         for root, dirs, files in os.walk(file_path.parent):
             for file in filter(
                 lambda f: (
-                    f.suffix == '.yml'
+                    f.suffix == ".yml"
                     and f.stem.startswith(file_name)
-                    and len(f.stem.split('-')) == 2
+                    and len(f.stem.split("-")) == 2
                 ),
-                map(
-                    lambda f: Path(f),
-                    files
-                )
+                map(lambda f: Path(f), files),
             ):
 
-                key = file.stem.split('-')[1]
+                key = file.stem.split("-")[1]
                 key_file_paths[key] = Path(root) / file
 
             # on ne fait pas les sous répertoires
@@ -122,11 +111,11 @@ class SchemaFiles():
 
     @classmethod
     def load_yml_file(cls, file_path, load_keys=False):
-        '''
-            Read yml file and return data
+        """
+        Read yml file and return data
 
-            TODO process error
-        '''
+        TODO process error
+        """
         if load_keys:
             data = cls.load_yml_file(file_path)
             # get all files
@@ -143,15 +132,19 @@ class SchemaFiles():
         except FileNotFoundError:
             raise errors.SchemaLoadError("File not found : {}".format(file_path))
         except yaml.YAMLError as e:
-            raise errors.SchemaLoadError("YAML : error in file {} : {}".format(str(file_path).replace(str(cls.config_directory()), ''), str(e)))
+            raise errors.SchemaLoadError(
+                "YAML : error in file {} : {}".format(
+                    str(file_path).replace(str(cls.config_directory()), ""), str(e)
+                )
+            )
 
     @classmethod
     def load_json_file(cls, file_path):
-        '''
-            Read json file and return data
+        """
+        Read json file and return data
 
-            TODO process error
-        '''
+        TODO process error
+        """
 
         try:
             with open(file_path) as f:
@@ -160,21 +153,26 @@ class SchemaFiles():
         except FileNotFoundError:
             raise errors.SchemaLoadError("File not found : {}".format(file_path))
         except json.JSONDecodeError as e:
-            raise errors.SchemaLoadError("Json : error in file {} : {}".format(str(file_path).replace(str(cls.config_directory()), ''), str(e)))
-
+            raise errors.SchemaLoadError(
+                "Json : error in file {} : {}".format(
+                    str(file_path).replace(str(cls.config_directory()), ""), str(e)
+                )
+            )
 
     def load(self):
-        '''
-            loads schema from file <...>/gn_modules/schemas/<schem_path_from_name>
-        '''
+        """
+        loads schema from file <...>/gn_modules/schemas/<schem_path_from_name>
+        """
 
         schema_name = self.schema_name()
         definition = self.definition
         if not definition:
-            raise errors.SchemaLoadError('pas de definition pour le schema: {}'.format(schema_name))
+            raise errors.SchemaLoadError(
+                "pas de definition pour le schema: {}".format(schema_name)
+            )
         # schema_name = definition['meta']['schema_name']
 
-        self.cls.set_schema_cache(schema_name, 'schema', self)
+        self.cls.set_schema_cache(schema_name, "schema", self)
 
         self.definition = definition
 
@@ -182,19 +180,21 @@ class SchemaFiles():
             self.definition = self.cls.process_defs(self.definition)
 
         except Exception as e:
-            raise Exception('{}: {}'.format(self.schema_name(), e))
+            raise Exception("{}: {}".format(self.schema_name(), e))
         if self.autoschema():
             self.definition = self.get_autoschema()
 
         self.json_schema = self.get_json_schema()
-        self.validation_schema = self.process_validation_schema(copy.deepcopy(self.json_schema))
+        self.validation_schema = self.process_validation_schema(
+            copy.deepcopy(self.json_schema)
+        )
 
         return self
 
     def check_definition_types(self, msg):
-        for key in self.definition['properties']:
-            if isinstance(self.definition['properties'][key]['type'], list):
-                print('error', msg, self.schema_name(), key)
+        for key in self.definition["properties"]:
+            if isinstance(self.definition["properties"][key]["type"], list):
+                print("error", msg, self.schema_name(), key)
                 break
 
     #################################################
@@ -207,32 +207,33 @@ class SchemaFiles():
 
     @classmethod
     def data_path(cls, data_name):
-        '''
-            retourne le chemin du fichier de données associé à data_name
-            data_name:
-                - 'test' => <gn_module>/config/data/test.yml
-                - 'test.exemple' => <gn_module>/config/data/test/exemple.yml
-            ou du dossier le cas écheant
-        '''
+        """
+        retourne le chemin du fichier de données associé à data_name
+        data_name:
+            - 'test' => <gn_module>/config/data/test.yml
+            - 'test.exemple' => <gn_module>/config/data/test/exemple.yml
+        ou du dossier le cas écheant
+        """
 
-        data_path = cls.config_directory() / 'data'
+        data_path = cls.config_directory() / "data"
 
         if not data_name:
             return data_path
 
-        for path_data_name in data_name.split('.'):
+        for path_data_name in data_name.split("."):
             data_path = data_path / path_data_name
 
         if data_path.is_dir():
             return data_path
 
-        file_path = Path(str(data_path) + '.yml')
+        file_path = Path(str(data_path) + ".yml")
         if file_path.is_file():
             return file_path
 
         raise errors.SchemaDataPathError(
-            'Le paramètre data_name={}, ne correspond à aucun fichier ou répertoire existant {}(.yml)'
-            .format(data_name, data_path)
+            "Le paramètre data_name={}, ne correspond à aucun fichier ou répertoire existant {}(.yml)".format(
+                data_name, data_path
+            )
         )
 
     @classmethod
@@ -240,34 +241,35 @@ class SchemaFiles():
 
         for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
             for file in filter(
-                lambda f: 'references' in root and f.endswith('.json'),
-                files
+                lambda f: "references" in root and f.endswith(".json"), files
             ):
                 file_path = Path(root) / file
                 reference = cls.load_json_file(file_path)
 
-                reference_name = file.replace('.json', '')
+                reference_name = file.replace(".json", "")
                 cls.check_reference(reference)
 
-                cls.set_global_cache('reference', reference_name, reference)
+                cls.set_global_cache("reference", reference_name, reference)
 
     @classmethod
     def check_schema_names(cls, schema_name, item, key=None):
         check = True
         if isinstance(item, dict):
             for item_key, item_value in item.items():
-                check = cls.check_schema_names(schema_name, item_value, item_key) and check
+                check = (
+                    cls.check_schema_names(schema_name, item_value, item_key) and check
+                )
         if isinstance(item, list):
-            for check_item in [cls.check_schema_names(schema_name, item_value) for item_value in item]:
+            for check_item in [
+                cls.check_schema_names(schema_name, item_value) for item_value in item
+            ]:
                 check = check_item and check
-        if key == 'schema_name' and isinstance(item ,str):
+        if key == "schema_name" and isinstance(item, str):
             check = item in cls.schema_names_from_cache()
             if not check:
                 raise errors.SchemaNameError(
-                    "Le schema {schema_name} fait appel au schema {schema_missing} qui n'est pas présent dans les dossiers de configuration"
-                    .format(
-                        schema_name=schema_name,
-                        schema_missing=item
+                    "Le schema {schema_name} fait appel au schema {schema_missing} qui n'est pas présent dans les dossiers de configuration".format(
+                        schema_name=schema_name, schema_missing=item
                     )
                 )
         return check
@@ -288,46 +290,46 @@ class SchemaFiles():
   - {str(e)}"""
             )
 
-
-
-
     @classmethod
     def init_definitions(cls):
 
         for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
             for file in filter(
-                lambda f: 'definitions' in root and f.endswith('.yml') and '-' not in f,
-                files
+                lambda f: "definitions" in root and f.endswith(".yml") and "-" not in f,
+                files,
             ):
                 definition = cls.get_definition_from_file_path(Path(root) / file)
-                schema_name = definition['meta']['schema_name']
-                cls.set_schema_cache(schema_name, 'definition', definition)
+                schema_name = definition["meta"]["schema_name"]
+                cls.set_schema_cache(schema_name, "definition", definition)
 
         # check schema_name s in properties
         check_schema_names = True
-        for schema_name, definition in cls.get_schema_cache(object_type='definition').items():
-            check_schema_names= cls.check_schema_names(schema_name, definition) and check_schema_names
+        for schema_name, definition in cls.get_schema_cache(
+            object_type="definition"
+        ).items():
+            check_schema_names = (
+                cls.check_schema_names(schema_name, definition) and check_schema_names
+            )
 
         return check_schema_names
 
-
     @classmethod
     def process_backrefs(cls):
-        '''
-            ajout des definition des relation avec backref dans le schema correspondant
-        '''
+        """
+        ajout des definition des relation avec backref dans le schema correspondant
+        """
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
 
             for relation_key, relation_def in sm.relationships().items():
-                if not relation_def.get('backref'):
+                if not relation_def.get("backref"):
                     continue
 
                 opposite = sm.opposite_relation_def(relation_def)
-                rel = cls(relation_def['schema_name'])
-                rel_properties = rel.attr('properties')
-                if not rel_properties.get(relation_def['backref']):
-                    rel_properties[relation_def['backref']] = opposite
+                rel = cls(relation_def["schema_name"])
+                rel_properties = rel.attr("properties")
+                if not rel_properties.get(relation_def["backref"]):
+                    rel_properties[relation_def["backref"]] = opposite
 
     # @classmethod
     # def process_complement(cls):
@@ -373,71 +375,58 @@ class SchemaFiles():
 
     @classmethod
     def init_schemas_models_and_serializers(cls):
-        import time
-        start_time = time.time()
 
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
             # try:
             sm.Model()
             # except AttributeError as e:
-                # raise errors.SchemaError(
-                    # '{}: {}'.format(sm.schema_name(), e))
-
-        # print("models --- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
+            # raise errors.SchemaError(
+            # '{}: {}'.format(sm.schema_name(), e))
 
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
             sm.MarshmallowSchema()
 
-        # print("schemas --- %s seconds ---" % (time.time() - start_time))
-
     @classmethod
     def reinit_marshmallow_schemas(cls):
-        '''
-            methode pour reinitialiser les schemas
-            par exemple pour un install après une migration
-            et pour l'installation de données complémentaire exemple
-            on a besoin de refaire les schema qui n'ont pas pu être fait correctement car des tables n'existaient pas
-            (pas de model pour les relations -> schema non operationel pour ces relation)
-        '''
+        """
+        methode pour reinitialiser les schemas
+        par exemple pour un install après une migration
+        et pour l'installation de données complémentaire exemple
+        on a besoin de refaire les schema qui n'ont pas pu être fait correctement car des tables n'existaient pas
+        (pas de model pour les relations -> schema non operationel pour ces relation)
+        """
         for schema_name in cls.schema_names_from_cache():
-            cls.set_schema_cache(schema_name, 'marshmallow', None)
+            cls.set_schema_cache(schema_name, "marshmallow", None)
 
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
             sm.Model()
 
-
         for schema_name in cls.schema_names_from_cache():
             sm = cls(schema_name)
             sm.MarshmallowSchema()
 
-
     @classmethod
     def process_schema_config(cls, data, key=None):
-        '''
-            transforme les element commençant par '__CONFIG.' et terminant par '__' par leur valeur correspondante dans
-            app.config
+        """
+        transforme les element commençant par '__CONFIG.' et terminant par '__' par leur valeur correspondante dans
+        app.config
 
-            par exemple __CONFIG.LOCAL_SRID__ => 2154
-        '''
-
+        par exemple __CONFIG.LOCAL_SRID__ => 2154
+        """
 
         # patch local srid config
-        gn_config['LOCAL_SRID'] = get_local_srid(db.engine)
+        gn_config["LOCAL_SRID"] = get_local_srid(db.engine)
 
-        if not hasattr(cls, '_re_CONFIG'):
-            setattr(cls, '_re_CONFIG', re.compile(r'__CONFIG\.(.*?)__'))
+        if not hasattr(cls, "_re_CONFIG"):
+            setattr(cls, "_re_CONFIG", re.compile(r"__CONFIG\.(.*?)__"))
 
         # process dict
 
         if type(data) is dict:
-            return {
-                k: cls.process_schema_config(v, k)
-                for k, v in data.items()
-            }
+            return {k: cls.process_schema_config(v, k) for k, v in data.items()}
 
         # process list
         if type(data) is list:
@@ -445,24 +434,28 @@ class SchemaFiles():
 
         # process text
 
-        if type(data) is str and '__CONFIG.' in data:
+        if type(data) is str and "__CONFIG." in data:
             config_key_str = cls._re_CONFIG.search(data)
             config_key_str = config_key_str and config_key_str.group(1)
-            config_key_replace_str = f'__CONFIG.{config_key_str}__'
+            config_key_replace_str = f"__CONFIG.{config_key_str}__"
             if not config_key_str:
                 return data
 
-            config_keys = config_key_str.split('.')
+            config_keys = config_key_str.split(".")
             config_value = gn_config
             try:
                 for config_key in config_keys:
                     config_value = config_value[config_key]
             except Exception:
-                raise errors.SchemaProcessConfigError("La clé {} n'est pas dans la config de geonature".format(config_key_str))
+                raise errors.SchemaProcessConfigError(
+                    "La clé {} n'est pas dans la config de geonature".format(
+                        config_key_str
+                    )
+                )
 
-            data = data.replace(config_key_replace_str, str(config_value) or '')
+            data = data.replace(config_key_replace_str, str(config_value) or "")
 
-            if key == 'srid':
+            if key == "srid":
                 data = int(data)
 
         return data
@@ -471,20 +464,20 @@ class SchemaFiles():
     def process_defs(cls, elem, _defs={}):
 
         if isinstance(elem, dict):
-            if '_defs' in elem:
+            if "_defs" in elem:
                 _defs_new = copy.deepcopy(_defs)
-                _defs_new.update(elem['_defs'])
+                _defs_new.update(elem["_defs"])
             else:
                 _defs_new = _defs
             for key, value in elem.items():
-                if key == '_defs':
+                if key == "_defs":
                     continue
                 val = cls.process_defs(value, _defs_new)
                 if val is not None:
                     elem[key] = val
 
-            if '__value' in elem:
-                return elem['__value']
+            if "__value" in elem:
+                return elem["__value"]
             return elem
 
         if isinstance(elem, list):
@@ -498,44 +491,40 @@ class SchemaFiles():
         if elem in _defs:
             return cls.process_defs(_defs[elem], _defs)
 
-        if str(elem).startswith('_') and not str(elem).startswith('__f__'):
+        if str(elem).startswith("_") and not str(elem).startswith("__f__"):
             raise Exception(
-                'Un elément commençant par "_" est présent dans les fichiers de config {}'
-                .format(elem)
+                'Un elément commençant par "_" est présent dans les fichiers de config {}'.format(
+                    elem
+                )
             )
 
         return elem
 
     @classmethod
     def get_layouts(cls, as_dict=False):
-        '''
-            renvoie la liste des layouts
-        '''
+        """
+        renvoie la liste des layouts
+        """
 
         layouts = []
         for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
-            for file in filter(
-                lambda f: f.endswith('.yml'),
-                files
-            ):
+            for file in filter(lambda f: f.endswith(".yml"), files):
                 file_path = Path(root) / file
                 layout = cls.load_yml_file(file_path)
-                if not (isinstance(layout, dict) and layout.get('layout_name')):
+                if not (isinstance(layout, dict) and layout.get("layout_name")):
                     continue
                 # layout['layout_name'] = layout.get('layout_name', file_path.stem)
                 layout = cls.process_defs(layout)
-                if '_defs' in layout:
-                    del layout['_defs']
+                if "_defs" in layout:
+                    del layout["_defs"]
                 layouts.append(layout)
-
 
         if as_dict is True:
             out = {}
             for layout in layouts:
-                out[layout['layout_name']] = layout
-                layout.pop('layout_name')
+                out[layout["layout_name"]] = layout
+                layout.pop("layout_name")
 
             return out
 
         return layouts
-

@@ -1,74 +1,72 @@
-'''
+"""
     SchemaSqlTrigger
-'''
+"""
 
 
-from tokenize import tabsize
-
-
-class SchemaSqlTrigger():
-    '''
-        methods pour gerer les trigger
-    '''
+class SchemaSqlTrigger:
+    """
+    methods pour gerer les trigger
+    """
 
     def sql_txt_process_triggers(self):
-        '''
-            methode pour gerer les triggers associés à un schema
-        '''
+        """
+        methode pour gerer les triggers associés à un schema
+        """
 
-        txt = ''
+        txt = ""
         for property_key, property_def in self.properties().items():
             txt += self.sql_txt_process_trigger(property_key, property_def)
 
         if txt:
-            txt = '\n-- Triggers\n\n\n' + txt
+            txt = "\n-- Triggers\n\n\n" + txt
         return txt
 
     def sql_txt_process_trigger(self, property_key, property_def):
-        '''
-            fonction qui cree les trigger associé à un élément d'un schema
-        '''
+        """
+        fonction qui cree les trigger associé à un élément d'un schema
+        """
 
-        trigger_name = property_def.get('trigger', {}).get('name')
+        trigger_name = property_def.get("trigger", {}).get("name")
         if not trigger_name:
-            return ''
+            return ""
 
-        if trigger_name == 'intersect_ref_geo':
+        if trigger_name == "intersect_ref_geo":
             return self.sql_txt_trigger_intersect_ref_geo(property_key, property_def)
 
-        if trigger_name == 'd_within':
+        if trigger_name == "d_within":
             return self.sql_txt_trigger_d_within(property_key, property_def)
 
-        if trigger_name == 'copy_geom':
+        if trigger_name == "copy_geom":
             return self.sql_txt_trigger_copy_geom(property_key, property_def)
 
-
     def sql_txt_trigger_intersect_ref_geo(self, property_key, property_def):
-        '''
-        '''
+        """ """
 
-        area_types = property_def.get('area_types', [])
+        area_types = property_def.get("area_types", [])
         area_types_txt = (
-            ' pour les types {}'.format(', '.join(area_types)) if area_types
-            else ''
+            " pour les types {}".format(", ".join(area_types)) if area_types else ""
         )
 
-        txt = ''
+        txt = ""
 
-        cor_schema_name = property_def['schema_dot_table'].split('.')[0]
-        cor_table_name = property_def['schema_dot_table'].split('.')[1]
+        cor_schema_name = property_def["schema_dot_table"].split(".")[0]
+        cor_table_name = property_def["schema_dot_table"].split(".")[1]
         sql_schema_name = self.sql_schema_name()
         sql_table_name = self.sql_table_name()
         local_key = self.pk_field_name()
-        trigger_function_insert_name = f'{cor_schema_name}.fct_trig_insert_{cor_table_name}_on_each_statement'
-        trigger_function_update_name = f'{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row'
-        function_process_all_name = f'{cor_schema_name}.process_all_{cor_table_name}'
+        trigger_function_insert_name = (
+            f"{cor_schema_name}.fct_trig_insert_{cor_table_name}_on_each_statement"
+        )
+        trigger_function_update_name = (
+            f"{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row"
+        )
+        function_process_all_name = f"{cor_schema_name}.process_all_{cor_table_name}"
         area_types = area_types
-        geometry_field_name = property_def['trigger']['key']
+        geometry_field_name = property_def["trigger"]["key"]
         area_types_txt = area_types_txt
-        of_key = property_def['trigger'].get('on', property_def['trigger']['key'])
+        of_key = property_def["trigger"].get("on", property_def["trigger"]["key"])
 
-        txt += f'''---- Trigger intersection {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec le ref_geo{area_types_txt}
+        txt += f"""---- Trigger intersection {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec le ref_geo{area_types_txt}
 
 
 CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
@@ -172,18 +170,16 @@ CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
     FOR EACH ROW
         EXECUTE PROCEDURE {trigger_function_update_name}();
 
-'''
+"""
         return txt
 
     def sql_txt_trigger_d_within(self, property_key, property_def):
-        """
+        """ """
 
-        """
-
-        cor_schema_name = property_def['schema_dot_table'].split('.')[0]
-        cor_table_name = property_def['schema_dot_table'].split('.')[1]
-        relation = self.cls(property_def['schema_name'])
-        distance = property_def['trigger']['distance']
+        cor_schema_name = property_def["schema_dot_table"].split(".")[0]
+        cor_table_name = property_def["schema_dot_table"].split(".")[1]
+        relation = self.cls(property_def["schema_name"])
+        distance = property_def["trigger"]["distance"]
         sql_schema_name = self.sql_schema_name()
         sql_table_name = self.sql_table_name()
         relation_schema_name = relation.sql_schema_name()
@@ -192,19 +188,25 @@ CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
         cor_schema_name = cor_schema_name
         cor_table_name = cor_table_name
         local_key = self.pk_field_name()
-        of_key = property_def['trigger'].get('on', property_def['trigger']['key'])
+        of_key = property_def["trigger"].get("on", property_def["trigger"]["key"])
         foreign_key = relation.pk_field_name()
-        trigger_function_insert_name = f'{cor_schema_name}.fct_trig_insert_{cor_table_name}_on_each_statement'
-        trigger_function_update_name = f'{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row'
-        function_process_all_name = f'{cor_schema_name}.process_all_{cor_table_name}'
+        trigger_function_insert_name = (
+            f"{cor_schema_name}.fct_trig_insert_{cor_table_name}_on_each_statement"
+        )
+        trigger_function_update_name = (
+            f"{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row"
+        )
+        function_process_all_name = f"{cor_schema_name}.process_all_{cor_table_name}"
 
-        geometry_field_name = property_def['trigger']['key']
+        geometry_field_name = property_def["trigger"]["key"]
         partition_keys = "t." + local_key
-        if property_def['trigger'].get('partition'):
-            partition_keys += ", " + ", l.".join(property_def['trigger'].get('partition'))
+        if property_def["trigger"].get("partition"):
+            partition_keys += ", " + ", l.".join(
+                property_def["trigger"].get("partition")
+            )
 
-        txt = ''
-        txt += f'''---- Trigger {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec une distance de {distance} avec {relation_schema_name}.{relation_table_name}.{foreign_key}
+        txt = ""
+        txt += f"""---- Trigger {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec une distance de {distance} avec {relation_schema_name}.{relation_table_name}.{foreign_key}
 
 
 CREATE OR REPLACE FUNCTION {trigger_function_insert_name}()
@@ -316,7 +318,7 @@ CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
     FOR EACH ROW
         EXECUTE PROCEDURE {trigger_function_update_name}();
 
-'''
+"""
 
         return txt
 
@@ -326,38 +328,41 @@ CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
         en cas d'insert ou d'update
         """
 
-        source_key = property_def['trigger']['key']
+        source_key = property_def["trigger"]["key"]
         # source_column = self.column(property_def['trigger']['key'])
 
         txt_data = {
-            'sql_schema_name': self.sql_schema_name(),
-            'sql_table_name': self.sql_table_name(),
-            'property_key': property_key,
-            'property_srid': property_def['srid'],
-            'source_key': source_key,
+            "sql_schema_name": self.sql_schema_name(),
+            "sql_table_name": self.sql_table_name(),
+            "property_key": property_key,
+            "property_srid": property_def["srid"],
+            "source_key": source_key,
             # 'source_srid': source_column['srid'],
         }
 
-        txt_data['insert_trigger_name'] = (
-            '{sql_schema_name}_tri_insert_{sql_table_name}_copy_{source_key}_to_{property_key}'
-            .format(**txt_data)
+        txt_data[
+            "insert_trigger_name"
+        ] = "{sql_schema_name}_tri_insert_{sql_table_name}_copy_{source_key}_to_{property_key}".format(
+            **txt_data
         )
 
-        txt_data['fn_insert_trigger_name'] = (
-            '{sql_schema_name}.fn_tri_insert_{sql_table_name}_copy_{source_key}_to_{property_key}'
-            .format(**txt_data)
+        txt_data[
+            "fn_insert_trigger_name"
+        ] = "{sql_schema_name}.fn_tri_insert_{sql_table_name}_copy_{source_key}_to_{property_key}".format(
+            **txt_data
         )
 
-        txt_data['update_trigger_name'] = (
-            '{sql_schema_name}_tri_update_{sql_table_name}_copy_{source_key}_to_{property_key}'
-            .format(**txt_data)
+        txt_data[
+            "update_trigger_name"
+        ] = "{sql_schema_name}_tri_update_{sql_table_name}_copy_{source_key}_to_{property_key}".format(
+            **txt_data
         )
 
-        txt_data['fn_update_trigger_name'] = (
-            '{sql_schema_name}.fn_tri_update_{sql_table_name}_copy_{source_key}_to_{property_key}'
-            .format(**txt_data)
+        txt_data[
+            "fn_update_trigger_name"
+        ] = "{sql_schema_name}.fn_tri_update_{sql_table_name}_copy_{source_key}_to_{property_key}".format(
+            **txt_data
         )
-
 
         txt = """CREATE OR REPLACE FUNCTION {fn_insert_trigger_name}()
     RETURNS trigger AS
@@ -371,22 +376,28 @@ CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-""".format(**txt_data)
+""".format(
+            **txt_data
+        )
 
-    # fn_insert = fn_update ???
+        # fn_insert = fn_update ???
 
         txt += """CREATE TRIGGER {insert_trigger_name}
     BEFORE INSERT ON {sql_schema_name}.{sql_table_name}
     FOR EACH ROW
         EXECUTE PROCEDURE {fn_insert_trigger_name}();
 
-""".format(**txt_data)
+""".format(
+            **txt_data
+        )
 
-        txt += '''CREATE TRIGGER {update_trigger_name}
+        txt += """CREATE TRIGGER {update_trigger_name}
     BEFORE UPDATE OF {source_key} ON {sql_schema_name}.{sql_table_name}
     FOR EACH ROW
         EXECUTE PROCEDURE {fn_insert_trigger_name}();
 
-'''.format(**txt_data)
+""".format(
+            **txt_data
+        )
 
         return txt

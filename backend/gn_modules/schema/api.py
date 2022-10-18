@@ -1,20 +1,16 @@
-'''
+"""
     SchemaMethods : api
-'''
+"""
 
 import json
-import copy
 from flask.views import MethodView
-from flask import request, jsonify, Response, current_app
-from functools import wraps
+from flask import request
 import csv
 import math
 from geonature.core.gn_permissions import decorators as permissions
 from geonature.utils.config import config
-
 from gn_modules import MODULE_CODE
-
-from .errors import SchemaLoadError, SchemaUnsufficientCruvedRigth
+from .errors import SchemaUnsufficientCruvedRigth
 
 
 # def check_cruved_on_row(view):
@@ -31,6 +27,7 @@ from .errors import SchemaLoadError, SchemaUnsufficientCruvedRigth
 #             return 'Erreur Cruved : {}'.format(str(e))
 
 #     return _check_cruved_on_row
+
 
 class Line(object):
     def __init__(self):
@@ -50,110 +47,103 @@ def iter_csv(data):
         writer.writerow(csv_line)
         yield line.read()
 
-class SchemaApi():
-    '''
-        class for schema api processing
 
-        doc:
-          - https://flask.palletsprojects.com/en/2.0.x/views/
+class SchemaApi:
+    """
+    class for schema api processing
 
-    '''
+    doc:
+      - https://flask.palletsprojects.com/en/2.0.x/views/
+
+    """
 
     def method_view_name(self, module_code, object_name, view_type):
-        object_name_undot = object_name.replace('.', '_')
-        return f'MV_{module_code}_{object_name_undot}_{view_type}'
+        object_name_undot = object_name.replace(".", "_")
+        return f"MV_{module_code}_{object_name_undot}_{view_type}"
 
     def view_name(self, module_code, object_name, view_type):
-        '''
-        '''
-        object_name_undot = object_name.replace('.', '_')
-        return f'MV_{module_code}_{object_name_undot}_{view_type}'
+        """ """
+        object_name_undot = object_name.replace(".", "_")
+        return f"MV_{module_code}_{object_name_undot}_{view_type}"
 
     @classmethod
     def base_url(cls):
-        '''
+        """
         base url (may differ with apps (GN, UH, TH, ...))
 
         TODO process apps ?
 
-        '''
-        return '{}/{}'.format(config['API_ENDPOINT'], MODULE_CODE.lower())
+        """
+        return "{}/{}".format(config["API_ENDPOINT"], MODULE_CODE.lower())
 
     def url(self, post_url, full_url=False):
-        '''
+        """
         /{schema_name}{post_url}
 
         - full/url renvoie l'url complet
 
         TODO gérer par type d'url ?
-        '''
+        """
 
-        url = (
-            self.attr(
-                'meta.url',
-                '/{}{}'.format(self.schema_name(), post_url)
-            )
-        )
+        url = self.attr("meta.url", "/{}{}".format(self.schema_name(), post_url))
 
         if full_url:
-            url = '{}{}'.format(self.cls.base_url(), url)
+            url = "{}{}".format(self.cls.base_url(), url)
 
         return url
 
     def parse_request_args(self, request, options={}):
-        '''
-            TODO !!! à refaire avec repo get_list
-            parse request flask element
-            - filters
-            - prefilters
-            - fields
-            - field_name
-            - sort
-            - page
-            - page_size
+        """
+        TODO !!! à refaire avec repo get_list
+        parse request flask element
+        - filters
+        - prefilters
+        - fields
+        - field_name
+        - sort
+        - page
+        - page_size
 
-            TODO plusieurs possibilités pour le parametrage
-            - par exemple au format tabulator ou autre ....
-        '''
+        TODO plusieurs possibilités pour le parametrage
+        - par exemple au format tabulator ou autre ....
+        """
 
         # params_txt = request.args.get('params', '{}')
         # params = json.loads(params_txt)
         params = {
-            'as_geojson': self.load_param(request.args.get('as_geojson', 'false')),
-            'compress': self.load_param(request.args.get('compress', 'false')),
-            'fields': self.load_array_param(request.args.get('fields')),
-            'field_name':  self.load_param(request.args.get('field_name', 'null')),
-            'filters': self.parse_filters(request.args.get('filters')),
-            'prefilters': self.parse_filters(request.args.get('prefilters')),
-            'page': self.load_param(request.args.get('page', 'null')),
-            'page_size': self.load_param(request.args.get('page_size', 'null')),
-            'sort': self.load_array_param(request.args.get('sort')),
-            "value": self.load_param(request.args.get('value', 'null')),
-            'as_csv': self.load_param(request.args.get('as_csv', 'false')),
-            'cruved_type': self.load_param(request.args.get('cruved_type', 'null'))
+            "as_geojson": self.load_param(request.args.get("as_geojson", "false")),
+            "compress": self.load_param(request.args.get("compress", "false")),
+            "fields": self.load_array_param(request.args.get("fields")),
+            "field_name": self.load_param(request.args.get("field_name", "null")),
+            "filters": self.parse_filters(request.args.get("filters")),
+            "prefilters": self.parse_filters(request.args.get("prefilters")),
+            "page": self.load_param(request.args.get("page", "null")),
+            "page_size": self.load_param(request.args.get("page_size", "null")),
+            "sort": self.load_array_param(request.args.get("sort")),
+            "value": self.load_param(request.args.get("value", "null")),
+            "as_csv": self.load_param(request.args.get("as_csv", "false")),
+            "cruved_type": self.load_param(request.args.get("cruved_type", "null")),
         }
 
-        if 'prefilters' in options:
-            params['prefilters'] = (
-                self.parse_filters(options['prefilters'])
-                +
-                params['prefilters']
+        if "prefilters" in options:
+            params["prefilters"] = (
+                self.parse_filters(options["prefilters"]) + params["prefilters"]
             )
 
         return params
 
     def load_array_param(self, param):
-        '''
-            pour les cas ou params est une chaine de caractère séparée par des ','
-        '''
+        """
+        pour les cas ou params est une chaine de caractère séparée par des ','
+        """
 
         if not param:
             return []
 
-        return param.split(',')
+        return param.split(",")
 
     def load_param(self, param):
-        if param == 'undefined':
+        if param == "undefined":
             return None
 
         # pour traiter les true false
@@ -163,18 +153,17 @@ class SchemaApi():
             return param
 
     def schema_api_dict(self, module_code, options):
-        '''
+        """
         options : dict
             - prefilters
-        '''
-
+        """
 
         def get_rest(self_mv, value=None):
 
             if value:
                 try:
                     return get_one_rest(value)
-                except SchemaUnsufficientCruvedRigth as e:
+                except SchemaUnsufficientCruvedRigth:
                     return f"Vous n'avez pas les droits suffisants pour accéder à cette requête (schema_name: {self.schema_name()}, module_code: {module_code})"
 
             else:
@@ -186,70 +175,65 @@ class SchemaApi():
             try:
                 m = self.get_row(
                     value,
-                    field_name=params.get('field_name'),
+                    field_name=params.get("field_name"),
                     module_code=module_code,
-                    cruved_type='R',
-                    params=params
+                    cruved_type="R",
+                    params=params,
                 ).one()
 
             except SchemaUnsufficientCruvedRigth as e:
-                return 'Erreur Cruved : {}'.format(str(e)), 403
+                return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
                 m,
-                fields=params.get('fields'),
-                as_geojson=params.get('as_geojson'),
+                fields=params.get("fields"),
+                as_geojson=params.get("as_geojson"),
             )
 
         def get_query_infos():
 
             params = self.parse_request_args(request, options)
-            count_total = (
-                self.query_list(
-                    module_code=module_code,
-                    cruved_type='R',
-                    params=params,
-                    query_type='total')
-                .count()
-            )
+            count_total = self.query_list(
+                module_code=module_code,
+                cruved_type="R",
+                params=params,
+                query_type="total",
+            ).count()
 
-            count_filtered = (
-                self.query_list(
-                    module_code=module_code,
-                    cruved_type='R',
-                    params=params,
-                    query_type='filtered')
-                .count()
-            )
-            page=1
+            count_filtered = self.query_list(
+                module_code=module_code,
+                cruved_type="R",
+                params=params,
+                query_type="filtered",
+            ).count()
+            page = 1
             last_page = (
-                math.ceil(count_total / params.get('page_size'))
-                if params.get('page_size')
+                math.ceil(count_total / params.get("page_size"))
+                if params.get("page_size")
                 else 1
             )
-            url_next=''
-            url_previous=''
-            page_size = params.get('page_size', None)
+            url_next = ""
+            url_previous = ""
+            page_size = params.get("page_size", None)
 
-            if params.get('page'):
-                page = params.get('page') or 1
+            if params.get("page"):
+                page = params.get("page") or 1
                 if page != 1:
-                    url_previous = request.url.replace(f'page={page}', f'page={page-1}')
+                    url_previous = request.url.replace(f"page={page}", f"page={page-1}")
                 if page != last_page:
-                    url_next = request.url.replace(f'page={page}', f'page={page+1}')
+                    url_next = request.url.replace(f"page={page}", f"page={page+1}")
 
             query_infos = {
-                'page': page,
-                'next': url_next,
-                'previous': url_previous,
-                'page_size': page_size,
-                'total': count_total,
-                'filtered': count_filtered,
-                'last_page': last_page
+                "page": page,
+                "next": url_next,
+                "previous": url_previous,
+                "page_size": page_size,
+                "total": count_total,
+                "filtered": count_filtered,
+                "last_page": last_page,
             }
 
             return query_infos
-
 
         def get_list_rest():
 
@@ -258,18 +242,18 @@ class SchemaApi():
 
             query_list = self.query_list(
                 module_code=module_code,
-                cruved_type=params.get('cruved_type') or 'R',
-                params=params
+                cruved_type=params.get("cruved_type") or "R",
+                params=params,
             )
 
             res_list = query_list.all()
             out = {
                 **query_infos,
-                'data': self.serialize_list(
+                "data": self.serialize_list(
                     res_list,
-                    fields=params.get('fields'),
-                    as_geojson=params.get('as_geojson'),
-                )
+                    fields=params.get("fields"),
+                    as_geojson=params.get("as_geojson"),
+                ),
             }
 
             return out
@@ -283,12 +267,10 @@ class SchemaApi():
                 m = self.insert_row(data)
 
             except SchemaUnsufficientCruvedRigth as e:
-                return 'Erreur Cruved : {}'.format(str(e)), 403
+                return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
-                m,
-                fields=params.get('fields'),
-                as_geojson=params.get('as_geojson')
+                m, fields=params.get("fields"), as_geojson=params.get("as_geojson")
             )
 
         def patch_rest(self_mv, value):
@@ -300,18 +282,16 @@ class SchemaApi():
                 m, _ = self.update_row(
                     value,
                     data,
-                    field_name=params.get('field_name'),
+                    field_name=params.get("field_name"),
                     module_code=module_code,
-                    params=params
+                    params=params,
                 )
 
             except SchemaUnsufficientCruvedRigth as e:
-                return 'Erreur Cruved : {}'.format(str(e)), 403
+                return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
-                m,
-                fields=params.get('fields'),
-                as_geojson=params.get('as_geojson')
+                m, fields=params.get("fields"), as_geojson=params.get("as_geojson")
             )
 
         def delete_rest(self_mv, value):
@@ -320,96 +300,118 @@ class SchemaApi():
 
             m = self.get_row(
                 value,
-                field_name=params.get('field_name'),
+                field_name=params.get("field_name"),
                 module_code=module_code,
-                cruved_type='D',
-                params = params
+                cruved_type="D",
+                params=params,
             ).one()
             dict_out = self.serialize(
-                m,
-                fields=params.get('fields'),
-                as_geojson=params.get('as_geojson')
+                m, fields=params.get("fields"), as_geojson=params.get("as_geojson")
             )
 
             try:
-                self.delete_row(value, field_name=params.get('field_name'))
+                self.delete_row(value, field_name=params.get("field_name"))
 
             except SchemaUnsufficientCruvedRigth as e:
-                return 'Erreur Cruved : {}'.format(str(e)), 403
+                return "Erreur Cruved : {}".format(str(e)), 403
 
             return dict_out
 
         def get_page_number(self_mv, value):
-            '''
-            '''
+            """ """
 
             params = self.parse_request_args(request, options)
             return {
-                'page': self.get_page_number(
-                    value,
-                    module_code,
-                    params.get('cruved_type') or 'R',
-                    params
+                "page": self.get_page_number(
+                    value, module_code, params.get("cruved_type") or "R", params
                 )
             }
 
-
         return {
-            'rest': {
-                'get': permissions.check_cruved_scope('R', module_code=module_code)(get_rest),
-                'post': permissions.check_cruved_scope('C', module_code=module_code)(post_rest),
-                'patch': permissions.check_cruved_scope('U', module_code=module_code)(patch_rest),
-                'delete': permissions.check_cruved_scope('D', module_code=module_code)(delete_rest)
+            "rest": {
+                "get": permissions.check_cruved_scope("R", module_code=module_code)(
+                    get_rest
+                ),
+                "post": permissions.check_cruved_scope("C", module_code=module_code)(
+                    post_rest
+                ),
+                "patch": permissions.check_cruved_scope("U", module_code=module_code)(
+                    patch_rest
+                ),
+                "delete": permissions.check_cruved_scope("D", module_code=module_code)(
+                    delete_rest
+                ),
             },
-            'page_number': {
-                'get': permissions.check_cruved_scope('R', module_code=module_code)(get_page_number)
-            }
+            "page_number": {
+                "get": permissions.check_cruved_scope("R", module_code=module_code)(
+                    get_page_number
+                )
+            },
         }
 
     def schema_view_func(self, view_type, module_code, options):
-        '''
-            c'est ici que ce gère le CRUVED pour l'accès aux routes
-        '''
+        """
+        c'est ici que ce gère le CRUVED pour l'accès aux routes
+        """
 
         schema_api_dict = self.schema_api_dict(module_code, options)[view_type]
 
         MV = type(
-            self.method_view_name(module_code, options['object_name'], view_type),
+            self.method_view_name(module_code, options["object_name"], view_type),
             (MethodView,),
-            schema_api_dict
+            schema_api_dict,
         )
-        return MV.as_view(self.view_name(module_code, options['object_name'], view_type))
+        return MV.as_view(
+            self.view_name(module_code, options["object_name"], view_type)
+        )
 
     def register_api(self, bp, module_code, object_name, options={}):
-        '''
-            Fonction qui enregistre une api pour un schema
+        """
+        Fonction qui enregistre une api pour un schema
 
-            TODO s
-                -comment gérer la config pour limiter les routes selon le cruved
-        '''
+        TODO s
+            -comment gérer la config pour limiter les routes selon le cruved
+        """
 
-        cruved = options.get('cruved', '')
+        cruved = options.get("cruved", "")
 
         # rest api
-        view_func_rest = self.schema_view_func('rest', module_code, options)
-        view_func_page_number = self.schema_view_func('page_number', module_code, options)
+        view_func_rest = self.schema_view_func("rest", module_code, options)
+        view_func_page_number = self.schema_view_func(
+            "page_number", module_code, options
+        )
 
         # read: GET (liste et one_row)
-        if 'R' in cruved:
-            bp.add_url_rule(f'/{object_name}/', defaults={'value': None}, view_func=view_func_rest, methods=['GET'])
-            bp.add_url_rule(f'/{object_name}/<value>', view_func=view_func_rest, methods=['GET'])
-            bp.add_url_rule(f'/{object_name}/page_number/<value>', view_func=view_func_page_number, methods=['GET'])
+        if "R" in cruved:
+            bp.add_url_rule(
+                f"/{object_name}/",
+                defaults={"value": None},
+                view_func=view_func_rest,
+                methods=["GET"],
+            )
+            bp.add_url_rule(
+                f"/{object_name}/<value>", view_func=view_func_rest, methods=["GET"]
+            )
+            bp.add_url_rule(
+                f"/{object_name}/page_number/<value>",
+                view_func=view_func_page_number,
+                methods=["GET"],
+            )
 
         # create : POST
-        if 'C' in cruved:
-            bp.add_url_rule(f'/{object_name}/', view_func=view_func_rest, methods=['POST'])
+        if "C" in cruved:
+            bp.add_url_rule(
+                f"/{object_name}/", view_func=view_func_rest, methods=["POST"]
+            )
 
         # update : PATCH
-        if 'U' in cruved:
-            bp.add_url_rule(f'/{object_name}/', view_func=view_func_rest, methods=['PATCH'])
+        if "U" in cruved:
+            bp.add_url_rule(
+                f"/{object_name}/", view_func=view_func_rest, methods=["PATCH"]
+            )
 
         # delete : DELETE
-        if 'D' in cruved:
-            bp.add_url_rule(f'/{object_name}/', view_func=view_func_rest, methods=['DELELTE'])
-
-
+        if "D" in cruved:
+            bp.add_url_rule(
+                f"/{object_name}/", view_func=view_func_rest, methods=["DELELTE"]
+            )

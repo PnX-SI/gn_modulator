@@ -1,18 +1,18 @@
-'''
+"""
     SchemaMethods : static methods for cmd
-'''
+"""
 
 
 class SchemaCommands:
-    '''
-        static methods for cmd
-    '''
+    """
+    static methods for cmd
+    """
 
     @classmethod
     def c_get_sample(cls, schema_name, value, field_name=None):
-        '''
-            get one row from id
-        '''
+        """
+        get one row from id
+        """
 
         sm = cls(schema_name)
 

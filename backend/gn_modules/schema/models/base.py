@@ -1,87 +1,79 @@
-'''
+"""
     SchemaMethods : sqlalchemy existing_Models processing
-'''
+"""
 
 import uuid
-
-from flask_sqlalchemy import model
 from geoalchemy2 import Geometry
-from gn_modules.schema.repositories import cruved
-
-from sqlalchemy.orm import column_property
-
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy import func, select, case, exists, and_ , literal_column, cast, column
-from sqlalchemy.dialects.postgresql import aggregate_order_by
-
 from geonature.utils.env import db
-
 from ..errors import SchemaProcessedPropertyError
 
 # store the sqla Models
 
-class SchemaModelBase():
-    '''
-        sqlalchemy Models processing
-    '''
+
+class SchemaModelBase:
+    """
+    sqlalchemy Models processing
+    """
 
     def model_name(self):
-        '''
-        '''
+        """ """
 
-        return self.attr('meta.model_name', 'T{}'.format(self.schema_name('pascal_case')))
+        return self.attr(
+            "meta.model_name", "T{}".format(self.schema_name("pascal_case"))
+        )
 
     def get_db_type(self, column):
 
-        field_type = column.get('type')
+        field_type = column.get("type")
 
-        if field_type == 'integer':
+        if field_type == "integer":
             return db.Integer
-        if field_type == 'json':
+        if field_type == "json":
             return JSONB
-        if field_type == 'boolean':
+        if field_type == "boolean":
             return db.Boolean
-        if field_type == 'number':
+        if field_type == "number":
             return db.Float
-        if field_type == 'string':
+        if field_type == "string":
             return db.Unicode
-        if field_type == 'uuid':
+        if field_type == "uuid":
             return UUID(as_uuid=True)
-        if field_type == 'date':
+        if field_type == "date":
             return db.Date
-        if field_type == 'datetime':
+        if field_type == "datetime":
             return db.DateTime
-        if field_type == 'geometry':
-            return Geometry(column['geometry_type'], column['srid'])
+        if field_type == "geometry":
+            return Geometry(column["geometry_type"], column["srid"])
 
-        raise(
-            SchemaProcessedPropertyError(
-                'db_type is None for prop {}'
-                .format(column)
-            )
+        raise (
+            SchemaProcessedPropertyError("db_type is None for prop {}".format(column))
         )
 
     def process_existing_column_model(self, key, column_def, column_model):
         pass
 
     def process_column_model(self, key, column_def):
-        '''
-        '''
+        """ """
         # get field_options
         field_args = []
         field_kwargs = {}
         db_type = None
 
         # primary key
-        if column_def.get('primary_key'):
-            field_kwargs['primary_key'] = True
+        if column_def.get("primary_key"):
+            field_kwargs["primary_key"] = True
 
         # foreign_key
-        if column_def.get('foreign_key'):
-            relation = self.cls(column_def['schema_name'])
-            foreign_key = '{}.{}'.format(relation.sql_schema_dot_table(), relation.pk_field_name())
+        if column_def.get("foreign_key"):
+            relation = self.cls(column_def["schema_name"])
+            foreign_key = "{}.{}".format(
+                relation.sql_schema_dot_table(), relation.pk_field_name()
+            )
             if self.is_required(key):
-                field_args.append(db.ForeignKey(foreign_key, ondelete="CASCADE", onupdate="CASCADE"))
+                field_args.append(
+                    db.ForeignKey(foreign_key, ondelete="CASCADE", onupdate="CASCADE")
+                )
             else:
                 field_args.append(db.ForeignKey(foreign_key))
 
@@ -89,18 +81,18 @@ class SchemaModelBase():
         db_type = self.get_db_type(column_def)
 
         # default
-        if column_def.get('default'):
-            field_kwargs['default'] = self.process_default_model(column_def)
+        if column_def.get("default"):
+            field_kwargs["default"] = self.process_default_model(column_def)
 
         return db.Column(db_type, *field_args, **field_kwargs)
 
     def process_default_model(self, column_def):
-        if column_def['type'] == 'uuid':
+        if column_def["type"] == "uuid":
             return uuid.uuid4
 
     def process_relation_model(self, key, relationship_def, Model):
 
-        relation = self.cls(relationship_def['schema_name'])
+        relation = self.cls(relationship_def["schema_name"])
 
         if not relation.Model():
             return
@@ -109,50 +101,47 @@ class SchemaModelBase():
         # if relationship_def.get('backref'):
         #     kwargs['backref'] = relationship_def.get('backref')
 
-        if relationship_def.get('relation_type') == '1-1':
-            kwargs['uselist'] = False
+        if relationship_def.get("relation_type") == "1-1":
+            kwargs["uselist"] = False
 
-
-        if relationship_def.get('relation_type') == '1-n':
+        if relationship_def.get("relation_type") == "1-n":
             # test si obligatoire
-            rel = self.cls(relationship_def['schema_name'])
+            rel = self.cls(relationship_def["schema_name"])
 
             # foreign_column = rel.property(relationship_def['foreign_key'])
-            if rel.is_required(relationship_def['foreign_key']):
-                kwargs['cascade'] = "all, delete, delete-orphan"
+            if rel.is_required(relationship_def["foreign_key"]):
+                kwargs["cascade"] = "all, delete, delete-orphan"
             # if foreign_column.requi
 
-
-        if relationship_def.get('relation_type') == 'n-1':
-            kwargs['foreign_keys'] = getattr(Model, relationship_def['local_key'])
+        if relationship_def.get("relation_type") == "n-1":
+            kwargs["foreign_keys"] = getattr(Model, relationship_def["local_key"])
 
             # patch si la cle n'est pas definie
-            column_def = self.column(relationship_def['local_key'])
-            relation = self.cls(column_def['schema_name'])
+            column_def = self.column(relationship_def["local_key"])
+            relation = self.cls(column_def["schema_name"])
 
-            kwargs['primaryjoin'] = (
-                getattr(self.Model(), relationship_def['local_key'])
-                ==
-                getattr(relation.Model(), relation.pk_field_name())
-            )
+            kwargs["primaryjoin"] = getattr(
+                self.Model(), relationship_def["local_key"]
+            ) == getattr(relation.Model(), relation.pk_field_name())
 
-        if relationship_def.get('relation_type') == 'n-n':
+        if relationship_def.get("relation_type") == "n-n":
             CorTable = self.CorTable(relationship_def)
-            kwargs['secondary'] = CorTable
+            kwargs["secondary"] = CorTable
             if (
                 # True or
-                relationship_def.get('local_key')
-                and relationship_def.get('foreign_key')
-             ):
-                kwargs['primaryjoin'] = (
-                    getattr(self.Model(), self.pk_field_name())
-                    ==
-                    getattr(CorTable.c, relationship_def.get('local_key', self.pk_field_name()))
+                relationship_def.get("local_key")
+                and relationship_def.get("foreign_key")
+            ):
+                kwargs["primaryjoin"] = getattr(
+                    self.Model(), self.pk_field_name()
+                ) == getattr(
+                    CorTable.c, relationship_def.get("local_key", self.pk_field_name())
                 )
-                kwargs['secondaryjoin'] = (
-                    getattr(relation.Model(), relation.pk_field_name())
-                    ==
-                    getattr(CorTable.c, relationship_def.get('foreign_key', self.pk_field_name()))
+                kwargs["secondaryjoin"] = getattr(
+                    relation.Model(), relation.pk_field_name()
+                ) == getattr(
+                    CorTable.c,
+                    relationship_def.get("foreign_key", self.pk_field_name()),
                 )
 
         relationship = db.relationship(relation.Model(), **kwargs)
@@ -160,29 +149,21 @@ class SchemaModelBase():
 
     def CorTable(self, relation_def):
 
+        schema_dot_table = relation_def.get("schema_dot_table")
+        cor_schema_name = schema_dot_table.split(".")[0]
+        cor_table_name = schema_dot_table.split(".")[1]
 
-        schema_dot_table = relation_def.get('schema_dot_table')
-        cor_schema_name = schema_dot_table.split('.')[0]
-        cor_table_name = schema_dot_table.split('.')[1]
-
-        CorTable = (
-            self.cls.get_global_cache(
-                'cor_table',
-                schema_dot_table
-            )
-        )
+        CorTable = self.cls.get_global_cache("cor_table", schema_dot_table)
 
         if CorTable is not None:
             return CorTable
 
-        CorTable = self.get_cache_existing_tables(
-                schema_dot_table
-            )
+        CorTable = self.get_cache_existing_tables(schema_dot_table)
 
         if CorTable is not None:
             return CorTable
 
-        relation = self.cls(relation_def['schema_name'])
+        relation = self.cls(relation_def["schema_name"])
         local_key = self.pk_field_name()
         foreign_key = relation.pk_field_name()
         CorTable = db.Table(
@@ -190,25 +171,25 @@ class SchemaModelBase():
             db.metadata,
             db.Column(
                 local_key,
-                db.ForeignKey(f'{self.sql_schema_dot_table()}.{local_key}'),
-                primary_key=True
+                db.ForeignKey(f"{self.sql_schema_dot_table()}.{local_key}"),
+                primary_key=True,
             ),
             db.Column(
                 foreign_key,
-                db.ForeignKey(f'{relation.sql_schema_dot_table()}.{foreign_key}'),
-                primary_key=True
+                db.ForeignKey(f"{relation.sql_schema_dot_table()}.{foreign_key}"),
+                primary_key=True,
             ),
-            schema=cor_schema_name
+            schema=cor_schema_name,
         )
 
-        self.cls.set_global_cache('cor_table', schema_dot_table, CorTable)
+        self.cls.set_global_cache("cor_table", schema_dot_table, CorTable)
 
         return CorTable
 
     def Model(self):
         if not self.sql_table_exists():
             return None
-        '''
+        """
         create and returns schema Model : a class created with type(name, (bases,), dict_model) function
         - name : self.model_name()
         - base :  db.Model
@@ -216,9 +197,9 @@ class SchemaModelBase():
 
         TODO store in global variable and create only if missing
         - avoid to create the model twice
-        '''
+        """
         # get Model from cache
-        if Model := self.cls.get_schema_cache(self.schema_name(), 'model'):
+        if Model := self.cls.get_schema_cache(self.schema_name(), "model"):
             return Model
 
         # get Model from existing
@@ -228,10 +209,10 @@ class SchemaModelBase():
 
         # dict_model used with type() to list properties and methods for class creation
         dict_model = {
-            '__tablename__': self.sql_table_name(),
-            '__table_args__': {
-                'schema': self.sql_schema_name(),
-            }
+            "__tablename__": self.sql_table_name(),
+            "__table_args__": {
+                "schema": self.sql_schema_name(),
+            },
         }
 
         ModelBaseClass = db.Model
@@ -239,7 +220,7 @@ class SchemaModelBase():
         # process properties
         for key, column_def in self.columns().items():
 
-            if column_def.get('column_property') is not None:
+            if column_def.get("column_property") is not None:
                 continue
 
             dict_model[key] = self.process_column_model(key, column_def)
@@ -250,7 +231,7 @@ class SchemaModelBase():
         Model.ownership = 0
 
         # store in cache before relations (avoid circular dependancies)
-        self.cls.set_schema_cache(self.schema_name(), 'model', Model)
+        self.cls.set_schema_cache(self.schema_name(), "model", Model)
 
         # process relations
 
@@ -263,7 +244,7 @@ class SchemaModelBase():
             setattr(
                 Model,
                 key,
-                self.process_column_property_model(key, column_property_def, Model)
+                self.process_column_property_model(key, column_property_def, Model),
             )
 
         return Model

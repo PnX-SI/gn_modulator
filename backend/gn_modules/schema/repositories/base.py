@@ -1,22 +1,19 @@
-'''
+"""
     SchemaMethods : sqlalchemy queries processing
-'''
+"""
 
-from dataclasses import field
 import math
-
 from geonature.utils.env import db
 
-from sqlalchemy import func, select, alias
+from sqlalchemy import func
 from sqlalchemy.orm import defer
 from .. import errors
 
 
-class SchemaRepositoriesBase():
-    '''
-        class for sqlalchemy query processing
-    '''
-
+class SchemaRepositoriesBase:
+    """
+    class for sqlalchemy query processing
+    """
 
     def value_filters(self, value, field_name=None):
 
@@ -30,47 +27,54 @@ class SchemaRepositoriesBase():
 
         if len(values) != len(field_names):
             raise errors.SchemaRepositoryError(
-                'get_row : les input value et field_name n''ont pas la même taille'
+                "get_row : les input value et field_name n" "ont pas la même taille"
             )
 
         value_filters = []
         # ici jouer sur filters avant le one
         for index, val in enumerate(values):
             f_name = field_names[index]
-            value_filters.append({ 'field': f_name, "type": "=", "value": val })
+            value_filters.append({"field": f_name, "type": "=", "value": val})
 
         return value_filters
 
+    def get_row(
+        self,
+        value,
+        field_name=None,
+        module_code="MODULES",
+        cruved_type="R",
+        params={},
+        query_type="all",
+    ):
+        """
+        return query get one row (Model.<field_name> == value)
 
-    def get_row(self, value, field_name=None, module_code='MODULES', cruved_type='R', params= {}, query_type='all'):
-        '''
-            return query get one row (Model.<field_name> == value)
+        - value
+        - field_name:
+          - filter by <field_name>==value
+          - if field_name is None, use primary key field name
 
-            - value
-            - field_name:
-              - filter by <field_name>==value
-              - if field_name is None, use primary key field name
-
-            - value and field name can be arrays, they must be of same size
+        - value and field name can be arrays, they must be of same size
 
 
-            db.session.query(Model).filter(<field_name> == value).one()
-        '''
+        db.session.query(Model).filter(<field_name> == value).one()
+        """
 
         value_filters = self.value_filters(value, field_name)
-        params['filters'] = params.get('filters', []) + value_filters
+        params["filters"] = params.get("filters", []) + value_filters
         query = self.query_list(
             module_code=module_code,
             cruved_type=cruved_type,
             params=params,
-            query_type=query_type
+            query_type=query_type,
         )
         return query
 
     def insert_row(self, data):
-        '''
-            insert new row with data
-        '''
+        """
+        insert new row with data
+        """
 
         if self.pk_field_name() in data and data[self.pk_field_name()] is None:
             data.pop(self.pk_field_name())
@@ -84,10 +88,10 @@ class SchemaRepositoriesBase():
         return m
 
     def is_new_data(self, model, data):
-        '''
-            for update_row
-            test if data different from model
-        '''
+        """
+        for update_row
+        test if data different from model
+        """
 
         if model is None and data is not None:
             return True
@@ -103,7 +107,7 @@ class SchemaRepositoriesBase():
             # test list
             if not isinstance(model, list):
                 # raise error ?
-                raise Exception('error list')
+                raise Exception("error list")
 
             # test taille
             if len(data) != len(model):
@@ -115,7 +119,9 @@ class SchemaRepositoriesBase():
                 for model_elem in model:
                     if not is_new_data:
                         break
-                    is_new_data = is_new_data and self.is_new_data(model_elem, data_elem)
+                    is_new_data = is_new_data and self.is_new_data(
+                        model_elem, data_elem
+                    )
 
                 if is_new_data:
                     return True
@@ -126,37 +132,31 @@ class SchemaRepositoriesBase():
         # pour les uuid la comparaison directe donne non egal en cas d'égalité
         # (pourquoi??) d'ou transformation en string pour la comparaison
         if isinstance(data, dict):
-            model = {
-                key: model[key]
-                for key in data
-                if key in model
-            }
+            model = {key: model[key] for key in data if key in model}
         if not (model == data or str(model) == str(data)):
             return True
 
         return False
 
-    def update_row(self, value, data, field_name=None, module_code="MODULES", params={}):
-        '''
-            update row (Model.<field_name> == value) with data
+    def update_row(
+        self, value, data, field_name=None, module_code="MODULES", params={}
+    ):
+        """
+        update row (Model.<field_name> == value) with data
 
-            # TODO deserialiser
-        '''
+        # TODO deserialiser
+        """
 
         self.validate_data(data)
 
-        m = (
-            self
-            .get_row(
-                value,
-                field_name=field_name,
-                module_code=module_code,
-                cruved_type='U',
-                params=params,
-                query_type='update'
-            )
-            .one()
-        )
+        m = self.get_row(
+            value,
+            field_name=field_name,
+            module_code=module_code,
+            cruved_type="U",
+            params=params,
+            query_type="update",
+        ).one()
 
         if not self.is_new_data(m, data):
             return m, False
@@ -167,20 +167,17 @@ class SchemaRepositoriesBase():
 
         return m, True
 
-    def delete_row(self, value, field_name=None, module_code='MODULES', params={}):
-        '''
-            delete row (Model.<field_name> == value)
-        '''
-        m = (
-            self
-            .get_row(
-                value,
-                field_name=field_name,
-                module_code=module_code,
-                cruved_type='D',
-                params=params,
-                query_type='delete'
-            )
+    def delete_row(self, value, field_name=None, module_code="MODULES", params={}):
+        """
+        delete row (Model.<field_name> == value)
+        """
+        m = self.get_row(
+            value,
+            field_name=field_name,
+            module_code=module_code,
+            cruved_type="D",
+            params=params,
+            query_type="delete",
         )
         # pour être sûr qu'il n'y a qu'une seule ligne de supprimée
         m.one()
@@ -190,38 +187,36 @@ class SchemaRepositoriesBase():
         return m
 
     def process_query_columns(self, params, query, order_by):
-        '''
-            permet d'ajouter de colonnes selon les besoin
-            - ownership pour cruved (toujours?)
-            - row_number (si dans fields)
-        '''
+        """
+        permet d'ajouter de colonnes selon les besoin
+        - ownership pour cruved (toujours?)
+        - row_number (si dans fields)
+        """
 
-        fields = params.get('fields', [])
+        fields = params.get("fields", [])
 
         # cruved
-        if 'ownership' in fields:
+        if "ownership" in fields:
             query = self.add_column_ownership(query)
 
         # row_number
-        if 'row_number' in fields:
+        if "row_number" in fields:
             query = query.add_columns(
-                func.row_number()
-                .over(order_by=order_by)
-                .label('row_number')
+                func.row_number().over(order_by=order_by).label("row_number")
             )
 
         return query
 
     def defer_fields(self, query, params={}):
-        '''
-            pour n'avoir dans la requête que les champs demandés
-        '''
-        fields = params.get('fields', [])
+        """
+        pour n'avoir dans la requête que les champs demandés
+        """
+        fields = params.get("fields", [])
         if not self.pk_field_name() in fields:
             fields.append(self.pk_field_name())
 
-        if self.schema_name() in ['commons.module', 'commons.modules']:
-            fields.append('type')
+        if self.schema_name() in ["commons.module", "commons.modules"]:
+            fields.append("type")
 
         defered_fields = [
             defer(getattr(self.Model(), key))
@@ -238,11 +233,14 @@ class SchemaRepositoriesBase():
         for defered_field in defered_fields:
             try:
                 query = query.options(defered_field)
-            except:
+            except Exception as e:
+                print(f"{self.schema_name()}: pb avec defer {defered_field} {str(e)}")
                 pass
         return query
 
-    def query_list(self, module_code='MODULES', cruved_type='R', params={}, query_type=None):
+    def query_list(
+        self, module_code="MODULES", cruved_type="R", params={}, query_type=None
+    ):
 
         Model = self.Model()
         model_pk_field = getattr(Model, self.pk_field_name())
@@ -251,7 +249,7 @@ class SchemaRepositoriesBase():
         # simplifier la requete
         query = self.defer_fields(query, params)
 
-        order_bys, query = self.get_sorters(Model, params.get('sort', []), query)
+        order_bys, query = self.get_sorters(Model, params.get("sort", []), query)
 
         # ajout colonnes row_number, ownership (cruved)
         query = self.process_query_columns(params, query, order_bys)
@@ -262,43 +260,37 @@ class SchemaRepositoriesBase():
         query = self.process_cruved_filter(cruved_type, module_code, query)
 
         # - prefiltrage params
-        query = self.process_filters(Model, params.get('prefilters', []), query)
+        query = self.process_filters(Model, params.get("prefilters", []), query)
 
         # requete pour count 'total'
-        if query_type == 'total':
-            return (
-                query
-                    .with_entities(model_pk_field)
-                    .group_by(model_pk_field)
-            )
+        if query_type == "total":
+            return query.with_entities(model_pk_field).group_by(model_pk_field)
 
         # filtrage
-        query = self.process_filters(Model, params.get('filters', []), query)
+        query = self.process_filters(Model, params.get("filters", []), query)
 
         # requete pour count 'filtered'
-        if query_type == 'filtered':
-            return (
-                query
-                    .with_entities(model_pk_field)
-                    .group_by(model_pk_field)
-            )
+        if query_type == "filtered":
+            return query.with_entities(model_pk_field).group_by(model_pk_field)
 
-        if query_type in ['update', 'delete', 'page_number']:
+        if query_type in ["update", "delete", "page_number"]:
             return query
 
         # sort
         query = query.order_by(*(tuple(order_bys)))
 
         # limit offset
-        query = self.process_page_size(params.get('page'), params.get('page_size'), query)
+        query = self.process_page_size(
+            params.get("page"), params.get("page_size"), query
+        )
 
         return query
 
     def get_page_number(self, value, module_code, cruved_type, params):
 
-        params['fields'] = ['row_number']
+        params["fields"] = ["row_number"]
 
-        query_list = self.query_list(module_code, cruved_type, params, 'page_number')
+        query_list = self.query_list(module_code, cruved_type, params, "page_number")
 
         sub_query = query_list.subquery()
 
@@ -308,10 +300,9 @@ class SchemaRepositoriesBase():
         row_number = (
             db.session.query(sub_query.c.row_number)
             .filter(getattr(sub_query.c, self.pk_field_name()) == value)
-            .one()
-            [0]
+            .one()[0]
         )
 
-        page_number = math.ceil(row_number / params.get('page_size'))
+        page_number = math.ceil(row_number / params.get("page_size"))
 
         return page_number

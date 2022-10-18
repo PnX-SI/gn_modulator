@@ -12,9 +12,9 @@ class SchemaSql(
     SchemaSqlTable,
     SchemaSqlTrigger,
 ):
-    '''
-        Classe qui englobe toutes les méthode pour le sql
-    '''
+    """
+    Classe qui englobe toutes les méthode pour le sql
+    """
 
     __abstract__ = True
 
