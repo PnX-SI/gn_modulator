@@ -48,7 +48,7 @@ form:
             key: id_site_category
             type: list_form
             title: Catégorie de site
-            object_name: m_monitoring.site_category
+            object_name: category
             module_code: m_monitoring
         -
             key: id_nomenclature_type_site
