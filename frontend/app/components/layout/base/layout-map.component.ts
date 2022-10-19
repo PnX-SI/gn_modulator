@@ -88,24 +88,16 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
       // affichage des données
 
       if (dataChanged && this.computedLayout.key) {
-        this._mapService.processData(this.mapId, this.data, {
+        const layer = this._mapService.processData(this.mapId, this.data, {
           key: this.computedLayout.key,
           zoom: this.computedLayout.zoom,
         });
 
-        return;
-      }
-
-      // initialisation de edited layer si besoin
-      if (
-        this.computedLayout.key &&
-        this.data[this.computedLayout.key] &&
-        this.computedLayout.edit &&
-        !this._map.$editedLayer.getValue()
-      ) {
-        // TODO faire un layer
-        this._map.$editedLayer.next(this.data[this.computedLayout.key]);
-        this._mapService.zoomOnLayer(this.mapId, this.data[this.computedLayout.key]);
+        // initialisation du layer d'edition (s'il ne l'est pas déjà)
+        if (this.computedLayout.edit && !this._map.$editedLayer.getValue()) {
+          this._map.$editedLayer.next(layer);
+          this._mapService.zoomOnLayer(this.mapId, layer);
+        }
       }
     });
   }

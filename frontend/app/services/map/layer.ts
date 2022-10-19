@@ -50,16 +50,13 @@ export default {
 
     if (options.key && data[options.key]) {
       this.removeLayers(mapId, { key: options.key });
-      this.processData(mapId, data[options.key], options);
-      return;
+      return this.processData(mapId, data[options.key], options);
     }
     if (dataType == 'geometry') {
-      this.processGeometry(mapId, data, options);
-      return;
+      return this.processGeometry(mapId, data, options);
     }
     if (dataType == 'dict') {
-      this.processLayersData(mapId, data);
-      return;
+      return this.processLayersData(mapId, data);
     }
   },
 
@@ -81,6 +78,7 @@ export default {
         this.zoomOnLayer(mapId, layer);
       }
     }
+    return layer;
   },
 
   processLayersData(mapId, layersData) {
