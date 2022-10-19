@@ -93,7 +93,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
           zoom: this.computedLayout.zoom,
         });
 
-        // initialisation du layer d'edition (s'il ne l'est pas déjà)
+        // initialisation du layer d'edition (s'il edit est à true et s'il n'est pas déjà )
         if (this.computedLayout.edit && !this._map.$editedLayer.getValue()) {
           this._map.$editedLayer.next(layer);
           this._mapService.zoomOnLayer(this.mapId, layer);
