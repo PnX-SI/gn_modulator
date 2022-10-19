@@ -407,11 +407,11 @@ class SchemaApi:
         # update : PATCH
         if "U" in cruved:
             bp.add_url_rule(
-                f"/{object_name}/", view_func=view_func_rest, methods=["PATCH"]
+                f"/{object_name}/<value>", view_func=view_func_rest, methods=["PATCH"]
             )
 
         # delete : DELETE
         if "D" in cruved:
             bp.add_url_rule(
-                f"/{object_name}/", view_func=view_func_rest, methods=["DELELTE"]
+                f"/{object_name}/<value>", view_func=view_func_rest, methods=["DELELTE"]
             )
