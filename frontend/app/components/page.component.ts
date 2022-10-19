@@ -135,24 +135,23 @@ export class PageComponent implements OnInit {
     // pour pouvoir accéder au paramètres pour le calcul des layouts
     this._mLayout.meta['params'] = this._mPage.params;
 
-    let data = utils.copy(this._mPage.moduleConfig.objects);
-    const dataPage = utils.copy(this._mPage.pageConfig.data || {});
+    let objectsModule = utils.copy(this._mPage.moduleConfig.objects);
+    const objectsPage = utils.copy(this._mPage.pageConfig.objects || {});
 
     // gestion du paramètre debug
     this.debug = ![undefined, false, 'false'].includes(this.routeQueryParams.debug);
-
     // pour toutes les clés de data (moduleConfig.objects)
-    for (const [objectName, objectConfig] of Object.entries(data)) {
+    for (const [objectName, objectConfig] of Object.entries(objectsModule)) {
       // set object_name
       (objectConfig as any).object_name = objectName;
 
       // on ajoute les données data définies pour la page
       // par exemple typeKey  = value|filters|prefilters
-      const dataPageValue = dataPage[objectName];
-      if (!dataPageValue) {
+      const objectsPageValue = objectsPage[objectName];
+      if (!objectsPageValue) {
         continue;
       }
-      for (const [typeKey, typeValue] of Object.entries(dataPageValue)) {
+      for (const [typeKey, typeValue] of Object.entries(objectsPageValue)) {
         (objectConfig as any)[typeKey] = typeValue;
       }
     }
@@ -162,11 +161,11 @@ export class PageComponent implements OnInit {
     // dans le dictionnaire params crée à partir des paramètre des routes (urlParams + queryParams)
 
     for (const [paramKey, paramValue] of Object.entries(this._mPage.params)) {
-      data = utils.replace(data, `:${paramKey}`, paramValue);
+      objectsModule = utils.replace(objectsModule, `:${paramKey}`, paramValue);
     }
 
     // pour communiquer les données aux composants du layout
-    this.data = data;
+    this.data = objectsModule;
 
     // resize des composants
     // TODO à affiner
