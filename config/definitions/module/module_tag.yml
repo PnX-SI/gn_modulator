@@ -1,0 +1,32 @@
+meta:
+    schema_name: modules.tag
+    sql_processing: true
+    sql_schema_dot_table: gn_modules.t_module_tags
+    label: Tag de modules
+    labels: Tags de modules
+    label_field_name: name
+    genre: M
+    unique:
+        - code
+properties:
+    id_module_tag:
+        type: integer
+        primary_key: true
+        title: Id
+    code:
+        type: string
+        title: Code du tag de module
+    name:
+        type: string
+        title: Nom du tag de module
+    description:
+        type: string
+        title: Description du tag de module
+    modules:
+        type: relation
+        relation_type: n-n
+        title: modules
+        description: Liste des modules associés à ce tag
+        schema_dot_table: gn_modules.cor_module_tag
+        schema_name: commons.module
+        backref: tags
