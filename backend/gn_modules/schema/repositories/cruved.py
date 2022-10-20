@@ -51,6 +51,9 @@ class SchemaRepositoriesCruved:
     def process_cruved_filter(self, cruved_type, module_code, query):
         """ """
 
+        if self.attr("meta.check_cruved") is None:
+            return query
+
         if not hasattr(g, "current_user"):
             return query
 
