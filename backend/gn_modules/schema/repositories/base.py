@@ -314,11 +314,11 @@ class SchemaRepositoriesBase:
         if params.get("page"):
             page = params.get("page") or 1
 
-            if url:
-                if page != 1:
-                    url_previous = url.replace(f"page={page}", f"page={page-1}")
-                if page != last_page:
-                    url_next = url.replace(f"page={page}", f"page={page+1}")
+        if url:
+            if page != 1:
+                url_previous = url.replace(f"page={page}", f"page={page-1}")
+            if page != last_page:
+                url_next = url.replace(f"page={page}", f"page={page+1}")
 
         query_infos = {
             "page": page,
