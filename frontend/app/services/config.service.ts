@@ -15,7 +15,7 @@ export class ModulesConfigService {
     layouts: {},
   };
 
-  constructor(private _requestService: ModulesRequestService) {}
+  constructor(private _mRequest: ModulesRequestService) {}
 
   /** Configuration */
 
@@ -33,7 +33,7 @@ export class ModulesConfigService {
       return of(this._config.modules);
     }
 
-    return this._requestService.request('get', `${this.backendModuleUrl()}/modules_config`).pipe(
+    return this._mRequest.request('get', `${this.backendModuleUrl()}/modules_config`).pipe(
       mergeMap((modulesConfig) => {
         this._config.modules = modulesConfig;
         return of(this._config.modules);
@@ -45,7 +45,7 @@ export class ModulesConfigService {
    * Renvoie l'ensemble des groupes de schema
    */
   getSchemaGroups() {
-    return this._requestService.request('get', `${this.backendModuleUrl()}/groups`);
+    return this._mRequest.request('get', `${this.backendModuleUrl()}/groups`);
   }
 
   objectConfig(moduleCode, objectName) {
@@ -67,7 +67,7 @@ export class ModulesConfigService {
   getLayouts() {
     return Object.keys(this._config.layouts).length
       ? of(this._config.layout)
-      : this._requestService.request('get', `${this.backendModuleUrl()}/layouts`).pipe(
+      : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts`).pipe(
           mergeMap((layouts) => {
             this._config.layouts = layouts;
             return of(this._config.layout);
@@ -101,5 +101,16 @@ export class ModulesConfigService {
     return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectName}/${urlSuffix}${
       value || ''
     }`;
+  }
+
+  exportUrl(moduleCode, objectName, exportName, options: any = {}) {
+    const url = this._mRequest.url(
+      `${this.backendUrl()}/${moduleCode}/${objectName}/exports/${exportName}`,
+      {
+        prefilters: options.prefilters,
+        filters: options.filters,
+      }
+    );
+    return url;
   }
 }

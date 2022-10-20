@@ -140,9 +140,10 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
         type: 'button',
         title: 'export',
         icon: 'file_download',
-        href: this._mPage.exportUrl(
+        href: this._mConfig.exportUrl(
           this._mPage.moduleCode,
-          this.computedLayout.export_code,
+          this.objectName(),
+          this.computedLayout.export_name,
           this.data
         ),
         description: 'Exporter les données',

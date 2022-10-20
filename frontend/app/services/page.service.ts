@@ -114,20 +114,6 @@ export class ModulesPageService {
     }
   }
 
-  exportUrl(moduleCode, exportCode, data) {
-    const moduleConfig = this._mConfig.moduleConfig(moduleCode);
-    const exportConfig = moduleConfig.exports.find((c) => c.export_code == exportCode);
-
-    const url = this._mRequest.url(
-      `${this._mConfig.backendModuleUrl()}/export/${moduleCode}/${exportCode}`,
-      {
-        prefilters: data.prefilters,
-        filters: data.filters,
-      }
-    );
-    return url;
-  }
-
   getBreadcrumbs() {
     return this._mRequest
       .request(
