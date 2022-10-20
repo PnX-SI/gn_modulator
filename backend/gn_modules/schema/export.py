@@ -29,9 +29,9 @@ class SchemaExport:
 
     def process_export_csv(self, query_list, params):
         """
-            génère la reponse csv à partir de la requête demandée
+        génère la reponse csv à partir de la requête demandée
 
-            TODO traiter par lot et streamer les données?
+        TODO traiter par lot et streamer les données?
         """
 
         res_list = self.serialize_list(query_list.all(), fields=params.get("fields"))

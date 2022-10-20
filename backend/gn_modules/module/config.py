@@ -347,8 +347,10 @@ class ModulesConfig:
                     p_error.append(p)
                 except Exception:
                     path_error = "/".join(p_error)
-                    txt_error = "La chemin demandé <b>{}/{}</b> n'est pas correct\n".format(
-                        path_error, p
+                    txt_error = (
+                        "La chemin demandé <b>{}/{}</b> n'est pas correct\n".format(
+                            path_error, p
+                        )
                     )
                     if type(out) is dict and out.keys():
                         txt_error += "<br><br>Vous pouvez choisir un chemin parmi :"
