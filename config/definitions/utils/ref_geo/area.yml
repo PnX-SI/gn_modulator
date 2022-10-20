@@ -16,7 +16,7 @@ properties:
         type: string
         column_property: concat
         title: Code et nom
-        label: '<area_name> (<area_code>)'
+        label: '<area_name> <area_code>'
     code_name:
         type: string
         column_property: concat
