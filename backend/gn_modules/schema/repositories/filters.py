@@ -38,7 +38,7 @@ class SchemaRepositoriesFilters:
         filters_processed, query = self.process_filter_array(Model, filters, query)
         if filters_processed is not None:
             query = query.filter(filters_processed)
-            return query.filter(filters_processed)
+            return query
 
         return query
 
