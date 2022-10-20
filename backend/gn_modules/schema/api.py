@@ -5,47 +5,10 @@
 import json
 from flask.views import MethodView
 from flask import request
-import csv
-import math
 from geonature.core.gn_permissions import decorators as permissions
 from geonature.utils.config import config
 from gn_modules import MODULE_CODE
-from .errors import SchemaUnsufficientCruvedRigth
-
-
-# def check_cruved_on_row(view):
-#     '''
-#         decorator for
-#     '''
-
-#     @wraps(view)
-#     def _check_cruved_on_row(*args, **kwargs):
-
-#         try:
-#             return view(*args, **kwargs)
-#         except SchemaUnsufficientCruvedRigth as e:
-#             return 'Erreur Cruved : {}'.format(str(e))
-
-#     return _check_cruved_on_row
-
-
-class Line(object):
-    def __init__(self):
-        self._line = None
-
-    def write(self, line):
-        self._line = line
-
-    def read(self):
-        return self._line
-
-
-def iter_csv(data):
-    line = Line()
-    writer = csv.writer(line)
-    for csv_line in data:
-        writer.writerow(csv_line)
-        yield line.read()
+from . import errors
 
 
 class SchemaApi:
@@ -92,7 +55,7 @@ class SchemaApi:
 
         return url
 
-    def parse_request_args(self, request, options={}):
+    def parse_request_args(self, request, object_definition={}):
         """
         TODO !!! à refaire avec repo get_list
         parse request flask element
@@ -125,9 +88,10 @@ class SchemaApi:
             "cruved_type": self.load_param(request.args.get("cruved_type", "null")),
         }
 
-        if "prefilters" in options:
+        if "prefilters" in object_definition:
             params["prefilters"] = (
-                self.parse_filters(options["prefilters"]) + params["prefilters"]
+                self.parse_filters(object_definition["prefilters"])
+                + params["prefilters"]
             )
 
         return params
@@ -152,9 +116,9 @@ class SchemaApi:
         except Exception:
             return param
 
-    def schema_api_dict(self, module_code, options):
+    def schema_api_dict(self, module_code, object_definition):
         """
-        options : dict
+        object_definition : dict
             - prefilters
         """
 
@@ -163,14 +127,15 @@ class SchemaApi:
             if value:
                 try:
                     return get_one_rest(value)
-                except SchemaUnsufficientCruvedRigth:
+                except errors.SchemaUnsufficientCruvedRigth:
                     return f"Vous n'avez pas les droits suffisants pour accéder à cette requête (schema_name: {self.schema_name()}, module_code: {module_code})"
 
             else:
                 return get_list_rest()
 
         def get_one_rest(value):
-            params = self.parse_request_args(request, options)
+
+            params = self.parse_request_args(request, object_definition)
 
             try:
                 m = self.get_row(
@@ -181,69 +146,26 @@ class SchemaApi:
                     params=params,
                 ).one()
 
-            except SchemaUnsufficientCruvedRigth as e:
+            except errors.SchemaUnsufficientCruvedRigth as e:
                 return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
-                m,
-                fields=params.get("fields"),
-                as_geojson=params.get("as_geojson"),
+                m, fields=params.get("fields"), as_geojson=params.get("as_geojson")
             )
-
-        def get_query_infos():
-
-            params = self.parse_request_args(request, options)
-            count_total = self.query_list(
-                module_code=module_code,
-                cruved_type="R",
-                params=params,
-                query_type="total",
-            ).count()
-
-            count_filtered = self.query_list(
-                module_code=module_code,
-                cruved_type="R",
-                params=params,
-                query_type="filtered",
-            ).count()
-            page = 1
-            last_page = (
-                math.ceil(count_total / params.get("page_size"))
-                if params.get("page_size")
-                else 1
-            )
-            url_next = ""
-            url_previous = ""
-            page_size = params.get("page_size", None)
-
-            if params.get("page"):
-                page = params.get("page") or 1
-                if page != 1:
-                    url_previous = request.url.replace(f"page={page}", f"page={page-1}")
-                if page != last_page:
-                    url_next = request.url.replace(f"page={page}", f"page={page+1}")
-
-            query_infos = {
-                "page": page,
-                "next": url_next,
-                "previous": url_previous,
-                "page_size": page_size,
-                "total": count_total,
-                "filtered": count_filtered,
-                "last_page": last_page,
-            }
-
-            return query_infos
 
         def get_list_rest():
 
-            params = self.parse_request_args(request, options)
-            query_infos = get_query_infos()
+            params = self.parse_request_args(request, object_definition)
+            cruved_type = params.get("cruved_type") or "R"
+            query_infos = self.get_query_infos(
+                module_code=module_code,
+                cruved_type=cruved_type,
+                params=params,
+                url=request.url,
+            )
 
             query_list = self.query_list(
-                module_code=module_code,
-                cruved_type=params.get("cruved_type") or "R",
-                params=params,
+                module_code=module_code, cruved_type=cruved_type, params=params
             )
 
             res_list = query_list.all()
@@ -261,12 +183,12 @@ class SchemaApi:
         def post_rest(self_mv):
 
             data = request.get_json()
-            params = self.parse_request_args(request, options)
+            params = self.parse_request_args(request, object_definition)
 
             try:
                 m = self.insert_row(data)
 
-            except SchemaUnsufficientCruvedRigth as e:
+            except errors.SchemaUnsufficientCruvedRigth as e:
                 return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
@@ -276,7 +198,7 @@ class SchemaApi:
         def patch_rest(self_mv, value):
 
             data = request.get_json()
-            params = self.parse_request_args(request, options)
+            params = self.parse_request_args(request, object_definition)
 
             try:
                 m, _ = self.update_row(
@@ -287,7 +209,7 @@ class SchemaApi:
                     params=params,
                 )
 
-            except SchemaUnsufficientCruvedRigth as e:
+            except errors.SchemaUnsufficientCruvedRigth as e:
                 return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
@@ -296,7 +218,7 @@ class SchemaApi:
 
         def delete_rest(self_mv, value):
 
-            params = self.parse_request_args(request, options)
+            params = self.parse_request_args(request, object_definition)
 
             m = self.get_row(
                 value,
@@ -312,7 +234,7 @@ class SchemaApi:
             try:
                 self.delete_row(value, field_name=params.get("field_name"))
 
-            except SchemaUnsufficientCruvedRigth as e:
+            except errors.SchemaUnsufficientCruvedRigth as e:
                 return "Erreur Cruved : {}".format(str(e)), 403
 
             return dict_out
@@ -320,12 +242,47 @@ class SchemaApi:
         def get_page_number(self_mv, value):
             """ """
 
-            params = self.parse_request_args(request, options)
+            params = self.parse_request_args(request, object_definition)
             return {
                 "page": self.get_page_number(
                     value, module_code, params.get("cruved_type") or "R", params
                 )
             }
+
+        def get_export(self_mv, export_name):
+            """
+            methode pour gérer la route d'export
+                - récupération de la configuration de l'export
+            """
+
+            # récupération de la configuration de l'export
+            export_definition = self.cls.get_global_cache("exports", export_name)
+
+            # renvoie une erreur si l'export n'est pas trouvé
+            if export_definition is None:
+                return "L'export correspondant au code {export_name} n'existe pas", 403
+
+            # definitions des paramètres
+
+            # - query params + object_definition
+            params = self.parse_request_args(request, object_definition)
+
+            # - export_definition
+            #  - on force fields a être
+            #   - TODO faire l'intersection de params['fields'] et export_definition['fields'] (si params['fields'] est défini)
+            params["fields"] = export_definition["fields"]
+            #   - TODO autres paramètres ????
+
+            cruved_type = params.get("cruved_type") or "R"
+
+            # recupération de la liste
+            query_list = self.query_list(
+                module_code=module_code, cruved_type=cruved_type, params=params
+            )
+
+            # on assume qu'il n'y que des export csv
+            # TODO ajouter query param export_type (csv, shape, geosjon, etc) et traiter les différents cas
+            return self.process_export_csv(query_list, params)
 
         return {
             "rest": {
@@ -342,6 +299,11 @@ class SchemaApi:
                     delete_rest
                 ),
             },
+            "export": {
+                "get": permissions.check_cruved_scope("E", module_code=module_code)(
+                    get_export
+                )
+            },
             "page_number": {
                 "get": permissions.check_cruved_scope("R", module_code=module_code)(
                     get_page_number
@@ -349,23 +311,27 @@ class SchemaApi:
             },
         }
 
-    def schema_view_func(self, view_type, module_code, options):
+    def schema_view_func(self, view_type, module_code, object_definition):
         """
         c'est ici que ce gère le CRUVED pour l'accès aux routes
         """
 
-        schema_api_dict = self.schema_api_dict(module_code, options)[view_type]
+        schema_api_dict = self.schema_api_dict(module_code, object_definition)[
+            view_type
+        ]
 
         MV = type(
-            self.method_view_name(module_code, options["object_name"], view_type),
+            self.method_view_name(
+                module_code, object_definition["object_name"], view_type
+            ),
             (MethodView,),
             schema_api_dict,
         )
         return MV.as_view(
-            self.view_name(module_code, options["object_name"], view_type)
+            self.view_name(module_code, object_definition["object_name"], view_type)
         )
 
-    def register_api(self, bp, module_code, object_name, options={}):
+    def register_api(self, bp, module_code, object_name, object_definition={}):
         """
         Fonction qui enregistre une api pour un schema
 
@@ -373,12 +339,15 @@ class SchemaApi:
             -comment gérer la config pour limiter les routes selon le cruved
         """
 
-        cruved = options.get("cruved", "")
+        cruved = object_definition.get("cruved", "")
 
         # rest api
-        view_func_rest = self.schema_view_func("rest", module_code, options)
+        view_func_rest = self.schema_view_func("rest", module_code, object_definition)
         view_func_page_number = self.schema_view_func(
-            "page_number", module_code, options
+            "page_number", module_code, object_definition
+        )
+        view_func_export = self.schema_view_func(
+            "export", module_code, object_definition
         )
 
         # read: GET (liste et one_row)
@@ -414,4 +383,12 @@ class SchemaApi:
         if "D" in cruved:
             bp.add_url_rule(
                 f"/{object_name}/<value>", view_func=view_func_rest, methods=["DELELTE"]
+            )
+
+        # export
+        if "E" in cruved and object_definition.get("exports"):
+            bp.add_url_rule(
+                f"/{object_name}/exports/<export_name>",
+                view_func=view_func_export,
+                methods=["GET"],
             )

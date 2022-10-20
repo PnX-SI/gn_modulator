@@ -27,12 +27,57 @@ class SchemaExport:
     export
     """
 
-    def process_export(self, export):
+    def process_export_csv(self, query_list, params):
+        """
+            génère la reponse csv à partir de la requête demandée
+
+            TODO traiter par lot et streamer les données?
+        """
+
+        res_list = self.serialize_list(query_list.all(), fields=params.get("fields"))
+
+        if not res_list:
+            return jsonify([]), 404
+
+        data_csv = []
+        keys = res_list[0].keys()
+        data_csv.append(self.process_csv_keys(keys))
+        data_csv += [[self.process_csv_data(key, d) for key in keys] for d in res_list]
+
+        response = Response(iter_csv(data_csv), mimetype="text/csv")
+        response.headers["Content-Disposition"] = "attachment; filename=data.csv"
+        return response
+
+    def process_export(self, export_params):
         """
         process export
             pour l'instant csv
-            TODO
+            TODO reprendre comme get_list dans api.py
         """
+
+        params = self.parse_request_args(request, export_params)
+
+        cruved_type = params.get("cruved_type") or "R"
+        module_code = export_params["module_code"]
+        query_infos = self.get_query_infos(
+            module_code=module_code, cruved_type=cruved_type, params=params
+        )
+
+        query_list = self.query_list(
+            module_code=module_code, cruved_type=cruved_type, params=params
+        )
+
+        res_list = query_list.all()
+        out = {
+            **query_infos,
+            "data": self.serialize_list(
+                res_list,
+                fields=params.get("fields"),
+                as_geojson=params.get("as_geojson"),
+            ),
+        }
+
+        return out
 
         params = self.parse_request_args(request)
 
@@ -43,9 +88,7 @@ class SchemaExport:
         out = {
             **query_info,
             "data": self.serialize_list(
-                res_list,
-                fields=fields,
-                as_geojson=params.get("as_geojson"),
+                res_list, fields=fields, as_geojson=params.get("as_geojson")
             ),
         }
 

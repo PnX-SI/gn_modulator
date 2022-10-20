@@ -286,6 +286,52 @@ class SchemaRepositoriesBase:
 
         return query
 
+    def get_query_infos(
+        self, module_code="MODULES", cruved_type="R", params={}, url=None
+    ):
+
+        count_total = self.query_list(
+            module_code=module_code, cruved_type="R", params=params, query_type="total"
+        ).count()
+
+        count_filtered = self.query_list(
+            module_code=module_code,
+            cruved_type="R",
+            params=params,
+            query_type="filtered",
+        ).count()
+
+        page = 1
+        last_page = (
+            math.ceil(count_total / params.get("page_size"))
+            if params.get("page_size")
+            else 1
+        )
+        url_next = ""
+        url_previous = ""
+        page_size = params.get("page_size", None)
+
+        if params.get("page"):
+            page = params.get("page") or 1
+
+            if url:
+                if page != 1:
+                    url_previous = url.replace(f"page={page}", f"page={page-1}")
+                if page != last_page:
+                    url_next = url.replace(f"page={page}", f"page={page+1}")
+
+        query_infos = {
+            "page": page,
+            "next": url_next,
+            "previous": url_previous,
+            "page_size": page_size,
+            "total": count_total,
+            "filtered": count_filtered,
+            "last_page": last_page,
+        }
+
+        return query_infos
+
     def get_page_number(self, value, module_code, cruved_type, params):
 
         params["fields"] = ["row_number"]

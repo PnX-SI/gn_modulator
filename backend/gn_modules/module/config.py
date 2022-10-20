@@ -9,9 +9,7 @@ from pathlib import Path
 import copy
 from flask import g, jsonify, Blueprint, current_app
 
-from geonature.core.gn_permissions.tools import (
-    cruved_scope_for_user_in_module,
-)
+from geonature.core.gn_permissions.tools import cruved_scope_for_user_in_module
 
 cache_modules_config = {}
 
@@ -170,14 +168,10 @@ class ModulesConfig:
         for key, module_config in modules_config.items():
             cache_modules_config[key] = module_config
 
-        for key in modules_config:
-            cls.process_module_objects(key)
-
-        for key in modules_config:
-            cls.process_module_params(key)
-
-        for key in modules_config:
-            cls.process_module_api(key)
+        for module_code in modules_config:
+            cls.process_module_objects(module_code)
+            cls.process_module_params(module_code)
+            cls.process_module_api(module_code)
 
         return modules_config
 
@@ -261,6 +255,29 @@ class ModulesConfig:
             sm = SchemaMethods(object_definition["schema_name"])
             module_config["definitions"][object_name] = sm.config(object_definition)
 
+        # Traitement des exports
+        # - pour chaque export défini dans la config du module
+        for export_name, export_definition in module_config.get("exports", {}).items():
+
+            #  - on lui assigne son export_name
+            export_definition["export_name"] = export_name
+
+            # test si l'export existe déjà
+            if SchemaMethods.get_global_cache("exports", export_name):
+                raise errors.ModuleConfigError(
+                    f"L'export {export_name} à déjà été défini par ailleurs, le code de l'export doit être unique"
+                )
+
+            #  - on l'assigne à son object
+            object_definition = module_config["objects"][
+                export_definition["object_name"]
+            ]
+            object_definition["exports"] = object_definition.get("exports", [])
+            object_definition["exports"].append(export_name)
+
+            # mise en cache pour pouvoir s'en reservir par ailleurs
+            SchemaMethods.set_global_cache("exports", export_name, export_definition)
+
     @classmethod
     def process_module_api(cls, module_code):
         module_config = cls.module_config(module_code)
@@ -330,10 +347,8 @@ class ModulesConfig:
                     p_error.append(p)
                 except Exception:
                     path_error = "/".join(p_error)
-                    txt_error = (
-                        "La chemin demandé <b>{}/{}</b> n'est pas correct\n".format(
-                            path_error, p
-                        )
+                    txt_error = "La chemin demandé <b>{}/{}</b> n'est pas correct\n".format(
+                        path_error, p
                     )
                     if type(out) is dict and out.keys():
                         txt_error += "<br><br>Vous pouvez choisir un chemin parmi :"

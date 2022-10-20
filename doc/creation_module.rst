@@ -76,27 +76,8 @@ Dictionnaire définissant la configuration du module, avec les clés suivantes:
                 - **style**: style css des layers
                     - **color**
                 - **bring_to_front**: *boolean*, si l'on souhaite ramener ces éléments au premier plan
+            - **exports**: liste des nom d'export (``export_name``) associés à l'object
 
-::
-
-    objects:
-        site_group:
-                cruved: CRUD
-                schema_name: m_monitoring.site_group
-                label: 'Parc éolien'
-                labels: 'Parcs éolien'
-        gites:
-            cruved: CRUD
-            schema_name: m_monitoring.site
-            label: Gîte chiroptère
-            labels: Gîtes chiroptère
-            prefilters: category.code = GIT
-        eolienne:
-            cruved: CRUD
-            schema_name: m_monitoring.site
-            label: Éolienne
-            genre: F
-            prefilters: category.code = EOL
 
 - **tree**: un dictionnaire qui défini une hiérachie entre les pages, classiquement
 
@@ -112,3 +93,13 @@ Dictionnaire définissant la configuration du module, avec les clés suivantes:
         parc_list:
             url: ''
             layout_name: m_eole.parc_list
+
+- **exports**:
+
+::
+    m_sipaf.pf: # code de l'export ou ``export_name``
+        export_label: Test
+        object_name: pf
+        fields:
+            - id_passage_faune
+            ...

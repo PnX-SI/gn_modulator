@@ -65,22 +65,6 @@ def api_breadcrumbs(module_code, page_name):
     return ModuleMethods.breadcrumbs(module_code, page_name, request.args.to_dict())
 
 
-@blueprint.route("export/<module_code>/<export_code>")
-def api_export(module_code, export_code):
-    """
-    TODO proprer
-    """
-    module_config = ModuleMethods.module_config(module_code)
-
-    export = next(
-        x for x in module_config["exports"] if x["export_code"] == export_code
-    )
-
-    sm = SchemaMethods(export["schema_name"])
-
-    return sm.process_export(export)
-
-
 @blueprint.route("/layouts/", methods=["GET"])
 def api_layout():
     """
