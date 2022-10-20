@@ -302,19 +302,22 @@ class SchemaRepositoriesBase:
         ).count()
 
         page = 1
+        page_size = params.get("page_size")
         last_page = (
-            math.ceil(count_total / params.get("page_size"))
-            if params.get("page_size")
+            math.ceil(count_total / page_size)
+            if page_size
             else 1
         )
         url_next = ""
         url_previous = ""
-        page_size = params.get("page_size", None)
 
         if params.get("page"):
             page = params.get("page") or 1
 
         if url:
+            if f"page={page}" not in url:
+                preff = "&" if "?" in url else "?"
+                url += f"{preff}page={page}"
             if page != 1:
                 url_previous = url.replace(f"page={page}", f"page={page-1}")
             if page != last_page:
