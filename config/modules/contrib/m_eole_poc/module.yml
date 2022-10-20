@@ -5,10 +5,8 @@ module:
   module_desc: POC pour le projet suivi éolien
   module_picto: fa-puzzle-piece
   active_frontend: true
-
 dependencies:
     - m_monitoring
-
 objects:
   parc:
     cruved: CRUD

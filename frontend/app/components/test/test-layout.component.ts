@@ -80,7 +80,7 @@ export class TestLayoutComponent implements OnInit {
             label_field_name: 'layout_name',
             title_field_name: 'layout_description',
             return_object: true,
-            data_reload_on_search: true,
+            reload_on_search: true,
             default: this.layoutName && { layout_name: this.layoutName },
           },
           {

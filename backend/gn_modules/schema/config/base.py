@@ -178,7 +178,7 @@ class SchemaConfigBase:
             "value_field_name": self.value_field_name(),
             "label_field_name": self.label_field_name(),
             "geometry_field_name": self.geometry_field_name(),
-            "data_reload_on_search": True,
+            "reload_on_search": True,
             "params": {"page_size": 7},
             "label": self.label(),
         }

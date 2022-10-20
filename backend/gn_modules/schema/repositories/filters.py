@@ -269,9 +269,12 @@ class SchemaRepositoriesFilters:
             filter_out = model_attribute <= filter_value
 
         elif filter_type == "=":
-            filter_out = or_(
-                model_attribute == filter_value,
-                cast(model_attribute, db.String) == (str(filter_value)),
+
+            filter_out = (
+                model_attribute == filter_value
+                # or_(
+                # model_attribute == filter_value,
+                # cast(model_attribute, db.String) == (str(filter_value)),
             )
 
         elif filter_type == "!=":

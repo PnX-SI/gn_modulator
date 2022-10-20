@@ -169,6 +169,7 @@ class SchemaApi:
             )
 
             res_list = query_list.all()
+
             out = {
                 **query_infos,
                 "data": self.serialize_list(

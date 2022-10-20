@@ -244,7 +244,7 @@ class SchemaRepositoriesBase:
 
         Model = self.Model()
         model_pk_field = getattr(Model, self.pk_field_name())
-        query = db.session.query(Model)
+        query = db.session.query(Model).distinct()
 
         # simplifier la requete
         query = self.defer_fields(query, params)
@@ -310,7 +310,8 @@ class SchemaRepositoriesBase:
         )
         url_next = ""
         url_previous = ""
-
+        url_first = ""
+        url_last = ""
         if params.get("page"):
             page = params.get("page") or 1
 
@@ -322,11 +323,15 @@ class SchemaRepositoriesBase:
                 url_previous = url.replace(f"page={page}", f"page={page-1}")
             if page != last_page:
                 url_next = url.replace(f"page={page}", f"page={page+1}")
+            url_first = url.replace(f"page={page}", "page=1")
+            url_last = url.replace(f"page={page}", f"page={last_page}")
 
         query_infos = {
             "page": page,
             "next": url_next,
             "previous": url_previous,
+            "first": url_first,
+            "last": url_last,
             "page_size": page_size,
             "total": count_total,
             "filtered": count_filtered,
