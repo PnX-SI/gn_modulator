@@ -15,7 +15,9 @@ try:
     ModuleMethods.init_modules()
     SchemaMethods.init_schemas_models_and_serializers()
 except NoForeignKeysError as e:
-    print("Erreur initialisation", str(e))
+    print("Erreur initialisation", e.__class__, str(e))
+# except AttributeError as e:
+    # print("Erreur initialisation", e.__class__, str(e))
 
 
 # ModuleMethods.process_commons_api(blueprint)

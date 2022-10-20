@@ -23,6 +23,7 @@ export class ModulesRequestService {
   request(method, url, { params = {}, data = {}, cache = false } = {}): Observable<any> {
     return new Observable<any>((observer) => {
       const urlRequest = this.url(url, params);
+
       if (cache && this._cacheRequests[urlRequest]) {
         observer.next(this._cacheRequests[urlRequest]);
         return observer.complete();

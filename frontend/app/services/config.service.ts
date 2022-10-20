@@ -33,19 +33,12 @@ export class ModulesConfigService {
       return of(this._config.modules);
     }
 
-    return this._mRequest.request('get', `${this.backendModuleUrl()}/modules_config`).pipe(
+    return this._mRequest.request('get', `${this.backendModuleUrl()}/modules_config/`).pipe(
       mergeMap((modulesConfig) => {
         this._config.modules = modulesConfig;
         return of(this._config.modules);
       })
     );
-  }
-
-  /**
-   * Renvoie l'ensemble des groupes de schema
-   */
-  getSchemaGroups() {
-    return this._mRequest.request('get', `${this.backendModuleUrl()}/groups`);
   }
 
   objectConfig(moduleCode, objectName) {
@@ -67,7 +60,7 @@ export class ModulesConfigService {
   getLayouts() {
     return Object.keys(this._config.layouts).length
       ? of(this._config.layout)
-      : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts`).pipe(
+      : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts/`).pipe(
           mergeMap((layouts) => {
             this._config.layouts = layouts;
             return of(this._config.layout);
