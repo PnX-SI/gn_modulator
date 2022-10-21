@@ -71,12 +71,7 @@ export default {
     this.getMap(mapId).addLayer(layer);
 
     if (options.zoom) {
-      if (data.type == 'Point') {
-        this.setCenter(mapId, utils.copy(data.coordinates).reverse());
-      }
-      if (data.type != 'Point') {
-        this.zoomOnLayer(mapId, layer);
-      }
+      this.zoomOnLayer(mapId, layer);
     }
     return layer;
   },
@@ -188,6 +183,10 @@ export default {
       return;
     }
     const map = this.getMap(mapId);
+    if (layer.getLatLng) {
+      this.setCenter(mapId, utils.copy(layer.getLatLng()));
+      return
+    }
 
     setTimeout(() => {
       if (!layer.getBounds) {
@@ -196,13 +195,12 @@ export default {
       }
 
       let bounds = layer.getBounds();
-
       if (!Object.keys(bounds).length) {
         return;
       }
 
       if (utils.fastDeepEqual(bounds._northEast, bounds._southWest)) {
-        this.setCenter(mapId, bounds._northEast);
+        this.setCenter(mapId, [ bounds._northEast.lat,  bounds._northEast.lng ] );
         return;
       }
 

@@ -104,14 +104,19 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
 
   onEditedLayerChange(layer) {
     if (this.computedLayout.key) {
-      const dataGeom = layer.toGeoJSON
-        ? layer.toGeoJSON().geometry
-        : layer.coordinates
-        ? layer
-        : null;
+      let dataGeom = null;
+      if (layer.toGeoJSON) {
+        const layerGeoJson = layer.toGeoJSON();
+        dataGeom =
+          layerGeoJson.type == 'FeatureCollection'
+            ? layerGeoJson.features[0].geometry
+            : layerGeoJson.geometry;
+      }
+      if (layer.coordinates) {
+        dataGeom = layer;
+      }
 
       this.data[this.computedLayout.key] = dataGeom;
-
       this._mLayout.reComputeLayout('map');
     }
   }

@@ -37,7 +37,7 @@ export default {
     return this._maps[mapId];
   },
 
-  computeCenter(center = null) {
+  computeCenter(center:any = null) {
     let computedCenter;
     if (!!center) {
       computedCenter =
@@ -143,7 +143,6 @@ export default {
 
         setTimeout(() => {
           /** zoom scale */
-
           this.L.control.zoom({ position: 'topright' }).addTo(map);
           this.L.control.scale().addTo(map);
 
