@@ -271,7 +271,8 @@ class SchemaRepositoriesFilters:
         elif filter_type == "=":
 
             filter_out = (
-                model_attribute == filter_value
+                model_attribute
+                == filter_value
                 # or_(
                 # model_attribute == filter_value,
                 # cast(model_attribute, db.String) == (str(filter_value)),

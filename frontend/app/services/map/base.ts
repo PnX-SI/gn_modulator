@@ -37,7 +37,7 @@ export default {
     return this._maps[mapId];
   },
 
-  computeCenter(center:any = null) {
+  computeCenter(center: any = null) {
     let computedCenter;
     if (!!center) {
       computedCenter =

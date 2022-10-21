@@ -17,7 +17,7 @@ try:
 except NoForeignKeysError as e:
     print("Erreur initialisation", e.__class__, str(e))
 # except AttributeError as e:
-    # print("Erreur initialisation", e.__class__, str(e))
+# print("Erreur initialisation", e.__class__, str(e))
 
 
 # ModuleMethods.process_commons_api(blueprint)

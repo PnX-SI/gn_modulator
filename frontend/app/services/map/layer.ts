@@ -185,7 +185,7 @@ export default {
     const map = this.getMap(mapId);
     if (layer.getLatLng) {
       this.setCenter(mapId, utils.copy(layer.getLatLng()));
-      return
+      return;
     }
 
     setTimeout(() => {
@@ -200,7 +200,7 @@ export default {
       }
 
       if (utils.fastDeepEqual(bounds._northEast, bounds._southWest)) {
-        this.setCenter(mapId, [ bounds._northEast.lat,  bounds._northEast.lng ] );
+        this.setCenter(mapId, [bounds._northEast.lat, bounds._northEast.lng]);
         return;
       }
 

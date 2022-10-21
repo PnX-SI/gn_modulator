@@ -303,11 +303,7 @@ class SchemaRepositoriesBase:
 
         page = 1
         page_size = params.get("page_size")
-        last_page = (
-            math.ceil(count_total / page_size)
-            if page_size
-            else 1
-        )
+        last_page = math.ceil(count_total / page_size) if page_size else 1
         url_next = ""
         url_previous = ""
         url_first = ""
