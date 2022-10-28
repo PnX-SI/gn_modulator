@@ -215,6 +215,10 @@ class SchemaRepositoriesBase:
         if not self.pk_field_name() in fields:
             fields.append(self.pk_field_name())
 
+        if params.get("as_geojson"):
+            if self.geometry_field_name() and self.geometry_field_name() not in fields:
+                fields.append(self.geometry_field_name())
+
         if self.schema_name() in ["commons.module", "commons.modules"]:
             fields.append("type")
 
