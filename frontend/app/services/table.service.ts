@@ -65,7 +65,7 @@ export class ModulesTableService {
     };
 
     const { actionAllowed, actionMsg } = this._mPage.checkAction(moduleCode, objectName, action);
-    console.log(moduleCode, objectName, actionAllowed)
+    console.log(moduleCode, objectName, actionAllowed);
     if (actionAllowed == null) {
       return;
     }
@@ -80,9 +80,9 @@ export class ModulesTableService {
           action,
           ownership
         );
-        return `<span class="table-icon ${
-          actionAllowed ? '' : 'disabled'
-        }"><i class='fa ${iconAction[action]} action' ${actionAllowed ? 'action="edit"' : ''}></i></span>`;
+        return `<span class="table-icon ${actionAllowed ? '' : 'disabled'}"><i class='fa ${
+          iconAction[action]
+        } action' ${actionAllowed ? 'action="edit"' : ''}></i></span>`;
       },
       width: 22,
       hozAlign: 'center',
@@ -111,8 +111,8 @@ export class ModulesTableService {
       .split('')
       .map((action) => this.columnAction(moduleCode, objectName, action))
       .filter((columnAction) => !!columnAction);
-      console.log(columnsAction);
-      return columnsAction;
+    console.log(columnsAction);
+    return columnsAction;
   }
 
   /**
