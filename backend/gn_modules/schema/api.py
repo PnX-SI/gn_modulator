@@ -11,6 +11,7 @@ from gn_modules import MODULE_CODE
 from . import errors
 import sqlparse
 
+
 class SchemaApi:
     """
     class for schema api processing
@@ -169,17 +170,19 @@ class SchemaApi:
                 module_code=module_code, cruved_type=cruved_type, params=params
             )
 
-            if params.get('sql'):
+            if params.get("sql"):
                 response = make_response(
-                    sqlparse.format(str(query_list), reindent=True, keywordcase='upper'),
-                    200
+                    sqlparse.format(
+                        str(query_list), reindent=True, keywordcase="upper"
+                    ),
+                    200,
                 )
                 response.mimetype = "text/plain"
                 return response
-            print('\n\nall\n\n')
+            print("\n\nall\n\n")
             res_list = query_list.all()
 
-            print('\n\nall\n\n')
+            print("\n\nall\n\n")
 
             out = {
                 **query_infos,

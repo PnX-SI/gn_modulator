@@ -251,8 +251,8 @@ class SchemaRepositoriesBase:
         query = db.session.query(Model).distinct()
 
         # eager loads ??
-        for field in params.get('fields') or []:
-            if field == 'ownership':
+        for field in params.get("fields") or []:
+            if field == "ownership":
                 continue
             _, query = self.custom_getattr(Model, field, query)
 

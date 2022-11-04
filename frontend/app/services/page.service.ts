@@ -10,7 +10,6 @@ import { mergeMap } from '@librairies/rxjs/operators';
 
 @Injectable()
 export class ModulesPageService {
-
   _mRoute: ModulesRouteService;
   _mSchema: ModulesSchemaService;
   _mConfig: ModulesConfigService;
@@ -166,10 +165,9 @@ export class ModulesPageService {
    *    - tableaux
    *    - boutton (detail / edit / etc...)
    */
-  checkAction(moduleCode, objectName, action, ownership=null) {
-
+  checkAction(moduleCode, objectName, action, ownership = null) {
     // 1) cruved defini pour cet objet ?
-    const objectConfig = this._mConfig.objectConfig(moduleCode, objectName)
+    const objectConfig = this._mConfig.objectConfig(moduleCode, objectName);
     const testObjectCruved = (objectConfig.cruved || '').includes(action);
 
     if (!testObjectCruved) {
@@ -194,11 +192,7 @@ export class ModulesPageService {
     //   (ce qui a été testé précédemment) donc à true
     //   par exemple pour les actions d'export
 
-    const testUserCruved = ownership
-      ? cruvedAction >= ownership
-      : true
-
-    const lObject = objectConfig.display.le_label;
+    const testUserCruved = ownership ? cruvedAction >= ownership : true;
 
     if (!testUserCruved) {
       const msgDroitsInsuffisants = {
@@ -227,8 +221,8 @@ export class ModulesPageService {
     };
 
     return {
-      res: true,
-      msg: msgTestOk[action],
+      actionAllowed: true,
+      actionMsg: msgTestOk[action],
     };
   }
 }

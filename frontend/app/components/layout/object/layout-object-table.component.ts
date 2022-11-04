@@ -116,7 +116,7 @@ export class ModulesLayoutObjectTableComponent
       const tableColumns = this._mTable.columns(
         this.computedLayout,
         this.moduleCode(),
-        this.objectName(),
+        this.objectName()
       );
 
       // récupération des champs à partir de layout

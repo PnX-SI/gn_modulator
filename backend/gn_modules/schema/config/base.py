@@ -22,7 +22,7 @@ class SchemaConfigBase:
             "map": self.config_map(),
             "filter_defs": self.config_filters(),
             "details": self.config_details(),
-            "properties": self.properties()
+            "properties": self.properties(),
         }
 
     def config_old(self):

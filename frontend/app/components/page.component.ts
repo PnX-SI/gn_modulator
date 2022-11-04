@@ -47,7 +47,6 @@ export class PageComponent implements OnInit {
   }
 
   ngOnInit() {
-
     // reset de page service (breadcrump etc .....)
     this._mPage.reset();
 
@@ -140,7 +139,6 @@ export class PageComponent implements OnInit {
     this.debug = ![undefined, false, 'false'].includes(this.routeQueryParams.debug);
     // pour toutes les clés de data (moduleConfig.objects)
     for (const [objectName, objectConfig] of Object.entries(objectsModule) as any) {
-
       // on ajoute les données data définies pour la page
       // par exemple typeKey  = value|filters|prefilters
       const objectsPageValue = objectsPage[objectName];

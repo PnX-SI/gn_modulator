@@ -65,7 +65,7 @@ export class ModulesTableService {
     };
 
     const { actionAllowed, actionMsg } = this._mPage.checkAction(moduleCode, objectName, action);
-
+    console.log(moduleCode, objectName, actionAllowed)
     if (actionAllowed == null) {
       return;
     }
@@ -82,9 +82,9 @@ export class ModulesTableService {
         );
         return `<span class="table-icon ${
           actionAllowed ? '' : 'disabled'
-        }"><i class='fa fa-pencil action' ${actionAllowed ? 'action="edit"' : ''}></i></span>`;
+        }"><i class='fa ${iconAction[action]} action' ${actionAllowed ? 'action="edit"' : ''}></i></span>`;
       },
-      width: 25,
+      width: 22,
       hozAlign: 'center',
       tooltip: (cell) => {
         const ownership = cell._cell.row.data['ownership'];
@@ -107,10 +107,12 @@ export class ModulesTableService {
    * D: delete
    */
   columnsAction(moduleCode, objectName) {
-    return 'RUD'
+    const columnsAction = 'RUD'
       .split('')
       .map((action) => this.columnAction(moduleCode, objectName, action))
       .filter((columnAction) => !!columnAction);
+      console.log(columnsAction);
+      return columnsAction;
   }
 
   /**

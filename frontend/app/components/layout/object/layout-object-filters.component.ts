@@ -67,7 +67,7 @@ export class ModulesLayoutObjectFiltersComponent
   }
 
   getFilters() {
-    this.objectConfig()
+    this.objectConfig();
     const filterDefs = this.objectConfig().filter_defs.defs;
     return Object.entries(this.filterValues)
       .filter(([key, value]: any) => ![null, undefined].includes(value))

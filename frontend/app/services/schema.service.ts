@@ -250,7 +250,7 @@ export class ModulesSchemaService {
 
   geometryType(moduleCode, objectName) {
     return this.geometryFieldName(moduleCode, objectName)
-      ? this.objectConfig(moduleCode, objectName).definition.properties[
+      ? this.objectConfig(moduleCode, objectName).properties[
           this.geometryFieldName(moduleCode, objectName)
         ].geometry_type
       : null;

@@ -239,10 +239,10 @@ class ModulesConfig:
 
     @classmethod
     def process_module_objects(cls, module_code):
-        '''
-            - object_module_config : configuration provenant du module.yml
-            - object_schema_config : configuration provenant de la definition
-        '''
+        """
+        - object_module_config : configuration provenant du module.yml
+        - object_schema_config : configuration provenant de la definition
+        """
 
         module_config = cls.module_config(module_code)
 
@@ -261,10 +261,9 @@ class ModulesConfig:
 
             # on récupère la configuration du schéma avec la possibilité de changer certains paramètre
             # comme par exemple 'label', 'labels', 'genre'
-            object_schema_config = (
-                SchemaMethods(object_module_config["schema_name"])
-                .config(object_module_config)
-            )
+            object_schema_config = SchemaMethods(
+                object_module_config["schema_name"]
+            ).config(object_module_config)
 
             # insertion de la config schema dans la config module
             for key, _object_schema_config_item in object_schema_config.items():
@@ -274,7 +273,9 @@ class ModulesConfig:
                 # si la clé est déjà présente dans object_module_config
                 # en prend en compte les clé de object_module_config et object_schema_config
                 # avec une priorité sur la configuration d'lobject au niveau du module (object_module_config)
-                if (key in object_module_config) and isinstance(_object_schema_config_item, dict):
+                if (key in object_module_config) and isinstance(
+                    _object_schema_config_item, dict
+                ):
                     object_schema_config_item.update(object_module_config[key])
                     object_module_config[key] = object_schema_config_item
 
@@ -296,9 +297,7 @@ class ModulesConfig:
                 )
 
             #  - on l'assigne à son object
-            object_config = module_config["objects"][
-                export_definition["object_name"]
-            ]
+            object_config = module_config["objects"][export_definition["object_name"]]
             object_config["exports"] = object_config.get("exports", [])
             object_config["exports"].append(export_name)
 

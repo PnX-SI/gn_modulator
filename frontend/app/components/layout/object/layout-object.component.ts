@@ -21,7 +21,6 @@ import utils from '../../../utils';
   styleUrls: ['../../base/base.scss', 'layout-object.component.scss'],
 })
 export class ModulesLayoutObjectComponent extends ModulesLayoutComponent implements OnInit {
-
   schemaData; // données relative au schema, récupérées par getData
   processedLayout; // layout pour form / details / etc..
 
