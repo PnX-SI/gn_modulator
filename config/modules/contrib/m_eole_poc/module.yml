@@ -61,6 +61,9 @@ pages:
   parc_list:
     url: ''
     layout_name: m_eole.parc_list
+  parc_details:
+    url: parc/:id_site_group
+    layout_name: m_eole.parc_details
 
 features:
   - m_eole.data

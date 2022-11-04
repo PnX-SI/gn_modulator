@@ -49,17 +49,13 @@ export class ModulesLayoutObjectTableComponent
       ajaxFiltering: true,
       height: this.tableHeight || '200px',
       ajaxRequestFunc: this.ajaxRequestFunc,
-      columns: this._mTable.columnsTable(
-        this.computeLayout,
-        this.objectConfig,
-        this._mPage.moduleConfig
-      ),
-      ajaxURL: this.objectConfig.table.url,
-      paginationSize: this.computedLayout.page_size || this.objectConfig.utils.page_size,
+      columns: this._mTable.columnsTable(this.computeLayout, this.moduleCode(), this.objectName()),
+      ajaxURL: this.objectConfig().table.url,
+      paginationSize: this.computedLayout.page_size || this.objectConfig().utils.page_size,
       pagination: 'remote',
       headerFilterLiveFilterDelay: 600,
       ajaxSorting: true,
-      initialSort: this._mTable.getSorters(this.objectConfig),
+      initialSort: this._mTable.processObjectSorters(this.objectConfig()?.table.sort),
       selectable: 1,
       columnMinWidth: 20,
       footerElement: `<span class="counter" id=counter></span>`,
@@ -99,7 +95,7 @@ export class ModulesLayoutObjectTableComponent
   };
 
   getRowValue(row) {
-    const pkFieldName = this.objectConfig.utils.pk_field_name;
+    const pkFieldName = this.pkFieldName();
     return this.getRowData(row)[pkFieldName];
   }
 
@@ -107,24 +103,41 @@ export class ModulesLayoutObjectTableComponent
     return row._row.data;
   }
 
+  /** ajaxRequestFunc
+   *
+   * la promesse qui va être appelée par le composant tabulator
+   * - on se sert de la fonction getList du service _mData
+   * - on gère les paramètre de route
+   *  - page_size, page, filters, prefilters, sort
+   *
+   */
   ajaxRequestFunc = (url, config, paramsTable) => {
     return new Promise((resolve, reject) => {
-      const fields = this._mTable
-        .columns(this.computedLayout, this.objectConfig)
-        .map((column) => column.field);
+      const tableColumns = this._mTable.columns(
+        this.computedLayout,
+        this.moduleCode(),
+        this.objectName(),
+      );
 
-      fields.push('ownership');
+      // récupération des champs à partir de layout
+      const fields = tableColumns.map((column) => column.field);
 
-      if (!fields.includes(this.objectConfig.utils.pk_field_name)) {
-        fields.push(this.objectConfig.utils.pk_field_name);
+      // ajout de ownership s'il n'est pas déjà dans les champs
+      if (!fields.includes('ownership')) {
+        fields.push('ownership');
       }
+
+      // ajout de la clé primaire si elle n'est pas déjà dans fields
+      if (!fields.includes(this.pkFieldName())) {
+        fields.push(this.pkFieldName());
+      }
+
+      // calcul des paramètres
+      // TODO traiter les paramètres venant des filtres de la table
       const params = {
         ...paramsTable,
         page_size: paramsTable.size,
-        sort: paramsTable.sorters
-          .filter((s) => s.field)
-          .map((s) => `${s.field}${s.dir == 'desc' ? '-' : ''}`)
-          .join(','),
+        sort: this._mTable.processTableSorters(paramsTable.sorters),
       };
       if (!this.computedLayout.display_filters) {
         params.filters = this.getDataFilters();
@@ -141,12 +154,19 @@ export class ModulesLayoutObjectTableComponent
         ...params, // depuis tabulator
         fields, // fields
       };
+
+      // on garde les paramètres en mémoire pour les utiliser dans getPageNumber();
       this._params = extendedParams;
+
+      // pour ne pas trainer sortersça dans l'api
       delete extendedParams['sorters'];
+
       this._mData.getList(this.moduleCode(), this.objectName(), extendedParams).subscribe(
         (res) => {
           // process lists
-          for (const column of this._mTable.columns(this.computedLayout, this.objectConfig)) {
+          // gestion des champs en rel.champ
+          // TODO à faire en backend  avec query param pour dire que l'on souhaite des sortie compatible table ????????
+          for (const column of tableColumns) {
             for (const d of res.data) {
               if (column['field'].includes('.')) {
                 let val = utils.getAttr(d, column['field']);
@@ -230,7 +250,7 @@ export class ModulesLayoutObjectTableComponent
 
   processConfig() {
     this.modalDeleteLayout = this._mSchema.modalDeleteLayout(
-      this.objectConfig,
+      this.objectConfig(),
       `delete_modal_${this._id}`
     );
     this.drawTable();

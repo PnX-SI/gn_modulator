@@ -10,6 +10,7 @@ import { mergeMap } from '@librairies/rxjs/operators';
 
 @Injectable()
 export class ModulesPageService {
+
   _mRoute: ModulesRouteService;
   _mSchema: ModulesSchemaService;
   _mConfig: ModulesConfigService;
@@ -23,9 +24,7 @@ export class ModulesPageService {
   moduleConfig;
   pageName;
   pageConfig;
-  // pageParams;
-  // pageQueryParams;
-  // pageAllParams;
+  currentUser;
   params;
 
   constructor(private _injector: Injector) {
@@ -132,5 +131,104 @@ export class ModulesPageService {
   reset() {
     this.breadcrumbs = [];
     this.moduleCode = null;
+  }
+
+  /** checkAction
+   * Fonction pour vérifier
+   *   so l'action peut être effectuée
+   *   si le lien peut être affiché
+   *
+   *  input
+   *    - objectName: nom de l'objet
+   *    - action: un lettre parmi 'CRUVED'
+   *
+   *  output
+   *    - {
+   *         - res: true|false
+   *         - msg: message
+   *      }
+   *
+   *    (pour les tableaux bouttons, etc....)
+   * pour cela on va tester plusieurs choses :
+   *
+   *  - 1) le cruved est-il défini pour cet objet et pour cet action ?
+   *     - l'action n'est pas affichées
+   *
+   *  - 2)l'utilisateur possède-t-il les droit pour faire cette action
+   *      - l'action est grisé
+   *      - message : vous n'avez pas les droits suffisants pour ...
+   *
+   *  - si oui:
+   *    - action non grisée
+   *    - message : modifier / voir / supprimer + txtobject
+   *
+   *  à appliquer dans
+   *    - tableaux
+   *    - boutton (detail / edit / etc...)
+   */
+  checkAction(moduleCode, objectName, action, ownership=null) {
+
+    // 1) cruved defini pour cet objet ?
+    const objectConfig = this._mConfig.objectConfig(moduleCode, objectName)
+    const testObjectCruved = (objectConfig.cruved || '').includes(action);
+
+    if (!testObjectCruved) {
+      return {
+        actionAllowed: null,
+        actionMsg: null,
+      };
+    }
+
+    // 2) l'utilisateur à t'il le droit
+
+    // - les droit de l'utilisateur pour ce module et pour un action (CRUVED)
+    const cruvedAction = this.moduleConfig.cruved[action];
+
+    // - on compare ce droit avec l'appartenance de la données
+    // la possibilité d'action doit être supérieure à l'appartenance
+    // - par exemple
+    //    si les droit du module sont de 2 pour l'édition
+    //    et que l'appartenance de la données est 3 (données autres (ni l'utilisateur ni son organisme))
+    //    alors le test echoue
+    // - si ownership est à null => on teste seulement si l'action est bien définie sur cet object
+    //   (ce qui a été testé précédemment) donc à true
+    //   par exemple pour les actions d'export
+
+    const testUserCruved = ownership
+      ? cruvedAction >= ownership
+      : true
+
+    const lObject = objectConfig.display.le_label;
+
+    if (!testUserCruved) {
+      const msgDroitsInsuffisants = {
+        C: `Droits inssuffisants pour créer ${objectConfig.display.un_nouveau_label}`,
+        R: `Droits inssuffisants pour voir ${objectConfig.display.le_label}`,
+        U: `Droits inssuffisants pour éditer ${objectConfig.display.le_label}`,
+        V: `Droits inssuffisants pour valider ${objectConfig.display.le_label}`,
+        E: `Droits inssuffisants pour exporter ${objectConfig.display.des_label}`,
+        D: `Droits inssuffisants pour supprimer ${objectConfig.display.le_label}`,
+      };
+      return {
+        actionAllowed: false,
+        actionMsg: msgDroitsInsuffisants[action],
+      };
+    }
+
+    // tests ok
+
+    const msgTestOk = {
+      C: `Créer ${objectConfig.display.un_nouveau_label}`,
+      R: `Voir ${objectConfig.display.le_label}`,
+      U: `Éditer ${objectConfig.display.le_label}`,
+      V: `Valider ${objectConfig.display.le_label}`,
+      E: `Exporter ${objectConfig.display.des_label}`,
+      D: `Supprimer ${objectConfig.display.le_label}`,
+    };
+
+    return {
+      res: true,
+      msg: msgTestOk[action],
+    };
   }
 }

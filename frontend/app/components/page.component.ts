@@ -22,8 +22,6 @@ export class PageComponent implements OnInit {
   _mLayout: ModulesLayoutService;
   _mData: ModulesDataService;
 
-  currentUser: User; // utilisateur courant
-
   debug = false; // pour activer le mode debug (depuis les queryParams)
 
   routeParams; // paramètre d'url
@@ -49,15 +47,15 @@ export class PageComponent implements OnInit {
   }
 
   ngOnInit() {
-    // récupération de l'utilisateur courant
-    this.currentUser = this._auth.getCurrentUser();
-
-    // - on le place dans layout.meta pour pouvoir s'en servir dans le calcul des layouts
-    this._mLayout.meta['currentUser'] = this.currentUser;
 
     // reset de page service (breadcrump etc .....)
     this._mPage.reset();
-    this._mPage.breadcrumbs = [];
+
+    // récupération de l'utilisateur courant
+    this._mPage.currentUser = this._auth.getCurrentUser();
+
+    // - on le place dans layout.meta pour pouvoir s'en servir dans le calcul des layouts
+    this._mLayout.meta['currentUser'] = this._mPage.currentUser;
 
     // process
     // - init config
@@ -141,9 +139,7 @@ export class PageComponent implements OnInit {
     // gestion du paramètre debug
     this.debug = ![undefined, false, 'false'].includes(this.routeQueryParams.debug);
     // pour toutes les clés de data (moduleConfig.objects)
-    for (const [objectName, objectConfig] of Object.entries(objectsModule)) {
-      // set object_name
-      (objectConfig as any).object_name = objectName;
+    for (const [objectName, objectConfig] of Object.entries(objectsModule) as any) {
 
       // on ajoute les données data définies pour la page
       // par exemple typeKey  = value|filters|prefilters
@@ -152,7 +148,7 @@ export class PageComponent implements OnInit {
         continue;
       }
       for (const [typeKey, typeValue] of Object.entries(objectsPageValue)) {
-        (objectConfig as any)[typeKey] = typeValue;
+        objectConfig[typeKey] = typeValue;
       }
     }
 

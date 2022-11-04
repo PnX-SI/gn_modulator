@@ -1,13 +1,36 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import utils from '../utils';
-
+import { ModulesPageService } from './page.service';
+import { ModulesConfigService } from './config.service';
 @Injectable()
 export class ModulesTableService {
-  constructor() {}
+  _mPage: ModulesPageService;
+  _mConfig: ModulesConfigService;
 
-  getSorters(objectConfig) {
-    const sortTable = objectConfig?.table.sort
-      ? objectConfig?.table.sort.split(',').map((sort) => {
+  constructor(private _injector: Injector) {
+    this._mPage = this._injector.get(ModulesPageService);
+    this._mConfig = this._injector.get(ModulesConfigService);
+  }
+
+  /** permet de passer des paramètre de tri du format tabulator
+   *   au format de l'api de liste
+   * [{column: 'field1', dir: 'asc'},{column: 'field2', dir: 'desc'}] -> 'field1,field2-'
+   *
+   */
+  processTableSorters(tableSort) {
+    return tableSort
+      .filter((s) => s.field)
+      .map((s) => `${s.field}${s.dir == 'desc' ? '-' : ''}`)
+      .join(',');
+  }
+
+  /** permet de traiter la definition de sort d'un object
+   * pour le passer au format tabulator
+   *   'field1,field2-' -> [{column: 'field1', dir: 'asc'},{column: 'field2', dir: 'desc'}]
+   */
+  processObjectSorters(sort) {
+    const sortTable = sort
+      ? sort.split(',').map((sort) => {
           let column = sort,
             dir = 'asc';
           if (sort[sort.length - 1] == '-') {
@@ -26,71 +49,85 @@ export class ModulesTableService {
   }
 
   /**
+   * columnAction
+   *   - Renvoie la définition de la colonne pour les actions:
+   *    voir, éditer, supprimer
+   *  - On utilise mPage.chekcLink pour voir si et comment on affiche l'action en question
+   *  - L'appartenance (ownership) sera fournie par les données du rang de la cellule dans les fonction formatter et tooltip)
+   * */
+  columnAction(moduleCode, objectName, action) {
+    // test si l'action est possible (ou avant)
+
+    const iconAction = {
+      R: 'fa-eye',
+      U: 'fa-edit',
+      D: 'fa-trash',
+    };
+
+    const { actionAllowed, actionMsg } = this._mPage.checkAction(moduleCode, objectName, action);
+
+    if (actionAllowed == null) {
+      return;
+    }
+
+    return {
+      headerSort: false,
+      formatter: (cell, formatterParams, onRendered) => {
+        const ownership = cell._cell.row.data['ownership'];
+        const { actionAllowed, actionMsg } = this._mPage.checkAction(
+          moduleCode,
+          objectName,
+          action,
+          ownership
+        );
+        return `<span class="table-icon ${
+          actionAllowed ? '' : 'disabled'
+        }"><i class='fa fa-pencil action' ${actionAllowed ? 'action="edit"' : ''}></i></span>`;
+      },
+      width: 25,
+      hozAlign: 'center',
+      tooltip: (cell) => {
+        const ownership = cell._cell.row.data['ownership'];
+        const { actionAllowed, actionMsg } = this._mPage.checkAction(
+          moduleCode,
+          objectName,
+          action,
+          ownership
+        );
+        return actionMsg;
+      },
+    };
+  }
+
+  /** columnsAction
+   *
+   * on traite toutes les colonnes d'action pour les action
+   * R: read / details
+   * U: update / edit
+   * D: delete
+   */
+  columnsAction(moduleCode, objectName) {
+    return 'RUD'
+      .split('')
+      .map((action) => this.columnAction(moduleCode, objectName, action))
+      .filter((columnAction) => !!columnAction);
+  }
+
+  /**
    * Definition des colonnes
    *
    * ajout des bouttons voir / éditer (selon les droits ?)
    */
-  columnsTable(layout, objectConfig, moduleConfig) {
+  columnsTable(layout, moduleCode, objectName) {
     //column definition in the columns array
     return [
-      {
-        headerSort: false,
-        formatter: (cell, formatterParams, onRendered) => {
-          var html = '';
-          html += `<span class="table-icon" action="details"><i class='fa fa-eye table-icon action' action="details"></i></span>`;
-          return html;
-        },
-        width: 30,
-        hozAlign: 'center',
-        tooltip: (cell) =>
-          `Afficher les détail ${objectConfig.display.du_label} ${this.getCellValue(
-            cell,
-            objectConfig
-          )}`,
-      },
-      {
-        headerSort: false,
-        formatter: (cell, formatterParams, onRendered) => {
-          const editAllowed = cell._cell.row.data['ownership'] <= moduleConfig.cruved['U'];
-          var html = '';
-          html += `<span class="table-icon ${
-            editAllowed ? '' : 'disabled'
-          }"><i class='fa fa-pencil action' ${editAllowed ? 'action="edit"' : ''}></i></span>`;
-          return html;
-        },
-        width: 25,
-        hozAlign: 'center',
-        tooltip: (cell) => {
-          const editAllowed = cell._cell.row.data['ownership'] <= moduleConfig.cruved['U'];
-          return editAllowed
-            ? `Éditer ${objectConfig.display.le_label} ${this.getCellValue(cell, objectConfig)}`
-            : '';
-        },
-      },
-      {
-        headerSort: false,
-        formatter: (cell, formatterParams, onRendered) => {
-          const deleteAllowed = cell._cell.row.data['ownership'] <= moduleConfig.cruved['D'];
-          var html = '';
-          html += `<span class="table-icon ${
-            deleteAllowed ? '' : 'disabled'
-          }"><i class='fa fa-trash action' ${deleteAllowed ? 'action="delete"' : ''}></i></span>`;
-          return html;
-        },
-        width: 25,
-        hozAlign: 'center',
-        tooltip: (cell) => {
-          const deleteAllowed = cell._cell.row.data['ownership'] <= moduleConfig.cruved['D'];
-          return deleteAllowed
-            ? `Supprimer ${objectConfig.display.le_label} ${this.getCellValue(cell, objectConfig)}`
-            : '';
-        },
-      },
-      ...this.columns(layout, objectConfig),
+      ...this.columnsAction(moduleCode, objectName),
+      ...this.columns(layout, moduleCode, objectName),
     ];
   }
 
-  columns(layout, objectConfig) {
+  columns(layout, moduleCode, objectName) {
+    const objectConfig = this._mConfig.objectConfig(moduleCode, objectName);
     const columns = objectConfig.table.columns;
     return columns.map((col) => {
       const column = utils.copy(col);

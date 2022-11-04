@@ -71,8 +71,8 @@ export class ModulesLayoutObjectGeoJSONComponent
     this._mapService.waitForMap(this.mapId).then(() => {
       // this.schemaData = response.data;
       let geojson = response.data;
-      const label_field_name = this.objectConfig.utils.label_field_name;
-      const pk_field_name = this.objectConfig.utils.pk_field_name;
+      const label_field_name = this.objectConfig().utils.label_field_name;
+      const pk_field_name = this.objectConfig().utils.pk_field_name;
       const currentZoom = this._mapService.getZoom(this.mapId);
       const currentMapBounds = this._mapService.getMapBounds(this.mapId);
 
@@ -91,7 +91,7 @@ export class ModulesLayoutObjectGeoJSONComponent
           pane: paneName,
           zoom: bZoom,
           key: this.computedLayout.key,
-          label: `${this.objectConfig.display.labels}`,
+          label: `${this.objectConfig().display.labels}`,
           style: layerStyle,
           onLayersAdded: () => {
             this.processValue(this.getDataValue());
@@ -146,10 +146,10 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   popupHTML(properties) {
-    const label = `<b>${this.utils.capitalize(this.objectConfig.display.label)}</b>: ${
+    const label = `<b>${this.utils.capitalize(this.objectConfig().display.label)}</b>: ${
       properties[this.labelFieldName()]
     }`;
-    const popupFields = this.objectConfig.map.popup_fields || [];
+    const popupFields = this.objectConfig().map.popup_fields || [];
     var propertiesHTML = '';
     propertiesHTML += '<ul>\n';
     propertiesHTML += popupFields
@@ -157,7 +157,7 @@ export class ModulesLayoutObjectGeoJSONComponent
       .map((fieldKey) => {
         // gerer les '.'
         const fieldKeyLabel = fieldKey.split('.')[0];
-        const fieldLabel = this.objectConfig.definition.properties[fieldKeyLabel].title;
+        const fieldLabel = this.objectConfig().properties[fieldKeyLabel].title;
         const fieldValue = utils.getAttr(properties, fieldKey);
         return `<li>${fieldLabel} : ${fieldValue}</li>`;
       })
@@ -181,7 +181,7 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
-    const fields = this.objectConfig.map.popup_fields;
+    const fields = this.objectConfig().map.popup_fields;
     fields.push('ownership');
     this._mData
       .getOne(this.moduleCode(), this.objectName(), value, { fields })
@@ -203,7 +203,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   getData(): Observable<any> {
     this._mapService.setProcessing(this.mapId, true);
     const extendedParams = {
-      fields: [this.objectConfig.utils.pk_field_name, this.objectConfig.utils.label_field_name], // fields
+      fields: [this.objectConfig().utils.pk_field_name, this.objectConfig().utils.label_field_name], // fields
       filters: this.getDataFilters() || [],
       prefilters: this.getDataPreFilters() || [],
       as_geojson: true,

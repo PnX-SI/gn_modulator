@@ -21,7 +21,6 @@ import utils from '../../../utils';
   styleUrls: ['../../base/base.scss', 'layout-object.component.scss'],
 })
 export class ModulesLayoutObjectComponent extends ModulesLayoutComponent implements OnInit {
-  objectConfig; // configuration du schema TODO à enlever??
 
   schemaData; // données relative au schema, récupérées par getData
   processedLayout; // layout pour form / details / etc..
@@ -86,7 +85,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       return;
     }
     this.isProcessing = true;
-    this.objectConfig = this._mConfig.objectConfig(this._mPage.moduleCode, this.objectName());
 
     this.processConfig();
     this.getData().subscribe(
@@ -200,8 +198,14 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     });
   }
 
+  /** moduleCode
+   *
+   * On renvoie par ordre de priorité
+   * - le moduleCode défini dans le layout (computedLayout si dynamique)
+   * - le moduleCode de la page en cours fournis par le service _mPage
+   */
   moduleCode() {
-    return this._mPage.moduleCode;
+    return this.computedLayout.moduleCode || this._mPage.moduleCode;
   }
 
   schemaName() {
@@ -210,6 +214,10 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   objectName() {
     return this.data.object_name;
+  }
+
+  objectConfig() {
+    return this._mConfig.objectConfig(this.moduleCode(), this.objectName());
   }
 
   // process des actions

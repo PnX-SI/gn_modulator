@@ -52,7 +52,9 @@ class SchemaRepositoriesUtil:
                 # on fait un alias
                 relation_entity = orm.aliased(relationship.mapper.entity)
 
-                query = query.join(relation_entity, relationship)
+                query = query.join(relation_entity, relationship, isouter=True)
+
+                # query = query.options(orm.contains_eager(relationship))
 
             elif condition:
                 # TODO gérer les alias si filtres un peu plus tordus ??

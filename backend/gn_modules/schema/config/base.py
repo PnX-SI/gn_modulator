@@ -20,9 +20,9 @@ class SchemaConfigBase:
             "form": self.config_form(),
             "table": self.config_table(),
             "map": self.config_map(),
-            "filters": self.config_filters(),
+            "filter_defs": self.config_filters(),
             "details": self.config_details(),
-            "definition": self.definition,
+            "properties": self.properties()
         }
 
     def config_old(self):
@@ -192,15 +192,15 @@ class SchemaConfigBase:
 
     def new(self, object_definition={}):
         return (
-            "nouvelle "
+            "nouvelle"
             if self.genre(object_definition) == "F"
-            else "nouvel "
+            else "nouvel"
             if self.is_first_letter_vowel(self.label(object_definition))
-            else "nouveau "
+            else "nouveau"
         )
 
     def news(self, object_definition={}):
-        return "nouvelles " if self.genre(object_definition) == "F" else "nouveaux "
+        return "nouvelles" if self.genre(object_definition) == "F" else "nouveaux"
 
     def label(self, object_definition={}):
         """
@@ -218,11 +218,11 @@ class SchemaConfigBase:
 
         return labels.lower()
 
-    def is_first_letter_vowel(self, string):
+    def is_first_letter_vowel(self, str):
         """
         returns True if unaccented first letter in 'aeiouy'
         """
-        return unaccent(self.label()[0]) in "aeiouy"
+        return unaccent(str[0]) in "aeiouy"
 
     def article_def(self, object_definition={}):
         """
@@ -278,19 +278,19 @@ class SchemaConfigBase:
         """
         Renvoie le label précédé de l'article indéfini et de self.new()
         """
-        return f"{self.article_undef(object_definition)}{self.new(object_definition)}{self.label(object_definition)}"
+        return f"{self.article_undef(object_definition)}{self.new(object_definition)} {self.label(object_definition)}"
 
     def d_un_nouveau_label(self, object_definition={}):
         """
         Renvoie le label précédé de l'article indéfini et de self.new()
         """
-        return f"d'{self.article_undef(object_definition)}{self.new(object_definition)}{self.label(object_definition)}"
+        return f"d'{self.article_undef(object_definition)}{self.new(object_definition)} {self.label(object_definition)}"
 
     def du_nouveau_label(self, object_definition={}):
         """
         Renvoie le label précédé de la préposition et de self.new()
         """
-        return f"{self.preposition(check_voyel=False)}{self.new(object_definition)}{self.label(object_definition)}"
+        return f"{self.preposition(object_definition, check_voyel=False)}{self.new(object_definition)} {self.label(object_definition)}"
 
     def des_nouveaux_labels(self, object_definition={}):
         """

@@ -239,21 +239,48 @@ class ModulesConfig:
 
     @classmethod
     def process_module_objects(cls, module_code):
+        '''
+            - object_module_config : configuration provenant du module.yml
+            - object_schema_config : configuration provenant de la definition
+        '''
+
         module_config = cls.module_config(module_code)
 
-        module_config["definitions"] = {}
         module_config["schemas"] = []
 
-        for object_name, object_definition in module_config["objects"].items():
-            object_definition = object_definition
-            object_definition["schema_name"] = object_definition.get(
+        for object_name, object_module_config in module_config["objects"].items():
+
+            object_module_config["schema_name"] = object_module_config.get(
                 "schema_name", object_name
             )
-            if object_definition["schema_name"] not in module_config["schemas"]:
-                module_config["schemas"].append(object_definition["schema_name"])
-            object_definition["object_name"] = object_name
-            sm = SchemaMethods(object_definition["schema_name"])
-            module_config["definitions"][object_name] = sm.config(object_definition)
+
+            if object_module_config["schema_name"] not in module_config["schemas"]:
+                module_config["schemas"].append(object_module_config["schema_name"])
+
+            object_module_config["object_name"] = object_name
+
+            # on récupère la configuration du schéma avec la possibilité de changer certains paramètre
+            # comme par exemple 'label', 'labels', 'genre'
+            object_schema_config = (
+                SchemaMethods(object_module_config["schema_name"])
+                .config(object_module_config)
+            )
+
+            # insertion de la config schema dans la config module
+            for key, _object_schema_config_item in object_schema_config.items():
+                # copie pour ne pas rendre les modifications persistantes
+                object_schema_config_item = copy.deepcopy(_object_schema_config_item)
+
+                # si la clé est déjà présente dans object_module_config
+                # en prend en compte les clé de object_module_config et object_schema_config
+                # avec une priorité sur la configuration d'lobject au niveau du module (object_module_config)
+                if (key in object_module_config) and isinstance(_object_schema_config_item, dict):
+                    object_schema_config_item.update(object_module_config[key])
+                    object_module_config[key] = object_schema_config_item
+
+                # sinon assignation simple
+                else:
+                    object_module_config[key] = object_schema_config_item
 
         # Traitement des exports
         # - pour chaque export défini dans la config du module
@@ -269,11 +296,11 @@ class ModulesConfig:
                 )
 
             #  - on l'assigne à son object
-            object_definition = module_config["objects"][
+            object_config = module_config["objects"][
                 export_definition["object_name"]
             ]
-            object_definition["exports"] = object_definition.get("exports", [])
-            object_definition["exports"].append(export_name)
+            object_config["exports"] = object_config.get("exports", [])
+            object_config["exports"].append(export_name)
 
             # mise en cache pour pouvoir s'en reservir par ailleurs
             SchemaMethods.set_global_cache("exports", export_name, export_definition)

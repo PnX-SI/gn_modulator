@@ -29,7 +29,7 @@ export class ModulesLayoutObjectFiltersComponent
           flex: '0',
         },
         {
-          items: this.objectConfig.filters.form.layout,
+          items: this.objectConfig().filter_defs.form.layout,
           overflow: true,
         },
         {
@@ -67,7 +67,8 @@ export class ModulesLayoutObjectFiltersComponent
   }
 
   getFilters() {
-    const filterDefs = this.objectConfig.filters.defs;
+    this.objectConfig()
+    const filterDefs = this.objectConfig().filter_defs.defs;
     return Object.entries(this.filterValues)
       .filter(([key, value]: any) => ![null, undefined].includes(value))
       .map(([key, value]: any) => ({

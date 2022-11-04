@@ -4,12 +4,12 @@
 
 import json
 from flask.views import MethodView
-from flask import request
+from flask import request, make_response
 from geonature.core.gn_permissions import decorators as permissions
 from geonature.utils.config import config
 from gn_modules import MODULE_CODE
 from . import errors
-
+import sqlparse
 
 class SchemaApi:
     """
@@ -86,6 +86,7 @@ class SchemaApi:
             "value": self.load_param(request.args.get("value", "null")),
             "as_csv": self.load_param(request.args.get("as_csv", "false")),
             "cruved_type": self.load_param(request.args.get("cruved_type", "null")),
+            "sql": self.load_param(request.args.get("sql", "null")),
         }
 
         if "prefilters" in object_definition:
@@ -168,7 +169,17 @@ class SchemaApi:
                 module_code=module_code, cruved_type=cruved_type, params=params
             )
 
+            if params.get('sql'):
+                response = make_response(
+                    sqlparse.format(str(query_list), reindent=True, keywordcase='upper'),
+                    200
+                )
+                response.mimetype = "text/plain"
+                return response
+            print('\n\nall\n\n')
             res_list = query_list.all()
+
+            print('\n\nall\n\n')
 
             out = {
                 **query_infos,

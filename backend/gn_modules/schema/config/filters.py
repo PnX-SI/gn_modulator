@@ -14,12 +14,12 @@ class SchemaConfigFilters:
                 "schema": self.config_filters_form_schema(),
                 "layout": self.config_filters_form_layout(),
             },
-            "defs": self.attr("filters.defs"),
+            "defs": self.attr("filter_defs.defs"),
         }
 
     def config_filters_form_schema(self):
 
-        filters_defs = self.attr("filters.defs", {})
+        filters_defs = self.attr("filter_defs.defs", {})
         properties = {
             key_filter: {
                 "type": filter_def.get("type") or "string",
@@ -30,7 +30,7 @@ class SchemaConfigFilters:
         return {"properties": properties}
 
     def config_filters_form_layout(self):
-        return self.attr("filters.layout")
+        return self.attr("filter_defs.layout")
 
     def filter_values(self):
         # TODO add more

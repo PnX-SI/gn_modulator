@@ -28,6 +28,7 @@ setuptools.setup(
             "picto = gn_modules:MODULE_PICTO",
             "blueprint = gn_modules.blueprint:blueprint",
             "migrations = gn_modules.migrations:versions",
+            "config_schema = gn_modules.conf_schema_toml:GnModuleSchemaConf",
         ],
     },
     classifiers=[

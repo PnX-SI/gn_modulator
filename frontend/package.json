@@ -9,6 +9,7 @@
   "author": "PNX",
   "license": "ISC",
   "dependencies": {
+    "tabulator": "^0.2.40",
     "tabulator-tables": "^4.9.3"
   }
 }

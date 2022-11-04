@@ -250,6 +250,12 @@ class SchemaRepositoriesBase:
         model_pk_field = getattr(Model, self.pk_field_name())
         query = db.session.query(Model).distinct()
 
+        # eager loads ??
+        for field in params.get('fields') or []:
+            if field == 'ownership':
+                continue
+            _, query = self.custom_getattr(Model, field, query)
+
         # simplifier la requete
         query = self.defer_fields(query, params)
 

@@ -42,7 +42,7 @@ export class ModulesConfigService {
   }
 
   objectConfig(moduleCode, objectName) {
-    return this._config['modules'][moduleCode || 'MODULES']['definitions'][objectName];
+    return this._config['modules'][moduleCode || 'MODULES'].objects[objectName];
   }
 
   moduleConfig(moduleCode) {
