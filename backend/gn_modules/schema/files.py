@@ -167,7 +167,7 @@ class SchemaFiles:
         schema_name = self.schema_name()
         definition = self.definition
         if not definition:
-            raise errors.SchemaLoadError(
+            raise errors.SchemaNotFoundError(
                 "pas de definition pour le schema: {}".format(schema_name)
             )
         # schema_name = definition['meta']['schema_name']

@@ -15,10 +15,34 @@ cache_modules_config = {}
 
 
 class ModulesConfig:
+    """
+    Méthodes pour gérer la configuration des modules
+    """
+
+    @classmethod
+    def object_config(cls, module_code, object_name):
+        """
+        Retourne la configuration d'un object
+        - référencé par 'object_name'
+        - et pour le module 'module_code'
+        """
+        module_config = cls.module_config(module_code)
+        object_config = module_config.get("objects", {}).get(object_name)
+
+        if not object_config:
+            raise errors.ModuleObjectNotFoundError(
+                f"L'object {object_name} n'a pas été trouvé pour le module {module_code}"
+            )
+
+        return object_config
+
     @classmethod
     def module_config(cls, module_code):
+        """
+        Retourne la configuration du module référencé par 'module_code'
+        """
         if module_code not in cls.modules_config():
-            raise errors.ModuleNotFound(
+            raise errors.ModuleNotFoundError(
                 "La config du module de code {} n'a pas été trouvée".format(module_code)
             )
         return cls.modules_config()[module_code]

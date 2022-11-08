@@ -1,10 +1,10 @@
 Module de modules
 =================
 
+- `Liste des commandes <./doc/commandes.rst>`_
+
 Présentation
 ============
-
-
 
 Installation
 ============
