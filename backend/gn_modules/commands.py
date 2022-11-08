@@ -7,8 +7,8 @@
 import click
 from flask.cli import with_appcontext
 
-from .schema import SchemaMethods
-from .module import ModuleMethods
+from .schema import SchemaMethods, errors as SchemaErrors
+from .module import ModuleMethods, errors as ModuleErrors
 
 
 @click.command("init")
@@ -165,7 +165,68 @@ def cmd_import_features(data_name):
     SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
 
 
+@click.command("grammar")
+@click.option("-s", "schema_name", help="Pour un schema donnée")
+@click.option("-m", "module_code", help="Pour un module donné")
+@click.option("-o", "object_name", help="Pour un module donné")
+@click.option(
+    "-g", "grammar_type", help="Pour un type donnée (par ex 'un_nouveau_label"
+)
+def cmd_test_grammar(
+    module_code=None, object_name=None, schema_name=None, grammar_type=None
+):
+    """
+    commande pour tester la grammaire
+    - sans options
+        affiche la grammaire pour tous les objects de tous les modules
+    - schema_name
+        pour un schema
+    - module_code
+        pour un module
+    - module_code, objet_name
+        pour un object (il ne peux pas y avoir object_name sans module_code)
+    - grammar_type
+        pour un element précis de grammaire
+    """
+
+    try:
+        grammar_txt = ModuleMethods.test_grammar(
+            module_code, object_name, schema_name, grammar_type
+        )
+
+        print(f"\n{grammar_txt}")
+
+    # cas schema non trouvé
+    except SchemaErrors.SchemaNotFoundError:
+        print(f"\nErreur:\n  - Le schema {schema_name} n'a pas été trouvé.")
+
+    # cas module non trouvé
+    except ModuleErrors.ModuleNotFoundError:
+        print(f"\nErreur:\n  - Le module {module_code} n'a pas été trouvé.")
+
+    # cas object sans module
+    except ModuleErrors.ModuleCodeRequiredError:
+        print("\nErreur:")
+        print(
+            f"   - Il faut préciser un module_code (avec -m) afin d'accéder à la grammaire de l'object '{object_name}'."
+        )
+
+    # cas object non trouvé
+    except ModuleErrors.ModuleObjectNotFoundError:
+        print(f"\nErreur:\n  - L'object {object_name} n'a pas été trouvé.")
+
+    except SchemaErrors.SchemaGrammarTypeError:
+        print(f"\nErreur:\n  - Le type choisi '{grammar_type}' n'est pas valide.")
+        print("    Veuillez choisir un type parmi la liste suivante : \n")
+
+        for grammar_type in SchemaMethods.grammar_type_list():
+            print(f"    - {grammar_type}")
+
+    print()
+
+
 commands = [
+    cmd_test_grammar,
     cmd_init_module,
     # cmd_reinit_module,
     cmd_install_module,

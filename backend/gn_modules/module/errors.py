@@ -6,7 +6,15 @@ class ModuleConfigError(Exception):
     pass
 
 
-class ModuleNotFound(Exception):
+class ModuleNotFoundError(Exception):
+    pass
+
+
+class ModuleObjectNotFoundError(Exception):
+    pass
+
+
+class ModuleCodeRequiredError(Exception):
     pass
 
 

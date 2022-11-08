@@ -10,7 +10,7 @@ class ModuleCommands:
 
         try:
             module_config = cls.module_config(module_code)
-        except errors.ModuleNotFound as e:
+        except errors.ModuleNotFoundError as e:
             print(e)
             return
 
@@ -109,7 +109,7 @@ class ModuleCommands:
         try:
             module_config = cls.module_config(module_code)
 
-        except errors.ModuleNotFound as e:
+        except errors.ModuleNotFoundError as e:
             print(e)
             return
 

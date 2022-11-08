@@ -15,9 +15,18 @@ class SchemaNameError(SchemaError):
     pass
 
 
-class SchemaLoadError(SchemaError):
+# class SchemaLoadError(SchemaError):
+#     """
+#     Error when loading a schema
+#     """
+
+#     pass
+
+
+class SchemaNotFoundError(SchemaError):
     """
     Error when loading a schema
+        schema file not found
     """
 
     pass
@@ -152,4 +161,8 @@ class SchemaUnsufficientCruvedRigth(SchemaError):
 
 
 class SchemaModelColumnPropertyError(SchemaError):
+    pass
+
+
+class SchemaGrammarTypeError(SchemaError):
     pass
