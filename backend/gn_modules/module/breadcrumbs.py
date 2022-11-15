@@ -1,7 +1,7 @@
 from gn_modules.schema import SchemaMethods
 
 
-class ModulesBreadCrumbs:
+class ModuleBreadCrumbs:
     @classmethod
     def breadcrumbs(cls, module_code, page_name, data):
         """

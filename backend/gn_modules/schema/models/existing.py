@@ -19,7 +19,8 @@ from geonature.core.gn_meta.models import (
     TAcquisitionFramework,
     CorDatasetActor,
 )
-from geonature.core.gn_synthese.models import Synthese
+
+# from geonature.core.gn_synthese.models import Synthese
 from geonature.core.gn_permissions.models import (
     TActions,
     TFilters,
@@ -36,10 +37,14 @@ from ref_geo.models import (
 
 # from gn_modules.ref_geo_models import LAreas, BibAreasTypes, BibLinearsTypes, LLinears, TLinearGroups
 # from geonature.core.taxonomie.models import Taxref
-from apptax.taxonomie.models import Taxref
+# from apptax.taxonomie.models import Taxref
+# from geonature.core.taxonomie.models import Taxref
+
 from geonature.core.users.models import CorRole
 
 from geonature.utils.env import db
+
+from gn_modules.utils.cache import set_global_cache
 
 cache_existing_models = {
     "commons.module": TModules,
@@ -60,8 +65,8 @@ cache_existing_models = {
     "ref_geo.area_type": BibAreasTypes,
     "ref_nom.nomenclature": TNomenclatures,
     "ref_nom.type": BibNomenclaturesTypes,
-    "syn.synthese": Synthese,
-    "tax.taxref": Taxref,
+    # "syn.synthese": Synthese,
+    # "tax.taxref": Taxref,
     "user.app": Application,
     "user.app_profil": UserApplicationRight,
     "user.groupe": CorRole,
@@ -83,8 +88,20 @@ class SchemaModelExisting:
         return cache_existing_tables.get(schema_dot_table)
 
     def get_model_from_schema_dot_table(self, schema_dot_table):
-
         Model = cache_existing_models.get(self.schema_name())
+
+        # Patch pourris bug nvelle version gn avec Taxref et Synthese (Taxref)
+        # TODO arranger existings ??
+
+        if self.schema_name() == "syn.synthese":
+            from geonature.core.gn_synthese.models import Synthese
+
+            return Synthese
+
+        if self.schema_name() == "tax.taxref":
+            from geonature.core.taxonomie.models import Taxref
+
+            return Taxref
 
         if Model:
             return Model
@@ -126,7 +143,7 @@ class SchemaModelExisting:
                 setattr(Model, key, self.process_column_model(key, column_def))
 
         # store in cache before relation (avoid circular dependancies)
-        self.cls.set_schema_cache(self.schema_name(), "model", Model)
+        set_global_cache(["schema", self.schema_name(), "model"], Model)
 
         for key, relation_def in self.relationships().items():
             if hasattr(Model, key):

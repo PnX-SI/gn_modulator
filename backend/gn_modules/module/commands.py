@@ -1,4 +1,3 @@
-from . import errors
 from ..schema import SchemaMethods
 from flask_migrate import upgrade as db_upgrade, downgrade as db_downgrade
 from geonature.utils.env import db
@@ -10,7 +9,7 @@ class ModuleCommands:
 
         try:
             module_config = cls.module_config(module_code)
-        except errors.ModuleNotFoundError as e:
+        except cls.errors.ModuleNotFoundError as e:
             print(e)
             return
 

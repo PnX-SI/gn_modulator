@@ -65,7 +65,6 @@ export class ModulesTableService {
     };
 
     const { actionAllowed, actionMsg } = this._mPage.checkAction(moduleCode, objectName, action);
-    console.log(moduleCode, objectName, actionAllowed);
     if (actionAllowed == null) {
       return;
     }
@@ -111,7 +110,6 @@ export class ModulesTableService {
       .split('')
       .map((action) => this.columnAction(moduleCode, objectName, action))
       .filter((columnAction) => !!columnAction);
-    console.log(columnsAction);
     return columnsAction;
   }
 

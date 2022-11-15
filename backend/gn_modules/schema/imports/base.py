@@ -3,72 +3,21 @@
     par exemple la nomenclature
 """
 
-import os
 import copy
 from pathlib import Path
 import jsonschema
 import marshmallow
 from sqlalchemy.orm.exc import NoResultFound
 from .. import errors
+from gn_modules.utils.cache import get_global_cache
 
 
 class SchemaBaseImports:
     @classmethod
-    def validate_feature_data(cls, data):
-        """
-        - charge des données depuis un fichier json
-        - recupère le schéma associé depuis schema_name
-        - valide la donnée par raport au schema
-        - retourne la données
-        """
-
-        schema = cls.get_global_cache("reference", "data")
-
-        try:
-            jsonschema.validate(instance=data, schema=schema)
-        except jsonschema.exceptions.ValidationError as e:
-            print(e)
-            return
-
-        return data
-
-    @classmethod
-    def data_file_sub_path(cls, data_file_path):
-        return str(data_file_path).replace(
-            str(cls.config_directory() / "data") + "/", ""
-        )
-
-    @classmethod
-    def init_datas(cls):
-        """
-        renvoie la liste des fichiers de données
-        """
-
-        for root, dirs, files in os.walk(cls.config_directory(), followlinks=True):
-            for file in filter(lambda f: f.endswith(".yml"), files):
-                file_path = Path(root) / file
-                data = cls.load_yml_file(file_path)
-
-                if not (isinstance(data, dict) and data.get("data_name")):
-                    continue
-
-                if not cls.validate_feature_data(data):
-                    continue
-
-                data["file_path"] = file_path
-                cls.set_global_cache("data", data.get("data_name"), data)
-
-    @classmethod
-    def get_data(cls, data_name):
-        return cls.get_global_cache("data", data_name)
-
-    @classmethod
     def process_features(cls, data_name):
         """ """
 
-        cls.init_datas()
-
-        data = cls.get_data(data_name)
+        data = get_global_cache("data", data_name)
 
         if not data:
             raise (Exception(f"La données demandée {data_name} n'existe pas"))
@@ -130,7 +79,9 @@ class SchemaBaseImports:
             [self.schema_name()] + list(map(lambda x: str(x), rel_test_values))
         )
 
-        if cache_value := self.cls.get_global_cache("import_pk_keys", cache_key):
+        if cache_value := get_global_cache(
+            ["import_pk_keys", self.schema_name(), cache_key]
+        ):
             return cache_value
 
         if None in rel_test_values:

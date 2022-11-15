@@ -11,6 +11,8 @@ from shapely.geometry import shape
 from utils_flask_sqla_geo.utilsgeometry import remove_third_dimension
 from geonature.utils.env import ma
 from .errors import SchemaProcessedPropertyError
+from gn_modules.utils.cache import get_global_cache, set_global_cache
+from sqlalchemy.orm.exc import NoResultFound
 
 
 class GeojsonSerializationField(fields.Field):
@@ -166,13 +168,14 @@ class SchemaSerializers:
         False permet de recréer le schema si besoin
         """
 
-        if self.cls.get_schema_cache(self.schema_name(), "marshmallow") and not force:
-            MarshmallowSchema = self.cls.get_schema_cache(
-                self.schema_name(), "marshmallow"
-            )
+        MarshmallowSchema = get_global_cache(
+            ["schema", self.schema_name(), "marshmallow"]
+        )
+
+        if MarshmallowSchema is not None and not force:
             return MarshmallowSchema
 
-        if not self.Model():
+        if self.Model() is None:
             return None
 
         marshmallow_meta_dict = {
@@ -264,7 +267,9 @@ class SchemaSerializers:
             marshmallow_schema_dict,
         )
 
-        self.cls.set_schema_cache(self.schema_name(), "marshmallow", MarshmallowSchema)
+        set_global_cache(
+            ["schema", self.schema_name(), "marshmallow"], MarshmallowSchema
+        )
 
         # load dependancies
         for dep in self.dependencies():
@@ -310,6 +315,42 @@ class SchemaSerializers:
             return self.as_geojson(data, geometry_field_name)
         else:
             return data
+
+    def get_row_as_dict(
+        self,
+        value,
+        field_name=None,
+        module_code="MODULES",
+        cruved_type="R",
+        params={},
+        query_type="all",
+        fields=None,
+        as_geojson=False,
+        geometry_field_name=None,
+    ):
+        """
+        enchaine en une seule commande get_row et serialize
+        si la ligne n'est pas trouvée, on renvoie None
+        """
+        try:
+            m = self.get_row(
+                value,
+                field_name=field_name,
+                module_code=module_code,
+                cruved_type=cruved_type,
+                params=params,
+                query_type=query_type,
+            ).one()
+
+        except NoResultFound:
+            return None
+
+        return self.serialize(
+            m,
+            fields=fields,
+            as_geojson=as_geojson,
+            geometry_field_name=geometry_field_name,
+        )
 
     def serialize_list(
         self, m_list, fields=None, as_geojson=False, geometry_field_name=False
@@ -370,3 +411,23 @@ class SchemaSerializers:
         MS = self.MarshmallowSchema()
         ms = MS()
         ms.load(data, instance=m)
+
+    @classmethod
+    def reinit_marshmallow_schemas(cls):
+        """
+        methode pour reinitialiser les schemas
+        par exemple pour un install après une migration
+        et pour l'installation de données complémentaire exemple
+        on a besoin de refaire les schema qui n'ont pas pu être fait correctement car des tables n'existaient pas
+        (pas de model pour les relations -> schema non operationel pour ces relation)
+        """
+        for schema_name in cls.schema_names():
+            set_global_cache(["schema", schema_name, "marshmallow"], None)
+
+        for schema_name in cls.schema_names():
+            sm = cls(schema_name)
+            sm.Model()
+
+        for schema_name in cls.schema_names():
+            sm = cls(schema_name)
+            sm.MarshmallowSchema()

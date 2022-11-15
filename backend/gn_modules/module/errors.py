@@ -6,6 +6,14 @@ class ModuleConfigError(Exception):
     pass
 
 
+class ModuleDefinitionFoundError(Exception):
+    """
+    Quand la definition d'un module n'est pas trouvée
+    """
+
+    pass
+
+
 class ModuleNotFoundError(Exception):
     pass
 

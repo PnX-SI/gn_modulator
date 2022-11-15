@@ -23,25 +23,6 @@ class SchemaConfigBase:
             "properties": self.properties(),
         }
 
-    def config_old(self):
-        """
-        frontend config
-        """
-
-        # self.reload()
-
-        return {
-            "definition": self.definition,
-            "validation": self.validation_schema,
-            "form": self.config_form(),
-            "display": self.config_display(),
-            "utils": self.config_utils(),
-            "table": self.config_table(),
-            "map": self.config_map(),
-            "filters": self.config_filters(),
-            "details": self.config_details(),
-        }
-
     def config_map(self):
         """
         configmap

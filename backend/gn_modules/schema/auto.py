@@ -6,6 +6,7 @@ from sqlalchemy.orm.properties import ColumnProperty
 from sqlalchemy.engine import reflection
 from geonature.utils.env import db
 from .errors import SchemaAutoError
+from gn_modules.utils.cache import get_global_cache, set_global_cache
 
 cor_type_db_schema = {
     "INTEGER": "integer",
@@ -19,13 +20,12 @@ cor_type_db_schema = {
 
 
 class SchemaAuto:
-
-    _insp = None
-
     def insp(self):
-        if not self._insp:
-            self._insp = reflection.Inspector.from_engine(db.engine)
-        return self._insp
+        insp = get_global_cache(["insp"])
+        if insp is None:
+            insp = reflection.Inspector.from_engine(db.engine)
+            set_global_cache(["insp"], insp)
+        return insp
 
     def autoschema(self):
         """
@@ -46,7 +46,7 @@ class SchemaAuto:
             return schema_definition
 
         Model = (
-            self.cls.get_schema_cache(self.schema_name(), "model")
+            get_global_cache(["schema", self.schema_name(), "model"])
             # or self.get_existing_model()
             or self.get_model_from_schema_dot_table(schema_dot_table)
         )

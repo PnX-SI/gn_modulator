@@ -8,7 +8,7 @@
 
 import copy
 import json
-from .errors import SchemaRelationError
+from gn_modules.utils.cache import get_global_cache
 
 column_types = [
     "integer",
@@ -116,6 +116,13 @@ class SchemaBase:
             return schema_name.replace(".", "/")
         else:
             return schema_name
+
+    @classmethod
+    def schema_names(cls):
+        """
+        renvoie la liste des noms de schemas (depuis les données du cache)
+        """
+        return list(get_global_cache(["schema"], {}).keys())
 
     def pk_field_names(self):
         """
@@ -246,7 +253,7 @@ class SchemaBase:
         )
 
         if relation_type is None:
-            raise SchemaRelationError(
+            raise self.errors.SchemaRelationError(
                 "relation type is None for relation_def : {}".format(relation_def)
             )
         return relation_type

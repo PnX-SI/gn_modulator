@@ -1,24 +1,28 @@
-import os
 from pathlib import Path
-from ..schema import SchemaMethods, errors as SchemaErrors
 from sqlalchemy.orm.exc import NoResultFound
-from geonature.utils.env import BACKEND_DIR
-from . import errors
-
-
-def symlink(path_source, path_dest):
-    if os.path.islink(path_dest):
-        os.remove(path_dest)
-    os.symlink(path_source, path_dest)
+from gn_modules.utils.env import assets_static_dir, migrations_directory
+from gn_modules.utils.files import symlink
+from gn_modules.schema import SchemaMethods
+from gn_modules.utils.cache import get_global_cache
 
 
 class ModuleBase:
     @classmethod
+    def module_codes(cls):
+        """
+        Renvoie la liste des code de module présents dans les fichiers de config
+        """
+        return list(get_global_cache(["module"]).keys())
+
+    @classmethod
     def migrations_dir(cls, module_code=None):
         if not module_code:
-            return SchemaMethods.migrations_directory()
-        module_config = cls.module_config(module_code)
-        return Path(module_config["module_dir_path"]) / "migrations"
+            return migrations_directory()
+        return cls.module_dir_path(module_code) / "migrations"
+
+    @classmethod
+    def module_dir_path(cls, module_code):
+        return Path(get_global_cache(["module", module_code, "file_path"]).parent)
 
     @classmethod
     def register_db_module(cls, module_code):
@@ -125,7 +129,6 @@ class ModuleBase:
         """
         module_config = cls.module_config(module_code)
         module_assets_dir = Path(module_config["module_dir_path"]) / "assets"
-        assets_static_dir = BACKEND_DIR / "static/external_assets/modules/"
         assets_static_dir.mkdir(exist_ok=True, parents=True)
 
         symlink(

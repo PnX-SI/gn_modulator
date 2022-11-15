@@ -2,6 +2,8 @@
     sql table
 """
 
+from gn_modules.utils.cache import get_global_cache, set_global_cache
+
 
 class SchemaSqlTable:
     """
@@ -28,10 +30,10 @@ class SchemaSqlTable:
         if not relation_def["relation_type"] == "n-n":
             return txt
 
-        if self.cls.get_global_cache("sql_table", relation_def["schema_dot_table"]):
+        if get_global_cache(["sql_table", relation_def["schema_dot_table"]]):
             return txt
 
-        self.cls.set_global_cache("sql_table", relation_def["schema_dot_table"], True)
+        set_global_cache(["sql_table", relation_def["schema_dot_table"]], True)
 
         local_key = self.pk_field_name()
         local_key_type = self.get_sql_type(

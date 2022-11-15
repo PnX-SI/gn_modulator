@@ -2,7 +2,7 @@
     methodes pour la grammaire
 """
 
-from gn_modules.utils import unaccent
+from gn_modules.utils.commons import unaccent
 
 
 class SchemaConfigGrammar:
