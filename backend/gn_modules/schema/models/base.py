@@ -7,6 +7,7 @@ from geoalchemy2 import Geometry
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from geonature.utils.env import db
 from ..errors import SchemaProcessedPropertyError
+from gn_modules.utils.cache import get_global_cache, set_global_cache
 
 # store the sqla Models
 
@@ -153,7 +154,7 @@ class SchemaModelBase:
         cor_schema_name = schema_dot_table.split(".")[0]
         cor_table_name = schema_dot_table.split(".")[1]
 
-        CorTable = self.cls.get_global_cache("cor_table", schema_dot_table)
+        CorTable = get_global_cache(["cor_table", schema_dot_table])
 
         if CorTable is not None:
             return CorTable
@@ -182,7 +183,7 @@ class SchemaModelBase:
             schema=cor_schema_name,
         )
 
-        self.cls.set_global_cache("cor_table", schema_dot_table, CorTable)
+        set_global_cache(["cor_table", schema_dot_table], CorTable)
 
         return CorTable
 
@@ -199,7 +200,7 @@ class SchemaModelBase:
         - avoid to create the model twice
         """
         # get Model from cache
-        if Model := self.cls.get_schema_cache(self.schema_name(), "model"):
+        if Model := get_global_cache(["schema", self.schema_name(), "model"]):
             return Model
 
         # get Model from existing
@@ -231,7 +232,7 @@ class SchemaModelBase:
         Model.ownership = 0
 
         # store in cache before relations (avoid circular dependancies)
-        self.cls.set_schema_cache(self.schema_name(), "model", Model)
+        set_global_cache(["schema", self.schema_name(), "model"], Model)
 
         # process relations
 
@@ -248,3 +249,17 @@ class SchemaModelBase:
             )
 
         return Model
+
+    def process_backrefs(self):
+        """
+        ajout des definition des relation avec backref dans le schema correspondant
+        """
+        for relation_key, relation_def in self.relationships().items():
+            if not relation_def.get("backref"):
+                continue
+
+            opposite = self.opposite_relation_def(relation_def)
+            rel = self.cls(relation_def["schema_name"])
+            rel_properties = rel.attr("properties")
+            if not rel_properties.get(relation_def["backref"]):
+                rel_properties[relation_def["backref"]] = opposite

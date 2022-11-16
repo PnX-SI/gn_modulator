@@ -1,5 +1,5 @@
 {
-  "$id:": "references/schema/schema",
+  "$id:": "references/schema/auto",
   "type": "object",
   "definitions": {
     "ref": { "$id": "/ref", "type": "string" }

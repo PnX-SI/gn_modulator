@@ -9,6 +9,7 @@ from flask.cli import with_appcontext
 
 from .schema import SchemaMethods, errors as SchemaErrors
 from .module import ModuleMethods, errors as ModuleErrors
+from gn_modules.utils.commons import errors_txt
 
 
 @click.command("init")
@@ -225,7 +226,23 @@ def cmd_test_grammar(
     print()
 
 
+@click.command("check")
+def cmd_check():
+    """
+    - Initialise gn_module en chargeant et vérifiant les définitions
+    - Collecte les erreurs rencontrées lors de l'initialisation
+    - Affiche les erreurs rencontées
+    """
+    print()
+    print("Vérification des définitions de gn_modules.\n")
+
+    from gn_modules.blueprint import errors_init_module
+
+    print(errors_txt(errors_init_module))
+
+
 commands = [
+    cmd_check,
     cmd_test_grammar,
     cmd_init_module,
     # cmd_reinit_module,

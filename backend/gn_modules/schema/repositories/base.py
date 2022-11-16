@@ -3,6 +3,7 @@
 """
 
 import math
+import copy
 from geonature.utils.env import db
 
 from sqlalchemy import func
@@ -62,13 +63,18 @@ class SchemaRepositoriesBase:
         """
 
         value_filters = self.value_filters(value, field_name)
-        params["filters"] = params.get("filters", []) + value_filters
+
+        # patch pour ne pas se traîner le params précédent en param par defaut ??
+        params_query = copy.deepcopy(params)
+        params_query["filters"] = params_query.get("filters", []) + value_filters
+
         query = self.query_list(
             module_code=module_code,
             cruved_type=cruved_type,
-            params=params,
+            params=params_query,
             query_type=query_type,
         )
+
         return query
 
     def insert_row(self, data):

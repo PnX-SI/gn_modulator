@@ -6,9 +6,10 @@ import json
 from flask.views import MethodView
 from flask import request, make_response
 from geonature.core.gn_permissions import decorators as permissions
-from geonature.utils.config import config
+
+# from geonature.utils.config import config
 from gn_modules import MODULE_CODE
-from . import errors
+from gn_modules.utils.cache import get_global_cache
 import sqlparse
 
 
@@ -38,6 +39,8 @@ class SchemaApi:
         TODO process apps ?
 
         """
+        from geonature.utils.config import config
+
         return "{}/{}".format(config["API_ENDPOINT"], MODULE_CODE.lower())
 
     def url(self, post_url, full_url=False):
@@ -129,7 +132,7 @@ class SchemaApi:
             if value:
                 try:
                     return get_one_rest(value)
-                except errors.SchemaUnsufficientCruvedRigth:
+                except self.errors.SchemaUnsufficientCruvedRigth:
                     return f"Vous n'avez pas les droits suffisants pour accéder à cette requête (schema_name: {self.schema_name()}, module_code: {module_code})"
 
             else:
@@ -148,7 +151,7 @@ class SchemaApi:
                     params=params,
                 ).one()
 
-            except errors.SchemaUnsufficientCruvedRigth as e:
+            except self.errors.SchemaUnsufficientCruvedRigth as e:
                 return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
@@ -203,7 +206,7 @@ class SchemaApi:
             try:
                 m = self.insert_row(data)
 
-            except errors.SchemaUnsufficientCruvedRigth as e:
+            except self.errors.SchemaUnsufficientCruvedRigth as e:
                 return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
@@ -224,7 +227,7 @@ class SchemaApi:
                     params=params,
                 )
 
-            except errors.SchemaUnsufficientCruvedRigth as e:
+            except self.errors.SchemaUnsufficientCruvedRigth as e:
                 return "Erreur Cruved : {}".format(str(e)), 403
 
             return self.serialize(
@@ -249,7 +252,7 @@ class SchemaApi:
             try:
                 self.delete_row(value, field_name=params.get("field_name"))
 
-            except errors.SchemaUnsufficientCruvedRigth as e:
+            except self.errors.SchemaUnsufficientCruvedRigth as e:
                 return "Erreur Cruved : {}".format(str(e)), 403
 
             return dict_out
@@ -271,7 +274,7 @@ class SchemaApi:
             """
 
             # récupération de la configuration de l'export
-            export_definition = self.cls.get_global_cache("exports", export_name)
+            export_definition = get_global_cache(["exports", export_name], "definition")
 
             # renvoie une erreur si l'export n'est pas trouvé
             if export_definition is None:

@@ -7,45 +7,70 @@
 from .api import SchemaApi
 from .auto import SchemaAuto
 from .base import SchemaBase
-from .cache import SchemaCache
 from .commands import SchemaCommands
 from .config import SchemaConfig
 from .doc import SchemaDoc
 from .export import SchemaExport
 from .imports import SchemaImports
-from .files import SchemaFiles
 from .models import SchemaModel
-from .process import SchemaProcess
 from .repositories import SchemaRepositories
 from .serializers import SchemaSerializers
 from .sql import SchemaSql
 from .types import SchemaTypes
 from .validation import SchemaValidation
+from . import errors
+from gn_modules.utils.cache import get_global_cache, set_global_cache
 
 
 class SchemaMethods(
     SchemaApi,
     SchemaAuto,
     SchemaBase,
-    SchemaCache,
     SchemaCommands,
     SchemaConfig,
     SchemaDoc,
     SchemaExport,
     SchemaImports,
-    SchemaFiles,
     SchemaModel,
-    SchemaProcess,
     SchemaRepositories,
     SchemaSerializers,
     SchemaSql,
     SchemaTypes,
     SchemaValidation,
 ):
+
+    errors = errors
+
     def __init__(self, schema_name):
         self._schema_name = schema_name
-        if not self.get_schema_cache(schema_name, "schema"):
-            self.load()
+        if not get_global_cache(["schema", schema_name, "schema"]):
+            self.init()
+
+    def init(self):
+        """
+        Initialise le schema et le place dans le cache
+        """
+
+        definition = self.definition
+        schema_name = definition["meta"]["schema_name"]
+
+        if not definition:
+            raise errors.SchemaLoadError(
+                "pas de definition pour le schema: {}".format(schema_name)
+            )
+
+        set_global_cache(["schema", schema_name, "schema"], self)
+
+        self.definition = definition
+
+        if self.autoschema():
+            self.definition = self.get_autoschema()
+
+        self.process_backrefs()
+
+        self.json_schema = self.get_json_schema()
+
+        return self
 
     @property
     def cls(self):
@@ -53,27 +78,42 @@ class SchemaMethods(
 
     @property
     def definition(self):
-        return self.cls.get_schema_cache(self.schema_name(), "definition")
+        return get_global_cache(["schema", self.schema_name(), "definition"])
 
     @definition.setter
     def definition(self, value):
-        self.cls.set_schema_cache(self.schema_name(), "definition", value)
+        set_global_cache(["schema", self.schema_name(), "definition"], value)
 
     @property
     def json_schema(self):
-        return self.cls.get_schema_cache(self.schema_name(), "json_schema")
+        return get_global_cache(["schema", self.schema_name(), "json_schema"])
 
     @json_schema.setter
     def json_schema(self, value):
-        self.cls.set_schema_cache(self.schema_name(), "json_schema", value)
-
-    @property
-    def validation_schema(self):
-        return self.cls.get_schema_cache(self.schema_name(), "validation_schema")
-
-    @validation_schema.setter
-    def validation_schema(self, value):
-        self.cls.set_schema_cache(self.schema_name(), "validation_schema", value)
+        set_global_cache(["schema", self.schema_name(), "json_schema"], value)
 
     def __str__(self):
-        return "< SchemaMethods : '{}'>".format(self.schema_name())
+        return self.schema_name()
+
+    @classmethod
+    def init_schemas(cls):
+        """
+        Initialise l'ensemble des schémas
+        """
+        init_schema_errors = []
+        for schema_names in cls.schema_names():
+            try:
+                # init class
+                SchemaMethods(schema_names)
+
+                # init Model
+                SchemaMethods(schema_names).Model()
+
+                # init MarshmallowSchema
+                SchemaMethods(schema_names).MarshmallowSchema()
+
+            except Exception as e:
+                # TODO gestion des erreurs
+                raise e
+
+        return init_schema_errors

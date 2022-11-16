@@ -12,6 +12,8 @@ from ..errors import (
     SchemaProcessedPropertyError,
 )
 
+from gn_modules.utils.cache import get_global_cache
+
 
 class SchemaSqlBase:
     def get_sql_type(self, column_def, cor_table=False, required=False):
@@ -64,9 +66,8 @@ class SchemaSqlBase:
 
     @classmethod
     def c_get_schema_name_from_sql_schema_dot_table(cls, sql_schema_dot_table):
-        for schema_name, definition in cls.get_schema_cache(
-            object_type="definition"
-        ).items():
+        for schema_name in cls.schema_names():
+            definition = get_global_cache(["schema", schema_name, "definition"])
             if definition["meta"]["sql_schema_dot_table"] == sql_schema_dot_table:
                 return schema_name
 

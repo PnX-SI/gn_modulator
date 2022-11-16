@@ -15,14 +15,6 @@ class SchemaNameError(SchemaError):
     pass
 
 
-# class SchemaLoadError(SchemaError):
-#     """
-#     Error when loading a schema
-#     """
-
-#     pass
-
-
 class SchemaNotFoundError(SchemaError):
     """
     Error when loading a schema

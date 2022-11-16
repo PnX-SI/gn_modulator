@@ -27,9 +27,9 @@ geom:
 geom_local:
     type: geometry
     geometry_type: geometry
-    srid: __CONFIG.LOCAL_SRID__
-    title: Geometrie locale (__CONFIG.LOCAL_SRID__)
-    description: Géométrie locale site (SRID=__CONFIG.LOCAL_SRID__)
+    srid: __LOCAL_SRID__
+    title: Geometrie locale (__LOCAL_SRID__)
+    description: Géométrie locale site (SRID=__LOCAL_SRID__)
     index: true
     trigger:
         name: copy_geom

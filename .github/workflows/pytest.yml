@@ -96,16 +96,7 @@ jobs:
             geonature db status
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
-        - name: Install core modules
-          run: |
-            geonature install_packaged_gn_module ./dependencies/GeoNature/contrib/occtax OCCTAX
-            geonature install_packaged_gn_module ./dependencies/GeoNature/contrib/gn_module_occhab OCCHAB
-            geonature install_packaged_gn_module ./dependencies/GeoNature/contrib/gn_module_validation VALIDATION
-          env:
-            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
-        # FRONTEND
-        # TODO CLARIFIER CI
         - name: Cache node modules
           uses: actions/cache@v1
           with:
@@ -113,31 +104,51 @@ jobs:
             key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
             restore-keys: |
               ${{ runner.os }}-node-
+
         - name: Node ${{ matrix.node-version }}
           uses: actions/setup-node@v1
           with:
             node-version: ${{ matrix.node-version }}
+
+        - name: NMV Node ${{ matrix.node-version }}
+          uses: dcodeIO/setup-node-nvm@master
+          with:
+            node-version: ${{ matrix.node-version }}
+
+        # FRONTEND
+        # TODO CLARIFIER CI
         - name: install frontend
           run: |
             cp ./config/settings.ini.sample ./config/settings.ini
-            geonature generate_frontend_config
-            geonature generate_frontend_tsconfig
-            geonature generate_frontend_tsconfig_app
-            ./install/05_install_frontend.sh --ci
+            ./install/05_install_frontend.sh
           working-directory: ./dependencies/GeoNature
           env:
-            GEONATURE_CONFIG_FILE: config/test_config.toml
+            GEONATURE_CONFIG_FILE: ./config/test_config.toml
 
-        # GN_MODULES
-        - name: Install gn_modules
-          run: geonature install_packaged_gn_module . MODULES --skip-frontend
+        - name: Install core modules
+          run: |
+            pip install -e ./dependencies/GeoNature/contrib/occtax
+            pip install -e ./dependencies/GeoNature/contrib/gn_module_occhab
+            pip install -e ./dependencies/GeoNature/contrib/gn_module_validation
+
+        - name: Install core modules database
+          run: |
+            geonature upgrade-modules
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
-        - name: test
-          run: echo ok
+
+        # GN_MODULES
+        - name: Install GN Modules
+          run: |
+            pip install -e .
+        - name: Install GN Modules db
+          run: |
+            geonature upgrade-modules
+          env:
+            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
         # Test GN_MODULES
         - name: Pytest gn_modules
-          run: pytest ./backend/gn_modules/tests/*
+          run: pytest -v ./backend/gn_modules/tests/*
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
