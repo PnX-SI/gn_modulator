@@ -1,7 +1,7 @@
+module_code: MODULES
 module:
-    module_code: MODULES
     module_label: Module de module
-    module_desc: Ne permet pas de compter les patates
+    module_desc: MonitoringV2
     module_picto: fa-puzzle-piece
     active_frontend: false
 objects:

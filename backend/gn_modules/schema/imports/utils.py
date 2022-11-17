@@ -104,7 +104,9 @@ class SchemaUtilsImports:
             map(lambda x: cls(schema_name).process_raw_import_column(x.key), columns)
         )
 
-        txt_primary_column = f"""CONCAT({", '|', ".join(sm.attr('meta.unique'))}) AS {sm.pk_field_name()}"""
+        txt_primary_column = (
+            f"""CONCAT({", '|', ".join(sm.attr('meta.unique'))}) AS {sm.pk_field_name()}"""
+        )
         v_txt_columns.insert(0, txt_primary_column)
 
         txt_columns = ",\n    ".join(v_txt_columns)
@@ -137,17 +139,13 @@ FROM pre_process
         property = self.property(key)
 
         if property["type"] == "number":
-            return (
-                f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::FLOAT END AS {key}"
-            )
+            return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::FLOAT END AS {key}"
 
         if property["type"] == "date":
             return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::DATE END AS {key}"
 
         if property["type"] == "integer" and "schema_name" not in property:
-            return (
-                f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::INTEGER END AS {key}"
-            )
+            return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::INTEGER END AS {key}"
 
         return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key} END AS {key}"
 
@@ -174,9 +172,7 @@ FROM pre_process
     END AS {key}"""
 
         if property["type"] == "geometry":
-            geometry_type = (
-                "ST_MULTI" if property["geometry_type"] == "multipolygon" else ""
-            )
+            geometry_type = "ST_MULTI" if property["geometry_type"] == "multipolygon" else ""
             return f"""{geometry_type}(
         ST_SETSRID(
             ST_FORCE2D(
@@ -221,9 +217,7 @@ FROM pre_process
                     and sm.property(column.key).get("relation_type") == "n-n"
                 ):
                     rel = cls(sm.property(column.key)["schema_name"])
-                    v_columns.append(
-                        f"{txt_column.split('.')[0]}.{rel.pk_field_name()}"
-                    )
+                    v_columns.append(f"{txt_column.split('.')[0]}.{rel.pk_field_name()}")
                 else:
                     v_columns.append(f"{txt_column} AS {column.key}")
             solved_keys[column.key] = txt_column
@@ -246,9 +240,7 @@ FROM {raw_import_view} t
 {txt_joins}
 """
 
-    def resolve_key(
-        self, key, index=None, alias_main="t", alias_join_base="j", solved_keys={}
-    ):
+    def resolve_key(self, key, index=None, alias_main="t", alias_join_base="j", solved_keys={}):
         """
         compliqué
         crée le txt pour
@@ -285,9 +277,7 @@ FROM {raw_import_view} t
                     )
                     v_join += v_join_inter
 
-                    link_joins[
-                        k_unique
-                    ] = f"{alias_join}_{index_unique}.{rel.pk_field_name()}"
+                    link_joins[k_unique] = f"{alias_join}_{index_unique}.{rel.pk_field_name()}"
 
         # creation des joins avec les conditions
         v_join_on = []

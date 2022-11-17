@@ -78,9 +78,7 @@ class SchemaRepositoriesUtil:
             if model_attribute is None:
                 continue
 
-            order_by = (
-                model_attribute.desc() if sort_dir == "-" else model_attribute.asc()
-            )
+            order_by = model_attribute.desc() if sort_dir == "-" else model_attribute.asc()
 
             # nullslast
             order_by = nullslast(order_by)
@@ -95,9 +93,7 @@ class SchemaRepositoriesUtil:
 
         model_attribute, query = self.custom_getattr(Model, sort_field, query)
 
-        order_by = (
-            model_attribute.desc() if sort_dir == "desc" else model_attribute.asc()
-        )
+        order_by = model_attribute.desc() if sort_dir == "desc" else model_attribute.asc()
 
         order_by = nullslast(order_by)
 

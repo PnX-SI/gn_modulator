@@ -20,9 +20,7 @@ class SchemaModelBase:
     def model_name(self):
         """ """
 
-        return self.attr(
-            "meta.model_name", "T{}".format(self.schema_name("pascal_case"))
-        )
+        return self.attr("meta.model_name", "T{}".format(self.schema_name("pascal_case")))
 
     def get_db_type(self, column):
 
@@ -47,9 +45,7 @@ class SchemaModelBase:
         if field_type == "geometry":
             return Geometry(column["geometry_type"], column["srid"])
 
-        raise (
-            SchemaProcessedPropertyError("db_type is None for prop {}".format(column))
-        )
+        raise (SchemaProcessedPropertyError("db_type is None for prop {}".format(column)))
 
     def process_existing_column_model(self, key, column_def, column_model):
         pass
@@ -68,9 +64,7 @@ class SchemaModelBase:
         # foreign_key
         if column_def.get("foreign_key"):
             relation = self.cls(column_def["schema_name"])
-            foreign_key = "{}.{}".format(
-                relation.sql_schema_dot_table(), relation.pk_field_name()
-            )
+            foreign_key = "{}.{}".format(relation.sql_schema_dot_table(), relation.pk_field_name())
             if self.is_required(key):
                 field_args.append(
                     db.ForeignKey(foreign_key, ondelete="CASCADE", onupdate="CASCADE")
@@ -133,9 +127,7 @@ class SchemaModelBase:
                 relationship_def.get("local_key")
                 and relationship_def.get("foreign_key")
             ):
-                kwargs["primaryjoin"] = getattr(
-                    self.Model(), self.pk_field_name()
-                ) == getattr(
+                kwargs["primaryjoin"] = getattr(self.Model(), self.pk_field_name()) == getattr(
                     CorTable.c, relationship_def.get("local_key", self.pk_field_name())
                 )
                 kwargs["secondaryjoin"] = getattr(

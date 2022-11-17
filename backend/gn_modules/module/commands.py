@@ -72,9 +72,7 @@ class ModuleCommands:
                         f"Le module {module_code} depend du module {module_dep_code} qui n'est pas installé"
                     )
                     print("Vous pouvez")
-                    print(
-                        f"    - soit installer le module {module_dep_code} au préalable,"
-                    )
+                    print(f"    - soit installer le module {module_dep_code} au préalable,")
                     print(
                         "    - soit relancer la commande avec l'option -f (--force) pour permettre l'installation automatique des dépendances"
                     )
@@ -131,9 +129,7 @@ class ModuleCommands:
             cls.create_migration_init_file(module_code)
 
     @classmethod
-    def test_grammar(
-        cls, module_code=None, object_name=None, schema_name=None, grammar_type=None
-    ):
+    def test_grammar(cls, module_code=None, object_name=None, schema_name=None, grammar_type=None):
         """
         renvoie un tecte contenant les élément de grammaire des schemas concerné par les argument
         (par defaut tout)
@@ -210,8 +206,7 @@ class ModuleCommands:
 
         # si grammar_type est défini, on ne prend que celui la
         for grammar_type_loop in filter(
-            lambda key: not (grammar_type and grammar_type != key)
-            and key != "description",
+            lambda key: not (grammar_type and grammar_type != key) and key != "description",
             grammar_list[0],
         ):
             grammar_txt += f"- {grammar_type_loop}\n"

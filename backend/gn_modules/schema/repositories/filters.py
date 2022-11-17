@@ -73,9 +73,7 @@ class SchemaRepositoriesFilters:
 
             # récursivité sur les listes
             if isinstance(elem, list):
-                loop_filter, query = self.process_filter_array(
-                    Model, elem, query, condition
-                )
+                loop_filter, query = self.process_filter_array(Model, elem, query, condition)
 
             # filtre
             elif isinstance(elem, dict):
@@ -131,9 +129,7 @@ class SchemaRepositoriesFilters:
                 else:
                     cpt_open -= 1
         filters[index_open] = f"   {filters[index_open]}   "
-        raise Exception(
-            f"Pas de parenthèse fermante trouvée {','.join(filters[index_open:])}"
-        )
+        raise Exception(f"Pas de parenthèse fermante trouvée {','.join(filters[index_open:])}")
 
     def parse_filters(self, filters):
         """
@@ -236,23 +232,19 @@ class SchemaRepositoriesFilters:
         filter_type = filter["type"]
         filter_value = filter.get("value", None)
 
-        model_attribute, query = self.custom_getattr(
-            Model, filter_field, query, condition
-        )
+        model_attribute, query = self.custom_getattr(Model, filter_field, query, condition)
 
         if filter_type in ["like", "ilike"]:
-            filter_out = getattr(
-                unaccent(cast(model_attribute, db.String)), filter_type
-            )(filter_value)
+            filter_out = getattr(unaccent(cast(model_attribute, db.String)), filter_type)(
+                filter_value
+            )
 
         elif filter_type == "~":
             filter_value_unaccent = unidecode.unidecode(filter_value)
             filters_out = []
             for v in filter_value_unaccent.split(" "):
                 filters_out.append(
-                    getattr(unaccent(cast(model_attribute, db.String)), "ilike")(
-                        f"%{v}%"
-                    )
+                    getattr(unaccent(cast(model_attribute, db.String)), "ilike")(f"%{v}%")
                 )
             filter_out = and_(*filters_out)
 

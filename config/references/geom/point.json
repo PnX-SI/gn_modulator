@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id:": "point",
     "$id": "https://geojson.org/schema/Point.json",
     "title": "GeoJSON Point",
     "type": "object",

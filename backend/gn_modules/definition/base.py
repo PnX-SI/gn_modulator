@@ -8,13 +8,21 @@ from gn_modules.utils.env import config_directory
 from gn_modules.utils.cache import set_global_cache, get_global_cache
 
 # liste de tous les type de definition
-definition_types = ["schema", "reference", "data", "module", "import", "layout"]
+definition_types = [
+    "schema",
+    "reference",
+    "data",
+    "module",
+    "import",
+    "layout",
+    "template",
+]
 
 # liste des types de definition avec une reference
 # (un jsonschema qui permet de valider les definitions reçues)
 # TODO ajouter tous les types sauf reference
-required_references = ["schema", "schema_auto", "data", "import"]
-definition_types_with_reference = ["schema", "data", "import"]
+required_references = ["schema", "schema_auto", "data", "import", "module"]
+definition_types_with_reference = ["schema", "data", "import", "module"]
 
 
 class DefinitionBase:
@@ -112,9 +120,7 @@ class DefinitionBase:
                 check_references_errors.append(
                     {
                         "type": "reference",
-                        "file_path": get_global_cache(
-                            ["reference", reference_key, "file_path"]
-                        ),
+                        "file_path": get_global_cache(["reference", reference_key, "file_path"]),
                         "definition": reference,
                         "msg": f"{str(e)}",
                     }
@@ -132,14 +138,26 @@ class DefinitionBase:
 
         check_local_definition_errors = []
 
-        definition = get_global_cache([definition_type, definition_key, "definition"])
+        definition = cls.get_definition(definition_type, definition_key)
 
         # schema de validation de la definition
-        definition_reference = cls.get_definition_reference(definition_type, definition)
-
+        definition_reference_name = cls.get_definition_reference_name(definition_type, definition)
+        definition_reference = get_global_cache(
+            ["reference", definition_reference_name, "definition"]
+        )
         if definition_reference is None:
+
             if definition_type in definition_types_with_reference:
-                raise Exception(f"{definition_type}: pas de reference trouvee")
+                check_local_definition_errors.append(
+                    {
+                        "type": definition_type,
+                        "file_path": get_global_cache(
+                            [definition_type, definition_key, "file_path"]
+                        ),
+                        "definition": definition,
+                        "msg": f"Une référence est requise pour valider pour le type {definition_type}",
+                    }
+                )
             return check_local_definition_errors
 
         resolver = jsonschema.RefResolver(
@@ -152,16 +170,12 @@ class DefinitionBase:
         for error in jsonschema_errors:
             msg = error.message
             if error.path:
-                msg = "[{}] {}".format(
-                    ".".join(str(x) for x in error.absolute_path), msg
-                )
+                msg = "[{}] {}".format(".".join(str(x) for x in error.absolute_path), msg)
 
             check_local_definition_errors.append(
                 {
                     "type": definition_type,
-                    "file_path": get_global_cache(
-                        [definition_type, definition_key, "file_path"]
-                    ),
+                    "file_path": get_global_cache([definition_type, definition_key, "file_path"]),
                     "definition": definition,
                     "msg": f"{msg}",
                 }
@@ -170,7 +184,7 @@ class DefinitionBase:
         return check_local_definition_errors
 
     @classmethod
-    def get_definition_reference(cls, definition_type, definition):
+    def get_definition_reference_name(cls, definition_type, definition):
         """
         renvoie le schema de reference pour pouvoir valider une definition
         """
@@ -179,18 +193,30 @@ class DefinitionBase:
         if definition_type == "schema":
             # deux possibilité (auto ou non)
             if definition["meta"].get("autoschema"):
-                return get_global_cache(["reference", "schema_auto", "definition"])
+                return "schema_auto"
             else:
-                return get_global_cache(["reference", "schema", "definition"])
+                return "schema"
 
-        # TODO
-        # - module, layout
+        # module
+        if definition_type == "module":
+            if definition.get("template"):
+                return "module_with_template"
+            else:
+                return "module"
 
-        # - data
         if definition_type in ["data", "import"]:
-            return get_global_cache(["reference", definition_type, "definition"])
+            return definition_type
 
         return None
+
+    @classmethod
+    def get_definition(cls, definition_type, definition_key):
+        """
+        retourne une définition pour un type donné
+        utilise get_global_cache
+        """
+
+        return get_global_cache([definition_type, definition_key, "definition"])
 
     @classmethod
     def local_check_definitions(cls):
@@ -220,24 +246,17 @@ class DefinitionBase:
         try:
             definition = cls.load_definition_from_file(file_path, load_keys=True)
 
-            # resolution des élément commençant par '_'
-            # et contenus dans _defs
-            # (sauf les element dynamique qui com,mencent par __f__)
-            definition = cls.process_defs(definition)
-
             if isinstance(definition, list):
                 definition_errors.append(
                     {
                         "type": "definition",
                         "file_path": str(file_path),
-                        "msg": "La definition ne doit pas être une liste",
+                        "msg": "La définition ne doit pas être une liste",
                     }
                 )
                 return definition_errors
 
-            definition_type, definition_key = cls.get_definition_type_and_key(
-                definition, file_path
-            )
+            definition_type, definition_key = cls.get_definition_type_and_key(definition)
 
             # si global_cache_key n'est pas défini
             # c'est que letype de configuration n'est pas detecté
@@ -254,7 +273,7 @@ class DefinitionBase:
             # test si la données n'existe pas dansun autre fichier
             # et déjà été chargée dans le cache
             # ce qui ne devrait pas être le cas
-            elif get_global_cache([definition_type, definition_key]):
+            elif cls.get_definition(definition_type, definition_key):
                 definition_errors.append(
                     {
                         "type": definition_type,
@@ -268,11 +287,9 @@ class DefinitionBase:
             # - verification des données
             # - mise en cache des definitions et du chemin du fichier
             else:
+                set_global_cache([definition_type, definition_key, "definition"], definition)
                 set_global_cache(
-                    [definition_type, definition_key, "definition"], definition
-                )
-                set_global_cache(
-                    [definition_type, definition_key, "file_path"], file_path
+                    [definition_type, definition_key, "file_path"], file_path.resolve()
                 )
 
         # gestion des exceptions et récupération des erreur
@@ -297,16 +314,13 @@ class DefinitionBase:
                 }
             )
 
-        # - erreurs dans les _defs et les élements commençant par '_'
-        except cls.errors.DefinitionNoDefsError as e:
-            definition_errors.append(
-                {"type": "definition", "file_path": str(file_path), "msg": f"{str(e)}"}
-            )
-
         return definition_errors
 
     @classmethod
-    def get_definition_type_and_key(cls, definition, file_path):
+    def get_definition_type_and_key(
+        cls,
+        definition,
+    ):
         """
         renvoie le type de definition et la clé pour le stockage dans le cache
         lorsque l'on peut en trouver une pour le dictionnaire de definition
@@ -314,13 +328,12 @@ class DefinitionBase:
 
         # recherche du type de configuration
         schema_name = definition.get("meta", {}).get("schema_name")
-        module_code = definition.get("module", {}).get("module_code")
+        module_code = definition.get("module_code")
         layout_name = definition.get("layout_name")
         data_name = definition.get("data_name")
         import_name = definition.get("import_name")
-        reference_id = (
-            definition.get("$id:") or definition.get("$id") or definition.get("$schema")
-        )
+        module_template_name = definition.get("module_template_name")
+        reference_id = definition.get("$id:")
 
         # assignation d'un type de definition et d'une reference
         definition_type, definition_key = (
@@ -334,8 +347,10 @@ class DefinitionBase:
             if data_name
             else ("import", import_name)
             if import_name
-            else ("reference", file_path.stem)
+            else ("reference", reference_id)
             if reference_id
+            else ("module_template", module_template_name)
+            if module_template_name
             else (None, None)
         )
 
@@ -368,7 +383,8 @@ class DefinitionBase:
 
         global_check_definition_errors = []
 
-        definition = get_global_cache([definition_type, definition_key, "definition"])
+        definition = cls.get_definition(definition_type, definition_key)
+
         schema_names = cls.schema_names()
         missings_schema_name = cls.check_definition_element_in_list(
             definition, "schema_name", schema_names
@@ -376,12 +392,11 @@ class DefinitionBase:
 
         if missings_schema_name:
 
+            missings_schema_name_txt = ", ".join(map(lambda x: f"'{x}'", missings_schema_name))
             global_check_definition_errors.append(
                 {
-                    "file_path": get_global_cache(
-                        [definition_type, definition_key, "file_path"]
-                    ),
-                    "msg": f"Les schémas {', '.join(missings_schema_name)} ne sont pas présents dans les définitions existantes",
+                    "file_path": get_global_cache([definition_type, definition_key, "file_path"]),
+                    "msg": f"Le ou les schéma(s) {missings_schema_name_txt} ne sont pas présents dans les définitions existantes",
                 }
             )
 
@@ -398,25 +413,20 @@ class DefinitionBase:
         l'initialisation est considérée comme valide lorsque la liste d'erreur est vide
         """
 
-        # chargement des définitions
-        init_definitions_errors = cls.load_definitions()
-        if len(init_definitions_errors):
-            return init_definitions_errors
+        for action in [
+            # chargement des définitions
+            "load_definitions",
+            # verification des réferences
+            # (qui vont servir à vérifier les definitions à l'étape suivante)
+            "check_references",
+            # application des templates
+            "process_definition_templates",
+            # vérification locale des définitions
+            "local_check_definitions",
+            # verification globale des definitions
+            "global_check_definitions",
+        ]:
+            if init_definitions_errors := getattr(cls, action)():
+                return init_definitions_errors
 
-        # verification des reference
-        # (qui vont servir à vérifier les definitions à l'étape suivante)
-        init_definitions_errors = cls.check_references()
-        if len(init_definitions_errors):
-            return init_definitions_errors
-
-        # vérification locale des définitions
-        init_definitions_errors = cls.local_check_definitions()
-        if len(init_definitions_errors):
-            return init_definitions_errors
-
-        # verification globale des definitions
-        init_definitions_errors = cls.global_check_definitions()
-        if len(init_definitions_errors):
-            return init_definitions_errors
-
-        return init_definitions_errors
+        return []

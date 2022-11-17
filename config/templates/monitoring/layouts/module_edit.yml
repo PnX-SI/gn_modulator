@@ -1,0 +1,8 @@
+layout_name: m_monitoring.module_edit
+height_auto: true
+direction: row
+items:
+    -
+        type: object
+        display: form
+        key: module

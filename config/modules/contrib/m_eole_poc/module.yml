@@ -1,6 +1,6 @@
 #
+module_code: m_eole
 module:
-  module_code: m_eole
   module_label: Modules de suivi éolien
   module_desc: POC pour le projet suivi éolien
   module_picto: fa-puzzle-piece
@@ -51,8 +51,8 @@ objects:
 params:
   id_module:
     schema_name: commons.module
-    value: m_eole
-    field_name: module_code
+    value:
+      module_code: m_eole
 
 tree:
   parc:

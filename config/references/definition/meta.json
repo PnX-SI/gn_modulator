@@ -1,5 +1,5 @@
 {
-  "$id:": "references/schema/meta",
+  "$id:": "meta",
   "type": "object",
   "properties": {
     "schema_name": { "type": "string"},

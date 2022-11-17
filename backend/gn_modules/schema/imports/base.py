@@ -9,7 +9,7 @@ import jsonschema
 import marshmallow
 from sqlalchemy.orm.exc import NoResultFound
 from .. import errors
-from gn_modules.utils.cache import get_global_cache
+from gn_modules.utils.cache import get_global_cache, clear_global_cache, set_global_cache
 
 
 class SchemaBaseImports:
@@ -17,12 +17,12 @@ class SchemaBaseImports:
     def process_features(cls, data_name):
         """ """
 
-        data = get_global_cache("data", data_name)
+        data = get_global_cache(["data", data_name, "definition"])
 
-        if not data:
+        if data is None:
             raise (Exception(f"La données demandée {data_name} n'existe pas"))
 
-        data_file_path = data["file_path"]
+        data_file_path = get_global_cache(["data", data_name, "file_path"])
 
         infos = []
 
@@ -49,18 +49,12 @@ class SchemaBaseImports:
             sm_rel.get_foreign_keys(rel_test_values)
             return rel_test_values
 
-        if (
-            self.property(key_process).get("relation_type") in ["1-n", "n-n"]
-            and not process_one
-        ):
+        if self.property(key_process).get("relation_type") in ["1-n", "n-n"] and not process_one:
             fks = [
                 self.get_foreign_key(key_process, value, process_one=True)
                 for value in rel_test_values
             ]
-            return [
-                fk if isinstance(fk, dict) else {sm_rel.pk_field_name(): fk}
-                for fk in fks
-            ]
+            return [fk if isinstance(fk, dict) else {sm_rel.pk_field_name(): fk} for fk in fks]
 
         if not isinstance(rel_test_values, list):
             rel_test_values = [rel_test_values]
@@ -75,13 +69,9 @@ class SchemaBaseImports:
         sm_rel.get_foreign_keys(d)
         rel_test_values = [d[key] for key in d]
 
-        cache_key = "__".join(
-            [self.schema_name()] + list(map(lambda x: str(x), rel_test_values))
-        )
+        cache_key = "__".join([self.schema_name()] + list(map(lambda x: str(x), rel_test_values)))
 
-        if cache_value := get_global_cache(
-            ["import_pk_keys", self.schema_name(), cache_key]
-        ):
+        if cache_value := get_global_cache(["import_pk_keys", self.schema_name(), cache_key]):
             return cache_value
 
         if None in rel_test_values:
@@ -94,15 +84,12 @@ class SchemaBaseImports:
                 params={},  # sinon bug et utilise un param précédent ????
             ).one()
             pk = getattr(m, sm_rel.pk_field_name())
-            self.cls.set_global_cache("import_pk_keys", cache_key, pk)
+            set_global_cache(["import_pk_keys", self.schema_name(), cache_key], pk)
             return pk
         except NoResultFound:
             raise errors.SchemaImportPKError(
-                "{}={} Pk not found {}".format(
-                    key_process, rel_test_values, sm_rel.schema_name()
-                )
+                "{}={} Pk not found {}".format(key_process, rel_test_values, sm_rel.schema_name())
             )
-            return None
 
     def get_foreign_keys(self, d):
 
@@ -154,9 +141,7 @@ class SchemaBaseImports:
         return (
             data_item["items"]
             if "items" in data_item
-            else cls.get_data_items_from_file(
-                Path(file_path).parent / data_item["file"]
-            )
+            else cls.get_data_items_from_file(Path(file_path).parent / data_item["file"])
             if "file" in data_item
             else []
         )
@@ -164,7 +149,7 @@ class SchemaBaseImports:
     @classmethod
     def process_data_item(cls, data_item, file_path):
 
-        cls.clear_global_cache("import_pk_keys")
+        clear_global_cache(["import_pk_keys"])
         schema_name = data_item["schema_name"]
         sm = cls(schema_name)
         v_updates = []
@@ -220,12 +205,14 @@ class SchemaBaseImports:
 
             except marshmallow.exceptions.ValidationError as e:
                 key = list(e.messages.keys())[0]
-                msg_error = "{values} : {key}={quote}{value}{quote} ({msg}) (marshmallow schema)".format(
-                    values=", ".join(values),
-                    key=key,
-                    quote="'" if isinstance(e.data[key], str) else "",
-                    value=e.data[key],
-                    msg=", ".join(e.messages[key]),
+                msg_error = (
+                    "{values} : {key}={quote}{value}{quote} ({msg}) (marshmallow schema)".format(
+                        values=", ".join(values),
+                        key=key,
+                        quote="'" if isinstance(e.data[key], str) else "",
+                        value=e.data[key],
+                        msg=", ".join(e.messages[key]),
+                    )
                 )
                 v_errors.append({"value": value, "data": d, "error": msg_error})
 

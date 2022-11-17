@@ -45,11 +45,7 @@ class SchemaModelColumnProperties:
             )
             relation_label, _ = self.custom_getattr(Model, label_key)
             return select(
-                [
-                    func.string_agg(
-                        cast(relation_label, db.String), literal_column("', '")
-                    )
-                ]
+                [func.string_agg(cast(relation_label, db.String), literal_column("', '"))]
             )
 
         if column_property_type in ["st_x", "st_y"]:
@@ -87,9 +83,7 @@ class SchemaModelColumnProperties:
             return func.st_astext(getattr(Model, column_property_def["key"]))
 
         if column_property_type in ["min", "max"]:
-            field_key = ".".join(
-                [column_property_def["relation_key"], column_property_def["key"]]
-            )
+            field_key = ".".join([column_property_def["relation_key"], column_property_def["key"]])
             relation_field, _ = self.custom_getattr(Model, field_key)
             func_min_max = getattr(func, column_property_type)
             return select([func_min_max(relation_field)])
@@ -98,14 +92,10 @@ class SchemaModelColumnProperties:
             "La column_property {} {} est mal définie".format(self.schema_name(), key)
         )
 
-    def column_property_util_relation_where_conditions(
-        self, key, column_property_def, Model
-    ):
+    def column_property_util_relation_where_conditions(self, key, column_property_def, Model):
 
         relation, _ = self.custom_getattr(Model, column_property_def["relation_key"])
-        rel = self.cls(
-            self.property(column_property_def["relation_key"])["schema_name"]
-        )
+        rel = self.cls(self.property(column_property_def["relation_key"])["schema_name"])
         conditions = relation
         if column_property_def.get("filters") is not None:
             condition_filters, conditions = rel.process_filter_array(

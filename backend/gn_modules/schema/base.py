@@ -175,9 +175,7 @@ class SchemaBase:
         return column_keys
 
     def column_properties_keys(self, sort=False):
-        column_keys = [
-            k for k, v in self.properties().items() if self.is_column_property(k)
-        ]
+        column_keys = [k for k, v in self.properties().items() if self.is_column_property(k)]
         if sort:
             column_keys.sort()
         return column_keys
@@ -328,9 +326,7 @@ class SchemaBase:
         if isinstance(data, dict):
 
             if not key:
-                return "_".join(
-                    [self.process_csv_data(None, data[k]) for k in data.keys()]
-                )
+                return "_".join([self.process_csv_data(None, data[k]) for k in data.keys()])
 
             if "." in key:
                 key1 = key.split(".")[0]

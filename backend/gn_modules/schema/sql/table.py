@@ -36,9 +36,7 @@ class SchemaSqlTable:
         set_global_cache(["sql_table", relation_def["schema_dot_table"]], True)
 
         local_key = self.pk_field_name()
-        local_key_type = self.get_sql_type(
-            self.column(local_key), cor_table=True, required=True
-        )
+        local_key_type = self.get_sql_type(self.column(local_key), cor_table=True, required=True)
         local_table_name = self.sql_table_name()
         local_schema_name = self.sql_schema_name()
 

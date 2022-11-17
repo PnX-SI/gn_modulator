@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://geojson.org/schema/Polygon.json",
   "title": "GeoJSON Polygon",
+  "$id:": "multipolygon",
   "type": "object",
   "required": [
     "type",

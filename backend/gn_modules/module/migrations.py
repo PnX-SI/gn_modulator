@@ -15,9 +15,7 @@ class ModuleMigration:
         suffix = "init_{}.py".format(module_code.lower())
 
         if revision_id:
-            return cls.migrations_dir(module_code) / "versions/{}_{}".format(
-                revision_id, suffix
-            )
+            return cls.migrations_dir(module_code) / "versions/{}_{}".format(revision_id, suffix)
         for root, dir, files in os.walk(cls.migrations_dir(module_code) / "versions"):
             for f in files:
                 if f.endswith(suffix):
@@ -38,10 +36,7 @@ class ModuleMigration:
         for root, dir, files in os.walk(dir_path):
             for f in files:
                 if link:
-                    if (
-                        module_version_dir.resolve()
-                        == (Path(root) / f).resolve().parent
-                    ):
+                    if module_version_dir.resolve() == (Path(root) / f).resolve().parent:
                         migration_files.append(Path(root) / f)
                 else:
                     if f.endswith(".py") and f != "__init__.py":
@@ -69,9 +64,7 @@ class ModuleMigration:
         if data_dir.exists():
             data_link.symlink_to(data_dir)
 
-        print(
-            "- Création des liens symboliques vers 'gn_modules/migrations' (data et versions)"
-        )
+        print("- Création des liens symboliques vers 'gn_modules/migrations' (data et versions)")
 
     @classmethod
     def remove_migration_links(cls, module_code):
@@ -103,9 +96,7 @@ class ModuleMigration:
             }
             txt = template.render(template_data)
 
-            migration_init_file_path = cls.migration_init_file_path(
-                module_code, revision_id
-            )
+            migration_init_file_path = cls.migration_init_file_path(module_code, revision_id)
             migration_init_file_path.parent.mkdir(parents=True, exist_ok=True)
             with open(migration_init_file_path, "w") as revision_file:
                 revision_file.write(txt)

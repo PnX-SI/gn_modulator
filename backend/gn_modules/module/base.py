@@ -17,7 +17,7 @@ class ModuleBase:
     @classmethod
     def migrations_dir(cls, module_code=None):
         if not module_code:
-            return migrations_directory()
+            return migrations_directory
         return cls.module_dir_path(module_code) / "migrations"
 
     @classmethod
@@ -28,21 +28,18 @@ class ModuleBase:
     def register_db_module(cls, module_code):
         print(f"- Enregistrement du module {module_code}")
         schema_module = SchemaMethods("commons.module")
-        module_data = cls.module_config(module_code)["module"]
-        module_code = module_data["module_code"]
+        module_config = cls.module_config(module_code)
         module_row_data = {
-            "module_label": module_data["module_label"],
-            "module_desc": module_data["module_desc"],
-            "module_picto": module_data["module_picto"],
-            "active_frontend": module_data["active_frontend"],
             "module_code": module_code,
+            "module_label": module_config["module"]["module_label"],
+            "module_desc": module_config["module"]["module_desc"],
+            "module_picto": module_config["module"]["module_picto"],
+            "active_frontend": module_config["module"]["active_frontend"],
             "module_path": "modules/{}".format(module_code.lower()),
             "active_backend": False,
         }
         try:
-            schema_module.update_row(
-                module_code, module_row_data, field_name="module_code"
-            )
+            schema_module.update_row(module_code, module_row_data, field_name="module_code")
         except NoResultFound:
             schema_module.insert_row(module_row_data)
 
@@ -62,9 +59,7 @@ class ModuleBase:
         processed_schema_names = []
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
-            txt_schema, processed_schema_names = sm.sql_txt_process(
-                processed_schema_names
-            )
+            txt_schema, processed_schema_names = sm.sql_txt_process(processed_schema_names)
             txt += txt_schema
 
         sql_file_path = cls.migrations_dir(module_code) / "data/schema.sql"
@@ -89,9 +84,7 @@ class ModuleBase:
         txt = "--\n-- reset.sql ({})\n--\n\n".format(module_code)
         for schema_name in schema_names:
             sm = SchemaMethods(schema_name)
-            txt_drop_schema = "-- DROP SCHEMA {} CASCADE;\n".format(
-                sm.sql_schema_name()
-            )
+            txt_drop_schema = "-- DROP SCHEMA {} CASCADE;\n".format(sm.sql_schema_name())
             if txt_drop_schema not in txt:
                 txt += txt_drop_schema
 
@@ -127,14 +120,31 @@ class ModuleBase:
         copie le dossier assets d'un module dans le repertoire static de geonature
         dans le dossier 'static/external_assets/modules/{module_code.lower()}'
         """
-        module_config = cls.module_config(module_code)
-        module_assets_dir = Path(module_config["module_dir_path"]) / "assets"
-        assets_static_dir.mkdir(exist_ok=True, parents=True)
 
+        if module_code == "MODULES":
+            return []
+
+        module_assets_dir = Path(cls.module_dir_path(module_code)) / "assets"
+        assets_static_dir.mkdir(exist_ok=True, parents=True)
+        module_img_path = Path(module_assets_dir / "module.jpg")
+
+        # on teste si le fichier assets/module.jpg est bien présent
+        if not module_img_path.exists():
+            return [
+                {
+                    "file_path": module_img_path.resolve(),
+                    "msg": f"Le fichier de l'image du module {module_code} n'existe pas",
+                }
+            ]
+
+        # s'il y a bien une image du module,
+        #   - on crée le lien des assets vers le dossize static de geonature
         symlink(
             module_assets_dir,
             assets_static_dir / module_code.lower(),
         )
+
+        return []
 
     @classmethod
     def test_module_dependencies(cls, module_code):

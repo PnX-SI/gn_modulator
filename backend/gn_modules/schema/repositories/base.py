@@ -125,9 +125,7 @@ class SchemaRepositoriesBase:
                 for model_elem in model:
                     if not is_new_data:
                         break
-                    is_new_data = is_new_data and self.is_new_data(
-                        model_elem, data_elem
-                    )
+                    is_new_data = is_new_data and self.is_new_data(model_elem, data_elem)
 
                 if is_new_data:
                     return True
@@ -144,9 +142,7 @@ class SchemaRepositoriesBase:
 
         return False
 
-    def update_row(
-        self, value, data, field_name=None, module_code="MODULES", params={}
-    ):
+    def update_row(self, value, data, field_name=None, module_code="MODULES", params={}):
         """
         update row (Model.<field_name> == value) with data
 
@@ -235,9 +231,7 @@ class SchemaRepositoriesBase:
         ]
 
         defered_fields += [
-            defer(getattr(self.Model(), key))
-            for key in self.column_keys()
-            if key not in fields
+            defer(getattr(self.Model(), key)) for key in self.column_keys() if key not in fields
         ]
 
         for defered_field in defered_fields:
@@ -248,9 +242,7 @@ class SchemaRepositoriesBase:
                 pass
         return query
 
-    def query_list(
-        self, module_code="MODULES", cruved_type="R", params={}, query_type=None
-    ):
+    def query_list(self, module_code="MODULES", cruved_type="R", params={}, query_type=None):
 
         Model = self.Model()
         model_pk_field = getattr(Model, self.pk_field_name())
@@ -296,15 +288,11 @@ class SchemaRepositoriesBase:
         query = query.order_by(*(tuple(order_bys)))
 
         # limit offset
-        query = self.process_page_size(
-            params.get("page"), params.get("page_size"), query
-        )
+        query = self.process_page_size(params.get("page"), params.get("page_size"), query)
 
         return query
 
-    def get_query_infos(
-        self, module_code="MODULES", cruved_type="R", params={}, url=None
-    ):
+    def get_query_infos(self, module_code="MODULES", cruved_type="R", params={}, url=None):
 
         count_total = self.query_list(
             module_code=module_code, cruved_type="R", params=params, query_type="total"

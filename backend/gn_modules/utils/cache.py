@@ -1,7 +1,11 @@
 global_cache = {}
 
 
-class CacheKeysNotListError(Exception):
+class CacheError(Exception):
+    pass
+
+
+class CacheKeysNotListError(CacheError):
     """
     Pour éviter les cas où l'on utilise les fonctions de global_cache
     en mettant un str à la place d'une liste pour keys
@@ -10,19 +14,24 @@ class CacheKeysNotListError(Exception):
     pass
 
 
-def clear_global_cache():
+def clear_global_cache(keys):
     """
-    RAZ global cache
+    efface toutes les keys d'un dictionnaire référencé par keys
     """
-    global_cache_keys = list(global_cache.keys())
-    for key in global_cache_keys:
-        del global_cache[key]
+    current = get_global_cache(keys)
+    if not isinstance(current, dict):
+        return
+
+    current_keys = list(current.keys())
+    for key in current_keys:
+        del current[key]
 
 
 def get_global_cache(keys, default=None):
 
     if not isinstance(keys, list):
         raise CacheKeysNotListError(f"La variable 'keys' n'est pas une liste {keys}")
+
     current = global_cache
     for key in keys:
         current = current.get(key)

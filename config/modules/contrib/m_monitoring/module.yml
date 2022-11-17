@@ -1,5 +1,5 @@
+module_code: m_monitoring
 module:
-  module_code: m_monitoring
   module_label: Gestionnaire de sites
   module_desc: Module de gestion de sites. (Vers une version 2 du module monitoring)
   module_picto: fa-puzzle-piece

@@ -34,18 +34,14 @@ class ModuleBreadCrumbs:
 
             # label ???
             if data.get(sm.pk_field_name()):
-                m = sm.get_row(
-                    data[sm.pk_field_name()], module_code=module_code, params={}
-                ).one()
+                m = sm.get_row(data[sm.pk_field_name()], module_code=module_code, params={}).one()
                 data_label = sm.serialize(m, fields=[sm.label_field_name()])
                 label_page = f"{sm.label()} {data_label[sm.label_field_name()]}"
             else:
                 # todo create ou list ???
 
                 label_page = (
-                    f"Création {sm.label()}"
-                    if page_config["type"] == "create"
-                    else sm.labels()
+                    f"Création {sm.label()}" if page_config["type"] == "create" else sm.labels()
                 )
 
             label_page = label_page.capitalize()
@@ -67,15 +63,11 @@ class ModuleBreadCrumbs:
                 data_parent = data
 
             breadcrumb = [{"label": label_page, "url": url_page}]
-            parent_breadcrumbs = cls.breadcrumbs(
-                module_code, parent_page_name, data_parent
-            )
+            parent_breadcrumbs = cls.breadcrumbs(module_code, parent_page_name, data_parent)
 
         else:
             # racine du module on met le nom du module
-            breadcrumb = [
-                {"url": url_page, "label": f"{module_config['module']['module_label']}"}
-            ]
+            breadcrumb = [{"url": url_page, "label": f"{module_config['module']['module_label']}"}]
             parent_breadcrumbs = [{"url": "#/modules/", "label": "Modules"}]
 
         return parent_breadcrumbs + breadcrumb

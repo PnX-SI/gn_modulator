@@ -1,11 +1,11 @@
-_defs:
-  _filters_departement: >
+aliases:
+  - &filters_departement |
     __f__{
         return data.region
         ? `area_code in ${utils.departementsForRegion(data.region.area_code).join(';')}`
         : null
     }
-  _filters_commune: >
+  - &filters_commune |
     __f__{
         if (data.departement) {
             return `area_code like ${data.departement.area_code}%`
@@ -69,14 +69,14 @@ layout:
           - area_code
         label_field_name: code_name
         sort: code_name
-        filters: _filters_departement
+        filters: *filters_departement
       - reload_on_search: true
         key: commune
         title: Commune
         type: list_form
         area_type: COM
         label_field_name: name_code
-        filters: _filters_commune
+        filters: *filters_commune
         sort: area_name
       - title: Infrastructure
         key: infrastructure

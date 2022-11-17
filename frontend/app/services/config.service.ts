@@ -33,7 +33,7 @@ export class ModulesConfigService {
       return of(this._config.modules);
     }
 
-    return this._mRequest.request('get', `${this.backendModuleUrl()}/modules_config/`).pipe(
+    return this._mRequest.request('get', `${this.backendModuleUrl()}/config/`).pipe(
       mergeMap((modulesConfig) => {
         this._config.modules = modulesConfig;
         return of(this._config.modules);

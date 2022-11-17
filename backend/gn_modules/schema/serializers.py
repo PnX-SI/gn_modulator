@@ -54,7 +54,7 @@ class SchemaSerializers:
     def marshmallow_meta_name(self):
         return "Meta{}".format(self.marshmallow_schema_name())
 
-    def process_column_marshmallow(self, column_def):
+    def process_column_marshmallow(self, column_key, column_def):
         field_type = column_def.get("type")
 
         kwargs = {"allow_none": True}
@@ -93,9 +93,7 @@ class SchemaSerializers:
         if field_type == "json":
             return fields.Raw(**kwargs)
 
-        raise SchemaProcessedPropertyError(
-            "type {} non traité".format(column_def["type"])
-        )
+        raise SchemaProcessedPropertyError("type {} non traité".format(column_def["type"]))
 
     def opposite_relation_def(self, relation_def):
         opposite = {
@@ -136,7 +134,8 @@ class SchemaSerializers:
             if self.is_relation_excluded(relation_def_test, relation_def)
         ]
 
-    def process_relation_marshmallow(self, relation_def):
+    def process_relation_marshmallow(self, relation_key, relation_def):
+
         # kwargs = {}
         # kwargs['exclude_relations'] = [self.opposite_relation_def(relation_def)]
 
@@ -149,8 +148,7 @@ class SchemaSerializers:
         exclude = relation.excluded_relations(self.opposite_relation_def(relation_def))
 
         relation_serializer = fields.Nested(
-            relation.marshmallow_schema_name(),
-            **{"exclude": exclude, "dump_default": None}
+            relation.marshmallow_schema_name(), **{"exclude": exclude, "dump_default": None}
         )
 
         if relation_def["relation_type"] == "n-1":
@@ -168,9 +166,7 @@ class SchemaSerializers:
         False permet de recréer le schema si besoin
         """
 
-        MarshmallowSchema = get_global_cache(
-            ["schema", self.schema_name(), "marshmallow"]
-        )
+        MarshmallowSchema = get_global_cache(["schema", self.schema_name(), "marshmallow"])
 
         if MarshmallowSchema is not None and not force:
             return MarshmallowSchema
@@ -217,10 +213,7 @@ class SchemaSerializers:
                 if self.has_property(k):
                     property = self.property(k)
                     # test if array
-                    if (
-                        property.get("relation_type") in ["n-1", "n-n"]
-                        and data[k] is None
-                    ):
+                    if property.get("relation_type") in ["n-1", "n-n"] and data[k] is None:
                         data.pop(k)
                 # rem ove extra items
                 else:
@@ -235,31 +228,33 @@ class SchemaSerializers:
             "load_fk": True,
         }
 
-        for key, column_def in self.columns().items():
-            marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
+        for column_key, column_def in self.columns().items():
+            marshmallow_schema_dict[column_key] = self.process_column_marshmallow(
+                column_key, column_def
+            )
 
-        for key, column_def in self.column_properties().items():
+        for column_key, column_def in self.column_properties().items():
             if column_def["type"] == "relation":
                 continue
-            marshmallow_schema_dict[key] = self.process_column_marshmallow(column_def)
+            marshmallow_schema_dict[column_key] = self.process_column_marshmallow(
+                column_key, column_def
+            )
 
         # if self.attr('meta.check_cruved'):
-        marshmallow_schema_dict["ownership"] = fields.Integer(
-            metadata={"dumps_only": True}
-        )
-        marshmallow_schema_dict["row_number"] = fields.Integer(
-            metadata={"dumps_only": True}
-        )
+        marshmallow_schema_dict["ownership"] = fields.Integer(metadata={"dumps_only": True})
+        marshmallow_schema_dict["row_number"] = fields.Integer(metadata={"dumps_only": True})
         # else:
         # marshmallow_schema_dict['ownership'] = 0
 
         # store in cache before relation (avoid circular dependancies)
-        for key, relation_def in self.relationships().items():
-            relation_marshmallow = self.process_relation_marshmallow(relation_def)
+
+        for relation_key, relation_def in self.relationships().items():
+            relation_marshmallow = self.process_relation_marshmallow(relation_key, relation_def)
+
             if not relation_marshmallow:
                 continue
 
-            marshmallow_schema_dict[key] = relation_marshmallow
+            marshmallow_schema_dict[relation_key] = relation_marshmallow
 
         MarshmallowSchema = type(
             self.marshmallow_schema_name(),
@@ -267,9 +262,7 @@ class SchemaSerializers:
             marshmallow_schema_dict,
         )
 
-        set_global_cache(
-            ["schema", self.schema_name(), "marshmallow"], MarshmallowSchema
-        )
+        set_global_cache(["schema", self.schema_name(), "marshmallow"], MarshmallowSchema)
 
         # load dependancies
         for dep in self.dependencies():
@@ -291,15 +284,11 @@ class SchemaSerializers:
         kwargs = {"only": fields} if fields else {}
 
         if as_geojson:
-            geometry_field_name = geometry_field_name or self.attr(
-                "meta.geometry_field_name"
-            )
+            geometry_field_name = geometry_field_name or self.attr("meta.geometry_field_name")
             if fields and geometry_field_name not in fields:
                 fields.append(geometry_field_name)
 
-        data = self.MarshmallowSchema()(**kwargs).dump(
-            m[0] if isinstance(m, tuple) else m
-        )
+        data = self.MarshmallowSchema()(**kwargs).dump(m[0] if isinstance(m, tuple) else m)
 
         # pour gérer les champs supplémentaire (ownership, row_number, etc....)
         if isinstance(m, tuple):
@@ -352,9 +341,7 @@ class SchemaSerializers:
             geometry_field_name=geometry_field_name,
         )
 
-    def serialize_list(
-        self, m_list, fields=None, as_geojson=False, geometry_field_name=False
-    ):
+    def serialize_list(self, m_list, fields=None, as_geojson=False, geometry_field_name=False):
         """
         serialize using marshmallow
 
@@ -365,9 +352,7 @@ class SchemaSerializers:
 
         if as_geojson:
 
-            geometry_field_name = geometry_field_name or self.attr(
-                "meta.geometry_field_name"
-            )
+            geometry_field_name = geometry_field_name or self.attr("meta.geometry_field_name")
             if fields and geometry_field_name not in fields:
                 fields.append(geometry_field_name)
 
@@ -398,9 +383,7 @@ class SchemaSerializers:
             return data_list
 
     def as_geojson(self, data, geometry_field_name=None):
-        geometry_field_name = geometry_field_name or self.attr(
-            "meta.geometry_field_name"
-        )
+        geometry_field_name = geometry_field_name or self.attr("meta.geometry_field_name")
         geometry = data.pop(geometry_field_name)
         return {"type": "Feature", "geometry": geometry, "properties": data}
 

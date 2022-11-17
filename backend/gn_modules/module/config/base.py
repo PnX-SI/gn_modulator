@@ -3,7 +3,7 @@
 """
 
 import copy
-from flask import g, jsonify, Blueprint, current_app
+from flask import g
 from gn_modules.schema import SchemaMethods
 from gn_modules.utils.cache import get_global_cache, set_global_cache
 from geonature.core.gn_permissions.tools import cruved_scope_for_user_in_module
@@ -34,6 +34,8 @@ class ModulesConfigBase:
         """
         Initialise la config d'un module
         """
+
+        init_module_config_errors = []
 
         module_config = None
 
@@ -76,7 +78,7 @@ class ModulesConfigBase:
             cls.process_module_params(module_code)
             cls.process_module_api(module_code)
 
-        return module_config
+        return init_module_config_errors
 
     @classmethod
     def modules_config_with_cruved(cls):

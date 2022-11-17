@@ -43,9 +43,7 @@ class SchemaSqlTrigger:
         """ """
 
         area_types = property_def.get("area_types", [])
-        area_types_txt = (
-            " pour les types {}".format(", ".join(area_types)) if area_types else ""
-        )
+        area_types_txt = " pour les types {}".format(", ".join(area_types)) if area_types else ""
 
         txt = ""
 
@@ -57,9 +55,7 @@ class SchemaSqlTrigger:
         trigger_function_insert_name = (
             f"{cor_schema_name}.fct_trig_insert_{cor_table_name}_on_each_statement"
         )
-        trigger_function_update_name = (
-            f"{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row"
-        )
+        trigger_function_update_name = f"{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row"
         function_process_all_name = f"{cor_schema_name}.process_all_{cor_table_name}"
         area_types = area_types
         geometry_field_name = property_def["trigger"]["key"]
@@ -193,17 +189,13 @@ CREATE TRIGGER trg_update_{cor_schema_name}_{cor_table_name}
         trigger_function_insert_name = (
             f"{cor_schema_name}.fct_trig_insert_{cor_table_name}_on_each_statement"
         )
-        trigger_function_update_name = (
-            f"{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row"
-        )
+        trigger_function_update_name = f"{cor_schema_name}.fct_trig_update_{cor_table_name}_on_row"
         function_process_all_name = f"{cor_schema_name}.process_all_{cor_table_name}"
 
         geometry_field_name = property_def["trigger"]["key"]
         partition_keys = "t." + local_key
         if property_def["trigger"].get("partition"):
-            partition_keys += ", " + ", l.".join(
-                property_def["trigger"].get("partition")
-            )
+            partition_keys += ", " + ", l.".join(property_def["trigger"].get("partition"))
 
         txt = ""
         txt += f"""---- Trigger {sql_schema_name}.{sql_table_name}.{geometry_field_name} avec une distance de {distance} avec {relation_schema_name}.{relation_table_name}.{foreign_key}

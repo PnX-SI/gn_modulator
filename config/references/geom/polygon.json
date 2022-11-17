@@ -3,6 +3,7 @@
   "$id": "https://geojson.org/schema/Polygon.json",
   "title": "GeoJSON Polygon",
   "type": "object",
+  "$id:": "polygon",
   "required": [
     "type",
     "coordinates"

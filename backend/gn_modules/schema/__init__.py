@@ -46,6 +46,29 @@ class SchemaMethods(
         if not get_global_cache(["schema", schema_name, "schema"]):
             self.init()
 
+    @property
+    def cls(self):
+        return self.__class__
+
+    @property
+    def definition(self):
+        return get_global_cache(["schema", self.schema_name(), "definition"])
+
+    @definition.setter
+    def definition(self, value):
+        set_global_cache(["schema", self.schema_name(), "definition"], value)
+
+    @property
+    def json_schema(self):
+        return get_global_cache(["schema", self.schema_name(), "json_schema"])
+
+    @json_schema.setter
+    def json_schema(self, value):
+        set_global_cache(["schema", self.schema_name(), "json_schema"], value)
+
+    def __str__(self):
+        return self.schema_name()
+
     def init(self):
         """
         Initialise le schema et le place dans le cache
@@ -72,48 +95,20 @@ class SchemaMethods(
 
         return self
 
-    @property
-    def cls(self):
-        return self.__class__
-
-    @property
-    def definition(self):
-        return get_global_cache(["schema", self.schema_name(), "definition"])
-
-    @definition.setter
-    def definition(self, value):
-        set_global_cache(["schema", self.schema_name(), "definition"], value)
-
-    @property
-    def json_schema(self):
-        return get_global_cache(["schema", self.schema_name(), "json_schema"])
-
-    @json_schema.setter
-    def json_schema(self, value):
-        set_global_cache(["schema", self.schema_name(), "json_schema"], value)
-
-    def __str__(self):
-        return self.schema_name()
-
     @classmethod
     def init_schemas(cls):
         """
         Initialise l'ensemble des schémas
         """
         init_schema_errors = []
+        # init class
         for schema_names in cls.schema_names():
-            try:
-                # init class
-                SchemaMethods(schema_names)
+            SchemaMethods(schema_names)
 
-                # init Model
-                SchemaMethods(schema_names).Model()
-
-                # init MarshmallowSchema
-                SchemaMethods(schema_names).MarshmallowSchema()
-
-            except Exception as e:
-                # TODO gestion des erreurs
-                raise e
+        # init Model
+        for schema_names in cls.schema_names():
+            SchemaMethods(schema_names).Model()
+        for schema_names in cls.schema_names():
+            SchemaMethods(schema_names).MarshmallowSchema()
 
         return init_schema_errors

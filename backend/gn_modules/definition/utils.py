@@ -10,62 +10,7 @@ class DefinitionUtils:
     """
     methodes pour
     - lire les json et yaml
-    - traiter les _defs
-      - pour definir un element et s'en re-servir ailleur dans la definition
-      - (à voir s'il n'y pas des chose à exploiter en YAML)
     """
-
-    @classmethod
-    def process_defs(cls, elem, _defs={}):
-
-        # dictionnaire
-        if isinstance(elem, dict):
-
-            # mise à jour des _defs si besoin
-            if "_defs" in elem:
-                _defs_new = copy.deepcopy(_defs)
-                _defs_new.update(elem["_defs"])
-
-            else:
-                _defs_new = _defs
-
-            for key, value in elem.items():
-
-                if key == "_defs":
-                    continue
-                val = cls.process_defs(value, _defs_new)
-
-                if val is not None:
-                    elem[key] = val
-
-            # ??
-            if "__value" in elem:
-                return elem["__value"]
-
-            return elem
-
-        # liste
-        if isinstance(elem, list):
-            elem_out = []
-            for item in elem:
-                val = cls.process_defs(item, _defs)
-                if val is not None and val != []:
-                    elem_out.append(val)
-            return elem_out
-
-        # element
-        if elem in _defs:
-            return cls.process_defs(_defs[elem], _defs)
-
-        # si un valeur commençant par "_" n'a pas été traitée => on lève une erreur
-        if str(elem).startswith("_") and not str(elem).startswith("__f__"):
-            raise cls.errors.DefinitionNoDefsError(
-                'Un elément commençant par "_" est présent dans les fichiers de config {}'.format(
-                    elem
-                )
-            )
-
-        return elem
 
     @classmethod
     def get_key_file_paths(cls, file_path):
@@ -152,9 +97,7 @@ class DefinitionUtils:
         # - liste
         if isinstance(item, list):
             for item_value in item:
-                missings += cls.check_definition_element_in_list(
-                    item_value, key_name, test_list
-                )
+                missings += cls.check_definition_element_in_list(item_value, key_name, test_list)
 
         # - element
         if item_key == key_name and isinstance(item, str):
@@ -162,3 +105,34 @@ class DefinitionUtils:
                 missings = [item]
 
         return missings
+
+    @classmethod
+    def errors_txt(cls, errors):
+        """
+        Pour l'affichage de la liste des erreurs
+        """
+
+        txt_errors = f"!!!! Il y a {len(errors)} erreurs dans les définitions. !!!!\n"
+
+        if len(errors) == 0:
+            return txt_errors
+
+        # on liste les fichiers
+        # afin de pouvoir les regrouper les erreurs par fichiers
+        definition_error_file_paths = []
+        for definition_error in errors:
+            if definition_error.get("file_path", "") not in definition_error_file_paths:
+                definition_error_file_paths.append(definition_error.get("file_path", ""))
+
+        # on trie les fichiers par ordre alphabetique
+        # on affiche les erreurs par fichier pour simplifier la lecture
+        for definition_error_file_path in sorted(definition_error_file_paths):
+            txt_errors += f"\n- {definition_error_file_path}\n\n"
+
+            for definition_error in filter(
+                lambda x: x.get("file_path", "") == definition_error_file_path,
+                errors,
+            ):
+                txt_errors += f"  - {definition_error['msg']}\n"
+
+        return txt_errors

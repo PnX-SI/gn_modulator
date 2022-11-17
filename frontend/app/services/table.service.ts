@@ -64,6 +64,12 @@ export class ModulesTableService {
       D: 'fa-trash',
     };
 
+    const actionTxt = {
+      R: 'details',
+      U: 'edit',
+      D: 'delete',
+    };
+
     const { actionAllowed, actionMsg } = this._mPage.checkAction(moduleCode, objectName, action);
     if (actionAllowed == null) {
       return;
@@ -81,7 +87,7 @@ export class ModulesTableService {
         );
         return `<span class="table-icon ${actionAllowed ? '' : 'disabled'}"><i class='fa ${
           iconAction[action]
-        } action' ${actionAllowed ? 'action="edit"' : ''}></i></span>`;
+        } action' ${actionAllowed ? 'action="' + actionTxt[action] + '"' : ''}></i></span>`;
       },
       width: 22,
       hozAlign: 'center',

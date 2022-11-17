@@ -95,8 +95,7 @@ class SchemaApi:
 
         if "prefilters" in object_definition:
             params["prefilters"] = (
-                self.parse_filters(object_definition["prefilters"])
-                + params["prefilters"]
+                self.parse_filters(object_definition["prefilters"]) + params["prefilters"]
             )
 
         return params
@@ -175,9 +174,7 @@ class SchemaApi:
 
             if params.get("sql"):
                 response = make_response(
-                    sqlparse.format(
-                        str(query_list), reindent=True, keywordcase="upper"
-                    ),
+                    sqlparse.format(str(query_list), reindent=True, keywordcase="upper"),
                     200,
                 )
                 response.mimetype = "text/plain"
@@ -304,23 +301,15 @@ class SchemaApi:
 
         return {
             "rest": {
-                "get": permissions.check_cruved_scope("R", module_code=module_code)(
-                    get_rest
-                ),
-                "post": permissions.check_cruved_scope("C", module_code=module_code)(
-                    post_rest
-                ),
-                "patch": permissions.check_cruved_scope("U", module_code=module_code)(
-                    patch_rest
-                ),
+                "get": permissions.check_cruved_scope("R", module_code=module_code)(get_rest),
+                "post": permissions.check_cruved_scope("C", module_code=module_code)(post_rest),
+                "patch": permissions.check_cruved_scope("U", module_code=module_code)(patch_rest),
                 "delete": permissions.check_cruved_scope("D", module_code=module_code)(
                     delete_rest
                 ),
             },
             "export": {
-                "get": permissions.check_cruved_scope("E", module_code=module_code)(
-                    get_export
-                )
+                "get": permissions.check_cruved_scope("E", module_code=module_code)(get_export)
             },
             "page_number": {
                 "get": permissions.check_cruved_scope("R", module_code=module_code)(
@@ -334,20 +323,14 @@ class SchemaApi:
         c'est ici que ce gère le CRUVED pour l'accès aux routes
         """
 
-        schema_api_dict = self.schema_api_dict(module_code, object_definition)[
-            view_type
-        ]
+        schema_api_dict = self.schema_api_dict(module_code, object_definition)[view_type]
 
         MV = type(
-            self.method_view_name(
-                module_code, object_definition["object_name"], view_type
-            ),
+            self.method_view_name(module_code, object_definition["object_name"], view_type),
             (MethodView,),
             schema_api_dict,
         )
-        return MV.as_view(
-            self.view_name(module_code, object_definition["object_name"], view_type)
-        )
+        return MV.as_view(self.view_name(module_code, object_definition["object_name"], view_type))
 
     def register_api(self, bp, module_code, object_name, object_definition={}):
         """
@@ -364,9 +347,7 @@ class SchemaApi:
         view_func_page_number = self.schema_view_func(
             "page_number", module_code, object_definition
         )
-        view_func_export = self.schema_view_func(
-            "export", module_code, object_definition
-        )
+        view_func_export = self.schema_view_func("export", module_code, object_definition)
 
         # read: GET (liste et one_row)
         if "R" in cruved:
@@ -376,9 +357,7 @@ class SchemaApi:
                 view_func=view_func_rest,
                 methods=["GET"],
             )
-            bp.add_url_rule(
-                f"/{object_name}/<value>", view_func=view_func_rest, methods=["GET"]
-            )
+            bp.add_url_rule(f"/{object_name}/<value>", view_func=view_func_rest, methods=["GET"])
             bp.add_url_rule(
                 f"/{object_name}/page_number/<value>",
                 view_func=view_func_page_number,
@@ -387,15 +366,11 @@ class SchemaApi:
 
         # create : POST
         if "C" in cruved:
-            bp.add_url_rule(
-                f"/{object_name}/", view_func=view_func_rest, methods=["POST"]
-            )
+            bp.add_url_rule(f"/{object_name}/", view_func=view_func_rest, methods=["POST"])
 
         # update : PATCH
         if "U" in cruved:
-            bp.add_url_rule(
-                f"/{object_name}/<value>", view_func=view_func_rest, methods=["PATCH"]
-            )
+            bp.add_url_rule(f"/{object_name}/<value>", view_func=view_func_rest, methods=["PATCH"])
 
         # delete : DELETE
         if "D" in cruved:

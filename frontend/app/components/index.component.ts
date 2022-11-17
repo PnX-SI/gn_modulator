@@ -27,15 +27,15 @@ export class ModulesIndexComponent implements OnInit {
           {
             direction: 'row',
             class: 'modules-liste',
-            items: this.modules.map((module) => ({
+            items: this.modules.map((moduleConfig) => ({
               flex: 'inherit',
-              title: module.module.module_label,
-              description: module.module.module_desc,
-              href: '/' + module.module.module_path,
+              title: moduleConfig.module.module_label,
+              description: moduleConfig.module.module_desc,
+              href: '/' + moduleConfig.module.module_path,
               img:
                 this._mConfig.assetsDirectory() +
                 '/' +
-                module.module.module_code.toLowerCase() +
+                moduleConfig.module_code.toLowerCase() +
                 '/module.jpg',
               type: 'card',
               class: 'module-card',

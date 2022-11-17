@@ -1,5 +1,5 @@
 {
-    "$id:": "references/schema/import",
+    "$id:": "import",
     "properties": {
         "import_name": {
             "type": "string"

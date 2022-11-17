@@ -98,9 +98,7 @@ class SchemaExport:
         keys = list(fields or out["data"][0].keys())
         keys = list(fields)
         data_csv.append(self.process_csv_keys(keys))
-        data_csv += [
-            [self.process_csv_data(key, d) for key in keys] for d in out["data"]
-        ]
+        data_csv += [[self.process_csv_data(key, d) for key in keys] for d in out["data"]]
 
         if params.get("as_csv") == "test":
             return jsonify(data_csv)

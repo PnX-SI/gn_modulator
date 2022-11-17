@@ -4,11 +4,3 @@ class DefinitionError(Exception):
     """
 
     pass
-
-
-class DefinitionNoDefsError(DefinitionError):
-    """
-    Quand un element de definition commençant par '_' n'est pas résolu (non trouvé dans les '_defs')
-    """
-
-    pass

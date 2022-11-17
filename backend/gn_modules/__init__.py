@@ -13,25 +13,24 @@ def init_gn_modules():
     """
 
     # - definitions
-
     start_time = time.time()
-    init_gn_module_errors = DefinitionMethods.init_definitions()
-    if init_gn_module_errors:
-        return init_gn_module_errors
-    print(f"definitions : {time.time() - start_time}")
+    errors = DefinitionMethods.init_definitions()
+    print(f"definitions : {round((time.time() - start_time)*1e3)} ms")
+    if errors:
+        return errors
 
     # - schemas
     start_time = time.time()
-    init_gn_module_errors = SchemaMethods.init_schemas()
-    if init_gn_module_errors:
-        return init_gn_module_errors
-    print(f"schemas     : {time.time() - start_time}")
+    errors = SchemaMethods.init_schemas()
+    print(f"schemas     : {round((time.time() - start_time)*1e3)} ms")
+    if errors:
+        return errors
 
     # - modules
     start_time = time.time()
-    init_gn_module_errors = ModuleMethods.init_modules()
-    if init_gn_module_errors:
-        return init_gn_module_errors
-    print(f"modules     : {time.time() - start_time}")
+    errors = ModuleMethods.init_modules()
+    print(f"modules     : {round((time.time() - start_time)*1e3)} ms")
+    if errors:
+        return errors
 
-    return init_gn_module_errors
+    return errors

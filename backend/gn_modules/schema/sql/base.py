@@ -12,7 +12,7 @@ from ..errors import (
     SchemaProcessedPropertyError,
 )
 
-from gn_modules.utils.cache import get_global_cache
+from gn_modules.utils.cache import get_global_cache, clear_global_cache
 
 
 class SchemaSqlBase:
@@ -79,9 +79,7 @@ class SchemaSqlBase:
 
     @classmethod
     def c_sql_table_exists(cls, sql_schema_name, sql_table_name):
-        return sql_table_name.lower() in inspect(db.engine).get_table_names(
-            sql_schema_name
-        )
+        return sql_table_name.lower() in inspect(db.engine).get_table_names(sql_schema_name)
 
     @classmethod
     def c_sql_schema_exists(cls, sql_schema_name):
@@ -97,9 +95,7 @@ class SchemaSqlBase:
         """
         check if sql table exists
         """
-        return self.cls.c_sql_table_exists(
-            self.sql_schema_name(), self.sql_table_name()
-        )
+        return self.cls.c_sql_table_exists(self.sql_schema_name(), self.sql_table_name())
 
     def sql_txt_create_schema(self):
         """
@@ -160,7 +156,7 @@ class SchemaSqlBase:
         process all sql for a schema
         """
 
-        self.cls.clear_global_cache("sql_table")
+        clear_global_cache(["sql_table"])
         if not self.sql_processing():
             processed_schema_names.append(self.schema_name())
             return "", processed_schema_names
@@ -180,9 +176,7 @@ class SchemaSqlBase:
 
         txt = "-- process schema : {}\n".format(self.schema_name())
         if schema_names_to_process:
-            txt += "--\n-- and dependancies : {}\n".format(
-                ", ".join(schema_names_to_process)
-            )
+            txt += "--\n-- and dependancies : {}\n".format(", ".join(schema_names_to_process))
         txt += "\n\n"
 
         if self.schema_name() not in processed_schema_names:
@@ -192,16 +186,11 @@ class SchemaSqlBase:
         sql_schema_names = []
         for name in schema_names_to_process:
             sm = self.cls(name)
-            if (
-                sm.sql_schema_name() not in sql_schema_names
-                and not sm.sql_schema_exists()
-            ):
+            if sm.sql_schema_name() not in sql_schema_names and not sm.sql_schema_exists():
                 sql_schema_names.append(sm.sql_schema_name())
 
         for sql_schema_name in sql_schema_names:
-            txt += "---- sql schema {sql_schema_name}\n\n".format(
-                sql_schema_name=sql_schema_name
-            )
+            txt += "---- sql schema {sql_schema_name}\n\n".format(sql_schema_name=sql_schema_name)
             txt += "CREATE SCHEMA IF NOT EXISTS {sql_schema_name};\n\n".format(
                 sql_schema_name=sql_schema_name
             )

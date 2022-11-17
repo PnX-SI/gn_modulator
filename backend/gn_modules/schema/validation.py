@@ -34,9 +34,7 @@ class SchemaValidation:
             if column_def["type"] == "geometry":
                 schema_name = "references.geom.{}".format(column_def["geometry_type"])
                 self.set_definition_from_schema_name(definitions, schema_name)
-                column_def["$ref"] = "#/definitions/{}".format(
-                    self.cls.defs_id(schema_name)
-                )
+                column_def["$ref"] = "#/definitions/{}".format(self.cls.defs_id(schema_name))
                 column_def.pop("type")
 
             properties[key] = self.process_json_schema(column_def)
@@ -69,15 +67,11 @@ class SchemaValidation:
         for key, _relation_def in self.relationships().items():
             relation_def = copy.deepcopy(_relation_def)
             relation_def.pop("type")
-            self.set_definition_from_schema_name(
-                definitions, relation_def["schema_name"]
-            )
+            self.set_definition_from_schema_name(definitions, relation_def["schema_name"])
 
             properties[key] = self.process_json_schema(relation_def)
 
-            ref = "#/definitions/{}".format(
-                self.cls.defs_id(relation_def["schema_name"])
-            )
+            ref = "#/definitions/{}".format(self.cls.defs_id(relation_def["schema_name"]))
 
             # relation 1 n
             if relation_def["relation_type"] == "n-1":
@@ -154,9 +148,7 @@ class SchemaValidation:
         if schema_definition_id in definitions:
             return
 
-        if schema_definition := get_global_cache(
-            ["js_definition", schema_definition_id]
-        ):
+        if schema_definition := get_global_cache(["js_definition", schema_definition_id]):
             definitions[schema_definition_id] = schema_definition
             deps = schema_definition["deps"]
             for dep in deps:
@@ -164,9 +156,7 @@ class SchemaValidation:
             return
 
         if "references" in schema_name:
-            definition = get_global_cache(
-                ["reference", schema_name.split(".")[-1], "definition"]
-            )
+            definition = get_global_cache(["reference", schema_name.split(".")[-1], "definition"])
         else:
             relation = self.cls(schema_name)
             definition = copy.deepcopy(relation.get_schema(columns_only=True))

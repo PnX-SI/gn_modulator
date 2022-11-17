@@ -28,7 +28,7 @@ export class ModulesRouteService {
   init() {}
 
   /**
-   * initialisation des routes en fonction du retour de l'api '/modules/modules_config'
+   * initialisation des routes en fonction du retour de l'api '/modules/config'
    * on utilise un subject pour gérer les appels simultanés à initRoute
    */
   initRoutes() {

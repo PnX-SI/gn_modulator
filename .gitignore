@@ -15,3 +15,7 @@ backend/gn_modules/migrations/versions/*
 
 **/*.egg-info
 **/__pycache__
+
+# coverage
+.coverage
+coverage.xml

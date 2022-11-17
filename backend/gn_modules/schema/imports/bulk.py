@@ -17,9 +17,7 @@ class SchemaBulkImports:
         for d in data:
             data_file_path = Path(import_file_path).parent / d["data"]
             pre_process_file_path = (
-                Path(import_file_path).parent / d["pre_process"]
-                if d.get("pre_process")
-                else None
+                Path(import_file_path).parent / d["pre_process"] if d.get("pre_process") else None
             )
             cls.process_csv_file(
                 schema_name=d["schema_name"],
@@ -48,13 +46,9 @@ class SchemaBulkImports:
 
         sm = cls(schema_name)
         raw_import_table = f"{schema_import}.tmp_import_{Path(data_file_path).stem}"
-        pre_processed_view = (
-            f"{schema_import}.v_pre_processed_import_{sm.schema_name('_')}"
-        )
+        pre_processed_view = f"{schema_import}.v_pre_processed_import_{sm.schema_name('_')}"
         raw_import_view = f"{schema_import}.v_raw_import_{sm.schema_name('_')}"
-        processed_import_view = (
-            f"{schema_import}.v_processed_import_{sm.schema_name('_')}"
-        )
+        processed_import_view = f"{schema_import}.v_processed_import_{sm.schema_name('_')}"
 
         # 0) clean
         if not keep_raw:
@@ -102,9 +96,7 @@ class SchemaBulkImports:
         cls.c_sql_exec_txt(txt_create_processed_import_view)
         cls.c_sql_exec_txt(f"SELECT * FROM {processed_import_view} LIMIT 1")
 
-        nb_processed = cls.c_sql_exec_txt(
-            f"SELECT COUNT(*) FROM {processed_import_view}"
-        ).scalar()
+        nb_processed = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {processed_import_view}").scalar()
         nb_raw = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_view}").scalar()
         nb_insert = cls.c_sql_exec_txt(
             f"SELECT COUNT(*) FROM {processed_import_view} WHERE {sm.pk_field_name()} IS NULL"
@@ -166,18 +158,14 @@ class SchemaBulkImports:
                 )
 
     @classmethod
-    def bulk_import_process_relation_n_n(
-        cls, schema_name, raw_import_table, key, verbose
-    ):
+    def bulk_import_process_relation_n_n(cls, schema_name, raw_import_table, key, verbose):
         sm = cls(schema_name)
 
         property = sm.property(key)
         cor_table = property["schema_dot_table"]
         rel = cls(property["schema_name"])
 
-        raw_delete_import_view = (
-            f"{schema_import}.v_raw_delete_import_{sm.schema_name('_')}_{key}"
-        )
+        raw_delete_import_view = f"{schema_import}.v_raw_delete_import_{sm.schema_name('_')}_{key}"
         processed_delete_import_view = (
             f"{schema_import}.v_processed_delete_import_{sm.schema_name('_')}_{key}"
         )
@@ -185,9 +173,7 @@ class SchemaBulkImports:
         # pre_processed_view = (
         #   f"{schema_import}.v_pre_processed_import_{sm.schema_name('_')}"
         # )
-        processed_import_view = (
-            f"{schema_import}.v_processed_import_{sm.schema_name('_')}_{key}"
-        )
+        processed_import_view = f"{schema_import}.v_processed_import_{sm.schema_name('_')}_{key}"
 
         # 0) clean
         cls.c_sql_exec_txt(f"DROP VIEW IF EXISTS {processed_import_view}")
@@ -260,17 +246,13 @@ DELETE FROM {cor_table} t
 
             # creation de la table temporaire
             txt_create_temporary_table_for_csv_import = (
-                cls.txt_create_temporary_table_for_csv_import(
-                    raw_import_table, first_line
-                )
+                cls.txt_create_temporary_table_for_csv_import(raw_import_table, first_line)
             )
             cls.c_sql_exec_txt(txt_create_temporary_table_for_csv_import)
 
             # on copie les données dans la table temporaire
             txt_copy_from_csv = cls.txt_copy_from_csv(raw_import_table, first_line)
-            db.session.connection().connection.cursor().copy_expert(
-                txt_copy_from_csv, f
-            )
+            db.session.connection().connection.cursor().copy_expert(txt_copy_from_csv, f)
             db.session.commit()
 
         return

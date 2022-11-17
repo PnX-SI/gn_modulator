@@ -86,20 +86,22 @@ class ModuleConfigUtils:
         objects = module_config["objects"] or {}
         processed_params = {}
 
+        # on boucle sur tous les éléments de params
         for key_param, param_config in params.items():
+
+            # récupération du schema (par ordre de priorité)
+            # - depuis schema_name
+            # - depuis object_name -> schema_name de l'object
             schema_name = (
                 param_config.get("schema_name")
-                or module_config["objects"][param_config["object_name"]].get(
-                    "schema_name"
-                )
+                or module_config["objects"][param_config["object_name"]].get("schema_name")
                 or param_config["object_name"]
             )
 
-            m = (
-                SchemaMethods(schema_name)
-                .get_row(param_config["value"], param_config["field_name"], params={})
-                .one()
-            )
+            field_names = list(param_config["value"].keys())
+            values = list(param_config["value"].values())
+
+            m = SchemaMethods(schema_name).get_row(values, field_names).one()
 
             processed_value = getattr(m, key_param)
             processed_params[key_param] = processed_value
@@ -138,9 +140,9 @@ class ModuleConfigUtils:
 
             # on récupère la configuration du schéma avec la possibilité de changer certains paramètre
             # comme par exemple 'label', 'labels', 'genre'
-            object_schema_config = SchemaMethods(
-                object_module_config["schema_name"]
-            ).config(object_module_config)
+            object_schema_config = SchemaMethods(object_module_config["schema_name"]).config(
+                object_module_config
+            )
 
             # insertion de la config schema dans la config module
             for key, _object_schema_config_item in object_schema_config.items():
@@ -150,9 +152,7 @@ class ModuleConfigUtils:
                 # si la clé est déjà présente dans object_module_config
                 # en prend en compte les clé de object_module_config et object_schema_config
                 # avec une priorité sur la configuration d'lobject au niveau du module (object_module_config)
-                if (key in object_module_config) and isinstance(
-                    _object_schema_config_item, dict
-                ):
+                if (key in object_module_config) and isinstance(_object_schema_config_item, dict):
                     object_schema_config_item.update(object_module_config[key])
                     object_module_config[key] = object_schema_config_item
 
@@ -184,19 +184,28 @@ class ModuleConfigUtils:
 
     @classmethod
     def process_module_api(cls, module_code):
+        """
+        ouvre les routes pour un module
+        """
 
         module_config = cls.module_config(module_code)
 
         bp = Blueprint(module_code, __name__)
+
+        # pour tous les object d'un module
         for object_name, object_definition in module_config["objects"].items():
+
+            # on récupère schema methodes
             sm = SchemaMethods(object_definition["schema_name"])
 
-            # ouverture des routes
-            sm.register_api(
-                bp, module_code, object_name, copy.deepcopy(object_definition)
-            )
+            # ouverture des routes pour ce schema
+            #   - avec les options:'object_definition'
+            #     en particulier le cruved
+            sm.register_api(bp, module_code, object_name, copy.deepcopy(object_definition))
 
+            # les prefiltres définis dans les objects ne servent que dans les ouverture de route ???
             if "prefilters" in object_definition:
                 del object_definition["prefilters"]
 
+        # enregistrement du blueprint pour ce module
         current_app.register_blueprint(bp, url_prefix=f"/{module_code.lower()}")

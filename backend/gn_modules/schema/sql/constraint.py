@@ -34,8 +34,7 @@ class SchemaSqlConstraint:
 
         if not pk_field_names:
             raise SchemaSqlError(
-                "Il n"
-                "y a pas de clé primaire définie pour le schema {sql_schema} {sql_table}"
+                "Il n'y a pas de clé primaire définie pour le schema {sql_schema} {sql_table}"
             )
 
         return """---- {sql_schema_name}.{sql_table_name} primary key constraint

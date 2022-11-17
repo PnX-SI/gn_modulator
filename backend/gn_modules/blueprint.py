@@ -6,6 +6,7 @@ from gn_modules.module import ModuleMethods
 from gn_modules.layout import LayoutMethods
 from gn_modules import init_gn_modules
 from gn_modules.utils.api import process_dict_path
+from gn_modules.definition import DefinitionMethods
 
 blueprint = Blueprint("modules", __name__)
 
@@ -19,6 +20,9 @@ errors_init_module = []
 # initialisation du module
 try:
     errors_init_module = init_gn_modules()
+    if errors_init_module:
+        print(f"\n{DefinitionMethods.errors_txt(errors_init_module)}")
+
 except Exception as e:
     # patch 1ère initialisation flask run
     # sqlalchemy.exc.NoForeignKeysError:
@@ -28,8 +32,8 @@ except Exception as e:
     raise e
 
 
-@blueprint.route("/modules_config/<path:config_path>", methods=["GET"])
-@blueprint.route("/modules_config/", methods=["GET"], defaults={"config_path": None})
+@blueprint.route("/config/<path:config_path>", methods=["GET"])
+@blueprint.route("/config/", methods=["GET"], defaults={"config_path": None})
 def api_modules_config(config_path):
     """
     renvoie la config des modules avec l'information sur le cruved des modules
@@ -44,7 +48,7 @@ def api_modules_config(config_path):
     return process_dict_path(
         ModuleMethods.modules_config_with_cruved(),
         config_path,
-        SchemaMethods.base_url() + "/modules_config/",
+        SchemaMethods.base_url() + "/config/",
     )
 
 
