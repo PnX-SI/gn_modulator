@@ -11,7 +11,7 @@ GN_MODULES_DIR = Path(gn_modules.__file__).parent
 
 assets_static_dir = BACKEND_DIR / "static/external_assets/modules/"
 config_directory = GN_MODULES_DIR / "../../config/"
-migrations_directory = GN_MODULES_DIR / "backend/gn_modules/migrations"
+migrations_directory = GN_MODULES_DIR / "migrations"
 
 
 def local_srid():

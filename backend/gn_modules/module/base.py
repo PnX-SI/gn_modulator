@@ -94,10 +94,6 @@ class ModuleBase:
         print("- Création du fichier {} (!!! à compléter)".format(sql_file_path.name))
 
     @classmethod
-    def modules(cls):
-        return list(cls.modules_config().keys())
-
-    @classmethod
     def process_module_features(cls, module_code):
 
         module_config = cls.module_config(module_code)

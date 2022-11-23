@@ -21,10 +21,10 @@ class ModuleCommands:
         # suppression des modules depandant du module en cours
         module_deps_installed = [
             module_dep_code
-            for module_dep_code, module_child_config in cls.modules_config().items()
+            for module_dep_code in cls.module_codes()
             if (
-                module_code in module_child_config.get("dependencies", [])
-                and module_child_config["registred"]
+                module_code in cls.module_config(module_dep_code).get("dependencies", [])
+                and cls.module_config(module_dep_code).get("registred")
             )
         ]
 
@@ -66,7 +66,7 @@ class ModuleCommands:
         module_config = cls.module_config(module_code)
         for module_dep_code in module_config.get("dependencies", []):
             module_dep_config = cls.module_config(module_dep_code)
-            if not module_dep_config["registred"]:
+            if not module_dep_config.get("registred"):
                 if not force:
                     print(
                         f"Le module {module_code} depend du module {module_dep_code} qui n'est pas installé"

@@ -243,10 +243,17 @@ class SchemaRepositoriesBase:
         return query
 
     def query_list(self, module_code="MODULES", cruved_type="R", params={}, query_type=None):
+        """
+        query_type: all|update|delete|total|filtered
+        """
 
         Model = self.Model()
         model_pk_field = getattr(Model, self.pk_field_name())
-        query = db.session.query(Model).distinct()
+
+        query = db.session.query(Model)
+
+        if query_type not in ["update", "delete"]:
+            query = query.distinct()
 
         # eager loads ??
         for field in params.get("fields") or []:

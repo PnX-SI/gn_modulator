@@ -27,21 +27,21 @@ def replace_in_dict(data, value_test, value):
     'le modude d'id = :id_module' -> 'le modude d'id = 17'
     """
 
-    # test avec json
-    value_ = (
-        json.dumps(value)
-        if isinstance(value, dict) or isinstance(value, list)
-        else "true"
-        if value is True
-        else "false"
-        if value is False
-        else "null"
-        if value is None
-        else str(value)
-        if isinstance(value, int) or isinstance(value, float)
-        else value
-    )
-    return json.loads(json.dumps(data).replace(value_test, value_))
+    # # test avec json
+    # value_ = (
+    #     json.dumps(value)
+    #     if isinstance(value, dict) or isinstance(value, list)
+    #     else "true"
+    #     if value is True
+    #     else "false"
+    #     if value is False
+    #     else "null"
+    #     if value is None
+    #     else str(value)
+    #     if isinstance(value, int) or isinstance(value, float)
+    #     else value
+    # )
+    # return json.loads(json.dumps(data).replace(value_test, value_))
 
     if isinstance(data, dict):
         return {key: replace_in_dict(val, value_test, value) for key, val in data.items()}

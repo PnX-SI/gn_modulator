@@ -56,8 +56,8 @@ class ModulesConfigBase:
 
         module_config = copy.deepcopy(module_definition)
 
-        if module_db is not None:
-            module_config["registred"] = True
+        module_config["registred"] = module_db is not None
+        if module_config["registred"]:
             for key_config_db in module_db or {}:
                 module_config["module"][key_config_db] = module_config["module"].get(
                     key_config_db, module_db[key_config_db]
