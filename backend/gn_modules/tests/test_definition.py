@@ -13,6 +13,26 @@ from gn_modules.utils.errors import get_errors, clear_errors, errors_txt
 # répertoire contenant les definitions destinées aux test
 definitions_test_dir = Path(__file__).parent / "definitions_test"
 
+"""
+err code
+TODO
+    ERR_VALID_REF
+    ERR_NO_REF_FOR_TYPE
+    ERR_DEF_EMPTY_FILE
+    ERR_TEMPLATE_NO_NAME
+    ERR_TEMPLATE_NOT_FOUND
+    ERR_TEMPLATE_UNRESOLVED_FIELDS
+
+DONE
+    ERR_DEF_MISSING_SCHEMA
+    ERR_DEF_YML
+    ERR_DEF_JSON
+    ERR_DEF_EXISTING
+    ERR_DEF_UNKNOWN
+    ERR_DEF_JS_VALID
+    ERR_DEF_IS_LIST
+"""
+
 
 @pytest.mark.usefixtures(scope="session")
 class TestDefinitions:

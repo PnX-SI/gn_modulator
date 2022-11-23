@@ -31,7 +31,8 @@ export class ModulesLayoutObjectTableComponent
     this._name = 'layout-object-table';
     this._mTable = this._injector.get(ModulesTableService);
     this.tableId = `table_${this._id}`;
-  }MarshmallowSchema
+  }
+  MarshmallowSchema;
 
   postInit() {}
 
