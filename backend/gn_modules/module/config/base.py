@@ -74,6 +74,8 @@ class ModulesConfigBase:
             cls.process_module_params(module_code)
             cls.process_module_api(module_code)
 
+        return module_config
+
     @classmethod
     def modules_config_with_cruved(cls):
 

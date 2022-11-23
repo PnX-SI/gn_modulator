@@ -11,7 +11,7 @@ class ModuleCommands:
             module_config = cls.module_config(module_code)
         except cls.errors.ModuleNotFoundError as e:
             print(e)
-            return
+            return False
 
         if not module_config["registred"]:
             print("Le module n'est pas enregistré")
@@ -38,7 +38,7 @@ class ModuleCommands:
             print(
                 "  - ou bien relancer la commande avec l'options -f (--force) pour supprimer automatiquement les modules dépendants"
             )
-            return
+            return False
 
         for module_dep_code in module_deps_installed:
             cls.remove_module(module_dep_code, force)
@@ -56,6 +56,8 @@ class ModuleCommands:
 
         # symlink
         cls.remove_migration_links(module_code)
+
+        return True
 
     @classmethod
     def install_module(cls, module_code, force=False):
@@ -76,7 +78,7 @@ class ModuleCommands:
                     print(
                         "    - soit relancer la commande avec l'option -f (--force) pour permettre l'installation automatique des dépendances"
                     )
-                    return
+                    return False
                 cls.install_module(module_dep_code, force)
 
         # mise en place des liens symboliques
@@ -98,7 +100,7 @@ class ModuleCommands:
         # assets
         cls.process_module_assets(module_code)
 
-        return
+        return True
 
     @classmethod
     def init_module(cls, module_code, force):

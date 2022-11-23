@@ -1,17 +1,15 @@
 from geonature.utils.env import db, BACKEND_DIR
 from ref_geo.utils import get_local_srid
 from .cache import get_global_cache, set_global_cache
-
-import os
 from pathlib import Path
 import gn_modules
 
 GN_MODULES_DIR = Path(gn_modules.__file__).parent
 
-
 assets_static_dir = BACKEND_DIR / "static/external_assets/modules/"
 config_directory = GN_MODULES_DIR / "../../config/"
 migrations_directory = GN_MODULES_DIR / "migrations"
+definitions_test_dir = Path(__file__).parent / "definitions_test"
 
 
 def local_srid():
