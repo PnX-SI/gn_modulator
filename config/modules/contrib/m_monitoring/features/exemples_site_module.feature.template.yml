@@ -1,0 +1,10 @@
+template:
+  name: 'm_monitoring.exemples_template'
+  params:
+    module_code: 'm_monitoring_test_2'
+data_name: __MODULE_CODE__.exemples
+items: []
+dependancies: m_monitoring.exemples
+
+
+

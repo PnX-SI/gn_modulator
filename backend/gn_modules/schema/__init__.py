@@ -100,7 +100,6 @@ class SchemaMethods(
         """
         Initialise l'ensemble des schémas
         """
-        init_schema_errors = []
         # init class
         for schema_names in cls.schema_names():
             SchemaMethods(schema_names)
@@ -110,5 +109,3 @@ class SchemaMethods(
             SchemaMethods(schema_names).Model()
         for schema_names in cls.schema_names():
             SchemaMethods(schema_names).MarshmallowSchema()
-
-        return init_schema_errors

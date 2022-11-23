@@ -9,7 +9,7 @@ from flask.cli import with_appcontext
 
 from gn_modules.schema import SchemaMethods
 from gn_modules.module import ModuleMethods
-from gn_modules.definition import DefinitionMethods
+from gn_modules.utils.errors import errors_txt
 
 
 @click.command("init")
@@ -234,7 +234,7 @@ def cmd_check():
 
     from gn_modules.blueprint import errors_init_module
 
-    print(DefinitionMethods.errors_txt(errors_init_module))
+    print(errors_txt())
 
 
 commands = [

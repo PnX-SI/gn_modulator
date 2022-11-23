@@ -1,0 +1,9 @@
+# module pour tester le templating de module
+with_template:
+  name: m_monitoring.module_template
+  params:
+    module_code: m_monitoring_test_2
+    module_label: Monitest_2
+    module_desc: Second module de test monitoring V2
+    module_picto: fa-puzzle-piece
+    active_frontend: false

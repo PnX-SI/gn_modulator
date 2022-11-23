@@ -8,6 +8,7 @@ import pytest
 from pathlib import Path
 from gn_modules.definition import DefinitionMethods
 from gn_modules.utils.cache import get_global_cache
+from gn_modules.utils.errors import get_errors, clear_errors, errors_txt
 
 # répertoire contenant les definitions destinées aux test
 definitions_test_dir = Path(__file__).parent / "definitions_test"
@@ -22,10 +23,9 @@ class TestDefinitions:
         - si on a bien des schemas, modules et layout à minima
         - si le traitement de ces définition n'entraîne par d'erreurs
         """
-        from gn_modules.blueprint import errors_init_module
 
         # pas d'erreurs à l'initialisation de gn_modules
-        assert len(errors_init_module) == 0
+        assert len(get_errors()) == 0
 
         # on a bien chargé des schemas, modules, layouts
         assert len(DefinitionMethods.reference_names()) > 0
@@ -55,57 +55,55 @@ class TestDefinitions:
         lors de l'utilisation de la methode DefinitionMethods.load_definition_file
         """
 
+        clear_errors()
+
         # json ok
-        errors = DefinitionMethods.load_definition_file(
-            definitions_test_dir / "load_definition_ok.json"
-        )
-        print(DefinitionMethods.errors_txt(errors))
-        assert len(errors) == 0
+        DefinitionMethods.load_definition_file(definitions_test_dir / "load_definition_ok.json")
+        assert len(get_errors()) == 0
 
         # yml ok
-        errors = DefinitionMethods.load_definition_file(
-            definitions_test_dir / "load_definition_ok.yml"
-        )
-        assert len(errors) == 0
+        DefinitionMethods.load_definition_file(definitions_test_dir / "load_definition_ok.yml")
+        assert len(get_errors()) == 0
 
         # json erreur de virgule
-        errors_json_fail = DefinitionMethods.load_definition_file(
-            definitions_test_dir / "load_definition_fail.json"
-        )
-        assert (
-            errors_json_fail[0]["msg"]
-            == "Erreur dans le fichier json: Expecting property name enclosed in double quotes: line 4 column 1 (char 42)"
-        )
+        DefinitionMethods.load_definition_file(definitions_test_dir / "load_definition_fail.json")
+        assert len(get_errors()) == 1
+        assert get_errors()[0]["code"] == "ERR_DEF_JSON"
+
+        clear_errors()
+        assert len(get_errors()) == 0
 
         # yml erreur yaml
-        errors = DefinitionMethods.load_definition_file(
-            definitions_test_dir / "load_definition_fail.yml"
-        )
-        assert len(errors) == 1
+        DefinitionMethods.load_definition_file(definitions_test_dir / "load_definition_fail.yml")
+        assert len(get_errors()) == 1
+        assert get_errors()[0]["code"] == "ERR_DEF_YML"
+
+        clear_errors()
 
         # erreur 'pas de liste'
-        errors = DefinitionMethods.load_definition_file(
+        DefinitionMethods.load_definition_file(
             definitions_test_dir / "load_definition_fail_list.yml"
         )
-        assert len(errors) == 1
-        assert errors[0]["msg"] == "La définition ne doit pas être une liste"
+        print(errors_txt())
+        assert len(get_errors()) == 1
+        assert get_errors()[0]["code"] == "ERR_DEF_IS_LIST"
+        clear_errors()
 
         # erreur 'Ne correspond à aucun format de definition attendu'
-        errors = DefinitionMethods.load_definition_file(
+        DefinitionMethods.load_definition_file(
             definitions_test_dir / "load_definition_fail_format.yml"
         )
-        assert len(errors) == 1
-        assert errors[0]["msg"] == "Ne correspond à aucun format de definition attendu"
+        assert len(get_errors()) == 1
+        assert get_errors()[0]["code"] == "ERR_DEF_UNKNOWN"
+        clear_errors()
 
         # erreur déjà défini
-        errors = DefinitionMethods.load_definition_file(
+        DefinitionMethods.load_definition_file(
             definitions_test_dir / "load_definition_fail_existing.yml"
         )
-        assert len(errors) == 1
-
-        assert (
-            "schema 'test.load_definition_ok' déjà défini(e) dans le fichier " in errors[0]["msg"]
-        )
+        assert len(get_errors()) == 1
+        assert get_errors()[0]["code"] == "ERR_DEF_EXISTING"
+        clear_errors()
 
     def test_local_check_definition(self):
         """
@@ -113,20 +111,18 @@ class TestDefinitions:
         de la méthode local_check_definition
         """
 
+        clear_errors()
+
         # Test remontée des erreurs de validation d'un schema
-        errors = DefinitionMethods.load_definition_file(
+        DefinitionMethods.load_definition_file(
             definitions_test_dir / "local_check_definition_fail_type.yml"
         )
-        assert len(errors) == 0
+        assert len(get_errors()) == 0
 
-        errors = DefinitionMethods.local_check_definition(
-            "schema", "test.test_local_check_fail_type"
-        )
-        assert len(errors) == 1
-        assert (
-            errors[0]["msg"]
-            == "[properties.test] {'type_': 'string', 'title': 'test'} is not valid under any of the given schemas"
-        )
+        DefinitionMethods.local_check_definition("schema", "test.test_local_check_fail_type")
+        assert len(get_errors()) == 1
+        assert get_errors()[0]["code"] == "ERR_DEF_JS_VALID"
+        clear_errors()
 
     def test_global_check_definition(self):
         """
@@ -135,30 +131,32 @@ class TestDefinitions:
         TODO
         """
 
+        clear_errors()
+
         DefinitionMethods.load_definition_file(
             definitions_test_dir / "local_check_schema_names_fail.yml"
         )
-        errors = DefinitionMethods.global_check_definition(
+        DefinitionMethods.global_check_definition(
             "schema", "test.test_local_check_fail_schema_names"
         )
 
-        print(DefinitionMethods.errors_txt(errors))
+        assert len(get_errors()) == 1
 
-        assert len(errors) == 1
-
-        assert (
-            errors[0]["msg"]
-            == "Le ou les schéma(s) 'schema.quinexistepas' ne sont pas présents dans les définitions existantes"
-        )
+        assert get_errors()[0]["code"] == "ERR_DEF_MISSING_SCHEMA"
+        clear_errors()
 
     def test_template(self):
         """
         Tests sur ce que l'on attend d'un template
         """
 
+        clear_errors()
+
         # si la definition du module m_monitoring_test
         # créé à partir du template m_monitoring.module_template
         # possède bien les éléments attendus
 
-        definition = DefinitionMethods.get_definition("module", "m_monitoring_test")
+        definition = DefinitionMethods.get_definition("module", "m_monitoring_test_1")
         assert definition.get("pages") is not None
+
+        assert definition["module_code"] == "m_monitoring_test_1"

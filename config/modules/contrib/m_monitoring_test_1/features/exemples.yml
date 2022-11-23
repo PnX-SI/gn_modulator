@@ -1,0 +1,4 @@
+with_template:
+  name: 'm_monitoring.exemples_template'
+  params:
+    module_code: 'm_monitoring_test_1'

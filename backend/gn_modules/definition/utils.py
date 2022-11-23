@@ -105,34 +105,3 @@ class DefinitionUtils:
                 missings = [item]
 
         return missings
-
-    @classmethod
-    def errors_txt(cls, errors):
-        """
-        Pour l'affichage de la liste des erreurs
-        """
-
-        txt_errors = f"!!!! Il y a {len(errors)} erreurs dans les définitions. !!!!\n"
-
-        if len(errors) == 0:
-            return txt_errors
-
-        # on liste les fichiers
-        # afin de pouvoir les regrouper les erreurs par fichiers
-        definition_error_file_paths = []
-        for definition_error in errors:
-            if definition_error.get("file_path", "") not in definition_error_file_paths:
-                definition_error_file_paths.append(definition_error.get("file_path", ""))
-
-        # on trie les fichiers par ordre alphabetique
-        # on affiche les erreurs par fichier pour simplifier la lecture
-        for definition_error_file_path in sorted(definition_error_file_paths):
-            txt_errors += f"\n- {definition_error_file_path}\n\n"
-
-            for definition_error in filter(
-                lambda x: x.get("file_path", "") == definition_error_file_path,
-                errors,
-            ):
-                txt_errors += f"  - {definition_error['msg']}\n"
-
-        return txt_errors

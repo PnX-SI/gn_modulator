@@ -1,8 +1,0 @@
-# module pour tester le templating de module
-module_template: m_monitoring.module_template
-module_code: m_monitoring_test
-module:
-  module_label: Module de test pour monitoring
-  module_desc: Module pour tester l'héritage d'un template de module
-  module_picto: fa-puzzle-piece
-  active_frontend: false

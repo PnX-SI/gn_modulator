@@ -1,31 +1,41 @@
-module_template_name: "m_monitoring.module_template"
-# module à redéfinir sinon erreur
+template:
+  name: "m_monitoring.module_template"
+  defaults:
+    module_picto: fa-puzzle-piece
+    active_frontend: false
+
+module_code: __MODULE_CODE__
+module:
+    module_label: __MODULE_LABEL__
+    module_desc: __MODULE_DESC__
+    module_picto: __MODULE_PICTO__
+    active_frontend: __ACTIVE_FRONTEND__
 dependencies:
   - m_monitoring
 params:
   id_module:
     object_name: module
     value:
-      module_code: M.MODULE_CODE
+      module_code: __MODULE_CODE__
 objects:
   module:
     schema_name: commons.module
     cruved: RU
   jdd:
     schema_name: meta.jdd
-    prefilters: "modules.module_code = M.MODULE_CODE"
+    prefilters: "modules.module_code = __MODULE_CODE__"
     cruved: R
   site:
     schema_name: m_monitoring.site
-    prefilters: "modules.module_code = M.MODULE_CODE"
+    prefilters: "modules.module_code = __MODULE_CODE__"
     cruved: CRUD
   visit:
     schema_name: m_monitoring.visit
-    prefilters: "module.module_code = M.MODULE_CODE"
+    prefilters: "module.module_code = __MODULE_CODE__"
     cruved: CRUD
   observation:
     schema_name: m_monitoring.observation
-    prefilters: "visit.module.module_code = M.MODULE_CODE"
+    prefilters: "visit.module.module_code = __MODULE_CODE__"
     cruved: CRUD
 tree:
   module:

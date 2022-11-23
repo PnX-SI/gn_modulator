@@ -4,6 +4,7 @@ MODULE_PICTO = "fa-puzzle-piece"
 from .definition import DefinitionMethods
 from .schema import SchemaMethods
 from .module import ModuleMethods
+from gn_modules.utils.errors import get_errors
 import time
 
 
@@ -14,23 +15,19 @@ def init_gn_modules():
 
     # - definitions
     start_time = time.time()
-    errors = DefinitionMethods.init_definitions()
+    DefinitionMethods.init_definitions()
     print(f"definitions : {round((time.time() - start_time)*1e3)} ms")
-    if errors:
-        return errors
+    if get_errors():
+        return
 
     # - schemas
     start_time = time.time()
-    errors = SchemaMethods.init_schemas()
+    SchemaMethods.init_schemas()
     print(f"schemas     : {round((time.time() - start_time)*1e3)} ms")
-    if errors:
-        return errors
+    if get_errors():
+        return
 
     # - modules
     start_time = time.time()
-    errors = ModuleMethods.init_modules()
+    ModuleMethods.init_modules()
     print(f"modules     : {round((time.time() - start_time)*1e3)} ms")
-    if errors:
-        return errors
-
-    return errors

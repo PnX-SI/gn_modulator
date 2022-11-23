@@ -35,14 +35,10 @@ class ModulesConfigBase:
         Initialise la config d'un module
         """
 
-        init_module_config_errors = []
-
         module_config = None
 
         # config depuis les definitions
         module_definition = get_global_cache(["module", module_code, "definition"])
-        if module_definition is None:
-            raise cls.errors.ModuleDefinitionFoundError
 
         # config depuis la base (gn_commons.t_module)
         module_db = SchemaMethods("commons.module").get_row_as_dict(
@@ -77,8 +73,6 @@ class ModulesConfigBase:
         if module_config.get("registred"):
             cls.process_module_params(module_code)
             cls.process_module_api(module_code)
-
-        return init_module_config_errors
 
     @classmethod
     def modules_config_with_cruved(cls):

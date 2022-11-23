@@ -6,7 +6,7 @@ from gn_modules.module import ModuleMethods
 from gn_modules.layout import LayoutMethods
 from gn_modules import init_gn_modules
 from gn_modules.utils.api import process_dict_path
-from gn_modules.definition import DefinitionMethods
+from gn_modules.utils.errors import get_errors, errors_txt
 
 blueprint = Blueprint("modules", __name__)
 
@@ -15,13 +15,12 @@ blueprint.cli.short_help = "Commandes pour l' administration du module MODULES"
 for cmd in commands:
     blueprint.cli.add_command(cmd)
 
-errors_init_module = []
 
 # initialisation du module
 try:
-    errors_init_module = init_gn_modules()
-    if errors_init_module:
-        print(f"\n{DefinitionMethods.errors_txt(errors_init_module)}")
+    init_gn_modules()
+    if get_errors():
+        print(f"\n{errors_txt()}")
 
 except Exception as e:
     # patch 1ère initialisation flask run
@@ -40,6 +39,8 @@ def api_modules_config(config_path):
     process_dict_path permet un aide à la navigation
     pour pouvoir explorer le dictionnaire de config à travers l'api
     """
+
+    errors_init_module = get_errors()
 
     # s'il y a des erreurs à l'initialisation du module => on le fait remonter
     if len(errors_init_module) > 0:

@@ -22,6 +22,11 @@ class SchemaBaseImports:
         if data is None:
             raise (Exception(f"La données demandée {data_name} n'existe pas"))
 
+        # gestion des dépendances
+        # attention aux dépendances circulaires
+        for dependancy_data_name in data.get("dependancies", []):
+            cls.process_features(dependancy_data_name)
+
         data_file_path = get_global_cache(["data", data_name, "file_path"])
 
         infos = []
