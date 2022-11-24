@@ -142,7 +142,7 @@ class TestDefinitions:
         DefinitionMethods.local_check_definition("schema", "test.test_local_check_fail_type")
         assert len(get_errors()) == 1
         assert get_errors()[0]["code"] == "ERR_DEF_JS_VALID"
-        assert get_global_cache(['schema', 'test.test_local_check_fail_type']) is None
+        assert get_global_cache(["schema", "test.test_local_check_fail_type"]) is None
 
         clear_errors()
 

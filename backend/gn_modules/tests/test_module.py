@@ -8,6 +8,7 @@ from gn_modules.schema import SchemaMethods
 from .utils import load_module_from_file
 from gn_modules import init_gn_modules
 
+
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
 class TestModules:
     def test_install_remove_module(self):
