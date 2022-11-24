@@ -158,13 +158,21 @@ def cmd_import_features(data_name=None, verbose=False):
     importe des feature depuis un fichier (data) (.yml) referencé par la clé 'data_name'
     """
 
-    if data_name is None:
-        "Liste des features disponibles"
-        for data_name in sorted(DefinitionMethods.data_names()):
+    data_names = sorted(DefinitionMethods.data_names())
+
+    if data_name is None or data_name not in data_names:
+        print()
+        if data_name:
+            print(f"La donnée demandée {data_name} n'existe pas.")
+            print("Veuillez choisir un code parmi la liste suivante\n")
+        for data_name in data_names:
             print(f"- {data_name}")
             if verbose:
                 data = DefinitionMethods.get_definition("data", data_name)
                 print(f"    {data['title']}\n")
+        if not verbose:
+            print("\n(Utiliser -v pour voir les détails)\n")
+
         return
 
     data_names = data_name.split(",")

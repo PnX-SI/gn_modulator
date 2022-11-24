@@ -5,10 +5,9 @@ Test pour valider
 """
 
 import pytest
-from pathlib import Path
 from gn_modules.definition import DefinitionMethods
 from gn_modules.utils.cache import get_global_cache
-from gn_modules.utils.errors import get_errors, clear_errors, errors_txt
+from gn_modules.utils.errors import get_errors, clear_errors
 from gn_modules.utils.env import definitions_test_dir
 
 # répertoire contenant les definitions destinées aux test

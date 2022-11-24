@@ -1,0 +1,5 @@
+data_name: test.global_check_dependencies_fail
+title: données exemple pour le module éolien
+dependencies:
+  - test.missing_dependency
+items: []

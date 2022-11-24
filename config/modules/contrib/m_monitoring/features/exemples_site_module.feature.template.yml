@@ -6,8 +6,8 @@ items:
 - schema_name: m_monitoring.cor_site_module
   items:
     - { id_module: __MODULE_CODE__, id_site: AL1}
-dependencies:
-  - m_monitoring.exemples
+# dependencies:
+  # - m_monitoring.exemples
 
 
 

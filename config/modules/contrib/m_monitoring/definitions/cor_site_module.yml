@@ -1,0 +1,22 @@
+meta:
+  schema_name: m_monitoring.cor_site_module
+  sql_schema_dot_table: m_monitoring.cor_site_module
+  label: Lien sites modules
+  label_field_name: id_site
+  genre: M
+  unique:
+    - id_site
+    - id_module
+properties:
+  id_module:
+    type: integer
+    title: Module
+    foreign_key: true
+    primary_key: true
+    schema_name: commons.module
+  id_site:
+    type: integer
+    title: Site
+    foreign_key: true
+    primary_key: true
+    schema_name: m_monitoring.site

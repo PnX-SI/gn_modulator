@@ -150,7 +150,6 @@ class SchemaRepositoriesBase:
         """
 
         self.validate_data(data)
-
         m = self.get_row(
             value,
             field_name=field_name,
@@ -214,8 +213,9 @@ class SchemaRepositoriesBase:
         pour n'avoir dans la requête que les champs demandés
         """
         fields = params.get("fields", [])
-        if not self.pk_field_name() in fields:
-            fields.append(self.pk_field_name())
+        for pk_field_name in self.pk_field_names():
+            if pk_field_name not in fields:
+                fields.append(pk_field_name)
 
         if params.get("as_geojson"):
             if self.geometry_field_name() and self.geometry_field_name() not in fields:
@@ -245,10 +245,14 @@ class SchemaRepositoriesBase:
     def query_list(self, module_code="MODULES", cruved_type="R", params={}, query_type=None):
         """
         query_type: all|update|delete|total|filtered
+
+        TODO gérer les pk_keys multiples
         """
 
         Model = self.Model()
-        model_pk_field = getattr(Model, self.pk_field_name())
+        model_pk_fields = [
+            getattr(Model, pk_field_name) for pk_field_name in self.pk_field_names()
+        ]
 
         query = db.session.query(Model)
 
@@ -279,14 +283,14 @@ class SchemaRepositoriesBase:
 
         # requete pour count 'total'
         if query_type == "total":
-            return query.with_entities(model_pk_field).group_by(model_pk_field)
+            return query.with_entities(*model_pk_fields).group_by(*model_pk_fields)
 
         # filtrage
         query = self.process_filters(Model, params.get("filters", []), query)
 
         # requete pour count 'filtered'
         if query_type == "filtered":
-            return query.with_entities(model_pk_field).group_by(model_pk_field)
+            return query.with_entities(*model_pk_fields).group_by(*model_pk_fields)
 
         if query_type in ["update", "delete", "page_number"]:
             return query
