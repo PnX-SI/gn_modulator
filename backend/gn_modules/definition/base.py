@@ -39,20 +39,28 @@ class DefinitionBase:
     """
 
     @classmethod
+    def type_keys(cls, definition_type):
+        return list(get_global_cache([definition_type], {}).keys())
+
+    @classmethod
     def schema_names(cls):
-        return list(get_global_cache(["schema"], {}).keys())
+        return cls.type_keys("schema")
 
     @classmethod
     def module_codes(cls):
-        return list(get_global_cache(["module"], {}).keys())
+        return cls.type_keys("module")
+
+    @classmethod
+    def data_names(cls):
+        return cls.type_keys("data")
 
     @classmethod
     def layout_names(cls):
-        return list(get_global_cache(["layout"], {}).keys())
+        return cls.type_keys("layout")
 
     @classmethod
     def reference_names(cls):
-        return list(get_global_cache(["reference"], {}).keys())
+        return cls.type_keys("reference")
 
     @classmethod
     def load_definitions(cls):
@@ -109,9 +117,9 @@ class DefinitionBase:
                 jsonschema.Draft7Validator.check_schema(reference)
             except Exception as e:
                 add_error(
-                    type="reference",
+                    definition_type="reference",
                     code="ERR_VALID_REF",
-                    key=reference_key,
+                    definition_key=reference_key,
                     msg=f"{str(e)}",
                 )
 
@@ -134,8 +142,8 @@ class DefinitionBase:
 
             if definition_type in definition_types_with_reference:
                 add_error(
-                    type=definition_type,
-                    key=definition_key,
+                    definition_type=definition_type,
+                    definition_key=definition_key,
                     code="ERR_NO_REF_FOR_TYPE",
                     msg=f"Une référence est requise pour valider pour le type {definition_type}",
                 )
@@ -154,9 +162,9 @@ class DefinitionBase:
                 msg = "[{}] {}".format(".".join(str(x) for x in error.absolute_path), msg)
 
             add_error(
-                type=definition_type,
-                key=definition_key,
-                code="ERR_DEF_JS_VALID",
+                definition_type=definition_type,
+                definition_key=definition_key,
+                code="ERR_LOCAL_CHECK_REF",
                 msg=f"{msg}",
             )
 
@@ -221,7 +229,8 @@ class DefinitionBase:
         # pour chaque type de definition sauf reférence qui sont validée en amont
         for definition_type in filter(lambda x: x != "reference", definition_types):
             # pour
-            for definition_key in get_global_cache([definition_type], {}).keys():
+            definition_keys = list(get_global_cache([definition_type], {}).keys())
+            for definition_key in definition_keys:
                 cls.local_check_definition(definition_type, definition_key)
 
     @classmethod
@@ -229,16 +238,16 @@ class DefinitionBase:
 
         if isinstance(definition, list):
             add_error(
-                type="definition",
+                definition_type="definition",
                 file_path=str(file_path),
                 msg="La définition ne doit pas être une liste",
-                code="ERR_DEF_IS_LIST",
+                code="ERR_LOAD_LIST",
             )
             return
 
         if definition is None:
             add_error(
-                type="definition",
+                definition_type="definition",
                 file_path=str(file_path),
                 msg="Le fichier est vide",
                 code="ERR_DEF_EMPTY_FILE",
@@ -251,10 +260,10 @@ class DefinitionBase:
         # c'est que letype de configuration n'est pas detecté
         if not definition_type:
             add_error(
-                type="definition",
+                definition_type="definition",
                 file_path=str(file_path),
                 msg="Ne correspond à aucun format de definition attendu",
-                code="ERR_DEF_UNKNOWN",
+                code="ERR_LOAD_UNKNOWN",
             )
 
         # test si la données n'existe pas dansun autre fichier
@@ -262,10 +271,11 @@ class DefinitionBase:
         # ce qui ne devrait pas être le cas
         elif cls.get_definition(definition_type, definition_key):
             add_error(
-                type=definition_type,
+                definition_type=definition_type,
+                definition_key=definition_key,
                 file_path=str(file_path),
                 msg=f"{definition_type} '{definition_key}' déjà défini(e) dans le fichier {cls.get_file_path(definition_type, definition_key)}",
-                code="ERR_DEF_EXISTING",
+                code="ERR_LOAD_EXISTING",
             )
 
         # sinon
@@ -290,19 +300,19 @@ class DefinitionBase:
         # - erreurs de format YAML
         except yaml.error.YAMLError as e:
             add_error(
-                type="definition",
+                definition_type="definition",
                 file_path=str(file_path),
                 msg=f"Erreur dans le fichier yaml: {str(e)}",
-                code="ERR_DEF_YML",
+                code="ERR_LOAD_YML",
             )
 
         # - erreurs de format JSON
         except json.JSONDecodeError as e:
             add_error(
-                type="definition",
+                definition_type="definition",
                 file_path=str(file_path),
                 msg=f"Erreur dans le fichier json: {str(e)}",
-                code="ERR_DEF_JSON",
+                code="ERR_LOAD_JSON",
             )
 
     @classmethod
@@ -372,20 +382,46 @@ class DefinitionBase:
 
         definition = cls.get_definition(definition_type, definition_key)
 
+        if definition is None:
+            raise Exception("yakou!!")
+
         schema_names = cls.schema_names()
-        missings_schema_name = cls.check_definition_element_in_list(
+        missing_schema_names = cls.check_definition_element_in_list(
             definition, "schema_name", schema_names
         )
 
-        if missings_schema_name:
+        if missing_schema_names:
 
-            missings_schema_name_txt = ", ".join(map(lambda x: f"'{x}'", missings_schema_name))
+            missings_schema_name_txt = ", ".join(map(lambda x: f"'{x}'", missing_schema_names))
             add_error(
-                type=definition_type,
-                code="ERR_DEF_MISSING_SCHEMA",
-                msg=f"Le ou les schéma(s) {missings_schema_name_txt} ne sont pas présents dans les définitions existantes",
+                definition_key=definition_key,
+                definition_type=definition_type,
+                code="ERR_GLOBAL_MISSING_SCHEMA",
+                msg=f"Le ou les schémas suivants ne sont pas présents dans les définitions : {missings_schema_name_txt}",
             )
             del get_global_cache([definition_type])[definition_key]
+            return
+
+        # print(missing_schema_names, definition_type, definition_key, definition)
+
+        # dépendancies
+        if dependencies := definition_type not in ["template", "with_template"] and definition.get(
+            "dependencies"
+        ):
+            type_keys = cls.type_keys(definition_type)
+            missing_dependencies = [
+                dependency for dependency in dependencies if dependency not in type_keys
+            ]
+            missing_dependencies_txt = ", ".join(missing_dependencies)
+            if missing_dependencies:
+                add_error(
+                    definition_type=definition_type,
+                    code="ERR_GLOBAL_MISSING_DEPENDENCIES",
+                    definition_key=definition_key,
+                    msg=f"La ou les dépendances suivante de type {definition_type} ne sont pas présentent dans les définitions : {missing_dependencies_txt}",
+                )
+                del get_global_cache([definition_type])[definition_key]
+                return
 
     @classmethod
     def init_definitions(cls):

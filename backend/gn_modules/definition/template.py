@@ -45,8 +45,8 @@ class DefinitionTemplates:
         if not template_name:
             add_error(
                 msg="Le champs <template.name> n'est pas défini",
-                type="with_template",
-                key=definition_with_template_key,
+                definition_type="with_template",
+                definition_key=definition_with_template_key,
                 code="ERR_TEMPLATE_NO_NAME",
             )
 
@@ -56,8 +56,8 @@ class DefinitionTemplates:
         if template is None:
             add_error(
                 msg="Le template {template_name} n'a pas été trouvé",
-                type="with_template",
-                key=definition_with_template_key,
+                definition_type="with_template",
+                definition_key=definition_with_template_key,
                 code="ERR_TEMPLATE_NOT_FOUND",
             )
 
@@ -85,8 +85,8 @@ class DefinitionTemplates:
             )
             add_error(
                 msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
-                type="with_template",
-                key=definition_with_template_key,
+                definition_type="with_template",
+                definition_key=definition_with_template_key,
                 code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
             )
             return

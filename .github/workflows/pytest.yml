@@ -147,12 +147,12 @@ jobs:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
         - name: install m_monitoring test 1
-          run: geonature modules install m_monitoring_test_1
+          run: geonature modules install -f m_monitoring_test_1
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
         - name: install m_monitoring test 2
-          run: geonature modules install m_monitoring_test_2
+          run: geonature modules install -f m_monitoring_test_2
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 

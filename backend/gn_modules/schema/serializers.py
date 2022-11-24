@@ -116,7 +116,8 @@ class SchemaSerializers:
             opposite["foreign_key"] = relation_def.get("local_key")
         if relation_def.get("schema_dot_table"):
             opposite["schema_dot_table"] = relation_def.get("schema_dot_table")
-
+        if relation_def.get("cor_schema_name"):
+            opposite["cor_schema_name"] = relation_def.get("cor_schema_name")
         return opposite
 
     def is_relation_excluded(self, relation_def_test, relation_def):
@@ -408,7 +409,6 @@ class SchemaSerializers:
             set_global_cache(["schema", schema_name, "marshmallow"], None)
 
         for schema_name in cls.schema_names():
-            print(schema_name)
             sm = cls(schema_name)
 
         for schema_name in cls.schema_names():

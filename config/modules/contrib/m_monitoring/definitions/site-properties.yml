@@ -124,7 +124,8 @@ modules:
     schema_name: commons.module
     title: Modules
     description: Modules associé au site
-    schema_dot_table: m_monitoring.cor_site_module
+    # schema_dot_table: m_monitoring.cor_site_module
+    cor_schema_name: m_monitoring.cor_site_module
     backref: sites
 areas:
     type: relation

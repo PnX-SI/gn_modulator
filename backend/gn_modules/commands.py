@@ -9,6 +9,7 @@ from flask.cli import with_appcontext
 
 from gn_modules.schema import SchemaMethods
 from gn_modules.module import ModuleMethods
+from gn_modules.definition import DefinitionMethods
 from gn_modules.utils.errors import errors_txt
 
 
@@ -150,11 +151,21 @@ def cmd_import_bulk_data(
 
 
 @click.command("features")
-@click.argument("data_name")
-def cmd_import_features(data_name):
+@click.argument("data_name", required=False)
+@click.option("-v", "--verbose", is_flag=True, help="affiche les détails des feature")
+def cmd_import_features(data_name=None, verbose=False):
     """
     importe des feature depuis un fichier (data) (.yml) referencé par la clé 'data_name'
     """
+
+    if data_name is None:
+        "Liste des features disponibles"
+        for data_name in sorted(DefinitionMethods.data_names()):
+            print(f"- {data_name}")
+            if verbose:
+                data = DefinitionMethods.get_definition("data", data_name)
+                print(f"    {data['title']}\n")
+        return
 
     data_names = data_name.split(",")
 

@@ -1,4 +1,5 @@
 data_name: m_eole.exemples
+title: données exemple pour le module éolien
 items:
   - schema_name: meta.ca
     items:

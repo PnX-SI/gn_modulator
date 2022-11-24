@@ -125,12 +125,16 @@
               "schema_dot_table": { "type": "string" },
               "nomenclature_type": {"type": "string" },
               "schema_name": { "type": "string" },
+              "cor_schema_name": { "type": "string" },
               "title": { "type": "string"},
               "trigger": { "type": "object" },
               "type": { "enum": [ "relation" ] },
               "backref": { "type": "string" }
             },
-            "required": [ "type", "title", "schema_name", "schema_dot_table", "relation_type"],
+            "anyOf":[
+              {"required": [ "type", "title", "schema_name", "schema_dot_table", "relation_type"]},
+              {"required": [ "type", "title", "schema_name", "cor_schema_name", "relation_type"]}
+            ],
             "additionalProperties": false
           },
           {

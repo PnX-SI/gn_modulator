@@ -5,7 +5,7 @@ code erreurs
 """
 
 
-def add_error(msg=None, code=None, type=None, key=None, file_path=None):
+def add_error(msg=None, code=None, definition_type=None, definition_key=None, file_path=None):
 
     if msg is None:
         raise Exception("msg is NOne")
@@ -13,10 +13,10 @@ def add_error(msg=None, code=None, type=None, key=None, file_path=None):
     if code is None:
         raise Exception("code is None")
 
-    file_path = file_path or get_global_cache([type, key, "file_path"])
+    file_path = file_path or get_global_cache([definition_type, definition_key, "file_path"])
 
-    if type and key and file_path is None:
-        raise Exception(f"file path is None {type}, {key}")
+    if definition_type and definition_key and (file_path is None):
+        raise Exception(f"file path is None {definition_type}, {definition_key}")
 
     error = {"msg": msg, "code": code, "file_path": file_path}
 

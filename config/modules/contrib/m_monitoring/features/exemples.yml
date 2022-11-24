@@ -1,4 +1,7 @@
 data_name: m_monitoring.exemples
+title: données d'exemple pour monitoring (groupes de site, site, visite)
+dependencies:
+  - m_monitoring.exemples
 items:
   - schema_name: m_monitoring.site_group
     items:

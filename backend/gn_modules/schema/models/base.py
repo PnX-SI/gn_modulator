@@ -142,6 +142,13 @@ class SchemaModelBase:
 
     def CorTable(self, relation_def):
 
+        # cas cor_schema_name
+        if cor_schema_name := relation_def.get("cor_schema_name"):
+            sm_cor = self.cls(cor_schema_name)
+            Model = sm_cor.Model()
+            CorTable = Model.__table__
+            return CorTable
+
         schema_dot_table = relation_def.get("schema_dot_table")
         cor_schema_name = schema_dot_table.split(".")[0]
         cor_table_name = schema_dot_table.split(".")[1]
@@ -229,7 +236,6 @@ class SchemaModelBase:
         # process relations
 
         for key, relationship_def in self.relationships().items():
-
             relationship = self.process_relation_model(key, relationship_def, Model)
             setattr(Model, key, relationship)
         # process column properties

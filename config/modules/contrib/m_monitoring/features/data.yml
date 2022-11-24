@@ -1,4 +1,5 @@
 data_name: m_monitoring.data
+title: catégories test (arbre loge, grotte ?)
 items:
     -
         schema_name: m_monitoring.site_category

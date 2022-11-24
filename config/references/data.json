@@ -1,6 +1,15 @@
 {
     "$id:": "data",
     "properties": {
+        "dependencies": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "title": {
+            "type": "string"
+        },
         "data_name": {
             "type": "string"
         },
@@ -19,9 +28,16 @@
                         }
                     }
                 },
-                "required": ["items", "schema_name"]
+                "required": [
+                    "items",
+                    "schema_name"
+                ]
             }
         }
     },
-    "required": ["items", "data_name"]
+    "required": [
+        "items",
+        "data_name",
+        "title"
+    ]
 }
