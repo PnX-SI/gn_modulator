@@ -4,7 +4,7 @@ template:
     module_code: 'm_monitoring_test_2'
 data_name: __MODULE_CODE__.exemples
 items: []
-dependancies: m_monitoring.exemples
+dependencies: m_monitoring.exemples
 
 
 

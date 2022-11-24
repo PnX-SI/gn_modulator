@@ -24,7 +24,7 @@ class SchemaBaseImports:
 
         # gestion des dépendances
         # attention aux dépendances circulaires
-        for dependancy_data_name in data.get("dependancies", []):
+        for dependancy_data_name in data.get("dependencies", []):
             cls.process_features(dependancy_data_name)
 
         data_file_path = get_global_cache(["data", data_name, "file_path"])

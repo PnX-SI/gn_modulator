@@ -223,7 +223,7 @@ class SchemaModelBase:
         # patch cruved
         Model.ownership = 0
 
-        # store in cache before relations (avoid circular dependancies)
+        # store in cache before relations (avoid circular dependencies)
         set_global_cache(["schema", self.schema_name(), "model"], Model)
 
         # process relations

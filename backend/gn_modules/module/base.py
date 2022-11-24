@@ -4,6 +4,7 @@ from gn_modules.utils.env import assets_static_dir, migrations_directory
 from gn_modules.utils.files import symlink
 from gn_modules.schema import SchemaMethods
 from gn_modules.utils.cache import get_global_cache
+from gn_modules.definition import DefinitionMethods
 
 
 class ModuleBase:

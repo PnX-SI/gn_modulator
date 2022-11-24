@@ -142,7 +142,7 @@ class SchemaModelExisting:
             else:
                 setattr(Model, key, self.process_column_model(key, column_def))
 
-        # store in cache before relation (avoid circular dependancies)
+        # store in cache before relation (avoid circular dependencies)
         set_global_cache(["schema", self.schema_name(), "model"], Model)
 
         for key, relation_def in self.relationships().items():

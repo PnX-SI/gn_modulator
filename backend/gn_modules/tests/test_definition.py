@@ -9,9 +9,9 @@ from pathlib import Path
 from gn_modules.definition import DefinitionMethods
 from gn_modules.utils.cache import get_global_cache
 from gn_modules.utils.errors import get_errors, clear_errors, errors_txt
+from gn_modules.utils.env import definitions_test_dir
 
 # répertoire contenant les definitions destinées aux test
-definitions_test_dir = Path(__file__).parent / "definitions_test"
 
 """
 err code
@@ -142,6 +142,8 @@ class TestDefinitions:
         DefinitionMethods.local_check_definition("schema", "test.test_local_check_fail_type")
         assert len(get_errors()) == 1
         assert get_errors()[0]["code"] == "ERR_DEF_JS_VALID"
+        assert get_global_cache(['schema', 'test.test_local_check_fail_type']) is None
+
         clear_errors()
 
     def test_global_check_definition(self):
@@ -163,6 +165,7 @@ class TestDefinitions:
         assert len(get_errors()) == 1
 
         assert get_errors()[0]["code"] == "ERR_DEF_MISSING_SCHEMA"
+        assert get_global_cache(["schema", "test.test_local_check_fail_schema_names"]) is None
         clear_errors()
 
     def test_template(self):

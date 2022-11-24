@@ -57,6 +57,9 @@ class ModuleCommands:
         # symlink
         cls.remove_migration_links(module_code)
 
+        # unregister
+        module_config["registred"] = False
+
         return True
 
     @classmethod
@@ -99,6 +102,9 @@ class ModuleCommands:
 
         # assets
         cls.process_module_assets(module_code)
+
+        # register
+        module_config["registred"] = True
 
         return True
 

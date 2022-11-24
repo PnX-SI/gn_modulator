@@ -1,6 +1,6 @@
 -- process schema : m_monitoring.site
 --
--- and dependancies : m_monitoring.site_category, m_monitoring.visit, m_monitoring.site_group, m_monitoring.observation, m_monitoring.actor, m_monitoring.sc_grotte, m_monitoring.sc_arbre_loge
+-- and dependencies : m_monitoring.site_category, m_monitoring.visit, m_monitoring.site_group, m_monitoring.observation, m_monitoring.actor, m_monitoring.sc_grotte, m_monitoring.sc_arbre_loge
 
 
 ---- sql schema m_monitoring

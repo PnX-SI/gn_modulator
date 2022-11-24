@@ -176,7 +176,7 @@ class SchemaSqlBase:
 
         txt = "-- process schema : {}\n".format(self.schema_name())
         if schema_names_to_process:
-            txt += "--\n-- and dependancies : {}\n".format(", ".join(schema_names_to_process))
+            txt += "--\n-- and dependencies : {}\n".format(", ".join(schema_names_to_process))
         txt += "\n\n"
 
         if self.schema_name() not in processed_schema_names:

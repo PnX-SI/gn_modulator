@@ -4,7 +4,7 @@ import yaml
 import json
 import jsonschema
 from gn_modules.utils.env import config_directory
-from gn_modules.utils.cache import set_global_cache, get_global_cache
+from gn_modules.utils.cache import set_global_cache, get_global_cache, clear_global_cache
 from gn_modules.utils.errors import add_error, get_errors
 
 # liste de tous les type de definition
@@ -160,6 +160,8 @@ class DefinitionBase:
                 msg=f"{msg}",
             )
 
+            del get_global_cache([definition_type])[definition_key]
+
     @classmethod
     def get_definition_reference_name(cls, definition_type, definition):
         """
@@ -282,6 +284,7 @@ class DefinitionBase:
 
             cls.save_in_cache_definition(definition, file_path)
 
+            return definition
         # gestion des exceptions et récupération des erreur
 
         # - erreurs de format YAML
@@ -382,6 +385,7 @@ class DefinitionBase:
                 code="ERR_DEF_MISSING_SCHEMA",
                 msg=f"Le ou les schéma(s) {missings_schema_name_txt} ne sont pas présents dans les définitions existantes",
             )
+            del get_global_cache([definition_type])[definition_key]
 
     @classmethod
     def init_definitions(cls):

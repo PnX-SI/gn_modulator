@@ -1,0 +1,11 @@
+module_code: pytest_2
+module:
+  module_label: "Module Pytest 2"
+  module_desc: "Test cyle installation / desinstallation"
+  module_picto: fa-puzzle-piece
+  active_frontend: false
+dependencies:
+  - pytest_1
+objects:
+    ref_geo.area:
+        cruved: R

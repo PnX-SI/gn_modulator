@@ -246,7 +246,7 @@ class SchemaSerializers:
         # else:
         # marshmallow_schema_dict['ownership'] = 0
 
-        # store in cache before relation (avoid circular dependancies)
+        # store in cache before relation (avoid circular dependencies)
 
         for relation_key, relation_def in self.relationships().items():
             relation_marshmallow = self.process_relation_marshmallow(relation_key, relation_def)
@@ -264,7 +264,7 @@ class SchemaSerializers:
 
         set_global_cache(["schema", self.schema_name(), "marshmallow"], MarshmallowSchema)
 
-        # load dependancies
+        # load dependencies
         for dep in self.dependencies():
             sm = self.cls(dep)
             sm.MarshmallowSchema()
@@ -406,6 +406,10 @@ class SchemaSerializers:
         """
         for schema_name in cls.schema_names():
             set_global_cache(["schema", schema_name, "marshmallow"], None)
+
+        for schema_name in cls.schema_names():
+            print(schema_name)
+            sm = cls(schema_name)
 
         for schema_name in cls.schema_names():
             sm = cls(schema_name)

@@ -1,7 +1,7 @@
 
 -- process schema : schemas.sipaf.pf
 --
--- and dependancies : schemas.sipaf.route
+-- and dependencies : schemas.sipaf.route
 
 
 ---- sql schema sipaf
