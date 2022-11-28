@@ -1,0 +1,17 @@
+type: schema
+code: meta.actor
+title: Schema meta.actor
+description: Définition du schema des acteurs de jeux de données
+
+meta:
+  schema_code: meta.actor
+  autoschema: true
+  model_name: CorDatasetActor
+  sql_schema_dot_table: gn_meta.cor_dataset_actor
+  label: Acteur de jeux de données
+  label_field_name: id_cda
+  genre: M
+  unique:
+    - id_dataset
+    - id_role
+    - id_organism

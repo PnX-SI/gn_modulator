@@ -1,0 +1,14 @@
+type: schema
+code: ref_geo.areas_type
+title: Schema ref_geo.areas_type
+description: Définition du schema des types de zonage de ref_geo
+
+meta:
+  sql_schema_dot_table: ref_geo.bib_areas_types
+  model_name: BibAreasTypes
+  label: type de geométrie
+  label_field_name: type_name
+  genre: M
+  autoschema: true
+  unique:
+    - type_code

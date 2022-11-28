@@ -1,0 +1,24 @@
+type: template
+code: m_monitoring.exemples_template
+title: template data exemple site module
+description: permet d'ajouter une liste de site à un module
+
+template:
+  type: data
+  code: __MODULE_CODE__.exemples
+  title: data site module __MODULE_CODE__
+  description: ajout de sites d'exemple pour le module (__MODULE_CODE__)
+  items:
+    - schema_code: m_monitoring.cor_site_module
+      items:
+        - { id_module: __MODULE_CODE__, id_site: AL1 }
+        - { id_module: __MODULE_CODE__, id_site: AL2 }
+        - { id_module: __MODULE_CODE__, id_site: AL3 }
+        - { id_module: __MODULE_CODE__, id_site: AL4 }
+        - { id_module: __MODULE_CODE__, id_site: AL5 }
+        - { id_module: __MODULE_CODE__, id_site: AL6 }
+        - { id_module: __MODULE_CODE__, id_site: GR1 }
+        - { id_module: __MODULE_CODE__, id_site: GR2 }
+        - { id_module: __MODULE_CODE__, id_site: GR3 }
+  dependencies:
+  - m_monitoring.exemples

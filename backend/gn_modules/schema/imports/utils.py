@@ -33,7 +33,7 @@ class SchemaUtilsImports:
     @classmethod
     def txt_pre_process_raw_import_view(
         cls,
-        schema_name,
+        schema_code,
         pre_process_file_path,
         raw_import_table,
         pre_process_import_view,
@@ -70,7 +70,7 @@ class SchemaUtilsImports:
 
     @classmethod
     def txt_create_raw_import_view(
-        cls, schema_name, temporary_table, raw_import_view, keys=None, key_unnest=None
+        cls, schema_code, temporary_table, raw_import_view, keys=None, key_unnest=None
     ):
         """
         - temporary_table : table ou sont stockées les données d'un csv
@@ -79,7 +79,7 @@ class SchemaUtilsImports:
         on passe les champs valant '' à NULL
         """
 
-        sm = cls(schema_name)
+        sm = cls(schema_code)
 
         columns = filter(
             lambda x: (
@@ -93,7 +93,7 @@ class SchemaUtilsImports:
         # on preprocess ttes les colonnes
         v_txt_pre_process_columns = list(
             map(
-                lambda x: cls(schema_name).pre_process_raw_import_columns(
+                lambda x: cls(schema_code).pre_process_raw_import_columns(
                     x.key, key_unnest=key_unnest
                 ),
                 cls.get_table_columns(temporary_table),
@@ -101,7 +101,7 @@ class SchemaUtilsImports:
         )
 
         v_txt_columns = list(
-            map(lambda x: cls(schema_name).process_raw_import_column(x.key), columns)
+            map(lambda x: cls(schema_code).process_raw_import_column(x.key), columns)
         )
 
         txt_primary_column = (
@@ -144,7 +144,7 @@ FROM pre_process
         if property["type"] == "date":
             return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::DATE END AS {key}"
 
-        if property["type"] == "integer" and "schema_name" not in property:
+        if property["type"] == "integer" and "schema_code" not in property:
             return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::INTEGER END AS {key}"
 
         return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key} END AS {key}"
@@ -186,13 +186,13 @@ FROM pre_process
 
     @classmethod
     def txt_create_processed_import_view(
-        cls, schema_name, raw_import_view, processed_import_view, keys=None
+        cls, schema_code, raw_import_view, processed_import_view, keys=None
     ):
         """
         requete pour créer une vue qui résoud les clé
         """
 
-        sm = cls(schema_name)
+        sm = cls(schema_code)
 
         v_columns = []
         v_joins = []
@@ -216,7 +216,7 @@ FROM pre_process
                     sm.has_property(column.key)
                     and sm.property(column.key).get("relation_type") == "n-n"
                 ):
-                    rel = cls(sm.property(column.key)["schema_name"])
+                    rel = cls(sm.property(column.key)["schema_code"])
                     v_columns.append(f"{txt_column.split('.')[0]}.{rel.pk_field_name()}")
                 else:
                     v_columns.append(f"{txt_column} AS {column.key}")
@@ -268,7 +268,7 @@ FROM {raw_import_view} t
                 if k_unique in solved_keys:
                     link_joins[k_unique] = solved_keys[k_unique]
                 else:
-                    rel = self.cls(self.property(k_unique)["schema_name"])
+                    rel = self.cls(self.property(k_unique)["schema_code"])
                     txt_column_join, v_join_inter = rel.resolve_key(
                         var_key,
                         index_unique,
@@ -328,11 +328,11 @@ FROM {raw_import_view} t
         property = self.property(key)
 
         if property.get("foreign_key"):
-            rel = self.cls(property["schema_name"])
+            rel = self.cls(property["schema_code"])
             return rel.resolve_key(key, index)
 
         if property.get("relation_type") == "n-n":
-            rel = self.cls(property["schema_name"])
+            rel = self.cls(property["schema_code"])
             return rel.resolve_key(key, index)
 
             # txt_column, v_join = rel.resolve_key(key, index)
@@ -342,10 +342,10 @@ FROM {raw_import_view} t
 
     @classmethod
     def txt_import_view_to_insert(
-        cls, schema_name, processed_import_view, dest_table=None, keys=None
+        cls, schema_code, processed_import_view, dest_table=None, keys=None
     ):
 
-        sm = cls(schema_name)
+        sm = cls(schema_code)
 
         table_name = dest_table or sm.sql_schema_dot_table()
 
@@ -376,9 +376,9 @@ FROM {processed_import_view}
 """
 
     @classmethod
-    def txt_import_view_to_update(cls, schema_name, processed_import_view):
+    def txt_import_view_to_update(cls, schema_code, processed_import_view):
 
-        sm = cls(schema_name)
+        sm = cls(schema_code)
 
         columns = cls.get_table_columns(processed_import_view)
 
@@ -429,9 +429,9 @@ AND {txt_update_conditions}
 """
 
     @classmethod
-    def txt_nb_update(cls, schema_name, processed_import_view):
+    def txt_nb_update(cls, schema_code, processed_import_view):
 
-        sm = cls(schema_name)
+        sm = cls(schema_code)
 
         columns = cls.get_table_columns(processed_import_view)
 

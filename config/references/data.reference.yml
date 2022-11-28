@@ -1,0 +1,39 @@
+type: object
+code: data
+title: Reference features
+description: Réference pour les définitions d'import de données (features)
+
+required:
+  - type
+  - code
+  - title
+  - description
+  - items
+properties:
+  type:
+    type: string
+    enum: [data]
+  code:
+    type: string
+  title:
+    type: string
+  description:
+    type: string
+  dependencies:
+    type: array
+    items:
+      type: string
+  items:
+    type: array
+    items:
+      type: object
+      properties:
+        schema_code:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+      required:
+        - items
+        - schema_code

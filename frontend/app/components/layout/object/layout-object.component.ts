@@ -50,7 +50,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       this.layout && this.layout.type,
       this.layout.diplay,
       this.data.object_name,
-      this.data.schema_name,
+      this.data.schema_code,
       this._id,
       ...args
     );
@@ -208,7 +208,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   }
 
   schemaName() {
-    return this.data.schema_name;
+    return this.data.schema_code;
   }
 
   objectName() {

@@ -1,0 +1,29 @@
+type: object
+code: reference
+title: Reference references
+description: Reference pour pouvoir valider les references
+
+required:
+  - type
+  - title
+  - code
+  - description
+  - properties
+  - required
+properties:
+  type:
+    type: string
+    enum: [object]
+  title:
+    type: string
+  code:
+    type: string
+  description:
+    type: string
+  properties:
+    type: object
+  required:
+    type: array
+  definitions:
+    type: object
+additionalProperties: False

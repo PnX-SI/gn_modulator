@@ -4,7 +4,6 @@
 
 
 import unicodedata
-import json
 
 
 def unaccent(input_str):

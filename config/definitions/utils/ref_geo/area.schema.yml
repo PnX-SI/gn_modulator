@@ -1,0 +1,28 @@
+type: schema
+code: ref_geo.area
+title: Schema ref_geo.area
+description: Définition du schema des zonages de ref_geo
+
+meta:
+    sql_schema_dot_table: ref_geo.l_areas
+    model_name: LAreas
+    label: géométrie
+    label_field_name: area_name
+    genre: F
+    autoschema: true
+    relations:
+        - area_type
+    unique:
+        - id_type
+        - area_code
+properties:
+    name_code:
+        type: string
+        column_property: concat
+        title: Code et nom
+        label: '<area_name> <area_code>'
+    code_name:
+        type: string
+        column_property: concat
+        title: Nom et code
+        label: '<area_code> <area_name>'

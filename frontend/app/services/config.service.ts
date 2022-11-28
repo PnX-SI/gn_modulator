@@ -60,7 +60,7 @@ export class ModulesConfigService {
   getLayouts() {
     return Object.keys(this._config.layouts).length
       ? of(this._config.layout)
-      : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts/`).pipe(
+      : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts/?as_dict`).pipe(
           mergeMap((layouts) => {
             this._config.layouts = layouts;
             return of(this._config.layout);

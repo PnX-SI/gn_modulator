@@ -88,17 +88,17 @@ class SchemaModelExisting:
         return cache_existing_tables.get(schema_dot_table)
 
     def get_model_from_schema_dot_table(self, schema_dot_table):
-        Model = cache_existing_models.get(self.schema_name())
+        Model = cache_existing_models.get(self.schema_code())
 
         # Patch pourris bug nvelle version gn avec Taxref et Synthese (Taxref)
         # TODO arranger existings ??
 
-        if self.schema_name() == "syn.synthese":
+        if self.schema_code() == "syn.synthese":
             from geonature.core.gn_synthese.models import Synthese
 
             return Synthese
 
-        if self.schema_name() == "tax.taxref":
+        if self.schema_code() == "tax.taxref":
             from geonature.core.taxonomie.models import Taxref
 
             return Taxref
@@ -111,9 +111,9 @@ class SchemaModelExisting:
                 continue
 
             sql_table_name = Model.__tablename__
-            sql_schema_name = Model.__table__.schema
+            sql_schema_code = Model.__table__.schema
 
-            if "{}.{}".format(sql_schema_name, sql_table_name) == schema_dot_table:
+            if "{}.{}".format(sql_schema_code, sql_table_name) == schema_dot_table:
                 return Model
 
     def search_existing_model(self):
@@ -126,7 +126,7 @@ class SchemaModelExisting:
 
     def get_existing_model(self):
         """ """
-        Model = cache_existing_models.get(self.schema_name())
+        Model = cache_existing_models.get(self.schema_code())
 
         if not Model:
             Model = self.search_existing_model()
@@ -143,7 +143,7 @@ class SchemaModelExisting:
                 setattr(Model, key, self.process_column_model(key, column_def))
 
         # store in cache before relation (avoid circular dependencies)
-        set_global_cache(["schema", self.schema_name(), "model"], Model)
+        set_global_cache(["schema", self.schema_code(), "model"], Model)
 
         for key, relation_def in self.relationships().items():
             if hasattr(Model, key):

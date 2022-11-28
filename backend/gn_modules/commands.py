@@ -62,49 +62,49 @@ def cmd_process_all(module_code):
 
 @click.command("sql")
 @click.option("-m", "module_code")
-@click.option("-s", "schema_name")
+@click.option("-s", "schema_code")
 @with_appcontext
-def cmd_process_sql(module_code=None, schema_name=None, force=False):
+def cmd_process_sql(module_code=None, schema_code=None, force=False):
     """
     affiche les commandes sql qui va être générées pour
-    - un schema spécifié par l'option -s,schema_name
+    - un schema spécifié par l'option -s,schema_code
     - un module spécifié par l'option -s,module_code
         (ensemble de schema définis par le module)
     """
 
-    if schema_name:
-        sm = SchemaMethods(schema_name)
-        txt, processed_schema_names = sm.sql_txt_process()
+    if schema_code:
+        sm = SchemaMethods(schema_code)
+        txt, processed_schema_codes = sm.sql_txt_process()
         print(txt)
 
     if module_code:
         module_config = ModuleMethods.module_config(module_code)
-        schema_names = module_config["schemas"]
-        processed_schema_names = []
+        schema_codes = module_config["schemas"]
+        processed_schema_codes = []
         txt_all = ""
-        for schema_name in schema_names:
-            sm = SchemaMethods(schema_name)
-            txt, processed_schema_names = sm.sql_txt_process(processed_schema_names)
+        for schema_code in schema_codes:
+            sm = SchemaMethods(schema_code)
+            txt, processed_schema_codes = sm.sql_txt_process(processed_schema_codes)
             txt_all += txt
         print(txt)
 
 
 @click.command("doc")
-@click.argument("schema_name")
+@click.argument("schema_code")
 @click.option("-f", "--force", is_flag=True)
 @with_appcontext
-def cmd_doc_schema(schema_name, force=False):
+def cmd_doc_schema(schema_code, force=False):
     """
-    affiche la doc d'un schema identifié par schema_name
+    affiche la doc d'un schema identifié par schema_code
     """
 
-    txt = SchemaMethods(schema_name).doc_markdown()
+    txt = SchemaMethods(schema_code).doc_markdown()
     print(txt)
     return True
 
 
 @click.command("import")
-@click.option("-s", "schema_name")
+@click.option("-s", "schema_code")
 @click.option("-d", "data_file_path", type=click.Path(exists=True))
 @click.option(
     "-p",
@@ -124,7 +124,7 @@ def cmd_doc_schema(schema_name, force=False):
 @click.option("-k", "--keep-raw", is_flag=True, help="garde le csv en base")
 @with_appcontext
 def cmd_import_bulk_data(
-    schema_name=None,
+    schema_code=None,
     import_file_path=None,
     data_file_path=None,
     pre_process_file_path=None,
@@ -135,9 +135,9 @@ def cmd_import_bulk_data(
     importe des données pour un schema
     """
 
-    if schema_name and data_file_path:
+    if schema_code and data_file_path:
         SchemaMethods.process_csv_file(
-            schema_name=schema_name,
+            schema_code=schema_code,
             data_file_path=data_file_path,
             pre_process_file_path=pre_process_file_path,
             verbose=verbose,
@@ -158,7 +158,7 @@ def cmd_import_features(data_name=None, verbose=False):
     importe des feature depuis un fichier (data) (.yml) referencé par la clé 'data_name'
     """
 
-    data_names = sorted(DefinitionMethods.data_names())
+    data_names = sorted(DefinitionMethods.definition_codes("data"))
 
     if data_name is None or data_name not in data_names:
         print()
@@ -186,16 +186,16 @@ def cmd_import_features(data_name=None, verbose=False):
 
 
 @click.command("grammar")
-@click.option("-s", "schema_name", help="Pour un schema donnée")
+@click.option("-s", "schema_code", help="Pour un schema donnée")
 @click.option("-m", "module_code", help="Pour un module donné")
 @click.option("-o", "object_name", help="Pour un module donné")
 @click.option("-g", "grammar_type", help="Pour un type donnée (par ex 'un_nouveau_label")
-def cmd_test_grammar(module_code=None, object_name=None, schema_name=None, grammar_type=None):
+def cmd_test_grammar(module_code=None, object_name=None, schema_code=None, grammar_type=None):
     """
     commande pour tester la grammaire
     - sans options
         affiche la grammaire pour tous les objects de tous les modules
-    - schema_name
+    - schema_code
         pour un schema
     - module_code
         pour un module
@@ -207,14 +207,14 @@ def cmd_test_grammar(module_code=None, object_name=None, schema_name=None, gramm
 
     try:
         grammar_txt = ModuleMethods.test_grammar(
-            module_code, object_name, schema_name, grammar_type
+            module_code, object_name, schema_code, grammar_type
         )
 
         print(f"\n{grammar_txt}")
 
     # cas schema non trouvé
     except SchemaMethods.errors.SchemaNotFoundError:
-        print(f"\nErreur:\n  - Le schema {schema_name} n'a pas été trouvé.")
+        print(f"\nErreur:\n  - Le schema {schema_code} n'a pas été trouvé.")
 
     # cas module non trouvé
     except ModuleMethods.errors.ModuleNotFoundError:

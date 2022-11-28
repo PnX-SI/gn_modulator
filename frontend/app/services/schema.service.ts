@@ -6,8 +6,6 @@ import { ModulesLayoutService } from './layout.service';
 
 @Injectable()
 export class ModulesSchemaService {
-  private _cache = {};
-
   _mData: ModulesDataService;
   _mForm: ModulesFormService;
   _mConfig: ModulesConfigService;

@@ -63,7 +63,7 @@ export class ModulesPageService {
       // const routeParams = { value, ...((layout as any)?.params || {}) };
       const routeParams = {};
       // routeParams[]
-      const schemaName = moduleConfig.objects[objectName].schema_name;
+      const schemaName = moduleConfig.objects[objectName].schema_code;
 
       routeParams[this._mSchema.pkFieldName(this.moduleCode, objectName)] = value;
       // this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);

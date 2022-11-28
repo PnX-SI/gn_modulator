@@ -9,11 +9,11 @@ class SchemaCommands:
     """
 
     @classmethod
-    def c_get_sample(cls, schema_name, value, field_name=None):
+    def c_get_sample(cls, schema_code, value, field_name=None):
         """
         get one row from id
         """
 
-        sm = cls(schema_name)
+        sm = cls(schema_code)
 
         return sm.serialize(sm.get_row(value, field_name), fields=sm.columns().keys())

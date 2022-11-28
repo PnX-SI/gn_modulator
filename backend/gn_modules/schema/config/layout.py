@@ -39,7 +39,7 @@ class SchemaConfigLayout:
                     "title",
                     "description",
                     "type",
-                    "schema_name",
+                    "schema_code",
                     "nomenclature_type",
                     "min",
                     "max",
@@ -50,8 +50,8 @@ class SchemaConfigLayout:
                     if key in definition:
                         layout[key] = layout.get(key, definition[key])
 
-                if layout["type"] in ["array", "object"] and layout.get("schema_name"):
-                    rel = self.cls(layout["schema_name"])
+                if layout["type"] in ["array", "object"] and layout.get("schema_code"):
+                    rel = self.cls(layout["schema_code"])
                     layout["items"] = rel.process_layout(layout["items"])
                 return layout
 

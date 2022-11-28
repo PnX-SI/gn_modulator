@@ -43,16 +43,16 @@ class SchemaSerializers:
     TODO
     """
 
-    def marshmallow_schema_name(self):
+    def marshmallow_schema_code(self):
         """ """
 
         return self.attr(
-            "meta.marshmallow_schema_name",
-            "ma{}".format(self.schema_name("pascal_case")),
+            "meta.marshmallow_schema_code",
+            "ma{}".format(self.schema_code("pascal_case")),
         )
 
     def marshmallow_meta_name(self):
-        return "Meta{}".format(self.marshmallow_schema_name())
+        return "Meta{}".format(self.marshmallow_schema_code())
 
     def process_column_marshmallow(self, column_key, column_def):
         field_type = column_def.get("type")
@@ -107,7 +107,7 @@ class SchemaSerializers:
                 if relation_def["relation_type"] == "1-1"
                 else "n-n"
             ),
-            "schema_name": self.schema_name(),
+            "schema_code": self.schema_code(),
             "title": self.attr("meta.label"),
         }
         if relation_def.get("foreign_key"):
@@ -116,14 +116,14 @@ class SchemaSerializers:
             opposite["foreign_key"] = relation_def.get("local_key")
         if relation_def.get("schema_dot_table"):
             opposite["schema_dot_table"] = relation_def.get("schema_dot_table")
-        if relation_def.get("cor_schema_name"):
-            opposite["cor_schema_name"] = relation_def.get("cor_schema_name")
+        if relation_def.get("cor_schema_code"):
+            opposite["cor_schema_code"] = relation_def.get("cor_schema_code")
         return opposite
 
     def is_relation_excluded(self, relation_def_test, relation_def):
         return (
             relation_def.get("relation_type") == relation_def_test.get("relation_type")
-            and relation_def.get("schema_name") == relation_def_test.get("schema_name")
+            and relation_def.get("schema_code") == relation_def_test.get("schema_code")
             and relation_def.get("local_key") == relation_def_test.get("local_key")
             and relation_def.get("foreign_key") == relation_def_test.get("foreign_key")
         )
@@ -142,14 +142,14 @@ class SchemaSerializers:
 
         # avoid circular dependencies
 
-        relation = self.cls(relation_def["schema_name"])
+        relation = self.cls(relation_def["schema_code"])
         if not relation.Model():
             return None
 
         exclude = relation.excluded_relations(self.opposite_relation_def(relation_def))
 
         relation_serializer = fields.Nested(
-            relation.marshmallow_schema_name(), **{"exclude": exclude, "dump_default": None}
+            relation.marshmallow_schema_code(), **{"exclude": exclude, "dump_default": None}
         )
 
         if relation_def["relation_type"] == "n-1":
@@ -167,7 +167,7 @@ class SchemaSerializers:
         False permet de recréer le schema si besoin
         """
 
-        MarshmallowSchema = get_global_cache(["schema", self.schema_name(), "marshmallow"])
+        MarshmallowSchema = get_global_cache(["schema", self.schema_code(), "marshmallow"])
 
         if MarshmallowSchema is not None and not force:
             return MarshmallowSchema
@@ -258,12 +258,12 @@ class SchemaSerializers:
             marshmallow_schema_dict[relation_key] = relation_marshmallow
 
         MarshmallowSchema = type(
-            self.marshmallow_schema_name(),
+            self.marshmallow_schema_code(),
             (ma.SQLAlchemyAutoSchema,),
             marshmallow_schema_dict,
         )
 
-        set_global_cache(["schema", self.schema_name(), "marshmallow"], MarshmallowSchema)
+        set_global_cache(["schema", self.schema_code(), "marshmallow"], MarshmallowSchema)
 
         # load dependencies
         for dep in self.dependencies():
@@ -405,16 +405,16 @@ class SchemaSerializers:
         on a besoin de refaire les schema qui n'ont pas pu être fait correctement car des tables n'existaient pas
         (pas de model pour les relations -> schema non operationel pour ces relation)
         """
-        for schema_name in cls.schema_names():
-            set_global_cache(["schema", schema_name, "marshmallow"], None)
+        for schema_code in cls.schema_codes():
+            set_global_cache(["schema", schema_code, "marshmallow"], None)
 
-        for schema_name in cls.schema_names():
-            sm = cls(schema_name)
+        for schema_code in cls.schema_codes():
+            sm = cls(schema_code)
 
-        for schema_name in cls.schema_names():
-            sm = cls(schema_name)
+        for schema_code in cls.schema_codes():
+            sm = cls(schema_code)
             sm.Model()
 
-        for schema_name in cls.schema_names():
-            sm = cls(schema_name)
+        for schema_code in cls.schema_codes():
+            sm = cls(schema_code)
             sm.MarshmallowSchema()

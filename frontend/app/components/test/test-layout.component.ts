@@ -27,7 +27,7 @@ export class TestLayoutComponent implements OnInit {
 
   layout: any;
 
-  layoutName: string;
+  layoutSearchName: string;
   value;
 
   data: any = {
@@ -41,7 +41,7 @@ export class TestLayoutComponent implements OnInit {
   ngOnInit() {
     this._route.queryParams.subscribe((params) => {
       this.debug = ![undefined, false, 'false'].includes(params.debug);
-      this.layoutName = params.layout_name;
+      this.layoutSearchName = params.layout_search_name;
       this.value = params.value;
       this.initLayout();
     });
@@ -77,11 +77,11 @@ export class TestLayoutComponent implements OnInit {
             type: 'list_form',
             api: '/modules/layouts/',
             value_field_name: 'layout_name',
-            label_field_name: 'layout_name',
-            title_field_name: 'layout_description',
+            label_field_name: 'title',
+            title_field_name: 'description',
             return_object: true,
             reload_on_search: true,
-            default: this.layoutName && { layout_name: this.layoutName },
+            default: this.layoutSearchName && { layout_search_name: this.layoutSearchName },
           },
           {
             flex: '0',

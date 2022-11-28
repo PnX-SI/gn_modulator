@@ -89,13 +89,13 @@ class SchemaModelColumnProperties:
             return select([func_min_max(relation_field)])
 
         raise errors.SchemaModelColumnPropertyError(
-            "La column_property {} {} est mal définie".format(self.schema_name(), key)
+            "La column_property {} {} est mal définie".format(self.schema_code(), key)
         )
 
     def column_property_util_relation_where_conditions(self, key, column_property_def, Model):
 
         relation, _ = self.custom_getattr(Model, column_property_def["relation_key"])
-        rel = self.cls(self.property(column_property_def["relation_key"])["schema_name"])
+        rel = self.cls(self.property(column_property_def["relation_key"])["schema_code"])
         conditions = relation
         if column_property_def.get("filters") is not None:
             condition_filters, conditions = rel.process_filter_array(

@@ -1,0 +1,17 @@
+type: schema
+code: ref_geo.linear_group
+title: Schema ref_geo.linear_group
+description: Définition du schema des groupes de linéaires de ref_geo
+
+meta:
+    sql_schema_dot_table: ref_geo.t_linear_groups
+    model_name: LLinearGroups
+    label: Groupe de linéaire
+    labels: Groupes de linéaires
+    label_field_name: name
+    genre: M
+    relation:
+        - linears
+    autoschema: true
+    unique:
+        - code

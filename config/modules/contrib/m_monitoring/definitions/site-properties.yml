@@ -39,44 +39,44 @@ id_site_category:
     title: Catégorie de site
     description: Catégorie de site (pour pouvoir associé des champs spécifiques)
     foreign_key: true
-    schema_name: m_monitoring.site_category
+    schema_code: m_monitoring.site_category
 category:
     type: relation
     relation_type: n-1
     local_key: id_site_category
-    schema_name: m_monitoring.site_category
+    schema_code: m_monitoring.site_category
     title: Catégorie de site
     description: Catégorie de site (pour pouvoir associé des champs spécifiques)
 id_digitiser:
     type: integer
     foreign_key: true
-    schema_name: user.role
+    schema_code: user.role
     title: Numérisateur
     description: Personne qui a saisi la donnée
 digitiser:
     type: relation
     relation_type: n-1
-    schema_name: user.role
+    schema_code: user.role
     title: Numérisateur
     description: Personne qui a saisi la donnée
     local_key: id_digitiser
 id_inventor:
     type: integer
     foreign_key: true
-    schema_name: user.role
+    schema_code: user.role
     title: Descripteur
     description: Descripteur du site
 inventor:
     type: relation
     relation_type: n-1
-    schema_name: user.role
+    schema_code: user.role
     title: Descripteur
     description: Descripteur du site
     local_key: id_inventor
 id_nomenclature_type_site:
     type: integer
     foreign_key: true
-    schema_name: ref_nom.nomenclature
+    schema_code: ref_nom.nomenclature
     title: Type de site
     nomenclature_type: TYPE_SITE
     description: Nomenclature de type de site
@@ -84,7 +84,7 @@ id_nomenclature_type_site:
 nomenclature_type_site:
     type: relation
     relation_type: n-1
-    schema_name: ref_nom.nomenclature
+    schema_code: ref_nom.nomenclature
     title: Type de site
     description: Nomenclature de type de site
     local_key: id_nomenclature_type_site
@@ -95,7 +95,7 @@ data:
 visits:
     type: relation
     relation_type: 1-n
-    schema_name: m_monitoring.visit
+    schema_code: m_monitoring.visit
     foreign_key: id_site
     title: Visites
     description: Visites associées au site
@@ -110,28 +110,28 @@ last_visit_date_min:
     column_property: max
     relation_key: visits
     key: date_min
-    schema_name: m_monitoring.visit
+    schema_code: m_monitoring.visit
 groups:
     type: relation
     relation_type: n-n
-    schema_name: m_monitoring.site_group
+    schema_code: m_monitoring.site_group
     title: Groupes de sites
     description: Groupes de sites associés au site
     schema_dot_table: m_monitoring.cor_site_group
 modules:
     type: relation
     relation_type: n-n
-    schema_name: commons.module
+    schema_code: commons.module
     title: Modules
     description: Modules associé au site
     # schema_dot_table: m_monitoring.cor_site_module
-    cor_schema_name: m_monitoring.cor_site_module
+    cor_schema_code: m_monitoring.cor_site_module
     backref: sites
 areas:
     type: relation
     title: Areas
     relation_type: n-n
-    schema_name: ref_geo.area
+    schema_code: ref_geo.area
     schema_dot_table: m_monitoring.cor_area_site
     trigger:
         name: intersect_ref_geo
@@ -141,7 +141,7 @@ linears:
     type: relation
     title: Linéaires
     relation_type: n-n
-    schema_name: ref_geo.linear
+    schema_code: ref_geo.linear
     schema_dot_table: m_monitoring.cor_linear_site
     trigger:
         name: d_within
@@ -182,6 +182,6 @@ actors:
     type: relation
     relation_type: 1-n
     foreign_key: id_site
-    schema_name: m_monitoring.actor
+    schema_code: m_monitoring.actor
     title: Acteurs
     description: Les acteurs liés au site

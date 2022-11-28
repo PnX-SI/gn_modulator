@@ -1,0 +1,25 @@
+type: schema
+code: m_monitoring.cor_site_module
+title: Schema cor_site_module
+description: Définition du schema de la relation cor_site_module
+meta:
+  sql_schema_dot_table: m_monitoring.cor_site_module
+  label: Lien sites modules
+  label_field_name: id_site
+  genre: M
+  unique:
+    - id_site
+    - id_module
+properties:
+  id_module:
+    type: integer
+    title: Module
+    foreign_key: true
+    primary_key: true
+    schema_code: commons.module
+  id_site:
+    type: integer
+    title: Site
+    foreign_key: true
+    primary_key: true
+    schema_code: m_monitoring.site

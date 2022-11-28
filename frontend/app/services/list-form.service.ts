@@ -134,8 +134,8 @@ export class ListFormService {
       schemaFilters.push(`area_type.type_code = ${options.area_type}`);
     }
 
-    if (options.schema_name && !options.object_name) {
-      options.object_name = options.schema_name;
+    if (options.schema_code && !options.object_name) {
+      options.object_name = options.schema_code;
     }
 
     if (!options.object_name) {

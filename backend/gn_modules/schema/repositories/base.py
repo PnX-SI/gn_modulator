@@ -221,7 +221,7 @@ class SchemaRepositoriesBase:
             if self.geometry_field_name() and self.geometry_field_name() not in fields:
                 fields.append(self.geometry_field_name())
 
-        if self.schema_name() in ["commons.module", "commons.modules"]:
+        if self.schema_code() in ["commons.module", "commons.modules"]:
             fields.append("type")
 
         defered_fields = [
@@ -238,7 +238,7 @@ class SchemaRepositoriesBase:
             try:
                 query = query.options(defered_field)
             except Exception as e:
-                print(f"{self.schema_name()}: pb avec defer {defered_field} {str(e)}")
+                print(f"{self.schema_code()}: pb avec defer {defered_field} {str(e)}")
                 pass
         return query
 

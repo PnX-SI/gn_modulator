@@ -46,7 +46,7 @@ class SchemaAuto:
             return schema_definition
 
         Model = (
-            get_global_cache(["schema", self.schema_name(), "model"])
+            get_global_cache(["schema", self.schema_code(), "model"])
             # or self.get_existing_model()
             or self.get_model_from_schema_dot_table(schema_dot_table)
         )
@@ -74,9 +74,9 @@ class SchemaAuto:
         properties = {}
 
         sql_table_name = Model.__tablename__
-        sql_schema_name = Model.__table__.schema
+        sql_schema_code = Model.__table__.schema
 
-        reflected_columns = self.insp().get_columns(sql_table_name, schema=sql_schema_name)
+        reflected_columns = self.insp().get_columns(sql_table_name, schema=sql_schema_code)
 
         # columns
         for column in Model.__table__.columns:
@@ -84,7 +84,7 @@ class SchemaAuto:
             if not hasattr(Model, column.key):
                 continue
             column_auto = self.process_column_auto(
-                column, reflected_columns, sql_schema_name, sql_table_name
+                column, reflected_columns, sql_schema_code, sql_table_name
             )
             if column_auto:
                 properties[column.key] = column_auto
@@ -120,7 +120,7 @@ class SchemaAuto:
             return
 
         sql_schema_dot_table = "{}.{}".format(relation.target.schema, relation.target.name)
-        schema_name = self.cls.c_get_schema_name_from_sql_schema_dot_table(sql_schema_dot_table)
+        schema_code = self.cls.c_get_schema_code_from_sql_schema_dot_table(sql_schema_dot_table)
         property = {
             "type": "relation",
             "relation_type": (
@@ -130,7 +130,7 @@ class SchemaAuto:
                 if relation.direction.name == "ONETOMANY"
                 else "n-n"
             ),
-            "schema_name": schema_name,
+            "schema_code": schema_code,
             "title": relation_key,
         }
 
@@ -141,7 +141,7 @@ class SchemaAuto:
 
         return property
 
-    def process_column_auto(self, column, reflected_columns, sql_schema_name, sql_table_name):
+    def process_column_auto(self, column, reflected_columns, sql_schema_code, sql_table_name):
 
         type = str(column.type)
 
@@ -151,16 +151,16 @@ class SchemaAuto:
         try:
             reflected_column = next(x for x in reflected_columns if x["name"] == column.key)
         except Exception:
-            # print('erreur auto', self.schema_name(), column.key, e)
+            # print('erreur auto', self.schema_code(), column.key, e)
             return
         schema_type = self.cls.c_get_type(type, "sql", "definition")
 
         if not schema_type:
             print(
-                f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
+                f"{sql_schema_code}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
             )
             raise SchemaAutoError(
-                f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
+                f"{sql_schema_code}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
             )
 
         property = {"type": schema_type["type"], "title": column.key}
@@ -168,7 +168,7 @@ class SchemaAuto:
         if schema_type["type"] == "geometry":
             if schema_type["srid"] == -1:
                 schema_type["srid"] = db.engine.execute(
-                    f"SELECT FIND_SRID('{sql_schema_name}', '{sql_table_name}', '{column.key}')"
+                    f"SELECT FIND_SRID('{sql_schema_code}', '{sql_table_name}', '{column.key}')"
                 ).scalar()
             property["srid"] = schema_type["srid"]
             property["geometry_type"] = schema_type["geometry_type"]
@@ -186,18 +186,18 @@ class SchemaAuto:
         for foreign_key in column.foreign_keys:
             # key = foreign_key.target_fullname.split(".")[-1]
             schema_dot_table = ".".join(foreign_key._table_key().split("."))
-            schema_name = self.cls.c_get_schema_name_from_sql_schema_dot_table(schema_dot_table)
-            if not schema_name:
+            schema_code = self.cls.c_get_schema_code_from_sql_schema_dot_table(schema_dot_table)
+            if not schema_code:
                 # TODO avec des schema non encore crées ??
                 continue
             property["foreign_key"] = True
-            property["schema_name"] = schema_name
+            property["schema_code"] = schema_code
 
-            if schema_name == "ref_nom.nomenclature":
+            if schema_code == "ref_nom.nomenclature":
 
                 # nomenclature_type
                 nomenclature_type = self.reflect_nomenclature_type(
-                    sql_schema_name, sql_table_name, column.key
+                    sql_schema_code, sql_table_name, column.key
                 )
                 property["nomenclature_type"] = nomenclature_type
                 # property.pop('foreign_key')
@@ -211,12 +211,12 @@ class SchemaAuto:
 
         return property
 
-    def reflect_nomenclature_type(self, sql_schema_name, sql_table_name, column_key):
+    def reflect_nomenclature_type(self, sql_schema_code, sql_table_name, column_key):
         """
         va chercher les type de nomenclature depuis les contraintes 'check_nomenclature_type'
         """
         check_constraints = self.insp().get_check_constraints(
-            sql_table_name, schema=sql_schema_name
+            sql_table_name, schema=sql_schema_code
         )
         for check_constraint in check_constraints:
             sqltext = check_constraint["sqltext"]

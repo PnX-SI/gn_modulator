@@ -38,31 +38,31 @@ class SchemaSqlTable:
         local_key = self.pk_field_name()
         local_key_type = self.get_sql_type(self.column(local_key), cor_table=True, required=True)
         local_table_name = self.sql_table_name()
-        local_schema_name = self.sql_schema_name()
+        local_schema_code = self.sql_schema_code()
 
-        relation = self.cls(relation_def["schema_name"])
+        relation = self.cls(relation_def["schema_code"])
         foreign_key = relation.pk_field_name()
         foreign_key_type = relation.get_sql_type(
             relation.column(foreign_key), cor_table=True, required=True
         )
         foreign_table_name = relation.sql_table_name()
-        foreign_schema_name = relation.sql_schema_name()
+        foreign_schema_code = relation.sql_schema_code()
 
         cor_schema_dot_table = relation_def["schema_dot_table"]
-        cor_schema_name = cor_schema_dot_table.split(".")[0]
+        cor_schema_code = cor_schema_dot_table.split(".")[0]
         cor_table_name = cor_schema_dot_table.split(".")[1]
 
         txt_args = {
-            "cor_schema_name": cor_schema_name,
+            "cor_schema_code": cor_schema_code,
             "cor_table_name": cor_table_name,
             "cor_schema_dot_table": cor_schema_dot_table,
             "local_key": local_key,
             "local_key_type": local_key_type,
-            "local_schema_name": local_schema_name,
+            "local_schema_code": local_schema_code,
             "local_table_name": local_table_name,
             "foreign_key": foreign_key,
             "foreign_key_type": foreign_key_type,
-            "foreign_schema_name": foreign_schema_name,
+            "foreign_schema_code": foreign_schema_code,
             "foreign_table_name": foreign_table_name,
         }
 
@@ -77,18 +77,18 @@ CREATE TABLE IF NOT EXISTS {cor_schema_dot_table} (
 ---- {cor_schema_dot_table} primary keys contraints
 
 ALTER TABLE {cor_schema_dot_table}
-    ADD CONSTRAINT pk_{cor_schema_name}_{cor_table_name}_{local_key}_{foreign_key} PRIMARY KEY ({local_key}, {foreign_key});
+    ADD CONSTRAINT pk_{cor_schema_code}_{cor_table_name}_{local_key}_{foreign_key} PRIMARY KEY ({local_key}, {foreign_key});
 
 ---- {cor_schema_dot_table} foreign keys contraints
 
 ALTER TABLE {cor_schema_dot_table}
-    ADD CONSTRAINT fk_{cor_schema_name}_{cor_table_name}_{local_key} FOREIGN KEY ({local_key})
-    REFERENCES {local_schema_name}.{local_table_name} ({local_key})
+    ADD CONSTRAINT fk_{cor_schema_code}_{cor_table_name}_{local_key} FOREIGN KEY ({local_key})
+    REFERENCES {local_schema_code}.{local_table_name} ({local_key})
     ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE {cor_schema_dot_table}
-    ADD CONSTRAINT fk_{cor_schema_name}_{cor_table_name}_{foreign_key} FOREIGN KEY ({foreign_key})
-    REFERENCES {foreign_schema_name}.{foreign_table_name} ({foreign_key})
+    ADD CONSTRAINT fk_{cor_schema_code}_{cor_table_name}_{foreign_key} FOREIGN KEY ({foreign_key})
+    REFERENCES {foreign_schema_code}.{foreign_table_name} ({foreign_key})
     ON UPDATE CASCADE ON DELETE CASCADE;
 """.format(
             **txt_args
@@ -96,7 +96,7 @@ ALTER TABLE {cor_schema_dot_table}
 
         if relation_def.get("nomenclature_type"):
             txt += self.sql_txt_nomenclature_type_constraint(
-                txt_args["cor_schema_name"],
+                txt_args["cor_schema_code"],
                 txt_args["cor_table_name"],
                 "id_nomenclature",
                 relation_def.get("nomenclature_type"),
@@ -120,10 +120,10 @@ ALTER TABLE {cor_schema_dot_table}
 
         txt = ""
 
-        txt = """---- table {sql_schema_name}.{sql_table_name}
+        txt = """---- table {sql_schema_code}.{sql_table_name}
 
-CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
-            sql_schema_name=self.sql_schema_name(), sql_table_name=self.sql_table_name()
+CREATE TABLE {sql_schema_code}.{sql_table_name} (""".format(
+            sql_schema_code=self.sql_schema_code(), sql_table_name=self.sql_table_name()
         )
 
         # liste des champs
@@ -160,8 +160,8 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
 
             if column_def.get("description") is None:
                 continue
-            txt += "COMMENT ON COLUMN {sql_schema_name}.{sql_table_name}.{key} IS '{description}';\n".format(
-                sql_schema_name=self.sql_schema_name(),
+            txt += "COMMENT ON COLUMN {sql_schema_code}.{sql_table_name}.{key} IS '{description}';\n".format(
+                sql_schema_code=self.sql_schema_code(),
                 sql_table_name=self.sql_table_name(),
                 key=key,
                 description=column_def["description"].replace("'", "''"),

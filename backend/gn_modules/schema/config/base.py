@@ -21,6 +21,7 @@ class SchemaConfigBase:
             "filter_defs": self.config_filters(),
             "details": self.config_details(),
             "properties": self.properties(),
+            "json_schema": self.json_schema,
         }
 
     def config_map(self):
@@ -49,7 +50,7 @@ class SchemaConfigBase:
 
                 (key_relationship, key_column) = key.split(".")
                 relation_def = self.relationship(key_relationship)
-                # relation = self.cls(relation_def["schema_name"])
+                # relation = self.cls(relation_def["schema_code"])
                 # relation_column = relation.column(key_column)
                 column_def = {
                     "title": relation_def["title"],
@@ -102,8 +103,8 @@ class SchemaConfigBase:
             "value_field_name": self.value_field_name(),
             "geometry_field_name": self.geometry_field_name(),
             "model_name": self.model_name(),
-            "schema_name": self.schema_name(),
-            "sql_schema_name": self.sql_schema_name(),
+            "schema_code": self.schema_code(),
+            "sql_schema_code": self.sql_schema_code(),
             "sql_table_name": self.sql_table_name(),
             "page_size": self.page_size(),
         }
@@ -144,4 +145,4 @@ class SchemaConfigBase:
         }
 
     def description(self, object_definition={}):
-        return self.attr("meta.description", f"Schéma '{self.schema_name()}'")
+        return self.attr("meta.description", f"Schéma '{self.schema_code()}'")

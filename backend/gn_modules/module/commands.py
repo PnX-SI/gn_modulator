@@ -137,7 +137,7 @@ class ModuleCommands:
             cls.create_migration_init_file(module_code)
 
     @classmethod
-    def test_grammar(cls, module_code=None, object_name=None, schema_name=None, grammar_type=None):
+    def test_grammar(cls, module_code=None, object_name=None, schema_code=None, grammar_type=None):
         """
         renvoie un tecte contenant les élément de grammaire des schemas concerné par les argument
         (par defaut tout)
@@ -163,9 +163,9 @@ class ModuleCommands:
         # récupération de grammar list
         grammar_list = []
 
-        # si schema_name on traite seulement ce schéma
-        if schema_name:
-            sm = SchemaMethods(schema_name)
+        # si schema_code on traite seulement ce schéma
+        if schema_code:
+            sm = SchemaMethods(schema_code)
             grammar_list.append(sm.config_display())
 
         else:

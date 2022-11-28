@@ -1,0 +1,44 @@
+type: object
+code: module
+title: Reference
+description: Réference pour les définitions de module
+
+required:
+  - type
+  - code
+  - title
+  - description
+  - module
+  - objects
+properties:
+  type:
+    type: string
+    enum: ['module']
+  code:
+    type: string
+  title:
+    type: string
+  description:
+    type: string
+  module:
+    type: object
+    required:
+      - module_label
+      - module_desc
+    properties:
+      module_label:
+        type: string
+      module_desc:
+        type: string
+  objects:
+    type: object
+    additionalProperties:
+      type: object
+      properties:
+        schema_code:
+          type: string
+        cruved:
+          type: string
+      required:
+        - schema_code
+        - cruved

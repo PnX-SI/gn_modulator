@@ -1,0 +1,35 @@
+type: object
+code: schema_auto
+title: Reference schema_auto
+description: Réference pour les schema auto (ou les propriete sont retrouvée automatiquement)
+
+definitions:
+  meta: !include schema-meta.reference.yml
+required:
+  - type
+  - code
+  - title
+  - description
+  - meta
+  - properties
+properties:
+  type:
+    type: string
+    enum: [schema_auto]
+  title:
+    type: string
+  code:
+    type: string
+  description:
+    type: string
+  meta:
+    $ref: '#/definitions/meta'
+  properties:
+    type: object
+    additionalProperties:
+      oneOf:
+        - title: auto property
+          properties:
+            title:
+              type: string
+          additionalProperties: true

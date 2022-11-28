@@ -1,0 +1,14 @@
+type: module
+code: pytest_1
+title: module test 1
+description: module test 1
+
+module:
+  module_label: "Module Pytest 1"
+  module_desc: "Test cyle installation / desinstallation"
+  module_picto: fa-puzzle-piece
+  active_frontend: false
+objects:
+  ref_geo:
+    schema_code: ref_geo.area
+    cruved: R

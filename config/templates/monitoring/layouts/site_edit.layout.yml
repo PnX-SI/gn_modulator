@@ -1,0 +1,11 @@
+type: layout
+code: m_monitoring.site_edit
+title: Layout site edit
+description: Layout pour l'édition d'un site
+layout:
+  height_auto: true
+  direction: row
+  items:
+    - type: object
+      display: form
+      key: site

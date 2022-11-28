@@ -1,0 +1,14 @@
+type: schema
+code: tax.taxref
+title: Schema tax.taxref
+description: Définition du schema de taxonomie
+
+meta:
+    autoschema: true
+    sql_schema_dot_table: taxonomie.taxref
+    model_name: Taxref
+    genre: F
+    label: taxonomie
+    label_field_name: nom_vern
+    unique:
+        - cd_nom

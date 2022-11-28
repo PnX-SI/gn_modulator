@@ -1,0 +1,8 @@
+type: use_template
+code: m_monitoring_test_1.exemples
+title: Données exemple m_monitoring_test_1
+description: Donnée d'exemple pour le protocole m_monitoring_test_1
+
+template_code: m_monitoring.exemples_template
+params:
+  module_code: m_monitoring_test_1

@@ -1,0 +1,20 @@
+type: schema
+code: ref_geo.linear
+title: Schema ref_geo.linear
+description: Définition du schema des linéaires de ref_geo
+
+meta:
+    schema_code: ref_geo.linear
+    sql_schema_dot_table: ref_geo.l_linears
+    model_name: LLinears
+    label: linéaire
+    label_field_name: linear_name
+    geometry_field_name: geom
+    genre: M
+    autoschema: true
+    relations:
+        - type
+        - groups
+    unique:
+        - id_type
+        - linear_code

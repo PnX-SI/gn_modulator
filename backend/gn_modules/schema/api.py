@@ -45,14 +45,14 @@ class SchemaApi:
 
     def url(self, post_url, full_url=False):
         """
-        /{schema_name}{post_url}
+        /{schema_code}{post_url}
 
         - full/url renvoie l'url complet
 
         TODO gérer par type d'url ?
         """
 
-        url = self.attr("meta.url", "/{}{}".format(self.schema_name(), post_url))
+        url = self.attr("meta.url", "/{}{}".format(self.schema_code(), post_url))
 
         if full_url:
             url = "{}{}".format(self.cls.base_url(), url)
@@ -132,7 +132,7 @@ class SchemaApi:
                 try:
                     return get_one_rest(value)
                 except self.errors.SchemaUnsufficientCruvedRigth:
-                    return f"Vous n'avez pas les droits suffisants pour accéder à cette requête (schema_name: {self.schema_name()}, module_code: {module_code})"
+                    return f"Vous n'avez pas les droits suffisants pour accéder à cette requête (schema_code: {self.schema_code()}, module_code: {module_code})"
 
             else:
                 return get_list_rest()

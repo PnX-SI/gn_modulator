@@ -1,13 +1,13 @@
 CREATE OR REPLACE FUNCTION setval_max
 (
-    schema_name name,
+    schema_code name,
     table_name name DEFAULT NULL::name,
     raise_notice boolean DEFAULT false
 )
 RETURNS void AS
 $BODY$
 
--- Sets all the sequences in the schema "schema_name" to the max(id) of every table (or a specific table, if name is supplied)
+-- Sets all the sequences in the schema "schema_code" to the max(id) of every table (or a specific table, if name is supplied)
 -- Examples:
 --  SELECT setval_max('public');
 --  SELECT setval_max('public','mytable');
@@ -19,8 +19,8 @@ DECLARE
     sql_code TEXT;
 
 BEGIN
-    IF ((SELECT COUNT(*) FROM pg_namespace WHERE nspname = schema_name) = 0) THEN
-        RAISE EXCEPTION 'The schema "%" does not exist', schema_name;
+    IF ((SELECT COUNT(*) FROM pg_namespace WHERE nspname = schema_code) = 0) THEN
+        RAISE EXCEPTION 'The schema "%" does not exist', schema_code;
     END IF;
 
     FOR sql_code IN
@@ -30,7 +30,7 @@ BEGIN
             INNER JOIN pg_class AS T ON D.refobjid = T.oid
             INNER JOIN pg_attribute AS C ON D.refobjid = C.attrelid AND D.refobjsubid = C.attnum
             INNER JOIN pg_namespace N ON N.oid = S.relnamespace
-            WHERE S.relkind = 'S' AND N.nspname = schema_name AND (table_name IS NULL OR T.relname = table_name)
+            WHERE S.relkind = 'S' AND N.nspname = schema_code AND (table_name IS NULL OR T.relname = table_name)
             ORDER BY S.relname
     LOOP
         IF (raise_notice) THEN

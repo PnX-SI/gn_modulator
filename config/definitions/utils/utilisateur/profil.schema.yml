@@ -1,0 +1,14 @@
+type: schema
+code: user.profil
+title: Schema user.profil
+description: Définition du schema pour les profils d'utilisateurs
+
+meta:
+    autoschema: true
+    model_name: Profils
+    sql_schema_dot_table: utilisateurs.t_profils
+    label: profil
+    label_field_name: nom_profil
+    genre: M
+    unique:
+        - code_profil

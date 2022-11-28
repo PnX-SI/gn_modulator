@@ -1,0 +1,11 @@
+type: layout
+title: Layout visit edit
+description: Layout pour l'édition d'une visite
+code: m_monitoring.visit_edit
+layout:
+  height_auto: true
+  direction: row
+  items:
+    - type: object
+      display: form
+      key: visit

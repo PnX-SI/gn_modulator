@@ -1,0 +1,14 @@
+type: schema
+code: user.liste
+title: Schema user.liste
+description: Définition du schema pour les liste d'utilisateurs
+
+meta:
+    autoschema: true
+    model_name: TListes
+    sql_schema_dot_table: utilisateurs.t_listes
+    label: liste
+    label_field_name: nom_liste
+    genre: F
+    unique:
+        - code_liste

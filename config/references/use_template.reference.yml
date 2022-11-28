@@ -1,0 +1,25 @@
+type: object
+code: use_template
+title: Reference template
+description: Référence pour les définitions des templates
+
+required:
+  - type
+  - code
+  - title
+  - description
+  - template_code
+properties:
+  type:
+    type: string
+    enum: [use_template]
+  code:
+    type: string
+  title:
+    type: string
+  description:
+    type: string
+  template_code:
+    type: string
+  params:
+    type: object

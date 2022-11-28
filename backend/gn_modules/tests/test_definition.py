@@ -47,9 +47,12 @@ class TestDefinitions:
         assert len(get_errors()) == 0
 
         # on a bien chargé des schemas, modules, layouts
-        assert len(DefinitionMethods.reference_names()) > 0
-        assert len(DefinitionMethods.module_codes()) > 0
-        assert len(DefinitionMethods.layout_names()) > 0
+        assert len(DefinitionMethods.definition_codes("reference")) > 0
+        assert len(DefinitionMethods.definition_codes("module")) > 0
+        assert len(DefinitionMethods.definition_codes("layout")) > 0
+        assert len(DefinitionMethods.definition_codes("schema")) > 0
+        assert len(DefinitionMethods.definition_codes("template")) > 0
+        assert len(DefinitionMethods.definition_codes("use_template")) > 0
 
         # on a bien les références
         # - pour les définitions
@@ -86,11 +89,11 @@ class TestDefinitions:
         if error_code is None:
             assert len(get_errors()) == 0
             assert definition is not None
-            definition_type, definition_key = DefinitionMethods.get_definition_type_and_key(
+            definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(
                 definition
             )
             assert definition_type is not None
-            assert definition_key is not None
+            assert definition_code is not None
 
             return definition
 
@@ -112,9 +115,11 @@ class TestDefinitions:
         # chargment de la definition (+ test que tout est ok)
         definition = self.test_load_definition(file_path)
 
-        definition_type, definition_key = DefinitionMethods.get_definition_type_and_key(definition)
+        definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(
+            definition
+        )
 
-        DefinitionMethods.local_check_definition(definition_type, definition_key)
+        DefinitionMethods.local_check_definition(definition_type, definition_code)
 
         # si le code d'erreur n'est pas défini, on s'assure qu'il n'y a pas d'erreur
         if error_code is None:
@@ -127,7 +132,7 @@ class TestDefinitions:
         assert get_errors()[0]["code"] == error_code
 
         # on teste si la definition a bien été supprimé
-        assert get_global_cache([definition_type, definition_key]) is None
+        assert get_global_cache([definition_type, definition_code]) is None
 
         return definition
 
@@ -145,9 +150,11 @@ class TestDefinitions:
 
         definition = self.test_local_check_definition(file_path)
 
-        defintion_type, definition_key = DefinitionMethods.get_definition_type_and_key(definition)
+        defintion_type, definition_code = DefinitionMethods.get_definition_type_and_code(
+            definition
+        )
 
-        DefinitionMethods.global_check_definition(defintion_type, definition_key)
+        DefinitionMethods.global_check_definition(defintion_type, definition_code)
 
         # si error_code n'est pas renseigné, on s'attend à n'avoir aucune erreur
         if error_code is None:
@@ -161,17 +168,17 @@ class TestDefinitions:
         assert get_errors()[0].get("file_path") is not None
 
         # test si la definition a bien été retirée du cache
-        assert get_global_cache([defintion_type, definition_key]) is None
+        assert get_global_cache([defintion_type, definition_code]) is None
 
         clear_errors()
 
     def test_load_definition_json_ok(self):
         # load json ok
-        return self.test_load_definition(definitions_test_dir / "load_definition_ok.json")
+        return self.test_load_definition(definitions_test_dir / "load_definition_ok.schema.json")
 
     def test_load_definition_yml_ok(self):
         # load yml ok
-        return self.test_load_definition(definitions_test_dir / "load_definition_ok.yml")
+        return self.test_load_definition(definitions_test_dir / "load_definition_ok.schema.yml")
 
     def test_load_definition_json_fail(self):
         # load json fail
@@ -200,7 +207,7 @@ class TestDefinitions:
     def test_load_definition_existing_fail(self):
         # load existing fail
         return self.test_load_definition(
-            definitions_test_dir / "load_definition_existing_fail.yml", "ERR_LOAD_EXISTING"
+            definitions_test_dir / "load_definition_existing_fail.schema.yml", "ERR_LOAD_EXISTING"
         )
 
     def test_local_check_definition_ref_fail(self):
@@ -209,7 +216,8 @@ class TestDefinitions:
         """
 
         return self.test_local_check_definition(
-            definitions_test_dir / "local_check_definition_ref_fail.yml", "ERR_LOCAL_CHECK_REF"
+            definitions_test_dir / "local_check_definition_ref_fail.schema.yml",
+            "ERR_LOCAL_CHECK_REF",
         )
 
     def test_global_check_definition_missing_schema(self):
@@ -217,7 +225,7 @@ class TestDefinitions:
         test global pour vérifier la remontée de missing schema
         """
         return self.test_global_check_definition(
-            definitions_test_dir / "global_check_schema_names_fail.yml",
+            definitions_test_dir / "global_check_schema_codes_fail.schema.yml",
             "ERR_GLOBAL_MISSING_SCHEMA",
         )
 
@@ -226,7 +234,7 @@ class TestDefinitions:
         test global pour vérifier la remontée de missing schema
         """
         return self.test_global_check_definition(
-            definitions_test_dir / "global_check_dependencies_fail.yml",
+            definitions_test_dir / "global_check_dependencies_fail.data.yml",
             "ERR_GLOBAL_MISSING_DEPENDENCIES",
         )
 
@@ -244,4 +252,4 @@ class TestDefinitions:
         definition = DefinitionMethods.get_definition("module", "m_monitoring_test_1")
         assert definition.get("pages") is not None
 
-        assert definition["module_code"] == "m_monitoring_test_1"
+        assert definition["code"] == "m_monitoring_test_1"

@@ -63,7 +63,7 @@ Dictionnaire définissant la configuration du module, avec les clés suivantes:
 - **objects**
     - permet de les données qui vont être manipulée dans ce module
         - pour chaque clé on va définir
-            - **schema_name**: définie la table
+            - **schema_code**: définie la table
             - **cruved**: quelles sont les api qui vont être ouvertes et pour quels type d'action
             - **prefilters**:
                 - par exemple pour les gîtes on souhaite avoir seulement les sites de catégorie ``gîtes``

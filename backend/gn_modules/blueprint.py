@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from .commands import commands
 from .schema import SchemaMethods
 from sqlalchemy.exc import NoForeignKeysError
@@ -73,4 +73,18 @@ def api_layout():
     Renvoie la liste des layouts
     """
 
-    return LayoutMethods.get_layouts()
+    # paramètres
+
+    # - as dict
+    #   renvoie sous forme de dictonnaire avec les layout_name en clé
+    #   destiné à la config
+    as_dict = request.args.get("as_dict")
+    # - filtre sur le nom des layouts
+    layout_search_name = request.args.get("layout_search_name")
+    # - pour un layout précis
+    layout_name = request.args.get("layout_name")
+
+    if layout_name:
+        return LayoutMethods.get_layout(layout_name)
+
+    return jsonify(LayoutMethods.get_layouts(layout_search_name, as_dict))

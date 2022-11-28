@@ -53,14 +53,14 @@ class ModuleBase:
     def create_schema_sql(cls, module_code, force=False):
 
         module_config = cls.module_config(module_code)
-        schema_names = module_config["schemas"]
+        schema_codes = module_config["schemas"]
 
         txt = ""
 
-        processed_schema_names = []
-        for schema_name in schema_names:
-            sm = SchemaMethods(schema_name)
-            txt_schema, processed_schema_names = sm.sql_txt_process(processed_schema_names)
+        processed_schema_codes = []
+        for schema_code in schema_codes:
+            sm = SchemaMethods(schema_code)
+            txt_schema, processed_schema_codes = sm.sql_txt_process(processed_schema_codes)
             txt += txt_schema
 
         sql_file_path = cls.migrations_dir(module_code) / "data/schema.sql"
@@ -81,11 +81,11 @@ class ModuleBase:
         sql_file_path.parent.mkdir(parents=True, exist_ok=True)
 
         module_config = cls.module_config(module_code)
-        schema_names = module_config["schemas"]
+        schema_codes = module_config["schemas"]
         txt = "--\n-- reset.sql ({})\n--\n\n".format(module_code)
-        for schema_name in schema_names:
-            sm = SchemaMethods(schema_name)
-            txt_drop_schema = "-- DROP SCHEMA {} CASCADE;\n".format(sm.sql_schema_name())
+        for schema_code in schema_codes:
+            sm = SchemaMethods(schema_code)
+            txt_drop_schema = "-- DROP SCHEMA {} CASCADE;\n".format(sm.sql_schema_code())
             if txt_drop_schema not in txt:
                 txt += txt_drop_schema
 

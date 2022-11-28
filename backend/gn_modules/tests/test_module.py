@@ -27,12 +27,14 @@ class TestModules:
         )
         assert res is None
 
-        module_config = load_module_from_file(definitions_test_dir / "modules/test1/module.yml")
+        module_config = load_module_from_file(
+            definitions_test_dir / "modules/test1/pytest_1.module.yml"
+        )
 
         assert len(get_errors()) == 0
 
         assert module_config is not None
-        assert module_config["module_code"] == module_code
+        assert module_config["code"] == module_code
         assert module_config["registred"] is False
 
         # install module
@@ -73,16 +75,20 @@ class TestModules:
             )
             assert res is None
 
-        module_config_1 = load_module_from_file(definitions_test_dir / "modules/test1/module.yml")
+        module_config_1 = load_module_from_file(
+            definitions_test_dir / "modules/test1/pytest_1.module.yml"
+        )
         assert len(get_errors()) == 0
         assert module_config_1 is not None
-        assert module_config_1["module_code"] == "pytest_1"
+        assert module_config_1["code"] == "pytest_1"
         assert module_config_1["registred"] is False
 
-        module_config_2 = load_module_from_file(definitions_test_dir / "modules/test2/module.yml")
+        module_config_2 = load_module_from_file(
+            definitions_test_dir / "modules/test2/pytest_2.module.yml"
+        )
         assert len(get_errors()) == 0
         assert module_config_2 is not None
-        assert module_config_2["module_code"] == "pytest_2"
+        assert module_config_2["code"] == "pytest_2"
         assert module_config_2["registred"] is False
         assert module_config_2["dependencies"] == ["pytest_1"]
 

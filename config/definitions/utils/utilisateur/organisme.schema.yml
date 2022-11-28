@@ -1,0 +1,24 @@
+type: schema
+code: user.organisme
+title: Schema user.organisme
+description: Définition du schema pour les organimes
+
+required:
+    - nom_organisme
+meta:
+    autoschema: true
+    sql_schema_dot_table: utilisateurs.bib_organismes
+    model_name: Organisme
+    genre: M
+    label: organisme
+    label_field_name: nom_organisme
+    unique:
+        - nom_organisme
+properties:
+    id_organisme:
+        type: integer
+        label: ID organisme
+        primary_key: true
+    nom_organisme:
+        type: string
+        label: Nom organisme

@@ -1,9 +1,36 @@
-import copy
 import os
 import json
 import yaml
 from pathlib import Path
 from gn_modules.utils.env import local_srid
+from gn_modules.utils.commons import replace_in_dict
+
+
+class YmlLoader(yaml.CLoader):
+    """
+    pour ajouter des inclusion de fichier
+    https://stackoverflow.com/questions/528281/how-can-i-include-a-yaml-file-inside-another
+    """
+
+    def __init__(self, stream):
+        self._root = os.path.split(stream.name)[0]
+        super(YmlLoader, self).__init__(stream)
+
+    def include(self, node):
+
+        filename = os.path.join(self._root, self.construct_scalar(node))
+
+        with open(filename, "r") as f:
+            if filename.endswith(".yml"):
+                return yaml.load(f, YmlLoader)
+            if filename.endswith(".json"):
+                return json.loads(f)
+            raise Exception(
+                f"Wrong include {filename} in {self._root} (doest not end with .yml or .json)"
+            )
+
+
+YmlLoader.add_constructor("!include", YmlLoader.include)
 
 
 class DefinitionUtils:
@@ -34,30 +61,17 @@ class DefinitionUtils:
         return key_file_paths
 
     @classmethod
-    def load_definition_from_file(cls, file_path, load_keys=False):
+    def load_definition_from_file(cls, file_path):
         """
         Read json or yml file and return data
-
-        TODO process error
         """
-        if load_keys:
-            data = cls.load_definition_from_file(file_path)
-            # get all files
-
-            for key, key_file_path in cls.get_key_file_paths(file_path).items():
-                data[key] = cls.load_definition_from_file(key_file_path)
-
-            return data
 
         with open(file_path) as f:
-            data_txt = f.read()
+            data = yaml.load(f, YmlLoader) if file_path.suffix == ".yml" else json.load(f)
+
             # traitement du local_srid
-            data_txt = data_txt.replace("__LOCAL_SRID__", str(local_srid()))
-            data = (
-                yaml.load(data_txt, yaml.CLoader)
-                if file_path.suffix == ".yml"
-                else json.loads(data_txt)
-            )
+            data = replace_in_dict(data, "__LOCAL_SRID__", local_srid())
+
             return data
 
     @classmethod
@@ -69,8 +83,8 @@ class DefinitionUtils:
             ont des élément qui sont présent dans <test_list>
 
         par exemple
-            - pour voir si les elements de clé 'schema_name'
-              sont bien dans la liste des schema_name chargés dans le cache
+            - pour voir si les elements de clé 'schema_code'
+              sont bien dans la liste des schema_code chargés dans le cache
 
         renvoie la liste des éléments manquants
         """
@@ -80,10 +94,10 @@ class DefinitionUtils:
         # - dictionnaire
         if isinstance(item, dict):
 
-            # patch pourris avec les data pour schema_name et commons.table_location
+            # patch pourris avec les data pour schema_code et commons.table_location
             if (
-                key_name == "schema_name"
-                and item.get("schema_name") == "commons.table_location"
+                key_name == "schema_code"
+                and item.get("schema_code") == "commons.table_location"
                 and item.get("items")
             ):
                 return []

@@ -1,13 +1,13 @@
 {
   "schemas": {
     "site": {
-      "schema_name": "schemas.monitoring.site"
+      "schema_code": "schemas.monitoring.site"
     },
     "visit": {
-      "schema_name": "schemas.monitoring.visit"
+      "schema_code": "schemas.monitoring.visit"
     },
     "observation": {
-      "schema_name": "schemas.monitoring.observation"
+      "schema_code": "schemas.monitoring.observation"
     }
   },
   "tree": {

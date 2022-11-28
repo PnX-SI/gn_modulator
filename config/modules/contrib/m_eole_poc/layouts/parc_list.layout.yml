@@ -1,0 +1,56 @@
+type: layout
+code: m_eole.parc_list
+title: Layout parc_list
+description: Layout pour la liste des parcs éoliens
+
+layout:
+    height_auto: true
+    direction: row
+    items:
+        -
+            flex: 2
+            type: map
+            items:
+                -
+                    type: object
+                    display: geojson
+                    key: parc
+                -
+                    type: object
+                    display: geojson
+                    key: gite
+                -
+                    type: object
+                    display: geojson
+                    key: eolienne
+
+        -
+            flex: 2
+            items:
+                -
+                    flex: '0'
+                    type: breadcrumbs
+                -
+                    display: tabs
+                    items:
+                        -
+                            label: '__f__`Parc (${data.parc.filtered}/${data.parc.total})`'
+                            items:
+                                -
+                                    key: parc
+                                    type: object
+                                    display: table
+                        -
+                            label: '__f__`Eoliennes (${data.eolienne.filtered}/${data.eolienne.total})`'
+                            items:
+                                -
+                                    key: eolienne
+                                    type: object
+                                    display: table
+                        -
+                            label: '__f__`Gîtes (${data.gite.filtered}/${data.gite.total})`'
+                            items:
+                                -
+                                    key: gite
+                                    type: object
+                                    display: table

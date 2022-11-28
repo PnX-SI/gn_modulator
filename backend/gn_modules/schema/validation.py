@@ -32,9 +32,9 @@ class SchemaValidation:
         for key, _column_def in self.columns().items():
             column_def = copy.deepcopy(_column_def)
             if column_def["type"] == "geometry":
-                schema_name = "references.geom.{}".format(column_def["geometry_type"])
-                self.set_definition_from_schema_name(definitions, schema_name)
-                column_def["$ref"] = "#/definitions/{}".format(self.cls.defs_id(schema_name))
+                schema_code = "references.geom.{}".format(column_def["geometry_type"])
+                self.set_definition_from_schema_code(definitions, schema_code)
+                column_def["$ref"] = "#/definitions/{}".format(self.cls.defs_id(schema_code))
                 column_def.pop("type")
 
             properties[key] = self.process_json_schema(column_def)
@@ -50,7 +50,7 @@ class SchemaValidation:
         # avoid circular deps
         # self.cls.set_global_cache(
         #     'js_definition',
-        #     self.schema_name(),
+        #     self.schema_code(),
         #     copy.deepcopy(processed_schema)
         # )
 
@@ -59,7 +59,7 @@ class SchemaValidation:
 
         self.set_definition(
             get_global_cache(["js_definition"]),
-            self.schema_name(),
+            self.schema_code(),
             copy.deepcopy(processed_schema),
         )
 
@@ -67,11 +67,11 @@ class SchemaValidation:
         for key, _relation_def in self.relationships().items():
             relation_def = copy.deepcopy(_relation_def)
             relation_def.pop("type")
-            self.set_definition_from_schema_name(definitions, relation_def["schema_name"])
+            self.set_definition_from_schema_code(definitions, relation_def["schema_code"])
 
             properties[key] = self.process_json_schema(relation_def)
 
-            ref = "#/definitions/{}".format(self.cls.defs_id(relation_def["schema_name"]))
+            ref = "#/definitions/{}".format(self.cls.defs_id(relation_def["schema_code"]))
 
             # relation 1 n
             if relation_def["relation_type"] == "n-1":
@@ -90,26 +90,26 @@ class SchemaValidation:
 
         self.set_definition(
             get_global_cache(["js_definition"]),
-            self.schema_name(),
+            self.schema_code(),
             copy.deepcopy(processed_schema),
         )
 
         return processed_schema
 
     @classmethod
-    def defs_id(cls, schema_name):
-        return schema_name.replace(".", "_")
+    def defs_id(cls, schema_code):
+        return schema_code.replace(".", "_")
 
-    def set_definition(self, definitions, schema_name, schema):
+    def set_definition(self, definitions, schema_code, schema):
 
-        schema_definition_id = self.cls.defs_id(schema_name)
+        schema_definition_id = self.cls.defs_id(schema_code)
 
         schema_definition = {}
 
         dependencies = []
 
         # patch oneOf ne marche pas avec ajsf
-        if schema_name == "references.geom.geometry":
+        if schema_code == "references.geom.geometry":
             dependencies = [
                 "references.geom.point",
                 "references.geom.multilinestring",
@@ -117,7 +117,7 @@ class SchemaValidation:
             ]
 
         for key, definition in schema.get("definitions", {}).items():
-            if key == schema_name:
+            if key == schema_code:
                 continue
 
             dependencies.append(key)
@@ -141,9 +141,9 @@ class SchemaValidation:
 
         set_global_cache(["js_definition", schema_definition_id], schema_definition)
 
-    def set_definition_from_schema_name(self, definitions, schema_name):
+    def set_definition_from_schema_code(self, definitions, schema_code):
         """ """
-        schema_definition_id = self.cls.defs_id(schema_name)
+        schema_definition_id = self.cls.defs_id(schema_code)
 
         if schema_definition_id in definitions:
             return
@@ -152,16 +152,16 @@ class SchemaValidation:
             definitions[schema_definition_id] = schema_definition
             deps = schema_definition["deps"]
             for dep in deps:
-                self.set_definition_from_schema_name(definitions, dep)
+                self.set_definition_from_schema_code(definitions, dep)
             return
 
-        if "references" in schema_name:
-            definition = get_global_cache(["reference", schema_name.split(".")[-1], "definition"])
+        if "references" in schema_code:
+            definition = get_global_cache(["reference", schema_code.split(".")[-1], "definition"])
         else:
-            relation = self.cls(schema_name)
+            relation = self.cls(schema_code)
             definition = copy.deepcopy(relation.get_schema(columns_only=True))
 
-        self.set_definition(definitions, schema_name, definition)
+        self.set_definition(definitions, schema_code, definition)
 
     def process_json_schema(self, schema, key=None):
         """

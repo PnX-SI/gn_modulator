@@ -31,7 +31,7 @@ et de détecter plus facilement si une erreur s'est glissée dans la configurati
 
 Des options sont displonibles pour n'afficher qu'un ensemble restreint de ces éléments.
 
-- ``-s``: ``schema_name`` pour un schéma donné
+- ``-s``: ``schema_code`` pour un schéma donné
 - ``-m``: ``module_code`` pour un module donné
 - ``-o``: ``object_name`` pour un object donné (l'option ``module_code`` doit être choisie)
 - ``-g``: ``grammar_type`` pour ne voir qu'un type donné, à choisir parmis ``label``, ``labels``, ``le_label``, ``les_labels``, ``un_label``, ``des_labels``, ``un_nouveau_label``, ``du_nouveau_label``, ``d_un_nouveau_label``, ``des_nouveaux_labels``, ``du_label``.

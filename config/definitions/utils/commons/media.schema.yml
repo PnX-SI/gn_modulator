@@ -1,0 +1,15 @@
+type: schema
+code: commons.media
+title: Schema commons.media
+description: Définition du schema des medias
+
+meta:
+  autoschema: true
+  model_name: TMedias
+  sql_schema_dot_table: gn_commons.t_medias
+  label: média
+  label_field_name: title_fr
+  genre: M
+  unique:
+    - id_table_location
+    - title_fr

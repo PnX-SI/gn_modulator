@@ -20,7 +20,7 @@ class SchemaModelBase:
     def model_name(self):
         """ """
 
-        return self.attr("meta.model_name", "T{}".format(self.schema_name("pascal_case")))
+        return self.attr("meta.model_name", "T{}".format(self.schema_code("pascal_case")))
 
     def get_db_type(self, column):
 
@@ -63,7 +63,7 @@ class SchemaModelBase:
 
         # foreign_key
         if column_def.get("foreign_key"):
-            relation = self.cls(column_def["schema_name"])
+            relation = self.cls(column_def["schema_code"])
             foreign_key = "{}.{}".format(relation.sql_schema_dot_table(), relation.pk_field_name())
             if self.is_required(key):
                 field_args.append(
@@ -87,7 +87,7 @@ class SchemaModelBase:
 
     def process_relation_model(self, key, relationship_def, Model):
 
-        relation = self.cls(relationship_def["schema_name"])
+        relation = self.cls(relationship_def["schema_code"])
 
         if not relation.Model():
             return
@@ -101,7 +101,7 @@ class SchemaModelBase:
 
         if relationship_def.get("relation_type") == "1-n":
             # test si obligatoire
-            rel = self.cls(relationship_def["schema_name"])
+            rel = self.cls(relationship_def["schema_code"])
 
             # foreign_column = rel.property(relationship_def['foreign_key'])
             if rel.is_required(relationship_def["foreign_key"]):
@@ -113,7 +113,7 @@ class SchemaModelBase:
 
             # patch si la cle n'est pas definie
             column_def = self.column(relationship_def["local_key"])
-            relation = self.cls(column_def["schema_name"])
+            relation = self.cls(column_def["schema_code"])
 
             kwargs["primaryjoin"] = getattr(
                 self.Model(), relationship_def["local_key"]
@@ -142,15 +142,15 @@ class SchemaModelBase:
 
     def CorTable(self, relation_def):
 
-        # cas cor_schema_name
-        if cor_schema_name := relation_def.get("cor_schema_name"):
-            sm_cor = self.cls(cor_schema_name)
+        # cas cor_schema_code
+        if cor_schema_code := relation_def.get("cor_schema_code"):
+            sm_cor = self.cls(cor_schema_code)
             Model = sm_cor.Model()
             CorTable = Model.__table__
             return CorTable
 
         schema_dot_table = relation_def.get("schema_dot_table")
-        cor_schema_name = schema_dot_table.split(".")[0]
+        cor_schema_code = schema_dot_table.split(".")[0]
         cor_table_name = schema_dot_table.split(".")[1]
 
         CorTable = get_global_cache(["cor_table", schema_dot_table])
@@ -163,7 +163,7 @@ class SchemaModelBase:
         if CorTable is not None:
             return CorTable
 
-        relation = self.cls(relation_def["schema_name"])
+        relation = self.cls(relation_def["schema_code"])
         local_key = self.pk_field_name()
         foreign_key = relation.pk_field_name()
         CorTable = db.Table(
@@ -179,7 +179,7 @@ class SchemaModelBase:
                 db.ForeignKey(f"{relation.sql_schema_dot_table()}.{foreign_key}"),
                 primary_key=True,
             ),
-            schema=cor_schema_name,
+            schema=cor_schema_code,
         )
 
         set_global_cache(["cor_table", schema_dot_table], CorTable)
@@ -199,7 +199,7 @@ class SchemaModelBase:
         - avoid to create the model twice
         """
         # get Model from cache
-        if Model := get_global_cache(["schema", self.schema_name(), "model"]):
+        if Model := get_global_cache(["schema", self.schema_code(), "model"]):
             return Model
 
         # get Model from existing
@@ -211,7 +211,7 @@ class SchemaModelBase:
         dict_model = {
             "__tablename__": self.sql_table_name(),
             "__table_args__": {
-                "schema": self.sql_schema_name(),
+                "schema": self.sql_schema_code(),
             },
         }
 
@@ -231,7 +231,7 @@ class SchemaModelBase:
         Model.ownership = 0
 
         # store in cache before relations (avoid circular dependencies)
-        set_global_cache(["schema", self.schema_name(), "model"], Model)
+        set_global_cache(["schema", self.schema_code(), "model"], Model)
 
         # process relations
 
@@ -257,7 +257,7 @@ class SchemaModelBase:
                 continue
 
             opposite = self.opposite_relation_def(relation_def)
-            rel = self.cls(relation_def["schema_name"])
+            rel = self.cls(relation_def["schema_code"])
             rel_properties = rel.attr("properties")
             if not rel_properties.get(relation_def["backref"]):
                 rel_properties[relation_def["backref"]] = opposite

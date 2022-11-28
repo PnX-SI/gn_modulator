@@ -1,0 +1,26 @@
+type: module
+code: MODULES
+title: Module 'MODULES'
+description: Définition du module MODULES (ouverture des routes communes (cruved R seulement))
+module:
+    module_label: Module de module
+    module_desc: MonitoringV2
+    module_picto: fa-puzzle-piece
+    active_frontend: false
+objects:
+    ref_geo.area:
+        cruved: R
+    ref_geo.linear_group:
+        cruved: R
+    user.role:
+        cruved: R
+    user.organisme:
+        cruved: R
+    ref_nom.nomenclature:
+        cruved: R
+    commons.module:
+        cruved: R
+    meta.jdd:
+        cruved: R
+    tax.taxref:
+        cruved: R

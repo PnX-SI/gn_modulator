@@ -1,0 +1,17 @@
+type: schema
+code: perm.permission
+title: Schema perm.permission
+description: Définition du schema des permissions
+
+meta:
+  autoschema: true
+  model_name: CorRoleActionFilterModuleObject
+  sql_schema_dot_table: gn_permissions.cor_role_action_filter_module_object
+  label: permission
+  label_field_name: id_permssion
+  genre: F
+  unique:
+    - id_role
+    - id_module
+    - id_action
+    - id_object

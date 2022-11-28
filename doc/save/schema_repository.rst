@@ -50,7 +50,7 @@ parser le schema
 ----------------
 
 - ``sql_table_name()``
-- ``sql_schema_name()``
+- ``sql_schema_code()``
 - ``model_name()``
 - ``method_view_name()``
 - ``url()`` ?? rest ou autres cas ???

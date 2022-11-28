@@ -173,14 +173,16 @@ const today = () => {
 
 const processFilterArray = (filters) => {
   const filtersOut = filters
-    .map((f) =>
-      isObject(f)
-        ? f.type == 'in'
-          ? `${f.field} ${f.type} ${f.value.join(';')}`
-          : `${f.field} ${f.type} ${f.value}`
-        : f
-    )
-    .join(',');
+    ? filters
+        .map((f) =>
+          isObject(f)
+            ? f.type == 'in'
+              ? `${f.field} ${f.type} ${f.value.join(';')}`
+              : `${f.field} ${f.type} ${f.value}`
+            : f
+        )
+        .join(',')
+    : '';
   return filtersOut;
 };
 

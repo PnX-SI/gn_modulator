@@ -1,5 +1,6 @@
 from gn_modules.definition import DefinitionMethods
 from gn_modules.module import ModuleMethods
+from gn_modules.utils.errors import get_errors
 
 
 def load_module_from_file(file_path):
@@ -13,14 +14,18 @@ def load_module_from_file(file_path):
     if not definition:
         return
 
-    module_code = definition.get("module_code")
+    module_code = definition.get("code")
 
     if not module_code:
         return
 
     DefinitionMethods.local_check_definition("module", module_code)
+    print(get_errors())
+    print(len(get_errors()))
+    assert len(get_errors()) == 0
 
     DefinitionMethods.global_check_definition("module", module_code)
+    assert len(get_errors()) == 0
 
     module_config = ModuleMethods.init_module_config(module_code)
 

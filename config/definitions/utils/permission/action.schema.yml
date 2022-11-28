@@ -1,0 +1,14 @@
+type: schema
+code: perm.action
+title: Schema perm.action
+description: Définition du schema des actions
+
+meta:
+  autoschema: true
+  model_name: TActions
+  sql_schema_dot_table: gn_permissions.t_actions
+  label: action
+  label_field_name: label_action
+  genre: M
+  unique:
+    - code_action

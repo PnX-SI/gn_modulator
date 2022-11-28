@@ -17,7 +17,7 @@ Les schemas
 ``meta``
 ========
 
-- ``schema_name`` : nom du schema
+- ``schema_code`` : nom du schema
 - ``slq_processing``: le sql est généré par gn_modules
 - ``sql_schema_dot_table``: table dans la base postgres
 - ``label``: Nom utilisé en frontend

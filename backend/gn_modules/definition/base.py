@@ -4,25 +4,8 @@ import yaml
 import json
 import jsonschema
 from gn_modules.utils.env import config_directory
-from gn_modules.utils.cache import set_global_cache, get_global_cache, clear_global_cache
+from gn_modules.utils.cache import set_global_cache, get_global_cache
 from gn_modules.utils.errors import add_error, get_errors
-
-# liste de tous les type de definition
-definition_types = [
-    "schema",
-    "reference",
-    "data",
-    "module",
-    "import",
-    "layout",
-    "template",
-]
-
-# liste des types de definition avec une reference
-# (un jsonschema qui permet de valider les definitions reçues)
-# TODO ajouter tous les types sauf reference
-required_references = ["schema", "schema_auto", "data", "import", "module"]
-definition_types_with_reference = ["schema", "data", "import", "module"]
 
 
 class DefinitionBase:
@@ -39,28 +22,17 @@ class DefinitionBase:
     """
 
     @classmethod
-    def type_keys(cls, definition_type):
+    def definition_types(cls):
+        """
+        renvoie la liste des types de definitions
+        """
+        if get_global_cache(["definition_types"]) is None:
+            set_global_cache(["definition_types"], [])
+        return get_global_cache(["definition_types"], [])
+
+    @classmethod
+    def definition_codes(cls, definition_type):
         return list(get_global_cache([definition_type], {}).keys())
-
-    @classmethod
-    def schema_names(cls):
-        return cls.type_keys("schema")
-
-    @classmethod
-    def module_codes(cls):
-        return cls.type_keys("module")
-
-    @classmethod
-    def data_names(cls):
-        return cls.type_keys("data")
-
-    @classmethod
-    def layout_names(cls):
-        return cls.type_keys("layout")
-
-    @classmethod
-    def reference_names(cls):
-        return cls.type_keys("reference")
 
     @classmethod
     def load_definitions(cls):
@@ -88,7 +60,7 @@ class DefinitionBase:
             #     - par exemple
             #       - site-propertie.yml contient la clé 'properties' du dictionnaire de definition de site
             for file in filter(
-                lambda f: (f.endswith(".yml") or f.endswith(".json")) and "-" not in f,
+                lambda f: (f.endswith(".yml") or f.endswith(".json")),
                 files,
             ):
                 file_path = Path(root) / file
@@ -100,123 +72,103 @@ class DefinitionBase:
         Vérifie que les référence chargées sont valides
         """
 
-        # Vérifier que les référence
-        # qui vont servir dans la validation des définitions
-        # ont bien été chargées
-        # TODO rajouter module, layout dans required_references...
-        for reference_key in required_references:
-            if reference_key not in get_global_cache(["reference"]):
-                add_error(
-                    msg=f"La reférence {reference_key} n'a pas été trouvée", code="ERR_NO_REF"
-                ),
-
         # test si les fichiers de référence ont bien été chargés
-        for reference_key, reference in get_global_cache(["reference"]).items():
+        for reference_code in cls.definition_codes("reference"):
 
+            reference = cls.get_definition("reference", reference_code)
             try:
                 jsonschema.Draft7Validator.check_schema(reference)
             except Exception as e:
                 add_error(
                     definition_type="reference",
                     code="ERR_VALID_REF",
-                    definition_key=reference_key,
+                    definition_code=reference_code,
                     msg=f"{str(e)}",
                 )
 
+            if reference_code == "reference" or reference.get("id"):
+                continue
+
+            cls.local_check_definition("reference", reference_code)
+
     @classmethod
-    def local_check_definition(cls, definition_type, definition_key):
+    def local_check_definition(cls, definition_type, definition_code):
         """
         Verifie la definition
         - si un json_schema est associé
         - TODO comment faire remonter des erreurs compréhensible ??
         """
 
-        definition = cls.get_definition(definition_type, definition_key)
+        definition = cls.get_definition(definition_type, definition_code)
+
+        if definition is None:
+            raise Exception(
+                f" {definition_type} {definition_code} ne doit pas avoir une definition nulle"
+            )
 
         # schema de validation de la definition
-        definition_reference_name = cls.get_definition_reference_name(definition_type, definition)
-        definition_reference = get_global_cache(
-            ["reference", definition_reference_name, "definition"]
-        )
+        definition_reference_code = definition_type
+        definition_reference = cls.get_definition("reference", definition_reference_code)
+
         if definition_reference is None:
 
-            if definition_type in definition_types_with_reference:
-                add_error(
-                    definition_type=definition_type,
-                    definition_key=definition_key,
-                    code="ERR_NO_REF_FOR_TYPE",
-                    msg=f"Une référence est requise pour valider pour le type {definition_type}",
-                )
+            add_error(
+                definition_type=definition_type,
+                definition_code=definition_code,
+                code="ERR_NO_REF_FOR_TYPE",
+                msg=f"Une référence est requise pour valider pour le type {definition_type}",
+            )
             return
 
-        resolver = jsonschema.RefResolver(
-            base_uri="file://{}/".format(config_directory),
-            referrer=definition_reference,
+        jsonschema_errors = jsonschema.Draft7Validator(definition_reference).iter_errors(
+            definition
         )
-        validator = jsonschema.Draft7Validator(definition_reference, resolver=resolver)
-        jsonschema_errors = validator.iter_errors(definition)
 
+        nb_errors = 0
         for error in jsonschema_errors:
+            nb_errors += 1
             msg = error.message
             if error.path:
                 msg = "[{}] {}".format(".".join(str(x) for x in error.absolute_path), msg)
 
+            print("json_error", definition_type, definition_code)
             add_error(
                 definition_type=definition_type,
-                definition_key=definition_key,
+                definition_code=definition_code,
                 code="ERR_LOCAL_CHECK_REF",
                 msg=f"{msg}",
             )
 
-            del get_global_cache([definition_type])[definition_key]
+        if nb_errors:
+            print("json error")
+            cls.remove_from_cache(definition_type, definition_code)
 
     @classmethod
-    def get_definition_reference_name(cls, definition_type, definition):
-        """
-        renvoie le schema de reference pour pouvoir valider une definition
-        """
-
-        # - schemas
-        if definition_type == "schema":
-            # deux possibilité (auto ou non)
-            if definition["meta"].get("autoschema"):
-                return "schema_auto"
-            else:
-                return "schema"
-
-        # module
-        if definition_type == "module":
-            if definition.get("template"):
-                return "module_with_template"
-            else:
-                return "module"
-
-        if definition_type in ["data", "import"]:
-            return definition_type
-
-        return None
+    def remove_from_cache(cls, definition_type, definition_code):
+        print("remove_from_cache", definition_type, definition_code)
+        del get_global_cache([definition_type])[definition_code]
 
     @classmethod
-    def get_definition(cls, definition_type, definition_key):
+    def get_definition(cls, definition_type, definition_code):
         """
         retourne une définition pour un type et une clé donnés
         """
 
-        return get_global_cache([definition_type, definition_key, "definition"])
+        return get_global_cache([definition_type, definition_code, "definition"])
 
     @classmethod
-    def get_file_path(cls, definition_type, definition_key):
+    def get_file_path(cls, definition_type, definition_code):
         """
         retourne le chemin du fichiern pour un type et une clé donnés
         """
 
-        return get_global_cache([definition_type, definition_key, "file_path"])
+        return get_global_cache([definition_type, definition_code, "file_path"])
 
     @classmethod
-    def set_cache(cls, definition_type, definition_key, definition, file_path):
-        set_global_cache([definition_type, definition_key, "definition"], definition)
+    def set_cache(cls, definition_type, definition_code, definition, file_path):
+        set_global_cache([definition_type, definition_code, "definition"], definition)
         set_global_cache(
-            [definition_type, definition_key, "file_path"],
+            [definition_type, definition_code, "file_path"],
             file_path,
         )
 
@@ -227,11 +179,13 @@ class DefinitionBase:
         """
 
         # pour chaque type de definition sauf reférence qui sont validée en amont
-        for definition_type in filter(lambda x: x != "reference", definition_types):
+        for definition_type in filter(
+            lambda x: x not in ["reference", "template", "use_template"], cls.definition_types()
+        ):
             # pour
-            definition_keys = list(get_global_cache([definition_type], {}).keys())
-            for definition_key in definition_keys:
-                cls.local_check_definition(definition_type, definition_key)
+            definition_codes = list(get_global_cache([definition_type], {}).keys())
+            for definition_code in definition_codes:
+                cls.local_check_definition(definition_type, definition_code)
 
     @classmethod
     def save_in_cache_definition(cls, definition, file_path):
@@ -254,11 +208,17 @@ class DefinitionBase:
             )
             return
 
-        definition_type, definition_key = cls.get_definition_type_and_key(definition)
+        definition_type, definition_code = cls.get_definition_type_and_code(definition)
 
-        # si global_cache_key n'est pas défini
-        # c'est que letype de configuration n'est pas detecté
+        # si definition_type n'est pas défini
+        # c'est que le type de configuration n'est pas detecté
+        # tolérance pour les fichiers avec '-' ??
         if not definition_type:
+
+            # fichiers avec '-' destinés à être inclu dans d'autres fichiers ??
+            if "-" in file_path.stem:
+                return
+
             add_error(
                 definition_type="definition",
                 file_path=str(file_path),
@@ -269,20 +229,31 @@ class DefinitionBase:
         # test si la données n'existe pas dansun autre fichier
         # et déjà été chargée dans le cache
         # ce qui ne devrait pas être le cas
-        elif cls.get_definition(definition_type, definition_key):
+        elif cls.get_definition(definition_type, definition_code):
             add_error(
                 definition_type=definition_type,
-                definition_key=definition_key,
+                definition_code=definition_code,
                 file_path=str(file_path),
-                msg=f"{definition_type} '{definition_key}' déjà défini(e) dans le fichier {cls.get_file_path(definition_type, definition_key)}",
+                msg=f"{definition_type} '{definition_code}' déjà défini(e) dans le fichier {cls.get_file_path(definition_type, definition_code)}",
                 code="ERR_LOAD_EXISTING",
             )
 
+        # verification de la cohérence suffixe du fichier - type de definition
+        # TODO à déplacer
+        elif file_path.stem.split(".")[-1] != definition_type and not definition.get(
+            "use_template"
+        ):
+            add_error(
+                definition_type=definition_type,
+                definition_code=definition_code,
+                file_path=str(file_path),
+                msg=f"Le nom du fichier '{file_path.stem}{file_path.suffix}' devrait se terminer en '.{definition_type}{file_path.suffix}'",
+                code="ERR_LOAD_FILE_NAME",
+            )
         # sinon
-        # - verification des données
         # - mise en cache des definitions et du chemin du fichier
         else:
-            cls.set_cache(definition_type, definition_key, definition, file_path.resolve())
+            cls.set_cache(definition_type, definition_code, definition, file_path.resolve())
 
     @classmethod
     def load_definition_file(cls, file_path):
@@ -290,7 +261,7 @@ class DefinitionBase:
 
         # chargement du fichier yml
         try:
-            definition = cls.load_definition_from_file(file_path, load_keys=True)
+            definition = cls.load_definition_from_file(file_path)
 
             cls.save_in_cache_definition(definition, file_path)
 
@@ -316,7 +287,7 @@ class DefinitionBase:
             )
 
     @classmethod
-    def get_definition_type_and_key(
+    def get_definition_type_and_code(
         cls,
         definition,
     ):
@@ -325,41 +296,15 @@ class DefinitionBase:
         lorsque l'on peut en trouver une pour le dictionnaire de definition
         """
 
-        # recherche du type de configuration
-        template_name = definition.get("template", {}).get("name")
-        # patch on veut juste assurer l'unicite de with_template_name
-        with_template_name = definition.get("with_template") and json.dumps(
-            definition.get("with_template"), sort_keys=True
-        )
-        schema_name = definition.get("meta", {}).get("schema_name")
-        module_code = definition.get("module_code")
-        layout_name = definition.get("layout_name")
-        data_name = definition.get("data_name")
-        import_name = definition.get("import_name")
-        reference_id = definition.get("$id:")
+        # patch définitions geometry
+        if definition.get("id") is not None:
+            return "reference", definition.get("id")
 
-        # assignation d'un type de definition et d'une reference
-        definition_type, definition_key = (
-            ("template", template_name)
-            if template_name
-            else ("with_template", with_template_name)
-            if with_template_name
-            else ("schema", schema_name)
-            if schema_name
-            else ("module", module_code)
-            if module_code
-            else ("layout", layout_name)
-            if layout_name
-            else ("data", data_name)
-            if data_name
-            else ("import", import_name)
-            if import_name
-            else ("reference", reference_id)
-            if reference_id
-            else (None, None)
-        )
+        # cas des références
+        if definition.get("type") == "object":
+            return "reference", definition.get("code")
 
-        return definition_type, definition_key
+        return definition.get("type"), definition.get("code")
 
     @classmethod
     def global_check_definitions(cls):
@@ -369,58 +314,56 @@ class DefinitionBase:
         """
 
         # pour chaque type de definition sauf reférence qui sont validée en amont
-        for definition_type in filter(lambda x: x != "reference", definition_types):
+        for definition_type in filter(lambda x: x != "reference", cls.definition_types()):
             # pour
-            for definition_key in get_global_cache([definition_type], {}).keys():
-                cls.global_check_definition(definition_type, definition_key)
+            for definition_code in get_global_cache([definition_type], {}).keys():
+                cls.global_check_definition(definition_type, definition_code)
 
     @classmethod
-    def global_check_definition(cls, definition_type, definition_key):
+    def global_check_definition(cls, definition_type, definition_code):
         """
-        - verification de la cohérence des 'schema_name'
+        - verification de la cohérence des 'schema_code'
         """
 
-        definition = cls.get_definition(definition_type, definition_key)
+        definition = cls.get_definition(definition_type, definition_code)
 
         if definition is None:
-            raise Exception("yakou!!")
+            raise Exception("yakou!!", definition_type, definition_code)
 
-        schema_names = cls.schema_names()
-        missing_schema_names = cls.check_definition_element_in_list(
-            definition, "schema_name", schema_names
+        schema_codes = cls.definition_codes("schema")
+        missing_schema_codes = cls.check_definition_element_in_list(
+            definition, "schema_code", schema_codes
         )
 
-        if missing_schema_names:
+        if missing_schema_codes:
 
-            missings_schema_name_txt = ", ".join(map(lambda x: f"'{x}'", missing_schema_names))
+            missings_schema_code_txt = ", ".join(map(lambda x: f"'{x}'", missing_schema_codes))
             add_error(
-                definition_key=definition_key,
+                definition_code=definition_code,
                 definition_type=definition_type,
                 code="ERR_GLOBAL_MISSING_SCHEMA",
-                msg=f"Le ou les schémas suivants ne sont pas présents dans les définitions : {missings_schema_name_txt}",
+                msg=f"Le ou les schémas suivants ne sont pas présents dans les définitions : {missings_schema_code_txt}",
             )
-            del get_global_cache([definition_type])[definition_key]
+            cls.remove_from_cache(definition_type, definition_code)
             return
 
-        # print(missing_schema_names, definition_type, definition_key, definition)
-
         # dépendancies
-        if dependencies := definition_type not in ["template", "with_template"] and definition.get(
+        if dependencies := definition_type not in ["template", "use_template"] and definition.get(
             "dependencies"
         ):
-            type_keys = cls.type_keys(definition_type)
+            definition_codes = cls.definition_codes(definition_type)
             missing_dependencies = [
-                dependency for dependency in dependencies if dependency not in type_keys
+                dependency for dependency in dependencies if dependency not in definition_codes
             ]
             missing_dependencies_txt = ", ".join(missing_dependencies)
             if missing_dependencies:
                 add_error(
                     definition_type=definition_type,
                     code="ERR_GLOBAL_MISSING_DEPENDENCIES",
-                    definition_key=definition_key,
+                    definition_code=definition_code,
                     msg=f"La ou les dépendances suivante de type {definition_type} ne sont pas présentent dans les définitions : {missing_dependencies_txt}",
                 )
-                del get_global_cache([definition_type])[definition_key]
+                cls.remove_from_cache(definition_type, definition_code)
                 return
 
     @classmethod
@@ -445,8 +388,12 @@ class DefinitionBase:
         if get_errors():
             return
 
-        # application des templates
-        cls.process_definition_templates()
+        # verification et application des templates
+        cls.check_template_definitions()
+        if get_errors():
+            return
+
+        cls.process_templates()
         if get_errors():
             return
 

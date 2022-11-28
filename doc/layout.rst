@@ -95,7 +95,7 @@ Schéma
 
 - ``type``: ``schema``
     - permet d'afficher des composant de base pour un schema
-- ``schema_name``:  le nom du Schéma
+- ``schema_code``:  le nom du Schéma
 - ``component``: type de composant parmi
     - ``map``
     - ``details``
@@ -205,4 +205,4 @@ Liste récupérée depuis une api
 
 - TODO ``params``
 
-- TODO ``schema_name``
+- TODO ``schema_code``

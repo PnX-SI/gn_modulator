@@ -1,0 +1,25 @@
+type: object
+code: layout
+title: Reference layout
+description: Référence pour les définitions de layout
+
+required:
+  - type
+  - code
+  - title
+  - description
+  - layout
+properties:
+  type:
+    type: string
+    enum: [layout]
+  title:
+    type: string
+  code:
+    type: string
+  description:
+    type: string
+  layout:
+    type: object
+  data:
+    type: object

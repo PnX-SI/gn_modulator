@@ -1,0 +1,16 @@
+type: schema
+code: meta.ca
+title: Schema meta.ca
+description: Définition du schema des cadres d'acquistion
+
+meta:
+  schema_code: meta.ca
+  unique:
+    - acquisition_framework_name
+  sql_schema_dot_table: gn_meta.t_acquisition_frameworks
+  model_name: TAcquisitionFramework
+  label: "cadre d'acquisition"
+  labels: "cadre d'acquistion"
+  label_field_name: truc
+  genre: M
+  autoschema: true

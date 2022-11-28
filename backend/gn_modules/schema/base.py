@@ -101,24 +101,24 @@ class SchemaBase:
 
         return elem or default
 
-    def schema_name(self, letter_case=None):
+    def schema_code(self, letter_case=None):
         """
         return name
         """
 
-        schema_name = self._schema_name
+        schema_code = self._schema_code
 
         if letter_case == "pascal_case":
-            return schema_name.replace(".", " ").title().replace(" ", "")
+            return schema_code.replace(".", " ").title().replace(" ", "")
         if letter_case in ["snake_case", "_"]:
-            return schema_name.replace(".", "_")
+            return schema_code.replace(".", "_")
         if letter_case == "/":
-            return schema_name.replace(".", "/")
+            return schema_code.replace(".", "/")
         else:
-            return schema_name
+            return schema_code
 
     @classmethod
-    def schema_names(cls):
+    def schema_codes(cls):
         """
         renvoie la liste des noms de schemas (depuis les données du cache)
         """
@@ -144,10 +144,10 @@ class SchemaBase:
         return pk_field_names[0] if len(pk_field_names) == 1 else None
 
     def object_name(self):
-        return self.schema_name().split(".")[-1]
+        return self.schema_code().split(".")[-1]
 
     def group_name(self):
-        return self.schema_name().split(".")[-2]
+        return self.schema_code().split(".")[-2]
 
     def code_field_name(self):
         return self.attr("meta.code_field_name", "{}_code".format(self.object_name()))
@@ -192,7 +192,7 @@ class SchemaBase:
             # on cherche la relation
             rel_key = key.split(".")[0]
             rel_prop = self.property(rel_key)
-            rel = self.cls(rel_prop["schema_name"])
+            rel = self.cls(rel_prop["schema_code"])
             return rel.property(key.split(".")[1])
         return self.properties()[key]
 
@@ -203,7 +203,7 @@ class SchemaBase:
             if not self.has_property(rel_key):
                 return False
             rel_prop = self.property(rel_key)
-            rel = self.cls(rel_prop["schema_name"])
+            rel = self.cls(rel_prop["schema_code"])
             return rel.has_property(key.split(".")[1])
         return self.properties().get(key) is not None
 
@@ -273,20 +273,20 @@ class SchemaBase:
         return columns_array
 
     def dependencies(self, exclude_deps=[]):
-        deps = [self.schema_name()]
+        deps = [self.schema_code()]
         for key, relation_def in self.relationships().items():
-            schema_name = relation_def["schema_name"]
+            schema_code = relation_def["schema_code"]
 
-            if schema_name in deps + exclude_deps:
+            if schema_code in deps + exclude_deps:
                 continue
 
-            deps.append(schema_name)
-            deps += self.cls(relation_def["schema_name"]).dependencies(
+            deps.append(schema_code)
+            deps += self.cls(relation_def["schema_code"]).dependencies(
                 exclude_deps=deps + exclude_deps
             )
 
-        if self.schema_name() in deps:
-            deps.remove(self.schema_name())
+        if self.schema_code() in deps:
+            deps.remove(self.schema_code())
 
         return list(dict.fromkeys(deps))
 

@@ -90,18 +90,18 @@ class ModuleConfigUtils:
         for key_param, param_config in params.items():
 
             # récupération du schema (par ordre de priorité)
-            # - depuis schema_name
-            # - depuis object_name -> schema_name de l'object
-            schema_name = (
-                param_config.get("schema_name")
-                or module_config["objects"][param_config["object_name"]].get("schema_name")
+            # - depuis schema_code
+            # - depuis object_name -> schema_code de l'object
+            schema_code = (
+                param_config.get("schema_code")
+                or module_config["objects"][param_config["object_name"]].get("schema_code")
                 or param_config["object_name"]
             )
 
             field_names = list(param_config["value"].keys())
             values = list(param_config["value"].values())
 
-            m = SchemaMethods(schema_name).get_row(values, field_names).one()
+            m = SchemaMethods(schema_code).get_row(values, field_names).one()
 
             processed_value = getattr(m, key_param)
             processed_params[key_param] = processed_value
@@ -129,18 +129,18 @@ class ModuleConfigUtils:
 
         for object_name, object_module_config in module_config["objects"].items():
 
-            object_module_config["schema_name"] = object_module_config.get(
-                "schema_name", object_name
+            object_module_config["schema_code"] = object_module_config.get(
+                "schema_code", object_name
             )
 
-            if object_module_config["schema_name"] not in module_config["schemas"]:
-                module_config["schemas"].append(object_module_config["schema_name"])
+            if object_module_config["schema_code"] not in module_config["schemas"]:
+                module_config["schemas"].append(object_module_config["schema_code"])
 
             object_module_config["object_name"] = object_name
 
             # on récupère la configuration du schéma avec la possibilité de changer certains paramètre
             # comme par exemple 'label', 'labels', 'genre'
-            object_schema_config = SchemaMethods(object_module_config["schema_name"]).config(
+            object_schema_config = SchemaMethods(object_module_config["schema_code"]).config(
                 object_module_config
             )
 
@@ -196,7 +196,7 @@ class ModuleConfigUtils:
         for object_name, object_definition in module_config["objects"].items():
 
             # on récupère schema methodes
-            sm = SchemaMethods(object_definition["schema_name"])
+            sm = SchemaMethods(object_definition["schema_code"])
 
             # ouverture des routes pour ce schema
             #   - avec les options:'object_definition'

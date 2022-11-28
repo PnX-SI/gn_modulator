@@ -37,7 +37,7 @@ class SchemaBaseImports:
             infos.append(
                 {
                     "file_path": str(data_file_path),
-                    "schema_name": data_item["schema_name"],
+                    "schema_code": data_item["schema_code"],
                     "updates": info["updates"],
                     "errors": info["errors"],
                     "inserts": info["inserts"],
@@ -49,7 +49,7 @@ class SchemaBaseImports:
 
     def get_foreign_key(self, key_process, rel_test_values, process_one=False):
 
-        sm_rel = self.cls(self.property(key_process)["schema_name"])
+        sm_rel = self.cls(self.property(key_process)["schema_code"])
         if isinstance(rel_test_values, dict):
             sm_rel.get_foreign_keys(rel_test_values)
             return rel_test_values
@@ -67,16 +67,16 @@ class SchemaBaseImports:
         rel_test_keys = sm_rel.attr("meta.unique")
 
         # on récupère le type de nomenclature au besoin
-        if sm_rel.schema_name() == "ref_nom.nomenclature" and len(rel_test_values) == 1:
+        if sm_rel.schema_code() == "ref_nom.nomenclature" and len(rel_test_values) == 1:
             rel_test_values.insert(0, self.property(key_process)["nomenclature_type"])
 
         d = {key: rel_test_values[index] for index, key in enumerate(rel_test_keys)}
         sm_rel.get_foreign_keys(d)
         rel_test_values = [d[key] for key in d]
 
-        cache_key = "__".join([self.schema_name()] + list(map(lambda x: str(x), rel_test_values)))
+        cache_key = "__".join([self.schema_code()] + list(map(lambda x: str(x), rel_test_values)))
 
-        if cache_value := get_global_cache(["import_pk_keys", self.schema_name(), cache_key]):
+        if cache_value := get_global_cache(["import_pk_keys", self.schema_code(), cache_key]):
             return cache_value
 
         if None in rel_test_values:
@@ -89,11 +89,11 @@ class SchemaBaseImports:
                 params={},  # sinon bug et utilise un param précédent ????
             ).one()
             pk = getattr(m, sm_rel.pk_field_name())
-            set_global_cache(["import_pk_keys", self.schema_name(), cache_key], pk)
+            set_global_cache(["import_pk_keys", self.schema_code(), cache_key], pk)
             return pk
         except NoResultFound:
             raise errors.SchemaImportPKError(
-                "{}={} Pk not found {}".format(key_process, rel_test_values, sm_rel.schema_name())
+                "{}={} Pk not found {}".format(key_process, rel_test_values, sm_rel.schema_code())
             )
 
     def get_foreign_keys(self, d):
@@ -130,8 +130,8 @@ class SchemaBaseImports:
 
         for key in copy.copy(d):
             if key not in self.properties():
-                if self.schema_name() == "schemas.utils.utilisateur.organisme":
-                    print(self.schema_name(), "pop key", key)
+                if self.schema_code() == "schemas.utils.utilisateur.organisme":
+                    print(self.schema_code(), "pop key", key)
                 d.pop(key)
 
     @classmethod
@@ -155,8 +155,8 @@ class SchemaBaseImports:
     def process_data_item(cls, data_item, file_path):
 
         clear_global_cache(["import_pk_keys"])
-        schema_name = data_item["schema_name"]
-        sm = cls(schema_name)
+        schema_code = data_item["schema_code"]
+        sm = cls(schema_code)
         v_updates = []
         v_inserts = []
         v_errors = []
@@ -270,15 +270,15 @@ class SchemaBaseImports:
         # detail_errors = cls.log_data_info_detail(info, "errors", details=details)
         # print('detail_errors', detail_errors)
         # print('detail_errors', info['errors'])
-        # txt += '  - {schema_name}\n'.format(schema_name=info['schema_name'])
+        # txt += '  - {schema_code}\n'.format(schema_code=info['schema_code'])
         # txt += '    - items ({})\n'.format(len(info['items']))
         # txt += '    - updates ({})\n'.format(len(info['updates']))
         # txt += '{}'.format(detail_updates)
         # txt += '    - inserts ({})\n'.format(len(info['inserts']))
         # txt += '{}'.format(detail_inserts)
 
-        txt = """    - {schema_name:45}    #:{nb_items:4}    I:{nb_inserts:4}    U:{nb_updates:4}    E:{nb_errors:4}""".format(
-            schema_name=info["schema_name"],
+        txt = """    - {schema_code:45}    #:{nb_items:4}    I:{nb_inserts:4}    U:{nb_updates:4}    E:{nb_errors:4}""".format(
+            schema_code=info["schema_code"],
             nb_items=len(info["items"]),
             nb_inserts=len(info["inserts"]),
             nb_updates=len(info["updates"]),
@@ -295,9 +295,9 @@ class SchemaBaseImports:
         """ """
 
         txt_list = []
-        for schema_name, info_file_value in infos_file.items():
-            # txt = "  - {}".format(schema_name, len(info_file_value))
-            txt = "  - {}".format(schema_name)
+        for schema_code, info_file_value in infos_file.items():
+            # txt = "  - {}".format(schema_code, len(info_file_value))
+            txt = "  - {}".format(schema_code)
             for info in info_file_value:
                 txt += "\n{}".format(cls.txt_data_info(info, details=details))
             txt_list.append(txt)

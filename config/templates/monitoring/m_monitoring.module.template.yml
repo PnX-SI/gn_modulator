@@ -1,118 +1,126 @@
-template:
-  name: "m_monitoring.module_template"
-  defaults:
-    module_picto: fa-puzzle-piece
-    active_frontend: false
+type: template
+code: m_monitoring.module_template
+title: Template de Module de type protocole monitoré
+description: Template de protocole monitoring (entrée par module)
 
-module_code: __MODULE_CODE__
-module:
-    module_label: __MODULE_LABEL__
-    module_desc: __MODULE_DESC__
-    module_picto: __MODULE_PICTO__
-    active_frontend: __ACTIVE_FRONTEND__
-dependencies:
-  - m_monitoring
-params:
-  id_module:
-    object_name: module
-    value:
-      module_code: __MODULE_CODE__
-objects:
+defaults:
+  module_picto: fa-puzzle-piece
+  active_frontend: false
+
+template:
+  type: module
+  code: __MODULE_CODE__
+  title: Protocole monitoring __MODULE_CODE__
+  description: Module d'exemple pour les protocoles monitoring (entrée par module)
+
   module:
-    schema_name: commons.module
-    cruved: RU
-  jdd:
-    schema_name: meta.jdd
-    prefilters: "modules.module_code = __MODULE_CODE__"
-    cruved: R
-  site:
-    schema_name: m_monitoring.site
-    prefilters: "modules.module_code = __MODULE_CODE__"
-    cruved: CRUD
-  visit:
-    schema_name: m_monitoring.visit
-    prefilters: "module.module_code = __MODULE_CODE__"
-    cruved: CRUD
-  observation:
-    schema_name: m_monitoring.observation
-    prefilters: "visit.module.module_code = __MODULE_CODE__"
-    cruved: CRUD
-tree:
-  module:
+      module_label: __MODULE_LABEL__
+      module_desc: __MODULE_DESC__
+      module_picto: __MODULE_PICTO__
+      active_frontend: __ACTIVE_FRONTEND__
+  dependencies:
+    - m_monitoring
+  params:
+    id_module:
+      object_name: module
+      value:
+        module_code: __MODULE_CODE__
+  objects:
+    module:
+      schema_code: commons.module
+      cruved: RU
+    jdd:
+      schema_code: meta.jdd
+      prefilters: "modules.module_code = __MODULE_CODE__"
+      cruved: R
     site:
-      visit:
-        observation: null
-pages:
-  module_details:
-    url: ""
-    layout_name: m_monitoring.module_details
-    objects:
-      module:
-        value: ":id_module"
-  module_edit:
-    url: module_edit
-    layout_name: m_monitoring.module_edit
-    objects:
-      module:
-        value: ":id_module"
-  site_details:
-    url: "site_details/:id_site"
-    layout_name: m_monitoring.site_details
-    objects:
+      schema_code: m_monitoring.site
+      prefilters: "modules.module_code = __MODULE_CODE__"
+      cruved: CRUD
+    visit:
+      schema_code: m_monitoring.visit
+      prefilters: "module.module_code = __MODULE_CODE__"
+      cruved: CRUD
+    observation:
+      schema_code: m_monitoring.observation
+      prefilters: "visit.module.module_code = __MODULE_CODE__"
+      cruved: CRUD
+  tree:
+    module:
       site:
-        value: ":id_site"
-      visit:
-        prefilters: "id_site = :id_site"
-  site_edit:
-    url: "site_edit/:id_site"
-    layout_name: m_monitoring.site_edit
-    objects:
-      site:
-        value: ":id_site"
-  site_create:
-    url: site_create
-    layout_name: m_monitoring.site_edit
-    defaults:
-      modules:
-        - id_module: ":id_module"
-  visit_details:
-    url: "visit_details/:id_visit"
-    layout_name: m_monitoring.visit_details
-    objects:
-      visit:
-        value: ":id_visit"
-      observation:
-        prefilters: "id_visit = :id_visit"
-  visit_edit:
-    url: "visit_edit/:id_visit"
-    layout_name: m_monitoring.visit_edit
-    objects:
-      visit:
-        value: ":id_visit"
-  visit_create:
-    url: visit_create
-    layout_name: m_monitoring.visit_edit
-    objects:
-      visit:
-        defaults:
-          id_module: ":id_module"
-          id_site: ":id_site"
-  observation_details:
-    url: "observation_details/:id_observation"
-    layout_name: m_monitoring.observation_details
-    objects:
-      observation:
-        value: ":id_observation"
-  observation_edit:
-    url: "observation_edit/:id_observation"
-    layout_name: m_monitoring.observation_edit
-    objects:
-      observation:
-        value: ":id_observation"
-  observation_create:
-    url: observation_create
-    layout_name: m_monitoring.observation_edit
-    objects:
-      observation:
-        defaults:
-          id_visit: ":id_visit"
+        visit:
+          observation: null
+  pages:
+    module_details:
+      url: ""
+      layout_name: m_monitoring.module_details
+      objects:
+        module:
+          value: ":id_module"
+    module_edit:
+      url: module_edit
+      layout_name: m_monitoring.module_edit
+      objects:
+        module:
+          value: ":id_module"
+    site_details:
+      url: "site_details/:id_site"
+      layout_name: m_monitoring.site_details
+      objects:
+        site:
+          value: ":id_site"
+        visit:
+          prefilters: "id_site = :id_site"
+    site_edit:
+      url: "site_edit/:id_site"
+      layout_name: m_monitoring.site_edit
+      objects:
+        site:
+          value: ":id_site"
+    site_create:
+      url: site_create
+      layout_name: m_monitoring.site_edit
+      defaults:
+        modules:
+          - id_module: ":id_module"
+    visit_details:
+      url: "visit_details/:id_visit"
+      layout_name: m_monitoring.visit_details
+      objects:
+        visit:
+          value: ":id_visit"
+        observation:
+          prefilters: "id_visit = :id_visit"
+    visit_edit:
+      url: "visit_edit/:id_visit"
+      layout_name: m_monitoring.visit_edit
+      objects:
+        visit:
+          value: ":id_visit"
+    visit_create:
+      url: visit_create
+      layout_name: m_monitoring.visit_edit
+      objects:
+        visit:
+          defaults:
+            id_module: ":id_module"
+            id_site: ":id_site"
+    observation_details:
+      url: "observation_details/:id_observation"
+      layout_name: m_monitoring.observation_details
+      objects:
+        observation:
+          value: ":id_observation"
+    observation_edit:
+      url: "observation_edit/:id_observation"
+      layout_name: m_monitoring.observation_edit
+      objects:
+        observation:
+          value: ":id_observation"
+    observation_create:
+      url: observation_create
+      layout_name: m_monitoring.observation_edit
+      objects:
+        observation:
+          defaults:
+            id_visit: ":id_visit"

@@ -41,9 +41,9 @@ class SchemaMethods(
 
     errors = errors
 
-    def __init__(self, schema_name):
-        self._schema_name = schema_name
-        if not get_global_cache(["schema", schema_name, "schema"]):
+    def __init__(self, schema_code):
+        self._schema_code = schema_code
+        if not get_global_cache(["schema", schema_code, "schema"]):
             self.init()
 
     @property
@@ -52,22 +52,22 @@ class SchemaMethods(
 
     @property
     def definition(self):
-        return get_global_cache(["schema", self.schema_name(), "definition"])
+        return get_global_cache(["schema", self.schema_code(), "definition"])
 
     @definition.setter
     def definition(self, value):
-        set_global_cache(["schema", self.schema_name(), "definition"], value)
+        set_global_cache(["schema", self.schema_code(), "definition"], value)
 
     @property
     def json_schema(self):
-        return get_global_cache(["schema", self.schema_name(), "json_schema"])
+        return get_global_cache(["schema", self.schema_code(), "json_schema"])
 
     @json_schema.setter
     def json_schema(self, value):
-        set_global_cache(["schema", self.schema_name(), "json_schema"], value)
+        set_global_cache(["schema", self.schema_code(), "json_schema"], value)
 
     def __str__(self):
-        return self.schema_name()
+        return self.schema_code()
 
     def init(self):
         """
@@ -75,14 +75,14 @@ class SchemaMethods(
         """
 
         definition = self.definition
-        schema_name = definition["meta"]["schema_name"]
+        schema_code = definition["code"]
 
         if not definition:
             raise errors.SchemaLoadError(
-                "pas de definition pour le schema: {}".format(schema_name)
+                "pas de definition pour le schema: {}".format(schema_code)
             )
 
-        set_global_cache(["schema", schema_name, "schema"], self)
+        set_global_cache(["schema", schema_code, "schema"], self)
 
         self.definition = definition
 
@@ -101,11 +101,11 @@ class SchemaMethods(
         Initialise l'ensemble des schémas
         """
         # init class
-        for schema_names in cls.schema_names():
-            SchemaMethods(schema_names)
+        for schema_codes in cls.schema_codes():
+            SchemaMethods(schema_codes)
 
         # init Model
-        for schema_names in cls.schema_names():
-            SchemaMethods(schema_names).Model()
-        for schema_names in cls.schema_names():
-            SchemaMethods(schema_names).MarshmallowSchema()
+        for schema_codes in cls.schema_codes():
+            SchemaMethods(schema_codes).Model()
+        for schema_codes in cls.schema_codes():
+            SchemaMethods(schema_codes).MarshmallowSchema()

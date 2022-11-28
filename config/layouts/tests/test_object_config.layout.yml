@@ -1,0 +1,15 @@
+type: layout
+code: test_object_config
+title: Layout test object config
+description: Layout de test pour la config des objects
+
+layout:
+  title: Test object_config
+  items:
+    - title: Test label
+      items:
+        - title: __f__`Le label XXXXXXXX ${data}`
+
+data:
+  modules:
+    schema_code: commons.module
