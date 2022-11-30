@@ -1,0 +1,21 @@
+title: Reference export
+code: export
+description: Référence pour valider les définitions d'export
+type: object
+
+required:
+  - type
+  - title
+  - code
+  - description
+
+properties:
+  type:
+    type: string
+    enum: [export]
+  title:
+    type: string
+  code:
+    type: string
+  description:
+    type: string

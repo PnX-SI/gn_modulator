@@ -127,5 +127,5 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     });
   }
 
-  refreshData(objectName: any): void {}
+  refreshData(objectCode: any): void {}
 }

@@ -55,7 +55,7 @@ export class ModulesTableService {
    *  - On utilise mPage.chekcLink pour voir si et comment on affiche l'action en question
    *  - L'appartenance (ownership) sera fournie par les données du rang de la cellule dans les fonction formatter et tooltip)
    * */
-  columnAction(moduleCode, objectName, action) {
+  columnAction(moduleCode, objectCode, action) {
     // test si l'action est possible (ou avant)
 
     const iconAction = {
@@ -70,7 +70,7 @@ export class ModulesTableService {
       D: 'delete',
     };
 
-    const { actionAllowed, actionMsg } = this._mPage.checkAction(moduleCode, objectName, action);
+    const { actionAllowed, actionMsg } = this._mPage.checkAction(moduleCode, objectCode, action);
     if (actionAllowed == null) {
       return;
     }
@@ -81,7 +81,7 @@ export class ModulesTableService {
         const ownership = cell._cell.row.data['ownership'];
         const { actionAllowed, actionMsg } = this._mPage.checkAction(
           moduleCode,
-          objectName,
+          objectCode,
           action,
           ownership
         );
@@ -95,7 +95,7 @@ export class ModulesTableService {
         const ownership = cell._cell.row.data['ownership'];
         const { actionAllowed, actionMsg } = this._mPage.checkAction(
           moduleCode,
-          objectName,
+          objectCode,
           action,
           ownership
         );
@@ -111,10 +111,10 @@ export class ModulesTableService {
    * U: update / edit
    * D: delete
    */
-  columnsAction(moduleCode, objectName) {
+  columnsAction(moduleCode, objectCode) {
     const columnsAction = 'RUD'
       .split('')
-      .map((action) => this.columnAction(moduleCode, objectName, action))
+      .map((action) => this.columnAction(moduleCode, objectCode, action))
       .filter((columnAction) => !!columnAction);
     return columnsAction;
   }
@@ -124,16 +124,16 @@ export class ModulesTableService {
    *
    * ajout des bouttons voir / éditer (selon les droits ?)
    */
-  columnsTable(layout, moduleCode, objectName) {
+  columnsTable(layout, moduleCode, objectCode) {
     //column definition in the columns array
     return [
-      ...this.columnsAction(moduleCode, objectName),
-      ...this.columns(layout, moduleCode, objectName),
+      ...this.columnsAction(moduleCode, objectCode),
+      ...this.columns(layout, moduleCode, objectCode),
     ];
   }
 
-  columns(layout, moduleCode, objectName) {
-    const objectConfig = this._mConfig.objectConfig(moduleCode, objectName);
+  columns(layout, moduleCode, objectCode) {
+    const objectConfig = this._mConfig.objectConfig(moduleCode, objectCode);
     const columns = objectConfig.table.columns;
     return columns.map((col) => {
       const column = utils.copy(col);

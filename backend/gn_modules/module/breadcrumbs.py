@@ -3,16 +3,16 @@ from gn_modules.schema import SchemaMethods
 
 class ModuleBreadCrumbs:
     @classmethod
-    def breadcrumbs(cls, module_code, page_name, data):
+    def breadcrumbs(cls, module_code, page_code, data):
         """
         Renvoie le breadcrumb pour un module et une page
         """
         # recupération de la config de la page
         module_config = cls.module_config(module_code)
-        page_config = module_config["pages"][page_name]
+        page_config = module_config["pages"][page_code]
 
         # page parent
-        parent_page_name = page_config.get("parent")
+        parent_page_code = page_config.get("parent")
         page_key = page_config["key"]
 
         # schema name
@@ -30,7 +30,7 @@ class ModuleBreadCrumbs:
         parent_breadcrumbs = []
 
         # dans le cas ou l'on a une page parent, on refait un appel à breadcrumbs
-        if parent_page_name:
+        if parent_page_code:
 
             # label ???
             if data.get(sm.pk_field_name()):
@@ -46,7 +46,7 @@ class ModuleBreadCrumbs:
 
             label_page = label_page.capitalize()
 
-            parent_page_config = module_config["pages"][parent_page_name]
+            parent_page_config = module_config["pages"][parent_page_code]
             parent_page_url = parent_page_config["url"]
             # determination des données pour l'appel à breadcrumb
             # ici on assume un seul parametre de route commencant par ':'
@@ -63,7 +63,7 @@ class ModuleBreadCrumbs:
                 data_parent = data
 
             breadcrumb = [{"label": label_page, "url": url_page}]
-            parent_breadcrumbs = cls.breadcrumbs(module_code, parent_page_name, data_parent)
+            parent_breadcrumbs = cls.breadcrumbs(module_code, parent_page_code, data_parent)
 
         else:
             # racine du module on met le nom du module

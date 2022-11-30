@@ -50,7 +50,7 @@ export class ModulesLayoutObjectTableComponent
       ajaxFiltering: true,
       height: this.tableHeight || '200px',
       ajaxRequestFunc: this.ajaxRequestFunc,
-      columns: this._mTable.columnsTable(this.computeLayout, this.moduleCode(), this.objectName()),
+      columns: this._mTable.columnsTable(this.computeLayout, this.moduleCode(), this.objectCode()),
       ajaxURL: this.objectConfig().table.url,
       paginationSize: this.computedLayout.page_size || this.objectConfig().utils.page_size,
       pagination: 'remote',
@@ -81,7 +81,7 @@ export class ModulesLayoutObjectTableComponent
     if (['details', 'edit'].includes(action)) {
       this._mPage.processAction({
         action,
-        objectName: this.objectName(),
+        objectCode: this.objectCode(),
         value,
       });
     }
@@ -117,7 +117,7 @@ export class ModulesLayoutObjectTableComponent
       const tableColumns = this._mTable.columns(
         this.computedLayout,
         this.moduleCode(),
-        this.objectName()
+        this.objectCode()
       );
 
       // récupération des champs à partir de layout
@@ -162,7 +162,7 @@ export class ModulesLayoutObjectTableComponent
       // pour ne pas trainer sortersça dans l'api
       delete extendedParams['sorters'];
 
-      this._mData.getList(this.moduleCode(), this.objectName(), extendedParams).subscribe(
+      this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams).subscribe(
         (res) => {
           // process lists
           // gestion des champs en rel.champ
@@ -223,7 +223,7 @@ export class ModulesLayoutObjectTableComponent
 
     // TODO une seule requete pour les getPageNumber et setPage ??
     this._mData
-      .getPageNumber(this.moduleCode(), this.objectName(), value, this._params)
+      .getPageNumber(this.moduleCode(), this.objectCode(), value, this._params)
       .subscribe((res) => {
         // set Page
         this.table.setPage(res.page);
@@ -250,7 +250,7 @@ export class ModulesLayoutObjectTableComponent
   }
 
   processConfig() {
-    this.modalDeleteLayout = this._mSchema.modalDeleteLayout(
+    this.modalDeleteLayout = this._mObject.modalDeleteLayout(
       this.objectConfig(),
       `delete_modal_${this._id}`
     );
@@ -292,8 +292,8 @@ export class ModulesLayoutObjectTableComponent
     return of(true);
   }
 
-  refreshData(objectName: any): void {
-    if (objectName == this.data.object_name) {
+  refreshData(objectCode: any): void {
+    if (objectCode == this.data.object_code) {
       this.drawTable();
     }
   }

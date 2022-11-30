@@ -137,7 +137,7 @@ class ModuleCommands:
             cls.create_migration_init_file(module_code)
 
     @classmethod
-    def test_grammar(cls, module_code=None, object_name=None, schema_code=None, grammar_type=None):
+    def test_grammar(cls, module_code=None, object_code=None, schema_code=None, grammar_type=None):
         """
         renvoie un tecte contenant les élément de grammaire des schemas concerné par les argument
         (par defaut tout)
@@ -147,11 +147,11 @@ class ModuleCommands:
         if module_code:
             cls.module_config(module_code)
 
-        if object_name and not module_code:
+        if object_code and not module_code:
             raise errors.ModuleCodeRequiredError("")
 
-        if object_name and module_code:
-            cls.object_config(module_code, object_name)
+        if object_code and module_code:
+            cls.object_config(module_code, object_code)
 
         grammar_type_list = SchemaMethods.grammar_type_list()
 
@@ -178,12 +178,12 @@ class ModuleCommands:
             ):
                 module_config = modules_config[module_code_loop]
 
-                # si object_name est défini on ne prend que celui là
-                for object_name_loop in filter(
-                    lambda key: not (object_name and key != object_name),
+                # si object_code est défini on ne prend que celui là
+                for object_code_loop in filter(
+                    lambda key: not (object_code and key != object_code),
                     module_config.get("objects", {}),
                 ):
-                    object_config = module_config["objects"][object_name_loop]
+                    object_config = module_config["objects"][object_code_loop]
 
                     current_grammar_item = object_config["display"]
 

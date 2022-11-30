@@ -95,36 +95,3 @@ class DefinitionTemplates:
             processed_definition,
             cls.get_file_path("use_template", definition_use_template_key),
         )
-
-    @classmethod
-    def process_module_template(cls, definition, template):
-        """
-        module qui herite d'un template
-
-        """
-
-        processed_definition = copy.deepcopy(template)
-        module_code = definition["module_code"]
-        processed_definition["module_code"] = module_code
-        processed_definition["module"] = definition["module"]
-
-        processed_definition = replace_in_dict(processed_definition, "M.MODULE_CODE", module_code)
-
-        return processed_definition
-
-    @classmethod
-    def process_data_template(cls, definition, template):
-        """
-        feature qui herite d'un template
-        """
-
-        processed_definition = copy.deepcopy(template)
-        template_params = processed_definition["template"].get("params", {})
-        if template_params.get("module_code"):
-            processed_definition = replace_in_dict(
-                processed_definition,
-                "M.MODULE_CODE",
-                template_params.get("module_code"),
-            )
-
-        return processed_definition

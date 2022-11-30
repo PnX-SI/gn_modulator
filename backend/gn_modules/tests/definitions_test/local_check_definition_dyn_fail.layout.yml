@@ -1,0 +1,11 @@
+type: layout
+code: local_check_definition_dyn_fail
+title: test dynamic element fail
+description: test de remontée d'erreur pour les élément dynamiques des layout (commençant par '__f__')
+
+layout:
+  items:
+    - title: __f__plaff{} yaz
+    - title: __f__'ok'
+    - title: __f__`ok ${data.truc}`
+    - title: __f__{ return `ok ${data.truc}`}

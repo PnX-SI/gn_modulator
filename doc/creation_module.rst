@@ -76,7 +76,7 @@ Dictionnaire définissant la configuration du module, avec les clés suivantes:
                 - **style**: style css des layers
                     - **color**
                 - **bring_to_front**: *boolean*, si l'on souhaite ramener ces éléments au premier plan
-            - **exports**: liste des nom d'export (``export_name``) associés à l'object
+            - **exports**: liste des nom d'export (``export_code``) associés à l'object
 
 
 - **tree**: un dictionnaire qui défini une hiérachie entre les pages, classiquement
@@ -92,14 +92,14 @@ Dictionnaire définissant la configuration du module, avec les clés suivantes:
     pages:
         parc_list:
             url: ''
-            layout_name: m_eole.parc_list
+            layout_code: m_eole.parc_list
 
 - **exports**:
 
 ::
-    m_sipaf.pf: # code de l'export ou ``export_name``
+    m_sipaf.pf: # code de l'export ou ``export_code``
         export_label: Test
-        object_name: pf
+        object_code: pf
         fields:
             - id_passage_faune
             ...

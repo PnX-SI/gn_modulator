@@ -23,7 +23,7 @@ TODO
     ERR_TEMPLATE_UNRESOLVED_FIELDS
 
 DONE
-    ERR_GLOBAL_MISSING_SCHEMA
+    ERR_GLOBAL_CHECK_MISSING_SCHEMA
     ERR_LOAD_YML
     ERR_LOAD_JSON
     ERR_LOAD_EXISTING
@@ -126,13 +126,19 @@ class TestDefinitions:
             assert len(get_errors()) == 0
             return definition
 
-        assert len(get_errors()) == 1
+        assert (
+            len(get_errors()) == 1
+        ), f"On s'attend à voir remonter une erreur (et non {len(get_errors())}"
 
         # on teste si le code de l'erreur est celui attendu
-        assert get_errors()[0]["code"] == error_code
+        assert (
+            get_errors()[0]["code"] == error_code
+        ), f"Le code d'erreur attendu est {error_code} (et non {get_errors()[0]['code']}"
 
         # on teste si la definition a bien été supprimé
-        assert get_global_cache([definition_type, definition_code]) is None
+        assert (
+            get_global_cache([definition_type, definition_code]) is None
+        ), "La definition erronée aurait du être supprimée du cache"
 
         return definition
 
@@ -168,7 +174,9 @@ class TestDefinitions:
         assert get_errors()[0].get("file_path") is not None
 
         # test si la definition a bien été retirée du cache
-        assert get_global_cache([defintion_type, definition_code]) is None
+        assert (
+            get_global_cache([defintion_type, definition_code]) is None
+        ), "La definition erronée aurait du être supprimée du cache"
 
         clear_errors()
 
@@ -220,13 +228,23 @@ class TestDefinitions:
             "ERR_LOCAL_CHECK_REF",
         )
 
+    def test_local_check_definition_dynamic(self):
+        """
+        test de remontée des erreur de validation des layout pour les éléments dynamiques
+        """
+
+        return self.test_local_check_definition(
+            definitions_test_dir / "local_check_definition_dyn_fail.layout.yml",
+            "ERR_LOCAL_CHECK_DYNAMIC",
+        )
+
     def test_global_check_definition_missing_schema(self):
         """
         test global pour vérifier la remontée de missing schema
         """
         return self.test_global_check_definition(
             definitions_test_dir / "global_check_schema_codes_fail.schema.yml",
-            "ERR_GLOBAL_MISSING_SCHEMA",
+            "ERR_GLOBAL_CHECK_MISSING_SCHEMA",
         )
 
     def test_global_check_definition_missing_dependencies(self):
@@ -235,7 +253,7 @@ class TestDefinitions:
         """
         return self.test_global_check_definition(
             definitions_test_dir / "global_check_dependencies_fail.data.yml",
-            "ERR_GLOBAL_MISSING_DEPENDENCIES",
+            "ERR_GLOBAL_CHECK_MISSING_DEPENDENCIES",
         )
 
     def test_template(self):

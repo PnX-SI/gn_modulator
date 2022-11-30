@@ -12,7 +12,7 @@ Ce fichier permet de définir
 
 - des routes ou pages
     - ``url``: url relative de la page dans le module
-    - ``layout_name``: nom du layout associé à cette page
+    - ``layout_code``: nom du layout associé à cette page
 
 
 Commandes

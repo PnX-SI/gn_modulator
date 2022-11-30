@@ -35,20 +35,34 @@ def add_error(
     error = {
         "msg": msg,
         "code": code,
-        "file_path": file_path,
+        "file_path": str(file_path),
         "template_file_path": template_file_path,
+        "definition_type": definition_type,
+        "definition_code": definition_code,
     }
 
     get_errors().append(error)
 
 
-def get_errors():
+def get_errors(definition_type=None, definition_code=None, error_code=None):
     errors = get_global_cache(["errors"])
-    if not isinstance(errors, list):
+    if errors is None:
         errors = []
         set_global_cache(["errors"], errors)
 
-    return errors
+    if not ((definition_type or definition_code or error_code) and len(errors)):
+        return errors
+
+    filtered_errors = list(
+        filter(
+            lambda x: (definition_code is None or x.get("definition_code") == definition_code)
+            and (definition_type is None or x.get("definition_type") == definition_type)
+            and (error_code is None or error_code in x.get("code")),
+            errors,
+        )
+    )
+
+    return filtered_errors
 
 
 def clear_errors():
@@ -74,7 +88,6 @@ def errors_txt():
     definition_error_file_paths = []
     template_file_paths = {}
     for definition_error in errors:
-        print(definition_error)
         if definition_error.get("template_file_path"):
             template_file_paths[definition_error.get("file_path")] = definition_error.get(
                 "template_file_path"

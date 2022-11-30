@@ -6,10 +6,8 @@ description: Layout de test pour la config des objects
 layout:
   title: Test object_config
   items:
-    - title: Test label
+    - title: Test label(schema_code)
       items:
-        - title: __f__`Le label XXXXXXXX ${data}`
-
-data:
-  modules:
-    schema_code: commons.module
+        - title: __f__meta.objects.label('commons.module')
+        - title: __f__meta.objects.label('meta.jdd')
+data: {}

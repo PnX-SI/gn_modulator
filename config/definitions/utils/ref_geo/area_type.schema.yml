@@ -1,6 +1,6 @@
 type: schema
-code: ref_geo.areas_type
-title: Schema ref_geo.areas_type
+code: ref_geo.area_type
+title: Schema ref_geo.area_type
 description: Définition du schema des types de zonage de ref_geo
 
 meta:

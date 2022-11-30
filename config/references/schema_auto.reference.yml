@@ -11,11 +11,11 @@ required:
   - title
   - description
   - meta
-  - properties
+  # - properties
 properties:
   type:
     type: string
-    enum: [schema_auto]
+    enum: [schema]
   title:
     type: string
   code:

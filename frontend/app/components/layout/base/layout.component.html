@@ -23,8 +23,8 @@
   <!-- name-->
   <ng-container *ngSwitchCase="'name'">
     <modules-layout
-      *ngIf="layoutFromName"
-      [layout]="layoutFromName"
+      *ngIf="layoutFromCode"
+      [layout]="layoutFromCode"
       [data]="data"
       [debug]="debug"
       (onAction)="processAction($event)"

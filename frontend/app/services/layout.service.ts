@@ -2,18 +2,28 @@ import { Injectable, Injector } from '@angular/core';
 import utils from '../utils';
 import { Subject } from '@librairies/rxjs';
 import { ModulesConfigService } from '../services/config.service';
+import { ModulesObjectService } from './object.service';
+import { AuthService, User } from '@geonature/components/auth/auth.service';
 
 @Injectable()
 export class ModulesLayoutService {
   _mConfig: ModulesConfigService;
+  _mObject: ModulesObjectService;
+  _auth: AuthService;
   utils;
 
   // pour pouvoir faire passer des infos au layout
   // - par exemple sur l'utilisateur courant ou autres
-  meta: any = {};
+  //
+  // meta.user : utilisateur courrant
+  // meta.utils: fonction utiles
+  // meta.object : fonction sur les objects (config etc....)
+  _meta: any;
 
   constructor(private _injector: Injector) {
     this._mConfig = this._injector.get(ModulesConfigService);
+    this._mObject = this._injector.get(ModulesObjectService);
+    this._auth = this._injector.get(AuthService);
   }
 
   $reComputeLayout = new Subject();
@@ -30,6 +40,35 @@ export class ModulesLayoutService {
     }
   }
 
+  /**
+   * Initialisation de meta qui servira dans les champs dynamique des layouts
+   * _meta est un dicitonnaire qui contient
+   *
+   * - current_user:  information sur l'utilisateur courrant
+   * - utils: des fonction utiles
+   * - object: pour l'affichage des label et ++ des objects
+   */
+  initMeta({ module_code = 'MODULES' } = {}) {
+    this._meta = {
+      module_code,
+      user: {
+        current: this._auth.getCurrentUser(),
+      },
+      utils: {
+        today: utils.today, // renvoie la date du jour (defaut)
+        departementsForRegion: utils.departementsForRegion, // liste des dept pour une region
+        YML: utils.YML,
+      },
+      objects: {
+        label: this.objectLabel.bind(this),
+      },
+    };
+  }
+
+  objectLabel(objectCode) {
+    return this._mConfig.objectLabel(this._meta.module_code, objectCode);
+  }
+
   openModal(modalName, data) {
     this.modals[modalName] && this.modals[modalName].next(data);
   }
@@ -38,8 +77,8 @@ export class ModulesLayoutService {
     this.$closeModals.next();
   }
 
-  getLayoutFromName(layoutName) {
-    return this._mConfig.layout(layoutName);
+  getLayoutFromCode(layoutCode): any {
+    return this._mConfig.layout(layoutCode);
   }
 
   reComputeLayout(name) {
@@ -54,91 +93,12 @@ export class ModulesLayoutService {
     this.$reDrawElem.next(true);
   }
 
-  refreshData(objectName) {
-    this.$refreshData.next(objectName);
+  refreshData(objectCode) {
+    this.$refreshData.next(objectCode);
   }
 
   stopActionProcessing(name) {
     this.$stopActionProcessing.next(true);
-  }
-
-  /** Met à plat tous les layouts
-   *
-   * TODO array
-   */
-  flatLayout(layout) {
-    if (Array.isArray(layout)) {
-      return utils
-        .flatAndRemoveDoublons(layout.map((elem) => this.flatLayout(elem)))
-        .filter((x) => !!x);
-    }
-    if (utils.isObject(layout)) {
-      if ('key' in layout && layout.key) {
-        return layout;
-      }
-      if ('items' in layout) {
-        return this.flatLayout(layout.items);
-      }
-    }
-  }
-
-  /**
-   * groupe:
-   * obj:
-   * array:
-   */
-  getLayoutType(layout) {
-    const layoutType = !layout
-      ? null
-      : Array.isArray(layout)
-      ? 'items'
-      : [
-          'breadcrumbs',
-          'button',
-          'html',
-          'form',
-          'message',
-          'medias',
-          'card',
-          'object',
-          'table',
-          'map',
-          'modal',
-          'dict',
-        ].includes(layout.type)
-      ? layout.type
-      : layout.key
-      ? 'key'
-      : layout.layout_name
-      ? 'name'
-      : 'section';
-    return layoutType;
-  }
-
-  /**
-   * Renvoie tous les champs d'un layout
-   */
-  getLayoutFields(layout, baseKey = null) {
-    const layoutType = this.getLayoutType(layout);
-    /** section */
-    if (['section', 'form'].includes(layoutType)) {
-      return utils.flatAndRemoveDoublons(this.getLayoutFields(layout.items || [], baseKey));
-    }
-
-    /** items */
-    if (layoutType == 'items') {
-      return utils.flatAndRemoveDoublons(layout.map((l) => this.getLayoutFields(l, baseKey)));
-    }
-    /** key - array ou object */
-    if (layoutType == 'key' && ['array', 'dict'].includes(layout.type)) {
-      const newBaseKey = baseKey ? `${baseKey}.${layout.key}` : layout.key;
-      return utils.flatAndRemoveDoublons(this.getLayoutFields(layout.items, newBaseKey));
-    }
-
-    /** key */
-    const keys = [layout.key];
-
-    return keys.filter((k) => !!k).map((key) => (baseKey ? `${baseKey}.${key}` : key));
   }
 
   isStrFunction(layout) {
@@ -184,7 +144,6 @@ export class ModulesLayoutService {
               data,
               globalData,
               formGroup,
-              meta: this.meta,
             })
           : value;
       }
@@ -201,12 +160,15 @@ export class ModulesLayoutService {
       strFunction = `{ return ${strFunction} }`;
     }
 
-    const f = new Function('data', 'globalData', 'formGroup', 'utils', 'meta', strFunction);
+    const f = new Function('data', 'globalData', 'formGroup', 'meta', strFunction);
 
     return f;
   }
 
-  evalLayout({ layout, data, globalData = null, formGroup = null, meta = null }) {
+  evalLayout({ layout, data, globalData = null, formGroup = null }) {
+    if (!this._meta) {
+      this.initMeta();
+    }
     if (this.isStrFunction(layout) && !data) {
       return null;
     }
@@ -220,7 +182,7 @@ export class ModulesLayoutService {
     }
 
     if (this.isStrFunction(layout)) {
-      const val = this.evalFunction(layout)(data, globalData, formGroup, utils, meta);
+      const val = this.evalFunction(layout)(data, globalData, formGroup, this._meta);
       return val !== undefined ? val : null; // on veut eviter le undefined
     }
     return layout;
@@ -233,7 +195,6 @@ export class ModulesLayoutService {
     const formDef = utils.copy(layout);
     formDef.attribut_label = formDef.attribut_label || layout.title;
     formDef.attribut_name = formDef.attribut_name || layout.key;
-
     return formDef;
   }
 }

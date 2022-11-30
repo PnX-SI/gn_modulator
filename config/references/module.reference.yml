@@ -40,5 +40,5 @@ properties:
         cruved:
           type: string
       required:
-        - schema_code
+        # - schema_code
         - cruved

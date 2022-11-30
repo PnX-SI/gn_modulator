@@ -1,5 +1,6 @@
 import * as fastDeepEqual from '@librairies/fast-deep-equal/es6';
 import _ from 'lodash';
+import YML from 'js-yaml';
 
 // const fastDeepEqual = (obj1, obj2) => {
 //   return fastDeepEqual_(obj1, obj2) || fastDeepEqual_(copy(obj1), copy(obj2))
@@ -41,6 +42,14 @@ const getAttr = (obj, paths) => {
 const parseJSON = (txt) => {
   try {
     return JSON.parse(txt);
+  } catch {
+    return null;
+  }
+};
+
+const parseYML = (txt) => {
+  try {
+    return YML.load(txt);
   } catch {
     return null;
   }
@@ -100,7 +109,7 @@ const filterAttr = (obj, paths, value) => {
 
 const setAttr = (obj, paths, value) => {
   var inter = obj;
-  const v_path = Object.entries(paths.split('.'));
+  const v_path = Object.entries(paths.split('.')) as any;
   for (const [index, path] of v_path) {
     if (index < v_path.length - 1) {
       inter[path] = inter[path] || {};
@@ -187,6 +196,7 @@ const processFilterArray = (filters) => {
 };
 
 const JSONStringify = (obj) => JSON.stringify(obj, null, 4);
+
 export default {
   fastDeepEqual,
   copy,
@@ -201,10 +211,12 @@ export default {
   unaccent,
   lowerUnaccent,
   parseJSON,
+  parseYML,
   processFilterArray,
   JSONStringify,
   replace,
   today,
   capitalize,
   JSON,
+  YML,
 };

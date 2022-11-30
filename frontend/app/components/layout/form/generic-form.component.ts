@@ -51,9 +51,10 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     this.listenToChanges = false;
     this._formService.setControls(this.formGroup, this.layout, this.data, this.globalData);
     this.listenToChanges = true;
+    // test du change ici ???
   }
 
-  onFormGroupChange(value) {
+  onFormGroupChange() {
     if (!this.listenToChanges || this._formService.isEqual(this.formGroup.value, this.data)) {
       return;
     }
@@ -89,9 +90,10 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
       appearance: this.layout.appearance || 'fill',
       formGroup: this.formGroup,
     };
+
     this._formService.setControls(this.formGroup, this.layout, this.data, this.globalData);
     this.formGroup.valueChanges.subscribe((value) => {
-      this.onFormGroupChange(value);
+      this.onFormGroupChange();
     });
   }
 }

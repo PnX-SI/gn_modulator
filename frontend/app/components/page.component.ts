@@ -32,7 +32,7 @@ export class PageComponent implements OnInit {
   // pageConfig; // configuration de la route en cours
   // moduleCode; // code du module en cours
 
-  layout; // layout de la page (récupéré depuis pageConfig.layout_name)
+  layout; // layout de la page (récupéré depuis pageConfig.layout_code)
   data; // data pour le layout
 
   pageInitialized: boolean; // test si la page est initialisée (pour affichage)
@@ -50,11 +50,7 @@ export class PageComponent implements OnInit {
     // reset de page service (breadcrump etc .....)
     this._mPage.reset();
 
-    // récupération de l'utilisateur courant
-    this._mPage.currentUser = this._auth.getCurrentUser();
-
     // - on le place dans layout.meta pour pouvoir s'en servir dans le calcul des layouts
-    this._mLayout.meta['currentUser'] = this._mPage.currentUser;
 
     // process
     // - init config
@@ -87,13 +83,14 @@ export class PageComponent implements OnInit {
         })
       )
       .subscribe(() => {
+        this._mLayout.initMeta();
         this.pageInitialized = true;
       });
   }
 
   /**
    * analyse des données fournies par la route
-   *  - pageName
+   *  - pageCode
    *  - moduleCode
    * afin de récupérer
    *  - la config du module
@@ -108,12 +105,12 @@ export class PageComponent implements OnInit {
 
     // recupéraiton de la configuration de la page;
     this._mPage.moduleConfig = this._mConfig.moduleConfig(this._mPage.moduleCode);
-    this._mPage.pageName = routeData.pageName;
-    this._mPage.pageConfig = this._mPage.moduleConfig.pages[routeData.pageName];
+    this._mPage.pageCode = routeData.pageCode;
+    this._mPage.pageConfig = this._mPage.moduleConfig.pages[routeData.pageCode];
 
     // initialisatio du layout
     this.layout = {
-      layout_name: this._mPage.pageConfig.layout_name,
+      layout_code: this._mPage.pageConfig.layout_code,
     };
   }
 
@@ -129,19 +126,16 @@ export class PageComponent implements OnInit {
       ...this.moduleParams,
     };
 
-    // pour pouvoir accéder au paramètres pour le calcul des layouts
-    this._mLayout.meta['params'] = this._mPage.params;
-
     let objectsModule = utils.copy(this._mPage.moduleConfig.objects);
     const objectsPage = utils.copy(this._mPage.pageConfig.objects || {});
 
     // gestion du paramètre debug
     this.debug = ![undefined, false, 'false'].includes(this.routeQueryParams.debug);
     // pour toutes les clés de data (moduleConfig.objects)
-    for (const [objectName, objectConfig] of Object.entries(objectsModule) as any) {
+    for (const [objectCode, objectConfig] of Object.entries(objectsModule) as any) {
       // on ajoute les données data définies pour la page
       // par exemple typeKey  = value|filters|prefilters
-      const objectsPageValue = objectsPage[objectName];
+      const objectsPageValue = objectsPage[objectCode];
       if (!objectsPageValue) {
         continue;
       }
@@ -174,7 +168,7 @@ export class PageComponent implements OnInit {
     if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,
-        objectName: data.object_name,
+        objectCode: data.object_code,
         data: data,
         layout: event.layout,
       });

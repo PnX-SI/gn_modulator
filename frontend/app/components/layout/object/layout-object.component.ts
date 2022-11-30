@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ModulesConfigService } from '../../../services/config.service';
-import { ModulesSchemaService } from '../../../services/schema.service';
+import { ModulesObjectService } from '../../../services/object.service';
 import { ModulesDataService } from '../../../services/data.service';
 import { ModulesPageService } from '../../../services/page.service';
 import { ModulesRouteService } from '../../../services/route.service';
@@ -10,7 +10,7 @@ import utils from '../../../utils';
 
 /** Composant pour afficher des objets
  * layout
- *  - object_name: référence à object défini dans module.yml
+ *  - object_code: référence à object défini dans module.yml
  *  - component:
  *    - map, table: liste d'object sur une carte
  *    - properties, form: pour 1 object (d'id=value)
@@ -26,7 +26,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   /** modules services */
   _mConfig: ModulesConfigService;
-  _mSchema: ModulesSchemaService;
+  _mObject: ModulesObjectService;
   _mData: ModulesDataService;
   _mRoute: ModulesRouteService;
   _mPage: ModulesPageService;
@@ -37,7 +37,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     super(_injector);
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mData = this._injector.get(ModulesDataService);
-    this._mSchema = this._injector.get(ModulesSchemaService);
+    this._mObject = this._injector.get(ModulesObjectService);
     this._mRoute = this._injector.get(ModulesRouteService);
     this._mPage = this._injector.get(ModulesPageService);
     this._name = 'layout-object';
@@ -49,7 +49,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       this._name,
       this.layout && this.layout.type,
       this.layout.diplay,
-      this.data.object_name,
+      this.data.object_code,
       this.data.schema_code,
       this._id,
       ...args
@@ -117,17 +117,17 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   processConfig() {
     // cas du formulaire
     if (this.computedLayout.display == 'form') {
-      this.processedLayout = this._mSchema.processFormLayout(
+      this.processedLayout = this._mObject.processFormLayout(
         this._mPage.moduleCode,
-        this.objectName()
+        this.objectCode()
       );
     }
 
     // cas des details ou propriété
     if (this.computedLayout.display == 'properties') {
-      this.processedLayout = this._mSchema.processPropertiesLayout(
+      this.processedLayout = this._mObject.processPropertiesLayout(
         this._mPage.moduleCode,
-        this.objectName()
+        this.objectCode()
       );
     }
 
@@ -139,8 +139,8 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
         icon: 'file_download',
         href: this._mConfig.exportUrl(
           this._mPage.moduleCode,
-          this.objectName(),
-          this.computedLayout.export_name,
+          this.objectCode(),
+          this.computedLayout.export_code,
           this.data
         ),
         description: 'Exporter les données',
@@ -186,13 +186,13 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       return of(null);
     }
 
-    const fields = this._mSchema.getFields(
+    const fields = this._mObject.getFields(
       this.moduleCode(),
-      this.objectName(),
+      this.objectCode(),
       this.processedLayout
     );
 
-    return this._mData.getOne(this.moduleCode(), this.objectName(), value, {
+    return this._mData.getOne(this.moduleCode(), this.objectCode(), value, {
       fields,
     });
   }
@@ -211,12 +211,12 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     return this.data.schema_code;
   }
 
-  objectName() {
-    return this.data.object_name;
+  objectCode() {
+    return this.data.object_code;
   }
 
   objectConfig() {
-    return this._mConfig.objectConfig(this.moduleCode(), this.objectName());
+    return this._mConfig.objectConfig(this.moduleCode(), this.objectCode());
   }
 
   // process des actions
@@ -225,7 +225,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,
-        objectName: this.objectName(),
+        objectCode: this.objectCode(),
         value: event.data[this.pkFieldName()],
         data: event.data,
         layout: this.processedLayout,
@@ -235,12 +235,12 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   // champ de clé primaire
   pkFieldName() {
-    return this._mSchema.pkFieldName(this.moduleCode(), this.objectName());
+    return this._mConfig.pkFieldName(this.moduleCode(), this.objectCode());
   }
 
   // champ pour le label
   labelFieldName() {
-    return this._mSchema.labelFieldName(this.moduleCode(), this.objectName());
+    return this._mConfig.labelFieldName(this.moduleCode(), this.objectCode());
   }
 
   setObject(data) {

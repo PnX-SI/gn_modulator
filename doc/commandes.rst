@@ -33,7 +33,7 @@ Des options sont displonibles pour n'afficher qu'un ensemble restreint de ces é
 
 - ``-s``: ``schema_code`` pour un schéma donné
 - ``-m``: ``module_code`` pour un module donné
-- ``-o``: ``object_name`` pour un object donné (l'option ``module_code`` doit être choisie)
+- ``-o``: ``object_code`` pour un object donné (l'option ``module_code`` doit être choisie)
 - ``-g``: ``grammar_type`` pour ne voir qu'un type donné, à choisir parmis ``label``, ``labels``, ``le_label``, ``les_labels``, ``un_label``, ``des_labels``, ``un_nouveau_label``, ``du_nouveau_label``, ``d_un_nouveau_label``, ``des_nouveaux_labels``, ``du_label``.
 
 Par exemple, la commande ``geonature modules grammar -m m_monitoring`` va afficher la sortie suivante

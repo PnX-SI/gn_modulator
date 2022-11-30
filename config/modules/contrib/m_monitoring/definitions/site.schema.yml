@@ -41,24 +41,24 @@ form:
                 - geom
                 -
                     key: id_digitiser
-                    default: __f__meta.currentUser?.id_role
+                    default: __f__meta.current_user?.id_role
         - code
         - name
         -
             key: id_digitiser
-            default: __f__meta.currentUser?.id_role
+            default: __f__meta.current_user?.id_role
             hidden: true
         -
             key: id_site_category
             type: list_form
             title: Catégorie de site
-            object_name: category
+            object_code: category
             module_code: m_monitoring
         -
             key: id_nomenclature_type_site
             type: list_form
             title: Type de site
-            object_name: ref_nom.nomenclature
+            object_code: ref_nom.nomenclature
         -
             display: fieldset
             type: array

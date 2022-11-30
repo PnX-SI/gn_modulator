@@ -22,7 +22,7 @@ template:
     - m_monitoring
   params:
     id_module:
-      object_name: module
+      object_code: module
       value:
         module_code: __MODULE_CODE__
   objects:
@@ -53,19 +53,19 @@ template:
   pages:
     module_details:
       url: ""
-      layout_name: m_monitoring.module_details
+      layout_code: m_monitoring.module_details
       objects:
         module:
           value: ":id_module"
     module_edit:
       url: module_edit
-      layout_name: m_monitoring.module_edit
+      layout_code: m_monitoring.module_edit
       objects:
         module:
           value: ":id_module"
     site_details:
       url: "site_details/:id_site"
-      layout_name: m_monitoring.site_details
+      layout_code: m_monitoring.site_details
       objects:
         site:
           value: ":id_site"
@@ -73,19 +73,19 @@ template:
           prefilters: "id_site = :id_site"
     site_edit:
       url: "site_edit/:id_site"
-      layout_name: m_monitoring.site_edit
+      layout_code: m_monitoring.site_edit
       objects:
         site:
           value: ":id_site"
     site_create:
       url: site_create
-      layout_name: m_monitoring.site_edit
+      layout_code: m_monitoring.site_edit
       defaults:
         modules:
           - id_module: ":id_module"
     visit_details:
       url: "visit_details/:id_visit"
-      layout_name: m_monitoring.visit_details
+      layout_code: m_monitoring.visit_details
       objects:
         visit:
           value: ":id_visit"
@@ -93,13 +93,13 @@ template:
           prefilters: "id_visit = :id_visit"
     visit_edit:
       url: "visit_edit/:id_visit"
-      layout_name: m_monitoring.visit_edit
+      layout_code: m_monitoring.visit_edit
       objects:
         visit:
           value: ":id_visit"
     visit_create:
       url: visit_create
-      layout_name: m_monitoring.visit_edit
+      layout_code: m_monitoring.visit_edit
       objects:
         visit:
           defaults:
@@ -107,19 +107,19 @@ template:
             id_site: ":id_site"
     observation_details:
       url: "observation_details/:id_observation"
-      layout_name: m_monitoring.observation_details
+      layout_code: m_monitoring.observation_details
       objects:
         observation:
           value: ":id_observation"
     observation_edit:
       url: "observation_edit/:id_observation"
-      layout_name: m_monitoring.observation_edit
+      layout_code: m_monitoring.observation_edit
       objects:
         observation:
           value: ":id_observation"
     observation_create:
       url: observation_create
-      layout_name: m_monitoring.observation_edit
+      layout_code: m_monitoring.observation_edit
       objects:
         observation:
           defaults:

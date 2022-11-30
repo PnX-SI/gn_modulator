@@ -16,9 +16,7 @@ export class ModulesIndexComponent implements OnInit {
   ngOnInit() {
     this._mConfig.init().subscribe(() => {
       const modules = this._mConfig.modulesConfig();
-      this.modules = Object.values(modules).filter(
-        (m) => (m as any).module.module_code != 'MODULES'
-      );
+      this.modules = Object.values(modules).filter((m) => (m as any).code != 'MODULES');
       this.layout = {
         title: 'Liste des modules',
         class: 'modules',
@@ -35,7 +33,7 @@ export class ModulesIndexComponent implements OnInit {
               img:
                 this._mConfig.assetsDirectory() +
                 '/' +
-                moduleConfig.module_code.toLowerCase() +
+                moduleConfig.code.toLowerCase() +
                 '/module.jpg',
               type: 'card',
               class: 'module-card',

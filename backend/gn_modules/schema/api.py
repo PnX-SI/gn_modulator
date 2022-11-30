@@ -22,14 +22,14 @@ class SchemaApi:
 
     """
 
-    def method_view_name(self, module_code, object_name, view_type):
-        object_name_undot = object_name.replace(".", "_")
-        return f"MV_{module_code}_{object_name_undot}_{view_type}"
+    def method_view_name(self, module_code, object_code, view_type):
+        object_code_undot = object_code.replace(".", "_")
+        return f"MV_{module_code}_{object_code_undot}_{view_type}"
 
-    def view_name(self, module_code, object_name, view_type):
+    def view_name(self, module_code, object_code, view_type):
         """ """
-        object_name_undot = object_name.replace(".", "_")
-        return f"MV_{module_code}_{object_name_undot}_{view_type}"
+        object_code_undot = object_code.replace(".", "_")
+        return f"MV_{module_code}_{object_code_undot}_{view_type}"
 
     @classmethod
     def base_url(cls):
@@ -75,7 +75,6 @@ class SchemaApi:
         - par exemple au format tabulator ou autre ....
         """
 
-        # params_txt = request.args.get('params', '{}')
         # params = json.loads(params_txt)
         params = {
             "as_geojson": self.load_param(request.args.get("as_geojson", "false")),
@@ -179,10 +178,8 @@ class SchemaApi:
                 )
                 response.mimetype = "text/plain"
                 return response
-            print("\n\nall\n\n")
-            res_list = query_list.all()
 
-            print("\n\nall\n\n")
+            res_list = query_list.all()
 
             out = {
                 **query_infos,
@@ -264,18 +261,18 @@ class SchemaApi:
                 )
             }
 
-        def get_export(self_mv, export_name):
+        def get_export(self_mv, export_code):
             """
             methode pour gérer la route d'export
                 - récupération de la configuration de l'export
             """
 
             # récupération de la configuration de l'export
-            export_definition = get_global_cache(["exports", export_name], "definition")
+            export_definition = get_global_cache(["exports", export_code], "definition")
 
             # renvoie une erreur si l'export n'est pas trouvé
             if export_definition is None:
-                return "L'export correspondant au code {export_name} n'existe pas", 403
+                return "L'export correspondant au code {export_code} n'existe pas", 403
 
             # definitions des paramètres
 
@@ -326,13 +323,13 @@ class SchemaApi:
         schema_api_dict = self.schema_api_dict(module_code, object_definition)[view_type]
 
         MV = type(
-            self.method_view_name(module_code, object_definition["object_name"], view_type),
+            self.method_view_name(module_code, object_definition["object_code"], view_type),
             (MethodView,),
             schema_api_dict,
         )
-        return MV.as_view(self.view_name(module_code, object_definition["object_name"], view_type))
+        return MV.as_view(self.view_name(module_code, object_definition["object_code"], view_type))
 
-    def register_api(self, bp, module_code, object_name, object_definition={}):
+    def register_api(self, bp, module_code, object_code, object_definition={}):
         """
         Fonction qui enregistre une api pour un schema
 
@@ -352,36 +349,36 @@ class SchemaApi:
         # read: GET (liste et one_row)
         if "R" in cruved:
             bp.add_url_rule(
-                f"/{object_name}/",
+                f"/{object_code}/",
                 defaults={"value": None},
                 view_func=view_func_rest,
                 methods=["GET"],
             )
-            bp.add_url_rule(f"/{object_name}/<value>", view_func=view_func_rest, methods=["GET"])
+            bp.add_url_rule(f"/{object_code}/<value>", view_func=view_func_rest, methods=["GET"])
             bp.add_url_rule(
-                f"/{object_name}/page_number/<value>",
+                f"/{object_code}/page_number/<value>",
                 view_func=view_func_page_number,
                 methods=["GET"],
             )
 
         # create : POST
         if "C" in cruved:
-            bp.add_url_rule(f"/{object_name}/", view_func=view_func_rest, methods=["POST"])
+            bp.add_url_rule(f"/{object_code}/", view_func=view_func_rest, methods=["POST"])
 
         # update : PATCH
         if "U" in cruved:
-            bp.add_url_rule(f"/{object_name}/<value>", view_func=view_func_rest, methods=["PATCH"])
+            bp.add_url_rule(f"/{object_code}/<value>", view_func=view_func_rest, methods=["PATCH"])
 
         # delete : DELETE
         if "D" in cruved:
             bp.add_url_rule(
-                f"/{object_name}/<value>", view_func=view_func_rest, methods=["DELELTE"]
+                f"/{object_code}/<value>", view_func=view_func_rest, methods=["DELELTE"]
             )
 
         # export
         if "E" in cruved and object_definition.get("exports"):
             bp.add_url_rule(
-                f"/{object_name}/exports/<export_name>",
+                f"/{object_code}/exports/<export_code>",
                 view_func=view_func_export,
                 methods=["GET"],
             )

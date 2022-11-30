@@ -53,18 +53,18 @@ def api_modules_config(config_path):
     )
 
 
-@blueprint.route("breadcrumbs/<module_code>/<page_name>", methods=["GET"])
-def api_breadcrumbs(module_code, page_name):
+@blueprint.route("breadcrumbs/<module_code>/<page_code>", methods=["GET"])
+def api_breadcrumbs(module_code, page_code):
     """
     renvoie une liste de lien pour
-    la page <page_name>
+    la page <page_code>
     du module <module_code>
 
     des arguments (id ou autres) peuvent être nécessaire pour
     accéder aux valeurs de l'object concerné par la page
     """
 
-    return ModuleMethods.breadcrumbs(module_code, page_name, request.args.to_dict())
+    return ModuleMethods.breadcrumbs(module_code, page_code, request.args.to_dict())
 
 
 @blueprint.route("/layouts/", methods=["GET"])
@@ -76,15 +76,17 @@ def api_layout():
     # paramètres
 
     # - as dict
-    #   renvoie sous forme de dictonnaire avec les layout_name en clé
+    #   renvoie sous forme de dictonnaire avec les layout_code en clé
     #   destiné à la config
     as_dict = request.args.get("as_dict")
     # - filtre sur le nom des layouts
-    layout_search_name = request.args.get("layout_search_name")
+    layout_search_code = request.args.get("layout_search_code")
     # - pour un layout précis
-    layout_name = request.args.get("layout_name")
+    layout_code = request.args.get("layout_code")
 
-    if layout_name:
-        return LayoutMethods.get_layout(layout_name)
+    if layout_code:
+        return LayoutMethods.get_layout(layout_code=layout_code)
 
-    return jsonify(LayoutMethods.get_layouts(layout_search_name, as_dict))
+    return jsonify(
+        LayoutMethods.get_layouts(layout_search_code=layout_search_code, as_dict=as_dict)
+    )

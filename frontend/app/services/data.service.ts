@@ -20,7 +20,7 @@ export class ModulesDataService {
    * On souhaite s'assurer que la config est bien chargée
    * pour l'élément demandé
    */
-  dataRequest(method, moduleCode, objectName, options: any): Observable<any> {
+  dataRequest(method, moduleCode, objectCode, options: any): Observable<any> {
     // on gère ici le paramètre fields
     // - si c'est une chaine de caractère => on le transforme en string
     if (Array.isArray(options?.params?.fields)) {
@@ -33,51 +33,51 @@ export class ModulesDataService {
       options.params.prefilters = utils.processFilterArray(options.params.prefilters);
     }
 
-    const url = this._mConfig.objectUrl(moduleCode, objectName, options.value, options.urlSuffix);
+    const url = this._mConfig.objectUrl(moduleCode, objectCode, options.value, options.urlSuffix);
     return this._requestService.request(method, url, {
       params: options.params,
       data: options.data,
     });
   }
 
-  getList(moduleCode, objectName, params = {}) {
-    return this.dataRequest('get', moduleCode, objectName, {
+  getList(moduleCode, objectCode, params = {}) {
+    return this.dataRequest('get', moduleCode, objectCode, {
       params,
     });
   }
 
-  getOne(moduleCode, objectName, value, params = {}) {
-    return this.dataRequest('get', moduleCode, objectName, {
+  getOne(moduleCode, objectCode, value, params = {}) {
+    return this.dataRequest('get', moduleCode, objectCode, {
       value,
       params,
     });
   }
 
-  getPageNumber(moduleCode, objectName, value, params = {}) {
-    return this.dataRequest('get', moduleCode, objectName, {
+  getPageNumber(moduleCode, objectCode, value, params = {}) {
+    return this.dataRequest('get', moduleCode, objectCode, {
       value,
       params,
       urlSuffix: 'page_number/',
     });
   }
 
-  post(moduleCode, objectName, data, params = {}) {
-    return this.dataRequest('post', moduleCode, objectName, {
+  post(moduleCode, objectCode, data, params = {}) {
+    return this.dataRequest('post', moduleCode, objectCode, {
       params,
       data,
     });
   }
 
-  patch(moduleCode, objectName, value, data, params = {}) {
-    return this.dataRequest('patch', moduleCode, objectName, {
+  patch(moduleCode, objectCode, value, data, params = {}) {
+    return this.dataRequest('patch', moduleCode, objectCode, {
       value,
       params,
       data,
     });
   }
 
-  delete(moduleCode, objectName, value, params = {}) {
-    return this.dataRequest('delete', moduleCode, objectName, {
+  delete(moduleCode, objectCode, value, params = {}) {
+    return this.dataRequest('delete', moduleCode, objectCode, {
       value,
       params,
     });

@@ -56,9 +56,9 @@ export class ModulesLayoutComponent implements OnInit {
   dataSave: any;
   bPostComputeLayout; // pour ne pas avoir tojours à comparer dataSave/data computedLayoutSave/computedLayout
 
-  // layout récupéré depuis layoutName
+  // layout récupéré depuis layoutCode
   // TODO à gérer en backend ?
-  layoutFromName;
+  layoutFromCode;
 
   /** margin for debug display
    * help with debugging nested layout
@@ -117,8 +117,8 @@ export class ModulesLayoutComponent implements OnInit {
       this.computeLayout();
     });
 
-    this._mLayout.$refreshData.subscribe((objectName) => {
-      this.refreshData(objectName);
+    this._mLayout.$refreshData.subscribe((objectCode) => {
+      this.refreshData(objectCode);
     });
 
     this._mLayout.$reComputedHeight.subscribe(() => {
@@ -182,7 +182,7 @@ export class ModulesLayoutComponent implements OnInit {
   // pour prendre en compte les paramètre qui sont des functions
   computeLayout() {
     // calcul du type de layout
-    this.layoutType = this.layoutType || this._mLayout.getLayoutType(this.layout);
+    this.layoutType = this.layoutType || utils.getLayoutType(this.layout);
 
     // calcul du layout
     this.computedLayout = this._mLayout.computeLayout({
@@ -222,23 +222,22 @@ export class ModulesLayoutComponent implements OnInit {
         )
       : [];
 
-    // si layout_name est défini
+    // si layout_code est défini
     // on va chercher le layout correspondant dans la config
     // TODO (gérer ça en backend)
-    if (this.computedLayout.layout_name && !this.layoutFromName) {
-      const layoutFromName = this._mLayout.getLayoutFromName(this.computedLayout.layout_name);
-
+    if (this.computedLayout.layout_code && !this.layoutFromCode) {
+      const layoutFromCode = this._mLayout.getLayoutFromCode(this.computedLayout.layout_code);
       // message d'erreur pour indiquer que l'on a pas trouvé le layout
-      if (!layoutFromName) {
-        this.layoutFromName = {
+      if (!layoutFromCode) {
+        this.layoutFromCode = {
           type: 'message',
           class: 'error',
-          html: `Pas de layout trouvé pour le <i>layout_name</i> <b>${this.computedLayout.layout_name}</b>`,
+          html: `Pas de layout trouvé pour le <i>layout_code</i> <b>${this.computedLayout.layout_code}</b>`,
         };
         return;
       }
 
-      this.layoutFromName = layoutFromName;
+      this.layoutFromCode = layoutFromCode.layout;
     }
 
     if (this.computedLayout.overflow) {
@@ -461,5 +460,5 @@ export class ModulesLayoutComponent implements OnInit {
     this._mLayout.reDrawElem('tab changed');
   }
 
-  refreshData(objectName) {}
+  refreshData(objectCode) {}
 }

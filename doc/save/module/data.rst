@@ -53,7 +53,7 @@ La commande permet d'insérer (ou de mettre à jour si les éléments existent d
 
 ::
 
-    geonature modules process_data -d <data_name>
+    geonature modules process_data -d <data_code>
 
 par exemple
 

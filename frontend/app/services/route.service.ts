@@ -78,7 +78,7 @@ export class ModulesRouteService {
    */
   addModulesRoutes(routesModules, modulesConfig) {
     for (const [moduleCode, moduleConfig] of Object.entries(modulesConfig)) {
-      for (const [pageName, pageConfig] of Object.entries(moduleConfig['pages'] || {})) {
+      for (const [pageCode, pageConfig] of Object.entries(moduleConfig['pages'] || {})) {
         const pagePath = !!pageConfig['url']
           ? `${moduleCode.toLowerCase()}/${pageConfig['url']}`
           : `${moduleCode.toLowerCase()}`;
@@ -87,7 +87,7 @@ export class ModulesRouteService {
           component: PageComponent,
           data: {
             moduleCode: moduleCode,
-            pageName,
+            pageCode,
           },
         });
       }
@@ -117,13 +117,13 @@ export class ModulesRouteService {
     });
   }
 
-  modulePageUrl(moduleCode, pageName, params) {
+  modulePageUrl(moduleCode, pageCode, params) {
     const moduleConfig = this._mConfig.moduleConfig(moduleCode);
-    const pageConfig = moduleConfig.pages[pageName];
+    const pageConfig = moduleConfig.pages[pageCode];
     if (!pageConfig) {
       this._commonService.regularToaster(
         'error',
-        `Il n'a pas de route définie pour la page ${pageName} pour le module ${moduleCode}`
+        `Il n'a pas de route définie pour la page ${pageCode} pour le module ${moduleCode}`
       );
       return;
     }
@@ -143,11 +143,11 @@ export class ModulesRouteService {
       url += `?${queryParams.join('&')}`;
     }
 
-    return `/modules/${moduleConfig.module.module_code.toLowerCase()}/${url}`;
+    return `/modules/${moduleConfig.module.code.toLowerCase()}/${url}`;
   }
 
-  navigateToPage(moduleCode, pageName, params) {
-    const url = this.modulePageUrl(moduleCode, pageName, params);
+  navigateToPage(moduleCode, pageCode, params) {
+    const url = this.modulePageUrl(moduleCode, pageCode, params);
 
     if (undefined == url) {
       return;

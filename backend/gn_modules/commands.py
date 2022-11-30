@@ -151,36 +151,36 @@ def cmd_import_bulk_data(
 
 
 @click.command("features")
-@click.argument("data_name", required=False)
+@click.argument("data_code", required=False)
 @click.option("-v", "--verbose", is_flag=True, help="affiche les détails des feature")
-def cmd_import_features(data_name=None, verbose=False):
+def cmd_import_features(data_code=None, verbose=False):
     """
-    importe des feature depuis un fichier (data) (.yml) referencé par la clé 'data_name'
+    importe des feature depuis un fichier (data) (.yml) referencé par la clé 'data_code'
     """
 
-    data_names = sorted(DefinitionMethods.definition_codes("data"))
+    data_codes = sorted(DefinitionMethods.definition_codes("data"))
 
-    if data_name is None or data_name not in data_names:
+    if data_code is None or data_code not in data_codes:
         print()
-        if data_name:
-            print(f"La donnée demandée {data_name} n'existe pas.")
+        if data_code:
+            print(f"La donnée demandée {data_code} n'existe pas.")
             print("Veuillez choisir un code parmi la liste suivante\n")
-        for data_name in data_names:
-            print(f"- {data_name}")
+        for data_code in data_codes:
+            print(f"- {data_code}")
             if verbose:
-                data = DefinitionMethods.get_definition("data", data_name)
+                data = DefinitionMethods.get_definition("data", data_code)
                 print(f"    {data['title']}\n")
         if not verbose:
             print("\n(Utiliser -v pour voir les détails)\n")
 
         return
 
-    data_names = data_name.split(",")
+    data_codes = data_code.split(",")
 
     infos = {}
-    for data_name in data_names:
-        print("import", data_name)
-        infos[data_name] = SchemaMethods.process_features(data_name)
+    for data_code in data_codes:
+        print("import", data_code)
+        infos[data_code] = SchemaMethods.process_features(data_code)
 
     SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
 
@@ -188,9 +188,9 @@ def cmd_import_features(data_name=None, verbose=False):
 @click.command("grammar")
 @click.option("-s", "schema_code", help="Pour un schema donnée")
 @click.option("-m", "module_code", help="Pour un module donné")
-@click.option("-o", "object_name", help="Pour un module donné")
+@click.option("-o", "object_code", help="Pour un module donné")
 @click.option("-g", "grammar_type", help="Pour un type donnée (par ex 'un_nouveau_label")
-def cmd_test_grammar(module_code=None, object_name=None, schema_code=None, grammar_type=None):
+def cmd_test_grammar(module_code=None, object_code=None, schema_code=None, grammar_type=None):
     """
     commande pour tester la grammaire
     - sans options
@@ -199,15 +199,15 @@ def cmd_test_grammar(module_code=None, object_name=None, schema_code=None, gramm
         pour un schema
     - module_code
         pour un module
-    - module_code, objet_name
-        pour un object (il ne peux pas y avoir object_name sans module_code)
+    - module_code, object_code
+        pour un object (il ne peux pas y avoir object_code sans module_code)
     - grammar_type
         pour un element précis de grammaire
     """
 
     try:
         grammar_txt = ModuleMethods.test_grammar(
-            module_code, object_name, schema_code, grammar_type
+            module_code, object_code, schema_code, grammar_type
         )
 
         print(f"\n{grammar_txt}")
@@ -224,12 +224,12 @@ def cmd_test_grammar(module_code=None, object_name=None, schema_code=None, gramm
     except ModuleMethods.errors.ModuleCodeRequiredError:
         print("\nErreur:")
         print(
-            f"   - Il faut préciser un module_code (avec -m) afin d'accéder à la grammaire de l'object '{object_name}'."
+            f"   - Il faut préciser un module_code (avec -m) afin d'accéder à la grammaire de l'object '{object_code}'."
         )
 
     # cas object non trouvé
     except ModuleMethods.errors.ModuleObjectNotFoundError:
-        print(f"\nErreur:\n  - L'object {object_name} n'a pas été trouvé.")
+        print(f"\nErreur:\n  - L'object {object_code} n'a pas été trouvé.")
 
     except SchemaMethods.errors.SchemaGrammarTypeError:
         print(f"\nErreur:\n  - Le type choisi '{grammar_type}' n'est pas valide.")

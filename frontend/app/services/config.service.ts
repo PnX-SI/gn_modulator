@@ -41,10 +41,6 @@ export class ModulesConfigService {
     );
   }
 
-  objectConfig(moduleCode, objectName) {
-    return this._config['modules'][moduleCode || 'MODULES'].objects[objectName];
-  }
-
   moduleConfig(moduleCode) {
     return this._config['modules'][moduleCode];
   }
@@ -53,14 +49,14 @@ export class ModulesConfigService {
     return this._config['modules'];
   }
 
-  layout(layoutName) {
-    return this._config['layouts'][layoutName];
+  layout(layoutCode) {
+    return this._config['layouts'][layoutCode];
   }
 
   getLayouts() {
     return Object.keys(this._config.layouts).length
       ? of(this._config.layout)
-      : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts/?as_dict`).pipe(
+      : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts/?as_dict=true`).pipe(
           mergeMap((layouts) => {
             this._config.layouts = layouts;
             return of(this._config.layout);
@@ -90,20 +86,54 @@ export class ModulesConfigService {
     return this.backendUrl() + '/static/external_assets/modules';
   }
 
-  objectUrl(moduleCode, objectName, value = '', urlSuffix = '') {
-    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectName}/${urlSuffix}${
+  objectUrl(moduleCode, objectCode, value = '', urlSuffix = '') {
+    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectCode}/${urlSuffix}${
       value || ''
     }`;
   }
 
-  exportUrl(moduleCode, objectName, exportName, options: any = {}) {
+  exportUrl(moduleCode, objectCode, exportName, options: any = {}) {
     const url = this._mRequest.url(
-      `${this.backendUrl()}/${moduleCode}/${objectName}/exports/${exportName}`,
+      `${this.backendUrl()}/${moduleCode}/${objectCode}/exports/${exportName}`,
       {
         prefilters: options.prefilters,
         filters: options.filters,
       }
     );
     return url;
+  }
+
+  /** Objects */
+
+  objectConfig(moduleCode, objectCode) {
+    return this._config['modules'][moduleCode || 'MODULES'].objects[objectCode];
+  }
+
+  pkFieldName(moduleCode, objectCode) {
+    return this.objectConfig(moduleCode, objectCode)?.utils.pk_field_name;
+  }
+
+  geometryFieldName(moduleCode, objectCode) {
+    return this.objectConfig(moduleCode, objectCode).utils.geometry_field_name;
+  }
+
+  geometryType(moduleCode, objectCode) {
+    return this.geometryFieldName(moduleCode, objectCode)
+      ? this.objectConfig(moduleCode, objectCode).properties[
+          this.geometryFieldName(moduleCode, objectCode)
+        ].geometry_type
+      : null;
+  }
+
+  labelFieldName(moduleCode, objectCode) {
+    return this.objectConfig(moduleCode, objectCode).utils.label_field_name;
+  }
+
+  objectId(moduleCode, objectCode, data) {
+    return data[this.pkFieldName(moduleCode, objectCode)];
+  }
+
+  objectLabel(moduleCode, objectCode) {
+    return this.objectConfig(moduleCode, objectCode).display.label;
   }
 }

@@ -98,16 +98,16 @@ class ModuleBase:
     def process_module_features(cls, module_code):
 
         module_config = cls.module_config(module_code)
-        data_names = module_config.get("features", [])
+        data_codes = module_config.get("features", [])
 
-        if not data_names:
+        if not data_codes:
             return
 
         print("- Ajout de données depuis les features")
 
-        for data_name in data_names:
+        for data_code in data_codes:
             infos = {}
-            infos[data_name] = SchemaMethods.process_features(data_name)
+            infos[data_code] = SchemaMethods.process_features(data_code)
 
         SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
 

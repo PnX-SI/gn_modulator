@@ -51,7 +51,6 @@ class ModulesConfigBase:
                 "module_label",
                 "module_path",
             ],
-            # params={}  # sinon on se traîne le param précédent ????
         )
 
         module_config = copy.deepcopy(module_definition)

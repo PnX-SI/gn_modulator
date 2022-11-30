@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ModulesLayoutService } from '../../services/layout.service';
+import { ModulesConfigService } from '../../services/config.service';
 import utils from '../../utils';
 @Component({
   selector: 'modules-test-layout',
@@ -27,7 +28,7 @@ export class TestLayoutComponent implements OnInit {
 
   layout: any;
 
-  layoutSearchName: string;
+  layoutCode: string;
   value;
 
   data: any = {
@@ -36,16 +37,22 @@ export class TestLayoutComponent implements OnInit {
 
   debug;
 
-  constructor(private _route: ActivatedRoute, private _mLayout: ModulesLayoutService) {}
+  constructor(
+    private _route: ActivatedRoute,
+    private _mLayout: ModulesLayoutService,
+    private _mConfig: ModulesConfigService
+  ) {}
 
   ngOnInit() {
-    this._route.queryParams.subscribe((params) => {
-      this.debug = ![undefined, false, 'false'].includes(params.debug);
-      this.layoutSearchName = params.layout_search_name;
-      this.value = params.value;
+    this._mConfig.init().subscribe(() => {
+      this._route.queryParams.subscribe((params) => {
+        this.debug = ![undefined, false, 'false'].includes(params.debug);
+        this.layoutCode = params.layout_code;
+        this.value = params.value;
+        this.initLayout();
+      });
       this.initLayout();
     });
-    this.initLayout();
   }
 
   initLayout() {
@@ -61,10 +68,10 @@ export class TestLayoutComponent implements OnInit {
           '__f__(event) => {',
           " if('layout_from_list' in event) {",
           '   formGroup.patchValue({',
-          "     layout: ''",
+          "     layout_definition: ''",
           '   });',
           '   formGroup.patchValue({',
-          "     layout: JSON.stringify(event.layout_from_list, 4, '    ')",
+          '     layout_definition: meta.utils.YML.dump(event.layout_from_list)',
           '   });',
           ' }',
           '}',
@@ -76,21 +83,24 @@ export class TestLayoutComponent implements OnInit {
             title: `Selection de layout`,
             type: 'list_form',
             api: '/modules/layouts/',
-            value_field_name: 'layout_name',
+            value_field_name: 'code',
             label_field_name: 'title',
             title_field_name: 'description',
             return_object: true,
-            reload_on_search: true,
-            default: this.layoutSearchName && { layout_search_name: this.layoutSearchName },
+            // reload_on_search: true,
+            default_item: this.layoutCode && { code: this.layoutCode },
           },
           {
             flex: '0',
-            key: 'layout',
+            key: 'layout_definition',
             type: 'textarea',
             title: 'Layout',
             display: 'form',
             min_rows: '5',
             max_rows: '30',
+            style: {
+              'overflow-y': 'scroll',
+            },
           },
         ],
       };
@@ -98,12 +108,15 @@ export class TestLayoutComponent implements OnInit {
   }
 
   process() {
-    let json = utils.parseJSON(this.rawLayout.layout);
+    let layoutDefinitionJson = utils.parseYML(this.rawLayout.layout_definition);
     this.layout = null;
     this.data = null;
+    if (!layoutDefinitionJson) {
+      return;
+    }
     setTimeout(() => {
-      this.layout = json && json.layout;
-      this.data = json && json.data;
+      this.layout = layoutDefinitionJson.layout;
+      this.data = layoutDefinitionJson.data;
     });
   }
 

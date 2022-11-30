@@ -14,20 +14,20 @@ from gn_modules.utils.cache import get_global_cache, clear_global_cache, set_glo
 
 class SchemaBaseImports:
     @classmethod
-    def process_features(cls, data_name):
+    def process_features(cls, data_code):
         """ """
 
-        data = get_global_cache(["data", data_name, "definition"])
+        data = get_global_cache(["data", data_code, "definition"])
 
         if data is None:
-            raise (Exception(f"La données demandée {data_name} n'existe pas"))
+            raise (Exception(f"La données demandée {data_code} n'existe pas"))
 
         # gestion des dépendances
         # attention aux dépendances circulaires
-        for dependancy_data_name in data.get("dependencies", []):
-            cls.process_features(dependancy_data_name)
+        for dependancy_data_code in data.get("dependencies", []):
+            cls.process_features(dependancy_data_code)
 
-        data_file_path = get_global_cache(["data", data_name, "file_path"])
+        data_file_path = get_global_cache(["data", data_code, "file_path"])
 
         infos = []
 

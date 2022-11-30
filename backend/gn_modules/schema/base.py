@@ -143,17 +143,17 @@ class SchemaBase:
         pk_field_names = self.pk_field_names()
         return pk_field_names[0] if len(pk_field_names) == 1 else None
 
-    def object_name(self):
+    def object_code(self):
         return self.schema_code().split(".")[-1]
 
     def group_name(self):
         return self.schema_code().split(".")[-2]
 
     def code_field_name(self):
-        return self.attr("meta.code_field_name", "{}_code".format(self.object_name()))
+        return self.attr("meta.code_field_name", "{}_code".format(self.object_code()))
 
     def name_field_name(self):
-        return self.attr("meta.name_field_name", "{}_name".format(self.object_name()))
+        return self.attr("meta.name_field_name", "{}_name".format(self.object_code()))
 
     def is_column(self, key):
         return self.has_property(key) and self.property(key).get("type") in column_types

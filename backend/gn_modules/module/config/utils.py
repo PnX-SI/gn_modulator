@@ -7,18 +7,18 @@ from gn_modules.utils.cache import get_global_cache, set_global_cache
 
 class ModuleConfigUtils:
     @classmethod
-    def object_config(cls, module_code, object_name):
+    def object_config(cls, module_code, object_code):
         """
         Retourne la configuration d'un object
-        - référencé par 'object_name'
+        - référencé par 'object_code'
         - et pour le module 'module_code'
         """
         module_config = cls.module_config(module_code)
-        object_config = module_config.get("objects", {}).get(object_name)
+        object_config = module_config.get("objects", {}).get(object_code)
 
         if not object_config:
             raise cls.errors.ModuleObjectNotFoundError(
-                f"L'object {object_name} n'a pas été trouvé pour le module {module_code}"
+                f"L'object {object_code} n'a pas été trouvé pour le module {module_code}"
             )
 
         return object_config
@@ -40,16 +40,16 @@ class ModuleConfigUtils:
 
         # find root
         page_root = None
-        for page_name, page_config in module_config["pages"].items():
+        for page_code, page_config in module_config["pages"].items():
             if page_config["url"] == "":
-                page_root = page_name
+                page_root = page_code
                 page_config["root"] = True
 
         # gestion des pages
         # assignation de key et parent (et type ????) shema_name etc ???
-        for page_name, page_config in module_config["pages"].items():
-            page_key = "_".join(page_name.split("_")[:-1])
-            page_type = page_name.split("_")[-1]
+        for page_code, page_config in module_config["pages"].items():
+            page_key = "_".join(page_code.split("_")[:-1])
+            page_type = page_code.split("_")[-1]
 
             page_parent = None
             if objects.get(page_key, {}).get("parent"):
@@ -59,7 +59,7 @@ class ModuleConfigUtils:
             page_config["type"] = page_type
             if page_parent:
                 page_config["parent"] = page_parent
-            elif page_root and page_root != page_name:
+            elif page_root and page_root != page_code:
                 page_config["parent"] = page_root
 
     @classmethod
@@ -91,11 +91,11 @@ class ModuleConfigUtils:
 
             # récupération du schema (par ordre de priorité)
             # - depuis schema_code
-            # - depuis object_name -> schema_code de l'object
+            # - depuis object_code -> schema_code de l'object
             schema_code = (
                 param_config.get("schema_code")
-                or module_config["objects"][param_config["object_name"]].get("schema_code")
-                or param_config["object_name"]
+                or module_config["objects"][param_config["object_code"]].get("schema_code")
+                or param_config["object_code"]
             )
 
             field_names = list(param_config["value"].keys())
@@ -127,16 +127,16 @@ class ModuleConfigUtils:
 
         module_config["schemas"] = []
 
-        for object_name, object_module_config in module_config["objects"].items():
+        for object_code, object_module_config in module_config["objects"].items():
 
             object_module_config["schema_code"] = object_module_config.get(
-                "schema_code", object_name
+                "schema_code", object_code
             )
 
             if object_module_config["schema_code"] not in module_config["schemas"]:
                 module_config["schemas"].append(object_module_config["schema_code"])
 
-            object_module_config["object_name"] = object_name
+            object_module_config["object_code"] = object_code
 
             # on récupère la configuration du schéma avec la possibilité de changer certains paramètre
             # comme par exemple 'label', 'labels', 'genre'
@@ -163,24 +163,24 @@ class ModuleConfigUtils:
         # Traitement des exports
         # a faire dans definition
         # - pour chaque export défini dans la config du module
-        for export_name, export_definition in module_config.get("exports", {}).items():
+        for export_code, export_definition in module_config.get("exports", {}).items():
 
-            #  - on lui assigne son export_name
-            export_definition["export_name"] = export_name
+            #  - on lui assigne son export_code
+            export_definition["export_code"] = export_code
 
             # test si l'export existe déjà
-            if get_global_cache(["exports", export_name]):
+            if get_global_cache(["exports", export_code]):
                 raise cls.errors.ModuleConfigError(
-                    f"L'export {export_name} à déjà été défini par ailleurs, le code de l'export doit être unique"
+                    f"L'export {export_code} à déjà été défini par ailleurs, le code de l'export doit être unique"
                 )
 
             #  - on l'assigne à son object
-            object_config = module_config["objects"][export_definition["object_name"]]
+            object_config = module_config["objects"][export_definition["object_code"]]
             object_config["exports"] = object_config.get("exports", [])
-            object_config["exports"].append(export_name)
+            object_config["exports"].append(export_code)
 
             # mise en cache pour pouvoir s'en reservir par ailleurs
-            set_global_cache(["exports", export_name], export_definition)
+            set_global_cache(["exports", export_code], export_definition)
 
     @classmethod
     def process_module_api(cls, module_code):
@@ -193,7 +193,7 @@ class ModuleConfigUtils:
         bp = Blueprint(module_code, __name__)
 
         # pour tous les object d'un module
-        for object_name, object_definition in module_config["objects"].items():
+        for object_code, object_definition in module_config["objects"].items():
 
             # on récupère schema methodes
             sm = SchemaMethods(object_definition["schema_code"])
@@ -201,7 +201,7 @@ class ModuleConfigUtils:
             # ouverture des routes pour ce schema
             #   - avec les options:'object_definition'
             #     en particulier le cruved
-            sm.register_api(bp, module_code, object_name, copy.deepcopy(object_definition))
+            sm.register_api(bp, module_code, object_code, copy.deepcopy(object_definition))
 
             # les prefiltres définis dans les objects ne servent que dans les ouverture de route ???
             if "prefilters" in object_definition:

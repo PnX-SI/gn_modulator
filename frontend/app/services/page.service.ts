@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { ModulesRouteService } from './route.service';
 import { ModulesConfigService } from './config.service';
 import { ModulesRequestService } from './request.service';
-import { ModulesSchemaService } from './schema.service';
+import { ModulesObjectService } from './object.service';
 import { ModulesLayoutService } from './layout.service';
 import { CommonService } from '@geonature_common/service/common.service';
 import { of } from '@librairies/rxjs';
@@ -11,7 +11,7 @@ import { mergeMap } from '@librairies/rxjs/operators';
 @Injectable()
 export class ModulesPageService {
   _mRoute: ModulesRouteService;
-  _mSchema: ModulesSchemaService;
+  _mObject: ModulesObjectService;
   _mConfig: ModulesConfigService;
   _mRequest: ModulesRequestService;
   _mLayout: ModulesLayoutService;
@@ -21,41 +21,40 @@ export class ModulesPageService {
   breadcrumbs = [];
   moduleCode;
   moduleConfig;
-  pageName;
+  pageCode;
   pageConfig;
-  currentUser;
   params;
 
   constructor(private _injector: Injector) {
     this._mRoute = this._injector.get(ModulesRouteService);
     this._mConfig = this._injector.get(ModulesConfigService);
-    this._mSchema = this._injector.get(ModulesSchemaService);
+    this._mObject = this._injector.get(ModulesObjectService);
     this._mLayout = this._injector.get(ModulesLayoutService);
     this._commonService = this._injector.get(CommonService);
     this._mRequest = this._injector.get(ModulesRequestService);
   }
 
-  setCurrentPage(pageName, pageConfig) {
-    this.pageName = pageName;
+  setCurrentPage(pageCode, pageConfig) {
+    this.pageCode = pageCode;
     this.pageConfig = pageConfig;
   }
 
-  processAction({ action, objectName, value = null, data = null, layout = null }) {
+  processAction({ action, objectCode, value = null, data = null, layout = null }) {
     const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
-    const pageConfig = moduleConfig.pages[this.pageName];
-    const parentPageName = pageConfig.parent;
+    const pageConfig = moduleConfig.pages[this.pageCode];
+    const parentpageCode = pageConfig.parent;
 
     if (['details', 'edit', 'create', 'list'].includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
 
-      const pageName = `${objectName}_${action}`;
-      if (!pageName) {
+      const pageCode = `${objectCode}_${action}`;
+      if (!pageCode) {
         this._commonService.regularToaster(
           'error',
-          `Il n'y a pas d'action definie pour ${action}, ${objectName}`
+          `Il n'y a pas d'action definie pour ${action}, ${objectCode}`
         );
         console.error(
-          `Il n'y a pas d'action definie pour ${action}, ${objectName}`,
+          `Il n'y a pas d'action definie pour ${action}, ${objectCode}`,
           moduleConfig.actions
         );
         return;
@@ -63,23 +62,23 @@ export class ModulesPageService {
       // const routeParams = { value, ...((layout as any)?.params || {}) };
       const routeParams = {};
       // routeParams[]
-      const schemaName = moduleConfig.objects[objectName].schema_code;
+      const schemaName = moduleConfig.objects[objectCode].schema_code;
 
-      routeParams[this._mSchema.pkFieldName(this.moduleCode, objectName)] = value;
-      // this._mRoute.navigateToPage(this.moduleCode, pageName, routeParams);
-      this._mRoute.navigateToPage(this.moduleCode, pageName, { ...this.params, ...routeParams });
+      routeParams[this._mConfig.pkFieldName(this.moduleCode, objectCode)] = value;
+      // this._mRoute.navigateToPage(this.moduleCode, pageCode, routeParams);
+      this._mRoute.navigateToPage(this.moduleCode, pageCode, { ...this.params, ...routeParams });
     }
 
     // TODO dans la config de generic form ????
     if (action == 'submit') {
-      this._mSchema.onSubmit(this.moduleCode, objectName, data, layout).subscribe(
+      this._mObject.onSubmit(this.moduleCode, objectCode, data, layout).subscribe(
         (data) => {
           this._mLayout.stopActionProcessing('');
           this._commonService.regularToaster('success', `La requete a bien été effectué`);
-          const value = this._mSchema.id(this.moduleCode, objectName, data);
+          const value = this._mConfig.objectId(this.moduleCode, objectCode, data);
           this.processAction({
             action: 'details',
-            objectName,
+            objectCode,
             value,
           });
         },
@@ -90,13 +89,13 @@ export class ModulesPageService {
     }
 
     if (action == 'delete') {
-      this._mSchema.onDelete(this.moduleCode, objectName, data).subscribe(() => {
+      this._mObject.onDelete(this.moduleCode, objectCode, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
         this._mLayout.closeModals();
-        this._mLayout.refreshData(objectName);
+        this._mLayout.refreshData(objectCode);
 
         if (pageConfig.type != 'details' && !pageConfig.root) {
-          this._mRoute.navigateToPage(this.moduleCode, parentPageName, data); // TODO params
+          this._mRoute.navigateToPage(this.moduleCode, parentpageCode, data); // TODO params
         } else {
         }
       });
@@ -105,9 +104,9 @@ export class ModulesPageService {
     // TODO clarifier
     if (action == 'cancel') {
       if (value) {
-        this.processAction({ action: 'details', objectName, value });
+        this.processAction({ action: 'details', objectCode, value });
       } else {
-        this._mRoute.navigateToPage(this.moduleCode, parentPageName, this.params); // TODO params
+        this._mRoute.navigateToPage(this.moduleCode, parentpageCode, this.params); // TODO params
       }
     }
   }
@@ -116,7 +115,7 @@ export class ModulesPageService {
     return this._mRequest
       .request(
         'get',
-        `${this._mConfig.backendModuleUrl()}/breadcrumbs/${this.moduleCode}/${this.pageName}`,
+        `${this._mConfig.backendModuleUrl()}/breadcrumbs/${this.moduleCode}/${this.pageCode}`,
         { params: this.params }
       )
       .pipe(
@@ -138,7 +137,7 @@ export class ModulesPageService {
    *   si le lien peut être affiché
    *
    *  input
-   *    - objectName: nom de l'objet
+   *    - objectCode: nom de l'objet
    *    - action: un lettre parmi 'CRUVED'
    *
    *  output
@@ -165,9 +164,9 @@ export class ModulesPageService {
    *    - tableaux
    *    - boutton (detail / edit / etc...)
    */
-  checkAction(moduleCode, objectName, action, ownership = null) {
+  checkAction(moduleCode, objectCode, action, ownership = null) {
     // 1) cruved defini pour cet objet ?
-    const objectConfig = this._mConfig.objectConfig(moduleCode, objectName);
+    const objectConfig = this._mConfig.objectConfig(moduleCode, objectCode);
     const testObjectCruved = (objectConfig.cruved || '').includes(action);
 
     if (!testObjectCruved) {

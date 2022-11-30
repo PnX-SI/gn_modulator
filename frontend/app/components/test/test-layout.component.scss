@@ -6,8 +6,14 @@
 }
 
 .layout-rendu {
-     width: 100%
+     width: 60%
 }
+
+.layout-def {
+  width: 40%;
+  background-color: lightgray;
+}
+
 
 :host ::ng-deep json-editor,
 :host ::ng-deep json-editor .jsoneditor,

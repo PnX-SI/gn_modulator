@@ -54,7 +54,7 @@ export class ModulesFormService {
 
   formGroup(layout) {
     let formGroupDefinition = {};
-    for (let elem of this._mLayout.flatLayout(layout)) {
+    for (let elem of utils.flatLayout(layout)) {
       formGroupDefinition[elem.key] = this.formDefinition(elem);
     }
     let control = this._formBuilder.group(formGroupDefinition);
@@ -67,7 +67,7 @@ export class ModulesFormService {
   }
 
   setControls(formControl, layout, data, globalData) {
-    for (let elem of this._mLayout.flatLayout(layout)) {
+    for (let elem of utils.flatLayout(layout)) {
       this.setControl(formControl, elem, data, globalData);
     }
     if (data) {
@@ -179,17 +179,6 @@ export class ModulesFormService {
     }
 
     return formValue;
-  }
-
-  /** pour corriger les string t
-   * en nombre ??? */
-  processData(data, layout) {
-    for (let elem of this._mLayout.flatLayout(layout)) {
-      if (elem.key && elem.type == 'number') {
-        data[elem.key] = data[elem.key] ? parseFloat(data[elem.key]) : data[elem.key];
-      }
-    }
-    return data;
   }
 
   isEqual(formValue, data) {

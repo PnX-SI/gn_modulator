@@ -4,7 +4,7 @@ from gn_modules.utils.cache import get_global_cache
 
 class BaseLayout:
     @classmethod
-    def layout_names(cls):
+    def layout_codes(cls):
         """
         renvoie la listes des layount_names trouvés dans les définitions
         """
@@ -12,40 +12,41 @@ class BaseLayout:
         return list(get_global_cache(["layout"]).keys())
 
     @classmethod
-    def get_layout(cls, layout_name):
+    def get_layout(cls, layout_code):
         """
-        renvoie un layout pour un layout_name donné
+        renvoie un layout pour un layout_code donné
         """
 
-        layout = get_global_cache(["layout", layout_name, "definition"])
+        layout = get_global_cache(["layout", layout_code, "definition"])
         return layout
 
     @classmethod
-    def get_layouts(cls, layout_search_name=None, layout_name=None, as_dict=False):
+    def get_layouts(cls, layout_search_code=None, layout_code=None, as_dict=False):
         """
         renvoie la liste des layouts destinées au frontend
         """
 
-        layout_names = cls.layout_names()
+        layout_codes = cls.layout_codes()
 
-        if layout_name:
-            return get_global_cache(["layout", layout_name, "definition"])
+        if layout_code:
+            return get_global_cache(["layout", layout_code, "definition"])
 
-        if layout_search_name:
-            layout_names = filter(
-                lambda x: layout_search_name is None or layout_search_name in x, layout_names
+        if layout_search_code:
+            layout_codes = filter(
+                lambda x: layout_search_code is None or layout_search_code in x, layout_codes
             )
 
         if as_dict:
+            print("glouki")
             layouts_as_dict = {}
-            for layout_name in layout_names:
-                layout = copy.deepcopy(cls.get_layout(layout_name))
-                layout.pop("layout_name")
-                layouts_as_dict[layout_name] = layout
-            return as_dict
+            for layout_code in layout_codes:
+                layout = copy.deepcopy(cls.get_layout(layout_code))
+                # layout.pop("layout_code")
+                layouts_as_dict[layout_code] = layout
+            return layouts_as_dict
 
         return [
-            cls.get_layout(layout_name)
+            cls.get_layout(layout_code)
             # faire ça dans init_layout ???
-            for layout_name in layout_names
+            for layout_code in layout_codes
         ]

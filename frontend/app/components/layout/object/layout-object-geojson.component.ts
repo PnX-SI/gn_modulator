@@ -81,7 +81,7 @@ export class ModulesLayoutObjectGeoJSONComponent
       const bZoom =
         this.computedLayout.zoom ||
         this.data.map?.zoom ||
-        this._mPage.pageConfig.key == this.data.object_name;
+        this._mPage.pageConfig.key == this.data.object_code;
 
       const bring_to_front = this.computedLayout.bring_to_front || this.data.map?.bring_to_front;
       this.mapData = {
@@ -184,7 +184,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     const fields = this.objectConfig().map.popup_fields;
     fields.push('ownership');
     this._mData
-      .getOne(this.moduleCode(), this.objectName(), value, { fields })
+      .getOne(this.moduleCode(), this.objectCode(), value, { fields })
       .subscribe((data) => {
         layer.setPopupContent(this.popupHTML(data));
       });
@@ -193,7 +193,7 @@ export class ModulesLayoutObjectGeoJSONComponent
       if (action) {
         this._mPage.processAction({
           action,
-          objectName: this.objectName(),
+          objectCode: this.objectCode(),
           value,
         });
       }
@@ -208,10 +208,10 @@ export class ModulesLayoutObjectGeoJSONComponent
       prefilters: this.getDataPreFilters() || [],
       as_geojson: true,
     };
-    return this._mData.getList(this.moduleCode(), this.objectName(), extendedParams);
+    return this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams);
   }
-  refreshData(objectName: any): void {
-    if (objectName == this.data.object_name) {
+  refreshData(objectCode: any): void {
+    if (objectCode == this.data.object_code) {
       this.postProcessLayout();
     }
   }
