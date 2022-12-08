@@ -45,17 +45,20 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
   // }
 
   updateForm() {
-    if (!this.formGroup) {
+    if (!this.context.form_group) {
       return;
     }
     this.listenToChanges = false;
-    this._formService.setControls(this.formGroup, this.layout, this.data, this.globalData);
+    this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
     this.listenToChanges = true;
     // test du change ici ???
   }
 
   onFormGroupChange() {
-    if (!this.listenToChanges || this._formService.isEqual(this.formGroup.value, this.data)) {
+    if (
+      !this.listenToChanges ||
+      this._formService.isEqual(this.context.form_group.value, this.data)
+    ) {
       return;
     }
     const dataChanged = {};
@@ -83,16 +86,13 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     if (this.formGroup) {
       return;
     }
-    this.formGroup = this.formGroup || this._formService.initForm(this.layout);
-    this.options = {
-      ...this.options,
-      form: true,
-      appearance: this.layout.appearance || 'fill',
-      formGroup: this.formGroup,
-    };
 
-    this._formService.setControls(this.formGroup, this.layout, this.data, this.globalData);
-    this.formGroup.valueChanges.subscribe((value) => {
+    this.formGroup = this._formService.initForm(this.layout);
+
+    this.context.form_group = this.formGroup;
+    this.context.appearance = this.layout.appearance;
+    this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
+    this.context.form_group.valueChanges.subscribe((value) => {
       this.onFormGroupChange();
     });
   }

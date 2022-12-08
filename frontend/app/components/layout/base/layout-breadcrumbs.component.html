@@ -1,10 +1,10 @@
 <!-- template pour l'affichage du breadcrumb-->
 <div>
-  <!-- on affiche les élements de la liste 
-    des breadcrub de la page (mPage.breadcrumbs)-->
+  <!-- on affiche les élements de la liste
+    des breadcrub de la page (ou du contexte courant)-->
   <ng-container
     *ngFor="
-      let breadcrumb of _mPage.breadcrumbs;
+      let breadcrumb of breadcrumbs;
       let index = index;
       let first = first;
       let last = last

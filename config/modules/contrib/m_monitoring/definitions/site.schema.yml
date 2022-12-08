@@ -41,12 +41,12 @@ form:
                 - geom
                 -
                     key: id_digitiser
-                    default: __f__meta.current_user?.id_role
+                    default: __f__context.current_user?.id_role
         - code
         - name
         -
             key: id_digitiser
-            default: __f__meta.current_user?.id_role
+            default: __f__context.current_user?.id_role
             hidden: true
         -
             key: id_site_category

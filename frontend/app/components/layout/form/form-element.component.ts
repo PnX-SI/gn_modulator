@@ -12,6 +12,7 @@ export class ModulesFormElementComponent
 {
   /** pour les composants dynamic-form de geonature */
   formDef;
+  formControl;
 
   constructor(_injector: Injector) {
     super(_injector);
@@ -19,27 +20,26 @@ export class ModulesFormElementComponent
   }
 
   postProcessLayout(): void {
+    this.formControl = this.getFormControl();
     if (this.computedLayout.type == 'dyn_form') {
       this.formDef = this._mLayout.toFormDef(this.computedLayout);
     }
   }
 
   onCheckboxChange(event) {
-    this.options.formGroup.get(this.layout.key).patchValue(event);
+    this.getFormGroup().get(this.layout.key).patchValue(event);
   }
 
   onInputChange() {
+    const formControl = this.getFormControl();
+
     if (this.computedLayout.type == 'number') {
-      this.options.formGroup
-        .get(this.layout.key)
-        .patchValue(parseFloat(this.options.formGroup.get(this.layout.key).value));
-      this.data[this.layout.key] = this.options.formGroup.get(this.layout.key).value;
+      formControl.patchValue(parseFloat(formControl.value));
+      this.data[this.layout.key] = formControl.value;
     }
     if (this.computedLayout.type == 'integer') {
-      this.options.formGroup
-        .get(this.layout.key)
-        .patchValue(parseInt(this.options.formGroup.get(this.layout.key).value));
-      this.data[this.layout.key] = this.options.formGroup.get(this.layout.key).value;
+      formControl.patchValue(parseInt(formControl.value));
+      this.data[this.layout.key] = formControl.value;
     }
 
     this.computedLayout.change && this.computedLayout.change();

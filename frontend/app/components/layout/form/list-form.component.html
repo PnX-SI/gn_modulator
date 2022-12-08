@@ -1,7 +1,9 @@
 <ng-container *ngIf="!!formControl">
+  {{formControl.value | json}}
   <mat-form-field
-    class="form-field list-form"
-    [appearance]="options.appearance || 'standart'"
+    class="form-field list-form "
+    [ngClass]="computedLayout.class"
+    [appearance]="context.appearance || 'outline'"
   >
     <mat-label>{{ listFormOptions.title || listFormOptions.key }}</mat-label>
     <mat-select

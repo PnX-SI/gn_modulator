@@ -9,7 +9,7 @@ import utils from '../utils';
 @Injectable()
 export class ModulesDataService {
   constructor(
-    private _requestService: ModulesRequestService,
+    private _mRequest: ModulesRequestService,
     private _mConfig: ModulesConfigService,
     private _http: HttpClient
   ) {}
@@ -34,7 +34,7 @@ export class ModulesDataService {
     }
 
     const url = this._mConfig.objectUrl(moduleCode, objectCode, options.value, options.urlSuffix);
-    return this._requestService.request(method, url, {
+    return this._mRequest.request(method, url, {
       params: options.params,
       data: options.data,
     });
@@ -81,5 +81,13 @@ export class ModulesDataService {
       value,
       params,
     });
+  }
+
+  getBreadcrumbs(context: any) {
+    return this._mRequest.request(
+      'get',
+      `${this._mConfig.backendModuleUrl()}/breadcrumbs/${context.module_code}/${context.page_code}`,
+      { params: context.params }
+    );
   }
 }

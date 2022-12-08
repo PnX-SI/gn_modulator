@@ -3,7 +3,6 @@ from pathlib import Path
 import yaml
 import json
 import jsonschema
-import js2py
 from gn_modules.utils.env import config_directory
 from gn_modules.utils.cache import set_global_cache, get_global_cache
 from gn_modules.utils.errors import add_error, get_errors
@@ -108,7 +107,7 @@ class DefinitionBase:
 
         cls.local_check_definition_reference(definition_type, definition_code)
 
-        if definition_type == "layout":
+        if definition_type in ["layout", "schema"]:
             cls.check_definition_dynamic_layout(definition_type, definition_code, definition)
 
         # suppression en cache de la definition si erreur locale
@@ -120,62 +119,6 @@ class DefinitionBase:
             )
         ):
             cls.remove_from_cache(definition_type, definition_code)
-
-    @classmethod
-    def check_definition_dynamic_layout(cls, definition_type, definition_code, element, keys=[]):
-        """
-        Vérifie récursivement les elements commençant par '__f__'
-        - fonction dynamiques js
-        - on vérifie seulement la creation de la fonction
-          (à ce stade on ne peut pas prédire l'état des variables (data, etc...))
-          on ignore les 'SyntaxError: Line 1: TemplateElement is not supported by ECMA 5.1.'
-        """
-
-        if isinstance(element, dict):
-            for key, item in element.items():
-                cls.check_definition_dynamic_layout(
-                    definition_type, definition_code, item, keys + [key]
-                )
-            return
-
-        if isinstance(element, list):
-            # cas (à rendre obselete??) ou la fonction est une liste de string et le premier est '__f__' ??
-            if len(element) and isinstance(element[0], str) and element[0].startswith("__f__"):
-                return cls.check_definition("\n".join(element))
-            for index, item in enumerate(element):
-                cls.check_definition_dynamic_layout(
-                    definition_type, definition_code, item, keys + [str(index)]
-                )
-            return
-
-        if isinstance(element, str):
-            if not element.startswith("__f__"):
-                return
-            # on essaye de refaire ce qui se passe dans
-            # layout.service, evalFunction
-            str_function = element[5:]
-            if str_function[0] != "{" and "return" not in str_function:
-                str_function = f"{{ return {str_function} }}"
-
-            str_eval = f"""
-            const strFunction = "{str_function}";
-            new Function('data', 'globalData', 'formGroup', 'meta', strFunction);
-            """
-
-            try:
-                js2py.eval_js(str_eval)
-            except Exception as e:
-                if "TemplateElement is not supported by ECMA 5.1." in str(e):
-                    pass
-                else:
-                    add_error(
-                        definition_type=definition_type,
-                        definition_code=definition_code,
-                        code="ERR_LOCAL_CHECK_DYNAMIC",
-                        msg=f"[{'.'.join(keys)}] Il y a une erreur dans la fonction dynamique ({str(e)}): {element}",
-                    )
-
-            return
 
     @classmethod
     def local_check_definition_reference(cls, definition_type, definition_code):
@@ -212,7 +155,7 @@ class DefinitionBase:
         for error in jsonschema_errors:
             msg = error.message
             if error.path:
-                msg = "[{}] {}".format(".".join(str(x) for x in error.absolute_path), msg)
+                msg = "[{}]\n    {}".format(".".join(str(x) for x in error.absolute_path), msg)
 
             add_error(
                 definition_type=definition_type,
@@ -223,7 +166,6 @@ class DefinitionBase:
 
     @classmethod
     def remove_from_cache(cls, definition_type, definition_code):
-        print("remove_from_cache", definition_type, definition_code)
         del get_global_cache([definition_type])[definition_code]
 
     @classmethod

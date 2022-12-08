@@ -22,8 +22,7 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.display)
   "
   [layout]="processedLayout"
   [data]="schemaData"
-  [debug]="debug"
-  (onAction)="processAction($event)"
+    (onAction)="processAction($event)"
 ></modules-layout>
 </div>
 
@@ -31,8 +30,7 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.display)
 <modules-layout-object-table
   *ngIf="computedLayout.display == 'table'"
   [layout]="layout"
-  [debug]="debug"
-  [data]="data"
+    [data]="data"
 >
 </modules-layout-object-table>
 
@@ -40,9 +38,8 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.display)
 <modules-layout-object-geojson
   *ngIf="computedLayout.display == 'geojson'"
   [layout]="layout"
-  [debug]="debug"
-  [data]="data"
-  [options]="options"
+    [data]="data"
+  [parentContext]="context"
 >
 </modules-layout-object-geojson>
 
@@ -50,8 +47,7 @@ schemaData && ['form', 'properties', 'export'].includes(computedLayout.display)
 <modules-layout-object-filters
   *ngIf="computedLayout.display == 'filters'"
   [layout]="layout"
-  [debug]="debug"
-  [data]="data"
+    [data]="data"
 >
 </modules-layout-object-filters>
 </ng-container>

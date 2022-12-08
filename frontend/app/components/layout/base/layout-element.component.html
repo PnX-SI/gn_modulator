@@ -1,12 +1,9 @@
 <!-- form -->
-<ng-container *ngIf="options?.form; else layoutKeyDefault">
+<ng-container *ngIf="context.form_group; else layoutKeyDefault">
   <modules-form-element
     [data]="data"
-    [debug]="debug"
-    [depth]="depth"
     [layout]="layout"
-    [globalData]="globalData"
-    [options]="options"
+    [parentContext]="context"
     (onAction)="processAction($event)"
   ></modules-form-element>
 </ng-container>
@@ -27,11 +24,11 @@
       </div>
       <div class="layout-key-value">
         <ng-container
-          *ngIf="[null, undefined].includes(dataKey); else displayValue"
+          *ngIf="[null, undefined].includes(elementData); else displayValue"
           >...</ng-container
         >
         <ng-template #displayValue>
-          {{ dataKey }}
+          {{ elementData }}
         </ng-template>
       </div>
     </div>

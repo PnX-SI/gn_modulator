@@ -6,6 +6,7 @@ import { ModulesLayoutService } from '../services/layout.service';
 import { AuthService, User } from '@geonature/components/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { mergeMap } from '@librairies/rxjs/operators';
+import { of } from '@librairies/rxjs';
 import utils from '../utils';
 
 @Component({
@@ -79,11 +80,15 @@ export class PageComponent implements OnInit {
           this.routeQueryParams = queryParams;
           this.moduleParams = this._mPage.moduleConfig.params || {};
           this.processParams();
-          return this._mPage.getBreadcrumbs();
+          this._mLayout.initContext({
+            module_code: this._mPage.moduleCode,
+            page_code: this._mPage.pageCode,
+            params: this._mPage.params,
+          });
+          return of(true);
         })
       )
       .subscribe(() => {
-        this._mLayout.initMeta();
         this.pageInitialized = true;
       });
   }

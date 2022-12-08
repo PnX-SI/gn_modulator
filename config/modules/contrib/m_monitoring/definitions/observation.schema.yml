@@ -73,7 +73,7 @@ form:
                 - id_visit
                 -
                     key: id_digitiser
-                    default: __f__meta.current_user?.id_role
+                    default: __f__context.current_user?.id_role
         -
             key: cd_nom
             type: list_form

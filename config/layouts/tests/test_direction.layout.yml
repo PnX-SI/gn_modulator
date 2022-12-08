@@ -1,0 +1,26 @@
+type: layout
+code: test_direction
+title: Layout test direction
+description: Layout de test pour la direciton des items
+
+layout:
+  title: Test direction
+  direction: row
+  items:
+    - title: c1
+      items:
+      - title: c1 r1
+        direction: row
+        items:
+          - title: c1 r1 c1
+          - title: c1 r1 c2
+          - title: c1 r1 c3
+      - title: c1 r2
+      - title: c1 r3
+    - title: c2
+      items:
+        - title: c3 r1
+        - title: c2 r2
+        - title: c2 r3
+    - title: c3
+

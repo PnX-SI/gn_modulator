@@ -31,7 +31,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   processConfig() {
-    this.mapId = this.options.mapId;
+    this.mapId = this.parentContext.map_id;
   }
 
   processValue(value) {

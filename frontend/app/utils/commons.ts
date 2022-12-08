@@ -27,13 +27,21 @@ const getAttr = (obj, paths) => {
     return obj;
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map((elem) => getAttr(elem, paths));
+  if (!Array.isArray(paths)) {
+    return getAttr(obj, paths.split('.'));
   }
 
-  const vPaths = paths.split('.');
-  const path = vPaths.shift();
-  const nextPaths = vPaths.join('.');
+  // if (Array.isArray(obj)) {
+  //   return obj.map((elem) => getAttr(elem, paths));
+  // }
+
+  if (paths.length == 0) {
+    return obj;
+  }
+
+  const paths2 = copy(paths);
+  const path = paths2.shift();
+  const nextPaths = paths2;
   const inter = obj[path];
 
   return getAttr(inter, nextPaths);

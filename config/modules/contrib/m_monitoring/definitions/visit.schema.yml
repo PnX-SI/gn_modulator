@@ -124,10 +124,10 @@ form:
         - id_site
         - id_module
         - key: id_digitiser
-          default: __f__meta.current_user?.id_role
+          default: __f__context.current_user?.id_role
           hidden: true
     - key: date_min
-      default: __f__meta.utils.today()
+      default: __f__utils.today()
     - date_max
     - key: id_dataset
       type: list_form

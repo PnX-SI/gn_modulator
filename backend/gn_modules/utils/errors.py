@@ -109,7 +109,7 @@ def errors_txt():
             lambda x: x.get("file_path", "") == definition_error_file_path,
             errors,
         ):
-            txt_errors += f"  - {definition_error['code']} {definition_error['msg']}\n"
+            txt_errors += f"  - {definition_error['code']} {definition_error['msg']}\n\n"
 
     # Rappel du nombre d'erreur si élevé
     if len(errors) > 5:

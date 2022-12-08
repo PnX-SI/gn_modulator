@@ -39,6 +39,17 @@ export class ListFormService {
       mergeMap((liste) => {
         this.processListeLengthisOne(options, control, liste);
         return of(liste);
+      }),
+      mergeMap((liste) => {
+        // on va tester si l'element est bien dans la liste et est bien celui de la liste
+        if (options.return_object && control.value) {
+          const elem = liste.items.find(
+            (item) => item[options.valueFieldName] == control.value[options.valueFieldName]
+          );
+          console.log(elem.description);
+          control.patchValue(elem);
+        }
+        return of(liste);
       })
     );
   }

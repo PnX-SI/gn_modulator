@@ -2,6 +2,7 @@ type: layout
 code: m_monitoring.site_details
 title: Layout site details
 description: Layout pour les details d'un site
+
 layout:
   height_auto: true
   direction: row

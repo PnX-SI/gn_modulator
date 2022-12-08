@@ -111,21 +111,6 @@ export class ModulesPageService {
     }
   }
 
-  getBreadcrumbs() {
-    return this._mRequest
-      .request(
-        'get',
-        `${this._mConfig.backendModuleUrl()}/breadcrumbs/${this.moduleCode}/${this.pageCode}`,
-        { params: this.params }
-      )
-      .pipe(
-        mergeMap((breadcrumbs) => {
-          this.breadcrumbs = breadcrumbs;
-          return of(true);
-        })
-      );
-  }
-
   reset() {
     this.breadcrumbs = [];
     this.moduleCode = null;

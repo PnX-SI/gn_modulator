@@ -15,21 +15,18 @@
     >
       <div
         attr.id="{{ _id }}.{{ index }}"
-        *ngFor="let elem of (data && data[layout.key]) || []; let index = index"
+        *ngFor="let elem of elementData || []; let index = index"
       >
         <modules-layout
-          [data]="elem"
-          [debug]="debug"
-          [depth]="depth + 1"
-          [globalData]="globalData"
+          [data]="data"
           [layout]="computedLayout.items"
-          [options]="arrayOptions(index)"
+          [parentContext]="arrayContext(index)"
           (onAction)="processAction($event)"
         ></modules-layout>
       </div>
       <div>
         <button
-          *ngIf="options.form"
+          *ngIf="!!context.form_group"
           mat-mini-fab
           color="primary"
           aria-label="Example icon button with a menu icon"
@@ -57,21 +54,18 @@
     >
       <div
         attr.id="{{ _id }}.{{ index }}"
-        *ngFor="let elem of (data && data[layout.key]) || []; let index = index"
+        *ngFor="let elem of elementData || []; let index = index"
       >
         <modules-layout
-          [data]="elem"
-          [debug]="debug"
-          [depth]="depth + 1"
-          [globalData]="globalData"
+          [data]="data"
           [layout]="computedLayout.items"
-          [options]="arrayOptions(index)"
+          [parentContext]="arrayElemContext(index)"
           (onAction)="processAction($event)"
         ></modules-layout>
       </div>
       <div style="flex: 0">
         <button
-          *ngIf="options.form"
+          *ngIf="!!context.form_group"
           mat-mini-fab
           color="primary"
           aria-label="Example icon button with a menu icon"
@@ -83,18 +77,5 @@
         </button>
       </div>
     </div>
-    <!-- <div style="flex: 0">
-      <button
-        *ngIf="options.form"
-        mat-mini-fab
-        color="primary"
-        aria-label="Example icon button with a menu icon"
-        [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
-        (click)="addArrayElement()"
-        (onAction)="processAction($event)"
-      >
-        <mat-icon>add</mat-icon>
-      </button>
-    </div> -->
   </ng-container>
 </ng-template>

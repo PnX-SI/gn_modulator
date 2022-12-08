@@ -2,16 +2,16 @@
 
 <!-- items -->
 <div [ngClass]="{ 'layout-row': direction == 'row', 'layout-items': true }">
-  <div *ngIf="options.index != undefined && options.form" style="flex: '0'">
+  <div *ngIf="context.index != null && context.form_group" style="flex: '0'">
     <button
-      *ngIf="options.form"
+      *ngIf="context.form_group"
       mat-icon-button
       color="black"
       [matTooltip]="layout.delete_one_title || 'Supprimer l\'élément'"
       (click)="
         this.emitAction({
           type: 'remove-array-element',
-          index: options.index
+          index: context.index
         })
       "
     >
@@ -27,11 +27,8 @@
     >
       <modules-layout
         [data]="data"
-        [debug]="debug"
-        [depth]="depth + 1"
-        [globalData]="globalData"
         [layout]="item"
-        [options]="options"
+        [parentContext]="context"
         (onAction)="processAction($event)"
       ></modules-layout>
     </div>

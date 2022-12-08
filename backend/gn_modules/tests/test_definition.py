@@ -10,28 +10,6 @@ from gn_modules.utils.cache import get_global_cache
 from gn_modules.utils.errors import get_errors, clear_errors
 from gn_modules.utils.env import definitions_test_dir
 
-# répertoire contenant les definitions destinées aux test
-
-"""
-err code
-TODO
-    ERR_VALID_REF
-    ERR_NO_REF_FOR_TYPE
-    ERR_DEF_EMPTY_FILE
-    ERR_TEMPLATE_NO_NAME
-    ERR_TEMPLATE_NOT_FOUND
-    ERR_TEMPLATE_UNRESOLVED_FIELDS
-
-DONE
-    ERR_GLOBAL_CHECK_MISSING_SCHEMA
-    ERR_LOAD_YML
-    ERR_LOAD_JSON
-    ERR_LOAD_EXISTING
-    ERR_LOAD_UNKNOWN
-    ERR_LOCAL_CHECK_REF
-    ERR_LOAD_LIST
-"""
-
 
 @pytest.mark.usefixtures(scope="session")
 class TestDefinitions:

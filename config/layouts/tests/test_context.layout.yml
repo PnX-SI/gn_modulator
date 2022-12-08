@@ -1,0 +1,57 @@
+type: layout
+code: test_context
+title: Layout test context
+description: Layout de test pour le context
+
+layout:
+  title: Test context
+  items:
+
+    - title: '__f__`Context - module_code: ${context.module_code}`'
+      class: '__f__utils.class_check(context.module_code, "m_context")'
+      flex: '0'
+
+    - title: '__f__`Data - module_code: ${context.module_code}`'
+      class: '__f__utils.class_check(context.module_code, "m_data")'
+      key: truc
+      flex: '0'
+
+    - title: '__f__`Layout - module_code: ${context.module_code}`'
+      module_code: 'm_layout'
+      class: '__f__utils.class_check(context.module_code, "m_layout")'
+      flex: '0'
+
+    - items:
+        module_code: 'm_layout_parent'
+        items:
+          - title: '__f__`Layout parent - module_code: ${context.module_code}`'
+            class: '__f__utils.class_check(context.module_code, "m_layout_parent")'
+            flex: '0'
+
+    - title: data_keys
+      flex: '0'
+      items:
+        - type: form
+          flex: '0'
+          items:
+            - type: integer
+              flex: '0'
+              key: key1
+              title: '__f__JSON.stringify(context.data_keys)'
+              class: '__f__utils.class_check(context.data_keys, [])'
+        - key: key2
+          flex: '0'
+          items:
+            - title: '__f__JSON.stringify(context.data_keys)'
+              flex: '0'
+              class: '__f__utils.class_check(context.data_keys, ["key2"])'
+
+data:
+  truc2:
+    module_code: m_computed_layout
+  truc:
+    module_code: m_data
+
+context:
+  module_code: m_context
+  page_code: o_context

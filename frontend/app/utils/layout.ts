@@ -7,31 +7,42 @@ import utilsCommons from '.';
 /**
  * Renvoie le type d'un layout
  */
+// const getLayoutType = (layout) => {
+//   const layoutType = !layout
+//     ? null
+//     : Array.isArray(layout)
+//     ? 'items'
+//     : [
+//         'breadcrumbs',
+//         'button',
+//         'html',
+//         'form',
+//         'message',
+//         'medias',
+//         'card',
+//         'object',
+//         'table',
+//         'map',
+//         'modal',
+//         // 'dict',
+//       ].includes(layout.type)
+//     ? layout.type
+//     : layout.key
+//     ? 'key'
+//     : layout.layout_code
+//     ? 'name'
+//     : 'section';
+//   return layoutType;
+// };
+
 const getLayoutType = (layout) => {
   const layoutType = !layout
     ? null
     : Array.isArray(layout)
     ? 'items'
-    : [
-        'breadcrumbs',
-        'button',
-        'html',
-        'form',
-        'message',
-        'medias',
-        'card',
-        'object',
-        'table',
-        'map',
-        'modal',
-        'dict',
-      ].includes(layout.type)
-    ? layout.type
-    : layout.key
-    ? 'key'
-    : layout.layout_code
-    ? 'name'
-    : 'section';
+    : !layout.type
+    ? 'section'
+    : layout.type;
   return layoutType;
 };
 
@@ -75,6 +86,9 @@ const processData = (data, layout) => {
  * TODO array
  */
 const flatLayout = (layout) => {
+  if (layout == null) {
+    return [];
+  }
   if (Array.isArray(layout)) {
     return utilsCommons
       .flatAndRemoveDoublons(layout.map((elem) => flatLayout(elem)))

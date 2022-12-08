@@ -1,19 +1,10 @@
-<!-- schema-->
-<div
-  *ngIf="debug && layout && computedLayout"
-  class="debug"
-  [ngStyle]="{ 'margin-left': debugMarginLeft }"
->
-  <b>{{ layoutType }}</b> - {{ computedLayout.object_code }} -
-</div>
 
 <div [attr.id]="_id" class="layout-section" [ngStyle]="computedLayout.style">
 <div v-if="filterValues">
   <modules-layout
     [layout]="processedLayout"
     [data]="filterValues"
-    [debug]="debug"
-    (onAction)="processAction($event)"
+        (onAction)="processAction($event)"
   ></modules-layout>
 
 </div>

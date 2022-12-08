@@ -2,6 +2,9 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { ModulesFormService } from '../../../services/form.service';
 
 import { ModulesLayoutComponent } from './layout.component';
+
+import utils from '../../../utils';
+
 @Component({
   selector: 'modules-layout-array',
   templateUrl: 'layout-array.component.html',
@@ -18,18 +21,31 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
     this.bPostComputeLayout = true;
   }
 
-  arrayOptions(index) {
-    return {
-      ...this.options,
-      index,
-      formGroup: this.options.formGroup && this.options.formGroup.get(this.layout.key).at(index),
+  arrayElemContext(index) {
+    const data_keys = utils.copy(this.context.data_keys);
+    data_keys.push(this.layout.key);
+    data_keys.push(index);
+    const arrayElemContext = {
+      form_group: this.context.form_group,
+      data_keys,
     };
+    for (const key of Object.keys(this.context).filter(
+      (key) => !['form_group', 'data_keys'].includes(key)
+    )) {
+      arrayElemContext[key] = this.context[key];
+    }
+
+    return arrayElemContext;
   }
 
   processAction(action) {
     if (action.type == 'remove-array-element') {
       this.data[this.layout.key].splice(action.index, 1);
-      this._formService.setControl(this.options.formGroup, this.layout, this.data, this.globalData);
+      this._formService.setControl({
+        context: this.context,
+        data: this.data,
+        layout: this.computedLayout,
+      });
       this._mLayout.reComputeLayout('');
     } else {
       this.emitAction(action);
@@ -38,7 +54,11 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
 
   addArrayElement() {
     this.data[this.layout.key].push({});
-    this._formService.setControl(this.options.formGroup, this.layout, this.data, this.globalData);
+    this._formService.setControl({
+      context: this.context,
+      data: this.data,
+      layout: this.computedLayout,
+    });
     // pour forcer le check de la validation ??
     this._mLayout.reComputeLayout('');
   }

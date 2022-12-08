@@ -1,0 +1,55 @@
+type: layout
+code: test_form_and_display
+title: Layout formulaire et display
+description: Layout de test pour l'affichage
+
+aliases:
+  - &layout_form
+    - direction: row
+      title: Element simples
+      items:
+        - type: integer
+          key: i1
+          title: integer 1
+        - type: string
+          key: s1
+          title: string
+    - title: Array
+      type: array
+      key: list
+      items:
+        direction: row
+        items:
+          - type: integer
+            key: li
+            title: liste integer
+          - type: string
+            key: ls
+            title: liste string
+
+    # - type: message
+    #   json: __f__context.fromGroup?.value || data
+    # - title: TODO afficher les erreurs
+    #   hidden: __f__!context.form_group
+
+data:
+  i1: 1
+  s1: a
+  list:
+    - li: 1
+      ls: a
+    - li: 2
+      ls: b
+
+layout:
+  title: Test Form and display
+  items:
+    - direction: row
+      items:
+        - title: Formulaire
+          type: form
+          items: *layout_form
+        - title: Affichage
+          items: *layout_form
+
+

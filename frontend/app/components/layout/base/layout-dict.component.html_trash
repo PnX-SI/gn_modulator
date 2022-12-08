@@ -1,12 +1,8 @@
 <ng-container>
   <modules-layout
     [data]="data[layout.key]"
-    [debug]="debug"
-    [depth]="depth + 1"
-    [direction]="computedLayout.direction"
-    [globalData]="globalData"
     [layout]="computedLayout.items"
-    [options]="objectOptions()"
+    [parentContext]="context"
     (onAction)="processAction($event)"
   >
   </modules-layout>

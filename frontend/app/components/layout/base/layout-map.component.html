@@ -5,18 +5,16 @@
   <modules-layout
     [layout]="modalsLayout"
     [data]="modalData"
-    [debug]="debug"
-    (onAction)="onModalAction($event)"
-    [options]="options"
+        (onAction)="onModalAction($event)"
+    [parentContext]="context"
   ></modules-layout>
 </div>
 
 <!-- OBJECT GEOJSON -->
-<div *ngIf="layout.items && options.mapId" class="geojsons">
+<div *ngIf="layout.items && context.map_id" class="geojsons">
   <modules-layout [layout]="layout.items" [data]="data"
-  [debug]="debug"
-  (onAction)="onModalAction($event)"
-  [options]="options"
+    (onAction)="onModalAction($event)"
+  [parentContext]="context"
 > </modules-layout>
 </div>
 

@@ -136,4 +136,8 @@ export class ModulesConfigService {
   objectLabel(moduleCode, objectCode) {
     return this.objectConfig(moduleCode, objectCode).display.label;
   }
+
+  objectLabels(moduleCode, objectCode) {
+    return this.objectConfig(moduleCode, objectCode).display.labels;
+  }
 }

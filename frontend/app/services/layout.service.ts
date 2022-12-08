@@ -2,28 +2,23 @@ import { Injectable, Injector } from '@angular/core';
 import utils from '../utils';
 import { Subject } from '@librairies/rxjs';
 import { ModulesConfigService } from '../services/config.service';
+import { ModulesRequestService } from '../services/request.service';
+import { ModulesContextService } from '../services/context.service';
 import { ModulesObjectService } from './object.service';
-import { AuthService, User } from '@geonature/components/auth/auth.service';
+
+declare var curData: any;
 
 @Injectable()
 export class ModulesLayoutService {
   _mConfig: ModulesConfigService;
+  _mRequest: ModulesRequestService;
   _mObject: ModulesObjectService;
-  _auth: AuthService;
-  utils;
 
-  // pour pouvoir faire passer des infos au layout
-  // - par exemple sur l'utilisateur courant ou autres
-  //
-  // meta.user : utilisateur courrant
-  // meta.utils: fonction utiles
-  // meta.object : fonction sur les objects (config etc....)
-  _meta: any;
+  _utils: any;
 
   constructor(private _injector: Injector) {
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mObject = this._injector.get(ModulesObjectService);
-    this._auth = this._injector.get(AuthService);
   }
 
   $reComputeLayout = new Subject();
@@ -33,6 +28,8 @@ export class ModulesLayoutService {
   $stopActionProcessing = new Subject();
   modals = {};
   $closeModals = new Subject();
+
+  elementTypes = ['integer', 'string', 'textarea', 'list_form'];
 
   initModal(modalName) {
     if (!this.modals[modalName]) {
@@ -48,25 +45,51 @@ export class ModulesLayoutService {
    * - utils: des fonction utiles
    * - object: pour l'affichage des label et ++ des objects
    */
-  initMeta({ module_code = 'MODULES' } = {}) {
-    this._meta = {
-      module_code,
-      user: {
-        current: this._auth.getCurrentUser(),
-      },
-      utils: {
-        today: utils.today, // renvoie la date du jour (defaut)
-        departementsForRegion: utils.departementsForRegion, // liste des dept pour une region
-        YML: utils.YML,
-      },
-      objects: {
-        label: this.objectLabel.bind(this),
-      },
+  initContext(context = {}) {
+    this._utils = {
+      today: utils.today, // renvoie la date du jour (defaut)
+      departementsForRegion: utils.departementsForRegion, // liste des dept pour une region
+      YML: utils.YML,
+      object_label: this.utilObject('label').bind(this),
+      object_labels: this.utilObject('labels').bind(this),
+      object_tab_label: this.objectTabLabel.bind(this),
     };
   }
 
-  objectLabel(objectCode) {
-    return this._mConfig.objectLabel(this._meta.module_code, objectCode);
+  initUtils() {
+    this._utils = {
+      today: utils.today, // renvoie la date du jour (defaut)
+      departementsForRegion: utils.departementsForRegion, // liste des dept pour une region
+      YML: utils.YML,
+      object_label: this.utilObject('label').bind(this),
+      object_labels: this.utilObject('labels').bind(this),
+      object_tab_label: this.objectTabLabel.bind(this),
+      class_check: this.class_check,
+    };
+  }
+
+  class_check(v1, v2) {
+    return utils.fastDeepEqual(v1, v2) ? 'test-layout-ok' : 'test-layout-error';
+  }
+
+  utilObject(fonctionType) {
+    return (context) => {
+      const fnConfigName = `object${utils.capitalize(fonctionType)}`;
+      try {
+        return this._mConfig[fnConfigName](context.module_code, context.object_code);
+      } catch (e) {
+        return `Pas de config trouvée pour {module_code: ${context.module_code}, object_code: ${context.object_code}}`;
+      }
+    };
+  }
+
+  objectTabLabel({ data, layout, context }) {
+    const nbTotal = data.nb_total;
+    const nbFiltered = data.nb_filtered;
+    const labels = this.utilObject('labels')({ data, layout, context });
+    return nbTotal
+      ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
+      : `${utils.capitalize(labels)}`;
   }
 
   openModal(modalName, data) {
@@ -129,23 +152,29 @@ export class ModulesLayoutService {
     return layout;
   }
 
+  /**
+   * TODO gérer les cas element ?
+   */
+  getLocalData({ context, data, layout }) {
+    const localData = utils.getAttr(data, context.data_keys);
+    return localData;
+  }
+
   // /**
   //  * Ici on ne remplace pas layout
   //  * seulement ces éléments qui sont des fonctions
   //  */
 
-  computeLayout({ layout, data, globalData, formGroup }) {
+  computeLayout({ context, data, layout }) {
     if (utils.isObject(layout)) {
       const computedLayout = {};
-      for (const [key, value] of Object.entries(layout)) {
-        computedLayout[key] = this.isStrFunction(value)
-          ? this.evalLayout({
-              layout: value,
-              data,
-              globalData,
-              formGroup,
-            })
-          : value;
+      for (const [key, element] of Object.entries(layout)) {
+        computedLayout[key] = this.evalLayoutElement({
+          element,
+          layout,
+          data,
+          context,
+        });
       }
       return computedLayout;
     }
@@ -160,32 +189,50 @@ export class ModulesLayoutService {
       strFunction = `{ return ${strFunction} }`;
     }
 
-    const f = new Function('data', 'globalData', 'formGroup', 'meta', strFunction);
+    strFunction = `{
+    const {layout, data, globalData, formGroup, utils, context} = x;
+    ${strFunction.substr(1)}
+    `;
 
+    const f = new Function('x', strFunction);
     return f;
   }
 
-  evalLayout({ layout, data, globalData = null, formGroup = null }) {
-    if (!this._meta) {
-      this.initMeta();
+  evalLayoutElement({ element, layout, data, context }) {
+    if (!this._utils) {
+      this.initUtils();
     }
-    if (this.isStrFunction(layout) && !data) {
+
+    if (this.isStrFunction(element) && !data) {
       return null;
     }
 
     if (!data) {
-      return layout;
+      return element;
     }
 
-    if (typeof layout == 'function') {
-      return layout({ data });
-    }
-
-    if (this.isStrFunction(layout)) {
-      const val = this.evalFunction(layout)(data, globalData, formGroup, this._meta);
+    if (typeof element == 'function') {
+      const globalData = data;
+      const localData = utils.getAttr(globalData, context.keys);
+      const val = element({
+        layout,
+        data: localData,
+        globalData,
+        utils: this._utils,
+        context,
+      });
       return val !== undefined ? val : null; // on veut eviter le undefined
     }
-    return layout;
+
+    if (this.isStrFunction(element)) {
+      return this.evalLayoutElement({
+        element: this.evalFunction(element),
+        context,
+        layout,
+        data,
+      });
+    }
+    return element;
   }
 
   /**

@@ -73,11 +73,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
    *  data -> layoutData
    */
   postComputeLayout(dataChanged, layoutChanged): void {
-    // if (this.options.mapId) {
-    // this.mapId = this.options.mapId;
-    // }
-    this.options = this.options || {};
-    this.options.mapId = this.mapId;
+    this.context.map_id = this.mapId;
     this._mapService.initMap(this.mapId, { zoom: this.computedLayout.zoom }).then((map) => {
       this._map = map;
 

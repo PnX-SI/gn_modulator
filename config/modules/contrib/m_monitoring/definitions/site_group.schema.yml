@@ -134,7 +134,7 @@ form:
         - id_site
         - geom
         - key: id_digitiser
-          default: __f__meta.current_user?.id_role
+          default: context.current_user?.id_role
           hidden: true
     - code
     - name

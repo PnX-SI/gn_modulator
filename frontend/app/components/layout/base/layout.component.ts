@@ -8,6 +8,9 @@ import {
   Injector,
 } from '@angular/core';
 import { ModulesLayoutService } from '../../../services/layout.service';
+import { ModulesContextService } from '../../../services/context.service';
+import { ModulesFormService } from '../../../services/form.service';
+
 import utils from '../../../utils';
 
 /** Composant de base pour les layouts */
@@ -17,32 +20,25 @@ import utils from '../../../utils';
   styleUrls: ['../../base/base.scss', 'layout.component.scss'],
 })
 export class ModulesLayoutComponent implements OnInit {
-  // @Output() layoutChange = new EventEmitter<any>();
-
-  // @Input() layoutDefinition: any;
+  /** données */
+  @Input() debug: any;
 
   /** agencement */
   @Input() layout: any;
 
   /** données */
   @Input() data: any;
-  @Input() globalData: any;
+  localData: any;
 
   /** actions */
   @Output() onAction = new EventEmitter<any>();
 
-  /** debug */
-  @Input() debug: any;
-
-  /** debug */
-  @Input() depth = 0;
-
   // disposition verticale (par défaut) ou horizontale (si direction='row') des items
   @Input() direction: string;
 
-  // TODO
-  // pour les formulaires, faire passer le formGroup (TODO par un service ?)
-  @Input() options: any = {};
+  // pour faire passer des infos aux composants enfants ?
+  @Input() parentContext: any = {};
+  context: any = {};
 
   // si processing ( par ex: affichage de spinner)
   @Input() isProcessing;
@@ -63,7 +59,6 @@ export class ModulesLayoutComponent implements OnInit {
   /** margin for debug display
    * help with debugging nested layout
    */
-  debugMarginLeft = '0px';
 
   /** Type de layout
    */
@@ -73,7 +68,7 @@ export class ModulesLayoutComponent implements OnInit {
   prettyDebug;
 
   // données associées à layout.key
-  dataKey;
+  elementData;
 
   // nom du composant (pour le debug)
   _name: string;
@@ -88,6 +83,8 @@ export class ModulesLayoutComponent implements OnInit {
 
   // services
   _mLayout: ModulesLayoutService;
+  _mContext: ModulesContextService;
+  _mForm: ModulesFormService;
 
   // pour les éléments avec overflow = true
   docHeightSave;
@@ -105,6 +102,8 @@ export class ModulesLayoutComponent implements OnInit {
     this._name = 'layout';
     this._id = Math.round(Math.random() * 1e10);
     this._mLayout = _injector.get(ModulesLayoutService);
+    this._mContext = _injector.get(ModulesContextService);
+    this._mForm = _injector.get(ModulesFormService);
     this.utils = utils;
   }
 
@@ -151,13 +150,13 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   // idem que log mais seulement quand debug = true
-  debugLog(...args) {
-    this.debug && this.log(...args);
+
+  getFormGroup() {
+    return this._mForm.getFormGroup(this.parentContext);
   }
 
-  // pour récupérer formGroup depuis les options
-  getFormGroup() {
-    return this.options.formGroup;
+  getFormControl() {
+    return this.getFormGroup().get(this.computedLayout.key);
   }
 
   // à redéfinir pour effectuer des actions apres computedLayout
@@ -165,7 +164,6 @@ export class ModulesLayoutComponent implements OnInit {
 
   // appelé à l'initiation ( ou en cas de changement de data/layout/globalData)
   processLayout() {
-    this.globalData = this.globalData || this.data;
     // calcul de computedLayout
     this.computeLayout();
     // à redéfinir
@@ -178,31 +176,94 @@ export class ModulesLayoutComponent implements OnInit {
     this.isInitialized = true;
   }
 
+  getLocalData() {
+    return this._mLayout.getLocalData({
+      data: this.data,
+      context: this.context,
+      layout: this.layout,
+    });
+  }
+
+  processContext() {
+    // passage de parentContext (venant des layout parents) à context (à destination des enfants)
+    // copie
+
+    // à clarifier
+
+    const layout = this.computedLayout || this.layout;
+
+    if (!layout) return;
+
+    for (const key of ['debug', 'form_group', 'appearance']) {
+      if (this.parentContext[key]) {
+        this.context[key] = this.parentContext[key];
+      }
+    }
+
+    if (this.debug) {
+      this.context.debug = true;
+    }
+
+    this.context.depth = (this.parentContext.depth || 0) + 1;
+    // dataKeys
+
+    this.processDataKeys();
+
+    this.localData = this.getLocalData();
+
+    // ? layout ou computedLayout
+    const computedContext = this._mContext.getContext({
+      data: this.localData,
+      layout,
+      context: this.parentContext,
+    });
+
+    this.context.module_code = computedContext.module_code;
+    this.context.page_code = computedContext.page_code;
+  }
+
+  /**
+   * A redéfinir dans les composants
+   * pour les besoins spécifiques
+   * - data_keys etc...
+   **/
+  processDataKeys() {
+    this.context.data_keys = utils.copy(this.parentContext.data_keys) || [];
+  }
+
+  getelementData() {
+    if (!this.layout) {
+      return;
+    }
+    let elementData = this.localData;
+    if (this.layout.key) {
+      elementData = utils.getAttr(this.localData, this.layout.key);
+    }
+    return elementData;
+  }
+
   // calcul de computedLayout
   // pour prendre en compte les paramètre qui sont des functions
   computeLayout() {
     // calcul du type de layout
     this.layoutType = this.layoutType || utils.getLayoutType(this.layout);
 
+    this.processContext();
     // calcul du layout
     this.computedLayout = this._mLayout.computeLayout({
       layout: this.layout,
       data: this.data,
-      globalData: this.globalData,
-      formGroup: this.getFormGroup(),
+      context: this.context,
     });
 
     // récupération des données associées à this.computedLayout.key
-    this.dataKey =
-      this.layoutType == 'key' ? utils.getAttr(this.data, this.computedLayout.key) : this.data;
+
+    this.elementData = this.getelementData();
 
     // pour l'affichage du debug
     // if (this.debug) {
-    this.prettyDebug = {
-      layout: this.pretty(this.computedLayout),
-      data: this.pretty(this.data),
-      dataKey: this.pretty(this.dataKey),
-    };
+    this.processPrettyDebug();
+
     // }
 
     if (!this.computedLayout) {
@@ -216,15 +277,20 @@ export class ModulesLayoutComponent implements OnInit {
           this._mLayout.computeLayout({
             layout: item,
             data: this.data,
-            globalData: this.globalData,
-            formGroup: this.getFormGroup(),
+            context: this.context,
           })
         )
       : [];
 
+    // options context -> layout
+    // if (this.computedLayout.module_code) {
+    //   this.options.module_code = this.computedLayout.module_code
+    // }
+
+    // options layout
+
     // si layout_code est défini
     // on va chercher le layout correspondant dans la config
-    // TODO (gérer ça en backend)
     if (this.computedLayout.layout_code && !this.layoutFromCode) {
       const layoutFromCode = this._mLayout.getLayoutFromCode(this.computedLayout.layout_code);
       // message d'erreur pour indiquer que l'on a pas trouvé le layout
@@ -391,12 +457,6 @@ export class ModulesLayoutComponent implements OnInit {
   // a redefinir pour faire des actions après processLayout
   postProcessLayout() {}
 
-  // calcul de la marge pour l'afffichage du debug
-  // - en fonction de l'input depth
-  processDebug() {
-    this.debugMarginLeft = `${10 * this.depth}px`;
-  }
-
   emitAction(event) {
     this.onAction.emit(event);
   }
@@ -405,6 +465,11 @@ export class ModulesLayoutComponent implements OnInit {
    * quand layout.action est defini
    */
   onButtonClick(event) {
+    if (this.computedLayout.click) {
+      this.computedLayout.click(event);
+      return;
+    }
+
     const action = this.computedLayout.action;
     if (!action) {
       return;
@@ -436,8 +501,37 @@ export class ModulesLayoutComponent implements OnInit {
     this.emitAction(event);
   }
 
-  pretty(obj) {
-    return JSON.stringify(obj, null, '____  ');
+  processPrettyDebug() {
+    const prettyLayout = this.prettyTitleObjForDebug('layout', this.computedLayout);
+    const prettyData = this.prettyTitleObjForDebug('data', this.data);
+    const prettyLocalData = this.prettyTitleObjForDebug('local data', this.localData);
+    const prettyElementData = this.prettyTitleObjForDebug('element data', this.elementData);
+
+    const context = {
+      module_code: this.context.module_code,
+      page_code: this.context.page_code,
+      object_code: this.context.object_code,
+      data_keys: this.context.data_keys,
+    };
+
+    const prettyContext = this.prettyTitleObjForDebug('context', context);
+
+    this.prettyDebug = {
+      layout: prettyLayout,
+      data: prettyData,
+      local_data: prettyLocalData,
+      element_data: prettyElementData,
+      context: prettyContext,
+    };
+  }
+
+  prettyTitleObjForDebug(title, obj) {
+    // let srtPretty = `${title}\n\n${JSON.stringify(obj, null, '____  ')}`
+    let srtPretty = `${title}\n\n${utils.YML.dump(obj, { skipInvalid: true }).replaceAll(
+      ' ',
+      '_'
+    )}`;
+    return srtPretty;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -446,12 +540,8 @@ export class ModulesLayoutComponent implements OnInit {
         continue;
       }
 
-      if (['layout', 'data', 'globalData'].includes(key)) {
+      if (['layout', 'data', 'parentContext'].includes(key)) {
         this.processLayout();
-      }
-
-      if (key == 'debug') {
-        this.processDebug();
       }
     }
   }

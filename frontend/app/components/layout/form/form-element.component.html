@@ -1,130 +1,124 @@
-<ng-container
-  *ngIf="layout && options.formGroup && options.formGroup.get(computedLayout.key) as formControl"
->
-    <!-- input -->
-    <ng-container
-      *ngIf="
-        ['date', 'string', 'number', 'textarea', 'uuid', 'integer'].includes(
-          computedLayout.type
-        )
-      "
+<ng-container *ngIf="!!formControl">
+  <!-- input -->
+  <ng-container
+    *ngIf="
+      ['date', 'string', 'number', 'textarea', 'uuid', 'integer'].includes(computedLayout.type)
+    "
+  >
+    <mat-form-field
+      class="form-field {{computedLayout.class}}"
+      [appearance]="context.appearance || 'outline'"
     >
-      <mat-form-field
-        class="form-field"
-        [appearance]="options.appearance || 'standart'"
+      <mat-label>{{ computedLayout.title || computedLayout.key }}</mat-label>
+      <input
+        *ngIf="['date', 'string', 'number'].includes(computedLayout.type)"
+        matInput
+        [placeholder]="computedLayout.placeholder"
+        [type]="computedLayout.type"
+        [formControl]="formControl"
+        [required]="computedLayout.required"
+        [min]="computedLayout.min"
+        [max]="computedLayout.max"
+        (change)="onInputChange()"
+      />
+
+      <input
+        *ngIf="'uuid' == computedLayout.type"
+        matInput
+        type="text"
+        [placeholder]="computedLayout.placeholder"
+        [formControl]="formControl"
+        [required]="computedLayout.required"
+        (change)="onInputChange()"
+      />
+
+      <input
+        *ngIf="'integer' == computedLayout.type"
+        matInput
+        type="number"
+        step="1"
+        [placeholder]="computedLayout.placeholder"
+        [formControl]="formControl"
+        [required]="computedLayout.required"
+        [min]="computedLayout.min"
+        [max]="computedLayout.max"
+        (change)="onInputChange()"
+      />
+
+      <textarea
+        *ngIf="['textarea', 'json'].includes(computedLayout.type)"
+        matInput
+        cdkTextareaAutosize
+        [placeholder]="computedLayout.placeholder"
+        [cdkAutosizeMinRows]="computedLayout.min_rows"
+        [cdkAutosizeMaxRows]="computedLayout.max_rows"
+        [formControl]="formControl"
+        [required]="computedLayout.required"
+        (change)="onInputChange()"
+        style="white-space: pre"
+      ></textarea>
+
+      <mat-hint>{{ computedLayout.hint }}</mat-hint>
+
+      <!-- erreurs -->
+
+      <!-- required -->
+      <mat-error *ngIf="formControl.errors && formControl.errors.required"
+        >Ce champs est requis</mat-error
       >
-        <mat-label>{{ computedLayout.title || computedLayout.key }}</mat-label>
-        <input
-          *ngIf="['date', 'string', 'number'].includes(computedLayout.type)"
-          matInput
-          [placeholder]="computedLayout.placeholder"
-          [type]="computedLayout.type"
-          [formControl]="formControl"
-          [required]="computedLayout.required"
-          [min]="computedLayout.min"
-          [max]="computedLayout.max"
-          (change)="onInputChange()"
-        />
 
-        <input
-          *ngIf="'uuid' == computedLayout.type"
-          matInput
-          type="text"
-          [placeholder]="computedLayout.placeholder"
-          [formControl]="formControl"
-          [required]="computedLayout.required"
-          (change)="onInputChange()"
-        />
+      <!-- min -->
+      <mat-error *ngIf="formControl.errors && formControl.errors.min">
+        La valeur doit être supérieure ou égale à
+        {{ formControl.errors.min.min }}
+      </mat-error>
 
-        <input
-          *ngIf="'integer' == computedLayout.type"
-          matInput
-          type="number"
-          step="1"
-          [placeholder]="computedLayout.placeholder"
-          [formControl]="formControl"
-          [required]="computedLayout.required"
-          [min]="computedLayout.min"
-          [max]="computedLayout.max"
-          (change)="onInputChange()"
-        />
+      <!-- max -->
+      <mat-error *ngIf="formControl.errors && formControl.errors.max">
+        La valeur doit être inférieure ou égale à
+        {{ formControl.errors.max.max }}
+      </mat-error>
 
-        <textarea
-          *ngIf="['textarea', 'json'].includes(computedLayout.type)"
-          matInput
-          cdkTextareaAutosize
-          [placeholder]="computedLayout.placeholder"
-          [cdkAutosizeMinRows]="computedLayout.min_rows"
-          [cdkAutosizeMaxRows]="computedLayout.max_rows"
-          [formControl]="formControl"
-          [required]="computedLayout.required"
-          (change)="onInputChange()"
-          style="white-space: pre;"
-          ></textarea>
+      <!-- integer -->
+      <mat-error *ngIf="formControl.errors && formControl.errors.integer">
+        La valeur doit être un nombre entier
+      </mat-error>
 
-        <mat-hint>{{ computedLayout.hint }}</mat-hint>
-
-
-        <!-- erreurs -->
-
-        <!-- required -->
-        <mat-error *ngIf="formControl.errors && formControl.errors.required"
-          >Ce champs est requis</mat-error
-        >
-
-        <!-- min -->
-        <mat-error *ngIf="formControl.errors && formControl.errors.min">
-          La valeur doit être supérieure ou égale à
-          {{ formControl.errors.min.min }}
-        </mat-error>
-
-        <!-- max -->
-        <mat-error *ngIf="formControl.errors && formControl.errors.max">
-          La valeur doit être inférieure ou égale à
-          {{ formControl.errors.max.max }}
-        </mat-error>
-
-        <!-- integer -->
-        <mat-error *ngIf="formControl.errors && formControl.errors.integer">
-          La valeur doit être un nombre entier
-        </mat-error>
-
-
-        <mat-icon
-          matPrefix
-          *ngIf="computedLayout.description"
-          [matTooltip]="computedLayout.description"
-          class="icon-description"
-        >
-          help
-        </mat-icon>
-      </mat-form-field>
-    </ng-container>
-
-    <!-- checkbox -->
-    <mat-checkbox
-      *ngIf="['checkbox', 'boolean'].includes(computedLayout.type)"
-      [formControl]="formControl"
-      >{{ computedLayout.title || computedLayout.key }}
-    </mat-checkbox>
-
-    <!-- list-form -->
-    <ng-container *ngIf="computedLayout.type == 'list_form'">
-      <modules-list-form
-        [layout]="layout"
-        [data]="data"
-        [options]="options"
-      ></modules-list-form>
-    </ng-container>
-
-    <!-- dynform-->
-    <ng-container *ngIf="computedLayout.type == 'dyn_form'">
-      <pnx-dynamic-form
-        class="dynamic-form padding-sm"
-        [formDef]="formDef"
-        [form]="options.formGroup"
+      <mat-icon
+        matPrefix
+        *ngIf="computedLayout.description"
+        [matTooltip]="computedLayout.description"
+        class="icon-description"
       >
-      </pnx-dynamic-form>
-    </ng-container>
+        help
+      </mat-icon>
+    </mat-form-field>
+  </ng-container>
 
+  <!-- checkbox -->
+  <mat-checkbox
+    *ngIf="['checkbox', 'boolean'].includes(computedLayout.type)"
+    [formControl]="formControl"
+    >{{ computedLayout.title || computedLayout.key }}
+  </mat-checkbox>
+
+  <!-- list-form -->
+  <ng-container *ngIf="computedLayout.type == 'list_form'">
+    {{ context.data_keys }}
+    <modules-list-form
+      [layout]="layout"
+      [data]="data"
+      [parentContext]="context"
+    ></modules-list-form>
+  </ng-container>
+
+  <!-- dynform-->
+  <ng-container *ngIf="computedLayout.type == 'dyn_form'">
+    <pnx-dynamic-form
+      class="dynamic-form padding-sm"
+      [formDef]="formDef"
+      [form]="context.form_group"
+    >
+    </pnx-dynamic-form>
+  </ng-container>
 </ng-container>

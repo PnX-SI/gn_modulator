@@ -37,7 +37,6 @@ class BaseLayout:
             )
 
         if as_dict:
-            print("glouki")
             layouts_as_dict = {}
             for layout_code in layout_codes:
                 layout = copy.deepcopy(cls.get_layout(layout_code))

@@ -19,7 +19,8 @@ export class ModulesFormService {
 
   /** Initialise un formGroup à partir d'un layout */
   initForm(layout) {
-    return this.formGroup(layout);
+    const formGroup = this.formGroup(layout);
+    return formGroup;
   }
 
   formValidators(layout) {
@@ -66,24 +67,42 @@ export class ModulesFormService {
     return this._formBuilder.array(formArrayDefinition);
   }
 
-  setControls(formControl, layout, data, globalData) {
-    for (let elem of utils.flatLayout(layout)) {
-      this.setControl(formControl, elem, data, globalData);
+  // renvoie le form group correspondant à context.data_keys
+  getFormGroup(context): any {
+    let formGroup = context.form_group;
+
+    for (const dataKey of context.data_keys || []) {
+      formGroup = Number.isInteger(dataKey) ? formGroup.at(dataKey) : formGroup.get(dataKey);
     }
-    if (data) {
-      formControl.patchValue(data);
+
+    return formGroup;
+  }
+
+  // renvoie le data correspondant à context.data_keys
+  getData(context, data): any {
+    return utils.getAttr(data, context.data_keys);
+  }
+
+  setControls({ context, data, layout }) {
+    for (let elem of utils.flatLayout(layout)) {
+      this.setControl({ context, data, layout: elem });
+    }
+
+    const localData = this.getData(context, data);
+    if (localData) {
+      this.getFormGroup(context).patchValue(localData);
     }
   }
 
   /** configure un control en fonction d'un layout */
-  setControl(formControl, layout, data, globalData) {
-    let control = formControl.get(layout.key);
-    console.assert(!!control, { key: layout.key, control: Object.keys(formControl.value) });
+  setControl({ context, data, layout }) {
+    const formGroup = this.getFormGroup(context);
+    let control = formGroup.get(layout.key);
+    // console.assert(!!control, { key: layout.key, control: Object.keys(formGroup.value) });
     let computedLayout = this._mLayout.computeLayout({
       layout,
       data,
-      globalData,
-      formGroup: null,
+      context,
     });
     control.setValidators(this.formValidators(computedLayout));
     if (computedLayout.disabled) {
@@ -91,9 +110,10 @@ export class ModulesFormService {
     }
 
     // control pour object
-    if (layout.type == 'object') {
-      let controlData = (data || {})[layout.key] || {};
-      this.setControls(control, layout.items, controlData, globalData);
+    if (layout.type == 'dict') {
+      const objectContext = { ...context };
+      objectContext.data_keys.push(layout.key);
+      this.setControls({ context: objectContext, data, layout: layout.items });
     }
 
     // control pour array
@@ -104,10 +124,17 @@ export class ModulesFormService {
       }
 
       control.clear();
-      for (let elem of controlData) {
+      for (let [index, elem] of Object.entries(controlData)) {
         let elemControl = this.formGroup(layout.items);
-        this.setControls(elemControl, layout.items, elem, globalData);
+        // this.setControls(elemControl, layout.items, elem, globalData);
+        const data_keys = utils.copy(context.data_keys) || [];
+        data_keys.push(layout.key);
+        const arrayItemContext = {
+          form_group: context.form_group,
+          data_keys,
+        };
         control.push(elemControl);
+        this.setControls({ context: arrayItemContext, data, layout: data.items });
       }
     }
 

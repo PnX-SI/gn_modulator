@@ -51,6 +51,23 @@
   padding: 2px;
 }
 
+.debug-container {
+  background-color: lightgreen;
+}
+
+.debug-details {
+  margin: 3px;
+  padding-left: 2px;
+  padding-right: 2px;
+
+  // border: 1px solid;
+  background-color: lightgreen;
+  color: black;
+  border-radius: 5px;
+
+  cursor: pointer;
+}
+
 .layout {
   width: 100%;
   margin: 1px;
@@ -146,6 +163,11 @@ div.layout-items > div {
   padding: 2px !important;
 }
 
+.layout-message.ok {
+  color: darkgreen;
+  background-color: lightgreen;
+}
+
 .layout-message.error {
   color: darkred;
   background-color: lightcoral;
@@ -218,11 +240,11 @@ div.layout-items > div {
 }
 
 .flexiflex-title {
-    flex: 0;
+  flex: 0;
 }
 
 .flexiflex-content {
-    flex: 1;
+  flex: 1;
 }
 
 :host ::ng-deep .mat-tab-body-wrapper {
@@ -235,9 +257,20 @@ div.layout-items > div {
 }
 
 .card-image {
-  cursor: pointer; 
+  cursor: pointer;
 }
 
 .geojsons {
   background-color: red;
+}
+
+.test-layout-error {
+  color: red;
+  background-color: lightcoral;
+
+}
+
+.test-layout-ok {
+  color: green;
+  background-color: lightgreen;
 }

@@ -1,4 +1,4 @@
-<ng-container *ngIf="isInitialized">
+<ng-container *ngIf="isInitialized && !!formGroup">
   <div
     [ngStyle]="computedLayout.style"
     [attr.id]="_id"
@@ -13,12 +13,8 @@
         <form [formGroup]="formGroup" class="layout-section">
           <modules-layout
             [data]="data"
-            [debug]="debug"
-            [depth]="depth + 1"
-            [direction]="computedLayout.direction"
-            [globalData]="globalData"
+            [parentContext]="context"
             [layout]="computedLayout.items"
-            [options]="options"
             (onAction)="processAction($event)"
           ></modules-layout>
         </form>

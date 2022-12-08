@@ -1,4 +1,5 @@
 import { ModulesConfigService } from './config.service';
+import { ModulesContextService } from './context.service';
 import { ModulesRouteService } from './route.service';
 import { ModulesDataService } from './data.service';
 import { ModulesLayoutService } from './layout.service';
@@ -12,6 +13,7 @@ import { ListFormService } from './list-form.service';
 
 export default [
   ModulesConfigService,
+  ModulesContextService,
   ModulesDataService,
   ModulesLayoutService,
   ModulesFormService,

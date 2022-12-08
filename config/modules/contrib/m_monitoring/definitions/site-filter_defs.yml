@@ -2,7 +2,7 @@ aliases:
   - &filters_departement |
     __f__{
         return data.region
-        ? `area_code in ${meta.utils.departementsForRegion(data.region.area_code).join(';')}`
+        ? `area_code in ${utils.departementsForRegion(data.region.area_code).join(';')}`
         : null
     }
   - &filters_commune |
@@ -11,7 +11,7 @@ aliases:
             return `area_code like ${data.departement.area_code}%`
         }
         if (data.region) {
-            return meta.utils.departementsForRegion(data.region.area_code)
+            return utils.departementsForRegion(data.region.area_code)
                 .map(departementCode => `area_code like ${departementCode}%`)
                 .join(',|,')
         }

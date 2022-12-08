@@ -1,24 +1,11 @@
 <!-- schema-->
-<link href="https://unpkg.com/tabulator-tables@4.1.4/dist/css/tabulator.min.css" rel="stylesheet">
-
-<div
-  *ngIf="debug && layout && computedLayout"
-  class="debug"
-  [ngStyle]="{ 'margin-left': debugMarginLeft }"
->
-  <b>{{ layoutType }}</b> - {{ computedLayout.object_code }} -
-</div>
+<link href="https://unpkg.com/tabulator-tables@4.1.4/dist/css/tabulator.min.css" rel="stylesheet" />
 
 <div [attr.id]="_id" class="layout-section table" [ngStyle]="computedLayout.style">
   <div [attr.id]="tableId"></div>
-<div>
-
-<!-- Fenêtre modal pour confirmer la suppression d'un élément -->
-<modules-layout
-[data]="[data]"
-[layout]="modalDeleteLayout"
-(onAction)="processAction($event)"
->
-
-</modules-layout>
-
+  <div>
+    <!-- Fenêtre modal pour confirmer la suppression d'un élément -->
+    <modules-layout [data]="[data]" [layout]="modalDeleteLayout" [parentContext]="context" (onAction)="processAction($event)">
+    </modules-layout>
+  </div>
+</div>
