@@ -68,12 +68,15 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     }
   }
 
+  postProcessContext(): void {
+    this.context.map_id = this.mapId;
+  }
+
   /**
    * Ici on va gérer les données pour l'affichage sur la carte
    *  data -> layoutData
    */
   postComputeLayout(dataChanged, layoutChanged): void {
-    this.context.map_id = this.mapId;
     this._mapService.initMap(this.mapId, { zoom: this.computedLayout.zoom }).then((map) => {
       this._map = map;
 

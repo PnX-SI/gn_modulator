@@ -18,6 +18,12 @@ const copy = (obj) => {
   return JSON.parse(JSON.stringify(obj));
 };
 
+const addKey = (keys, key) => {
+    for (const k of key.split('.')) {
+      keys.push(k)
+    }
+  }
+
 const getAttr = (obj, paths, index = 0) => {
   if (!paths) {
     return obj;
@@ -216,6 +222,7 @@ export default {
   flat,
   flatAndRemoveDoublons,
   getAttr,
+  addKey,
   isObject,
   removeDoublons,
   setAttr,

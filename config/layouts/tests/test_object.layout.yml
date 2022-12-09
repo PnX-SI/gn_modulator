@@ -1,0 +1,22 @@
+type: layout
+code: test_layout_object
+title: test_layout_object
+description: test sur les object (nécéssite monitoring)
+
+
+layout:
+  title: Test object
+  items:
+    - type: map
+      items:
+        type: object
+        display: geojson
+        object_code: site
+
+
+
+data:
+  site:
+
+context:
+  module_code: m_monitoring

@@ -88,6 +88,7 @@ const processData = (data, layout) => {
  * TODO array
  */
 const flatLayout = (layout) => {
+  // console.log('flat layout', layout)
   if (layout == null) {
     return [];
   }
@@ -98,7 +99,21 @@ const flatLayout = (layout) => {
   }
   if (utilsCommons.isObject(layout)) {
     if ('key' in layout && layout.key) {
-      return layout;
+      //   // traitement des '.'
+      // if (layout.key.includes('.')) {
+      //   const keys = layout.key.split('.');
+      //   const keyDict = keys.shift();
+      //   console.log(keys, keyDict);
+      //   return {
+      //     type: 'dict',
+      //     key: keyDict,
+      //     items: flatLayout({
+      //       ...layout,
+      //       key: keys.join('.'),
+      //     }),
+      //   };
+      // }
+      return [ layout ];
     }
     if ('items' in layout) {
       return flatLayout(layout.items);

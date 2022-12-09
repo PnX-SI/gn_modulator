@@ -12,7 +12,7 @@
   <div>
     <div class="layout-key">
       <div class="layout-key-title">
-        {{ layout.title }}
+        {{ layout.title || elementKey }}
         <mat-icon
           matPrefix
           *ngIf="computedLayout.description"

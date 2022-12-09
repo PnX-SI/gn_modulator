@@ -24,6 +24,7 @@ export class TestLayoutComponent implements OnInit {
     layout: JSON.stringify(this.test, null, 4),
   };
 
+  debug;
   error: null;
 
   layout: any;
@@ -34,8 +35,6 @@ export class TestLayoutComponent implements OnInit {
   data: any = {
     display_form: false,
   };
-
-  debug;
 
   constructor(
     private _route: ActivatedRoute,
@@ -57,6 +56,7 @@ export class TestLayoutComponent implements OnInit {
 
   initLayout() {
     this.rawLayout.layout_from_list = null;
+    this.rawLayout.debug = null;
     this.layout = null;
     this.data = null;
     this.testLayoutForm = {
@@ -76,17 +76,29 @@ export class TestLayoutComponent implements OnInit {
         `,
       items: [
         {
+          direction: 'row',
           flex: '0',
-          type: 'button',
-          icon: 'refresh',
-          description: 'Recharger le layout',
-          click: `__f__(event) => {
-            context.form_group.patchValue({
-              oups: !context.form_group.value.oups,
-              layout_definition: '',
-              layout_from_list: { code: data.layout_from_list.code },
-            });
-            }`,
+          items: [
+            {
+              flex: '0',
+              type: 'button',
+              icon: 'refresh',
+              description: 'Recharger le layout',
+              click: `__f__(event) => {
+              context.form_group.patchValue({
+                oups: !context.form_group.value.oups,
+                layout_definition: '',
+                layout_from_list: { code: data.layout_from_list.code },
+              });
+              }`,
+            },
+            {
+              flex: '0',
+              type: 'boolean',
+              key: 'debug',
+              default: this.debug
+            },
+          ],
         },
         {
           hidden: true,

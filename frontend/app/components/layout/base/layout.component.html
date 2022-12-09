@@ -1,26 +1,7 @@
-<!-- Debug -->
 <ng-container *ngIf="computedLayout && !computedLayout.hidden && isInitialized">
-  <div
-    *ngIf="context.debug && layout && computedLayout && layoutType != 'items'"
-    class="debug-container"
-  >
-    <div class="debug" [ngStyle]="{ 'margin-left': (context.depth || 0) * 2 + 'px' }">
-      <b>{{ layoutType }}</b>
 
-      <span class="debug-details" [matTooltip]="prettyDebug.data">d</span>
-      <span class="debug-details" [matTooltip]="prettyDebug.local_data">ld</span>
-      <span class="debug-details" [matTooltip]="prettyDebug.element_data">ed</span>
-
-      <span class="debug-details" [matTooltip]="prettyDebug.layout"
-        >l
-        <i *ngIf="layout.items && layout.items.length">
-          ({{ layout.items.length }}{{ layout.direction == 'row' ? '-' : '' }})</i
-        ></span
-      >
-      <span class="debug-details" [matTooltip]="prettyDebug.context">c</span>
-    </div>
-  </div>
-
+  <!-- Debug -->
+  <modules-layout-debug *ngIf="context.debug" [debugData]="debugData"></modules-layout-debug>
   <!-- code -->
   <ng-container *ngIf="layoutType == 'code'">
     <modules-layout
@@ -106,33 +87,13 @@
   >
   </modules-layout-array>
 
-  <!-- key -->
-  <!-- <ng-container *ngIf="layoutType == 'key'">
-      <modules-layout-array
-        *ngIf="computedLayout.type == 'array'"
-        [data]="data"
-        [layout]="layout"
-        [parentContext]="context"
-        (onAction)="processAction($event)"
-      >
-      </modules-layout-array>
-
-      <modules-layout
-        *ngIf="computedLayout.type == 'dict'"
-        [data]="data"
-        [layout]="layout.items"
-        [parentContext]="context"
-        (onAction)="processAction($event)"
-      ></modules-layout>
-
-      <modules-layout-key
-        *ngIf="!['dict', 'array'].includes(computedLayout.type)"
-        [data]="data"
-        [layout]="layout"
-        [parentContext]="context"
-        (onAction)="processAction($event)"
-      ></modules-layout-key>
-    </ng-container> -->
+  <modules-layout-section
+    *ngIf="computedLayout.type == 'dict'"
+    [data]="data"
+    [layout]="layout"
+    [parentContext]="context"
+    (onAction)="processAction($event)"
+  ></modules-layout-section>
 
   <!-- buttons -->
   <ng-container *ngIf="layoutType == 'button'">
@@ -195,7 +156,7 @@
   <!-- object -->
   <ng-container *ngIf="layoutType == 'object'">
     <modules-layout-object
-      [data]="computedLayout.key ? data[computedLayout.key] : data"
+      [data]="data"
       [layout]="layout"
       [parentContext]="context"
       (onAction)="processAction($event)"

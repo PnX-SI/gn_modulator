@@ -7,6 +7,7 @@ import {
   Output,
   Injector,
 } from '@angular/core';
+import { ModulesConfigService } from '../../../services/config.service';
 import { ModulesLayoutService } from '../../../services/layout.service';
 import { ModulesContextService } from '../../../services/context.service';
 import { ModulesFormService } from '../../../services/form.service';
@@ -65,10 +66,11 @@ export class ModulesLayoutComponent implements OnInit {
   layoutType: string;
 
   /** pour l'affichage du debug */
-  prettyDebug;
+  debugData;
 
   // données associées à layout.key
   elementData;
+  elementKey;
 
   // nom du composant (pour le debug)
   _name: string;
@@ -82,6 +84,7 @@ export class ModulesLayoutComponent implements OnInit {
   isInitialized = false;
 
   // services
+  _mConfig: ModulesConfigService;
   _mLayout: ModulesLayoutService;
   _mContext: ModulesContextService;
   _mForm: ModulesFormService;
@@ -105,6 +108,7 @@ export class ModulesLayoutComponent implements OnInit {
     this._mLayout = _injector.get(ModulesLayoutService);
     this._mContext = _injector.get(ModulesContextService);
     this._mForm = _injector.get(ModulesFormService);
+    this._mConfig = _injector.get(ModulesConfigService);
     this.utils = utils;
   }
 
@@ -152,12 +156,11 @@ export class ModulesLayoutComponent implements OnInit {
 
   // idem que log mais seulement quand debug = true
 
-  getFormGroup() {
-    return this._mForm.getFormGroup(this.parentContext);
-  }
-
   getFormControl() {
-    return this.getFormGroup().get(this.computedLayout.key);
+    return this._mForm.getFormControl(this.context.form_group, [
+      ...this.context.data_keys,
+      this.layout.key,
+    ]);
   }
 
   // à redéfinir pour effectuer des actions apres computedLayout
@@ -195,7 +198,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     if (!layout) return;
 
-    for (const key of ['debug', 'form_group', 'appearance', 'index']) {
+    for (const key of ['debug', 'form_group', 'appearance', 'index', 'map_id']) {
       if (this.parentContext[key] != null) {
         this.context[key] = this.parentContext[key];
       }
@@ -221,6 +224,7 @@ export class ModulesLayoutComponent implements OnInit {
     });
 
     this.context.module_code = computedContext.module_code;
+    this.context.object_code = computedContext.object_code;
     this.context.page_code = computedContext.page_code;
   }
 
@@ -231,15 +235,18 @@ export class ModulesLayoutComponent implements OnInit {
    **/
   postProcessContext() {}
 
-  getElementData() {
+  processElementData() {
     if (!this.layout) {
       return;
     }
-    let elementData = this.localData;
+
     if (this.layout.key) {
-      elementData = utils.getAttr(this.localData, this.layout.key);
+      this.elementKey = [...this.context.data_keys, this.layout.key].join('.');
+      this.elementData = utils.getAttr(this.localData, this.layout.key);
+    } else {
+      this.elementData = this.localData;
+      this.elementKey = this.context.data_keys.join('.');
     }
-    return elementData;
   }
 
   // calcul de computedLayout
@@ -258,11 +265,11 @@ export class ModulesLayoutComponent implements OnInit {
 
     // récupération des données associées à this.computedLayout.key
 
-    this.elementData = this.getElementData();
+    this.processElementData();
 
     // pour l'affichage du debug
     // if (this.debug) {
-    this.processPrettyDebug();
+    this.processDebugData();
 
     // }
 
@@ -323,24 +330,6 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   processItems() {}
-
-  itemContext(index) {
-    const data_keys = utils.copy(this.context.data_keys);
-    data_keys.push(this.layout.key);
-    data_keys.push(index);
-    const itemContext = {
-      form_group: this.context.form_group,
-      data_keys,
-      index,
-    };
-    for (const key of Object.keys(this.context).filter(
-      (key) => !['form_group', 'data_keys'].includes(key)
-    )) {
-      itemContext[key] = this.context[key];
-    }
-
-    return itemContext;
-  }
 
   // pour gérer les composant avec overflow = true
   processHeightOverflow() {
@@ -511,28 +500,40 @@ export class ModulesLayoutComponent implements OnInit {
     this.emitAction(event);
   }
 
-  processPrettyDebug() {
-    const prettyLayout = this.prettyTitleObjForDebug('layout', this.computedLayout);
-    const prettyData = this.prettyTitleObjForDebug('data', this.data);
-    const prettyLocalData = this.prettyTitleObjForDebug('local data', this.localData);
-    const prettyElementData = this.prettyTitleObjForDebug('element data', this.elementData);
+  processDebugData() {
+    if (!this.layout) {
+      return;
+    }
 
-    const context = {
+    const elementDataDebug = { key: this.elementKey, data: this.elementData };
+    const localDataDebug = { key: this.context.data_keys?.join('.'), data: this.localData };
+
+    const contextDebug = {
       module_code: this.context.module_code,
       page_code: this.context.page_code,
       object_code: this.context.object_code,
       data_keys: this.context.data_keys,
       index: this.context.index,
+      map_id: this.context.map_id,
     };
 
-    const prettyContext = this.prettyTitleObjForDebug('context', context);
+    const prettyLayout = this.prettyTitleObjForDebug('layout', this.computedLayout);
+    const prettyData = this.prettyTitleObjForDebug('data', this.data);
+    const prettyLocalData = this.prettyTitleObjForDebug('local data', localDataDebug);
+    const prettyElementData = this.prettyTitleObjForDebug('element data', elementDataDebug);
+    const prettyContext = this.prettyTitleObjForDebug('context', contextDebug);
 
-    this.prettyDebug = {
+    this.debugData = {
       layout: prettyLayout,
       data: prettyData,
       local_data: prettyLocalData,
       element_data: prettyElementData,
       context: prettyContext,
+      depth: this.context.depth,
+      itemsLength: this.layout.items?.length,
+      layoutType: this.layoutType,
+      direction: this.computedLayout.direction,
+      display: this.computedLayout.display,
     };
   }
 
@@ -559,6 +560,27 @@ export class ModulesLayoutComponent implements OnInit {
 
   onTabChanged($event) {
     this._mLayout.reDrawElem('tab changed');
+  }
+
+  moduleCode() {
+    return this.getContextItem('module_code');
+  }
+
+  objectCode() {
+    return this.getContextItem('object_code');
+  }
+
+  objectConfig() {
+    return this._mConfig.objectConfig(this.moduleCode(), this.objectCode());
+  }
+
+  moduleConfig() {
+    return this._mConfig.moduleConfig(this.moduleCode());
+  }
+
+  /** TODO à revoir context tout ça */
+  getContextItem(itemName) {
+    return this.context[itemName];
   }
 
   refreshData(objectCode) {}

@@ -276,7 +276,7 @@ class DefinitionBase:
                 definition_type=definition_type,
                 definition_code=definition_code,
                 file_path=str(file_path),
-                msg=f"Le nom du fichier '{file_path.stem}{file_path.suffix}' devrait se terminer en '.{definition_type}{file_path.suffix}'",
+                msg=f"Le nom du fichier '{file_path.stem}{file_path.suffix}' doit se terminer en '.{definition_type}{file_path.suffix}'",
                 code="ERR_LOAD_FILE_NAME",
             )
         # sinon

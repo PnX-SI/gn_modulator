@@ -19,7 +19,8 @@ export class ModulesFormService {
 
   /** Initialise un formGroup à partir d'un layout */
   initForm(layout) {
-    const formGroup = this.formGroup(layout);
+    const formGroup = this.createFormGroup(layout);
+
     return formGroup;
   }
 
@@ -45,17 +46,59 @@ export class ModulesFormService {
     if (layout.type == 'array') {
       return this.formArray(layout);
     }
-    if (layout.type == 'object') {
-      return this.formGroup(layout.items);
+    // todo object dict watever ??
+    if (layout.type == 'dict') {
+      return this.createFormGroup(layout.items);
     }
 
     let formDefinition = [null];
     return formDefinition;
   }
 
-  formGroup(layout) {
+  processLayout(layout) {
+    let flat = utils.flatLayout(layout);
+    let simple = flat.filter((l) => !l.key.includes('.'));
+    let dotted: Array<any> = flat
+      .filter((l) => l.key.includes('.'))
+      .map((l) => {
+        const keys = l.key.split('.');
+        const keyDict = keys.shift();
+        return {
+          type: 'dict',
+          key: keyDict,
+          items: [
+            {
+              ...l,
+              key: keys.join('.'),
+            },
+          ],
+        };
+      });
+
+    for (let [i1, l1] of Object.entries(dotted)) {
+      const keyDict = l1.key;
+      for (let [i2, l2] of Object.entries(dotted)) {
+        if (i1 <= i2) {
+          continue;
+        }
+
+
+        if (l2.key == l1.key) {
+          l1.items.push(l2.items);
+          l2.items = null;
+        }
+      }
+    }
+
+    dotted = dotted.filter((l) => l.items);
+
+    return [...simple, ...dotted];
+  }
+
+  createFormGroup(layout): any {
     let formGroupDefinition = {};
-    for (let elem of utils.flatLayout(layout)) {
+
+    for (let elem of this.processLayout(layout)) {
       formGroupDefinition[elem.key] = this.formDefinition(elem);
     }
     let control = this._formBuilder.group(formGroupDefinition);
@@ -66,18 +109,6 @@ export class ModulesFormService {
     let formArrayDefinition = [];
     return this._formBuilder.array(formArrayDefinition);
   }
-
-  // renvoie le form group correspondant à context.data_keys
-  getFormGroup(context): any {
-    let formGroup = context.form_group;
-
-    for (const dataKey of context.data_keys || []) {
-      formGroup = Number.isInteger(dataKey) ? formGroup.at(dataKey) : formGroup.get(dataKey);
-    }
-
-    return formGroup;
-  }
-
   // renvoie le data correspondant à context.data_keys
   getData(context, data): any {
     return utils.getAttr(data, context.data_keys);
@@ -90,14 +121,33 @@ export class ModulesFormService {
 
     const localData = this.getData(context, data);
     if (localData) {
-      this.getFormGroup(context).patchValue(localData);
+      this.getFormControl(context.form_group, context.data_keys).patchValue(localData);
     }
+  }
+
+  getFormControl(formControl, key) {
+    if (Array.isArray(key)) {
+      for (let k of key) {
+        formControl = this.getFormControl(formControl, k);
+      }
+    }
+
+    if (typeof key == 'string') {
+      if (key.includes('.')) {
+        for (const k of key.split('.')) {
+          formControl = this.getFormControl(formControl, k);
+        }
+      } else {
+        formControl = Number.isInteger(key) ? formControl.at(key) : formControl.get(key);
+      }
+    }
+
+    return formControl;
   }
 
   /** configure un control en fonction d'un layout */
   setControl({ context, data, layout }) {
-    const formGroup = this.getFormGroup(context);
-    let control = formGroup.get(layout.key);
+    let control = this.getFormControl(context.form_group, [...context.data_keys, layout.key]);
     // console.assert(!!control, { key: layout.key, control: Object.keys(formGroup.value) });
     let computedLayout = this._mLayout.computeLayout({
       layout,
@@ -112,7 +162,9 @@ export class ModulesFormService {
     // control pour object
     if (layout.type == 'dict') {
       const objectContext = { ...context };
-      objectContext.data_keys.push(layout.key);
+      objectContext.data_keys = utils.copy(context.data_keys);
+      utils.addKey(objectContext.data_keys, layout.key);
+
       this.setControls({ context: objectContext, data, layout: layout.items });
     }
 
@@ -125,10 +177,10 @@ export class ModulesFormService {
 
       control.clear();
       for (let [index, elem] of Object.entries(controlData)) {
-        let elemControl = this.formGroup(layout.items);
+        let elemControl = this.createFormGroup(layout.items);
         // this.setControls(elemControl, layout.items, elem, globalData);
         const data_keys = utils.copy(context.data_keys) || [];
-        data_keys.push(layout.key);
+        utils.addKey(data_keys, layout.key);
         const arrayItemContext = {
           form_group: context.form_group,
           data_keys,

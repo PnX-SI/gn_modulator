@@ -13,7 +13,6 @@ export class ModulesLayoutObjectGeoJSONComponent
   extends ModulesLayoutObjectComponent
   implements OnInit
 {
-  mapId;
   zoom;
   center;
   layersData;
@@ -31,7 +30,6 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   processConfig() {
-    this.mapId = this.parentContext.map_id;
   }
 
   processValue(value) {
@@ -49,7 +47,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     if (!this.pkFieldName()) {
       return;
     }
-    const layer = this._mapService.findLayer(this.mapId, layerSearcghFilters);
+    const layer = this._mapService.findLayer(this.context.map_id, layerSearcghFilters);
     if (!layer) {
       console.error(`le layer (${this.pkFieldName()}==${value}) n'est pas présent`);
       return;
@@ -68,20 +66,21 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   processData(response) {
     this.schemaData = response.data;
-    this._mapService.waitForMap(this.mapId).then(() => {
-      // this.schemaData = response.data;
+    this._mapService.waitForMap(this.context.map_id).then(() => {
+
       let geojson = response.data;
       const label_field_name = this.objectConfig().utils.label_field_name;
       const pk_field_name = this.objectConfig().utils.pk_field_name;
-      const currentZoom = this._mapService.getZoom(this.mapId);
-      const currentMapBounds = this._mapService.getMapBounds(this.mapId);
+      const currentZoom = this._mapService.getZoom(this.context.map_id);
+      const currentMapBounds = this._mapService.getMapBounds(this.context.map_id);
 
       const layerStyle = this.computedLayout.style || this.data.map?.style;
       const paneName = this.computedLayout.pane || this.data.map?.pane || `P1`;
       const bZoom =
         this.computedLayout.zoom ||
-        this.data.map?.zoom ||
-        this._mPage.pageConfig.key == this.data.object_code;
+        this.data.map?.zoom ;
+        // ||
+        // this._mPage.pageConfig.key == this.data.object_code;
 
       const bring_to_front = this.computedLayout.bring_to_front || this.data.map?.bring_to_front;
       this.mapData = {
@@ -95,7 +94,7 @@ export class ModulesLayoutObjectGeoJSONComponent
           style: layerStyle,
           onLayersAdded: () => {
             this.processValue(this.getDataValue());
-            this._mapService.setProcessing(this.mapId, false);
+            this._mapService.setProcessing(this.context.map_id, false);
           },
           onEachFeature: (feature, layer) => {
             /** click */
@@ -108,7 +107,7 @@ export class ModulesLayoutObjectGeoJSONComponent
             const label = feature.properties[label_field_name];
             if (label) {
               const action = this._mapService.actionTooltipDisplayZoomThreshold(
-                this.mapId,
+                this.context.map_id,
                 layer,
                 this.tooltipDisplayZoomTreshold,
                 false,
@@ -125,7 +124,7 @@ export class ModulesLayoutObjectGeoJSONComponent
 
               /** tooltip - zoom et emprise */
               layer.onZoomMoveEnd = this._mapService.layerZoomMoveEndListener(
-                this.mapId,
+                this.context.map_id,
                 layer,
                 this.tooltipDisplayZoomTreshold
               );
@@ -138,7 +137,7 @@ export class ModulesLayoutObjectGeoJSONComponent
       };
       const d = {};
       d[this.computedLayout.key] = this.mapData;
-      this._mapService.processData(this.mapId, d, {
+      this._mapService.processData(this.context.map_id, d, {
         // key: this.computedLayout.key,
         zoom: this.computedLayout.zoom,
       });
@@ -165,7 +164,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     propertiesHTML += '</ul>\n';
 
     const htmlDetails = '<button action="details">Details</button>';
-    const condEdit = properties['ownership'] <= this._mPage.moduleConfig.cruved['U'];
+    const condEdit = properties['ownership'] <= this.moduleConfig().cruved['U'];
     const htmlEdit = condEdit ? '<button action="edit">Éditer</button>' : '';
 
     const html = `
@@ -201,7 +200,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   getData(): Observable<any> {
-    this._mapService.setProcessing(this.mapId, true);
+    this._mapService.setProcessing(this.context.map_id, true);
     const extendedParams = {
       fields: [this.objectConfig().utils.pk_field_name, this.objectConfig().utils.label_field_name], // fields
       filters: this.getDataFilters() || [],

@@ -15,7 +15,7 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
 
   postProcessContext(): void {
     if (this.layout.key) {
-      this.context.data_keys.push(this.layout.key);
+      utils.addKey(this.context.data_keys, this.layout.key)
     }
   }
 

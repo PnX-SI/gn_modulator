@@ -203,21 +203,22 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
    * - le moduleCode défini dans le layout (computedLayout si dynamique)
    * - le moduleCode de la page en cours fournis par le service _mPage
    */
-  moduleCode() {
-    return this.computedLayout.moduleCode || this._mPage.moduleCode;
-  }
 
-  schemaName() {
-    return this.data.schema_code;
-  }
+  // moduleCode() {
+  //   return this.computedLayout.moduleCode || this._mPage.moduleCode;
+  // }
 
-  objectCode() {
-    return this.data.object_code;
-  }
+  // schemaName() {
+  //   return this.data.schema_code;
+  // }
 
-  objectConfig() {
-    return this._mConfig.objectConfig(this.moduleCode(), this.objectCode());
-  }
+  // objectCode() {
+  //   return this.data.object_code;
+  // }
+
+  // objectConfig() {
+  //   return this._mConfig.objectConfig(this.moduleCode(), this.objectCode());
+  // }
 
   // process des actions
   // TODO à clarifier avec page.element ??

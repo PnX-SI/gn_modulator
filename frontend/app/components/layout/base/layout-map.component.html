@@ -5,17 +5,20 @@
   <modules-layout
     [layout]="modalsLayout"
     [data]="modalData"
-        (onAction)="onModalAction($event)"
+    (onAction)="onModalAction($event)"
     [parentContext]="context"
   ></modules-layout>
 </div>
 
 <!-- OBJECT GEOJSON -->
 <div *ngIf="layout.items && context.map_id" class="geojsons">
-  <modules-layout [layout]="layout.items" [data]="data"
+  <modules-layout
+    [layout]="layout.items"
+    [data]="data"
     (onAction)="onModalAction($event)"
-  [parentContext]="context"
-> </modules-layout>
+    [parentContext]="context"
+  >
+  </modules-layout>
 </div>
 
 <div class="map-container" [ngStyle]="{ height: '100%', position: 'relative' }">
@@ -29,6 +32,5 @@
     <div [attr.id]="mapId" [ngStyle]="{ height: '100%' }"></div>
   </div>
 
-  <div class="coordinates" *ngIf="_map?.coordinatesTxt"> {{ _map?.coordinatesTxt }}</div>
-
+  <div class="coordinates" *ngIf="_map?.coordinatesTxt">{{ _map?.coordinatesTxt }}</div>
 </div>

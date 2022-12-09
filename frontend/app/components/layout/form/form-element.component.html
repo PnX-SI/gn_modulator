@@ -9,7 +9,7 @@
       class="form-field {{computedLayout.class}}"
       [appearance]="context.appearance || 'outline'"
     >
-      <mat-label>{{ computedLayout.title || computedLayout.key }}</mat-label>
+      <mat-label>{{ computedLayout.title || elementKey }}</mat-label>
       <input
         *ngIf="['date', 'string', 'number'].includes(computedLayout.type)"
         matInput
@@ -99,7 +99,7 @@
   <mat-checkbox
     *ngIf="['checkbox', 'boolean'].includes(computedLayout.type)"
     [formControl]="formControl"
-    >{{ computedLayout.title || computedLayout.key }}
+    >{{ computedLayout.title || elementKey }}
   </mat-checkbox>
 
   <!-- list-form -->

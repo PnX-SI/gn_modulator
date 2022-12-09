@@ -24,17 +24,16 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
   arrayItemsContext;
 
   postProcessContext() {
-    const elementData = this.getElementData();
-    if (!elementData) {
+    if (!this.elementData) {
       return;
     }
-    this.arrayItemsContext = elementData.map((d, index) => this.arrayItemContext(index));
+    this.arrayItemsContext = this.elementData.map((d, index) => this.arrayItemContext(index));
   }
 
   arrayItemContext(index) {
     const data_keys = utils.copy(this.context.data_keys);
-    data_keys.push(this.layout.key);
-    data_keys.push(index);
+    utils.addKey(data_keys, `${this.layout.key}.${index}`);
+
     const arrayItemContext = {
       form_group: this.context.form_group,
       data_keys,

@@ -29,7 +29,7 @@ export class ModulesLayoutService {
   modals = {};
   $closeModals = new Subject();
 
-  elementTypes = ['integer', 'string', 'textarea', 'list_form'];
+  elementTypes = ['integer', 'string', 'textarea', 'list_form', 'boolean', 'checkbox'];
 
   initModal(modalName) {
     if (!this.modals[modalName]) {

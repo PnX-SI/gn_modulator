@@ -27,7 +27,7 @@ export class ModulesFormElementComponent
   }
 
   onCheckboxChange(event) {
-    this.getFormGroup().get(this.layout.key).patchValue(event);
+    this.getFormControl().patchValue(event);
   }
 
   onInputChange() {

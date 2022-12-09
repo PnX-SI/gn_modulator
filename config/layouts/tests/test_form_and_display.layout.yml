@@ -4,28 +4,58 @@ title: Layout formulaire et display
 description: Layout de test pour l'affichage
 
 aliases:
-  - &layout_form
-    - direction: row
-      title: Element simples
+
+  - &layout_simple
+    title: Element simples
+    display: fieldset
+    direction: row
+    items:
+      - type: integer
+        key: i1
+      - type: string
+        key: s1
+
+  - &layout_array
+    title: Array
+    display: fieldset
+    type: array
+    key: list
+    items:
+      direction: row
       items:
         - type: integer
-          key: i1
-          title: integer 1
+          key: li
         - type: string
-          key: s1
-          title: string
-    - title: Array
-      type: array
-      key: list
+          key: ls
+
+  - &layout_dict
+    title: Dict
+    display: fieldset
+    type: dict
+    key: dict
+    items:
+      direction: row
       items:
-        direction: row
-        items:
-          - type: integer
-            key: li
-            title: liste integer
-          - type: string
-            key: ls
-            title: liste string
+        - type: integer
+          key: di
+        - type: string
+          key: ds
+
+  - &layout_dot
+    title: Element '.'
+    display: fieldset
+    direction: row
+    items:
+      - type: string
+        key: 'data.s1'
+      - type: string
+        key: 'data.s2'
+
+  - &layout_form
+    - *layout_simple
+    - *layout_array
+    - *layout_dict
+    - *layout_dot
 
     # - type: message
     #   json: __f__context.fromGroup?.value || data
@@ -35,11 +65,18 @@ aliases:
 data:
   i1: 1
   s1: a
+  data:
+    s1: b
+    s2: c
   list:
     - li: 1
       ls: a
     - li: 2
       ls: b
+  dict:
+    di: 1
+    ds: a
+
 
 layout:
   title: Test Form and display
