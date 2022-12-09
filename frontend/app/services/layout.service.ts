@@ -37,25 +37,6 @@ export class ModulesLayoutService {
     }
   }
 
-  /**
-   * Initialisation de meta qui servira dans les champs dynamique des layouts
-   * _meta est un dicitonnaire qui contient
-   *
-   * - current_user:  information sur l'utilisateur courrant
-   * - utils: des fonction utiles
-   * - object: pour l'affichage des label et ++ des objects
-   */
-  initContext(context = {}) {
-    this._utils = {
-      today: utils.today, // renvoie la date du jour (defaut)
-      departementsForRegion: utils.departementsForRegion, // liste des dept pour une region
-      YML: utils.YML,
-      object_label: this.utilObject('label').bind(this),
-      object_labels: this.utilObject('labels').bind(this),
-      object_tab_label: this.objectTabLabel.bind(this),
-    };
-  }
-
   initUtils() {
     this._utils = {
       today: utils.today, // renvoie la date du jour (defaut)

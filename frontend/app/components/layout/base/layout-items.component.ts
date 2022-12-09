@@ -10,4 +10,18 @@ export class ModulesLayoutItemsComponent extends ModulesLayoutComponent implemen
     super(_injector);
     this._name = 'layout-items';
   }
+
+  postProcessContext(): void {
+    this.context.index = null;
+  }
+
+  processItems() {
+    this.computedItems = this.layout.map((item) =>
+      this._mLayout.computeLayout({
+        layout: item,
+        data: this.data,
+        context: this.context,
+      })
+    );
+  }
 }

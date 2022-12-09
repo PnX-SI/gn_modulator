@@ -46,7 +46,6 @@ export class ListFormService {
           const elem = liste.items.find(
             (item) => item[options.valueFieldName] == control.value[options.valueFieldName]
           );
-          console.log(elem.description);
           control.patchValue(elem);
         }
         return of(liste);

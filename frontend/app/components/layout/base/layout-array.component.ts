@@ -21,21 +21,32 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
     this.bPostComputeLayout = true;
   }
 
-  arrayElemContext(index) {
+  arrayItemsContext;
+
+  postProcessContext() {
+    const elementData = this.getElementData();
+    if (!elementData) {
+      return;
+    }
+    this.arrayItemsContext = elementData.map((d, index) => this.arrayItemContext(index));
+  }
+
+  arrayItemContext(index) {
     const data_keys = utils.copy(this.context.data_keys);
     data_keys.push(this.layout.key);
     data_keys.push(index);
-    const arrayElemContext = {
+    const arrayItemContext = {
       form_group: this.context.form_group,
       data_keys,
+      index,
     };
     for (const key of Object.keys(this.context).filter(
       (key) => !['form_group', 'data_keys'].includes(key)
     )) {
-      arrayElemContext[key] = this.context[key];
+      arrayItemContext[key] = this.context[key];
     }
 
-    return arrayElemContext;
+    return arrayItemContext;
   }
 
   processAction(action) {

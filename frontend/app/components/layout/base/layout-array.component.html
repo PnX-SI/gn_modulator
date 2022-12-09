@@ -1,81 +1,86 @@
 <!-- array -->
 
 <!-- array fieldset -->
-<ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple">
-  <fieldset class="fieldset">
-    <legend *ngIf="computedLayout.title">
-      {{ computedLayout.title }} ({{ data && data[layout.key]?.length }})
-    </legend>
-    <div
-      [ngClass]="{
-        'layout-row': computedLayout.direction == 'row',
-        'layout-items': true
-      }"
-      [attr.id]="_id"
-    >
+<ng-container *ngIf="!!arrayItemsContext">
+  <ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple">
+    <fieldset class="fieldset">
+      <legend *ngIf="computedLayout.title">
+        {{ computedLayout.title }} ({{ data && data[layout.key]?.length }})
+      </legend>
       <div
-        attr.id="{{ _id }}.{{ index }}"
-        *ngFor="let elem of elementData || []; let index = index"
+        [ngClass]="{
+          'layout-row': computedLayout.direction == 'row',
+          'layout-items': true
+        }"
+        [attr.id]="_id"
       >
-        <modules-layout
-          [data]="data"
-          [layout]="computedLayout.items"
-          [parentContext]="arrayContext(index)"
-          (onAction)="processAction($event)"
-        ></modules-layout>
-      </div>
-      <div>
-        <button
-          *ngIf="!!context.form_group"
-          mat-mini-fab
-          color="primary"
-          aria-label="Example icon button with a menu icon"
-          [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
-          (click)="addArrayElement()"
-          (onAction)="processAction($event)"
+        <div
+          attr.id="{{ _id }}.{{ index }}"
+          *ngFor="let elem of elementData || []; let index = index"
         >
-          <mat-icon>add</mat-icon>
-        </button>
+          <modules-layout
+            [data]="data"
+            [layout]="computedLayout.items"
+            [parentContext]="arrayItemsContext[index]"
+            (onAction)="processAction($event)"
+          ></modules-layout>
+        </div>
+        <div>
+          <button
+            type="button"
+            *ngIf="!!context.form_group"
+            mat-mini-fab
+            color="primary"
+            aria-label="Example icon button with a menu icon"
+            [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
+            (click)="addArrayElement()"
+            (onAction)="processAction($event)"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
       </div>
-    </div>
-  </fieldset>
-</ng-container>
-
-<!-- array normal -->
-<ng-template #layoutArraySimple>
-  <ng-container>
-    <h3>{{ computedLayout.title }} ({{ data && data[layout.key]?.length }})</h3>
-    <div
-      [ngClass]="{
-        'layout-row': computedLayout.direction == 'row',
-        'layout-items': true
-      }"
-      [attr.id]="_id"
-    >
-      <div
-        attr.id="{{ _id }}.{{ index }}"
-        *ngFor="let elem of elementData || []; let index = index"
-      >
-        <modules-layout
-          [data]="data"
-          [layout]="computedLayout.items"
-          [parentContext]="arrayElemContext(index)"
-          (onAction)="processAction($event)"
-        ></modules-layout>
-      </div>
-      <div style="flex: 0">
-        <button
-          *ngIf="!!context.form_group"
-          mat-mini-fab
-          color="primary"
-          aria-label="Example icon button with a menu icon"
-          [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
-          (click)="addArrayElement()"
-          (onAction)="processAction($event)"
-        >
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
-    </div>
+    </fieldset>
   </ng-container>
-</ng-template>
+
+  <!-- array normal -->
+  <ng-template #layoutArraySimple>
+    <ng-container>
+      <h3>{{ computedLayout.title }} ({{ data && data[layout.key]?.length }})</h3>
+      <div
+        [ngClass]="{
+          'layout-row': computedLayout.direction == 'row',
+          'layout-items': true
+        }"
+        [attr.id]="_id"
+      >
+        <div
+          attr.id="{{ _id }}.{{ index }}"
+          *ngFor="let elem of elementData || []; let index = index"
+        >
+          <modules-layout
+            [data]="data"
+            [layout]="computedLayout.items"
+            [parentContext]="arrayItemsContext[index]"
+            (onAction)="processAction($event)"
+          ></modules-layout>
+        </div>
+        <div style="flex: 0">
+          <button
+            type="button
+            "
+            *ngIf="!!context.form_group"
+            mat-mini-fab
+            color="primary"
+            aria-label="Example icon button with a menu icon"
+            [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
+            (click)="addArrayElement()"
+            (onAction)="processAction($event)"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </ng-template>
+</ng-container>

@@ -13,11 +13,23 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
     this._name = 'layout-section';
   }
 
-  processDataKeys(): void {
-    this.context.data_keys = utils.copy(this.parentContext.data_keys) || [];
-
+  postProcessContext(): void {
     if (this.layout.key) {
       this.context.data_keys.push(this.layout.key);
     }
   }
+
+  // processItems() {
+  //   const items = this.layoutType == 'items' ? this.layout : this.layout.items || [];
+
+  //   this.computedItems = items.map
+  //     ? items.map((item) =>
+  //         this._mLayout.computeLayout({
+  //           layout: item,
+  //           data: this.data,
+  //           context: this.context,
+  //         })
+  //       )
+  //     : [];
+  // }
 }

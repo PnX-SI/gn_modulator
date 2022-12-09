@@ -5,8 +5,6 @@ import { ModulesRequestService } from './request.service';
 import { ModulesObjectService } from './object.service';
 import { ModulesLayoutService } from './layout.service';
 import { CommonService } from '@geonature_common/service/common.service';
-import { of } from '@librairies/rxjs';
-import { mergeMap } from '@librairies/rxjs/operators';
 
 @Injectable()
 export class ModulesPageService {

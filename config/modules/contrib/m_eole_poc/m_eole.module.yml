@@ -63,10 +63,12 @@ tree:
 pages:
   parc_list:
     url: ''
-    layout_code: m_eole.parc_list
+    layout:
+      code: m_eole.parc_list
   parc_details:
     url: parc/:id_site_group
-    layout_code: m_eole.parc_details
+    layout:
+      code: m_eole.parc_details
 
 features:
   - m_eole.data

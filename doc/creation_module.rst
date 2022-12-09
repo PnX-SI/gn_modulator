@@ -92,7 +92,8 @@ Dictionnaire définissant la configuration du module, avec les clés suivantes:
     pages:
         parc_list:
             url: ''
-            layout_code: m_eole.parc_list
+            layout:
+              code: m_eole.parc_list
 
 - **exports**:
 

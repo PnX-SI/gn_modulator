@@ -93,6 +93,7 @@ export class ModulesLayoutComponent implements OnInit {
   bListenPageResize;
 
   computedItems;
+  itemsContext;
 
   actionProcessing; // pour les spinners
 
@@ -194,8 +195,8 @@ export class ModulesLayoutComponent implements OnInit {
 
     if (!layout) return;
 
-    for (const key of ['debug', 'form_group', 'appearance']) {
-      if (this.parentContext[key]) {
+    for (const key of ['debug', 'form_group', 'appearance', 'index']) {
+      if (this.parentContext[key] != null) {
         this.context[key] = this.parentContext[key];
       }
     }
@@ -207,7 +208,8 @@ export class ModulesLayoutComponent implements OnInit {
     this.context.depth = (this.parentContext.depth || 0) + 1;
     // dataKeys
 
-    this.processDataKeys();
+    this.context.data_keys = utils.copy(this.parentContext.data_keys) || [];
+    this.postProcessContext();
 
     this.localData = this.getLocalData();
 
@@ -227,11 +229,9 @@ export class ModulesLayoutComponent implements OnInit {
    * pour les besoins spécifiques
    * - data_keys etc...
    **/
-  processDataKeys() {
-    this.context.data_keys = utils.copy(this.parentContext.data_keys) || [];
-  }
+  postProcessContext() {}
 
-  getelementData() {
+  getElementData() {
     if (!this.layout) {
       return;
     }
@@ -258,7 +258,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     // récupération des données associées à this.computedLayout.key
 
-    this.elementData = this.getelementData();
+    this.elementData = this.getElementData();
 
     // pour l'affichage du debug
     // if (this.debug) {
@@ -270,17 +270,7 @@ export class ModulesLayoutComponent implements OnInit {
       return;
     }
 
-    const items = this.layoutType == 'items' ? this.layout : this.layout.items || [];
-
-    this.computedItems = items.map
-      ? items.map((item) =>
-          this._mLayout.computeLayout({
-            layout: item,
-            data: this.data,
-            context: this.context,
-          })
-        )
-      : [];
+    this.processItems();
 
     // options context -> layout
     // if (this.computedLayout.module_code) {
@@ -291,14 +281,14 @@ export class ModulesLayoutComponent implements OnInit {
 
     // si layout_code est défini
     // on va chercher le layout correspondant dans la config
-    if (this.computedLayout.layout_code && !this.layoutFromCode) {
-      const layoutFromCode = this._mLayout.getLayoutFromCode(this.computedLayout.layout_code);
+    if (this.computedLayout.code && !this.layoutFromCode) {
+      const layoutFromCode = this._mLayout.getLayoutFromCode(this.computedLayout.code);
       // message d'erreur pour indiquer que l'on a pas trouvé le layout
       if (!layoutFromCode) {
         this.layoutFromCode = {
           type: 'message',
           class: 'error',
-          html: `Pas de layout trouvé pour le <i>layout_code</i> <b>${this.computedLayout.layout_code}</b>`,
+          html: `Pas de layout trouvé pour le <i>layout_code</i> <b>${this.computedLayout.code}</b>`,
         };
         return;
       }
@@ -330,6 +320,26 @@ export class ModulesLayoutComponent implements OnInit {
     // sauvegarde des données pour la prochaine comparaison
     this.dataSave = dataCopy;
     this.computedLayoutSave = computedLayoutCopy;
+  }
+
+  processItems() {}
+
+  itemContext(index) {
+    const data_keys = utils.copy(this.context.data_keys);
+    data_keys.push(this.layout.key);
+    data_keys.push(index);
+    const itemContext = {
+      form_group: this.context.form_group,
+      data_keys,
+      index,
+    };
+    for (const key of Object.keys(this.context).filter(
+      (key) => !['form_group', 'data_keys'].includes(key)
+    )) {
+      itemContext[key] = this.context[key];
+    }
+
+    return itemContext;
   }
 
   // pour gérer les composant avec overflow = true
@@ -512,6 +522,7 @@ export class ModulesLayoutComponent implements OnInit {
       page_code: this.context.page_code,
       object_code: this.context.object_code,
       data_keys: this.context.data_keys,
+      index: this.context.index,
     };
 
     const prettyContext = this.prettyTitleObjForDebug('context', context);

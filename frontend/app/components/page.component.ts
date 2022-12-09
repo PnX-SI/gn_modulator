@@ -3,6 +3,7 @@ import { ModulesConfigService } from '../services/config.service';
 import { ModulesPageService } from '../services/page.service';
 import { ModulesDataService } from '../services/data.service';
 import { ModulesLayoutService } from '../services/layout.service';
+import { ModulesContextService } from '../services/context.service';
 import { AuthService, User } from '@geonature/components/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { mergeMap } from '@librairies/rxjs/operators';
@@ -22,6 +23,7 @@ export class PageComponent implements OnInit {
   _auth: AuthService;
   _mLayout: ModulesLayoutService;
   _mData: ModulesDataService;
+  _mContext: ModulesContextService;
 
   debug = false; // pour activer le mode debug (depuis les queryParams)
 
@@ -45,6 +47,7 @@ export class PageComponent implements OnInit {
     this._mPage = this._injector.get(ModulesPageService);
     this._auth = this._injector.get(AuthService);
     this._mLayout = this._injector.get(ModulesLayoutService);
+    this._mContext = this._injector.get(ModulesContextService);
   }
 
   ngOnInit() {
@@ -80,7 +83,7 @@ export class PageComponent implements OnInit {
           this.routeQueryParams = queryParams;
           this.moduleParams = this._mPage.moduleConfig.params || {};
           this.processParams();
-          this._mLayout.initContext({
+          this._mContext.initContext({
             module_code: this._mPage.moduleCode,
             page_code: this._mPage.pageCode,
             params: this._mPage.params,
@@ -113,10 +116,8 @@ export class PageComponent implements OnInit {
     this._mPage.pageCode = routeData.pageCode;
     this._mPage.pageConfig = this._mPage.moduleConfig.pages[routeData.pageCode];
 
-    // initialisatio du layout
-    this.layout = {
-      layout_code: this._mPage.pageConfig.layout_code,
-    };
+    // initialisation du layout
+    this.layout = this._mPage.pageConfig.layout;
   }
 
   // lien entre les paramètres

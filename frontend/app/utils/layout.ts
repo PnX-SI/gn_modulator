@@ -41,7 +41,9 @@ const getLayoutType = (layout) => {
     : Array.isArray(layout)
     ? 'items'
     : !layout.type
-    ? 'section'
+    ? layout.code
+      ? 'code'
+      : 'section'
     : layout.type;
   return layoutType;
 };

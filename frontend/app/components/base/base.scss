@@ -267,10 +267,31 @@ div.layout-items > div {
 .test-layout-error {
   color: red;
   background-color: lightcoral;
-
 }
 
 .test-layout-ok {
   color: green;
   background-color: lightgreen;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.flex-center > div {
+}
+
+:host ::ng-deep .small-button {
+  // width: 20px!important;
+  // min-width: unset!important;
+}
+
+.small-icon-clear {
+  font-size: 1.2em;
+  color: grey;
+  background-color: lightgray;
+  border-radius: 10px;
 }

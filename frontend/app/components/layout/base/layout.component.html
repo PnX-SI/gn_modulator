@@ -21,12 +21,13 @@
     </div>
   </div>
 
-  <!-- name-->
-  <ng-container *ngIf="layoutType == 'name'">
+  <!-- code -->
+  <ng-container *ngIf="layoutType == 'code'">
     <modules-layout
       *ngIf="layoutFromCode"
       [layout]="layoutFromCode"
       [data]="data"
+      [parentContext]="context"
       (onAction)="processAction($event)"
     ></modules-layout>
   </ng-container>

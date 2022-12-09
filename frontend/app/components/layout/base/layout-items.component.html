@@ -1,22 +1,26 @@
 <!-- affichage d'une liste d'élément (en complément de layout-section)-->
-
 <!-- items -->
 <div [ngClass]="{ 'layout-row': direction == 'row', 'layout-items': true }">
-  <div *ngIf="context.index != null && context.form_group" style="flex: '0'">
-    <button
-      *ngIf="context.form_group"
-      mat-icon-button
-      color="black"
-      [matTooltip]="layout.delete_one_title || 'Supprimer l\'élément'"
-      (click)="
-        this.emitAction({
-          type: 'remove-array-element',
-          index: context.index
-        })
-      "
-    >
-      <mat-icon>clear</mat-icon>
-    </button>
+  <div *ngIf="parentContext.index != null && context.form_group" style="flex: '0'">
+    <div class="flex-center">
+      <div>
+        <button
+          type="button"
+          *ngIf="context.form_group"
+          mat-icon-button
+          color="black"
+          [matTooltip]="layout.delete_one_title || 'Supprimer l\'élément'"
+          (click)="
+            this.emitAction({
+              type: 'remove-array-element',
+              index: parentContext.index
+            })
+          "
+        >
+          <mat-icon class="small-icon-clear">clear</mat-icon>
+        </button>
+      </div>
+    </div>
   </div>
   <ng-container *ngFor="let item of computedLayout; let index = index">
     <div

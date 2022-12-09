@@ -18,7 +18,7 @@ const copy = (obj) => {
   return JSON.parse(JSON.stringify(obj));
 };
 
-const getAttr = (obj, paths) => {
+const getAttr = (obj, paths, index = 0) => {
   if (!paths) {
     return obj;
   }
@@ -39,12 +39,15 @@ const getAttr = (obj, paths) => {
     return obj;
   }
 
-  const paths2 = copy(paths);
-  const path = paths2.shift();
-  const nextPaths = paths2;
-  const inter = obj[path];
+  if (index >= paths.length) {
+    return obj;
+  }
 
-  return getAttr(inter, nextPaths);
+  const path = paths[index];
+  const inter = obj[path];
+  index += 1;
+
+  return getAttr(inter, paths, index);
 };
 
 const parseJSON = (txt) => {
