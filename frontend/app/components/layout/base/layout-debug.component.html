@@ -2,11 +2,11 @@
 *ngIf="debugData"
 class="debug-container"
 >
-<div class="debug" [ngStyle]="{ 'margin-left': (debugData.depth || 0) * 2 + 'px' }">
-  <b>{{ debugData.layoutType }}</b> <i>>{{ debugData.display }}</i>
-  <span class="debug-details" [matTooltip]="debugData.data">d</span>
-  <span class="debug-details" [matTooltip]="debugData.local_data">ld</span>
-  <span class="debug-details" [matTooltip]="debugData.element_data">ed</span>
+<div class="debug" [ngStyle]="{ 'margin-left': (debugData.debug || 0) * 2 + 'px' }">
+  <b>{{ debugData.layoutType }}</b> <i>{{ debugData.display }}</i>
+  <span *ngIf="debugData.data" class="debug-details" [matTooltip]="debugData.data">d</span>
+  <span *ngIf="debugData.local_data" class="debug-details" [matTooltip]="debugData.local_data">ld</span>
+  <span *ngIf="debugData.element_data" class="debug-details" [matTooltip]="debugData.element_data">ed</span>
   <span class="debug-details" [matTooltip]="debugData.layout"
     >l
     <i *ngIf="debugData.itemsLength">

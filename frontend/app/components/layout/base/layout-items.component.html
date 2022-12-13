@@ -1,6 +1,6 @@
 <!-- affichage d'une liste d'élément (en complément de layout-section)-->
 <!-- items -->
-<div [ngClass]="{ 'layout-row': direction == 'row', 'layout-items': true }">
+<div *ngIf="computedLayout && computedLayout.length" [ngClass]="{ 'layout-row': direction == 'row', 'layout-items': true }">
   <div *ngIf="parentContext.index != null && context.form_group" style="flex: '0'">
     <div class="flex-center">
       <div>

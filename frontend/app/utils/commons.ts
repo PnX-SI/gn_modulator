@@ -19,10 +19,10 @@ const copy = (obj) => {
 };
 
 const addKey = (keys, key) => {
-    for (const k of key.split('.')) {
-      keys.push(k)
-    }
+  for (const k of key.split('.')) {
+    keys.push(k);
   }
+};
 
 const getAttr = (obj, paths, index = 0) => {
   if (!paths) {

@@ -1,43 +1,52 @@
 <!-- object-->
 <ng-container *ngIf="computedLayout">
+  <modules-layout-debug [debugData]="debugData"></modules-layout-debug>
+  <!-- Cas formulaire et properties-->
+  <!-- <div [attr.id]="_id" [ngStyle]="computedLayout.style" class="layout-section" *ngIf=" -->
+  <!-- objectData && ['form', 'properties', 'export'].includes(computedLayout.display) -->
+  <!-- "> -->
 
-<!-- Cas formulaire et properties-->
-<div [attr.id]="_id" [ngStyle]="computedLayout.style" class="layout-section" *ngIf="
-schemaData && ['form', 'properties', 'export'].includes(computedLayout.display)
-">
-<modules-layout
+  <ng-container *ngIf="!computedLayout.display">
+    <modules-layout
+      [layout]="layout.items"
+      [data]="objectData"
+      [parentContext]="objectContext"
+    ></modules-layout>
+  </ng-container>
+
+  <!-- <modules-layout
   *ngIf="
-    schemaData &&
+    objectData &&
     ['form', 'properties', 'export'].includes(computedLayout.display)
   "
   [layout]="processedLayout"
-  [data]="schemaData"
+  [data]="objectData"
     (onAction)="processAction($event)"
 ></modules-layout>
-</div>
+</div> -->
 
-<!-- Liste -->
-<modules-layout-object-table
-  *ngIf="computedLayout.display == 'table'"
-  [layout]="layout"
+  <!-- Liste -->
+  <modules-layout-object-table
+    *ngIf="computedLayout.display == 'table'"
+    [layout]="layout"
     [data]="data"
->
-</modules-layout-object-table>
+  >
+  </modules-layout-object-table>
 
-<!-- Carte -->
-<modules-layout-object-geojson
-  *ngIf="computedLayout.display == 'geojson'"
-  [layout]="layout"
+  <!-- Carte -->
+  <modules-layout-object-geojson
+    *ngIf="computedLayout.display == 'geojson'"
+    [layout]="layout"
     [data]="data"
-  [parentContext]="context"
->
-</modules-layout-object-geojson>
+    [parentContext]="context"
+  >
+  </modules-layout-object-geojson>
 
-<!-- Filtres-->
-<modules-layout-object-filters
-  *ngIf="computedLayout.display == 'filters'"
-  [layout]="layout"
+  <!-- Filtres-->
+  <modules-layout-object-filters
+    *ngIf="computedLayout.display == 'filters'"
+    [layout]="layout"
     [data]="data"
->
-</modules-layout-object-filters>
+  >
+  </modules-layout-object-filters>
 </ng-container>

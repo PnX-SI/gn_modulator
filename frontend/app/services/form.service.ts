@@ -82,7 +82,6 @@ export class ModulesFormService {
           continue;
         }
 
-
         if (l2.key == l1.key) {
           l1.items.push(l2.items);
           l2.items = null;

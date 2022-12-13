@@ -1,0 +1,40 @@
+type: layout
+code: test_object_details
+title: Layout test object details
+description: Layout de test pour le context
+
+data:
+  module_label: test
+  module_code: test
+  module_desc: Module de test
+  module_path: test/
+
+aliases:
+  - &module_items
+    - key: module_label
+      type: integer
+    - key: module_code
+      type: string
+    - key: module_desc
+      type: string
+
+context:
+  _module_code: MODULES
+  _object_code: commons.module
+
+layout:
+  items:
+    - title: Test object details
+      items:
+        title: '__f__utils.object_title_details(x)'
+        direction: 'row'
+        items: *module_items
+    - title: Test object site_edit
+      items:
+        title: '__f__utils.object_title_create_edit(x)'
+        direction: 'row'
+        items: *module_items
+
+
+
+

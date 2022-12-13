@@ -64,7 +64,8 @@ class DefinitionDynamic:
         object_label: () => {},
         object_labels: () => {},
         object_tab_label: () => {},
-
+        object_title_details: () => {},
+        object_title_create_edit: () => {},
     },
     context: {},
 }"""
@@ -136,8 +137,8 @@ f(x);"""
                         definition_type=definition_type,
                         definition_code=definition_code,
                         code="ERR_LOCAL_CHECK_DYNAMIC",
-                        # msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}",
-                        msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}\n\n {str_eval}",
+                        msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}",
+                        # msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}\n\n {str_eval}",
                     )
 
             return

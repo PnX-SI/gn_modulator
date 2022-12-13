@@ -16,9 +16,9 @@ layout:
         - title: "__f__`object_code : ${context.object_code}`"
           style: "__f__context.object_code == 'site' ? {color: 'green'} : {color:'red'}"
         - title: "__f__`Label : ${utils.object_label(context)}`"
-          style: "__f__utils.object_label(context) == 'site' ? {color: 'green'} : {color:'red'}"
-        - title: "__f__`Labels : ${utils.object_labels(context)}`"
-          style: "__f__utils.object_labels(context) == 'sites' ? {color: 'green'} : {color:'red'}"
+          style: "__f__utils.object_label(x) == 'site' ? {color: 'green'} : {color:'red'}"
+        - title: "__f__`Labels : ${utils.object_labels(x)}`"
+          style: "__f__utils.object_labels(x) == 'sites' ? {color: 'green'} : {color:'red'}"
         # - title: "__f__`Tab label : ${utils.object_tab_label(context)}`"
           # style: "__f__utils.object_tab_label() == 'Sites (1/10)' ? {color: 'green'} : {color:'red'}"
 

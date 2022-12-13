@@ -42,9 +42,11 @@ export class ModulesLayoutService {
       today: utils.today, // renvoie la date du jour (defaut)
       departementsForRegion: utils.departementsForRegion, // liste des dept pour une region
       YML: utils.YML,
-      object_label: this.utilObject('label').bind(this),
-      object_labels: this.utilObject('labels').bind(this),
+      object_label: this.objectLabel.bind(this),
+      object_labels: this.objectLabels.bind(this),
       object_tab_label: this.objectTabLabel.bind(this),
+      object_title_details: this.objectTitleDetails.bind(this),
+      object_title_create_edit: this.objectTitleCreateEdit.bind(this),
       class_check: this.class_check,
     };
   }
@@ -53,25 +55,58 @@ export class ModulesLayoutService {
     return utils.fastDeepEqual(v1, v2) ? 'test-layout-ok' : 'test-layout-error';
   }
 
-  utilObject(fonctionType) {
-    return (context) => {
-      const fnConfigName = `object${utils.capitalize(fonctionType)}`;
-      try {
-        return this._mConfig[fnConfigName](context.module_code, context.object_code);
-      } catch (e) {
-        return `Pas de config trouvée pour {module_code: ${context.module_code}, object_code: ${context.object_code}}`;
-      }
-    };
+  // utilObject(fonctionType) {
+  //   return (x) => {
+  //     const fnConfigName = `object${utils.capitalize(fonctionType)}`;
+  //     try {
+  //       return this._mConfig[fnConfigName](x.context._module_code, x.context._object_code);
+  //     } catch (e) {
+  //       return `Pas de config trouvée pour {_module_code: ${x.context._module_code}, _object_code: ${x.context._object_code}}`;
+  //     }
+  //   };
+  // }
+
+  objectConfig({context}) {
+    return this._mConfig.objectConfig(context._module_code, context._object_code);
   }
 
-  objectTabLabel({ data, layout, context }) {
+  objectLabel({ context }) {
+    return this.objectConfig({context}).display.object_label;
+  }
+
+  objectLabels({ context }) {
+    return this.objectConfig({context}).display.object_labels;
+  }
+
+  objectTitleDetails({context, data}) {
+    const du_label = this.objectConfig({context}).display.du_label;
+    const label_field_name = this.objectConfig({context}).utils.label_field_name;
+    return `Détails ${du_label} ${data[label_field_name]}`
+  }
+
+  objectTitleCreateEdit({context, data}) {
+    const du_label = this.objectConfig({context}).display.du_label;
+    const du_nouveau_label = this.objectConfig({context}).display.du_nouveau_label;
+    const labelFieldName = this.objectConfig({context}).utils.label_field_name;
+    const pkFieldName = this.objectConfig({context}).utils.pk_field_name;
+    const id = data[pkFieldName]
+    return !!id
+      ? `Modification ${du_label} ${data[labelFieldName]}`
+      : `Création ${du_nouveau_label}`
+  }
+
+
+  objectTabLabel({ data, context }) {
     const nbTotal = data.nb_total;
     const nbFiltered = data.nb_filtered;
-    const labels = this.utilObject('labels')({ data, layout, context });
+    const labels = this.objectLabel({ context });
     return nbTotal
       ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
       : `${utils.capitalize(labels)}`;
   }
+
+
+
 
   openModal(modalName, data) {
     this.modals[modalName] && this.modals[modalName].next(data);

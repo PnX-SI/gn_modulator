@@ -113,7 +113,7 @@ const flatLayout = (layout) => {
       //     }),
       //   };
       // }
-      return [ layout ];
+      return [layout];
     }
     if ('items' in layout) {
       return flatLayout(layout.items);

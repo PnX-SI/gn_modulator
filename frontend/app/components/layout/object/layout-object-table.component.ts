@@ -293,7 +293,7 @@ export class ModulesLayoutObjectTableComponent
   }
 
   refreshData(objectCode: any): void {
-    if (objectCode == this.data.object_code) {
+    if (objectCode == this.data._object_code) {
       this.drawTable();
     }
   }

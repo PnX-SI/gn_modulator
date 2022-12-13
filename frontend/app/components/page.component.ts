@@ -84,9 +84,9 @@ export class PageComponent implements OnInit {
           this.moduleParams = this._mPage.moduleConfig.params || {};
           this.processParams();
           this._mContext.initContext({
-            module_code: this._mPage.moduleCode,
-            page_code: this._mPage.pageCode,
-            params: this._mPage.params,
+            _module_code: this._mPage.moduleCode,
+            _page_code: this._mPage.pageCode,
+            _params: this._mPage.params,
           });
           return of(true);
         })
@@ -174,7 +174,7 @@ export class PageComponent implements OnInit {
     if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,
-        objectCode: data.object_code,
+        objectCode: data._object_code,
         data: data,
         layout: event.layout,
       });

@@ -112,7 +112,7 @@ class SchemaProcessConfigError(SchemaError):
     pass
 
 
-class SchemaDataTypeError(SchemaError):
+class objectDataTypeError(SchemaError):
     """
     process_data : data_type is not valid
     """
@@ -120,7 +120,7 @@ class SchemaDataTypeError(SchemaError):
     pass
 
 
-class SchemaDataPathError(SchemaError):
+class objectDataPathError(SchemaError):
     """
     process_data : data_path is not correct
     """

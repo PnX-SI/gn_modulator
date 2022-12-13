@@ -21,7 +21,8 @@ import utils from '../../../utils';
   styleUrls: ['../../base/base.scss', 'layout-object.component.scss'],
 })
 export class ModulesLayoutObjectComponent extends ModulesLayoutComponent implements OnInit {
-  schemaData; // données relative au schema, récupérées par getData
+  objectData; // données relative au schema, récupérées par getData
+  objectContext;
   processedLayout; // layout pour form / details / etc..
 
   /** modules services */
@@ -49,7 +50,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       this._name,
       this.layout && this.layout.type,
       this.layout.diplay,
-      this.data.object_code,
+      this.data._object_code,
       this.data.schema_code,
       this._id,
       ...args
@@ -71,6 +72,19 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   postProcessLayout() {
     return this.processObject();
   }
+
+  postProcessContext(): void {
+      if(this._name == 'layout-object' && this.layout.key) {
+        utils.addKey(this.context.data_keys, this.layout.key)
+      }
+
+      this.objectContext = {};
+      this.objectContext._module_code = this.context._module_code;
+      this.objectContext._object_code = this.context._object_code;
+      this.objectContext.debug = this.context.debug;
+      this.objectContext.data_keys = [];
+
+    }
 
   /**
    * processObject()
@@ -152,7 +166,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // peut être redefini
   processData(data) {
     this.processDefaults(data);
-    this.schemaData = data;
+    this.objectData = data;
   }
 
   // traitement des valeurs par défaut
@@ -197,28 +211,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     });
   }
 
-  /** moduleCode
-   *
-   * On renvoie par ordre de priorité
-   * - le moduleCode défini dans le layout (computedLayout si dynamique)
-   * - le moduleCode de la page en cours fournis par le service _mPage
-   */
-
-  // moduleCode() {
-  //   return this.computedLayout.moduleCode || this._mPage.moduleCode;
-  // }
-
-  // schemaName() {
-  //   return this.data.schema_code;
-  // }
-
-  // objectCode() {
-  //   return this.data.object_code;
-  // }
-
-  // objectConfig() {
-  //   return this._mConfig.objectConfig(this.moduleCode(), this.objectCode());
-  // }
 
   // process des actions
   // TODO à clarifier avec page.element ??

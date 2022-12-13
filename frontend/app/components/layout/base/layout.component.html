@@ -1,7 +1,6 @@
 <ng-container *ngIf="computedLayout && !computedLayout.hidden && isInitialized">
-
   <!-- Debug -->
-  <modules-layout-debug *ngIf="context.debug" [debugData]="debugData"></modules-layout-debug>
+  <modules-layout-debug *ngIf="context.debug && !['items', 'object'].includes(layoutType)" [debugData]="debugData"></modules-layout-debug>
   <!-- code -->
   <ng-container *ngIf="layoutType == 'code'">
     <modules-layout

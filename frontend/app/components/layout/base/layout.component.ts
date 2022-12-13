@@ -205,10 +205,12 @@ export class ModulesLayoutComponent implements OnInit {
     }
 
     if (this.debug) {
-      this.context.debug = true;
+      this.context.debug = 1;
     }
 
-    this.context.depth = (this.parentContext.depth || 0) + 1;
+    if (this.parentContext.debug) {
+      this.context.debug = this.parentContext.debug + 1;
+    }
     // dataKeys
 
     this.context.data_keys = utils.copy(this.parentContext.data_keys) || [];
@@ -223,9 +225,9 @@ export class ModulesLayoutComponent implements OnInit {
       context: this.parentContext,
     });
 
-    this.context.module_code = computedContext.module_code;
-    this.context.object_code = computedContext.object_code;
-    this.context.page_code = computedContext.page_code;
+    this.context._module_code = computedContext._module_code;
+    this.context._object_code = computedContext._object_code;
+    this.context._page_code = computedContext._page_code;
   }
 
   /**
@@ -278,11 +280,6 @@ export class ModulesLayoutComponent implements OnInit {
     }
 
     this.processItems();
-
-    // options context -> layout
-    // if (this.computedLayout.module_code) {
-    //   this.options.module_code = this.computedLayout.module_code
-    // }
 
     // options layout
 
@@ -505,13 +502,13 @@ export class ModulesLayoutComponent implements OnInit {
       return;
     }
 
-    const elementDataDebug = { key: this.elementKey, data: this.elementData };
-    const localDataDebug = { key: this.context.data_keys?.join('.'), data: this.localData };
+    const elementDataDebug = this.elementData;
+    const localDataDebug = this.localData;
 
     const contextDebug = {
-      module_code: this.context.module_code,
-      page_code: this.context.page_code,
-      object_code: this.context.object_code,
+      _module_code: this.context._module_code,
+      _page_code: this.context._page_code,
+      _object_code: this.context._object_code,
       data_keys: this.context.data_keys,
       index: this.context.index,
       map_id: this.context.map_id,
@@ -519,17 +516,17 @@ export class ModulesLayoutComponent implements OnInit {
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.computedLayout);
     const prettyData = this.prettyTitleObjForDebug('data', this.data);
-    const prettyLocalData = this.prettyTitleObjForDebug('local data', localDataDebug);
-    const prettyElementData = this.prettyTitleObjForDebug('element data', elementDataDebug);
+    const prettyLocalData = this.prettyTitleObjForDebug(`local data (${this.context.data_keys?.join('.')})`, localDataDebug);
+    const prettyElementData = this.prettyTitleObjForDebug(`element data (${this.elementKey})`, elementDataDebug);
     const prettyContext = this.prettyTitleObjForDebug('context', contextDebug);
 
     this.debugData = {
       layout: prettyLayout,
       data: prettyData,
-      local_data: prettyLocalData,
-      element_data: prettyElementData,
+      local_data: !utils.fastDeepEqual(this.localData, this.data) && prettyLocalData,
+      element_data: !utils.fastDeepEqual(this.elementData, this.localData) && prettyElementData,
       context: prettyContext,
-      depth: this.context.depth,
+      debug: this.context.debug,
       itemsLength: this.layout.items?.length,
       layoutType: this.layoutType,
       direction: this.computedLayout.direction,

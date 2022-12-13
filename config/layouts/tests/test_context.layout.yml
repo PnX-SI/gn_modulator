@@ -46,11 +46,27 @@ layout:
               flex: '0'
               class: '__f__utils.class_check(context.data_keys, ["key2"])'
 
+    - title: Objects
+      items:
+        - type: object
+          key: object
+          items:
+            - title: '__f__JSON.stringify(context.data_keys)'
+              class: '__f__utils.class_check(context.data_keys, [])'
+              flex: '0'
+            - title: '__f__JSON.stringify(context.object_code)'
+              class: '__f__utils.class_check(context.object_code, "commons.module")'
+              flex: '0'
+
+
 data:
   truc2:
     module_code: m_computed_layout
   truc:
     module_code: m_data
+  object:
+    module_code: m_object
+    object_code: commons.module
 
 context:
   module_code: m_context

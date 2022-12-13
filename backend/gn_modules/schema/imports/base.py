@@ -1,5 +1,5 @@
 """
-    SchemaData methode pour gerer les données depuis des fichiers .yml
+    objectData methode pour gerer les données depuis des fichiers .yml
     par exemple la nomenclature
 """
 

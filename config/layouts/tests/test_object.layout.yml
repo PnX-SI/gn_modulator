@@ -6,13 +6,16 @@ description: test sur les object (nécéssite monitoring)
 
 layout:
   title: Test object
+  direction: row
   items:
     - type: map
       items:
         type: object
         display: geojson
         object_code: site
-
+    - type: object
+      display: table
+      object_code: site
 
 
 data:

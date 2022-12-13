@@ -150,6 +150,8 @@ export class ModulesPageService {
   checkAction(moduleCode, objectCode, action, ownership = null) {
     // 1) cruved defini pour cet objet ?
     const objectConfig = this._mConfig.objectConfig(moduleCode, objectCode);
+    const moduleConfig = this._mConfig.moduleConfig(moduleCode);
+
     const testObjectCruved = (objectConfig.cruved || '').includes(action);
 
     if (!testObjectCruved) {
@@ -162,7 +164,7 @@ export class ModulesPageService {
     // 2) l'utilisateur à t'il le droit
 
     // - les droit de l'utilisateur pour ce module et pour un action (CRUVED)
-    const cruvedAction = this.moduleConfig.cruved[action];
+    const cruvedAction = moduleConfig.cruved[action];
 
     // - on compare ce droit avec l'appartenance de la données
     // la possibilité d'action doit être supérieure à l'appartenance

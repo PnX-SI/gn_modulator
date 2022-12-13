@@ -29,8 +29,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     this._mapService = this._injector.get(ModulesMapService);
   }
 
-  processConfig() {
-  }
+  processConfig() {}
 
   processValue(value) {
     if (!value) {
@@ -65,9 +64,8 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   processData(response) {
-    this.schemaData = response.data;
+    this.objectData = response.data;
     this._mapService.waitForMap(this.context.map_id).then(() => {
-
       let geojson = response.data;
       const label_field_name = this.objectConfig().utils.label_field_name;
       const pk_field_name = this.objectConfig().utils.pk_field_name;
@@ -76,11 +74,7 @@ export class ModulesLayoutObjectGeoJSONComponent
 
       const layerStyle = this.computedLayout.style || this.data.map?.style;
       const paneName = this.computedLayout.pane || this.data.map?.pane || `P1`;
-      const bZoom =
-        this.computedLayout.zoom ||
-        this.data.map?.zoom ;
-        // ||
-        // this._mPage.pageConfig.key == this.data.object_code;
+      const bZoom = this.computedLayout.zoom || this.data.map?.zoom;
 
       const bring_to_front = this.computedLayout.bring_to_front || this.data.map?.bring_to_front;
       this.mapData = {
@@ -210,7 +204,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     return this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams);
   }
   refreshData(objectCode: any): void {
-    if (objectCode == this.data.object_code) {
+    if (objectCode == this.data._object_code) {
       this.postProcessLayout();
     }
   }

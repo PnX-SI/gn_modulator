@@ -96,7 +96,7 @@ export class TestLayoutComponent implements OnInit {
               flex: '0',
               type: 'boolean',
               key: 'debug',
-              default: this.debug
+              default: this.debug,
             },
           ],
         },
@@ -144,6 +144,7 @@ export class TestLayoutComponent implements OnInit {
       return;
     }
     setTimeout(() => {
+      console.log(layoutDefinitionJson.context)
       this._mContext.initContext(layoutDefinitionJson.context || {});
       this.layout = layoutDefinitionJson.layout;
       this.data = layoutDefinitionJson.data || {};

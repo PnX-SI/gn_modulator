@@ -42,7 +42,11 @@ export class ModulesConfigService {
   }
 
   moduleConfig(moduleCode) {
-    return this._config['modules'][moduleCode];
+    const moduleConfig = this._config['modules'][moduleCode];
+    if (!moduleConfig) {
+      console.error(`Le module ${moduleCode} n'est pas présent`);
+    }
+    return moduleConfig;
   }
 
   modulesConfig() {
@@ -106,7 +110,11 @@ export class ModulesConfigService {
   /** Objects */
 
   objectConfig(moduleCode, objectCode) {
-    return this._config['modules'][moduleCode || 'MODULES'].objects[objectCode];
+    const objectConfig = this.moduleConfig(moduleCode).objects[objectCode];
+    if (!objectConfig) {
+      console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
+    }
+    return objectConfig;
   }
 
   pkFieldName(moduleCode, objectCode) {
@@ -133,11 +141,11 @@ export class ModulesConfigService {
     return data[this.pkFieldName(moduleCode, objectCode)];
   }
 
-  objectLabel(moduleCode, objectCode) {
-    return this.objectConfig(moduleCode, objectCode).display.label;
-  }
+  // objectLabel(moduleCode, objectCode) {
+  //   return this.objectConfig(moduleCode, objectCode).display.label;
+  // }
 
-  objectLabels(moduleCode, objectCode) {
-    return this.objectConfig(moduleCode, objectCode).display.labels;
-  }
+  // objectLabels(moduleCode, objectCode) {
+  //   return this.objectConfig(moduleCode, objectCode).display.labels;
+  // }
 }
