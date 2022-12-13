@@ -5,7 +5,6 @@ Test pour valider
 
 reste à tester (a minima)
 ERR_DEF_EMPTY_FILE
-ERR_TEMPLATE_NOT_FOUND
 ERR_TEMPLATE_UNRESOLVED_FIELDS
 """
 
@@ -68,31 +67,16 @@ class TestDefinitions:
             return
 
         definition = DefinitionMethods.load_definition_file(file_path)
-        # s'il n'y pas d'erreur de code
-        # on s'assure que le chargement du fichier s'est bien passé
-        if error_code is None:
-            assert (
-                len(get_errors()) == 0
-            ), "Il ne doit pas y avoir d'erreur à ce stade (load_definition)"
-            assert definition is not None
-            definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(
-                definition
-            )
-            assert definition_type is not None
-            assert definition_code is not None
 
-            return definition
-
-        assert get_errors()[0]["code"] == error_code
+        self.check_errors(definition=definition, error_code=error_code, context='load_definition')
 
         return definition
 
     def check_errors(
-        self, definition_type=None, definition_code=None, error_code=None, context=None
+        self, definition=None, error_code=None, context=None
     ):
 
-        if definition_type is None:
-            return
+        get_errors() and print(errors_txt())
 
         # si le code d'erreur n'est pas défini, on s'assure qu'il n'y a pas d'erreur
         if error_code is None:
@@ -100,20 +84,30 @@ class TestDefinitions:
                 len(get_errors()) == 0
             ), f"({context}) : il ne doit pas y avoir d'erreur à ce stade"
 
+            definition
+            assert definition is not None
+
+            definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(definition)
+
+            assert definition_type is not None
+            assert definition_code is not None
+
         else:
             assert (
                 len(get_errors()) == 1
-            ), f"({context}) : on s'attend à voir remonter une erreur (et non {len(get_errors())})"
+            ), f"({context}, {error_code}) : on s'attend à voir remonter seule erreur (et non {len(get_errors())})"
 
             # on teste si le code de l'erreur est celui attendu
             assert (
                 get_errors()[0]["code"] == error_code
-            ), f"({context}) : le code d'erreur attendu est {error_code} (et non {get_errors()[0]['code']})"
+            ), f"({context}, {error_code}) : le code d'erreur attendu n' pas {get_errors()[0]['code']}"
 
             # on teste si la definition a bien été supprimé
-            assert (
-                get_global_cache([definition_type, definition_code]) is None
-            ), "({context}) : la definition erronée aurait du être supprimée du cache"
+            if (definition is not None) and (error_code not in ['ERR_LOAD_EXISTING']):
+                definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(definition)
+                assert (
+                    get_global_cache([definition_type, definition_code]) is None
+                ), f"({context}, {error_code}) : la definition erronée aurait du être supprimée du cache"
 
     def test_check_references(self):
         """
@@ -151,7 +145,7 @@ class TestDefinitions:
 
         DefinitionMethods.local_check_definition(definition_type, definition_code)
 
-        self.check_errors(definition_type, definition_code, error_code, "local_check")
+        self.check_errors(definition=definition, error_code=error_code, context="local_check")
 
         return definition
 
@@ -175,7 +169,7 @@ class TestDefinitions:
 
         DefinitionMethods.global_check_definition(definition_type, definition_code)
 
-        self.check_errors(definition_type, definition_code, error_code, "global_check")
+        self.check_errors(definition=definition, error_code=error_code, context="global_check")
 
         return definition
 
@@ -188,13 +182,15 @@ class TestDefinitions:
 
         definition = self.test_local_check_definition(file_path)
 
-        definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(definition)
+        definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(
+            definition
+        )
 
-        assert definition_type == 'use_template'
+        assert definition_type == "use_template"
 
         DefinitionMethods.process_template(definition_code)
 
-        self.check_errors(definition_type, definition_code, error_code, 'process_template')
+        self.check_errors(definition=definition, error_code=error_code, context="process_template")
 
     def test_load_definition_json_ok(self):
         # load json ok
@@ -287,6 +283,17 @@ class TestDefinitions:
         return self.test_process_template(
             definitions_test_dir / "process_template_not_found_fail.use_template.yml",
             "ERR_TEMPLATE_NOT_FOUND",
+        )
+
+    def test_template_unresolved_fields_fail(self):
+        """
+        ERR_TEMPLATE_UNRESOLVED_FIELDS
+        """
+
+        self.test_load_definition(definitions_test_dir / "process_template_unresolved_fields_fail.template.yml")
+        return self.test_process_template(
+            definitions_test_dir / "process_template_unresolved_fields_fail.use_template.yml",
+            "ERR_TEMPLATE_UNRESOLVED_FIELDS",
         )
 
     def test_template(self):

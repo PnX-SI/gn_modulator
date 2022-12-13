@@ -72,6 +72,8 @@ def clear_errors():
 def errors_txt():
     """
     Pour l'affichage de la liste des erreurs
+
+    skip_no_error : ne renvoie rien s'il n'y a pas d'erreurs
     """
 
     errors = get_errors()

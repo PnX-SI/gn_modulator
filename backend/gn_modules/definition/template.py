@@ -54,7 +54,7 @@ class DefinitionTemplates:
 
         if template is None:
             add_error(
-                msg="Le template {template_code} n'a pas été trouvé",
+                msg=f"Le template {template_code} n'a pas été trouvé",
                 definition_type="use_template",
                 definition_code=definition_use_template_code,
                 code="ERR_TEMPLATE_NOT_FOUND",
@@ -65,7 +65,7 @@ class DefinitionTemplates:
 
         template_params = definition_use_template.get("params", {})
 
-        template_defaults = template["template"].get("defaults", {})
+        template_defaults = template.get("defaults", {})
 
         params = copy.deepcopy(template_defaults)
         params.update(template_params)
@@ -92,6 +92,9 @@ class DefinitionTemplates:
                 code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
                 template_file_path=str(cls.get_file_path("template", template_code)),
             )
+
+            cls.remove_from_cache("use_template", definition_use_template_code)
+
             return
 
         cls.save_in_cache_definition(

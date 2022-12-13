@@ -292,7 +292,6 @@ class DefinitionBase:
         # chargement du fichier yml
         try:
             definition = cls.load_definition_from_file(file_path)
-
             cls.save_in_cache_definition(definition, file_path)
 
             return definition
@@ -325,6 +324,9 @@ class DefinitionBase:
         renvoie le type de definition et la clé pour le stockage dans le cache
         lorsque l'on peut en trouver une pour le dictionnaire de definition
         """
+
+        if isinstance(definition, list):
+            return None, None
 
         # patch définitions geometry
         if definition.get("id") is not None:
