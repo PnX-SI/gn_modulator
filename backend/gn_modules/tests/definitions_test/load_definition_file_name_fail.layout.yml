@@ -1,0 +1,18 @@
+type: schema
+code: test.file_name_fail
+title: test ERR_LOAD_FILE_NAME
+description: test ERR_LOAD_FILE_NAME
+
+meta:
+  schema_code: test.load_definition_ok
+  unique:
+    - id_acquisition_framework
+    - dataset_name
+  sql_schema_dot_table: gn_meta.t_datasets
+  model_name: TDatasets
+  label: jeu de données
+  labels: jeux de données
+  label_field_name: dataset_shortname
+  title_field_name: dataset_desc
+  genre: M
+  autoschema: true

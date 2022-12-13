@@ -220,6 +220,12 @@ class TestDefinitions:
             definitions_test_dir / "load_definition_existing_fail.schema.yml", "ERR_LOAD_EXISTING"
         )
 
+    def test_load_definition_file_name_fail(self):
+        # ERR_LOAD_FILE_NAME
+        return self.test_load_definition(
+            definitions_test_dir / "load_definition_file_name_fail.layout.yml", "ERR_LOAD_FILE_NAME"
+        )
+
     def test_local_check_definition_dynamic(self):
         """
         test de remontée des erreur de validation des layout pour les éléments dynamiques
