@@ -3,7 +3,6 @@ code: test_object
 title: test_layout_object
 description: test sur les object (nécéssite monitoring)
 
-
 layout:
   title: Test object
   direction: row

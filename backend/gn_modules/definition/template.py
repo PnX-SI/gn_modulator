@@ -1,6 +1,5 @@
 import copy
 
-from gn_modules.utils.cache import get_global_cache
 from gn_modules.utils.errors import add_error
 from gn_modules.utils.commons import replace_in_dict
 import json
@@ -23,7 +22,7 @@ class DefinitionTemplates:
         """
 
         for definition_type in ["template", "use_template"]:
-            for defininition_code in cls.definition_codes(definition_type):
+            for defininition_code in cls.definition_codes_for_type(definition_type):
                 cls.local_check_definition(definition_type, defininition_code)
 
     @classmethod
@@ -32,7 +31,7 @@ class DefinitionTemplates:
         procède au traitement des templates pour l'ensemble des définitions
         """
 
-        for defininition_key in cls.definition_codes("use_template"):
+        for defininition_key in cls.definition_codes_for_type("use_template"):
             cls.process_template(defininition_key)
 
     @classmethod
@@ -60,6 +59,18 @@ class DefinitionTemplates:
                 code="ERR_TEMPLATE_NOT_FOUND",
             )
 
+            cls.remove_from_cache("use_template", definition_use_template_code)
+            return
+
+        # check code template et use_template
+        template_type = template["template"]["type"]
+        if definition_use_template["code"].split(".")[-1] != template_type:
+            add_error(
+                msg=f"Le code de use_template {definition_use_template['code']} devrait se terminer par '.{template_type}'",
+                definition_type="use_template",
+                definition_code=definition_use_template_code,
+                code="ERR_USE_TEMPLATE_CODE",
+            )
             cls.remove_from_cache("use_template", definition_use_template_code)
             return
 

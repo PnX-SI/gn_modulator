@@ -114,6 +114,7 @@ export class ModulesConfigService {
     if (!objectConfig) {
       console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
     }
+    console.log(objectConfig);
     return objectConfig;
   }
 

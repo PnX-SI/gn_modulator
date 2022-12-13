@@ -1,12 +1,10 @@
 import pytest
 from gn_modules.module import ModuleMethods
-from gn_modules.definition import DefinitionMethods
 from gn_modules.utils.env import definitions_test_dir
 from gn_modules.utils.errors import get_errors, clear_errors
 from gn_modules.utils.cache import set_global_cache, get_global_cache
 from gn_modules.schema import SchemaMethods
-from .utils import load_module_from_file
-from gn_modules import init_gn_modules
+from .utils.module import load_module_from_file
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")

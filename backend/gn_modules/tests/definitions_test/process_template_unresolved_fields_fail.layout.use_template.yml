@@ -1,6 +1,6 @@
 type: use_template
-code: process_template_unresolved_fields_fail
+code: process_template_unresolved_fields_fail.layout
 title: test ERR_TEMPLATE_UNRESOLVED_FIELDS
 description: test remontée erreur ERR_TEMPLATE_UNRESOLVED_FIELDS
 
-template_code: process_template_unresolved_fields_fail
+template_code: process_template_unresolved_fields_fail.layout

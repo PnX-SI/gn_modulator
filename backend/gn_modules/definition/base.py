@@ -31,7 +31,7 @@ class DefinitionBase:
         return get_global_cache(["definition_types"], [])
 
     @classmethod
-    def definition_codes(cls, definition_type):
+    def definition_codes_for_type(cls, definition_type):
         return list(get_global_cache([definition_type], {}).keys())
 
     @classmethod
@@ -73,7 +73,7 @@ class DefinitionBase:
         """
 
         # test si les fichiers de référence ont bien été chargés
-        for reference_code in cls.definition_codes("reference"):
+        for reference_code in cls.definition_codes_for_type("reference"):
 
             reference = cls.get_definition("reference", reference_code)
             try:
@@ -111,6 +111,20 @@ class DefinitionBase:
 
         if definition_type in ["layout", "schema"]:
             cls.check_definition_dynamic_layout(definition_type, definition_code, definition)
+
+        # check template codes
+        if definition_type == "template":
+            template = cls.get_definition("template", definition_code)
+            template_type = template["template"]["type"]
+            if definition_code.split(".")[-1] != template_type:
+                add_error(
+                    msg=f"Le code du template {definition_code} devrait se terminer par '.{template_type}'",
+                    definition_type="template",
+                    definition_code=definition_code,
+                    code="ERR_LOCAL_CHECK_TEMPLATE_CODE",
+                )
+                cls.remove_from_cache("template", definition_code)
+                return
 
         # suppression en cache de la definition si erreur locale
         if len(
@@ -354,7 +368,7 @@ class DefinitionBase:
         # pour chaque type de definition sauf reférence qui sont validée en amont
         for definition_type in filter(lambda x: x != "reference", cls.definition_types()):
             # pour
-            for definition_code in cls.definition_codes(definition_type):
+            for definition_code in cls.definition_codes_for_type(definition_type):
                 cls.global_check_definition(definition_type, definition_code)
 
     @classmethod
@@ -368,7 +382,7 @@ class DefinitionBase:
         if definition is None:
             raise Exception("yakou!!", definition_type, definition_code)
 
-        schema_codes = cls.definition_codes("schema")
+        schema_codes = cls.definition_codes_for_type("schema")
         missing_schema_codes = cls.check_definition_element_in_list(
             definition, "schema_code", schema_codes
         )
@@ -387,7 +401,7 @@ class DefinitionBase:
         if dependencies := definition_type not in ["template", "use_template"] and definition.get(
             "dependencies"
         ):
-            definition_codes = cls.definition_codes(definition_type)
+            definition_codes = cls.definition_codes_for_type(definition_type)
             missing_dependencies = [
                 dependency for dependency in dependencies if dependency not in definition_codes
             ]

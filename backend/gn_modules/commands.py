@@ -158,7 +158,7 @@ def cmd_import_features(data_code=None, verbose=False):
     importe des feature depuis un fichier (data) (.yml) referencé par la clé 'data_code'
     """
 
-    data_codes = sorted(DefinitionMethods.definition_codes("data"))
+    data_codes = sorted(DefinitionMethods.definition_codes_for_type("data"))
 
     if data_code is None or data_code not in data_codes:
         print()
