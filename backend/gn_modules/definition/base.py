@@ -145,7 +145,7 @@ class DefinitionBase:
             add_error(
                 definition_type=definition_type,
                 definition_code=definition_code,
-                code="ERR_NO_REF_FOR_TYPE",
+                code="ERR_LOCAL_CHECK_NO_REF_FOR_TYPE",
                 msg=f"Une référence est requise pour valider pour le type {definition_type}",
             )
             return

@@ -87,7 +87,7 @@ class TestDefinitions:
         test si le schema de validation est valide (selon la référence de schemas de validation)
         """
         clear_errors()
-        self.test_load_definition(definitions_test_dir / "check_reference_fail.reference.yml")
+        self.test_load_definition(definitions_test_dir / "check_references_fail.reference.yml")
         DefinitionMethods.check_references()
 
         assert (
@@ -228,6 +228,16 @@ class TestDefinitions:
         return self.test_local_check_definition(
             definitions_test_dir / "local_check_definition_dyn_fail.layout.yml",
             "ERR_LOCAL_CHECK_DYNAMIC",
+        )
+
+    def test_local_check_definition_no_ref_for_type(self):
+        """
+        ERR_LOCAL_CHECK_NO_REF_FOR_TYPE
+        """
+
+        return self.test_local_check_definition(
+            definitions_test_dir / "local_check_definition_no_ref_for_type_fail.gloubi.yml",
+            "ERR_LOCAL_CHECK_NO_REF_FOR_TYPE",
         )
 
     def test_global_check_definition_missing_schema(self):

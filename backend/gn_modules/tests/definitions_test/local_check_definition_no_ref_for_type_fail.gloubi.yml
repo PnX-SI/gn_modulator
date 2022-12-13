@@ -1,0 +1,5 @@
+type: gloubi
+code: glouba
+title: test ERR_LOCAL_CHECK_NO_REF_FOR_TYPE
+description: test de remontée d'erreur ERR_LOCAL_CHECK_NO_REF_FOR_TYPE
+
