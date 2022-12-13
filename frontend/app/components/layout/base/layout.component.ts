@@ -516,8 +516,14 @@ export class ModulesLayoutComponent implements OnInit {
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.computedLayout);
     const prettyData = this.prettyTitleObjForDebug('data', this.data);
-    const prettyLocalData = this.prettyTitleObjForDebug(`local data (${this.context.data_keys?.join('.')})`, localDataDebug);
-    const prettyElementData = this.prettyTitleObjForDebug(`element data (${this.elementKey})`, elementDataDebug);
+    const prettyLocalData = this.prettyTitleObjForDebug(
+      `local data (${this.context.data_keys?.join('.')})`,
+      localDataDebug
+    );
+    const prettyElementData = this.prettyTitleObjForDebug(
+      `element data (${this.elementKey})`,
+      elementDataDebug
+    );
     const prettyContext = this.prettyTitleObjForDebug('context', contextDebug);
 
     this.debugData = {

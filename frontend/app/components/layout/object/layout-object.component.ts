@@ -74,17 +74,16 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   }
 
   postProcessContext(): void {
-      if(this._name == 'layout-object' && this.layout.key) {
-        utils.addKey(this.context.data_keys, this.layout.key)
-      }
-
-      this.objectContext = {};
-      this.objectContext._module_code = this.context._module_code;
-      this.objectContext._object_code = this.context._object_code;
-      this.objectContext.debug = this.context.debug;
-      this.objectContext.data_keys = [];
-
+    if (this._name == 'layout-object' && this.layout.key) {
+      utils.addKey(this.context.data_keys, this.layout.key);
     }
+
+    this.objectContext = {};
+    this.objectContext._module_code = this.context._module_code;
+    this.objectContext._object_code = this.context._object_code;
+    this.objectContext.debug = this.context.debug;
+    this.objectContext.data_keys = [];
+  }
 
   /**
    * processObject()
@@ -210,7 +209,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       fields,
     });
   }
-
 
   // process des actions
   // TODO à clarifier avec page.element ??

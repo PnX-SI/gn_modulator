@@ -7,7 +7,7 @@ Test pour valider
 import pytest
 from gn_modules.definition import DefinitionMethods
 from gn_modules.utils.cache import get_global_cache
-from gn_modules.utils.errors import get_errors, clear_errors
+from gn_modules.utils.errors import get_errors, clear_errors, errors_txt
 from gn_modules.utils.env import definitions_test_dir
 
 
@@ -22,7 +22,9 @@ class TestDefinitions:
         """
 
         # pas d'erreurs à l'initialisation de gn_modules
-        assert len(get_errors()) == 0
+        assert (
+            len(get_errors()) == 0
+        ), "Il ne doit pas y avoir d'erreur à ce stade (initialisation module)"
 
         # on a bien chargé des schemas, modules, layouts
         assert len(DefinitionMethods.definition_codes("reference")) > 0
@@ -61,11 +63,12 @@ class TestDefinitions:
             return
 
         definition = DefinitionMethods.load_definition_file(file_path)
-
         # s'il n'y pas d'erreur de code
         # on s'assure que le chargement du fichier s'est bien passé
         if error_code is None:
-            assert len(get_errors()) == 0
+            assert (
+                len(get_errors()) == 0
+            ), "Il ne doit pas y avoir d'erreur à ce stade (load_definition)"
             assert definition is not None
             definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(
                 definition
@@ -78,6 +81,20 @@ class TestDefinitions:
         assert get_errors()[0]["code"] == error_code
 
         return definition
+
+    def test_check_references(self):
+        """
+        test si le schema de validation est valide (selon la référence de schemas de validation)
+        """
+        clear_errors()
+        self.test_load_definition(definitions_test_dir / "check_reference_fail.reference.yml")
+        DefinitionMethods.check_references()
+
+        assert (
+            len(get_errors()) == 1
+        ), f"check references, on s'attend à voir remonter une erreur (et non {len(get_errors())})"
+        get_errors()[0]["code"] == "ERR_VALID_REF"
+        clear_errors()
 
     def test_local_check_definition(self, file_path=None, error_code=None):
         """
@@ -97,21 +114,26 @@ class TestDefinitions:
             definition
         )
 
+        DefinitionMethods.check_references()
+
         DefinitionMethods.local_check_definition(definition_type, definition_code)
 
+        print(errors_txt())
         # si le code d'erreur n'est pas défini, on s'assure qu'il n'y a pas d'erreur
         if error_code is None:
-            assert len(get_errors()) == 0
+            assert (
+                len(get_errors()) == 0
+            ), "Il ne doit pas y avoir d'erreur à ce stade (local_check)"
             return definition
 
         assert (
             len(get_errors()) == 1
-        ), f"On s'attend à voir remonter une erreur (et non {len(get_errors())}"
+        ), f"local_check, on s'attend à voir remonter une erreur (et non {len(get_errors())})"
 
         # on teste si le code de l'erreur est celui attendu
         assert (
             get_errors()[0]["code"] == error_code
-        ), f"Le code d'erreur attendu est {error_code} (et non {get_errors()[0]['code']}"
+        ), f"Le code d'erreur attendu est {error_code} (et non {get_errors()[0]['code']})"
 
         # on teste si la definition a bien été supprimé
         assert (
@@ -142,7 +164,9 @@ class TestDefinitions:
 
         # si error_code n'est pas renseigné, on s'attend à n'avoir aucune erreur
         if error_code is None:
-            assert len(get_errors()) == 0
+            assert (
+                len(get_errors()) == 0
+            ), "Il ne doit pas y avoir d'erreur à ce stade (global_check)"
             return definition
 
         # test si on a bien le code d'erreur attendu
@@ -194,16 +218,6 @@ class TestDefinitions:
         # load existing fail
         return self.test_load_definition(
             definitions_test_dir / "load_definition_existing_fail.schema.yml", "ERR_LOAD_EXISTING"
-        )
-
-    def test_local_check_definition_ref_fail(self):
-        """
-        test de remontée des erreur de validation par le schema de refence avec jsonschema
-        """
-
-        return self.test_local_check_definition(
-            definitions_test_dir / "local_check_definition_ref_fail.schema.yml",
-            "ERR_LOCAL_CHECK_REF",
         )
 
     def test_local_check_definition_dynamic(self):

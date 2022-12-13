@@ -144,7 +144,7 @@ export class TestLayoutComponent implements OnInit {
       return;
     }
     setTimeout(() => {
-      console.log(layoutDefinitionJson.context)
+      console.log(layoutDefinitionJson.context);
       this._mContext.initContext(layoutDefinitionJson.context || {});
       this.layout = layoutDefinitionJson.layout;
       this.data = layoutDefinitionJson.data || {};

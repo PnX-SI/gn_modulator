@@ -66,35 +66,34 @@ export class ModulesLayoutService {
   //   };
   // }
 
-  objectConfig({context}) {
+  objectConfig({ context }) {
     return this._mConfig.objectConfig(context._module_code, context._object_code);
   }
 
   objectLabel({ context }) {
-    return this.objectConfig({context}).display.object_label;
+    return this.objectConfig({ context }).display.object_label;
   }
 
   objectLabels({ context }) {
-    return this.objectConfig({context}).display.object_labels;
+    return this.objectConfig({ context }).display.object_labels;
   }
 
-  objectTitleDetails({context, data}) {
-    const du_label = this.objectConfig({context}).display.du_label;
-    const label_field_name = this.objectConfig({context}).utils.label_field_name;
-    return `Détails ${du_label} ${data[label_field_name]}`
+  objectTitleDetails({ context, data }) {
+    const du_label = this.objectConfig({ context }).display.du_label;
+    const label_field_name = this.objectConfig({ context }).utils.label_field_name;
+    return `Détails ${du_label} ${data[label_field_name]}`;
   }
 
-  objectTitleCreateEdit({context, data}) {
-    const du_label = this.objectConfig({context}).display.du_label;
-    const du_nouveau_label = this.objectConfig({context}).display.du_nouveau_label;
-    const labelFieldName = this.objectConfig({context}).utils.label_field_name;
-    const pkFieldName = this.objectConfig({context}).utils.pk_field_name;
-    const id = data[pkFieldName]
+  objectTitleCreateEdit({ context, data }) {
+    const du_label = this.objectConfig({ context }).display.du_label;
+    const du_nouveau_label = this.objectConfig({ context }).display.du_nouveau_label;
+    const labelFieldName = this.objectConfig({ context }).utils.label_field_name;
+    const pkFieldName = this.objectConfig({ context }).utils.pk_field_name;
+    const id = data[pkFieldName];
     return !!id
       ? `Modification ${du_label} ${data[labelFieldName]}`
-      : `Création ${du_nouveau_label}`
+      : `Création ${du_nouveau_label}`;
   }
-
 
   objectTabLabel({ data, context }) {
     const nbTotal = data.nb_total;
@@ -104,9 +103,6 @@ export class ModulesLayoutService {
       ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
       : `${utils.capitalize(labels)}`;
   }
-
-
-
 
   openModal(modalName, data) {
     this.modals[modalName] && this.modals[modalName].next(data);

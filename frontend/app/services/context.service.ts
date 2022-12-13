@@ -14,7 +14,12 @@ export class ModulesContextService {
     this._auth = this._injector.get(AuthService);
   }
 
-  initContext({ _module_code=null, _object_code=null, _page_code=null, _params=null }={}) {
+  initContext({
+    _module_code = null,
+    _object_code = null,
+    _page_code = null,
+    _params = null,
+  } = {}) {
     this._module_code = _module_code || 'MODULES';
     this._page_code = _page_code;
     this._page_code = _page_code;

@@ -85,6 +85,8 @@ class DefinitionBase:
                     definition_code=reference_code,
                     msg=f"{str(e)}",
                 )
+                cls.remove_from_cache("reference", reference_code)
+                continue
 
             if reference_code == "reference" or reference.get("id"):
                 continue
@@ -286,7 +288,6 @@ class DefinitionBase:
 
     @classmethod
     def load_definition_file(cls, file_path):
-        """ """
 
         # chargement du fichier yml
         try:
