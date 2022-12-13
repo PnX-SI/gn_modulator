@@ -2,6 +2,11 @@
 Test pour valider
 - que les définition contenues dans le module sont valides
 - les messages des remontées d'erreurs
+
+reste à tester (a minima)
+ERR_DEF_EMPTY_FILE
+ERR_TEMPLATE_NOT_FOUND
+ERR_TEMPLATE_UNRESOLVED_FIELDS
 """
 
 import pytest
@@ -82,6 +87,34 @@ class TestDefinitions:
 
         return definition
 
+    def check_errors(
+        self, definition_type=None, definition_code=None, error_code=None, context=None
+    ):
+
+        if definition_type is None:
+            return
+
+        # si le code d'erreur n'est pas défini, on s'assure qu'il n'y a pas d'erreur
+        if error_code is None:
+            assert (
+                len(get_errors()) == 0
+            ), f"({context}) : il ne doit pas y avoir d'erreur à ce stade"
+
+        else:
+            assert (
+                len(get_errors()) == 1
+            ), f"({context}) : on s'attend à voir remonter une erreur (et non {len(get_errors())})"
+
+            # on teste si le code de l'erreur est celui attendu
+            assert (
+                get_errors()[0]["code"] == error_code
+            ), f"({context}) : le code d'erreur attendu est {error_code} (et non {get_errors()[0]['code']})"
+
+            # on teste si la definition a bien été supprimé
+            assert (
+                get_global_cache([definition_type, definition_code]) is None
+            ), "({context}) : la definition erronée aurait du être supprimée du cache"
+
     def test_check_references(self):
         """
         test si le schema de validation est valide (selon la référence de schemas de validation)
@@ -118,27 +151,7 @@ class TestDefinitions:
 
         DefinitionMethods.local_check_definition(definition_type, definition_code)
 
-        print(errors_txt())
-        # si le code d'erreur n'est pas défini, on s'assure qu'il n'y a pas d'erreur
-        if error_code is None:
-            assert (
-                len(get_errors()) == 0
-            ), "Il ne doit pas y avoir d'erreur à ce stade (local_check)"
-            return definition
-
-        assert (
-            len(get_errors()) == 1
-        ), f"local_check, on s'attend à voir remonter une erreur (et non {len(get_errors())})"
-
-        # on teste si le code de l'erreur est celui attendu
-        assert (
-            get_errors()[0]["code"] == error_code
-        ), f"Le code d'erreur attendu est {error_code} (et non {get_errors()[0]['code']})"
-
-        # on teste si la definition a bien été supprimé
-        assert (
-            get_global_cache([definition_type, definition_code]) is None
-        ), "La definition erronée aurait du être supprimée du cache"
+        self.check_errors(definition_type, definition_code, error_code, "local_check")
 
         return definition
 
@@ -149,38 +162,39 @@ class TestDefinitions:
         TODO
         """
 
-        if not file_path:
-            return
-
         clear_errors()
+
+        if file_path is None:
+            return
 
         definition = self.test_local_check_definition(file_path)
 
-        defintion_type, definition_code = DefinitionMethods.get_definition_type_and_code(
+        definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(
             definition
         )
 
-        DefinitionMethods.global_check_definition(defintion_type, definition_code)
+        DefinitionMethods.global_check_definition(definition_type, definition_code)
 
-        # si error_code n'est pas renseigné, on s'attend à n'avoir aucune erreur
-        if error_code is None:
-            assert (
-                len(get_errors()) == 0
-            ), "Il ne doit pas y avoir d'erreur à ce stade (global_check)"
-            return definition
+        self.check_errors(definition_type, definition_code, error_code, "global_check")
 
-        # test si on a bien le code d'erreur attendu
-        assert get_errors()[0]["code"] == error_code
+        return definition
 
-        # test si file_path est bien renseigné
-        assert get_errors()[0].get("file_path") is not None
-
-        # test si la definition a bien été retirée du cache
-        assert (
-            get_global_cache([defintion_type, definition_code]) is None
-        ), "La definition erronée aurait du être supprimée du cache"
+    def test_process_template(self, file_path=None, error_code=None):
 
         clear_errors()
+
+        if file_path is None:
+            return
+
+        definition = self.test_local_check_definition(file_path)
+
+        definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(definition)
+
+        assert definition_type == 'use_template'
+
+        DefinitionMethods.process_template(definition_code)
+
+        self.check_errors(definition_type, definition_code, error_code, 'process_template')
 
     def test_load_definition_json_ok(self):
         # load json ok
@@ -223,7 +237,8 @@ class TestDefinitions:
     def test_load_definition_file_name_fail(self):
         # ERR_LOAD_FILE_NAME
         return self.test_load_definition(
-            definitions_test_dir / "load_definition_file_name_fail.layout.yml", "ERR_LOAD_FILE_NAME"
+            definitions_test_dir / "load_definition_file_name_fail.layout.yml",
+            "ERR_LOAD_FILE_NAME",
         )
 
     def test_local_check_definition_dynamic(self):
@@ -262,6 +277,16 @@ class TestDefinitions:
         return self.test_global_check_definition(
             definitions_test_dir / "global_check_dependencies_fail.data.yml",
             "ERR_GLOBAL_CHECK_MISSING_DEPENDENCIES",
+        )
+
+    def test_template_not_found_fail(self):
+        """
+        ERR_TEMPLATE_NOT_FOUND
+        """
+
+        return self.test_process_template(
+            definitions_test_dir / "process_template_not_found_fail.use_template.yml",
+            "ERR_TEMPLATE_NOT_FOUND",
         )
 
     def test_template(self):

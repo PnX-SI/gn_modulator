@@ -32,17 +32,17 @@ class DefinitionTemplates:
         procède au traitement des templates pour l'ensemble des définitions
         """
 
-        for defininition_key in get_global_cache(["use_template"]).keys():
+        for defininition_key in cls.definition_codes('use_template'):
             cls.process_template(defininition_key)
 
     @classmethod
-    def process_template(cls, definition_use_template_key):
+    def process_template(cls, definition_use_template_code):
         """
         traite une definition qui herite d'un template
         """
 
         # definition qui herite du template
-        definition_use_template = cls.get_definition("use_template", definition_use_template_key)
+        definition_use_template = cls.get_definition("use_template", definition_use_template_code)
 
         # check reference ??
 
@@ -56,9 +56,12 @@ class DefinitionTemplates:
             add_error(
                 msg="Le template {template_code} n'a pas été trouvé",
                 definition_type="use_template",
-                definition_code=definition_use_template_key,
+                definition_code=definition_use_template_code,
                 code="ERR_TEMPLATE_NOT_FOUND",
             )
+
+            cls.remove_from_cache("use_template", definition_use_template_code)
+            return
 
         template_params = definition_use_template.get("params", {})
 
@@ -85,7 +88,7 @@ class DefinitionTemplates:
             add_error(
                 msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
                 definition_type="use_template",
-                definition_code=definition_use_template_key,
+                definition_code=definition_use_template_code,
                 code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
                 template_file_path=str(cls.get_file_path("template", template_code)),
             )
@@ -93,5 +96,5 @@ class DefinitionTemplates:
 
         cls.save_in_cache_definition(
             processed_definition,
-            cls.get_file_path("use_template", definition_use_template_key),
+            cls.get_file_path("use_template", definition_use_template_code),
         )
