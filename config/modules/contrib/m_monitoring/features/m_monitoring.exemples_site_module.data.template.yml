@@ -1,5 +1,5 @@
 type: template
-code: m_monitoring.exemples_template
+code: m_monitoring.exemples_site_module.data
 title: template data exemple site module
 description: permet d'ajouter une liste de site à un module
 

@@ -1,5 +1,5 @@
 type: schema
-code: test.load_yml_ok
+code: load_definition_existing_fail
 title: Schema test.load_existing_fail
 description: Remontée erreur existing fail
 

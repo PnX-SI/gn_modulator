@@ -68,13 +68,11 @@ class TestDefinitions:
 
         definition = DefinitionMethods.load_definition_file(file_path)
 
-        self.check_errors(definition=definition, error_code=error_code, context='load_definition')
+        self.check_errors(definition=definition, error_code=error_code, context="load_definition")
 
         return definition
 
-    def check_errors(
-        self, definition=None, error_code=None, context=None
-    ):
+    def check_errors(self, definition=None, error_code=None, context=None):
 
         get_errors() and print(errors_txt())
 
@@ -87,7 +85,9 @@ class TestDefinitions:
             definition
             assert definition is not None
 
-            definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(definition)
+            definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(
+                definition
+            )
 
             assert definition_type is not None
             assert definition_code is not None
@@ -103,8 +103,10 @@ class TestDefinitions:
             ), f"({context}, {error_code}) : le code d'erreur attendu n' pas {get_errors()[0]['code']}"
 
             # on teste si la definition a bien été supprimé
-            if (definition is not None) and (error_code not in ['ERR_LOAD_EXISTING']):
-                definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(definition)
+            if (definition is not None) and (error_code not in ["ERR_LOAD_EXISTING"]):
+                definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(
+                    definition
+                )
                 assert (
                     get_global_cache([definition_type, definition_code]) is None
                 ), f"({context}, {error_code}) : la definition erronée aurait du être supprimée du cache"
@@ -194,11 +196,15 @@ class TestDefinitions:
 
     def test_load_definition_json_ok(self):
         # load json ok
-        return self.test_load_definition(definitions_test_dir / "load_definition_ok.schema.json")
+        return self.test_load_definition(
+            definitions_test_dir / "load_definition_json_ok.schema.json"
+        )
 
     def test_load_definition_yml_ok(self):
         # load yml ok
-        return self.test_load_definition(definitions_test_dir / "load_definition_ok.schema.yml")
+        return self.test_load_definition(
+            definitions_test_dir / "load_definition_yml_ok.schema.yml"
+        )
 
     def test_load_definition_json_fail(self):
         # load json fail
@@ -226,7 +232,11 @@ class TestDefinitions:
 
     def test_load_definition_existing_fail(self):
         # load existing fail
-        return self.test_load_definition(
+        self.test_load_definition(
+            definitions_test_dir / "load_definition_existing_fail.schema.yml"
+        )
+
+        self.test_load_definition(
             definitions_test_dir / "load_definition_existing_fail.schema.yml", "ERR_LOAD_EXISTING"
         )
 
@@ -290,7 +300,9 @@ class TestDefinitions:
         ERR_TEMPLATE_UNRESOLVED_FIELDS
         """
 
-        self.test_load_definition(definitions_test_dir / "process_template_unresolved_fields_fail.template.yml")
+        self.test_load_definition(
+            definitions_test_dir / "process_template_unresolved_fields_fail.template.yml"
+        )
         return self.test_process_template(
             definitions_test_dir / "process_template_unresolved_fields_fail.use_template.yml",
             "ERR_TEMPLATE_UNRESOLVED_FIELDS",
@@ -304,7 +316,7 @@ class TestDefinitions:
         clear_errors()
 
         # si la definition du module m_monitoring_test
-        # créé à partir du template m_monitoring.module_template
+        # créé à partir du template m_monitoring.module
         # possède bien les éléments attendus
 
         definition = DefinitionMethods.get_definition("module", "m_monitoring_test_1")

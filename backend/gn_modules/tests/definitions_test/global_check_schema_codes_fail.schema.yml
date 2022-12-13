@@ -1,5 +1,5 @@
 type: schema
-code: test.global_check_schema_codes_fail
+code: global_check_schema_codes_fail
 title: test missing schema_codes
 description: test missing schema_codes
 meta:

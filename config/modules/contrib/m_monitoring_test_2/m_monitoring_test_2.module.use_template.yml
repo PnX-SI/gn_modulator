@@ -1,9 +1,9 @@
 type: use_template
-code: m_monitoring_test_2
+code: m_monitoring_test_2.module
 title: Module monitoring test 2
 description: Module de test avec entrée par protocole
 
-template_code: m_monitoring.module_template
+template_code: m_monitoring.module
 params:
   module_code: m_monitoring_test_2
   module_label: Monitest_2

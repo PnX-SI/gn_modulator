@@ -89,5 +89,5 @@ details:
         - label_communes
         - label_infrastructures
 
-properties: !include site-properties.yml
-filter_defs: !include site-filter_defs.yml
+properties: !include m_monitoring.site-properties.yml
+filter_defs: !include m_monitoring.site-filter_defs.yml

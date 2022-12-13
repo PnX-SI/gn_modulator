@@ -1,5 +1,5 @@
 type: data
-code: m_monitoring.category_data
+code: m_monitoring.category
 title: Données de catégories
 description: catégories pour monitoring (arbre loge, grotte ?)
 

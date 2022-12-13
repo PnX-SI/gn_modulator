@@ -1,5 +1,5 @@
 type: template
-code: m_monitoring.module_template
+code: m_monitoring.module
 title: Template de Module de type protocole monitoré
 description: Template de protocole monitoring (entrée par module)
 

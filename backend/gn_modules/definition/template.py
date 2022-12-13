@@ -32,7 +32,7 @@ class DefinitionTemplates:
         procède au traitement des templates pour l'ensemble des définitions
         """
 
-        for defininition_key in cls.definition_codes('use_template'):
+        for defininition_key in cls.definition_codes("use_template"):
             cls.process_template(defininition_key)
 
     @classmethod

@@ -1,5 +1,5 @@
 type: schema
-code: test.load_yml_ok
+code: load_definition_yml_ok
 title: Schema test.load_yml_ok
 description: Valider chargement schema yml ok
 

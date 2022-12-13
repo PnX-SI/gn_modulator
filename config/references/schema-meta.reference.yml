@@ -1,5 +1,5 @@
 type: object
-code: meta
+code: schema-meta
 title: Reference schema.meta
 description: Référence pour la clé 'meta' des schemas
 

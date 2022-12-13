@@ -1,5 +1,5 @@
 type: data
-code: test.global_check_dependencies_fail
+code: global_check_dependencies_fail
 title: test dépendances
 description: test dépendances de données
 dependencies:

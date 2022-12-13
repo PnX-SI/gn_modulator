@@ -219,6 +219,13 @@ class DefinitionBase:
                 cls.local_check_definition(definition_type, definition_code)
 
     @classmethod
+    def file_name(cls, definition):
+
+        definition_type, definition_code = cls.get_definition_type_and_code(definition)
+
+        return f"{definition_code}.{definition_type}"
+
+    @classmethod
     def save_in_cache_definition(cls, definition, file_path):
 
         if isinstance(definition, list):
@@ -269,20 +276,19 @@ class DefinitionBase:
                 code="ERR_LOAD_EXISTING",
             )
 
-        # verification de la cohérence suffixe du fichier - type de definition
-        # TODO à déplacer
-        elif file_path.stem.split(".")[-1] != definition_type and not definition.get(
-            "use_template"
-        ):
+        # check file_name
+        # file_path = cls.get_file_path(definition_type, definition_code)
+        # file_name = cls.file_name(definition)
+        elif file_path.stem != cls.file_name(definition) and not (definition.get("use_template")):
             add_error(
                 definition_type=definition_type,
                 definition_code=definition_code,
                 file_path=str(file_path),
-                msg=f"Le nom du fichier '{file_path.stem}{file_path.suffix}' doit se terminer en '.{definition_type}{file_path.suffix}'",
+                # msg=f"Le nom du fichier '{file_path.stem}{file_path.suffix}' doit se terminer en '.{definition_type}{file_path.suffix}'",
+                msg=f"Le nom du fichier devrait être '{cls.file_name(definition)}{file_path.suffix}'",
                 code="ERR_LOAD_FILE_NAME",
             )
-        # sinon
-        # - mise en cache des definitions et du chemin du fichier
+
         else:
             cls.set_cache(definition_type, definition_code, definition, file_path.resolve())
 

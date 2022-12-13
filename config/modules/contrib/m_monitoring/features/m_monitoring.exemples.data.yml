@@ -4,7 +4,7 @@ title: Données exemple monitoring
 description: données d'exemple pour monitoring (groupes de site, site, visite)
 
 dependencies:
-  - m_monitoring.category_data
+  - m_monitoring.category
 items:
   - schema_code: m_monitoring.site_group
     items:

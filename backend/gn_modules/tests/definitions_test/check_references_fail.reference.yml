@@ -1,5 +1,5 @@
 type: object
-code: test_load_definition_valid_ref_fail
+code: check_references_fail
 title: test erreur ERR_VALID_REF
 description: test de la remontée d'erreur avec code ERR_VALID_REF
 

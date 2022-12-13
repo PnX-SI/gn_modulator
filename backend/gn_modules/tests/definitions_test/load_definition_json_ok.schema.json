@@ -1,6 +1,6 @@
 {
     "type": "schema",
-    "code": "test.load_json_ok",
+    "code": "load_definition_json_ok",
     "title": "Schema test.load_json_ok",
     "description": "Valider chargement schema json ok",
     "meta": {
