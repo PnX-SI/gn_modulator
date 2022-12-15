@@ -3,115 +3,133 @@ code: test_context
 title: Layout test context
 description: Layout de test pour le context
 
+aliases:
+  - &test_module_code
+    title: module_code
+    direction: row
+    flex: "0"
+    items:
+      - type: assert
+        title: context
+        test: "__f__context.module_code"
+        value: m_context
+
+      - type: assert
+        module_code: m_layout
+        title: layout
+        test: "__f__context.module_code"
+        value: m_layout
+
+      - module_code: m_layout_parent
+        items:
+          type: assert
+          title: layout parent
+          test: "__f__context.module_code"
+          value: m_layout_parent
+
+  - &test_object_code
+    title: object_code
+    direction: row
+    flex: "0"
+    items:
+      - type: assert
+        title: context
+        test: "__f__context.object_code"
+        value: o_context
+
+      - type: assert
+        object_code: o_layout
+        title: layout
+        test: "__f__context.object_code"
+        value: o_layout
+
+      - object_code: o_layout_parent
+        items:
+          type: assert
+          title: layout parent
+          test: "__f__context.object_code"
+          value: o_layout_parent
+
+  - &test_object_display
+    title: objects
+    module_code: m_monitoring
+    object_code: site
+    page_code: site_group_details
+    params:
+      id_site_group: 1
+    flex: "0"
+    items:
+      - direction: row
+        items:
+          - type: assert
+            title: module_code
+            test: "__f__context.module_code"
+            value: m_monitoring
+          - type: assert
+            title: page_code
+            test: "__f__context.page_code"
+            value: site_group_details
+          - type: assert
+            title: object_code
+            test: "__f__context.object_code"
+            value: site
+
+      - direction: row
+        items:
+          - type: assert
+            title: label
+            test: "__f__o.label(x)"
+            value: site
+          - type: assert
+            title: labels
+            test: "__f__o.labels(x)"
+            value: sites
+          - type: assert
+            title: schema_code
+            test: "__f__o.schema_code(x)"
+            value: m_monitoring.site
+          - type: assert
+            title: prefilters
+            test: "__f__o.prefilters(x)"
+            value: "groups.id_site_group = 1"
+
+  - &test_breadcrumbs
+    title: breadcrumbs
+    module_code: m_monitoring
+    flex: '0'
+    items:
+      - type: breadcrumbs
+        page_code: site_list
+      - type: breadcrumbs
+        page_code: site_group_details
+        params:
+          id_site_group: 1
+      - type: breadcrumbs
+        page_code: site_details
+        params:
+          id_site: 1
+      # - type: breadcrumbs
+      #   page_code: visit_details
+      #   params:
+      #     id_visit: 1
+      # - type: breadcrumbs
+      #   page_code: observation_details
+      #   params:
+      #     id_observation: 1
+
+
+
+
 layout:
   title: Test context
   items:
-
-    - title: module_code
-      direction: row
-      flex: '0'
-      items:
-
-        - type: assert
-          title: context
-          test: "__f__context.module_code"
-          value: m_context
-
-        - type: assert
-          module_code: m_layout
-          title: layout
-          test: "__f__context.module_code"
-          value: m_layout
-
-        - module_code: m_layout_parent
-          items:
-            type: assert
-            title: layout parent
-            test: "__f__context.module_code"
-            value: m_layout_parent
-
-    - title: object_code
-      direction: row
-      flex: '0'
-      items:
-
-        - type: assert
-          title: context
-          test: "__f__context.object_code"
-          value: o_context
-
-        - type: assert
-          object_code: o_layout
-          title: layout
-          test: "__f__context.object_code"
-          value: o_layout
-
-        - object_code: o_layout_parent
-          items:
-            type: assert
-            title: layout parent
-            test: "__f__context.object_code"
-            value: o_layout_parent
-
-    - title: Objects
-      module_code: m_monitoring
-      object_code: site
-      page_code: site_group_details
-      params:
-        id_site_group:
-          1
-      flex: '0'
-      items:
-        - direction: row
-          items:
-            - type: assert
-              title: module_code
-              test: "__f__context.module_code"
-              value: m_monitoring
-            - type: assert
-              title: page_code
-              test: "__f__context.page_code"
-              value: site_group_details
-            - type: assert
-              title: object_code
-              test: "__f__context.object_code"
-              value: site
-
-        - direction: row
-          items:
-            - type: assert
-              title: label
-              test: "__f__o.label(x)"
-              value: site
-            - type: assert
-              title: labels
-              test: "__f__o.labels(x)"
-              value: sites
-            - type: assert
-              title: schema_code
-              test: "__f__o.schema_code(x)"
-              value: m_monitoring.site
-            - type: assert
-              title: prefilters
-              test: "__f__o.prefilters(x)"
-              value: 'groups.id_site_group = 1'
+    - *test_module_code
+    - *test_object_code
+    - *test_object_display
+    - *test_breadcrumbs
 
 
-    #         - type: assert
-    #           title: "__f__`label '${o.label(x)}'`"
-    #           test: "__f__o.label(x) == 'site' || `${o.label(x)} != 'site'`"
-    #         - type: assert
-    #           title: "__f__`labels '${o.label(x)}'`"
-    #           test: "__f__o.labels(x) == 'sites' || `${o.labels(x)} != 'sites'`"
-    #         - type: assert
-    #           title: "__f__`du label '${o.du_label(x)}'`"
-    #           test: "__f__o.du_label(x) == 'du site' || `${o.du_label(x)} != 'du site'`"
-    #         - type: assert
-    #           title: "__f__`schema_code '${o.schema_code(x)}'`"
-    #           test: "__f__o.schema_code(x) == 'm_monitoring.site' || `${o.schema_code(x)} != 'm_monitoring.site'`"
-    #         - type: assert
-    #           title: "__f__`prefilters '${o.prefilters(x)}'`"
-    #           test: "__f__o.prefilters(x) == 'groups.id_site_group = 1' || '${o.prefilters(x)}' != 'groups.id_site_group = 1'"
+
 
 context:
   module_code: m_context
