@@ -23,6 +23,7 @@ import utils from '../../../utils';
 export class ModulesLayoutObjectComponent extends ModulesLayoutComponent implements OnInit {
   objectData; // données relative au schema, récupérées par getData
   objectContext;
+  objectConfig;
   processedLayout; // layout pour form / details / etc..
 
   /** modules services */
@@ -43,18 +44,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     this._mPage = this._injector.get(ModulesPageService);
     this._name = 'layout-object';
     this.bPostComputeLayout = true;
-  }
-
-  log(...args) {
-    console.log(
-      this._name,
-      this.layout && this.layout.type,
-      this.layout.diplay,
-      this.data._object_code,
-      this.data.schema_code,
-      this._id,
-      ...args
-    );
   }
 
   postComputeLayout(dataChanged: any, layoutChanged: any): void {
@@ -79,8 +68,8 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     }
 
     this.objectContext = {};
-    this.objectContext._module_code = this.context._module_code;
-    this.objectContext._object_code = this.context._object_code;
+    this.objectContext.module_code = this.context.module_code;
+    this.objectContext.object_code = this.context.object_code;
     this.objectContext.debug = this.context.debug;
     this.objectContext.data_keys = [];
   }
@@ -226,12 +215,12 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   // champ de clé primaire
   pkFieldName() {
-    return this._mConfig.pkFieldName(this.moduleCode(), this.objectCode());
+    return this._mObject.pkFieldName(this.moduleCode(), this.objectCode());
   }
 
   // champ pour le label
   labelFieldName() {
-    return this._mConfig.labelFieldName(this.moduleCode(), this.objectCode());
+    return this._mObject.labelFieldName(this.moduleCode(), this.objectCode());
   }
 
   setObject(data) {

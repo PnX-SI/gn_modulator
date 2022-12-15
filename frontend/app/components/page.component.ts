@@ -20,7 +20,6 @@ export class PageComponent implements OnInit {
   _mConfig: ModulesConfigService;
   _route: ActivatedRoute;
   _mPage: ModulesPageService;
-  _auth: AuthService;
   _mLayout: ModulesLayoutService;
   _mData: ModulesDataService;
   _mContext: ModulesContextService;
@@ -45,7 +44,6 @@ export class PageComponent implements OnInit {
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mData = this._injector.get(ModulesDataService);
     this._mPage = this._injector.get(ModulesPageService);
-    this._auth = this._injector.get(AuthService);
     this._mLayout = this._injector.get(ModulesLayoutService);
     this._mContext = this._injector.get(ModulesContextService);
   }
@@ -84,9 +82,9 @@ export class PageComponent implements OnInit {
           this.moduleParams = this._mPage.moduleConfig.params || {};
           this.processParams();
           this._mContext.initContext({
-            _module_code: this._mPage.moduleCode,
-            _page_code: this._mPage.pageCode,
-            _params: this._mPage.params,
+            module_code: this._mPage.moduleCode,
+            page_code: this._mPage.pageCode,
+            params: this._mPage.params,
           });
           return of(true);
         })
@@ -174,7 +172,7 @@ export class PageComponent implements OnInit {
     if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,
-        objectCode: data._object_code,
+        objectCode: data.object_code,
         data: data,
         layout: event.layout,
       });

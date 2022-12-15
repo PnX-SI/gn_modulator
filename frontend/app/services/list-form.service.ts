@@ -4,6 +4,7 @@ import { of, Observable } from '@librairies/rxjs';
 import { mergeMap } from '@librairies/rxjs/operators';
 import { ModulesRequestService } from './request.service';
 import { ModulesConfigService } from './config.service';
+import { ModulesObjectService } from './object.service';
 import utils from './../utils';
 @Injectable()
 export class ListFormService {
@@ -16,7 +17,8 @@ export class ListFormService {
 
   constructor(
     private _requestService: ModulesRequestService,
-    private _mConfig: ModulesConfigService
+    private _mConfig: ModulesConfigService,
+    private _mObject: ModulesObjectService
   ) {}
 
   init() {}
@@ -46,7 +48,6 @@ export class ListFormService {
           const elem = liste.items.find(
             (item) => item[options.valueFieldName] == control.value[options.valueFieldName]
           );
-          console.log(control.value[options.valueFieldName], elem[options.valueFieldName]);
           control.patchValue(elem);
         }
         return of(liste);
@@ -136,28 +137,28 @@ export class ListFormService {
      **/
     let schemaFilters: Array<any> = [];
     if (options.nomenclature_type) {
-      options._object_code = 'ref_nom.nomenclature';
+      options.object_code = 'ref_nom.nomenclature';
       schemaFilters.push(`nomenclature_type.mnemonique = ${options.nomenclature_type}`);
       options.cache = true;
     }
     if (options.area_type) {
-      options._object_code = 'ref_geo.area';
+      options.object_code = 'ref_geo.area';
       schemaFilters.push(`area_type.type_code = ${options.area_type}`);
     }
 
-    if (options.schema_code && !options._object_code) {
-      options._object_code = options.schema_code;
+    if (options.schema_code && !options.object_code) {
+      options.object_code = options.schema_code;
     }
 
-    if (!options._object_code) {
+    if (!options.object_code) {
       return of(true);
     }
 
-    const moduleCode = options._module_code || 'MODULES';
+    const moduleCode = options.module_code || 'MODULES';
 
-    const objectConfig = this._mConfig.objectConfig(moduleCode, options._object_code);
+    const objectConfig = this._mObject.objectConfig(moduleCode, options.object_code);
 
-    const objectUrl = this._mConfig.objectUrl(moduleCode, options._object_code);
+    const objectUrl = this._mConfig.objectUrl(moduleCode, options.object_code);
     options.api = options.api || objectUrl;
     options.value_field_name = options.value_field_name || objectConfig.utils.value_field_name;
     options.label_field_name = options.label_field_name || objectConfig.utils.label_field_name;
@@ -202,7 +203,7 @@ export class ListFormService {
     // TODO test si cela ne vient pas d'être fait ?
     const params = options.params || {};
     params.filters = options.filters || '';
-    if (options._object_code) {
+    if (options.object_code) {
       params.filters = [params.filters, options.schema_filters || []].flat().filter((f) => !!f);
       params.sort = params.sort || options.sort;
 

@@ -1,6 +1,9 @@
 <ng-container *ngIf="computedLayout && !computedLayout.hidden && isInitialized">
   <!-- Debug -->
-  <modules-layout-debug *ngIf="context.debug && !['items', 'object'].includes(layoutType)" [debugData]="debugData"></modules-layout-debug>
+  <modules-layout-debug
+    *ngIf="context.debug && !['items', 'object'].includes(layoutType)"
+    [debugData]="debugData"
+  ></modules-layout-debug>
   <!-- code -->
   <ng-container *ngIf="layoutType == 'code'">
     <modules-layout
@@ -12,6 +15,14 @@
     ></modules-layout>
   </ng-container>
 
+  <!-- assert-->
+  <ng-container *ngIf="layoutType == 'assert'">
+    <div [ngClass]="{ 'test-layout': true, success: assertionIsTrue, error: !assertionIsTrue }">
+      <p>
+        <u>{{ computedLayout.title }}</u> : <i>{{ computedLayout.test }}</i>&#160;<b *ngIf="!assertionIsTrue">({{ computedLayout.value }})</b>
+      </p>
+    </div>
+  </ng-container>
   <!-- form -->
   <ng-container *ngIf="layoutType == 'form'">
     <modules-generic-form

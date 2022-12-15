@@ -62,7 +62,7 @@ export class ModulesPageService {
       // routeParams[]
       const schemaName = moduleConfig.objects[objectCode].schema_code;
 
-      routeParams[this._mConfig.pkFieldName(this.moduleCode, objectCode)] = value;
+      routeParams[this._mObject.pkFieldName(this.moduleCode, objectCode)] = value;
       // this._mRoute.navigateToPage(this.moduleCode, pageCode, routeParams);
       this._mRoute.navigateToPage(this.moduleCode, pageCode, { ...this.params, ...routeParams });
     }
@@ -73,7 +73,7 @@ export class ModulesPageService {
         (data) => {
           this._mLayout.stopActionProcessing('');
           this._commonService.regularToaster('success', `La requete a bien été effectué`);
-          const value = this._mConfig.objectId(this.moduleCode, objectCode, data);
+          const value = this._mObject.objectId(this.moduleCode, objectCode, data);
           this.processAction({
             action: 'details',
             objectCode,
@@ -149,7 +149,7 @@ export class ModulesPageService {
    */
   checkAction(moduleCode, objectCode, action, ownership = null) {
     // 1) cruved defini pour cet objet ?
-    const objectConfig = this._mConfig.objectConfig(moduleCode, objectCode);
+    const objectConfig = this._mObject.objectConfig(moduleCode, objectCode);
     const moduleConfig = this._mConfig.moduleConfig(moduleCode);
 
     const testObjectCruved = (objectConfig.cruved || '').includes(action);

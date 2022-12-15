@@ -2,14 +2,17 @@ import { Injectable, Injector } from '@angular/core';
 import utils from '../utils';
 import { ModulesPageService } from './page.service';
 import { ModulesConfigService } from './config.service';
+import { ModulesObjectService } from './object.service';
 @Injectable()
 export class ModulesTableService {
   _mPage: ModulesPageService;
   _mConfig: ModulesConfigService;
+  _mObject: ModulesObjectService;
 
   constructor(private _injector: Injector) {
     this._mPage = this._injector.get(ModulesPageService);
     this._mConfig = this._injector.get(ModulesConfigService);
+    this._mObject = this._injector.get(ModulesObjectService);
   }
 
   /** permet de passer des paramètre de tri du format tabulator
@@ -133,7 +136,7 @@ export class ModulesTableService {
   }
 
   columns(layout, moduleCode, objectCode) {
-    const objectConfig = this._mConfig.objectConfig(moduleCode, objectCode);
+    const objectConfig = this._mObject.objectConfig(moduleCode, objectCode);
     const columns = objectConfig.table.columns;
     return columns.map((col) => {
       const column = utils.copy(col);

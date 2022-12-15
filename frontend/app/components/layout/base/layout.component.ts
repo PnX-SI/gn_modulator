@@ -11,6 +11,7 @@ import { ModulesConfigService } from '../../../services/config.service';
 import { ModulesLayoutService } from '../../../services/layout.service';
 import { ModulesContextService } from '../../../services/context.service';
 import { ModulesFormService } from '../../../services/form.service';
+import { ModulesObjectService } from '../../../services/object.service';
 
 import utils from '../../../utils';
 
@@ -88,12 +89,15 @@ export class ModulesLayoutComponent implements OnInit {
   _mLayout: ModulesLayoutService;
   _mContext: ModulesContextService;
   _mForm: ModulesFormService;
+  _mObject: ModulesObjectService;
 
   // pour les éléments avec overflow = true
   docHeightSave;
 
   // listenPage resize
   bListenPageResize;
+
+  assertionIsTrue;
 
   computedItems;
   itemsContext;
@@ -109,6 +113,7 @@ export class ModulesLayoutComponent implements OnInit {
     this._mContext = _injector.get(ModulesContextService);
     this._mForm = _injector.get(ModulesFormService);
     this._mConfig = _injector.get(ModulesConfigService);
+    this._mObject = _injector.get(ModulesObjectService);
     this.utils = utils;
   }
 
@@ -170,6 +175,10 @@ export class ModulesLayoutComponent implements OnInit {
   processLayout() {
     // calcul de computedLayout
     this.computeLayout();
+    this.assertionIsTrue = utils.fastDeepEqual(
+      this.computedLayout?.test,
+      this.computedLayout?.value
+    );
     // à redéfinir
     this.postProcessLayout();
 
@@ -220,14 +229,14 @@ export class ModulesLayoutComponent implements OnInit {
 
     // ? layout ou computedLayout
     const computedContext = this._mContext.getContext({
-      data: this.localData,
       layout,
       context: this.parentContext,
     });
 
-    this.context._module_code = computedContext._module_code;
-    this.context._object_code = computedContext._object_code;
-    this.context._page_code = computedContext._page_code;
+    this.context.module_code = computedContext.module_code;
+    this.context.object_code = computedContext.object_code;
+    this.context.page_code = computedContext.page_code;
+    this.context.params = computedContext.params;
   }
 
   /**
@@ -506,12 +515,13 @@ export class ModulesLayoutComponent implements OnInit {
     const localDataDebug = this.localData;
 
     const contextDebug = {
-      _module_code: this.context._module_code,
-      _page_code: this.context._page_code,
-      _object_code: this.context._object_code,
+      module_code: this.context.module_code,
+      page_code: this.context.page_code,
+      object_code: this.context.object_code,
       data_keys: this.context.data_keys,
       index: this.context.index,
       map_id: this.context.map_id,
+      params: this.context.params,
     };
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.computedLayout);
@@ -566,24 +576,15 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   moduleCode() {
-    return this.getContextItem('module_code');
+    return this.context.module_code;
   }
 
   objectCode() {
-    return this.getContextItem('object_code');
-  }
-
-  objectConfig() {
-    return this._mConfig.objectConfig(this.moduleCode(), this.objectCode());
+    return this.context.object_code;
   }
 
   moduleConfig() {
     return this._mConfig.moduleConfig(this.moduleCode());
-  }
-
-  /** TODO à revoir context tout ça */
-  getContextItem(itemName) {
-    return this.context[itemName];
   }
 
   refreshData(objectCode) {}

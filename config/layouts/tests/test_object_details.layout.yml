@@ -19,19 +19,19 @@ aliases:
       type: string
 
 context:
-  _module_code: MODULES
-  _object_code: commons.module
+  module_code: MODULES
+  object_code: commons.module
 
 layout:
   items:
     - title: Test object details
       items:
-        title: '__f__utils.object_title_details(x)'
+        title: '__f__o.title_details(x)'
         direction: 'row'
         items: *module_items
     - title: Test object site_edit
       items:
-        title: '__f__utils.object_title_create_edit(x)'
+        title: '__f__o.title_create_edit(x)'
         direction: 'row'
         items: *module_items
 

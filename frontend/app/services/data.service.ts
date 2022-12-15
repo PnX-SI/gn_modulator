@@ -86,9 +86,7 @@ export class ModulesDataService {
   getBreadcrumbs(context: any) {
     return this._mRequest.request(
       'get',
-      `${this._mConfig.backendModuleUrl()}/breadcrumbs/${context._module_code}/${
-        context.page_code
-      }`,
+      `${this._mConfig.backendModuleUrl()}/breadcrumbs/${context.module_code}/${context.page_code}`,
       { params: context.params }
     );
   }

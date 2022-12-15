@@ -88,7 +88,6 @@ const processData = (data, layout) => {
  * TODO array
  */
 const flatLayout = (layout) => {
-  // console.log('flat layout', layout)
   if (layout == null) {
     return [];
   }
@@ -103,7 +102,6 @@ const flatLayout = (layout) => {
       // if (layout.key.includes('.')) {
       //   const keys = layout.key.split('.');
       //   const keyDict = keys.shift();
-      //   console.log(keys, keyDict);
       //   return {
       //     type: 'dict',
       //     key: keyDict,

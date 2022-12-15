@@ -7,20 +7,139 @@ import utils from '../utils';
 export class ModulesObjectService {
   _mData: ModulesDataService;
   _mConfig: ModulesConfigService;
-  // _mLayout: ModulesLayoutService;
 
   constructor(private _injector: Injector) {
     this._mData = this._injector.get(ModulesDataService);
     this._mConfig = this._injector.get(ModulesConfigService);
-    // this._mLayout = this._injector.get(ModulesLayoutService);
+  }
+
+  /** renvoie la configuration d'un object en fonction de
+   * - moduleCode
+   * - objectCode
+   * - pageCode
+   * - params
+   */
+  objectConfig(moduleCode, objectCode, pageCode = null, params: any = null) {
+    // config provenant du module
+
+    const objectModuleConfig = this._mConfig.moduleConfig(moduleCode).objects[objectCode];
+    if (!objectModuleConfig) {
+      console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
+      return;
+    }
+
+    if (!(pageCode || params)) {
+      return objectModuleConfig;
+    }
+
+    // config provenant de la page
+    let objectPageConfig: any = {};
+    if (pageCode) {
+      const pageConfig: any = this._mConfig.pageConfig(moduleCode, pageCode);
+      objectPageConfig = pageConfig.objects[objectCode] || {};
+    }
+
+    let objectConfig = {
+      ...objectModuleConfig,
+      ...objectPageConfig,
+    };
+
+    if (!params) {
+      return objectConfig;
+    }
+
+    for (const [paramKey, paramValue] of Object.entries(params)) {
+      objectConfig = utils.replace(objectConfig, `:${paramKey}`, paramValue);
+    }
+
+    return objectConfig;
+  }
+
+  objectConfigContext({ context }) {
+    return this.objectConfig(
+      context.module_code,
+      context.object_code,
+      context.page_code,
+      context.params
+    );
+  }
+
+  pkFieldName(moduleCode, objectCode) {
+    return this.objectConfig(moduleCode, objectCode)?.utils.pk_field_name;
+  }
+
+  geometryFieldName(moduleCode, objectCode) {
+    return this.objectConfig(moduleCode, objectCode).utils.geometry_field_name;
+  }
+
+  geometryType(moduleCode, objectCode) {
+    return this.geometryFieldName(moduleCode, objectCode)
+      ? this.objectConfig(moduleCode, objectCode).properties[
+          this.geometryFieldName(moduleCode, objectCode)
+        ].geometry_type
+      : null;
+  }
+
+  labelFieldName(moduleCode, objectCode) {
+    return this.objectConfig(moduleCode, objectCode).utils.label_field_name;
+  }
+
+  objectId(moduleCode, objectCode, data) {
+    return data[this.pkFieldName(moduleCode, objectCode)];
+  }
+
+  objectPreFilters({ context }) {
+    return this.objectConfigContext({ context }).prefilters;
+  }
+
+  objectSchemaCode({ context }) {
+    return this.objectConfigContext({ context }).schema_code;
+  }
+
+  objectLabel({ context }) {
+    return this.objectConfigContext({ context }).display.label;
+  }
+
+  objectLabels({ context }) {
+    return this.objectConfigContext({ context }).display.labels;
+  }
+
+  objectDuLabel({ context }) {
+    return this.objectConfigContext({ context }).display.du_label;
+  }
+
+  objectTitleDetails({ context, data }) {
+    const du_label = this.objectConfigContext({ context }).display.du_label;
+    const label_field_name = this.objectConfigContext({ context }).utils.label_field_name;
+    return `Détails ${du_label} ${data[label_field_name]}`;
+  }
+
+  objectTitleCreateEdit({ context, data }) {
+    const du_label = this.objectConfigContext({ context }).display.du_label;
+    const du_nouveau_label = this.objectConfigContext({ context }).display.du_nouveau_label;
+    const labelFieldName = this.objectConfigContext({ context }).utils.label_field_name;
+    const pkFieldName = this.objectConfigContext({ context }).utils.pk_field_name;
+    const id = data[pkFieldName];
+    return !!id
+      ? `Modification ${du_label} ${data[labelFieldName]}`
+      : `Création ${du_nouveau_label}`;
+  }
+
+  objectTabLabel({ data, context }) {
+    const nbTotal = data.nb_total;
+    const nbFiltered = data.nb_filtered;
+    const labels = this.objectLabel({ context });
+    return nbTotal
+      ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
+      : `${utils.capitalize(labels)}`;
   }
 
   processFormLayout(moduleCode, objectCode) {
-    const objectConfig = this._mConfig.objectConfig(moduleCode, objectCode);
+    const objectConfig = this.objectConfig(moduleCode, objectCode);
     const moduleConfig = this._mConfig.moduleConfig(moduleCode);
     const schemaLayout = objectConfig.form.layout;
-    const geometryType = this._mConfig.geometryType(moduleCode, objectCode);
-    const geometryFieldName = this._mConfig.geometryFieldName(moduleCode, objectCode);
+    const geometryType = this.geometryType(moduleCode, objectCode);
+    const geometryFieldName = this.geometryFieldName(moduleCode, objectCode);
     return {
       type: 'form',
       appearance: 'fill',
@@ -153,7 +272,7 @@ export class ModulesObjectService {
   }
 
   processPropertiesLayout(moduleCode, objectCode) {
-    const objectConfig = this._mConfig.objectConfig(moduleCode, objectCode);
+    const objectConfig = this.objectConfig(moduleCode, objectCode);
     const moduleConfig = this._mConfig.moduleConfig(moduleCode);
     return {
       // direction: "row",
@@ -197,7 +316,7 @@ export class ModulesObjectService {
 
     const processedData = utils.processData(data, layout);
 
-    const id = this._mConfig.objectId(moduleCode, objectCode, data);
+    const id = this.objectId(moduleCode, objectCode, data);
 
     const request = id
       ? this._mData.patch(moduleCode, objectCode, id, processedData, {
@@ -211,25 +330,21 @@ export class ModulesObjectService {
   }
 
   onDelete(moduleCode, objectCode, data) {
-    return this._mData.delete(
-      moduleCode,
-      objectCode,
-      this._mConfig.objectId(moduleCode, objectCode, data)
-    );
+    return this._mData.delete(moduleCode, objectCode, this.objectId(moduleCode, objectCode, data));
   }
 
   getFields(moduleCode, objectCode, layout) {
     const fields = utils.getLayoutFields(layout);
 
     if (
-      this._mConfig.geometryFieldName(moduleCode, objectCode) &&
-      this._mConfig.geometryFieldName(moduleCode, objectCode)
+      this.geometryFieldName(moduleCode, objectCode) &&
+      this.geometryFieldName(moduleCode, objectCode)
     ) {
-      fields.push(this._mConfig.geometryFieldName(moduleCode, objectCode));
+      fields.push(this.geometryFieldName(moduleCode, objectCode));
     }
 
-    if (!fields.includes(this._mConfig.pkFieldName(moduleCode, objectCode))) {
-      fields.push(this._mConfig.pkFieldName(moduleCode, objectCode));
+    if (!fields.includes(this.pkFieldName(moduleCode, objectCode))) {
+      fields.push(this.pkFieldName(moduleCode, objectCode));
     }
 
     return fields;

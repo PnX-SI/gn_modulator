@@ -264,12 +264,18 @@ div.layout-items > div {
   background-color: red;
 }
 
-.test-layout-error {
+.test-layout {
+  border: solid 1px lightgray;
+  padding: 4px;
+  margin: 4px;
+}
+
+.test-layout.error {
   color: red;
   background-color: lightcoral;
 }
 
-.test-layout-ok {
+.test-layout.success {
   color: green;
   background-color: lightgreen;
 }
@@ -295,3 +301,4 @@ div.layout-items > div {
   background-color: lightgray;
   border-radius: 10px;
 }
+

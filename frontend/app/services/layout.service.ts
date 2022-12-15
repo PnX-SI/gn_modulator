@@ -3,7 +3,6 @@ import utils from '../utils';
 import { Subject } from '@librairies/rxjs';
 import { ModulesConfigService } from '../services/config.service';
 import { ModulesRequestService } from '../services/request.service';
-import { ModulesContextService } from '../services/context.service';
 import { ModulesObjectService } from './object.service';
 
 declare var curData: any;
@@ -15,6 +14,7 @@ export class ModulesLayoutService {
   _mObject: ModulesObjectService;
 
   _utils: any;
+  _utilsObject: any;
 
   constructor(private _injector: Injector) {
     this._mConfig = this._injector.get(ModulesConfigService);
@@ -42,66 +42,18 @@ export class ModulesLayoutService {
       today: utils.today, // renvoie la date du jour (defaut)
       departementsForRegion: utils.departementsForRegion, // liste des dept pour une region
       YML: utils.YML,
-      object_label: this.objectLabel.bind(this),
-      object_labels: this.objectLabels.bind(this),
-      object_tab_label: this.objectTabLabel.bind(this),
-      object_title_details: this.objectTitleDetails.bind(this),
-      object_title_create_edit: this.objectTitleCreateEdit.bind(this),
-      class_check: this.class_check,
     };
-  }
 
-  class_check(v1, v2) {
-    return utils.fastDeepEqual(v1, v2) ? 'test-layout-ok' : 'test-layout-error';
-  }
-
-  // utilObject(fonctionType) {
-  //   return (x) => {
-  //     const fnConfigName = `object${utils.capitalize(fonctionType)}`;
-  //     try {
-  //       return this._mConfig[fnConfigName](x.context._module_code, x.context._object_code);
-  //     } catch (e) {
-  //       return `Pas de config trouvée pour {_module_code: ${x.context._module_code}, _object_code: ${x.context._object_code}}`;
-  //     }
-  //   };
-  // }
-
-  objectConfig({ context }) {
-    return this._mConfig.objectConfig(context._module_code, context._object_code);
-  }
-
-  objectLabel({ context }) {
-    return this.objectConfig({ context }).display.object_label;
-  }
-
-  objectLabels({ context }) {
-    return this.objectConfig({ context }).display.object_labels;
-  }
-
-  objectTitleDetails({ context, data }) {
-    const du_label = this.objectConfig({ context }).display.du_label;
-    const label_field_name = this.objectConfig({ context }).utils.label_field_name;
-    return `Détails ${du_label} ${data[label_field_name]}`;
-  }
-
-  objectTitleCreateEdit({ context, data }) {
-    const du_label = this.objectConfig({ context }).display.du_label;
-    const du_nouveau_label = this.objectConfig({ context }).display.du_nouveau_label;
-    const labelFieldName = this.objectConfig({ context }).utils.label_field_name;
-    const pkFieldName = this.objectConfig({ context }).utils.pk_field_name;
-    const id = data[pkFieldName];
-    return !!id
-      ? `Modification ${du_label} ${data[labelFieldName]}`
-      : `Création ${du_nouveau_label}`;
-  }
-
-  objectTabLabel({ data, context }) {
-    const nbTotal = data.nb_total;
-    const nbFiltered = data.nb_filtered;
-    const labels = this.objectLabel({ context });
-    return nbTotal
-      ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
-      : `${utils.capitalize(labels)}`;
+    this._utilsObject = {
+      prefilters: this._mObject.objectPreFilters.bind(this._mObject),
+      schema_code: this._mObject.objectSchemaCode.bind(this._mObject),
+      label: this._mObject.objectLabel.bind(this._mObject),
+      du_label: this._mObject.objectDuLabel.bind(this._mObject),
+      labels: this._mObject.objectLabels.bind(this._mObject),
+      tab_label: this._mObject.objectTabLabel.bind(this._mObject),
+      title_details: this._mObject.objectTitleDetails.bind(this._mObject),
+      title_create_edit: this._mObject.objectTitleCreateEdit.bind(this._mObject),
+    };
   }
 
   openModal(modalName, data) {
@@ -202,7 +154,7 @@ export class ModulesLayoutService {
     }
 
     strFunction = `{
-    const {layout, data, globalData, formGroup, utils, context} = x;
+    const {layout, data, globalData, utils, context, o} = x;
     ${strFunction.substr(1)}
     `;
 
@@ -231,6 +183,7 @@ export class ModulesLayoutService {
         data: localData,
         globalData,
         utils: this._utils,
+        o: this._utilsObject,
         context,
       });
       return val !== undefined ? val : null; // on veut eviter le undefined

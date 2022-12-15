@@ -49,6 +49,18 @@ export class ModulesConfigService {
     return moduleConfig;
   }
 
+  pageConfig(moduleCode, pageCode) {
+    const moduleConfig = this.moduleConfig(moduleCode);
+    if (!moduleConfig) {
+      return;
+    }
+    const pageConfig = this.moduleConfig(moduleCode).pages[pageCode];
+    if (!pageConfig) {
+      console.error(`La page ${pageCode} module ${moduleCode} n'existe pas`);
+    }
+    return pageConfig;
+  }
+
   modulesConfig() {
     return this._config['modules'];
   }
@@ -90,12 +102,6 @@ export class ModulesConfigService {
     return this.backendUrl() + '/static/external_assets/modules';
   }
 
-  objectUrl(moduleCode, objectCode, value = '', urlSuffix = '') {
-    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectCode}/${urlSuffix}${
-      value || ''
-    }`;
-  }
-
   exportUrl(moduleCode, objectCode, exportName, options: any = {}) {
     const url = this._mRequest.url(
       `${this.backendUrl()}/${moduleCode}/${objectCode}/exports/${exportName}`,
@@ -107,40 +113,21 @@ export class ModulesConfigService {
     return url;
   }
 
+  objectUrl(moduleCode, objectCode, value = '', urlSuffix = '') {
+    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectCode}/${urlSuffix}${
+      value || ''
+    }`;
+  }
+
   /** Objects */
 
-  objectConfig(moduleCode, objectCode) {
-    const objectConfig = this.moduleConfig(moduleCode).objects[objectCode];
-    if (!objectConfig) {
-      console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
-    }
-    console.log(objectConfig);
-    return objectConfig;
-  }
-
-  pkFieldName(moduleCode, objectCode) {
-    return this.objectConfig(moduleCode, objectCode)?.utils.pk_field_name;
-  }
-
-  geometryFieldName(moduleCode, objectCode) {
-    return this.objectConfig(moduleCode, objectCode).utils.geometry_field_name;
-  }
-
-  geometryType(moduleCode, objectCode) {
-    return this.geometryFieldName(moduleCode, objectCode)
-      ? this.objectConfig(moduleCode, objectCode).properties[
-          this.geometryFieldName(moduleCode, objectCode)
-        ].geometry_type
-      : null;
-  }
-
-  labelFieldName(moduleCode, objectCode) {
-    return this.objectConfig(moduleCode, objectCode).utils.label_field_name;
-  }
-
-  objectId(moduleCode, objectCode, data) {
-    return data[this.pkFieldName(moduleCode, objectCode)];
-  }
+  // objectConfig(moduleCode, objectCode) {
+  //   const objectConfig = this.moduleConfig(moduleCode).objects[objectCode];
+  //   if (!objectConfig) {
+  //     console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
+  //   }
+  //   return objectConfig;
+  // }
 
   // objectLabel(moduleCode, objectCode) {
   //   return this.objectConfig(moduleCode, objectCode).display.label;

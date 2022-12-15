@@ -35,7 +35,7 @@ class DefinitionDynamic:
 
         # on ajoute la resolution des variables
         str_function = f"""{{
-            const {{layout, data, globalData, formGroup, utils, context}} = x;
+            const {{layout, data, globalData, o, utils, context}} = x;
             {str_function[1:-1]}
         }}"""
 
@@ -60,12 +60,17 @@ class DefinitionDynamic:
         today: () => {},
         departementsForRegion: () => {},
         YML: {},
-        class_check: () => {},
-        object_label: () => {},
-        object_labels: () => {},
-        object_tab_label: () => {},
-        object_title_details: () => {},
-        object_title_create_edit: () => {},
+
+    },
+    o: {
+        prefilters: () => {},
+        schema_code: () => {},
+        label: () => {},
+        labels: () => {},
+        du_label: () => {},
+        tab_label: () => {},
+        title_details: () => {},
+        title_create_edit: () => {},
     },
     context: {},
 }"""

@@ -21,7 +21,7 @@ export class ModulesLayoutObjectTableComponent
   tab = document.createElement('div'); // element
   tableHeight; // hauteur de la table
 
-  _params;
+  params;
   modalDeleteLayout;
 
   _mTable: ModulesTableService;
@@ -157,7 +157,7 @@ export class ModulesLayoutObjectTableComponent
       };
 
       // on garde les paramètres en mémoire pour les utiliser dans getPageNumber();
-      this._params = extendedParams;
+      this.params = extendedParams;
 
       // pour ne pas trainer sortersça dans l'api
       delete extendedParams['sorters'];
@@ -223,7 +223,7 @@ export class ModulesLayoutObjectTableComponent
 
     // TODO une seule requete pour les getPageNumber et setPage ??
     this._mData
-      .getPageNumber(this.moduleCode(), this.objectCode(), value, this._params)
+      .getPageNumber(this.moduleCode(), this.objectCode(), value, this.params)
       .subscribe((res) => {
         // set Page
         this.table.setPage(res.page);
@@ -293,7 +293,7 @@ export class ModulesLayoutObjectTableComponent
   }
 
   refreshData(objectCode: any): void {
-    if (objectCode == this.data._object_code) {
+    if (objectCode == this.data.object_code) {
       this.drawTable();
     }
   }
