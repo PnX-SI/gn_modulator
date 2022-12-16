@@ -186,7 +186,7 @@ export class ModulesLayoutObjectGeoJSONComponent
       if (action) {
         this._mPage.processAction({
           action,
-          objectCode: this.objectCode(),
+          context: this.context,
           value,
         });
       }

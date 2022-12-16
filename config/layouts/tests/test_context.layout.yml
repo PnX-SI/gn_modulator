@@ -12,20 +12,20 @@ aliases:
       - type: assert
         title: context
         test: "__f__context.module_code"
-        value: m_context
+        test_value: m_context
 
       - type: assert
         module_code: m_layout
         title: layout
         test: "__f__context.module_code"
-        value: m_layout
+        test_value: m_layout
 
       - module_code: m_layout_parent
         items:
           type: assert
           title: layout parent
           test: "__f__context.module_code"
-          value: m_layout_parent
+          test_value: m_layout_parent
 
   - &test_object_code
     title: object_code
@@ -35,25 +35,24 @@ aliases:
       - type: assert
         title: context
         test: "__f__context.object_code"
-        value: o_context
+        test_value: o_context
 
       - type: assert
         object_code: o_layout
         title: layout
         test: "__f__context.object_code"
-        value: o_layout
+        test_value: o_layout
 
       - object_code: o_layout_parent
         items:
           type: assert
           title: layout parent
           test: "__f__context.object_code"
-          value: o_layout_parent
+          test_value: o_layout_parent
 
   - &test_object_display
     title: objects
     module_code: m_monitoring
-    object_code: site
     page_code: site_group_details
     params:
       id_site_group: 1
@@ -64,34 +63,60 @@ aliases:
           - type: assert
             title: module_code
             test: "__f__context.module_code"
-            value: m_monitoring
+            test_value: m_monitoring
           - type: assert
             title: page_code
             test: "__f__context.page_code"
-            value: site_group_details
+            test_value: site_group_details
+
+      - direction: row
+        object_code: site
+        items:
           - type: assert
             title: object_code
             test: "__f__context.object_code"
-            value: site
-
-      - direction: row
-        items:
+            test_value: site
           - type: assert
             title: label
             test: "__f__o.label(x)"
-            value: site
+            test_value: site
           - type: assert
             title: labels
             test: "__f__o.labels(x)"
-            value: sites
+            test_value: sites
           - type: assert
             title: schema_code
             test: "__f__o.schema_code(x)"
-            value: m_monitoring.site
+            test_value: m_monitoring.site
           - type: assert
             title: prefilters
             test: "__f__o.prefilters(x)"
-            value: "groups.id_site_group = 1"
+            test_value: "groups.id_site_group = 1"
+
+      - direction: row
+        object_code: site_group
+        items:
+          - type: assert
+            title: object_code
+            test: "__f__context.object_code"
+            test_value: site_group
+          - type: assert
+            title: label
+            test: "__f__o.label(x)"
+            test_value: groupe de sites
+          - type: assert
+            title: labels
+            test: "__f__o.labels(x)"
+            test_value: groupes de sites
+          - type: assert
+            title: schema_code
+            test: "__f__o.schema_code(x)"
+            test_value: m_monitoring.site_group
+          - type: assert
+            title: value
+            test: "__f__o.value(x)"
+            test_value: "1"
+
 
   - &test_breadcrumbs
     title: breadcrumbs

@@ -23,7 +23,6 @@ import utils from '../../../utils';
 export class ModulesLayoutObjectComponent extends ModulesLayoutComponent implements OnInit {
   objectData; // données relative au schema, récupérées par getData
   objectContext;
-  objectConfig;
   processedLayout; // layout pour form / details / etc..
 
   /** modules services */
@@ -119,16 +118,13 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   processConfig() {
     // cas du formulaire
     if (this.computedLayout.display == 'form') {
-      this.processedLayout = this._mObject.processFormLayout(
-        this._mPage.moduleCode,
-        this.objectCode()
-      );
+      this.processedLayout = this._mObject.processFormLayout(this.moduleCode(), this.objectCode());
     }
 
     // cas des details ou propriété
     if (this.computedLayout.display == 'properties') {
       this.processedLayout = this._mObject.processPropertiesLayout(
-        this._mPage.moduleCode,
+        this.moduleCode(),
         this.objectCode()
       );
     }
@@ -140,7 +136,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
         title: 'export',
         icon: 'file_download',
         href: this._mConfig.exportUrl(
-          this._mPage.moduleCode,
+          this.moduleCode(),
           this.objectCode(),
           this.computedLayout.export_code,
           this.data
@@ -205,7 +201,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,
-        objectCode: this.objectCode(),
+        context: this.context,
         value: event.data[this.pkFieldName()],
         data: event.data,
         layout: this.processedLayout,
@@ -242,17 +238,17 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   // valeur associée à l'id de l'object
   getDataValue() {
-    return this.data.value;
+    return this.context.value;
   }
 
   // filtres associés à l'object
   getDataFilters() {
-    return this.data.filters;
+    return this.context.filters;
   }
 
   // prefiltres associés à l'object
   getDataPreFilters() {
-    return this.data.prefilters;
+    return this.context.prefilters;
   }
 
   // Quand une nouvelle valeur est définie

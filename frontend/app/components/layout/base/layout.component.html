@@ -19,7 +19,7 @@
   <ng-container *ngIf="layoutType == 'assert'">
     <div [ngClass]="{ 'test-layout': true, success: assertionIsTrue, error: !assertionIsTrue }">
       <p>
-        <u>{{ computedLayout.title }}</u> : <i>{{ computedLayout.test }}</i>&#160;<b *ngIf="!assertionIsTrue">({{ computedLayout.value }})</b>
+        <u>{{ computedLayout.title }}</u> : <i>{{ computedLayout.test }}</i>&#160;<b *ngIf="!assertionIsTrue">({{ computedLayout.test_value }})</b>
       </p>
     </div>
   </ng-container>

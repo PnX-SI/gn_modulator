@@ -16,13 +16,6 @@ export class ModulesPageService {
 
   _commonService: CommonService;
 
-  breadcrumbs = [];
-  moduleCode;
-  moduleConfig;
-  pageCode;
-  pageConfig;
-  params;
-
   constructor(private _injector: Injector) {
     this._mRoute = this._injector.get(ModulesRouteService);
     this._mConfig = this._injector.get(ModulesConfigService);
@@ -32,27 +25,22 @@ export class ModulesPageService {
     this._mRequest = this._injector.get(ModulesRequestService);
   }
 
-  setCurrentPage(pageCode, pageConfig) {
-    this.pageCode = pageCode;
-    this.pageConfig = pageConfig;
-  }
-
-  processAction({ action, objectCode, value = null, data = null, layout = null }) {
-    const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
-    const pageConfig = moduleConfig.pages[this.pageCode];
+  processAction({ action, context, value = null, data = null, layout = null }) {
+    const moduleConfig = this._mConfig.moduleConfig(context.module_code);
+    const pageConfig = moduleConfig.pages[context.page_code];
     const parentpageCode = pageConfig.parent;
 
     if (['details', 'edit', 'create', 'list'].includes(action)) {
-      const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
+      const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
-      const pageCode = `${objectCode}_${action}`;
+      const pageCode = `${context.object_code}_${action}`;
       if (!pageCode) {
         this._commonService.regularToaster(
           'error',
-          `Il n'y a pas d'action definie pour ${action}, ${objectCode}`
+          `Il n'y a pas d'action definie pour ${action}, ${context.object_code}`
         );
         console.error(
-          `Il n'y a pas d'action definie pour ${action}, ${objectCode}`,
+          `Il n'y a pas d'action definie pour ${action}, ${context.object_code}`,
           moduleConfig.actions
         );
         return;
@@ -60,23 +48,26 @@ export class ModulesPageService {
       // const routeParams = { value, ...((layout as any)?.params || {}) };
       const routeParams = {};
       // routeParams[]
-      const schemaName = moduleConfig.objects[objectCode].schema_code;
+      const schemaName = moduleConfig.objects[context.object_code].schema_code;
 
-      routeParams[this._mObject.pkFieldName(this.moduleCode, objectCode)] = value;
-      // this._mRoute.navigateToPage(this.moduleCode, pageCode, routeParams);
-      this._mRoute.navigateToPage(this.moduleCode, pageCode, { ...this.params, ...routeParams });
+      routeParams[this._mObject.pkFieldName(context.module_code, context.object_code)] = value;
+      // this._mRoute.navigateToPage(moduleCode, pageCode, routeParams);
+      this._mRoute.navigateToPage(context.module_code, context.page_code, {
+        ...context.params,
+        ...routeParams,
+      });
     }
 
     // TODO dans la config de generic form ????
     if (action == 'submit') {
-      this._mObject.onSubmit(this.moduleCode, objectCode, data, layout).subscribe(
+      this._mObject.onSubmit(context.module_code, context.object_code, data, layout).subscribe(
         (data) => {
           this._mLayout.stopActionProcessing('');
           this._commonService.regularToaster('success', `La requete a bien été effectué`);
-          const value = this._mObject.objectId(this.moduleCode, objectCode, data);
+          const value = this._mObject.objectId(context.module_code, context.object_code, data);
           this.processAction({
             action: 'details',
-            objectCode,
+            context,
             value,
           });
         },
@@ -87,13 +78,13 @@ export class ModulesPageService {
     }
 
     if (action == 'delete') {
-      this._mObject.onDelete(this.moduleCode, objectCode, data).subscribe(() => {
+      this._mObject.onDelete(context.module_code, context.object_code, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
         this._mLayout.closeModals();
-        this._mLayout.refreshData(objectCode);
+        this._mLayout.refreshData(context.object_code);
 
         if (pageConfig.type != 'details' && !pageConfig.root) {
-          this._mRoute.navigateToPage(this.moduleCode, parentpageCode, data); // TODO params
+          this._mRoute.navigateToPage(context.module_code, parentpageCode, data); // TODO params
         } else {
         }
       });
@@ -102,16 +93,11 @@ export class ModulesPageService {
     // TODO clarifier
     if (action == 'cancel') {
       if (value) {
-        this.processAction({ action: 'details', objectCode, value });
+        this.processAction({ action: 'details', context, value });
       } else {
-        this._mRoute.navigateToPage(this.moduleCode, parentpageCode, this.params); // TODO params
+        this._mRoute.navigateToPage(context.module_code, parentpageCode, context.params); // TODO params
       }
     }
-  }
-
-  reset() {
-    this.breadcrumbs = [];
-    this.moduleCode = null;
   }
 
   /** checkAction

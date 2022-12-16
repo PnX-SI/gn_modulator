@@ -81,7 +81,7 @@ export class ModulesLayoutObjectTableComponent
     if (['details', 'edit'].includes(action)) {
       this._mPage.processAction({
         action,
-        objectCode: this.objectCode(),
+        context: this.context,
         value,
       });
     }

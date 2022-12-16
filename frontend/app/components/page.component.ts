@@ -39,6 +39,10 @@ export class PageComponent implements OnInit {
 
   pageInitialized: boolean; // test si la page est initialisée (pour affichage)
 
+  moduleCode;
+  pageCode;
+  params;
+
   constructor(private _injector: Injector) {
     this._route = this._injector.get(ActivatedRoute);
     this._mConfig = this._injector.get(ModulesConfigService);
@@ -50,7 +54,6 @@ export class PageComponent implements OnInit {
 
   ngOnInit() {
     // reset de page service (breadcrump etc .....)
-    this._mPage.reset();
 
     // - on le place dans layout.meta pour pouvoir s'en servir dans le calcul des layouts
 
@@ -79,12 +82,17 @@ export class PageComponent implements OnInit {
         // url queryParams
         mergeMap((queryParams) => {
           this.routeQueryParams = queryParams;
-          this.moduleParams = this._mPage.moduleConfig.params || {};
-          this.processParams();
+          this.moduleParams = this._mConfig.moduleConfig(this.moduleCode).params || {};
+          this.params = {
+            ...this.routeQueryParams,
+            ...this.routeParams,
+            ...this.moduleParams,
+          };
+
           this._mContext.initContext({
-            module_code: this._mPage.moduleCode,
-            page_code: this._mPage.pageCode,
-            params: this._mPage.params,
+            module_code: this.moduleCode,
+            page_code: this.pageCode,
+            params: this.params,
           });
           return of(true);
         })
@@ -107,75 +115,27 @@ export class PageComponent implements OnInit {
     // reset data
     this.data = null;
 
-    this._mPage.moduleCode = routeData.moduleCode;
+    this.moduleCode = routeData.moduleCode;
 
     // recupéraiton de la configuration de la page;
-    this._mPage.moduleConfig = this._mConfig.moduleConfig(this._mPage.moduleCode);
-    this._mPage.pageCode = routeData.pageCode;
-    this._mPage.pageConfig = this._mPage.moduleConfig.pages[routeData.pageCode];
+    this.pageCode = routeData.pageCode;
 
     // initialisation du layout
-    this.layout = this._mPage.pageConfig.layout;
-  }
-
-  // lien entre les paramètres
-  // en passant par data
-  // permet de récupérer value
-  // - id de l'objet en cours ? (par ex. id d'un site)
-  // - paramètre de prefilter pour des liste d'objet (par ex. visite d'un site)
-  processParams() {
-    this._mPage.params = {
-      ...this.routeQueryParams,
-      ...this.routeParams,
-      ...this.moduleParams,
-    };
-
-    let objectsModule = utils.copy(this._mPage.moduleConfig.objects);
-    const objectsPage = utils.copy(this._mPage.pageConfig.objects || {});
-
-    // gestion du paramètre debug
-    this.debug = ![undefined, false, 'false'].includes(this.routeQueryParams.debug);
-    // pour toutes les clés de data (moduleConfig.objects)
-    for (const [objectCode, objectConfig] of Object.entries(objectsModule) as any) {
-      // on ajoute les données data définies pour la page
-      // par exemple typeKey  = value|filters|prefilters
-      const objectsPageValue = objectsPage[objectCode];
-      if (!objectsPageValue) {
-        continue;
-      }
-      for (const [typeKey, typeValue] of Object.entries(objectsPageValue)) {
-        objectConfig[typeKey] = typeValue;
-      }
-    }
-
-    // prise en comptes des routeParams et routeQueryParams
-    // par exemple on va remplacer ':id_site' par la valeurs indexée par la clé id_site
-    // dans le dictionnaire params crée à partir des paramètre des routes (urlParams + queryParams)
-
-    for (const [paramKey, paramValue] of Object.entries(this._mPage.params)) {
-      objectsModule = utils.replace(objectsModule, `:${paramKey}`, paramValue);
-    }
-
-    // pour communiquer les données aux composants du layout
-    this.data = objectsModule;
-
-    // resize des composants
-    // TODO à affiner
-    // setTimeout(() => this._mLayout.reComputeHeight('page'), 500);
+    this.layout = this._mConfig.pageConfig(routeData.moduleCode, routeData.pageCode).layout;
   }
 
   /**
    * TODO clarifier les process actions un peu partout
    */
-  processAction(event) {
-    const data = event.layout.key ? event.data[event.layout.key] : event.data;
-    if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
-      this._mPage.processAction({
-        action: event.action,
-        objectCode: data.object_code,
-        data: data,
-        layout: event.layout,
-      });
-    }
-  }
+  // processAction(event) {
+  //   const data = event.layout.key ? event.data[event.layout.key] : event.data;
+  //   if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
+  //     this._mPage.processAction({
+  //       action: event.action,
+  //       context: this.context,
+  //       data: data,
+  //       layout: event.layout,
+  //     });
+  //   }
+  // }
 }

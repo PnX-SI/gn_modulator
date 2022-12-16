@@ -1,12 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
 import { ModulesDataService } from './data.service';
-import { ModulesFormService } from './form.service';
 import { ModulesConfigService } from './config.service';
 import utils from '../utils';
 @Injectable()
 export class ModulesObjectService {
   _mData: ModulesDataService;
   _mConfig: ModulesConfigService;
+
+  _cacheObjectConfig = {};
 
   constructor(private _injector: Injector) {
     this._mData = this._injector.get(ModulesDataService);
@@ -22,10 +23,20 @@ export class ModulesObjectService {
   objectConfig(moduleCode, objectCode, pageCode = null, params: any = null) {
     // config provenant du module
 
+    if (!(moduleCode && objectCode)) {
+      return {};
+    }
+
+    const moduleConfig = this._mConfig.moduleConfig(moduleCode);
+
+    if (!moduleConfig) {
+      return {};
+    }
+
     const objectModuleConfig = this._mConfig.moduleConfig(moduleCode).objects[objectCode];
     if (!objectModuleConfig) {
-      console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
-      return;
+      // console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
+      return {};
     }
 
     if (!(pageCode || params)) {
@@ -48,6 +59,7 @@ export class ModulesObjectService {
       return objectConfig;
     }
 
+    // à mettre ailleurs (ou à résoudre au dernier moment ?)
     for (const [paramKey, paramValue] of Object.entries(params)) {
       objectConfig = utils.replace(objectConfig, `:${paramKey}`, paramValue);
     }
@@ -55,13 +67,35 @@ export class ModulesObjectService {
     return objectConfig;
   }
 
+  objectConfigCacheKey(moduleCode, objectCode, pageCode, params) {
+    return `${moduleCode}__${objectCode}__${pageCode}__${JSON.stringify(params)}`;
+  }
+
   objectConfigContext({ context }) {
-    return this.objectConfig(
+    const cacheKey = this.objectConfigCacheKey(
       context.module_code,
       context.object_code,
       context.page_code,
       context.params
     );
+    if (!this._cacheObjectConfig[cacheKey]) {
+      this._cacheObjectConfig[cacheKey] = utils.copy(
+        this.objectConfig(
+          context.module_code,
+          context.object_code,
+          context.page_code,
+          context.params
+        )
+      );
+    }
+    return this._cacheObjectConfig[cacheKey];
+  }
+
+  setObjectConfig(context, config) {
+    let objectConfig = this.objectConfigContext({ context });
+    for (const key of Object.keys(config)) {
+      objectConfig[key] = config[key];
+    }
   }
 
   pkFieldName(moduleCode, objectCode) {
@@ -90,6 +124,10 @@ export class ModulesObjectService {
 
   objectPreFilters({ context }) {
     return this.objectConfigContext({ context }).prefilters;
+  }
+
+  objectValue({ context }) {
+    return this.objectConfigContext({ context }).value;
   }
 
   objectSchemaCode({ context }) {

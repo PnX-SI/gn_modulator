@@ -177,7 +177,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.computeLayout();
     this.assertionIsTrue = utils.fastDeepEqual(
       this.computedLayout?.test,
-      this.computedLayout?.value
+      this.computedLayout?.test_value
     );
     // à redéfinir
     this.postProcessLayout();
@@ -237,6 +237,19 @@ export class ModulesLayoutComponent implements OnInit {
     this.context.object_code = computedContext.object_code;
     this.context.page_code = computedContext.page_code;
     this.context.params = computedContext.params;
+
+    const objectConfig = this.objectConfig();
+    for (const key of ['filters', 'prefilters', 'value']) {
+      this.context[key] = this.layout[key] || this.parentContext[key] || objectConfig[key];
+    }
+    // ici pour filter value, etc....
+    // 1 depuis moduleConfig
+    // 2 depuis context
+    // 3 depuis layout
+  }
+
+  objectConfig() {
+    return this._mObject.objectConfigContext({ context: this.context });
   }
 
   /**
@@ -522,6 +535,9 @@ export class ModulesLayoutComponent implements OnInit {
       index: this.context.index,
       map_id: this.context.map_id,
       params: this.context.params,
+      value: this.context.value,
+      filters: this.context.filters,
+      prefilters: this.context.prefilters,
     };
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.computedLayout);

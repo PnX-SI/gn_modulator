@@ -43,9 +43,9 @@ export class ModulesConfigService {
 
   moduleConfig(moduleCode) {
     const moduleConfig = this._config['modules'][moduleCode];
-    if (!moduleConfig) {
-      console.error(`Le module ${moduleCode} n'est pas présent`);
-    }
+    // if (!moduleConfig) {
+    // console.error(`Le module ${moduleCode} n'est pas présent`);
+    // }
     return moduleConfig;
   }
 
@@ -55,9 +55,9 @@ export class ModulesConfigService {
       return;
     }
     const pageConfig = this.moduleConfig(moduleCode).pages[pageCode];
-    if (!pageConfig) {
-      console.error(`La page ${pageCode} module ${moduleCode} n'existe pas`);
-    }
+    // if (!pageConfig) {
+    // console.error(`La page ${pageCode} module ${moduleCode} n'existe pas`);
+    // }
     return pageConfig;
   }
 

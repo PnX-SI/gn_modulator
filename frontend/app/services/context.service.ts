@@ -1,9 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
-import { AuthService, User } from '@geonature/components/auth/auth.service';
+import { AuthService } from '@geonature/components/auth/auth.service';
+import { ModulesObjectService } from './object.service';
 
+import utils from '../utils';
 @Injectable()
 export class ModulesContextService {
   _auth: AuthService;
+  _mObject: ModulesObjectService;
+
   module_code;
   page_code;
   object_code;
@@ -12,9 +16,11 @@ export class ModulesContextService {
 
   constructor(private _injector: Injector) {
     this._auth = this._injector.get(AuthService);
+    this._mObject = this._injector.get(ModulesObjectService);
   }
 
   initContext({ module_code = null, object_code = null, page_code = null, params = null } = {}) {
+    this._mObject._cacheObjectConfig = {};
     this.module_code = module_code || 'MODULES';
     this.page_code = page_code;
     this.page_code = page_code;
@@ -26,7 +32,6 @@ export class ModulesContextService {
     return (layout && layout[elemKey]) || (context && context[elemKey]) || this[elemKey];
   }
 
-  // pour les breadcrumbs
   getContext({ layout, context }) {
     const contextOut = {
       module_code: this.getContextElem('module_code', { layout, context }),
