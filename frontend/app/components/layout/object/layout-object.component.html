@@ -1,6 +1,6 @@
 <!-- object-->
 <ng-container *ngIf="computedLayout">
-  <modules-layout-debug [debugData]="debugData"></modules-layout-debug>
+  <!-- <modules-layout-debug [debugData]="debugData"></modules-layout-debug> -->
   <!-- Cas formulaire et properties-->
   <!-- <div [attr.id]="_id" [ngStyle]="computedLayout.style" class="layout-section" *ngIf=" -->
   <!-- objectData && ['form', 'properties', 'export'].includes(computedLayout.display) -->
@@ -30,6 +30,7 @@
     *ngIf="computedLayout.display == 'table'"
     [layout]="layout"
     [data]="data"
+    [parentContext]="objectContext"
   >
   </modules-layout-object-table>
 
@@ -47,6 +48,7 @@
     *ngIf="computedLayout.display == 'filters'"
     [layout]="layout"
     [data]="data"
+    [parentContext]="objectContext"
   >
   </modules-layout-object-filters>
 </ng-container>

@@ -99,7 +99,7 @@ class SchemaModelExisting:
             return Synthese
 
         if self.schema_code() == "tax.taxref":
-            from geonature.core.taxonomie.models import Taxref
+            from apptax.taxonomie.models import Taxref
 
             return Taxref
 

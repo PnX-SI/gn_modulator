@@ -52,6 +52,8 @@ export class ModulesLayoutComponent implements OnInit {
   // (pour ne pas déclencher postComputeLayout s'il n'y a pas besoin)
   computedLayoutSave: any;
   dataSave: any;
+  contextSave: any;
+
   bPostComputeLayout; // pour ne pas avoir tojours à comparer dataSave/data computedLayoutSave/computedLayout
 
   // layout récupéré depuis layoutCode
@@ -159,8 +161,6 @@ export class ModulesLayoutComponent implements OnInit {
     console.log(this._name, this.layout && this.layout.type, this._id, ...args);
   }
 
-  // idem que log mais seulement quand debug = true
-
   getFormControl() {
     return this._mForm.getFormControl(this.context.form_group, [
       ...this.context.data_keys,
@@ -169,7 +169,7 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   // à redéfinir pour effectuer des actions apres computedLayout
-  postComputeLayout(dataChanged, layoutChanged) {}
+  postComputeLayout(dataChanged, layoutChanged, contextChanged) {}
 
   // appelé à l'initiation ( ou en cas de changement de data/layout/globalData)
   processLayout() {
@@ -334,14 +334,20 @@ export class ModulesLayoutComponent implements OnInit {
     // comparaison entre le layout calculé et les données précédentes
     const dataCopy = utils.copy(this.data);
     const computedLayoutCopy = utils.copy(this.computedLayout);
+    console.log(this.context)
+    const contextCopy = utils.copy(this.context);
+
     const dataChanged = !utils.fastDeepEqual(this.dataSave, dataCopy);
     const layoutChanged = !utils.fastDeepEqual(this.computedLayoutSave, computedLayoutCopy);
+    const contextChanged = !utils.fastDeepEqual(this.contextSave, contextCopy);
 
-    if (this.computedLayoutSave && this.dataSave && !layoutChanged && !dataChanged) {
+
+
+    if (this.computedLayoutSave && this.dataSave && this.contextSave && !layoutChanged && !dataChanged && !contextChanged) {
       return;
     }
 
-    this.postComputeLayout(dataChanged, layoutChanged);
+    this.postComputeLayout(dataChanged, layoutChanged, contextChanged);
 
     // sauvegarde des données pour la prochaine comparaison
     this.dataSave = dataCopy;

@@ -45,14 +45,14 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     this.bPostComputeLayout = true;
   }
 
-  postComputeLayout(dataChanged: any, layoutChanged: any): void {
-    if (!utils.fastDeepEqual(this.data.value, this.dataSave?.value)) {
-      this.processValue(this.data.value);
+  postComputeLayout(dataChanged: any, layoutChanged: any, contextChanged: any): void {
+    if (!utils.fastDeepEqual(this.context.value, this.contextSave?.value)) {
+      this.processValue(this.context.value);
     }
-    if (!utils.fastDeepEqual(this.data.filters, this.dataSave?.filters)) {
+    if (!utils.fastDeepEqual(this.context.filters, this.contextSave?.filters)) {
       this.processFilters();
     }
-    if (!utils.fastDeepEqual(this.data.prefilters, this.dataSave?.prefilters)) {
+    if (!utils.fastDeepEqual(this.context.prefilters, this.contextSave?.prefilters)) {
       this.processPreFilters();
     }
   }
@@ -69,6 +69,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     this.objectContext = {};
     this.objectContext.module_code = this.context.module_code;
     this.objectContext.object_code = this.context.object_code;
+    this.log(this.context.debug)
     this.objectContext.debug = this.context.debug;
     this.objectContext.data_keys = [];
   }
@@ -221,10 +222,14 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   setObject(data) {
     let change = false;
-    for (const [key, value] of Object.entries(data)) {
+
+    const objectConfig = this.objectConfig();
+
+    for (const [key, value] of Object.entries(objectConfig)) {
       if (!utils.fastDeepEqual(this.data[key], value)) {
         change = true;
-        this.data[key] = value;
+        // this._mObject.setObjectConfig(this.context)
+        objectConfig[key] = value;
       }
     }
     // s'il y a eu un changement on recalcule les layout

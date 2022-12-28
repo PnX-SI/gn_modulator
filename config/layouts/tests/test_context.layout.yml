@@ -116,6 +116,11 @@ aliases:
             title: value
             test: "__f__o.value(x)"
             test_value: "1"
+          - type: assert
+            title: value
+            test: "__f__o.value(x)"
+            test_value: 2
+            value: 2
 
 
   - &test_breadcrumbs

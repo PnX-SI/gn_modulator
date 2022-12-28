@@ -16,9 +16,5 @@ layout:
       display: table
       object_code: site
 
-
-data:
-  site:
-
 context:
   module_code: m_monitoring

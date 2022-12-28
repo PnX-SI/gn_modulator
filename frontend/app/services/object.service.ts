@@ -123,11 +123,15 @@ export class ModulesObjectService {
   }
 
   objectPreFilters({ context }) {
-    return this.objectConfigContext({ context }).prefilters;
+    return context.prefilters;
+  }
+
+  objectFilters({ context }) {
+    return context.filters;
   }
 
   objectValue({ context }) {
-    return this.objectConfigContext({ context }).value;
+    return context.value;
   }
 
   objectSchemaCode({ context }) {

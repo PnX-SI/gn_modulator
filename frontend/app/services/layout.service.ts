@@ -47,6 +47,8 @@ export class ModulesLayoutService {
     this._utilsObject = {
       value: this._mObject.objectValue.bind(this._mObject),
       prefilters: this._mObject.objectPreFilters.bind(this._mObject),
+      filters: this._mObject.objectFilters.bind(this._mObject),
+      config: this._mObject.objectConfigContext.bind(this._mObject),
       schema_code: this._mObject.objectSchemaCode.bind(this._mObject),
       label: this._mObject.objectLabel.bind(this._mObject),
       du_label: this._mObject.objectDuLabel.bind(this._mObject),

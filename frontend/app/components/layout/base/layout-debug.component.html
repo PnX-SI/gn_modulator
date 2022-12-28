@@ -3,7 +3,8 @@
 class="debug-container"
 >
 <div class="debug" [ngStyle]="{ 'margin-left': (debugData.debug || 0) * 2 + 'px' }">
-  <b>{{ debugData.layoutType }}</b> <i>{{ debugData.display }}</i>
+  <b>{{ debugData.layoutType }}</b>
+  <i *ngIf="debugData.display">&nbsp;{{ debugData.display }}&nbsp;</i>
   <span *ngIf="debugData.data" class="debug-details" [matTooltip]="debugData.data">d</span>
   <span *ngIf="debugData.local_data" class="debug-details" [matTooltip]="debugData.local_data">ld</span>
   <span *ngIf="debugData.element_data" class="debug-details" [matTooltip]="debugData.element_data">ed</span>

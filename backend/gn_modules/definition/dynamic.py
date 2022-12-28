@@ -64,6 +64,8 @@ class DefinitionDynamic:
     },
     o: {
         prefilters: () => {},
+        filters: () => {},
+        config: () => {},
         value: () => {},
         schema_code: () => {},
         label: () => {},
