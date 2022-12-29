@@ -29,8 +29,6 @@ export class ModulesLayoutService {
   modals = {};
   $closeModals = new Subject();
 
-  elementTypes = ['integer', 'string', 'textarea', 'list_form', 'boolean', 'checkbox'];
-
   getFormControl(formId) {
     return this._formControls[formId];
   }
@@ -141,6 +139,11 @@ export class ModulesLayoutService {
   //  */
 
   computeLayout({ context, data, layout }) {
+    if (typeof(layout) == 'string' && context.module_code && context.object_code) {
+      return this._mObject.property(context, layout)
+    }
+
+
     if (utils.isObject(layout)) {
       const computedLayout = {};
       for (const [key, element] of Object.entries(layout)) {
@@ -153,6 +156,7 @@ export class ModulesLayoutService {
       }
       return computedLayout;
     }
+
 
     return layout;
   }

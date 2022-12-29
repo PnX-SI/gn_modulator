@@ -1,5 +1,6 @@
 <!-- form -->
-<ng-container *ngIf="context.form_group_id; else layoutKeyDefault">
+
+<ng-container *ngIf="context.form_group_id">
   <modules-form-element
     [data]="data"
     [layout]="layout"
@@ -8,11 +9,11 @@
   ></modules-form-element>
 </ng-container>
 
-<ng-template #layoutKeyDefault>
+<ng-container *ngIf="!context.form_group_id">
   <div>
     <div class="layout-key">
       <div class="layout-key-title">
-        {{ layout.title || elementKey }}
+        {{ computedLayout.title || elementKey }}
         <mat-icon
           matPrefix
           *ngIf="computedLayout.description"
@@ -33,4 +34,6 @@
       </div>
     </div>
   </div>
-</ng-template>
+</ng-container>
+
+

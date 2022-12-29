@@ -7,39 +7,13 @@ import utilsCommons from '.';
 /**
  * Renvoie le type d'un layout
  */
-// const getLayoutType = (layout) => {
-//   const layoutType = !layout
-//     ? null
-//     : Array.isArray(layout)
-//     ? 'items'
-//     : [
-//         'breadcrumbs',
-//         'button',
-//         'html',
-//         'form',
-//         'message',
-//         'medias',
-//         'card',
-//         'object',
-//         'table',
-//         'map',
-//         'modal',
-//         // 'dict',
-//       ].includes(layout.type)
-//     ? layout.type
-//     : layout.key
-//     ? 'key'
-//     : layout.layout_code
-//     ? 'name'
-//     : 'section';
-//   return layoutType;
-// };
-
 const getLayoutType = (layout) => {
   const layoutType = !layout
     ? null
     : Array.isArray(layout)
     ? 'items'
+    : typeof layout == 'string' || layout.key
+    ? 'key'
     : !layout.type
     ? layout.code
       ? 'code'
@@ -69,9 +43,13 @@ const getLayoutFields = (layout, baseKey = null) => {
   }
 
   /** key */
-  const keys = [layout.key];
+  const key = typeof(layout)   == 'string' ? layout : layout.key ? layout.key : null;
 
-  return keys.filter((k) => !!k).map((key) => (baseKey ? `${baseKey}.${key}` : key));
+  if (!key) {
+    return [];
+  }
+
+  return [baseKey ? `${baseKey}.${key}` : key];
 };
 
 const processData = (data, layout) => {
@@ -97,25 +75,16 @@ const flatLayout = (layout) => {
       .filter((x) => !!x);
   }
   if (utilsCommons.isObject(layout)) {
-    if ('key' in layout && layout.key) {
-      //   // traitement des '.'
-      // if (layout.key.includes('.')) {
-      //   const keys = layout.key.split('.');
-      //   const keyDict = keys.shift();
-      //   return {
-      //     type: 'dict',
-      //     key: keyDict,
-      //     items: flatLayout({
-      //       ...layout,
-      //       key: keys.join('.'),
-      //     }),
-      //   };
-      // }
+    if (layout.key) {
       return [layout];
     }
     if ('items' in layout) {
       return flatLayout(layout.items);
     }
+  }
+
+  if (typeof layout == 'string') {
+    return [layout];
   }
 };
 

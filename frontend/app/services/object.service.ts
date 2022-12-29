@@ -91,6 +91,14 @@ export class ModulesObjectService {
     return this._cacheObjectConfig[cacheKey];
   }
 
+  property(context, key) {
+    const objectConfig = this.objectConfigContext(context);
+    return {
+      key,
+      ...objectConfig.properties[key]
+    };
+  }
+
   setObjectConfig(context, config) {
     let objectConfig = this.objectConfigContext(context);
     for (const key of Object.keys(config)) {

@@ -47,7 +47,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   postComputeLayout(dataChanged: any, layoutChanged: any, contextChanged: any): void {
     if (!utils.fastDeepEqual(this.context.value, this.contextSave?.value)) {
-      this.log('processValue', this.context.value);
       this.processValue(this.context.value);
     }
     if (!utils.fastDeepEqual(this.context.filters, this.contextSave?.filters)) {

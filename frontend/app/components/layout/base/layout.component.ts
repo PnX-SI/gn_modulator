@@ -164,9 +164,13 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   getFormControl() {
+    if(!this.computedLayout) {
+      return null;
+    }
+
     return this._mForm.getFormControl(this.context.form_group_id, [
       ...this.context.data_keys,
-      this.layout.key,
+      this.computedLayout.key,
     ]);
   }
 
@@ -245,9 +249,6 @@ export class ModulesLayoutComponent implements OnInit {
       this.context[key] = this.layout[key] || this.parentContext[key] || objectConfig[key];
     }
 
-    if (this.context.form_group_id) {
-      this.formControl = this.getFormControl();
-    }
     // ici pour filter value, etc....
     // 1 depuis moduleConfig
     // 2 depuis context
@@ -266,13 +267,13 @@ export class ModulesLayoutComponent implements OnInit {
   postProcessContext() {}
 
   processElementData() {
-    if (!this.layout) {
+    if (!this.computedLayout) {
       return;
     }
 
-    if (this.layout.key) {
-      this.elementKey = [...this.context.data_keys, this.layout.key].join('.');
-      this.elementData = utils.getAttr(this.localData, this.layout.key);
+    if (this.computedLayout.key) {
+      this.elementKey = [...this.context.data_keys, this.computedLayout.key].join('.');
+      this.elementData = utils.getAttr(this.localData, this.computedLayout.key);
     } else {
       this.elementData = this.localData;
       this.elementKey = this.context.data_keys.join('.');
@@ -294,6 +295,11 @@ export class ModulesLayoutComponent implements OnInit {
     });
 
     // récupération des données associées à this.computedLayout.key
+
+    if (this.context.form_group_id) {
+
+      this.formControl = this.getFormControl();
+    }
 
     this.processElementData();
 
@@ -554,9 +560,11 @@ export class ModulesLayoutComponent implements OnInit {
       value: this.context.value,
       filters: this.context.filters,
       prefilters: this.context.prefilters,
+      form_group_id: this.context.form_group_id
     };
 
-    const prettyLayout = this.prettyTitleObjForDebug('layout', this.computedLayout);
+    const prettyLayout = this.prettyTitleObjForDebug('layout', this.layout);
+    const prettyComputedLayout = this.prettyTitleObjForDebug('computed layout', this.computedLayout);
     const prettyData = this.prettyTitleObjForDebug('data', this.data);
     const prettyLocalData = this.prettyTitleObjForDebug(
       `local data (${this.context.data_keys?.join('.')})`,
@@ -570,6 +578,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     this.debugData = {
       layout: prettyLayout,
+      computedLayout: prettyComputedLayout,
       data: prettyData,
       local_data: !utils.fastDeepEqual(this.localData, this.data) && prettyLocalData,
       element_data: !utils.fastDeepEqual(this.elementData, this.localData) && prettyElementData,

@@ -7,19 +7,24 @@ import {
   AbstractControl,
 } from '@angular/forms';
 import { ModulesLayoutService } from './layout.service';
+import { ModulesObjectService } from './object.service';
 import utils from '../utils';
 
 @Injectable()
 export class ModulesFormService {
-  constructor(private _formBuilder: FormBuilder, private _mLayout: ModulesLayoutService) {}
+  constructor(
+    private _formBuilder: FormBuilder,
+    private _mLayout: ModulesLayoutService,
+    private _mObject: ModulesObjectService
+  ) {}
 
   /** Configuration */
 
   init() {}
 
   /** Initialise un formGroup à partir d'un layout */
-  initForm(layout, id) {
-    const formGroup = this.createFormGroup(layout);
+  initForm(layout, id, context) {
+    const formGroup = this.createFormGroup(layout, context);
     this._mLayout.setFormControl(formGroup, id);
     return formGroup;
   }
@@ -42,21 +47,26 @@ export class ModulesFormService {
     return validators;
   }
 
-  formDefinition(layout) {
+  formDefinition(layout, context) {
     if (layout.type == 'array') {
       return this.formArray(layout);
     }
     // todo object dict watever ??
     if (layout.type == 'dict') {
-      return this.createFormGroup(layout.items);
+      return this.createFormGroup(layout.items, context);
     }
 
     let formDefinition = [null];
     return formDefinition;
   }
 
-  processLayout(layout) {
-    let flat = utils.flatLayout(layout);
+  processLayoutContext() {}
+
+  processLayout(layout, context) {
+    let flat = utils
+      .flatLayout(layout)
+      .map((elem) => (elem.key ? elem : this._mObject.property(context, elem)));
+
     let simple = flat.filter((l) => !l.key.includes('.'));
     let dotted: Array<any> = flat
       .filter((l) => l.key.includes('.'))
@@ -94,11 +104,11 @@ export class ModulesFormService {
     return [...simple, ...dotted];
   }
 
-  createFormGroup(layout): any {
+  createFormGroup(layout, context): any {
     let formGroupDefinition = {};
 
-    for (let elem of this.processLayout(layout)) {
-      formGroupDefinition[elem.key] = this.formDefinition(elem);
+    for (let elem of this.processLayout(layout, context)) {
+      formGroupDefinition[elem.key] = this.formDefinition(elem, context);
     }
     let control = this._formBuilder.group(formGroupDefinition);
     return control;
@@ -114,7 +124,7 @@ export class ModulesFormService {
   }
 
   setControls({ context, data, layout }) {
-    for (let elem of utils.flatLayout(layout)) {
+    for (let elem of this.processLayout(layout, context)) {
       this.setControl({ context, data, layout: elem });
     }
 
@@ -180,7 +190,7 @@ export class ModulesFormService {
 
       control.clear();
       for (let [index, elem] of Object.entries(controlData)) {
-        let elemControl = this.createFormGroup(layout.items);
+        let elemControl = this.createFormGroup(layout.items, context);
         // this.setControls(elemControl, layout.items, elem, globalData);
         const data_keys = utils.copy(context.data_keys) || [];
         utils.addKey(data_keys, layout.key);
@@ -217,8 +227,8 @@ export class ModulesFormService {
       const correctValue =
         computedLayout.type == 'integer' ? parseInt(control.value) : parseFloat(control.value);
 
+      console.log(computedLayout.key)
       data[computedLayout.key] = correctValue;
-
       control.setValue(correctValue);
     }
   }

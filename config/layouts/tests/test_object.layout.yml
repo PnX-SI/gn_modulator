@@ -3,19 +3,38 @@ code: test_object
 title: test_object
 description: test sur les object (nécéssite monitoring)
 
+
 layout:
   title: Test object
+  object_code: site
+  value: 15
   items:
-    type: object
-    object_code: site
-    value: 15
-    items:
-      title: '__f__o.title_details(x)'
+    - type: object
       items:
-        - type: string
-          key: code
-        - code
-        - description
+        - direction: row
+          items:
+            - title: '__f__o.title_details(x)'
+              items:
+                - type: message
+                  json: '__f__data'
+                - id_site
+
+                - code
+                # - description
+            - title: '__f__o.title_create_edit(x)'
+              type: form
+              items:
+                - type: message
+                  json: __f__formGroup.value
+                - id_site
+                - code
+
+                # - hiden: true
+                  # items:
+                # - geom
+                # - code
+                # - description
+
 
   # direction: row
   # items:

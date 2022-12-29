@@ -35,7 +35,7 @@ class DefinitionDynamic:
 
         # on ajoute la resolution des variables
         str_function = f"""{{
-            const {{layout, data, globalData, o, utils, context}} = x;
+            const {{layout, data, globalData, o, utils, context, formGroup}} = x;
             {str_function[1:-1]}
         }}"""
 

@@ -35,11 +35,11 @@ export class ModulesFormElementComponent
 
     if (this.computedLayout.type == 'number') {
       formControl.patchValue(parseFloat(formControl.value));
-      this.data[this.layout.key] = formControl.value;
+      this.data[this.computedLayout.key] = formControl.value;
     }
     if (this.computedLayout.type == 'integer') {
       formControl.patchValue(parseInt(formControl.value));
-      this.data[this.layout.key] = formControl.value;
+      this.data[this.computedLayout.key] = formControl.value;
     }
 
     this.computedLayout.change && this.computedLayout.change();

@@ -79,7 +79,7 @@
     ></modules-layout-card>
   </ng-container>
 
-  <ng-container *ngIf="_mLayout.elementTypes.includes(layoutType)">
+  <ng-container *ngIf="layoutType == 'key'">
     <modules-layout-element
       [data]="data"
       [layout]="layout"
