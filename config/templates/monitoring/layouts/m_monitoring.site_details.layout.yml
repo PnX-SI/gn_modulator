@@ -3,6 +3,8 @@ code: m_monitoring.site_details
 title: Layout site details
 description: Layout pour les details d'un site
 
+context:
+  module_code: m_monitoring
 layout:
   height_auto: true
   direction: row
@@ -11,18 +13,20 @@ layout:
       items:
         - type: object
           display: geojson
-          key: site
+          object_code: site
+          value: 1
     - items:
         - type: breadcrumbs
           flex: "0"
-        - key: site
+        - object_code: site
           type: object
           display: properties
         - display: tabs
           items:
             - label: "__f__`Visites (${data.visit.filtered}/${data.visit.total})`"
+              object_code: visit
               items:
-                - key: visit
+                - object_code: visit
                   action: create
                   type: button
                   icon: add
@@ -31,4 +35,3 @@ layout:
                   params: "__f__{ return {id_site: data.site.value}}"
                 - type: object
                   display: table
-                  key: visit

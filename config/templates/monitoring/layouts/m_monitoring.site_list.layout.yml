@@ -1,0 +1,18 @@
+type: layout
+code: m_monitoring.site_list
+title: Layout site list
+description: Layout pour la liste de sites
+layout:
+  height_auto: true
+  direction: row
+  items:
+    - type: map
+      items:
+        type: object
+        display: geojson
+        object_code: site
+    - type: object
+      display: table
+      object_code: site
+context:
+  module_code: m_monitoring

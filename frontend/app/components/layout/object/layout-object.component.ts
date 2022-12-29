@@ -117,34 +117,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   /** Traitement de la configuration */
   processConfig() {
-    // cas du formulaire
-    if (this.computedLayout.display == 'form') {
-      this.processedLayout = this._mObject.processFormLayout(this.moduleCode(), this.objectCode());
-    }
-
-    // cas des details ou propriété
-    if (this.computedLayout.display == 'properties') {
-      this.processedLayout = this._mObject.processPropertiesLayout(
-        this.moduleCode(),
-        this.objectCode()
-      );
-    }
-
-    // export ??
-    if (this.computedLayout.display == 'export') {
-      this.processedLayout = {
-        type: 'button',
-        title: 'export',
-        icon: 'file_download',
-        href: this._mConfig.exportUrl(
-          this.moduleCode(),
-          this.objectCode(),
-          this.computedLayout.export_code,
-          this.data
-        ),
-        description: 'Exporter les données',
-      };
-    }
   }
 
   // traitement des données
@@ -168,7 +140,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // récupération des données
   // peut être redefini
   getData(): Observable<any> {
-    if (['form', 'properties'].includes(this.computedLayout.display) && this.getDataValue()) {
+    if (this.getDataValue()) {
       return this.getOneRow();
     }
     return of({});
@@ -188,7 +160,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     const fields = this._mObject.getFields(
       this.moduleCode(),
       this.objectCode(),
-      this.processedLayout
+      this.layout.items
     );
 
     return this._mData.getOne(this.moduleCode(), this.objectCode(), value, {

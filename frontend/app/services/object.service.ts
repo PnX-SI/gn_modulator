@@ -389,6 +389,11 @@ export class ModulesObjectService {
       fields.push(this.pkFieldName(moduleCode, objectCode));
     }
 
+    if (!fields.includes(this.labelFieldName(moduleCode, objectCode))) {
+      fields.push(this.labelFieldName(moduleCode, objectCode));
+    }
+
+
     return fields;
   }
 }
