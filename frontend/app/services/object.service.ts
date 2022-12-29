@@ -95,7 +95,7 @@ export class ModulesObjectService {
     const objectConfig = this.objectConfigContext(context);
     return {
       key,
-      ...objectConfig.properties[key]
+      ...objectConfig.properties[key],
     };
   }
 
@@ -400,7 +400,6 @@ export class ModulesObjectService {
     if (!fields.includes(this.labelFieldName(moduleCode, objectCode))) {
       fields.push(this.labelFieldName(moduleCode, objectCode));
     }
-
 
     return fields;
   }

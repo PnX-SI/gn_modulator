@@ -43,7 +43,7 @@ const getLayoutFields = (layout, baseKey = null) => {
   }
 
   /** key */
-  const key = typeof(layout)   == 'string' ? layout : layout.key ? layout.key : null;
+  const key = typeof layout == 'string' ? layout : layout.key ? layout.key : null;
 
   if (!key) {
     return [];

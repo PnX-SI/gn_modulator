@@ -139,10 +139,9 @@ export class ModulesLayoutService {
   //  */
 
   computeLayout({ context, data, layout }) {
-    if (typeof(layout) == 'string' && context.module_code && context.object_code) {
-      return this._mObject.property(context, layout)
+    if (typeof layout == 'string' && context.module_code && context.object_code) {
+      return this._mObject.property(context, layout);
     }
-
 
     if (utils.isObject(layout)) {
       const computedLayout = {};
@@ -156,7 +155,6 @@ export class ModulesLayoutService {
       }
       return computedLayout;
     }
-
 
     return layout;
   }

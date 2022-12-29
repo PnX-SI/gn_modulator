@@ -164,7 +164,7 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   getFormControl() {
-    if(!this.computedLayout) {
+    if (!this.computedLayout) {
       return null;
     }
 
@@ -297,7 +297,6 @@ export class ModulesLayoutComponent implements OnInit {
     // récupération des données associées à this.computedLayout.key
 
     if (this.context.form_group_id) {
-
       this.formControl = this.getFormControl();
     }
 
@@ -560,11 +559,14 @@ export class ModulesLayoutComponent implements OnInit {
       value: this.context.value,
       filters: this.context.filters,
       prefilters: this.context.prefilters,
-      form_group_id: this.context.form_group_id
+      form_group_id: this.context.form_group_id,
     };
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.layout);
-    const prettyComputedLayout = this.prettyTitleObjForDebug('computed layout', this.computedLayout);
+    const prettyComputedLayout = this.prettyTitleObjForDebug(
+      'computed layout',
+      this.computedLayout
+    );
     const prettyData = this.prettyTitleObjForDebug('data', this.data);
     const prettyLocalData = this.prettyTitleObjForDebug(
       `local data (${this.context.data_keys?.join('.')})`,

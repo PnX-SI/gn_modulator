@@ -115,8 +115,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   }
 
   /** Traitement de la configuration */
-  processConfig() {
-  }
+  processConfig() {}
 
   // traitement des données
   // peut être redefini
@@ -156,11 +155,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       return of(null);
     }
 
-    const fields = this._mObject.getFields(
-      this.moduleCode(),
-      this.objectCode(),
-      this.layout.items
-    );
+    const fields = this._mObject.getFields(this.moduleCode(), this.objectCode(), this.layout.items);
 
     return this._mData.getOne(this.moduleCode(), this.objectCode(), value, {
       fields,
