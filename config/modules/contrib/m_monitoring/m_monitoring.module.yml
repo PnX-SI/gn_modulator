@@ -1,6 +1,6 @@
 type: module
 code: m_monitoring
-title: "Module monitiring"
+title: "Module monitoring"
 description: "Module monitoring, apporte les schemas des sites, visites, etc..."
 
 module:

@@ -58,7 +58,7 @@ export class ModulesTableService {
    *  - On utilise mPage.chekcLink pour voir si et comment on affiche l'action en question
    *  - L'appartenance (ownership) sera fournie par les données du rang de la cellule dans les fonction formatter et tooltip)
    * */
-  columnAction(moduleCode, objectCode, action) {
+  columnAction(context, action) {
     // test si l'action est possible (ou avant)
 
     const iconAction = {
@@ -73,7 +73,7 @@ export class ModulesTableService {
       D: 'delete',
     };
 
-    const { actionAllowed, actionMsg } = this._mPage.checkAction(moduleCode, objectCode, action);
+    const { actionAllowed, actionMsg } = this._mPage.checkAction(context, action);
     if (actionAllowed == null) {
       return;
     }
@@ -82,12 +82,7 @@ export class ModulesTableService {
       headerSort: false,
       formatter: (cell, formatterParams, onRendered) => {
         const ownership = cell._cell.row.data['ownership'];
-        const { actionAllowed, actionMsg } = this._mPage.checkAction(
-          moduleCode,
-          objectCode,
-          action,
-          ownership
-        );
+        const { actionAllowed, actionMsg } = this._mPage.checkAction(context, action, ownership);
         return `<span class="table-icon ${actionAllowed ? '' : 'disabled'}"><i class='fa ${
           iconAction[action]
         } action' ${actionAllowed ? 'action="' + actionTxt[action] + '"' : ''}></i></span>`;
@@ -96,12 +91,7 @@ export class ModulesTableService {
       hozAlign: 'center',
       tooltip: (cell) => {
         const ownership = cell._cell.row.data['ownership'];
-        const { actionAllowed, actionMsg } = this._mPage.checkAction(
-          moduleCode,
-          objectCode,
-          action,
-          ownership
-        );
+        const { actionAllowed, actionMsg } = this._mPage.checkAction(context, action, ownership);
         return actionMsg;
       },
     };
@@ -114,10 +104,10 @@ export class ModulesTableService {
    * U: update / edit
    * D: delete
    */
-  columnsAction(moduleCode, objectCode) {
+  columnsAction(context) {
     const columnsAction = 'RUD'
       .split('')
-      .map((action) => this.columnAction(moduleCode, objectCode, action))
+      .map((action) => this.columnAction(context, action))
       .filter((columnAction) => !!columnAction);
     return columnsAction;
   }
@@ -127,16 +117,13 @@ export class ModulesTableService {
    *
    * ajout des bouttons voir / éditer (selon les droits ?)
    */
-  columnsTable(layout, moduleCode, objectCode) {
+  columnsTable(layout, context) {
     //column definition in the columns array
-    return [
-      ...this.columnsAction(moduleCode, objectCode),
-      ...this.columns(layout, moduleCode, objectCode),
-    ];
+    return [...this.columnsAction(context), ...this.columns(layout, context)];
   }
 
-  columns(layout, moduleCode, objectCode) {
-    const objectConfig = this._mObject.objectConfig(moduleCode, objectCode);
+  columns(layout, context) {
+    const objectConfig = this._mObject.objectConfigContext(context);
     const columns = objectConfig.table.columns;
     return columns.map((col) => {
       const column = utils.copy(col);

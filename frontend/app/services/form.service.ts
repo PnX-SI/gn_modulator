@@ -18,9 +18,9 @@ export class ModulesFormService {
   init() {}
 
   /** Initialise un formGroup à partir d'un layout */
-  initForm(layout) {
+  initForm(layout, id) {
     const formGroup = this.createFormGroup(layout);
-
+    this._mLayout.setFormControl(formGroup, id);
     return formGroup;
   }
 
@@ -120,11 +120,15 @@ export class ModulesFormService {
 
     const localData = this.getData(context, data);
     if (localData) {
-      this.getFormControl(context.form_group, context.data_keys).patchValue(localData);
+      this.getFormControl(context.form_group_id, context.data_keys).patchValue(localData);
     }
   }
 
   getFormControl(formControl, key) {
+    if (!utils.isObject(formControl)) {
+      return this.getFormControl(this._mLayout.getFormControl(formControl), key);
+    }
+
     if (Array.isArray(key)) {
       for (let k of key) {
         formControl = this.getFormControl(formControl, k);
@@ -146,7 +150,7 @@ export class ModulesFormService {
 
   /** configure un control en fonction d'un layout */
   setControl({ context, data, layout }) {
-    let control = this.getFormControl(context.form_group, [...context.data_keys, layout.key]);
+    let control = this.getFormControl(context.form_group_id, [...context.data_keys, layout.key]);
     // console.assert(!!control, { key: layout.key, control: Object.keys(formGroup.value) });
     let computedLayout = this._mLayout.computeLayout({
       layout,
@@ -181,7 +185,7 @@ export class ModulesFormService {
         const data_keys = utils.copy(context.data_keys) || [];
         utils.addKey(data_keys, layout.key);
         const arrayItemContext = {
-          form_group: context.form_group,
+          form_group_id: context.form_group_id,
           data_keys,
         };
         control.push(elemControl);

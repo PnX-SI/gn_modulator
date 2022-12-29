@@ -50,7 +50,7 @@ export class ModulesLayoutObjectTableComponent
       ajaxFiltering: true,
       height: this.tableHeight || '200px',
       ajaxRequestFunc: this.ajaxRequestFunc,
-      columns: this._mTable.columnsTable(this.computedLayout, this.moduleCode(), this.objectCode()),
+      columns: this._mTable.columnsTable(this.computedLayout, this.context),
       ajaxURL: this.objectConfig().table.url,
       paginationSize: this.computedLayout.page_size || this.objectConfig().utils.page_size,
       pagination: 'remote',
@@ -91,6 +91,7 @@ export class ModulesLayoutObjectTableComponent
     }
 
     if (action == 'selected') {
+      console.log('selected', value);
       this.setObject({ value });
     }
   };
@@ -114,11 +115,7 @@ export class ModulesLayoutObjectTableComponent
    */
   ajaxRequestFunc = (url, config, paramsTable) => {
     return new Promise((resolve, reject) => {
-      const tableColumns = this._mTable.columns(
-        this.computedLayout,
-        this.moduleCode(),
-        this.objectCode()
-      );
+      const tableColumns = this._mTable.columns(this.computedLayout, this.context);
 
       // récupération des champs à partir de layout
       const fields = tableColumns.map((column) => column.field);
@@ -293,7 +290,7 @@ export class ModulesLayoutObjectTableComponent
   }
 
   refreshData(objectCode: any): void {
-    if (objectCode == this.data.object_code) {
+    if (objectCode == this.context.object_code) {
       this.drawTable();
     }
   }

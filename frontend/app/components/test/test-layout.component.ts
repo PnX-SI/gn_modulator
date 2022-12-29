@@ -65,10 +65,10 @@ export class TestLayoutComponent implements OnInit {
       type: 'form',
       change: `__f__(event) => {
            if('layout_from_list' in event) {
-             context.form_group.patchValue({
+             formGroup.patchValue({
                layout_definition: ''
              });
-            context.form_group.patchValue({
+            formGroup.patchValue({
                layout_definition: x.utils.YML.dump(event.layout_from_list)
              });
            }
@@ -85,8 +85,8 @@ export class TestLayoutComponent implements OnInit {
               icon: 'refresh',
               description: 'Recharger le layout',
               click: `__f__(event) => {
-              context.form_group.patchValue({
-                oups: !context.form_group.value.oups,
+              formGroup.patchValue({
+                oups: !formGroup.value.oups,
                 layout_definition: '',
                 layout_from_list: { code: data.layout_from_list.code },
               });

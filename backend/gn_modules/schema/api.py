@@ -372,7 +372,7 @@ class SchemaApi:
         # delete : DELETE
         if "D" in cruved:
             bp.add_url_rule(
-                f"/{object_code}/<value>", view_func=view_func_rest, methods=["DELELTE"]
+                f"/{object_code}/<value>", view_func=view_func_rest, methods=["DELETE"]
             )
 
         # export

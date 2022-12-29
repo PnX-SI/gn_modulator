@@ -1,12 +1,12 @@
 <!-- affichage d'une liste d'élément (en complément de layout-section)-->
 <!-- items -->
 <div *ngIf="computedLayout && computedLayout.length" [ngClass]="{ 'layout-row': direction == 'row', 'layout-items': true }">
-  <div *ngIf="parentContext.index != null && context.form_group" style="flex: '0'">
+  <div *ngIf="parentContext.index != null && context.form_group_id" style="flex: '0'">
     <div class="flex-center">
       <div>
         <button
           type="button"
-          *ngIf="context.form_group"
+          *ngIf="context.form_group_id"
           mat-icon-button
           color="black"
           [matTooltip]="layout.delete_one_title || 'Supprimer l\'élément'"

@@ -143,7 +143,7 @@ export class ModulesRouteService {
       url += `?${queryParams.join('&')}`;
     }
 
-    return `/modules/${moduleConfig.module.code.toLowerCase()}/${url}`;
+    return `/modules/${moduleConfig.code.toLowerCase()}/${url}`;
   }
 
   navigateToPage(moduleCode, pageCode, params) {

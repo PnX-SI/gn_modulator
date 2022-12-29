@@ -60,7 +60,7 @@ aliases:
     # - type: message
     #   json: __f__context.fromGroup?.value || data
     # - title: TODO afficher les erreurs
-    #   hidden: __f__!context.form_group
+    #   hidden: __f__!context.form_group_id
 
 data:
   i1: 1

@@ -204,7 +204,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     return this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams);
   }
   refreshData(objectCode: any): void {
-    if (objectCode == this.data.object_code) {
+    if (objectCode == this.context.object_code) {
       this.postProcessLayout();
     }
   }

@@ -5,8 +5,6 @@ import { ModulesConfigService } from '../services/config.service';
 import { ModulesRequestService } from '../services/request.service';
 import { ModulesObjectService } from './object.service';
 
-declare var curData: any;
-
 @Injectable()
 export class ModulesLayoutService {
   _mConfig: ModulesConfigService;
@@ -15,6 +13,8 @@ export class ModulesLayoutService {
 
   _utils: any;
   _utilsObject: any;
+
+  _formControls = {};
 
   constructor(private _injector: Injector) {
     this._mConfig = this._injector.get(ModulesConfigService);
@@ -30,6 +30,14 @@ export class ModulesLayoutService {
   $closeModals = new Subject();
 
   elementTypes = ['integer', 'string', 'textarea', 'list_form', 'boolean', 'checkbox'];
+
+  getFormControl(formId) {
+    return this._formControls[formId];
+  }
+
+  setFormControl(formControl, formId) {
+    this._formControls[formId] = formControl;
+  }
 
   initModal(modalName) {
     if (!this.modals[modalName]) {
@@ -157,7 +165,7 @@ export class ModulesLayoutService {
     }
 
     strFunction = `{
-    const {layout, data, globalData, utils, context, o} = x;
+    const {layout, data, globalData, utils, context, formGroup, o} = x;
     ${strFunction.substr(1)}
     `;
 
@@ -181,6 +189,7 @@ export class ModulesLayoutService {
     if (typeof element == 'function') {
       const globalData = data;
       const localData = utils.getAttr(globalData, context.keys);
+      const formGroup = context.form_group_id && this._formControls[context.form_group_id];
       const val = element({
         layout,
         data: localData,
@@ -188,6 +197,7 @@ export class ModulesLayoutService {
         utils: this._utils,
         o: this._utilsObject,
         context,
+        formGroup,
       });
       return val !== undefined ? val : null; // on veut eviter le undefined
     }

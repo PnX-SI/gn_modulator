@@ -75,6 +75,8 @@ export class ModulesLayoutComponent implements OnInit {
   elementData;
   elementKey;
 
+  formControl;
+
   // nom du composant (pour le debug)
   _name: string;
 
@@ -162,7 +164,7 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   getFormControl() {
-    return this._mForm.getFormControl(this.context.form_group, [
+    return this._mForm.getFormControl(this.context.form_group_id, [
       ...this.context.data_keys,
       this.layout.key,
     ]);
@@ -207,7 +209,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     if (!layout) return;
 
-    for (const key of ['debug', 'form_group', 'appearance', 'index', 'map_id']) {
+    for (const key of ['debug', 'form_group_id', 'appearance', 'index', 'map_id']) {
       if (this.parentContext[key] != null) {
         this.context[key] = this.parentContext[key];
       }
@@ -242,6 +244,10 @@ export class ModulesLayoutComponent implements OnInit {
     for (const key of ['filters', 'prefilters', 'value']) {
       this.context[key] = this.layout[key] || this.parentContext[key] || objectConfig[key];
     }
+
+    if (this.context.form_group_id) {
+      this.formControl = this.getFormControl();
+    }
     // ici pour filter value, etc....
     // 1 depuis moduleConfig
     // 2 depuis context
@@ -249,7 +255,7 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   objectConfig() {
-    return this._mObject.objectConfigContext({ context: this.context });
+    return this._mObject.objectConfigContext(this.context);
   }
 
   /**
@@ -334,16 +340,20 @@ export class ModulesLayoutComponent implements OnInit {
     // comparaison entre le layout calculé et les données précédentes
     const dataCopy = utils.copy(this.data);
     const computedLayoutCopy = utils.copy(this.computedLayout);
-    console.log(this.context)
     const contextCopy = utils.copy(this.context);
 
     const dataChanged = !utils.fastDeepEqual(this.dataSave, dataCopy);
     const layoutChanged = !utils.fastDeepEqual(this.computedLayoutSave, computedLayoutCopy);
     const contextChanged = !utils.fastDeepEqual(this.contextSave, contextCopy);
 
-
-
-    if (this.computedLayoutSave && this.dataSave && this.contextSave && !layoutChanged && !dataChanged && !contextChanged) {
+    if (
+      this.computedLayoutSave &&
+      this.dataSave &&
+      this.contextSave &&
+      !layoutChanged &&
+      !dataChanged &&
+      !contextChanged
+    ) {
       return;
     }
 

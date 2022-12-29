@@ -35,12 +35,12 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
     utils.addKey(data_keys, `${this.layout.key}.${index}`);
 
     const arrayItemContext = {
-      form_group: this.context.form_group,
+      form_group_id: this.context.form_group_id,
       data_keys,
       index,
     };
     for (const key of Object.keys(this.context).filter(
-      (key) => !['form_group', 'data_keys'].includes(key)
+      (key) => !['form_group_id', 'data_keys'].includes(key)
     )) {
       arrayItemContext[key] = this.context[key];
     }

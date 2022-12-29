@@ -71,7 +71,7 @@ export class ModulesObjectService {
     return `${moduleCode}__${objectCode}__${pageCode}__${JSON.stringify(params)}`;
   }
 
-  objectConfigContext({ context }) {
+  objectConfigContext(context) {
     const cacheKey = this.objectConfigCacheKey(
       context.module_code,
       context.object_code,
@@ -92,7 +92,7 @@ export class ModulesObjectService {
   }
 
   setObjectConfig(context, config) {
-    let objectConfig = this.objectConfigContext({ context });
+    let objectConfig = this.objectConfigContext(context);
     for (const key of Object.keys(config)) {
       objectConfig[key] = config[key];
     }
@@ -135,32 +135,32 @@ export class ModulesObjectService {
   }
 
   objectSchemaCode({ context }) {
-    return this.objectConfigContext({ context }).schema_code;
+    return this.objectConfigContext(context).schema_code;
   }
 
   objectLabel({ context }) {
-    return this.objectConfigContext({ context }).display.label;
+    return this.objectConfigContext(context).display.label;
   }
 
   objectLabels({ context }) {
-    return this.objectConfigContext({ context }).display.labels;
+    return this.objectConfigContext(context).display.labels;
   }
 
   objectDuLabel({ context }) {
-    return this.objectConfigContext({ context }).display.du_label;
+    return this.objectConfigContext(context).display.du_label;
   }
 
   objectTitleDetails({ context, data }) {
-    const du_label = this.objectConfigContext({ context }).display.du_label;
-    const label_field_name = this.objectConfigContext({ context }).utils.label_field_name;
+    const du_label = this.objectConfigContext(context).display.du_label;
+    const label_field_name = this.objectConfigContext(context).utils.label_field_name;
     return `Détails ${du_label} ${data[label_field_name]}`;
   }
 
   objectTitleCreateEdit({ context, data }) {
-    const du_label = this.objectConfigContext({ context }).display.du_label;
-    const du_nouveau_label = this.objectConfigContext({ context }).display.du_nouveau_label;
-    const labelFieldName = this.objectConfigContext({ context }).utils.label_field_name;
-    const pkFieldName = this.objectConfigContext({ context }).utils.pk_field_name;
+    const du_label = this.objectConfigContext(context).display.du_label;
+    const du_nouveau_label = this.objectConfigContext(context).display.du_nouveau_label;
+    const labelFieldName = this.objectConfigContext(context).utils.label_field_name;
+    const pkFieldName = this.objectConfigContext(context).utils.pk_field_name;
     const id = data[pkFieldName];
     return !!id
       ? `Modification ${du_label} ${data[labelFieldName]}`

@@ -45,7 +45,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
   // }
 
   updateForm() {
-    if (!this.context.form_group) {
+    if (!this.formGroup) {
       return;
     }
     this.listenToChanges = false;
@@ -55,10 +55,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
   }
 
   onFormGroupChange() {
-    if (
-      !this.listenToChanges ||
-      this._formService.isEqual(this.context.form_group.value, this.data)
-    ) {
+    if (!this.listenToChanges || this._formService.isEqual(this.formGroup.value, this.data)) {
       return;
     }
     const dataChanged = {};
@@ -87,12 +84,12 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
       return;
     }
 
-    this.formGroup = this._formService.initForm(this.layout);
+    this.formGroup = this._mForm.initForm(this.layout, this._id);
 
-    this.context.form_group = this.formGroup;
+    this.context.form_group_id = this._id;
     this.context.appearance = this.layout.appearance;
     this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
-    this.context.form_group.valueChanges.subscribe((value) => {
+    this.formGroup.valueChanges.subscribe((value) => {
       this.onFormGroupChange();
     });
   }

@@ -28,13 +28,16 @@ export class ModulesPageService {
   processAction({ action, context, value = null, data = null, layout = null }) {
     const moduleConfig = this._mConfig.moduleConfig(context.module_code);
     const pageConfig = moduleConfig.pages[context.page_code];
-    const parentpageCode = pageConfig.parent;
+    const parentpageCode = pageConfig?.parent;
+    const objectConfig = this._mObject.objectConfigContext({ context });
 
+    console.log('processAction', action);
     if (['details', 'edit', 'create', 'list'].includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
       const pageCode = `${context.object_code}_${action}`;
-      if (!pageCode) {
+      console.log(pageCode, moduleConfig.pages);
+      if (!Object.keys(moduleConfig.pages).includes(pageCode)) {
         this._commonService.regularToaster(
           'error',
           `Il n'y a pas d'action definie pour ${action}, ${context.object_code}`
@@ -48,11 +51,10 @@ export class ModulesPageService {
       // const routeParams = { value, ...((layout as any)?.params || {}) };
       const routeParams = {};
       // routeParams[]
-      const schemaName = moduleConfig.objects[context.object_code].schema_code;
 
       routeParams[this._mObject.pkFieldName(context.module_code, context.object_code)] = value;
       // this._mRoute.navigateToPage(moduleCode, pageCode, routeParams);
-      this._mRoute.navigateToPage(context.module_code, context.page_code, {
+      this._mRoute.navigateToPage(context.module_code, pageCode, {
         ...context.params,
         ...routeParams,
       });
@@ -83,7 +85,7 @@ export class ModulesPageService {
         this._mLayout.closeModals();
         this._mLayout.refreshData(context.object_code);
 
-        if (pageConfig.type != 'details' && !pageConfig.root) {
+        if (pageConfig && pageConfig.type != 'details' && !pageConfig.root) {
           this._mRoute.navigateToPage(context.module_code, parentpageCode, data); // TODO params
         } else {
         }
@@ -133,13 +135,29 @@ export class ModulesPageService {
    *    - tableaux
    *    - boutton (detail / edit / etc...)
    */
-  checkAction(moduleCode, objectCode, action, ownership = null) {
+  checkAction(context, action, ownership = null) {
     // 1) cruved defini pour cet objet ?
-    const objectConfig = this._mObject.objectConfig(moduleCode, objectCode);
-    const moduleConfig = this._mConfig.moduleConfig(moduleCode);
+    const objectConfig = this._mObject.objectConfigContext(context);
+    const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
     const testObjectCruved = (objectConfig.cruved || '').includes(action);
 
+    if ('RU'.includes(action)) {
+      const moduleConfig = this._mConfig.moduleConfig(context.module_code);
+
+      const pageCodeAction = {
+        R: 'details',
+        U: 'edit',
+      };
+      const pageCode = `${context.object_code}_${pageCodeAction[action]}`;
+      const pageExists = Object.keys(moduleConfig.pages).includes(pageCode);
+      if (!pageExists) {
+        return {
+          actionAllowed: null,
+          actionMsg: null,
+        };
+      }
+    }
     if (!testObjectCruved) {
       return {
         actionAllowed: null,
