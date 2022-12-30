@@ -3,7 +3,8 @@ import utils from '../../utils';
 
 const defautDrawOptions = {
   position: 'topleft',
-  drawMarker: true,
+  customMarker: true,
+  drawMarker: false,
   editMode: true,
   drawCircle: false,
   drawCircleMarker: false,
@@ -21,6 +22,7 @@ const hiddenDrawOptions = {
   drawCircle: false,
   drawCircleMarker: false,
   drawRectangle: false,
+  customMarker: false,
   drawMarker: false,
   drawPolygon: false,
   drawPolyline: false,
@@ -59,7 +61,7 @@ export default {
     const drawOptions = options.edit ? options.drawOptions || defautDrawOptions : hiddenDrawOptions;
 
     if (options.edit && options.geometry_type) {
-      drawOptions.drawMarker =
+      drawOptions.customMarker =
         options.geometry_type == 'geometry' || options.geometry_type.includes('point');
       drawOptions.drawPolygon =
         options.geometry_type == 'geometry' || options.geometry_type.includes('polygon');

@@ -50,19 +50,7 @@ export class ModulesLayoutService {
       YML: utils.YML,
     };
 
-    this._utilsObject = {
-      value: this._mObject.objectValue.bind(this._mObject),
-      prefilters: this._mObject.objectPreFilters.bind(this._mObject),
-      filters: this._mObject.objectFilters.bind(this._mObject),
-      config: this._mObject.objectConfigContext.bind(this._mObject),
-      schema_code: this._mObject.objectSchemaCode.bind(this._mObject),
-      label: this._mObject.objectLabel.bind(this._mObject),
-      du_label: this._mObject.objectDuLabel.bind(this._mObject),
-      labels: this._mObject.objectLabels.bind(this._mObject),
-      tab_label: this._mObject.objectTabLabel.bind(this._mObject),
-      title_details: this._mObject.objectTitleDetails.bind(this._mObject),
-      title_create_edit: this._mObject.objectTitleCreateEdit.bind(this._mObject),
-    };
+    this._utilsObject = this._mObject.utilsObject();
   }
 
   openModal(modalName, data) {
@@ -180,14 +168,6 @@ export class ModulesLayoutService {
       this.initUtils();
     }
 
-    if (this.isStrFunction(element) && !data) {
-      return null;
-    }
-
-    if (!data) {
-      return element;
-    }
-
     if (typeof element == 'function') {
       const globalData = data;
       const localData = utils.getAttr(globalData, context.keys);
@@ -223,5 +203,46 @@ export class ModulesLayoutService {
     formDef.attribut_label = formDef.attribut_label || layout.title;
     formDef.attribut_name = formDef.attribut_name || layout.key;
     return formDef;
+  }
+
+  getLayoutFields(layout, context, data, baseKey = null) {
+    const layoutType = utils.getLayoutType(layout);
+    /** section */
+    if (['section', 'form'].includes(layoutType)) {
+      return utils.flatAndRemoveDoublons(
+        this.getLayoutFields(layout.items || [], context, data, baseKey)
+      );
+    }
+
+    /** items */
+    if (layoutType == 'items') {
+      return utils.flatAndRemoveDoublons(
+        layout.map((l) => this.getLayoutFields(l, context, data, baseKey))
+      );
+    }
+    /** key - array ou object */
+    if (layoutType == 'key' && ['array', 'dict'].includes(layout.type)) {
+      const newBaseKey = baseKey ? `${baseKey}.${layout.key}` : layout.key;
+      return utils.flatAndRemoveDoublons(
+        this.getLayoutFields(layout.items, context, data, newBaseKey)
+      );
+    }
+
+    /** key */
+
+    let key = typeof layout == 'string' ? layout : layout.key ? layout.key : null;
+
+    key = this.evalLayoutElement({
+      element: key,
+      layout: layout,
+      data,
+      context,
+    })
+
+    if (!key) {
+      return [];
+    }
+
+    return [baseKey ? `${baseKey}.${key}` : key];
   }
 }

@@ -12,6 +12,8 @@ const getLayoutType = (layout) => {
     ? null
     : Array.isArray(layout)
     ? 'items'
+    : ['array', 'dict'].includes(layout.type)
+    ? layout.type
     : typeof layout == 'string' || layout.key
     ? 'key'
     : !layout.type
@@ -22,35 +24,6 @@ const getLayoutType = (layout) => {
   return layoutType;
 };
 
-/**
- * Renvoie tous les champs d'un layout
- */
-const getLayoutFields = (layout, baseKey = null) => {
-  const layoutType = getLayoutType(layout);
-  /** section */
-  if (['section', 'form'].includes(layoutType)) {
-    return utilsCommons.flatAndRemoveDoublons(getLayoutFields(layout.items || [], baseKey));
-  }
-
-  /** items */
-  if (layoutType == 'items') {
-    return utilsCommons.flatAndRemoveDoublons(layout.map((l) => getLayoutFields(l, baseKey)));
-  }
-  /** key - array ou object */
-  if (layoutType == 'key' && ['array', 'dict'].includes(layout.type)) {
-    const newBaseKey = baseKey ? `${baseKey}.${layout.key}` : layout.key;
-    return utilsCommons.flatAndRemoveDoublons(getLayoutFields(layout.items, newBaseKey));
-  }
-
-  /** key */
-  const key = typeof layout == 'string' ? layout : layout.key ? layout.key : null;
-
-  if (!key) {
-    return [];
-  }
-
-  return [baseKey ? `${baseKey}.${key}` : key];
-};
 
 const processData = (data, layout) => {
   for (let elem of flatLayout(layout)) {
@@ -90,7 +63,6 @@ const flatLayout = (layout) => {
 
 export default {
   getLayoutType,
-  getLayoutFields,
   processData,
   flatLayout,
 };

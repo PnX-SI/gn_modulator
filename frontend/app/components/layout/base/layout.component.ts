@@ -219,8 +219,8 @@ export class ModulesLayoutComponent implements OnInit {
       }
     }
 
-    if (this.debug) {
-      this.context.debug = 1;
+    if (this.debug !== undefined) {
+      this.context.debug = this.debug ? 1 : 0;
     }
 
     if (this.parentContext.debug) {
@@ -245,7 +245,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.context.params = computedContext.params;
 
     const objectConfig = this.objectConfig();
-    for (const key of ['filters', 'prefilters', 'value']) {
+    for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
       this.context[key] = this.layout[key] || this.parentContext[key] || objectConfig[key];
     }
 
@@ -537,6 +537,7 @@ export class ModulesLayoutComponent implements OnInit {
     if (event.type == 'data-change') {
       this.computeLayout();
     }
+    this.log('processAction', event);
     this.emitAction(event);
   }
 
@@ -560,6 +561,7 @@ export class ModulesLayoutComponent implements OnInit {
       filters: this.context.filters,
       prefilters: this.context.prefilters,
       form_group_id: this.context.form_group_id,
+      debug: this.context.debug
     };
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.layout);
@@ -608,7 +610,7 @@ export class ModulesLayoutComponent implements OnInit {
         continue;
       }
 
-      if (['layout', 'data', 'parentContext'].includes(key)) {
+      if (['layout', 'data', 'parentContext', 'debug'].includes(key)) {
         this.processLayout();
       }
     }

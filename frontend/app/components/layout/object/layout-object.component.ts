@@ -108,8 +108,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   processTotalFiltered(response) {
     if (![null, undefined].includes(response.total)) {
-      this.data.total = response.total;
-      this.data.filtered = response.filtered;
+      this.setObject({nb_total: response.total, nb_filtered: response.filtered})
       this._mLayout.reComputeLayout('totalfilter');
     }
   }
@@ -128,7 +127,8 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // dans le cas du formulaire seulement ?
   // si data.default est défini
   processDefaults(data) {
-    for (const [defaultKey, defaultValue] of Object.entries(this.data.defaults || {})) {
+    const objectConfig = this.objectConfig();
+    for (const [defaultKey, defaultValue] of Object.entries(objectConfig.defaults || {})) {
       if (!((defaultValue as any).length && (defaultValue as any)[0] == ':')) {
         data[defaultKey] = defaultValue;
       }
@@ -138,7 +138,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // récupération des données
   // peut être redefini
   getData(): Observable<any> {
-    if (this.getDataValue()) {
+    if (!['geojson', 'table'].includes(this.computedLayout.display) && this.getDataValue()) {
       return this.getOneRow();
     }
     return of({});
@@ -155,7 +155,10 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       return of(null);
     }
 
-    const fields = this._mObject.getFields(this.moduleCode(), this.objectCode(), this.layout.items);
+    // const fields = this._mLayout.getLayoutFields(this.moduleCode(), this.objectCode(), this.layout.items);
+    const fields = this._mLayout.getLayoutFields(this.layout.items, this.context, null);
+
+    console.log(fields)
 
     return this._mData.getOne(this.moduleCode(), this.objectCode(), value, {
       fields,
@@ -165,13 +168,14 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // process des actions
   // TODO à clarifier avec page.element ??
   processAction(event) {
+    this.log('processAction', event)
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,
         context: this.context,
         value: event.data[this.pkFieldName()],
         data: event.data,
-        layout: this.processedLayout,
+        layout: this.layout,
       });
     }
   }
@@ -194,16 +198,12 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     for (const [key, value] of Object.entries(data)) {
       if (!utils.fastDeepEqual(objectConfig[key], value)) {
         change = true;
-        // this._mObject.setObjectConfig(this.context)
         objectConfig[key] = value;
       }
     }
     // s'il y a eu un changement on recalcule les layout
     if (change) {
       this._mLayout.reComputeLayout('set data object');
-      // setTimeout(() => {
-      // this._mLayout.reComputeHeight("set data object");
-      // });
     }
   }
 

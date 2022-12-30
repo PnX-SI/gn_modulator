@@ -11,6 +11,7 @@
       [layout]="layout.items"
       [data]="objectData"
       [parentContext]="objectContext"
+      (onAction)="processAction($event)"
     ></modules-layout>
   </ng-container>
 

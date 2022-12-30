@@ -87,6 +87,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     this.formGroup = this._mForm.initForm(this.layout, this._id, this.context);
 
     this.context.form_group_id = this._id;
+    this.context.direction = this.direction;
     this.context.appearance = this.layout.appearance;
     this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
     this.formGroup.valueChanges.subscribe((value) => {

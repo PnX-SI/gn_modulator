@@ -74,6 +74,9 @@ class DefinitionDynamic:
         tab_label: () => {},
         title_details: () => {},
         title_create_edit: () => {},
+        is_action_allowed: () => {},
+        geometry_type: () => {},
+        geometry_field_name: () => {},
     },
     context: {},
 }"""

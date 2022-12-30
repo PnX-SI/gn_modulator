@@ -1,5 +1,6 @@
 import utils from '../../utils';
 import * as L from '@librairies/leaflet';
+import { CustomMarkerIcon } from '@geonature_common/map/marker/marker.component';
 
 export default {
   waitForMap(mapId, maxRetries = null): Promise<L.map> {
@@ -177,6 +178,15 @@ export default {
           }
 
           map.isInitialized = true;
+
+          // init PM
+          const customIcon = L.icon({
+            iconUrl: 'assets/marker-icon.png',
+            shadowUrl: 'assets/marker-shadow.png',
+          });
+
+          var customMarker = map.pm.Toolbar.copyDrawControl('drawMarker',{name: "customMarker"})
+          customMarker.drawInstance.setOptions({markerStyle: {icon : customIcon}});
           resolve(map);
         }, 100);
       });

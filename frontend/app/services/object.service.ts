@@ -47,7 +47,7 @@ export class ModulesObjectService {
     let objectPageConfig: any = {};
     if (pageCode) {
       const pageConfig: any = this._mConfig.pageConfig(moduleCode, pageCode);
-      objectPageConfig = pageConfig.objects[objectCode] || {};
+      objectPageConfig = pageConfig.objects && pageConfig.objects[objectCode] || {};
     }
 
     let objectConfig = {
@@ -159,29 +159,71 @@ export class ModulesObjectService {
   }
 
   objectTitleDetails({ context, data }) {
+
     const du_label = this.objectConfigContext(context).display.du_label;
     const label_field_name = this.objectConfigContext(context).utils.label_field_name;
-    return `Détails ${du_label} ${data[label_field_name]}`;
+    return `Détails ${du_label} ${data && data[label_field_name]}`;
   }
 
   objectTitleCreateEdit({ context, data }) {
+    if(!(context.module_code && context.object_code)){
+      return
+    }
     const du_label = this.objectConfigContext(context).display.du_label;
     const du_nouveau_label = this.objectConfigContext(context).display.du_nouveau_label;
     const labelFieldName = this.objectConfigContext(context).utils.label_field_name;
     const pkFieldName = this.objectConfigContext(context).utils.pk_field_name;
-    const id = data[pkFieldName];
+    const id = data && data[pkFieldName];
     return !!id
       ? `Modification ${du_label} ${data[labelFieldName]}`
       : `Création ${du_nouveau_label}`;
   }
 
-  objectTabLabel({ data, context }) {
-    const nbTotal = data.nb_total;
-    const nbFiltered = data.nb_filtered;
-    const labels = this.objectLabel({ context });
+  objectTabLabel({ context }) {
+    const nbTotal = context.nb_total;
+    const nbFiltered = context.nb_filtered;
+    const labels = this.objectLabels({ context });
     return nbTotal
       ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
-      : `${utils.capitalize(labels)}`;
+      : `${utils.capitalize(labels)} (0)`;
+  }
+
+  objectIsActionAllowed({context, data}, action) {
+    const moduleCruvedAction = this._mConfig.moduleConfig(context.module_code).cruved[action];
+    const ownership = data && data.ownership;
+    if (! ownership) {
+      return true;
+    }
+    return moduleCruvedAction >= ownership;
+  }
+
+  objectGeometryFieldName({context}) {
+    console.log(context.module_code, context.object_code)
+    return this.geometryFieldName(context.module_code, context.object_code)
+  }
+
+  objectGeometryType({context}) {
+    console.log(context.module_code, context.object_code)
+    return this.geometryType(context.module_code, context.object_code)
+  }
+
+  utilsObject() {
+    return {
+      value: this.objectValue.bind(this),
+      prefilters: this.objectPreFilters.bind(this),
+      filters: this.objectFilters.bind(this),
+      config: this.objectConfigContext.bind(this),
+      schema_code: this.objectSchemaCode.bind(this),
+      label: this.objectLabel.bind(this),
+      du_label: this.objectDuLabel.bind(this),
+      labels: this.objectLabels.bind(this),
+      tab_label: this.objectTabLabel.bind(this),
+      title_details: this.objectTitleDetails.bind(this),
+      title_create_edit: this.objectTitleCreateEdit.bind(this),
+      is_action_allowed: this.objectIsActionAllowed.bind(this),
+      geometry_field_name: this.objectGeometryFieldName.bind(this),
+      geometry_type: this.objectGeometryType.bind(this),
+    };
   }
 
   processFormLayout(moduleCode, objectCode) {
@@ -357,50 +399,50 @@ export class ModulesObjectService {
     };
   }
 
-  onSubmit(moduleCode, objectCode, data, layout) {
-    if (!data) {
-      return;
-    }
+  // onSubmit(moduleCode, objectCode, data, layout) {
+  //   if (!data) {
+  //     return;
+  //   }
 
-    const fields = this.getFields(moduleCode, objectCode, layout);
+  //   const fields = this.getFields(moduleCode, objectCode, layout);
 
-    const processedData = utils.processData(data, layout);
+  //   const processedData = utils.processData(data, layout);
 
-    const id = this.objectId(moduleCode, objectCode, data);
+  //   const id = this.objectId(moduleCode, objectCode, data);
 
-    const request = id
-      ? this._mData.patch(moduleCode, objectCode, id, processedData, {
-          fields,
-        })
-      : this._mData.post(moduleCode, objectCode, processedData, {
-          fields,
-        });
+  //   const request = id
+  //     ? this._mData.patch(moduleCode, objectCode, id, processedData, {
+  //         fields,
+  //       })
+  //     : this._mData.post(moduleCode, objectCode, processedData, {
+  //         fields,
+  //       });
 
-    return request;
-  }
+  //   return request;
+  // }
 
   onDelete(moduleCode, objectCode, data) {
     return this._mData.delete(moduleCode, objectCode, this.objectId(moduleCode, objectCode, data));
   }
 
-  getFields(moduleCode, objectCode, layout) {
-    const fields = utils.getLayoutFields(layout);
+  // getFields(moduleCode, objectCode, layout) {
+  //   const fields = utils.getLayoutFields(layout);
 
-    if (
-      this.geometryFieldName(moduleCode, objectCode) &&
-      this.geometryFieldName(moduleCode, objectCode)
-    ) {
-      fields.push(this.geometryFieldName(moduleCode, objectCode));
-    }
+  //   // if (
+  //   //   this.geometryFieldName(moduleCode, objectCode) &&
+  //   //   this.geometryFieldName(moduleCode, objectCode)
+  //   // ) {
+  //   //   fields.push(this.geometryFieldName(moduleCode, objectCode));
+  //   // }
 
-    if (!fields.includes(this.pkFieldName(moduleCode, objectCode))) {
-      fields.push(this.pkFieldName(moduleCode, objectCode));
-    }
+  //   if (!fields.includes(this.pkFieldName(moduleCode, objectCode))) {
+  //     fields.push(this.pkFieldName(moduleCode, objectCode));
+  //   }
 
-    if (!fields.includes(this.labelFieldName(moduleCode, objectCode))) {
-      fields.push(this.labelFieldName(moduleCode, objectCode));
-    }
+  //   if (!fields.includes(this.labelFieldName(moduleCode, objectCode))) {
+  //     fields.push(this.labelFieldName(moduleCode, objectCode));
+  //   }
 
-    return fields;
-  }
+  //   return fields;
+  // }
 }

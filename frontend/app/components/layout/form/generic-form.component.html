@@ -14,6 +14,7 @@
           <modules-layout
             [data]="data"
             [parentContext]="context"
+            [direction]="computedLayout.direction"
             [layout]="computedLayout.items"
             (onAction)="processAction($event)"
           ></modules-layout>

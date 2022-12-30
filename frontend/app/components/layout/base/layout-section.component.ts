@@ -19,17 +19,17 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
     }
   }
 
-  // processItems() {
-  //   const items = this.layoutType == 'items' ? this.layout : this.layout.items || [];
+  processItems() {
+    const items = this.layoutType == 'items' ? this.layout : this.layout.items || [];
 
-  //   this.computedItems = items.map
-  //     ? items.map((item) =>
-  //         this._mLayout.computeLayout({
-  //           layout: item,
-  //           data: this.data,
-  //           context: this.context,
-  //         })
-  //       )
-  //     : [];
-  // }
+    this.computedItems = items.map
+      ? items.map((item) =>
+          this._mLayout.computeLayout({
+            layout: item,
+            data: this.data,
+            context: {...this.context, object_code: item.object_code },
+          })
+        )
+      : [];
+  }
 }

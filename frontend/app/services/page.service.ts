@@ -4,7 +4,10 @@ import { ModulesConfigService } from './config.service';
 import { ModulesRequestService } from './request.service';
 import { ModulesObjectService } from './object.service';
 import { ModulesLayoutService } from './layout.service';
+import { ModulesDataService } from './data.service';
+
 import { CommonService } from '@geonature_common/service/common.service';
+import utils from '../utils';
 
 @Injectable()
 export class ModulesPageService {
@@ -13,6 +16,7 @@ export class ModulesPageService {
   _mConfig: ModulesConfigService;
   _mRequest: ModulesRequestService;
   _mLayout: ModulesLayoutService;
+  _mData: ModulesDataService;
 
   _commonService: CommonService;
 
@@ -23,9 +27,35 @@ export class ModulesPageService {
     this._mLayout = this._injector.get(ModulesLayoutService);
     this._commonService = this._injector.get(CommonService);
     this._mRequest = this._injector.get(ModulesRequestService);
+    this._mData = this._injector.get(ModulesDataService);
+  }
+
+  onSubmit(context, data, layout) {
+    if (!data) {
+      return;
+    }
+
+    const fields = this._mLayout.getLayoutFields(context.module_code, context.object_code, layout);
+
+    const processedData = utils.processData(data, layout);
+
+    const id = this._mObject.objectId(context.module_code, context.object_code, data);
+
+    const request = id
+      ? this._mData.patch(context.module_code, context.object_code, id, processedData, {
+          fields,
+        })
+      : this._mData.post(context.module_code, context.object_code, processedData, {
+          fields,
+        });
+
+    return request;
+
   }
 
   processAction({ action, context, value = null, data = null, layout = null }) {
+
+    console.log('processAction')
     const moduleConfig = this._mConfig.moduleConfig(context.module_code);
     const pageConfig = moduleConfig.pages[context.page_code];
     const parentpageCode = pageConfig?.parent;
@@ -62,7 +92,7 @@ export class ModulesPageService {
 
     // TODO dans la config de generic form ????
     if (action == 'submit') {
-      this._mObject.onSubmit(context.module_code, context.object_code, data, layout).subscribe(
+      this.onSubmit(context, data, layout).subscribe(
         (data) => {
           this._mLayout.stopActionProcessing('');
           this._commonService.regularToaster('success', `La requete a bien été effectué`);
@@ -82,6 +112,10 @@ export class ModulesPageService {
     if (action == 'delete') {
       this._mObject.onDelete(context.module_code, context.object_code, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
+        if (objectConfig.value == this._mObject.objectId(context.module_code, context.object_code, data)) {
+          delete objectConfig.value;
+        }
+
         this._mLayout.closeModals();
         this._mLayout.refreshData(context.object_code);
 
@@ -168,7 +202,7 @@ export class ModulesPageService {
     // 2) l'utilisateur à t'il le droit
 
     // - les droit de l'utilisateur pour ce module et pour un action (CRUVED)
-    const cruvedAction = moduleConfig.cruved[action];
+    const moduleCruvedAction = moduleConfig.cruved[action];
 
     // - on compare ce droit avec l'appartenance de la données
     // la possibilité d'action doit être supérieure à l'appartenance
@@ -180,7 +214,7 @@ export class ModulesPageService {
     //   (ce qui a été testé précédemment) donc à true
     //   par exemple pour les actions d'export
 
-    const testUserCruved = ownership ? cruvedAction >= ownership : true;
+    const testUserCruved = ownership ? moduleCruvedAction >= ownership : true;
 
     if (!testUserCruved) {
       const msgDroitsInsuffisants = {

@@ -7,5 +7,49 @@ layout:
   direction: row
   items:
     - type: object
-      display: form
-      key: site
+      object_code: site
+      items:
+        type: form
+        direction: row
+        items:
+          - type: map
+            # key: __f__o.geometry_field_name(x)
+            edit: true
+            # geometry_type: o.geometry_type(x)
+            # gps: true
+            # hidden: __f__!o.geometry_field_name(x)
+            # zoom: 12
+          - items:
+            - title: __f__o.title_create_edit(x)
+            - items:
+              - code
+              - name
+              - description
+              - ownership
+            - direction: row
+              items:
+                - flex: '0'
+                  type: button
+                  color: primary
+                  title: Valider
+                  icon: done
+                  description: Enregistrer le contenu du formulaire
+                  action: submit
+                  disabled: __f__!(formGroup.valid )
+                - flex: '0'
+                  type: button
+                  color: primary
+                  title: Annuler
+                  icon: refresh
+                  description: "Annuler lédition"
+                  action: cancel
+                - flex: '0'
+                  type: button
+                  color: warn
+                  title: Supprimer
+                  icon: delete
+                  description: Supprimer le passage à faune
+                  action:
+                    type: modal
+                    modal_name: delete
+

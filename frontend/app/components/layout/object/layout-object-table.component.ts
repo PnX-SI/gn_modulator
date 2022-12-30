@@ -91,7 +91,6 @@ export class ModulesLayoutObjectTableComponent
     }
 
     if (action == 'selected') {
-      console.log('selected', value);
       this.setObject({ value });
     }
   };
@@ -201,7 +200,7 @@ export class ModulesLayoutObjectTableComponent
     utils.waitForElement('counter', document.querySelector(`#${this.tableId}`)).then(
       (counterElement) => {
         // (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
-        (counterElement as any).innerHTML = `<b>${this.data.filtered} /  ${this.data.total}</b>`;
+        (counterElement as any).innerHTML = `<b>${this.context.nb_filtered || 0} /  ${this.context.nb_total || 0}</b>`;
       },
       (error) => {
         console.error('waitForElement erreur');

@@ -5,47 +5,19 @@ description: test sur les object (nécéssite monitoring)
 
 
 layout:
-  title: Test object
+  title: __f__`Test object ${o.tab_label(x)}`
   object_code: site
-  value: 15
   items:
-    - type: object
-      items:
-        - direction: row
-          items:
-            - title: '__f__o.title_details(x)'
-              items:
-                - type: message
-                  json: '__f__data'
-                - id_site
-
-                - code
-                # - description
-            - title: '__f__o.title_create_edit(x)'
-              type: form
-              items:
-                - type: message
-                  json: __f__formGroup.value
-                - id_site
-                - code
-
-                # - hiden: true
-                  # items:
-                # - geom
-                # - code
-                # - description
-
-
-  # direction: row
-  # items:
-    # - type: map
-    #   items:
-    #     type: object
-    #     display: geojson
-    #     object_code: site
-    # - type: object
-    #   display: table
-    #   object_code: site
+  - direction: row
+    items:
+      - type: map
+        items:
+          type: object
+          display: geojson
+          object_code: site
+      - type: object
+        display: table
+        object_code: site
 
 context:
   module_code: m_monitoring

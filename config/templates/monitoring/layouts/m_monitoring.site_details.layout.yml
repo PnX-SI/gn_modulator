@@ -14,20 +14,34 @@ layout:
         - type: object
           display: geojson
           object_code: site
-          value: 1
     - items:
         - type: breadcrumbs
           flex: "0"
         - object_code: site
           type: object
-          display: properties
+          items:
+            - title: __f__o.title_details(x)
+              items:
+                - code
+                - name
+                - description
+                - ownership
+                - type: button
+                  color: primary
+                  title: Éditer
+                  description: __f__o.title_create_edit(x)
+                  action: edit
+                  hidden: __f__!o.is_action_allowed(x, 'U')
+                  flex: '0'
+
+
+
         - display: tabs
           items:
-            - label: "__f__`Visites (${data.visit.filtered}/${data.visit.total})`"
+            - label: "__f__o.tab_label(x)"
               object_code: visit
               items:
-                - object_code: visit
-                  action: create
+                - action: create
                   type: button
                   icon: add
                   color: primary
@@ -35,3 +49,4 @@ layout:
                   params: "__f__{ return {id_site: data.site.value}}"
                 - type: object
                   display: table
+                  hidden: __f__!context.nb_total;

@@ -72,11 +72,11 @@ export class ModulesLayoutObjectGeoJSONComponent
       const currentZoom = this._mapService.getZoom(this.context.map_id);
       const currentMapBounds = this._mapService.getMapBounds(this.context.map_id);
 
-      const layerStyle = this.computedLayout.style || this.data.map?.style;
-      const paneName = this.computedLayout.pane || this.data.map?.pane || `P1`;
-      const bZoom = this.computedLayout.zoom || this.data.map?.zoom;
+      const layerStyle = this.computedLayout.style || this.context.map?.style;
+      const paneName = this.computedLayout.pane || this.context.map?.pane || `P1`;
+      const bZoom = this.computedLayout.zoom || this.context.map?.zoom;
 
-      const bring_to_front = this.computedLayout.bring_to_front || this.data.map?.bring_to_front;
+      const bring_to_front = this.computedLayout.bring_to_front || this.context.map?.bring_to_front;
       this.mapData = {
         geojson,
         layerOptions: {
