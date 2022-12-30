@@ -530,6 +530,7 @@ export class ModulesLayoutComponent implements OnInit {
       action: this.layout.action,
       data: this.data,
       layout: this.computedLayout,
+      context: this.context,
     });
   }
 
@@ -537,7 +538,6 @@ export class ModulesLayoutComponent implements OnInit {
     if (event.type == 'data-change') {
       this.computeLayout();
     }
-    this.log('processAction', event);
     this.emitAction(event);
   }
 
@@ -561,7 +561,7 @@ export class ModulesLayoutComponent implements OnInit {
       filters: this.context.filters,
       prefilters: this.context.prefilters,
       form_group_id: this.context.form_group_id,
-      debug: this.context.debug
+      debug: this.context.debug,
     };
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.layout);

@@ -4,7 +4,6 @@ import { ModulesLayoutService } from './layout.service';
 import * as L from '@librairies/leaflet';
 import '@librairies/@geoman-io/leaflet-geoman-free';
 
-
 L.PM.initialize({ optIn: true }); // Property 'PM' does not exist on type 'typeof import(".../node_modules/@types/leaflet/index")'.ts(2339)
 
 import mapMethods from './map';

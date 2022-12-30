@@ -27,7 +27,7 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
           this._mLayout.computeLayout({
             layout: item,
             data: this.data,
-            context: {...this.context, object_code: item.object_code },
+            context: { ...this.context, object_code: item.object_code },
           })
         )
       : [];

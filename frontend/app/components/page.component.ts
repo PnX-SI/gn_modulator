@@ -83,15 +83,13 @@ export class PageComponent implements OnInit {
         mergeMap((queryParams) => {
           this.routeQueryParams = queryParams;
           this.debug = this.routeQueryParams.debug != undefined;
-          setTimeout(()=> this._mLayout.reComputeLayout(''), 100);
+          setTimeout(() => this._mLayout.reComputeLayout(''), 200);
           this.moduleParams = this._mConfig.moduleConfig(this.moduleCode).params || {};
           this.params = {
             ...this.routeQueryParams,
             ...this.routeParams,
             ...this.moduleParams,
           };
-
-
 
           this._mContext.initContext({
             module_code: this.moduleCode,
@@ -131,15 +129,14 @@ export class PageComponent implements OnInit {
   /**
    * TODO clarifier les process actions un peu partout
    */
-  // processAction(event) {
-  //   const data = event.layout.key ? event.data[event.layout.key] : event.data;
-  //   if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
-  //     this._mPage.processAction({
-  //       action: event.action,
-  //       context: this.context,
-  //       data: data,
-  //       layout: event.layout,
-  //     });
-  //   }
-  // }
+  processAction(event) {
+    if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
+      this._mPage.processAction({
+        action: event.action,
+        context: event.context,
+        data: event.data,
+        layout: event.layout,
+      });
+    }
+  }
 }

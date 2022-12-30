@@ -35,7 +35,7 @@ export class ModulesPageService {
       return;
     }
 
-    const fields = this._mLayout.getLayoutFields(context.module_code, context.object_code, layout);
+    const fields = this._mLayout.getLayoutFields(layout, context, data);
 
     const processedData = utils.processData(data, layout);
 
@@ -50,23 +50,18 @@ export class ModulesPageService {
         });
 
     return request;
-
   }
 
   processAction({ action, context, value = null, data = null, layout = null }) {
-
-    console.log('processAction')
     const moduleConfig = this._mConfig.moduleConfig(context.module_code);
     const pageConfig = moduleConfig.pages[context.page_code];
     const parentpageCode = pageConfig?.parent;
     const objectConfig = this._mObject.objectConfigContext({ context });
 
-    console.log('processAction', action);
     if (['details', 'edit', 'create', 'list'].includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
       const pageCode = `${context.object_code}_${action}`;
-      console.log(pageCode, moduleConfig.pages);
       if (!Object.keys(moduleConfig.pages).includes(pageCode)) {
         this._commonService.regularToaster(
           'error',
@@ -112,7 +107,10 @@ export class ModulesPageService {
     if (action == 'delete') {
       this._mObject.onDelete(context.module_code, context.object_code, data).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
-        if (objectConfig.value == this._mObject.objectId(context.module_code, context.object_code, data)) {
+        if (
+          objectConfig.value ==
+          this._mObject.objectId(context.module_code, context.object_code, data)
+        ) {
           delete objectConfig.value;
         }
 
@@ -120,7 +118,7 @@ export class ModulesPageService {
         this._mLayout.refreshData(context.object_code);
 
         if (pageConfig && pageConfig.type != 'details' && !pageConfig.root) {
-          this._mRoute.navigateToPage(context.module_code, parentpageCode, data); // TODO params
+          this._mRoute.navigateToPage(context.module_code, parentpageCode, data, false); // TODO params
         } else {
         }
       });

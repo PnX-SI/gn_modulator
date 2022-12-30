@@ -22,9 +22,21 @@ layout:
           - items:
             - title: __f__o.title_create_edit(x)
             - items:
+              - hidden: true
+                items:
+                - id_site
               - code
               - name
               - description
+              - key: id_site_category
+                type: list_form
+                title: Catégorie de site
+                object_code: category
+                module_code: m_monitoring
+              - key: id_nomenclature_type_site
+                type: list_form
+                title: Type de site
+                object_code: ref_nom.nomenclature
               - ownership
             - direction: row
               items:
@@ -49,7 +61,24 @@ layout:
                   title: Supprimer
                   icon: delete
                   description: Supprimer le passage à faune
+                  hidden: __f__!o.is_action_allowed(x, 'D')
                   action:
                     type: modal
                     modal_name: delete
+                - type: modal
+                  modal_name: delete
+                  title: Confirmer la suppression de l'élément
+                  direction: row
+                  items:
+                    - type: button
+                      title: Suppression
+                      action: delete
+                      icon: delete
+                      color: warn
+                    - type: button
+                      title: Annuler
+                      action: close
+                      icon: refresh
+                      color: primary
+
 

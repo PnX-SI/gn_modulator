@@ -47,7 +47,7 @@ export class ModulesObjectService {
     let objectPageConfig: any = {};
     if (pageCode) {
       const pageConfig: any = this._mConfig.pageConfig(moduleCode, pageCode);
-      objectPageConfig = pageConfig.objects && pageConfig.objects[objectCode] || {};
+      objectPageConfig = (pageConfig.objects && pageConfig.objects[objectCode]) || {};
     }
 
     let objectConfig = {
@@ -159,24 +159,23 @@ export class ModulesObjectService {
   }
 
   objectTitleDetails({ context, data }) {
-
     const du_label = this.objectConfigContext(context).display.du_label;
     const label_field_name = this.objectConfigContext(context).utils.label_field_name;
     return `Détails ${du_label} ${data && data[label_field_name]}`;
   }
 
   objectTitleCreateEdit({ context, data }) {
-    if(!(context.module_code && context.object_code)){
-      return
+    if (!(context.module_code && context.object_code)) {
+      return;
     }
     const du_label = this.objectConfigContext(context).display.du_label;
-    const du_nouveau_label = this.objectConfigContext(context).display.du_nouveau_label;
+    const d_un_nouveau_label = this.objectConfigContext(context).display.d_un_nouveau_label;
     const labelFieldName = this.objectConfigContext(context).utils.label_field_name;
     const pkFieldName = this.objectConfigContext(context).utils.pk_field_name;
     const id = data && data[pkFieldName];
     return !!id
       ? `Modification ${du_label} ${data[labelFieldName]}`
-      : `Création ${du_nouveau_label}`;
+      : `Création ${d_un_nouveau_label}`;
   }
 
   objectTabLabel({ context }) {
@@ -188,23 +187,21 @@ export class ModulesObjectService {
       : `${utils.capitalize(labels)} (0)`;
   }
 
-  objectIsActionAllowed({context, data}, action) {
+  objectIsActionAllowed({ context, data }, action) {
     const moduleCruvedAction = this._mConfig.moduleConfig(context.module_code).cruved[action];
     const ownership = data && data.ownership;
-    if (! ownership) {
+    if (!ownership) {
       return true;
     }
     return moduleCruvedAction >= ownership;
   }
 
-  objectGeometryFieldName({context}) {
-    console.log(context.module_code, context.object_code)
-    return this.geometryFieldName(context.module_code, context.object_code)
+  objectGeometryFieldName({ context }) {
+    return this.geometryFieldName(context.module_code, context.object_code);
   }
 
-  objectGeometryType({context}) {
-    console.log(context.module_code, context.object_code)
-    return this.geometryType(context.module_code, context.object_code)
+  objectGeometryType({ context }) {
+    return this.geometryType(context.module_code, context.object_code);
   }
 
   utilsObject() {
@@ -424,25 +421,4 @@ export class ModulesObjectService {
   onDelete(moduleCode, objectCode, data) {
     return this._mData.delete(moduleCode, objectCode, this.objectId(moduleCode, objectCode, data));
   }
-
-  // getFields(moduleCode, objectCode, layout) {
-  //   const fields = utils.getLayoutFields(layout);
-
-  //   // if (
-  //   //   this.geometryFieldName(moduleCode, objectCode) &&
-  //   //   this.geometryFieldName(moduleCode, objectCode)
-  //   // ) {
-  //   //   fields.push(this.geometryFieldName(moduleCode, objectCode));
-  //   // }
-
-  //   if (!fields.includes(this.pkFieldName(moduleCode, objectCode))) {
-  //     fields.push(this.pkFieldName(moduleCode, objectCode));
-  //   }
-
-  //   if (!fields.includes(this.labelFieldName(moduleCode, objectCode))) {
-  //     fields.push(this.labelFieldName(moduleCode, objectCode));
-  //   }
-
-  //   return fields;
-  // }
 }

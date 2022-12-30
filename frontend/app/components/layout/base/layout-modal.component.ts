@@ -43,7 +43,7 @@ export class ModulesLayoutModalComponent extends ModulesLayoutComponent implemen
   initModal() {
     if (!this.modalOpenSubscription) {
       this._mLayout.initModal(this.computedLayout.modal_name);
-      this.modalOpenSubscription = this._mLayout.modals[this.computedLayout.modal_name].subscribe(
+      this.modalOpenSubscription = this._mLayout._modals[this.computedLayout.modal_name].subscribe(
         (data) => {
           this.data = data;
           this.openDialog();

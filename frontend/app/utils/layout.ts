@@ -24,7 +24,6 @@ const getLayoutType = (layout) => {
   return layoutType;
 };
 
-
 const processData = (data, layout) => {
   for (let elem of flatLayout(layout)) {
     if (elem.key && elem.type == 'number') {

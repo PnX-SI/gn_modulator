@@ -117,7 +117,7 @@ export class ModulesRouteService {
     });
   }
 
-  modulePageUrl(moduleCode, pageCode, params) {
+  modulePageUrl(moduleCode, pageCode, params, query = true) {
     const moduleConfig = this._mConfig.moduleConfig(moduleCode);
     const pageConfig = moduleConfig.pages[pageCode];
     if (!pageConfig) {
@@ -134,7 +134,7 @@ export class ModulesRouteService {
     for (const [key, value] of Object.entries(params || {})) {
       if (pageConfig.url.includes(`:${key}`)) {
         url = url.replace(`:${key}`, value);
-      } else if (![null, undefined].includes(value as any)) {
+      } else if (![null, undefined].includes(value as any) && query) {
         queryParams.push(`${key}=${value}`);
       }
     }
@@ -146,8 +146,8 @@ export class ModulesRouteService {
     return `/modules/${moduleConfig.code.toLowerCase()}/${url}`;
   }
 
-  navigateToPage(moduleCode, pageCode, params) {
-    const url = this.modulePageUrl(moduleCode, pageCode, params);
+  navigateToPage(moduleCode, pageCode, params, query = true) {
+    const url = this.modulePageUrl(moduleCode, pageCode, params, query);
 
     if (undefined == url) {
       return;

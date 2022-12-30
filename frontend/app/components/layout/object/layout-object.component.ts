@@ -108,7 +108,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   processTotalFiltered(response) {
     if (![null, undefined].includes(response.total)) {
-      this.setObject({nb_total: response.total, nb_filtered: response.filtered})
+      this.setObject({ nb_total: response.total, nb_filtered: response.filtered });
       this._mLayout.reComputeLayout('totalfilter');
     }
   }
@@ -155,10 +155,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       return of(null);
     }
 
-    // const fields = this._mLayout.getLayoutFields(this.moduleCode(), this.objectCode(), this.layout.items);
     const fields = this._mLayout.getLayoutFields(this.layout.items, this.context, null);
-
-    console.log(fields)
 
     return this._mData.getOne(this.moduleCode(), this.objectCode(), value, {
       fields,
@@ -168,7 +165,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // process des actions
   // TODO à clarifier avec page.element ??
   processAction(event) {
-    this.log('processAction', event)
+    console.log('po', event);
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,

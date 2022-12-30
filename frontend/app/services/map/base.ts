@@ -186,8 +186,8 @@ export default {
             iconAnchor: [12, 41],
           });
 
-          var customMarker = map.pm.Toolbar.copyDrawControl('drawMarker',{name: "customMarker"})
-          customMarker.drawInstance.setOptions({markerStyle: {icon : customIcon}});
+          var customMarker = map.pm.Toolbar.copyDrawControl('drawMarker', { name: 'customMarker' });
+          customMarker.drawInstance.setOptions({ markerStyle: { icon: customIcon } });
           resolve(map);
         }, 100);
       });

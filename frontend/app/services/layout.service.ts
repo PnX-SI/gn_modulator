@@ -26,7 +26,7 @@ export class ModulesLayoutService {
   $reDrawElem = new Subject();
   $refreshData = new Subject();
   $stopActionProcessing = new Subject();
-  modals = {};
+  _modals = {};
   $closeModals = new Subject();
 
   getFormControl(formId) {
@@ -38,9 +38,17 @@ export class ModulesLayoutService {
   }
 
   initModal(modalName) {
-    if (!this.modals[modalName]) {
-      this.modals[modalName] = new Subject();
+    if (!this._modals[modalName]) {
+      this._modals[modalName] = new Subject();
     }
+  }
+
+  openModal(modalName, data) {
+    this._modals[modalName] && this._modals[modalName].next(data);
+  }
+
+  closeModals() {
+    this.$closeModals.next();
   }
 
   initUtils() {
@@ -52,15 +60,6 @@ export class ModulesLayoutService {
 
     this._utilsObject = this._mObject.utilsObject();
   }
-
-  openModal(modalName, data) {
-    this.modals[modalName] && this.modals[modalName].next(data);
-  }
-
-  closeModals() {
-    this.$closeModals.next();
-  }
-
   getLayoutFromCode(layoutCode): any {
     return this._mConfig.layout(layoutCode);
   }
@@ -185,12 +184,16 @@ export class ModulesLayoutService {
     }
 
     if (this.isStrFunction(element)) {
-      return this.evalLayoutElement({
-        element: this.evalFunction(element),
-        context,
-        layout,
-        data,
-      });
+      try {
+        return this.evalLayoutElement({
+          element: this.evalFunction(element),
+          context,
+          layout,
+          data,
+        });
+      } catch (exeption) {
+        console.error(`Erreur '${exeption}' dans l'évaluation de la fonction\n${element}\n`);
+      }
     }
     return element;
   }
@@ -237,7 +240,7 @@ export class ModulesLayoutService {
       layout: layout,
       data,
       context,
-    })
+    });
 
     if (!key) {
       return [];

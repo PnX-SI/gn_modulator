@@ -22,6 +22,9 @@ layout:
           items:
             - title: __f__o.title_details(x)
               items:
+                - hidden: true
+                  items:
+                    - id_site
                 - code
                 - name
                 - description
@@ -32,9 +35,7 @@ layout:
                   description: __f__o.title_create_edit(x)
                   action: edit
                   hidden: __f__!o.is_action_allowed(x, 'U')
-                  flex: '0'
-
-
+                  flex: "0"
 
         - display: tabs
           items:
@@ -45,8 +46,9 @@ layout:
                   type: button
                   icon: add
                   color: primary
+                  description: __f__o.title_create_edit(x)
                   flex: "0"
-                  params: "__f__{ return {id_site: data.site.value}}"
+                  params: "__f__{ return {id_site: context.params.id_site}}"
                 - type: object
                   display: table
                   hidden: __f__!context.nb_total;
