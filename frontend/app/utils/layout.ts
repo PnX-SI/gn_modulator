@@ -12,7 +12,7 @@ const getLayoutType = (layout) => {
     ? null
     : Array.isArray(layout)
     ? 'items'
-    : ['array', 'dict'].includes(layout.type)
+    : ['array', 'dict', 'map'].includes(layout.type)
     ? layout.type
     : typeof layout == 'string' || layout.key
     ? 'key'

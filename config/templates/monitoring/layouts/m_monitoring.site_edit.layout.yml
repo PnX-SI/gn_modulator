@@ -13,12 +13,12 @@ layout:
         direction: row
         items:
           - type: map
-            # key: __f__o.geometry_field_name(x)
+            key: __f__o.geometry_field_name(x)
             edit: true
             # geometry_type: o.geometry_type(x)
-            # gps: true
-            # hidden: __f__!o.geometry_field_name(x)
-            # zoom: 12
+            gps: true
+            hidden: __f__!o.geometry_field_name(x)
+            zoom: 12
           - items:
             - title: __f__o.title_create_edit(x)
             - items:
