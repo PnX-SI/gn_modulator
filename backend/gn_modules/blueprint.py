@@ -90,3 +90,15 @@ def api_layout():
     return jsonify(
         LayoutMethods.get_layouts(layout_search_code=layout_search_code, as_dict=as_dict)
     )
+
+
+@blueprint.route("/schemas/", methods=["GET"])
+def api_schemas():
+    """
+    renvoie tous les schémas
+    """
+
+    return {
+        schema_code: {"properties": SchemaMethods(schema_code).properties()}
+        for schema_code in SchemaMethods.schema_codes()
+    }

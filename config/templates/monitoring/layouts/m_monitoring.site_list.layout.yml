@@ -11,8 +11,21 @@ layout:
         type: object
         display: geojson
         object_code: site
+        items:
+          - name
+          - code
+          - description
+          - nomenclature_type_site.label_fr
+          - category.name
     - type: object
       display: table
+      sort: last_visit_date_min-
       object_code: site
+      items:
+        - code
+        - name
+        - category.name
+        - nb_visits
+        - last_visit_date_min
 context:
   module_code: m_monitoring

@@ -1,17 +1,19 @@
 import { Injectable, Injector } from '@angular/core';
 import { ModulesDataService } from './data.service';
 import { ModulesConfigService } from './config.service';
+import { ModulesSchemaService } from './schema.service';
 import utils from '../utils';
 @Injectable()
 export class ModulesObjectService {
   _mData: ModulesDataService;
   _mConfig: ModulesConfigService;
-
+  _mSchema: ModulesSchemaService;
   _cacheObjectConfig = {};
 
   constructor(private _injector: Injector) {
     this._mData = this._injector.get(ModulesDataService);
     this._mConfig = this._injector.get(ModulesConfigService);
+    this._mSchema = this._injector.get(ModulesSchemaService);
   }
 
   /** renvoie la configuration d'un object en fonction de
@@ -22,6 +24,12 @@ export class ModulesObjectService {
    */
   objectConfig(moduleCode, objectCode, pageCode = null, params: any = null) {
     // config provenant du module
+
+    const cacheKey = this.objectConfigCacheKey(moduleCode, objectCode, pageCode, params);
+
+    if (this._cacheObjectConfig[cacheKey]) {
+      return this._cacheObjectConfig[cacheKey];
+    }
 
     if (!(moduleCode && objectCode)) {
       return {};
@@ -40,6 +48,7 @@ export class ModulesObjectService {
     }
 
     if (!(pageCode || params)) {
+      this._cacheObjectConfig[cacheKey] = objectModuleConfig;
       return objectModuleConfig;
     }
 
@@ -56,6 +65,7 @@ export class ModulesObjectService {
     };
 
     if (!params) {
+      this._cacheObjectConfig[cacheKey] = objectConfig;
       return objectConfig;
     }
 
@@ -64,6 +74,7 @@ export class ModulesObjectService {
       objectConfig = utils.replace(objectConfig, `:${paramKey}`, paramValue);
     }
 
+    this._cacheObjectConfig[cacheKey] = objectConfig;
     return objectConfig;
   }
 
@@ -72,31 +83,17 @@ export class ModulesObjectService {
   }
 
   objectConfigContext(context) {
-    const cacheKey = this.objectConfigCacheKey(
+    return this.objectConfig(
       context.module_code,
       context.object_code,
       context.page_code,
       context.params
     );
-    if (!this._cacheObjectConfig[cacheKey]) {
-      this._cacheObjectConfig[cacheKey] = utils.copy(
-        this.objectConfig(
-          context.module_code,
-          context.object_code,
-          context.page_code,
-          context.params
-        )
-      );
-    }
-    return this._cacheObjectConfig[cacheKey];
   }
 
   property(context, key) {
-    const objectConfig = this.objectConfigContext(context);
-    return {
-      key,
-      ...objectConfig.properties[key],
-    };
+    const schemaCode = this.objectConfigContext(context).schema_code;
+    return this._mSchema.property(schemaCode, key);
   }
 
   setObjectConfig(context, config) {

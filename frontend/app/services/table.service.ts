@@ -122,9 +122,28 @@ export class ModulesTableService {
     return [...this.columnsAction(context), ...this.columns(layout, context)];
   }
 
+  columnLayoutItem(layoutItem, context) {
+    if (typeof layoutItem == 'string') {
+      const property = this._mObject.property(context, layoutItem);
+      let title = layoutItem.includes('.') ? property.parent.title : property.title;
+      return {
+        field: layoutItem,
+        title,
+        headerFilter: true,
+        type: property.type,
+      };
+    }
+
+    // TODO complétenter avec la property ???
+    return layoutItem;
+  }
+
   columns(layout, context) {
     const objectConfig = this._mObject.objectConfigContext(context);
-    const columns = objectConfig.table.columns;
+    // const columns = objectConfig.table.columns;
+
+    const columns = layout.items.map((item) => this.columnLayoutItem(item, context));
+
     return columns.map((col) => {
       const column = utils.copy(col);
       column.headerFilter = column.headerFilter && layout.display_filters;

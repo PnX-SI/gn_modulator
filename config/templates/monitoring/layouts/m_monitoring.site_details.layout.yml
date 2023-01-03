@@ -25,10 +25,10 @@ layout:
                 - hidden: true
                   items:
                     - id_site
+                    - ownership
                 - code
                 - name
                 - description
-                - ownership
                 - type: button
                   color: primary
                   title: Éditer

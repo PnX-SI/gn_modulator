@@ -23,6 +23,7 @@ export class ModulesConfigService {
     return forkJoin({
       config: this.getModulesConfig(),
       layout: this.getLayouts(),
+      schema: this.getSchemas(),
     });
   }
 
@@ -69,13 +70,28 @@ export class ModulesConfigService {
     return this._config['layouts'][layoutCode];
   }
 
+  schema(schemaCode) {
+    return this._config['schemas'][schemaCode];
+  }
+
+  getSchemas() {
+    return Object.keys(this._config.schemas).length
+      ? of(this._config.schemas)
+      : this._mRequest.request('get', `${this.backendModuleUrl()}/schemas/?as_dict=true`).pipe(
+          mergeMap((schemas) => {
+            this._config.schemas = schemas;
+            return of(this._config.schemas);
+          })
+        );
+  }
+
   getLayouts() {
     return Object.keys(this._config.layouts).length
-      ? of(this._config.layout)
+      ? of(this._config.layouts)
       : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts/?as_dict=true`).pipe(
           mergeMap((layouts) => {
             this._config.layouts = layouts;
-            return of(this._config.layout);
+            return of(this._config.layouts);
           })
         );
   }

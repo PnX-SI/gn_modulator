@@ -139,13 +139,13 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   popupHTML(properties) {
+    const fields = this.popupFields();
     const label = `<b>${this.utils.capitalize(this.objectConfig().display.label)}</b>: ${
       properties[this.labelFieldName()]
     }`;
-    const popupFields = this.objectConfig().map.popup_fields || [];
     var propertiesHTML = '';
     propertiesHTML += '<ul>\n';
-    propertiesHTML += popupFields
+    propertiesHTML += fields
       .filter((fieldKey) => fieldKey != 'ownership')
       .map((fieldKey) => {
         // gerer les '.'
@@ -172,9 +172,19 @@ export class ModulesLayoutObjectGeoJSONComponent
     return html;
   }
 
+  popupFields(): Array<any> {
+    const fields = this.computedLayout.items;
+    if (!fields) {
+      return [this.labelFieldName()];
+    }
+    if (!fields.include('ownership')) {
+      fields.push('ownership');
+    }
+  }
+
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
-    const fields = this.objectConfig().map.popup_fields;
+    const fields = this.popupFields(); // ?? computedItems
     fields.push('ownership');
     this._mData
       .getOne(this.moduleCode(), this.objectCode(), value, { fields })

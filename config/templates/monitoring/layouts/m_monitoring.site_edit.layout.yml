@@ -33,10 +33,7 @@ layout:
                 title: Catégorie de site
                 object_code: category
                 module_code: m_monitoring
-              - key: id_nomenclature_type_site
-                type: list_form
-                title: Type de site
-                object_code: ref_nom.nomenclature
+              - id_nomenclature_type_site
               - ownership
             - direction: row
               items:

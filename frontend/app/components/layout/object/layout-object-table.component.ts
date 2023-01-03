@@ -56,7 +56,7 @@ export class ModulesLayoutObjectTableComponent
       pagination: 'remote',
       headerFilterLiveFilterDelay: 600,
       ajaxSorting: true,
-      initialSort: this._mTable.processObjectSorters(this.objectConfig()?.table.sort),
+      initialSort: this._mTable.processObjectSorters(this.computedLayout.sort),
       selectable: 1,
       columnMinWidth: 20,
       footerElement: `<span class="counter" id=counter></span>`,

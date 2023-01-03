@@ -4,90 +4,66 @@ title: Schema site
 description: Définition du schema des sites de monitoring
 
 meta:
-    sql_processing: true
-    sql_schema_dot_table: m_monitoring.t_sites
-    genre: M
-    label: site
-    label_field_name: name
-    geometry_field_name: geom
-    unique:
-        - code
-    check_cruved: true
-map:
-    popup_fields:
-        - name
-        - code
-        - description
-        - nomenclature_type_site.label_fr
-        - category.name
-table:
-    columns:
-        - category.name
-        - code
-        - name
-        - nb_visits
-        - last_visit_date_min
-    sort: last_visit_date_min-
+  sql_processing: true
+  sql_schema_dot_table: m_monitoring.t_sites
+  genre: M
+  label: site
+  label_field_name: name
+  geometry_field_name: geom
+  unique:
+    - code
+  check_cruved: true
 required:
+  - code
+  - name
+  - geom
+form:
+  layout:
+    - hidden: true
+      items:
+        - id_site
+        - geom
+        - key: id_digitiser
+          default: __f__context.current_user?.id_role
     - code
     - name
-    - geom
-form:
-    layout:
-        -
-            hidden: true
-            items:
-                - id_site
-                - geom
-                -
-                    key: id_digitiser
-                    default: __f__context.current_user?.id_role
-        - code
-        - name
-        -
-            key: id_digitiser
-            default: __f__context.current_user?.id_role
-            hidden: true
-        -
-            key: id_site_category
+    - key: id_digitiser
+      default: __f__context.current_user?.id_role
+      hidden: true
+    - key: id_site_category
+      type: list_form
+      title: Catégorie de site
+      object_code: category
+      module_code: m_monitoring
+    - key: id_nomenclature_type_site
+      type: list_form
+      title: Type de site
+      object_code: ref_nom.nomenclature
+    - display: fieldset
+      type: array
+      key: actors
+      items:
+        direction: row
+        items:
+          - key: id_role
             type: list_form
-            title: Catégorie de site
-            object_code: category
-            module_code: m_monitoring
-        -
-            key: id_nomenclature_type_site
+          - key: id_organism
             type: list_form
-            title: Type de site
-            object_code: ref_nom.nomenclature
-        -
-            display: fieldset
-            type: array
-            key: actors
-            items:
-                direction: row
-                items:
-                    -
-                        key: id_role
-                        type: list_form
-                    -
-                        key: id_organism
-                        type: list_form
-                    -
-                        key: id_nomenclature_type_actor
-                        type: list_form
+          - key: id_nomenclature_type_actor
+            type: list_form
 details:
-    layout:
-        - code
-        - name
-        - type_site
-        - 'digitiser.nom_complet '
-        - inventor.nom_complet
-        - nomenclature_type_site.label_fr
-        - category.name
-        - label_regions
-        - label_departements
-        - label_communes
-        - label_infrastructures
+  layout:
+    - code
+    - name
+    - type_site
+    - digitiser.nom_complet
+    - inventor.nom_complet
+    - nomenclature_type_site.label_fr
+    - category.name
+    - label_regions
+    - label_departements
+    - label_communes
+    - label_infrastructures
 
 properties: !include m_monitoring.site-properties.yml
 filter_defs: !include m_monitoring.site-filter_defs.yml
