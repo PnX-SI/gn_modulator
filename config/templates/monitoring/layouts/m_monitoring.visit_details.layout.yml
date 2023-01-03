@@ -14,6 +14,9 @@ layout:
         items:
           - title:  __f__o.title_details(x)
             items:
+              - hidden: true
+                items:
+                  - id_visit
               - site.name
               - module.module_label
               - date_min

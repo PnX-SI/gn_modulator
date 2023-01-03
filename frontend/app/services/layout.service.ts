@@ -137,9 +137,13 @@ export class ModulesLayoutService {
         };
       }
 
-      // patch title
-      if (property.parent) {
+      // patch title si parent && label_field_name
+      if (
+        property.parent &&
+        property.key == this._mObject.labelFieldName(context.module_code, context.object_code)
+      ) {
         property.title = property.parent.title;
+        property.description = property.parent.description;
       }
 
       return property;
@@ -207,7 +211,10 @@ export class ModulesLayoutService {
           data,
         });
       } catch (exeption) {
-        console.error(`Erreur '${exeption}' dans l'évaluation de la fonction\n${element}\n`);
+        if (!data && `${exeption}` == 'TypeError: data is undefined') {
+        } else {
+          console.error(`Erreur '${exeption}' dans l'évaluation de la fonction\n${element}\n`);
+        }
       }
     }
     return element;

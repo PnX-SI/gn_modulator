@@ -206,7 +206,9 @@ export class ModulesFormService {
     // valeurs par defaut
     if (computedLayout.default && [null, undefined].includes(control.value)) {
       control.setValue(computedLayout.default);
-      data[computedLayout.key] = computedLayout.default;
+      if (data) {
+        data[computedLayout.key] = computedLayout.default;
+      }
     }
 
     // ?? correction float int date etc
