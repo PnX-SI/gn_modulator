@@ -112,7 +112,6 @@ export class ModulesLayoutObjectTableComponent
    *
    */
   ajaxRequestFunc = (url, config, paramsTable) => {
-    console.log('ajax');
     return new Promise((resolve, reject) => {
       const tableColumns = this._mTable.columns(this.computedLayout, this.context);
 
