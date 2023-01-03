@@ -86,7 +86,7 @@ export class ModulesLayoutService {
 
   isStrFunction(layout) {
     return typeof layout == 'string'
-      ? '__f__' == layout.substr(0, 5)
+      ? '__f__' == layout.substring(0, 5)
       : Array.isArray(layout) && layout.length
       ? this.isStrFunction(layout[0])
       : false;

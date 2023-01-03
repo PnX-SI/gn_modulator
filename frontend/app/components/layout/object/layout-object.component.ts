@@ -190,6 +190,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     let change = false;
 
     const objectConfig = this.objectConfig();
+    console.log(data, objectConfig.nb_total);
 
     for (const [key, value] of Object.entries(data)) {
       if (!utils.fastDeepEqual(objectConfig[key], value)) {

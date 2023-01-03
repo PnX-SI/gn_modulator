@@ -33,7 +33,7 @@
       <!-- Tabs -->
       <ng-container *ngSwitchCase="'tabs'">
         <mat-tab-group class="layout-section" (selectedTabChange)="onTabChanged($event)">
-          <ng-container *ngFor="let item of computedLayout.items; let index = index">
+          <ng-container *ngFor="let item of layout.items; let index = index">
             <mat-tab
               [label]="computedItems[index].label || computedItems[index].title || index"
               *ngIf="!computedItems[index].hidden"

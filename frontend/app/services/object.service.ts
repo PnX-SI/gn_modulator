@@ -176,12 +176,14 @@ export class ModulesObjectService {
   }
 
   objectTabLabel({ context }) {
-    const nbTotal = context.nb_total;
-    const nbFiltered = context.nb_filtered;
+    const objectConfig = this.objectConfigContext(context);
+    const nbTotal = objectConfig.nb_total;
+    const nbFiltered = objectConfig.nb_filtered;
     const labels = this.objectLabels({ context });
-    return nbTotal
+    const objectTabLabel = nbTotal
       ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
       : `${utils.capitalize(labels)} (0)`;
+    return objectTabLabel;
   }
 
   objectIsActionAllowed({ context, data }, action) {
