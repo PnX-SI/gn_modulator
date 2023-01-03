@@ -11,6 +11,7 @@ meta:
   label_field_name: date_min
   unique:
     - id_site
+    - id_module
     - date_min
 properties:
   id_visit:

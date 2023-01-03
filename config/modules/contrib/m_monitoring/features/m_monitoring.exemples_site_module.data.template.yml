@@ -20,5 +20,28 @@ template:
         - { id_module: __MODULE_CODE__, id_site: GR1 }
         - { id_module: __MODULE_CODE__, id_site: GR2 }
         - { id_module: __MODULE_CODE__, id_site: GR3 }
+    - schema_code: m_monitoring.visit
+      items:
+        - id_site: AL1
+          date_min: "2023-01-05"
+          id_digitiser: admin
+          id_module: __MODULE_CODE__
+          observers: [admin]
+          id_dataset: [m_monitoring_exemple, m_monitoring_exemple]
+        - id_site: AL1
+          date_min: "2023-01-06"
+          id_digitiser: admin
+          id_module: __MODULE_CODE__
+          observers: [admin]
+          id_dataset: [m_monitoring_exemple, m_monitoring_exemple]
+    - schema_code: m_monitoring.observation
+      items:
+        - id_visit: [AL1, __MODULE_CODE__, "2023-01-06"]
+          cd_nom: 361617
+        - id_visit: [AL1, __MODULE_CODE__, "2023-01-06"]
+          cd_nom: 424946
+        - id_visit: [AL1, __MODULE_CODE__, "2023-01-05"]
+          cd_nom: 582479
+
   dependencies:
   - m_monitoring.exemples

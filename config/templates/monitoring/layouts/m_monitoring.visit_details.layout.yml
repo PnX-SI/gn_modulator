@@ -24,6 +24,7 @@ layout:
               - digitiser.nom_complet
               - dataset.dataset_name
               - dataset.acquisition_framework.acquisition_framework_name
+              - module.module_label
               - observers.nom_complet
               - type: button
                 color: primary

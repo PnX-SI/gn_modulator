@@ -71,6 +71,7 @@ class SchemaBaseImports:
             rel_test_values.insert(0, self.property(key_process)["nomenclature_type"])
 
         d = {key: rel_test_values[index] for index, key in enumerate(rel_test_keys)}
+
         sm_rel.get_foreign_keys(d)
         rel_test_values = [d[key] for key in d]
 

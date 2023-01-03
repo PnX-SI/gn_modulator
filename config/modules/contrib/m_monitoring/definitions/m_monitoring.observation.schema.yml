@@ -11,6 +11,7 @@ meta:
     label_field_name: cd_nom
     unique:
         - cd_nom
+        - id_visit
 properties:
     id_observation:
         type: integer

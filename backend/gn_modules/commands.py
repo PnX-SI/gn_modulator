@@ -35,7 +35,7 @@ def cmd_install_module(module_code, force=False):
     commande d'initialisation du module
     """
 
-    module_codes = sorted(DefinitionMethods.definition_codes_for_type("data"))
+    module_codes = ModuleMethods.module_codes()
 
     if module_code is None or module_code not in module_codes:
 

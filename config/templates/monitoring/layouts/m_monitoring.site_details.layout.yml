@@ -59,5 +59,7 @@ layout:
                     - digitiser.nom_complet
                     - dataset.dataset_name
                     - observers.nom_complet
+                    - module.module_label
+
                   sort: date_min-
 
