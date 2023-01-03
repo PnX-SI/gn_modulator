@@ -4,25 +4,19 @@ description: Layout pour les détails d'une visite
 code: m_monitoring.visit_details
 layout:
   height_auto: true
-  direction: row
   items:
-    - key: visit
+    - type: breadcrumbs
+      flex: "0"
+    - object_code: visit
       type: object
-      display: properties
-    - items:
-        - type: breadcrumbs
-          flex: "0"
-        - display: tabs
+      items:
+        - title:  __f__o.title_details(x)
           items:
-            - label: "__f__`Observations (${data.observation.filtered}/${data.observation.total})`"
-              items:
-                - type: button
-                  icon: add
-                  action: create
-                  key: observation
-                  color: primary
-                  params: "__f__{return { id_visit: data.visit.value}}"
-                  flex: "0"
-                - type: object
-                  display: table
-                  key: observation
+            - site.name
+            - module.module_label
+            - date_min
+            - nb_observations
+            - digitiser.nom_complet
+            - dataset.dataset_name
+            - dataset.acquisition_framework.acquisition_framework_name
+            - observers.nom_complet

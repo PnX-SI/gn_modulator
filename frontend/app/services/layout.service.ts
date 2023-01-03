@@ -127,8 +127,7 @@ export class ModulesLayoutService {
 
   computeLayout({ context, data, layout }) {
     if (typeof layout == 'string' && context.module_code && context.object_code) {
-      const property = this._mObject.property(context, layout);
-      layout == 'id_nomenclature_type_site' && console.log(property);
+      const property = utils.copy(this._mObject.property(context, layout));
 
       // ?? traiter ça dans list form ???
       if (property.schema_code) {
@@ -136,6 +135,11 @@ export class ModulesLayoutService {
           ...property,
           type: 'list_form',
         };
+      }
+
+      // patch title
+      if (property.parent) {
+        property.title = property.parent.title;
       }
 
       return property;
