@@ -16,6 +16,29 @@ class ModuleBase:
         return list(get_global_cache(["module"]).keys())
 
     @classmethod
+    def registred_modules(cls):
+        """
+        liste des modules installés
+        """
+        return list(
+            filter(
+                lambda module_code: cls.module_config(module_code)["registred"], cls.module_codes()
+            )
+        )
+
+    @classmethod
+    def unregistred_modules(cls):
+        """
+        liste des modules non installés
+        """
+        return list(
+            filter(
+                lambda module_code: not cls.module_config(module_code)["registred"],
+                cls.module_codes(),
+            )
+        )
+
+    @classmethod
     def migrations_dir(cls, module_code=None):
         if not module_code:
             return migrations_directory

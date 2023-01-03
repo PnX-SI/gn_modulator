@@ -27,13 +27,37 @@ def cmd_init_module(module_code, force=False, reinstall=False):
 
 
 @click.command("install")
-@click.argument("module_code")
+@click.argument("module_code", required=False)
 @click.option("-f", "--force", is_flag=True)
 @with_appcontext
 def cmd_install_module(module_code, force=False):
     """
     commande d'initialisation du module
     """
+
+    module_codes = sorted(DefinitionMethods.definition_codes_for_type("data"))
+
+    if module_code is None or module_code not in module_codes:
+
+        print("registred", ModuleMethods.registred_modules())
+        print("unregistred", ModuleMethods.unregistred_modules())
+        print()
+
+        if module_code:
+            print(f"Le module demandé {module_code} n'existe pas.")
+            print("Veuillez choisir un code parmi la liste suivante\n")
+
+        for module_code in ModuleMethods.unregistred_modules():
+            print(f"- {module_code}")
+
+        print()
+        print("Modules installés\n")
+        for module_code in ModuleMethods.registred_modules():
+            print(f"- {module_code}")
+
+        print()
+
+        return
 
     return ModuleMethods.install_module(module_code, force)
 
