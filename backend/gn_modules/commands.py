@@ -250,9 +250,6 @@ def cmd_check():
     """
     print()
     print("Vérification des définitions de gn_modules.\n")
-
-    from gn_modules.blueprint import errors_init_module
-
     print(errors_txt())
 
 

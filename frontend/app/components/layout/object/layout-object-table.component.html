@@ -5,7 +5,12 @@
   <div [attr.id]="tableId"></div>
   <div>
     <!-- Fenêtre modal pour confirmer la suppression d'un élément -->
-    <modules-layout [data]="[data]" [layout]="modalDeleteLayout" [parentContext]="context" (onAction)="processAction($event)">
+    <modules-layout
+      [data]="[data]"
+      [layout]="modalDeleteLayout"
+      [parentContext]="context"
+      (onAction)="processAction($event)"
+    >
     </modules-layout>
   </div>
 </div>

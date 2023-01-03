@@ -1,6 +1,7 @@
 from ..schema import SchemaMethods
 from flask_migrate import upgrade as db_upgrade, downgrade as db_downgrade
 from geonature.utils.env import db
+from . import errors
 
 
 class ModuleCommands:

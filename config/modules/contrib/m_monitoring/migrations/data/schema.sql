@@ -128,6 +128,22 @@ CREATE TABLE m_monitoring.sc_arbre_loge (
 );
 
 
+
+ALTER TABLE m_monitoring.t_sites ADD CONSTRAINT unique_m_monitoring_t_sites_code UNIQUE(code);
+
+ALTER TABLE m_monitoring.bib_sites_category ADD CONSTRAINT unique_m_monitoring_bib_sites_category_code UNIQUE(code);
+
+ALTER TABLE m_monitoring.t_visits ADD CONSTRAINT unique_m_monitoring_t_visits_id_site_date_min UNIQUE(id_site, date_min);
+
+ALTER TABLE m_monitoring.t_site_group ADD CONSTRAINT unique_m_monitoring_t_site_group_code UNIQUE(code);
+
+ALTER TABLE m_monitoring.t_observations ADD CONSTRAINT unique_m_monitoring_t_observations_cd_nom UNIQUE(cd_nom);
+
+ALTER TABLE m_monitoring.cor_site_actor ADD CONSTRAINT unique_m_monitoring_cor_site_actor_id_nomenclature_type_actor_id_organism_id_role_id_site UNIQUE(id_nomenclature_type_actor, id_organism, id_role, id_site);
+
+ALTER TABLE m_monitoring.sc_grotte ADD CONSTRAINT unique_m_monitoring_sc_grotte_id_site UNIQUE(id_site);
+
+ALTER TABLE m_monitoring.sc_arbre_loge ADD CONSTRAINT unique_m_monitoring_sc_arbre_loge_id_site UNIQUE(id_site);
 ---- m_monitoring.t_sites primary key constraint
 
 ALTER TABLE m_monitoring.t_sites

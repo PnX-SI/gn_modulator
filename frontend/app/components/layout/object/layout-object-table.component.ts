@@ -32,7 +32,6 @@ export class ModulesLayoutObjectTableComponent
     this._mTable = this._injector.get(ModulesTableService);
     this.tableId = `table_${this._id}`;
   }
-  MarshmallowSchema;
 
   postInit() {}
 
@@ -113,6 +112,7 @@ export class ModulesLayoutObjectTableComponent
    *
    */
   ajaxRequestFunc = (url, config, paramsTable) => {
+    console.log('ajax');
     return new Promise((resolve, reject) => {
       const tableColumns = this._mTable.columns(this.computedLayout, this.context);
 
@@ -163,8 +163,8 @@ export class ModulesLayoutObjectTableComponent
           // process lists
           // gestion des champs en rel.champ
           // TODO à faire en backend  avec query param pour dire que l'on souhaite des sortie compatible table ????????
-          for (const column of tableColumns) {
-            for (const d of res.data) {
+          for (const d of res.data) {
+            for (const column of tableColumns) {
               if (column['field'].includes('.')) {
                 let val = utils.getAttr(d, column['field']);
                 val = Array.isArray(val) ? val.join(', ') : val;

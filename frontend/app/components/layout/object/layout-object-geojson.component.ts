@@ -177,9 +177,10 @@ export class ModulesLayoutObjectGeoJSONComponent
     if (!fields) {
       return [this.labelFieldName()];
     }
-    if (!fields.include('ownership')) {
+    if (!fields.includes('ownership')) {
       fields.push('ownership');
     }
+    return fields;
   }
 
   onPopupOpen(layer) {

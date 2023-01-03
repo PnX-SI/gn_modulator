@@ -12,15 +12,18 @@ class SchemaSqlConstraint:
 
     def slq_txt_unique_key_constraint(self):
         """ """
+        uniques = self.attr("meta.unique")
 
-        if self.attr("unique") is None:
+        if uniques is None:
             return ""
-        txt = "\nALTER TABLE {} ADD CONSTRAINT unique_{}_{} ({})".format(
+
+        txt = "\nALTER TABLE {} ADD CONSTRAINT unique_{}_{} UNIQUE({});".format(
             self.sql_schema_dot_table(),
             self.sql_schema_dot_table().replace(".", "_"),
-            "_".join(self.attr("unique")),
-            ", ".join(self.attr("unique")),
+            "_".join(uniques),
+            ", ".join(uniques),
         )
+
         return txt
 
     def sql_txt_primary_key_constraints(self):

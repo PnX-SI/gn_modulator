@@ -25,6 +25,7 @@ const addKey = (keys, key) => {
 };
 
 const getAttr = (obj, paths, index = 0) => {
+  // paths.includes('observers') && console.log(obj, paths, index)
   if (!paths) {
     return obj;
   }
@@ -37,10 +38,6 @@ const getAttr = (obj, paths, index = 0) => {
     return getAttr(obj, paths.split('.'));
   }
 
-  // if (Array.isArray(obj)) {
-  //   return obj.map((elem) => getAttr(elem, paths));
-  // }
-
   if (paths.length == 0) {
     return obj;
   }
@@ -50,6 +47,12 @@ const getAttr = (obj, paths, index = 0) => {
   }
 
   const path = paths[index];
+
+  if (Array.isArray(obj) && !Number.isInteger(path)) {
+    // console.log('array', obj, paths, index)
+    return obj.map((elem) => getAttr(elem, paths, index));
+  }
+
   const inter = obj[path];
   index += 1;
 

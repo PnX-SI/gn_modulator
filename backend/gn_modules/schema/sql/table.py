@@ -17,23 +17,29 @@ class SchemaSqlTable:
 
         txt = ""
         for key, relation_def in self.relationships().items():
-            txt += self.sql_txt_process_correlation(relation_def)
+            txt += self.sql_txt_process_correlation(key, relation_def)
 
         return txt
 
-    def sql_txt_process_correlation(self, relation_def):
+    def sql_txt_process_correlation(self, key, relation_def):
         """
         fonction qui cree les table de correlation associée
         """
+
         txt = ""
 
         if not relation_def["relation_type"] == "n-n":
             return txt
 
-        if get_global_cache(["sql_table", relation_def["schema_dot_table"]]):
+        relation_schema_dot_table = (
+            relation_def.get("schema_dot_table")
+            or self.cls(relation_def.get("cor_schema_code")).sql_schema_dot_table()
+        )
+
+        if get_global_cache(["sql_table", relation_schema_dot_table]):
             return txt
 
-        set_global_cache(["sql_table", relation_def["schema_dot_table"]], True)
+        set_global_cache(["sql_table", relation_schema_dot_table], True)
 
         local_key = self.pk_field_name()
         local_key_type = self.get_sql_type(self.column(local_key), cor_table=True, required=True)
@@ -48,7 +54,7 @@ class SchemaSqlTable:
         foreign_table_name = relation.sql_table_name()
         foreign_schema_code = relation.sql_schema_code()
 
-        cor_schema_dot_table = relation_def["schema_dot_table"]
+        cor_schema_dot_table = relation_schema_dot_table
         cor_schema_code = cor_schema_dot_table.split(".")[0]
         cor_table_name = cor_schema_dot_table.split(".")[1]
 

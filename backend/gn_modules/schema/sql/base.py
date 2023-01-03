@@ -83,7 +83,7 @@ class SchemaSqlBase:
 
     @classmethod
     def c_sql_schema_exists(cls, sql_schema_code):
-        return sql_schema_code in inspect(db.engine).get_schema_codes()
+        return sql_schema_code in inspect(db.engine).get_schema_names()
 
     def sql_schema_exists(self):
         """
@@ -198,6 +198,7 @@ class SchemaSqlBase:
         # actions
         for action in [
             "sql_txt_create_table",
+            "slq_txt_unique_key_constraint",
             "sql_txt_primary_key_constraints",
             "sql_txt_foreign_key_constraints",
             "sql_txt_nomenclature_type_constraints",

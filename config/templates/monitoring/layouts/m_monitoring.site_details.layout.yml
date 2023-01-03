@@ -29,6 +29,7 @@ layout:
                 - code
                 - name
                 - description
+                - nb_visits
                 - type: button
                   color: primary
                   title: Éditer
@@ -51,4 +52,12 @@ layout:
                   params: "__f__{ return {id_site: context.params.id_site}}"
                 - type: object
                   display: table
-                  hidden: __f__!context.nb_total;
+                  items:
+                    - site.name
+                    - date_min
+                    - nb_observations
+                    - digitiser.nom_complet
+                    - dataset.dataset_name
+                    - observers.nom_complet
+                  sort: date_min-
+

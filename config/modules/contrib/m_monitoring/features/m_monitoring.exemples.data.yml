@@ -6,6 +6,19 @@ description: données d'exemple pour monitoring (groupes de site, site, visite)
 dependencies:
   - m_monitoring.category
 items:
+  - schema_code: meta.ca
+    items:
+      - acquisition_framework_name: m_monitoring_exemple
+        acquisition_framework_desc: m_monitoring_exemple
+        acquisition_framework_start_date: '2022-01-01'
+  - schema_code: meta.jdd
+    items:
+      - id_acquisition_framework: m_monitoring_exemple
+        dataset_name: m_monitoring_exemple
+        dataset_shortname: m_monitoring_exemple
+        dataset_desc: m_monitoring_exemple
+        marine_domain: false
+        terrestrial_domain: false
   - schema_code: m_monitoring.site_group
     items:
       - name: Site group 1
@@ -184,3 +197,17 @@ items:
         id_site_category: GT
         groups:
           - SG3
+  - schema_code: m_monitoring.visit
+    items:
+      - id_site: AL1
+        date_min: '2023-01-05'
+        id_digitiser: admin
+        id_module: m_monitoring
+        observers: [admin]
+        id_dataset: [m_monitoring_exemple, m_monitoring_exemple]
+      - id_site: AL1
+        date_min: '2023-01-06'
+        id_digitiser: admin
+        id_module: m_monitoring
+        observers: [admin]
+        id_dataset: [m_monitoring_exemple, m_monitoring_exemple]

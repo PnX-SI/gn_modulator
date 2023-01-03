@@ -4,7 +4,7 @@ title: Schema visite
 description: Définition du schema des visite de monitoring
 
 meta:
-  sql_processing: "true"
+  sql_processing: true
   sql_schema_dot_table: m_monitoring.t_visits
   genre: F
   label: visite
@@ -107,53 +107,53 @@ properties:
     title: "Nombre d'observations"
     column_property: nb
     relation_key: observations
-details:
-  layout:
-    - site.name
-    - module.module_label
-    - date_min
-    - nb_observations
-    - digitiser.nom_complet
-    - dataset.dataset_name
-    - dataset.acquisition_framework.acquisition_framework_name
-    - observers.nom_complet
-form:
-  layout:
-    - hidden: true
-      items:
-        - id_site
-        - id_module
-        - key: id_digitiser
-          default: __f__context.current_user?.id_role
-          hidden: true
-    - key: date_min
-      default: __f__utils.today()
-    - date_max
-    - key: id_dataset
-      type: list_form
-      title: Jeu de données
-      schema_code: meta.jdd
-      page_size: 10
-      reload_on_search: true
-      filters: "__f__data.id_module && `modules.id_module = ${data.id_module}`"
-    - key: observers
-      type: list_form
-      title: Observateurs
-      schema_code: user.role
-      multiple: true
-      return_object: true
-      filters: groupes.listes.code_liste = obsocctax
-    - key: id_module
-      type: list_form
-      title: Protocole
-      schema_code: commons.module
-      filters: "__f__`sites.id_site = ${data.id_site}`"
-table:
-  columns:
-    - site.name
-    - date_min
-    - nb_observations
-    - digitiser.nom_complet
-    - dataset.dataset_name
-    - observers.nom_complet
-  sort: date_min-
+# details:
+#   layout:
+#     - site.name
+#     - module.module_label
+#     - date_min
+#     - nb_observations
+#     - digitiser.nom_complet
+#     - dataset.dataset_name
+#     - dataset.acquisition_framework.acquisition_framework_name
+#     - observers.nom_complet
+# form:
+#   layout:
+#     - hidden: true
+#       items:
+#         - id_site
+#         - id_module
+#         - key: id_digitiser
+#           default: __f__context.current_user?.id_role
+#           hidden: true
+#     - key: date_min
+#       default: __f__utils.today()
+#     - date_max
+#     - key: id_dataset
+#       type: list_form
+#       title: Jeu de données
+#       schema_code: meta.jdd
+#       page_size: 10
+#       reload_on_search: true
+#       filters: "__f__data.id_module && `modules.id_module = ${data.id_module}`"
+#     - key: observers
+#       type: list_form
+#       title: Observateurs
+#       schema_code: user.role
+#       multiple: true
+#       return_object: true
+#       filters: groupes.listes.code_liste = obsocctax
+#     - key: id_module
+#       type: list_form
+#       title: Protocole
+#       schema_code: commons.module
+#       filters: "__f__`sites.id_site = ${data.id_site}`"
+# table:
+#   columns:
+#     - site.name
+#     - date_min
+#     - nb_observations
+#     - digitiser.nom_complet
+#     - dataset.dataset_name
+#     - observers.nom_complet
+#   sort: date_min-
