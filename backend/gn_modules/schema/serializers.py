@@ -342,7 +342,9 @@ class SchemaSerializers:
             geometry_field_name=geometry_field_name,
         )
 
-    def serialize_list(self, m_list, fields=None, as_geojson=False, geometry_field_name=False):
+    def serialize_list(
+        self, m_list, fields=None, as_geojson=False, geometry_field_name=False, flat_keys=False
+    ):
         """
         serialize using marshmallow
 
@@ -381,6 +383,9 @@ class SchemaSerializers:
             return {"type": "FeatureCollection", "features": features}
 
         else:
+
+            if flat_keys:
+                return [{key: self.process_csv_data(key, d) for key in fields} for d in data_list]
             return data_list
 
     def as_geojson(self, data, geometry_field_name=None):

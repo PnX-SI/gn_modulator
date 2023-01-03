@@ -78,6 +78,7 @@ class SchemaApi:
         # params = json.loads(params_txt)
         params = {
             "as_geojson": self.load_param(request.args.get("as_geojson", "false")),
+            "flat_keys": self.load_param(request.args.get("flat_keys", "false")),
             "compress": self.load_param(request.args.get("compress", "false")),
             "fields": self.load_array_param(request.args.get("fields")),
             "field_name": self.load_param(request.args.get("field_name", "null")),
@@ -187,6 +188,7 @@ class SchemaApi:
                     res_list,
                     fields=params.get("fields"),
                     as_geojson=params.get("as_geojson"),
+                    flat_keys=params.get("flat_keys"),
                 ),
             }
 

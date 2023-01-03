@@ -149,15 +149,14 @@ export class ModulesTableService {
       column.headerFilter = column.headerFilter && layout.display_filters;
       // pour les dates
       column.formatter = (cell, formatterParams, onRendered) => {
-        if (col.type == 'date') {
+        let value = cell._cell.row.data[column.field];
+
+        if (col.type == 'date' && !!value) {
           // pour avoir les dates en français
-          let cellData = cell._cell.row.data[col.field];
-          return cellData && cellData.split('-').reverse().join('/');
+          return value.split('-').reverse().join('/');
         }
-        if (col.field.includes('.')) {
-          return utils.getAttr(cell._cell.row.data, col.field);
-        }
-        return cell._cell.row.data[col.field];
+
+        return value;
       };
       delete column.type;
       return column;

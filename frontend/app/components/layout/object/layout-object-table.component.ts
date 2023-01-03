@@ -149,6 +149,7 @@ export class ModulesLayoutObjectTableComponent
       const extendedParams = {
         ...params, // depuis tabulator
         fields, // fields
+        flat_keys: true, // sortie à plat
       };
 
       // on garde les paramètres en mémoire pour les utiliser dans getPageNumber();
@@ -162,16 +163,16 @@ export class ModulesLayoutObjectTableComponent
           // process lists
           // gestion des champs en rel.champ
           // TODO à faire en backend  avec query param pour dire que l'on souhaite des sortie compatible table ????????
-          for (const d of res.data) {
-            for (const column of tableColumns) {
-              if (column['field'].includes('.')) {
-                let val = utils.getAttr(d, column['field']);
-                val = Array.isArray(val) ? val.join(', ') : val;
-                delete d[column['field'].split('.')[0]];
-                utils.setAttr(d, column['field'], val);
-              }
-            }
-          }
+          // for (const d of res.data) {
+          // for (const column of tableColumns) {
+          // if (column['field'].includes('.') && Array.isArray(d[column['field'].split('.')[0]])) {
+          //   let val = utils.getAttr(d, column['field']);
+          //   val = Array.isArray(val) ? val.join(', ') : val;
+          //   delete d[column['field'].split('.')[0]];
+          //   utils.setAttr(d, column['field'], val);
+          // }
+          // }
+          // }
 
           resolve(res);
           this.onHeightChange(true);

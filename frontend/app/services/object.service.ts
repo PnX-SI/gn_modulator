@@ -156,8 +156,8 @@ export class ModulesObjectService {
   }
 
   objectTitleDetails({ context, data }) {
-    const du_label = this.objectConfigContext(context).display.du_label;
-    const label_field_name = this.objectConfigContext(context).utils.label_field_name;
+    const du_label = this.objectConfigContext(context).display?.du_label;
+    const label_field_name = this.objectConfigContext(context).utils?.label_field_name;
     return `Détails ${du_label} ${data && data[label_field_name]}`;
   }
 

@@ -165,7 +165,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // process des actions
   // TODO à clarifier avec page.element ??
   processAction(event) {
-    console.log('po', event);
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
       this._mPage.processAction({
         action: event.action,

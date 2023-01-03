@@ -10,13 +10,43 @@ layout:
     - object_code: visit
       type: object
       items:
-        - title:  __f__o.title_details(x)
-          items:
-            - site.name
-            - module.module_label
-            - date_min
-            - nb_observations
-            - digitiser.nom_complet
-            - dataset.dataset_name
-            - dataset.acquisition_framework.acquisition_framework_name
-            - observers.nom_complet
+        direction: row
+        items:
+          - title:  __f__o.title_details(x)
+            items:
+              - site.name
+              - module.module_label
+              - date_min
+              - nb_observations
+              - digitiser.nom_complet
+              - dataset.dataset_name
+              - dataset.acquisition_framework.acquisition_framework_name
+              - observers.nom_complet
+              - type: button
+                color: primary
+                title: Éditer
+                description: __f__o.title_create_edit(x)
+                action: edit
+                hidden: __f__!o.is_action_allowed(x, 'U')
+                flex: "0"
+          - display: tabs
+            items:
+              - label: "__f__o.tab_label(x)"
+                object_code: observation
+                items:
+                  - action: create
+                    type: button
+                    icon: add
+                    color: primary
+                    description: __f__o.title_create_edit(x)
+                    flex: "0"
+                    params: "__f__{ return {id_visit: context.params.id_visit}}"
+                  - type: object
+                    display: table
+                    items:
+                      - taxon.nom_vern
+                      - visit.site.name
+                      - visit.date_min
+                      - visit.observers.nom_complet
+                    sort: taxon.nom_vern
+

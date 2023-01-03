@@ -25,7 +25,6 @@ const addKey = (keys, key) => {
 };
 
 const getAttr = (obj, paths, index = 0) => {
-  // paths.includes('observers') && console.log(obj, paths, index)
   if (!paths) {
     return obj;
   }
@@ -49,7 +48,6 @@ const getAttr = (obj, paths, index = 0) => {
   const path = paths[index];
 
   if (Array.isArray(obj) && !Number.isInteger(path)) {
-    // console.log('array', obj, paths, index)
     return obj.map((elem) => getAttr(elem, paths, index));
   }
 
