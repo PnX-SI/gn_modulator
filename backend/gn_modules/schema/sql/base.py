@@ -13,6 +13,7 @@ from ..errors import (
 )
 
 from gn_modules.utils.cache import get_global_cache, clear_global_cache
+from gn_modules.utils.commons import get_class_from_path
 
 
 class SchemaSqlBase:
@@ -49,9 +50,9 @@ class SchemaSqlBase:
             return "public.uuid_generate_v4()"
             return "uuid_generate_v4()"
 
-    def sql_schema_code(self):
+    def sql_schema_name(self):
         """
-        from meta.sql_schema_code or id
+        from meta.sql_schema_name or id
         """
         return self.sql_schema_dot_table().split(".")[0]
 
@@ -62,46 +63,57 @@ class SchemaSqlBase:
         return self.sql_schema_dot_table().split(".")[1]
 
     def sql_schema_dot_table(self):
-        return self.attr("meta.sql_schema_dot_table")
+        sql_schema_dot_table = self.attr("meta.sql_schema_dot_table")
+        return self.cls.c_get_sql_schema_dot_table_from_definition(self.schema_code())
+
+    @classmethod
+    def c_get_sql_schema_dot_table_from_definition(cls, schema_code):
+        definition = get_global_cache(["schema", schema_code, "definition"])
+        sql_schema_dot_table = definition["meta"].get("sql_schema_dot_table")
+
+        if sql_schema_dot_table is not None:
+            return sql_schema_dot_table
+
+        Model = get_class_from_path(definition["meta"].get("model"))
+        return f"{Model.__table__.schema}.{Model.__tablename__}"
 
     @classmethod
     def c_get_schema_code_from_sql_schema_dot_table(cls, sql_schema_dot_table):
         for schema_code in cls.schema_codes():
-            definition = get_global_cache(["schema", schema_code, "definition"])
-            if definition["meta"]["sql_schema_dot_table"] == sql_schema_dot_table:
+            if cls.c_get_sql_schema_dot_table_from_definition(schema_code) == sql_schema_dot_table:
                 return schema_code
 
     @classmethod
     def c_sql_schema_dot_table_exists(cls, sql_schema_dot_table):
-        sql_schema_code = sql_schema_dot_table.split(".")[0]
+        sql_schema_name = sql_schema_dot_table.split(".")[0]
         sql_table_name = sql_schema_dot_table.split(".")[1]
-        return cls.c_sql_table_exists(sql_schema_code, sql_table_name)
+        return cls.c_sql_table_exists(sql_schema_name, sql_table_name)
 
     @classmethod
-    def c_sql_table_exists(cls, sql_schema_code, sql_table_name):
-        return sql_table_name.lower() in inspect(db.engine).get_table_names(sql_schema_code)
+    def c_sql_table_exists(cls, sql_schema_name, sql_table_name):
+        return sql_table_name.lower() in inspect(db.engine).get_table_names(sql_schema_name)
 
     @classmethod
-    def c_sql_schema_exists(cls, sql_schema_code):
-        return sql_schema_code in inspect(db.engine).get_schema_names()
+    def c_sql_schema_exists(cls, sql_schema_name):
+        return sql_schema_name in inspect(db.engine).get_schema_names()
 
     def sql_schema_exists(self):
         """
         check if sql schema exists
         """
-        return self.cls.c_sql_schema_exists(self.sql_schema_code())
+        return self.cls.c_sql_schema_exists(self.sql_schema_name())
 
     def sql_table_exists(self):
         """
         check if sql table exists
         """
-        return self.cls.c_sql_table_exists(self.sql_schema_code(), self.sql_table_name())
+        return self.cls.c_sql_table_exists(self.sql_schema_name(), self.sql_table_name())
 
     def sql_txt_create_schema(self):
         """
         Create schema sql schema
         """
-        txt = "CREATE SCHEMA  IF NOT EXISTS {};".format(self.sql_schema_code())
+        txt = "CREATE SCHEMA  IF NOT EXISTS {};".format(self.sql_schema_name())
         return txt
 
     def sql_txt_drop_schema(self):
@@ -111,7 +123,7 @@ class SchemaSqlBase:
         Jamais de drop cascade !!!!!!!
         """
 
-        txt = "DROP SCHEMA {};".format(self.sql_schema_code())
+        txt = "DROP SCHEMA {};".format(self.sql_schema_name())
         return txt
 
     def sql_processing(self):
@@ -147,7 +159,7 @@ class SchemaSqlBase:
         """
         txt = ""
 
-        txt += "DROP TABLE {}.{};".format(self.sql_schema_code(), self.sql_table_name())
+        txt += "DROP TABLE {}.{};".format(self.sql_schema_name(), self.sql_table_name())
 
         return txt
 
@@ -183,16 +195,16 @@ class SchemaSqlBase:
             schema_codes_to_process.insert(0, self.schema_code())
 
         # schemas
-        sql_schema_codes = []
+        sql_schema_names = []
         for name in schema_codes_to_process:
             sm = self.cls(name)
-            if sm.sql_schema_code() not in sql_schema_codes and not sm.sql_schema_exists():
-                sql_schema_codes.append(sm.sql_schema_code())
+            if sm.sql_schema_name() not in sql_schema_names and not sm.sql_schema_exists():
+                sql_schema_names.append(sm.sql_schema_name())
 
-        for sql_schema_code in sql_schema_codes:
-            txt += "---- sql schema {sql_schema_code}\n\n".format(sql_schema_code=sql_schema_code)
-            txt += "CREATE SCHEMA IF NOT EXISTS {sql_schema_code};\n\n".format(
-                sql_schema_code=sql_schema_code
+        for sql_schema_name in sql_schema_names:
+            txt += "---- sql schema {sql_schema_name}\n\n".format(sql_schema_name=sql_schema_name)
+            txt += "CREATE SCHEMA IF NOT EXISTS {sql_schema_name};\n\n".format(
+                sql_schema_name=sql_schema_name
             )
 
         # actions

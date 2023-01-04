@@ -7,8 +7,7 @@ required:
     - nom_organisme
 meta:
     autoschema: true
-    sql_schema_dot_table: utilisateurs.bib_organismes
-    model_name: Organisme
+    model: pypnusershub.db.models.Organisme
     genre: M
     label: organisme
     label_field_name: nom_organisme

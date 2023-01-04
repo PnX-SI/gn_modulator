@@ -77,33 +77,32 @@ class TestDefinitions:
 
     def test_load_definition_json_ok(self):
         # load json ok
-        return test_load_definition(definitions_test_dir / "load_definition_json_ok.schema.json")
+        test_load_definition(definitions_test_dir / "load_definition_json_ok.schema.json")
+        DefinitionMethods.remove_from_cache("schema", "load_definition_json_ok")
 
     def test_load_definition_yml_ok(self):
         # load yml ok
-        return test_load_definition(definitions_test_dir / "load_definition_yml_ok.schema.yml")
+        test_load_definition(definitions_test_dir / "load_definition_yml_ok.schema.yml")
+        DefinitionMethods.remove_from_cache("schema", "load_definition_yml_ok")
 
     def test_load_definition_json_fail(self):
         # load json fail
-        return test_load_definition(
-            definitions_test_dir / "load_definition_fail.json", "ERR_LOAD_JSON"
-        )
+
+        test_load_definition(definitions_test_dir / "load_definition_fail.json", "ERR_LOAD_JSON")
 
     def test_load_definition_yml_fail(self):
         # load yml fail
-        return test_load_definition(
-            definitions_test_dir / "load_definition_fail.yml", "ERR_LOAD_YML"
-        )
+        test_load_definition(definitions_test_dir / "load_definition_fail.yml", "ERR_LOAD_YML")
 
     def test_load_definition_list_fail(self):
         # load list fail
-        return test_load_definition(
+        test_load_definition(
             definitions_test_dir / "load_definition_list_fail.yml", "ERR_LOAD_LIST"
         )
 
     def test_load_definition_unknown_fail(self):
         # load unknown fail
-        return test_load_definition(
+        test_load_definition(
             definitions_test_dir / "load_definition_unknown_fail.yml", "ERR_LOAD_UNKNOWN"
         )
 
@@ -114,10 +113,11 @@ class TestDefinitions:
         test_load_definition(
             definitions_test_dir / "load_definition_existing_fail.schema.yml", "ERR_LOAD_EXISTING"
         )
+        DefinitionMethods.remove_from_cache("schema", "load_definition_existing_fail")
 
     def test_load_definition_file_name_fail(self):
         # ERR_LOAD_FILE_NAME
-        return test_load_definition(
+        test_load_definition(
             definitions_test_dir / "load_definition_file_name_fail.layout.yml",
             "ERR_LOAD_FILE_NAME",
         )
@@ -127,7 +127,7 @@ class TestDefinitions:
         test de remontée des erreur de validation des layout pour les éléments dynamiques
         """
 
-        return test_local_check_definition(
+        test_local_check_definition(
             definitions_test_dir / "local_check_definition_dyn_fail.layout.yml",
             "ERR_LOCAL_CHECK_DYNAMIC",
         )
@@ -137,16 +137,26 @@ class TestDefinitions:
         ERR_LOCAL_CHECK_NO_REF_FOR_TYPE
         """
 
-        return test_local_check_definition(
+        test_local_check_definition(
             definitions_test_dir / "local_check_definition_no_ref_for_type_fail.gloubi.yml",
             "ERR_LOCAL_CHECK_NO_REF_FOR_TYPE",
+        )
+
+    def test_local_check_auto_model_not_found(self):
+        """
+        ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND
+        """
+
+        test_local_check_definition(
+            definitions_test_dir / "local_check_auto_model_not_found.schema.yml",
+            "ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND",
         )
 
     def test_global_check_definition_missing_schema(self):
         """
         test global pour vérifier la remontée de missing schema
         """
-        return test_global_check_definition(
+        test_global_check_definition(
             definitions_test_dir / "global_check_schema_codes_fail.schema.yml",
             "ERR_GLOBAL_CHECK_MISSING_SCHEMA",
         )
@@ -155,7 +165,7 @@ class TestDefinitions:
         """
         test global pour vérifier la remontée de missing schema
         """
-        return test_global_check_definition(
+        test_global_check_definition(
             definitions_test_dir / "global_check_dependencies_fail.data.yml",
             "ERR_GLOBAL_CHECK_MISSING_DEPENDENCIES",
         )
@@ -165,7 +175,7 @@ class TestDefinitions:
         ERR_TEMPLATE_NOT_FOUND
         """
 
-        return test_process_template(
+        test_process_template(
             definitions_test_dir / "process_template_not_found_fail.layout.use_template.yml",
             "ERR_TEMPLATE_NOT_FOUND",
         )
@@ -175,7 +185,7 @@ class TestDefinitions:
         ERR_USE_TEMPLATE_CODE
         """
 
-        return test_process_template(
+        test_process_template(
             definitions_test_dir / "process_template_code_error_fail.use_template.yml",
             "ERR_USE_TEMPLATE_CODE",
         )
@@ -185,7 +195,7 @@ class TestDefinitions:
         ERR_LOCAL_CHECK_TEMPLATE_CODE
         """
 
-        return test_local_check_definition(
+        test_local_check_definition(
             definitions_test_dir / "process_template_code_fail.template.yml",
             "ERR_LOCAL_CHECK_TEMPLATE_CODE",
         )
@@ -198,7 +208,7 @@ class TestDefinitions:
         test_load_definition(
             definitions_test_dir / "process_template_unresolved_fields_fail.layout.template.yml"
         )
-        return test_process_template(
+        test_process_template(
             definitions_test_dir
             / "process_template_unresolved_fields_fail.layout.use_template.yml",
             "ERR_TEMPLATE_UNRESOLVED_FIELDS",

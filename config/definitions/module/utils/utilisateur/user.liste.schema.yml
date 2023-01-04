@@ -5,8 +5,7 @@ description: Définition du schema pour les liste d'utilisateurs
 
 meta:
     autoschema: true
-    model_name: TListes
-    sql_schema_dot_table: utilisateurs.t_listes
+    model: pypnusershub.db.models.UserList
     label: liste
     label_field_name: nom_liste
     genre: F

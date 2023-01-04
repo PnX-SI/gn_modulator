@@ -6,8 +6,7 @@ description: Définition du schema de la synthese
 meta:
     schema_code: syn.synthese
     autoschema: true
-    sql_schema_dot_table: gn_synthese.synthese
-    model_name: Synthese
+    model: geonature.core.gn_synthese.models.Synthese
     genre: M
     label: element de la synthese
     labels: elements de la synthese

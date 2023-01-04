@@ -5,8 +5,7 @@ description: Définition du schema des 'table_locations'
 meta:
     schema_code: commons.table_location
     autoschema: true
-    model_name: BibTablesLocation
-    sql_schema_dot_table: gn_commons.bib_tables_location
+    model: geonature.core.gn_commons.models.base.BibTablesLocation
     label: table_location
     label_field_name: table_desc
     genre: F

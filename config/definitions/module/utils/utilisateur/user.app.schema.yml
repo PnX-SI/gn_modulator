@@ -5,8 +5,7 @@ description: Définition du schema pour les applications
 
 meta:
     autoschema: true
-    model_name: TApplications
-    sql_schema_dot_table: utilisateurs.t_applications
+    model: pypnusershub.db.models.Application
     label: application
     label_field_name: nom_application
     genre: F

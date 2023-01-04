@@ -7,6 +7,7 @@ from sqlalchemy.engine import reflection
 from geonature.utils.env import db
 from .errors import SchemaAutoError
 from gn_modules.utils.cache import get_global_cache, set_global_cache
+from gn_modules.utils.commons import get_class_from_path
 
 cor_type_db_schema = {
     "INTEGER": "integer",
@@ -45,11 +46,7 @@ class SchemaAuto:
             schema_definition["properties"] = {}
             return schema_definition
 
-        Model = (
-            get_global_cache(["schema", self.schema_code(), "model"])
-            # or self.get_existing_model()
-            or self.get_model_from_schema_dot_table(schema_dot_table)
-        )
+        Model = get_class_from_path(self.attr("meta.model"))
 
         if Model is None:
             raise SchemaAutoError(
@@ -74,9 +71,9 @@ class SchemaAuto:
         properties = {}
 
         sql_table_name = Model.__tablename__
-        sql_schema_code = Model.__table__.schema
+        sql_schema_name = Model.__table__.schema
 
-        reflected_columns = self.insp().get_columns(sql_table_name, schema=sql_schema_code)
+        reflected_columns = self.insp().get_columns(sql_table_name, schema=sql_schema_name)
 
         # columns
         for column in Model.__table__.columns:
@@ -84,7 +81,7 @@ class SchemaAuto:
             if not hasattr(Model, column.key):
                 continue
             column_auto = self.process_column_auto(
-                column, reflected_columns, sql_schema_code, sql_table_name
+                column, reflected_columns, sql_schema_name, sql_table_name
             )
             if column_auto:
                 properties[column.key] = column_auto
@@ -106,7 +103,6 @@ class SchemaAuto:
         for relation_key, relation in inspect(Model).relationships.items():
             if relation_key not in self.attr("meta.relations", []):
                 continue
-
             property = self.process_relation_auto(relation_key, relation)
             if property:
                 properties[relation_key] = property
@@ -139,9 +135,12 @@ class SchemaAuto:
                 relation.secondary.schema, relation.secondary.name
             )
 
+        if self.definition.get("properties", {}).get(relation_key):
+            property.update(self.property(relation_key))
+
         return property
 
-    def process_column_auto(self, column, reflected_columns, sql_schema_code, sql_table_name):
+    def process_column_auto(self, column, reflected_columns, sql_schema_name, sql_table_name):
 
         type = str(column.type)
 
@@ -157,10 +156,10 @@ class SchemaAuto:
 
         if not schema_type:
             print(
-                f"{sql_schema_code}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
+                f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
             )
             raise SchemaAutoError(
-                f"{sql_schema_code}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
+                f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
             )
 
         property = {"type": schema_type["type"], "title": column.key}
@@ -168,7 +167,7 @@ class SchemaAuto:
         if schema_type["type"] == "geometry":
             if schema_type["srid"] == -1:
                 schema_type["srid"] = db.engine.execute(
-                    f"SELECT FIND_SRID('{sql_schema_code}', '{sql_table_name}', '{column.key}')"
+                    f"SELECT FIND_SRID('{sql_schema_name}', '{sql_table_name}', '{column.key}')"
                 ).scalar()
             property["srid"] = schema_type["srid"]
             property["geometry_type"] = schema_type["geometry_type"]
@@ -197,7 +196,7 @@ class SchemaAuto:
 
                 # nomenclature_type
                 nomenclature_type = self.reflect_nomenclature_type(
-                    sql_schema_code, sql_table_name, column.key
+                    sql_schema_name, sql_table_name, column.key
                 )
                 property["nomenclature_type"] = nomenclature_type
                 # property.pop('foreign_key')
@@ -211,12 +210,12 @@ class SchemaAuto:
 
         return property
 
-    def reflect_nomenclature_type(self, sql_schema_code, sql_table_name, column_key):
+    def reflect_nomenclature_type(self, sql_schema_name, sql_table_name, column_key):
         """
         va chercher les type de nomenclature depuis les contraintes 'check_nomenclature_type'
         """
         check_constraints = self.insp().get_check_constraints(
-            sql_table_name, schema=sql_schema_code
+            sql_table_name, schema=sql_schema_name
         )
         for check_constraint in check_constraints:
             sqltext = check_constraint["sqltext"]

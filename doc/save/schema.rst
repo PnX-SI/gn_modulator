@@ -22,7 +22,7 @@ Structure du schéma pour un objet contenant les champs suivants:
         "$meta": {
           "name": "nom qui référence l'objet",
           "module": "pour référencer le module",
-          "sql_schema_code": "optionel",
+          "sql_schema_name": "optionel",
           "sql_table_name": "optionel",
           "label": "label qui servira pour les titres, les bouttons, les messages, etc...",
           "description": "pour décrire l'objet",
@@ -45,9 +45,9 @@ Structure du schéma pour un objet contenant les champs suivants:
 de ce schéma, on doit être en mesure de tirer les information suivantes:
 
 - sql
-    - ``sql_schema_code`` : nom du schema sql (attention à la confusion schema sql et schema jsonschema)
+    - ``sql_schema_name`` : nom du schema sql (attention à la confusion schema sql et schema jsonschema)
     - ``sql_table_name`` : nom de la table
-      - ````sql_schema_code`` et ``sql_table_name`` peuvent être soit définis dans ``$meta`` soit déduis des valeurs de ``module`` et ``name``
+      - ````sql_schema_name`` et ``sql_table_name`` peuvent être soit définis dans ``$meta`` soit déduis des valeurs de ``module`` et ``name``
     - ``pk_field_names`` : ensemble des clé primaires
 - python
     - ``model_name`` : nom du modèle sqla
@@ -84,7 +84,7 @@ donnera les informations suivantes :
 .. code-block:: json
 
     {
-        "sql_schema_code": "m_test",
+        "sql_schema_name": "m_test",
         "sql_table_name": "t_example",
         "pk_field_names": ["id_example"],
 

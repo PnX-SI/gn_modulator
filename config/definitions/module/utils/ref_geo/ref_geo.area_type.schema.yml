@@ -4,8 +4,7 @@ title: Schema ref_geo.area_type
 description: Définition du schema des types de zonage de ref_geo
 
 meta:
-  sql_schema_dot_table: ref_geo.bib_areas_types
-  model_name: BibAreasTypes
+  model: ref_geo.models.BibAreasTypes
   label: type de geométrie
   label_field_name: type_name
   genre: M

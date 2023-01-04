@@ -5,8 +5,7 @@ description: Définition du schema des linéaires de ref_geo
 
 meta:
     schema_code: ref_geo.linear
-    sql_schema_dot_table: ref_geo.l_linears
-    model_name: LLinears
+    model: ref_geo.models.LLinears
     label: linéaire
     label_field_name: linear_name
     geometry_field_name: geom

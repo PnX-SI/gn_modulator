@@ -1,13 +1,13 @@
 type: schema
-code: meta.jdd
-title: Schema meta.jdd
-description: Définition du schema des jeux de données
+code: local_check_auto_model_not_found
+title: schema test ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND
+description: schema test ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND
 
 meta:
   unique:
     - id_acquisition_framework
     - dataset_name
-  model: geonature.core.gn_meta.models.TDatasets
+  model: geonature.core.gn_meta.models.TDatasets_youlpa
   label: jeu de données
   labels: jeux de données
   label_field_name: dataset_shortname

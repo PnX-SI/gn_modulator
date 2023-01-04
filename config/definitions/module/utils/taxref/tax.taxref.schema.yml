@@ -5,8 +5,7 @@ description: Définition du schema de taxonomie
 
 meta:
     autoschema: true
-    sql_schema_dot_table: taxonomie.taxref
-    model_name: Taxref
+    model: apptax.taxonomie.models.Taxref
     genre: F
     label: taxonomie
     label_field_name: nom_vern

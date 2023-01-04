@@ -4,8 +4,7 @@ title: Schema ref_geo.area
 description: Définition du schema des zonages de ref_geo
 
 meta:
-    sql_schema_dot_table: ref_geo.l_areas
-    model_name: LAreas
+    model: ref_geo.models.LAreas
     label: géométrie
     label_field_name: area_name
     genre: F

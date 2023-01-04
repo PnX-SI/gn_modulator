@@ -18,8 +18,7 @@ meta:
         - label_fr
       definition_default:
         - definition_fr
-  model_name: TNomenclatures
-  sql_schema_dot_table: ref_nomenclatures.t_nomenclatures
+  model: pypnnomenclature.models.TNomenclatures
   genre: F
   label: nomenclature
   table:

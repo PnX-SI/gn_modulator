@@ -4,8 +4,7 @@ title: Schema ref_geo.linear_group
 description: Définition du schema des groupes de linéaires de ref_geo
 
 meta:
-    sql_schema_dot_table: ref_geo.t_linear_groups
-    model_name: LLinearGroups
+    model: ref_geo.models.TLinearGroups
     label: Groupe de linéaire
     labels: Groupes de linéaires
     label_field_name: name

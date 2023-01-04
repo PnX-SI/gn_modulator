@@ -5,8 +5,7 @@ description: Définition du schema pour les profils utilisateurs applications
 
 meta:
     autoschema: true
-    model_name: UserApplicationRight
-    sql_schema_dot_table: utilisateurs.cor_role_app_profil
+    model: pypnusershub.db.models.UserApplicationRight
     label: application profil
     label_field_name: id_app
     genre: F

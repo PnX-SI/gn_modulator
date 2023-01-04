@@ -5,8 +5,7 @@ description: Définition du schema des actions
 
 meta:
   autoschema: true
-  model_name: TActions
-  sql_schema_dot_table: gn_permissions.t_actions
+  model: geonature.core.gn_permissions.models.TActions
   label: action
   label_field_name: label_action
   genre: M

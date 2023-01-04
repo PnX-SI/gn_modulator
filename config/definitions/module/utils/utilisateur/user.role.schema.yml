@@ -9,8 +9,7 @@ required:
     - prenom_role
 meta:
     autoschema: true
-    model_name: User
-    sql_schema_dot_table: utilisateurs.t_roles
+    model: pypnusershub.db.models.User
     label: utilisateur
     label_field_name: nom_role
     genre: M

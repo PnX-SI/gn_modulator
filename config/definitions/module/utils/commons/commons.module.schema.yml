@@ -5,8 +5,7 @@ description: Définition du schema des modules
 
 meta:
     autoschema: true
-    model_name: TModules
-    sql_schema_dot_table: gn_commons.t_modules
+    model: geonature.core.gn_commons.models.base.TModules
     label: module
     label_field_name: module_label
     genre: M

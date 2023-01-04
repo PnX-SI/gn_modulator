@@ -4,21 +4,26 @@ title: Reference schema.meta
 description: Référence pour la clé 'meta' des schemas
 
 required:
-    - label
-    - label_field_name
-    - genre
-    - sql_schema_dot_table
-    - unique
+  - label
+  - label_field_name
+  - genre
+  - unique
+dependencies:
+  autoschema: [model]
 properties:
-    label:
-        type: string
-    label_field_name:
-        type: string
-    genre:
-        type: string
-    sql_schema_dot_table:
-        type: string
-    unique:
-        type: array
-        items:
-           type: string
+  label:
+    type: string
+  label_field_name:
+    type: string
+  genre:
+    type: string
+  sql_schema_dot_table:
+    type: string
+  unique:
+    type: array
+    items:
+      type: string
+  model:
+    type: string
+  autoschema:
+    type: boolean

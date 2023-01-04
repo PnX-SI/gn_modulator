@@ -160,13 +160,12 @@ export class ModulesLayoutService {
       }
 
       if (!!computedLayout.key) {
-        const property = this._mObject.property(context, computedLayout.key)
+        const property = this._mObject.property(context, computedLayout.key);
         return {
           ...property,
-          ...computedLayout
-        }
+          ...computedLayout,
+        };
       }
-
 
       return computedLayout;
     }

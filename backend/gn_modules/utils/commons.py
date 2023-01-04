@@ -4,6 +4,7 @@
 
 
 import unicodedata
+from importlib import import_module
 
 
 def unaccent(input_str):
@@ -55,3 +56,9 @@ def replace_in_dict(data, value_test, value):
             return data.replace(value_test, str(value))
 
     return data
+
+
+def get_class_from_path(path):
+    class_module_name, class_object_name = path.rsplit(".", 1)
+    class_module = import_module(class_module_name)
+    return getattr(class_module, class_object_name)

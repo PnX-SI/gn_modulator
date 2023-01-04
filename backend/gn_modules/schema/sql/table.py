@@ -44,7 +44,7 @@ class SchemaSqlTable:
         local_key = self.pk_field_name()
         local_key_type = self.get_sql_type(self.column(local_key), cor_table=True, required=True)
         local_table_name = self.sql_table_name()
-        local_schema_code = self.sql_schema_code()
+        local_schema_code = self.sql_schema_name()
 
         relation = self.cls(relation_def["schema_code"])
         foreign_key = relation.pk_field_name()
@@ -52,7 +52,7 @@ class SchemaSqlTable:
             relation.column(foreign_key), cor_table=True, required=True
         )
         foreign_table_name = relation.sql_table_name()
-        foreign_schema_code = relation.sql_schema_code()
+        foreign_schema_code = relation.sql_schema_name()
 
         cor_schema_dot_table = relation_schema_dot_table
         cor_schema_code = cor_schema_dot_table.split(".")[0]
@@ -126,10 +126,10 @@ ALTER TABLE {cor_schema_dot_table}
 
         txt = ""
 
-        txt = """---- table {sql_schema_code}.{sql_table_name}
+        txt = """---- table {sql_schema_name}.{sql_table_name}
 
-CREATE TABLE {sql_schema_code}.{sql_table_name} (""".format(
-            sql_schema_code=self.sql_schema_code(), sql_table_name=self.sql_table_name()
+CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
+            sql_schema_name=self.sql_schema_name(), sql_table_name=self.sql_table_name()
         )
 
         # liste des champs
@@ -166,8 +166,8 @@ CREATE TABLE {sql_schema_code}.{sql_table_name} (""".format(
 
             if column_def.get("description") is None:
                 continue
-            txt += "COMMENT ON COLUMN {sql_schema_code}.{sql_table_name}.{key} IS '{description}';\n".format(
-                sql_schema_code=self.sql_schema_code(),
+            txt += "COMMENT ON COLUMN {sql_schema_name}.{sql_table_name}.{key} IS '{description}';\n".format(
+                sql_schema_name=self.sql_schema_name(),
                 sql_table_name=self.sql_table_name(),
                 key=key,
                 description=column_def["description"].replace("'", "''"),

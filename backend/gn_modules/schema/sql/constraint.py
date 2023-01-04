@@ -40,13 +40,13 @@ class SchemaSqlConstraint:
                 "Il n'y a pas de clé primaire définie pour le schema {sql_schema} {sql_table}"
             )
 
-        return """---- {sql_schema_code}.{sql_table_name} primary key constraint
+        return """---- {sql_schema_name}.{sql_table_name} primary key constraint
 
-ALTER TABLE {sql_schema_code}.{sql_table_name}
-    ADD CONSTRAINT pk_{sql_schema_code}_{sql_table_name}_{pk_keys_dash} PRIMARY KEY ({pk_keys_commas});
+ALTER TABLE {sql_schema_name}.{sql_table_name}
+    ADD CONSTRAINT pk_{sql_schema_name}_{sql_table_name}_{pk_keys_dash} PRIMARY KEY ({pk_keys_commas});
 
 """.format(
-            sql_schema_code=self.sql_schema_code(),
+            sql_schema_name=self.sql_schema_name(),
             sql_table_name=self.sql_table_name(),
             pk_keys_dash="_".join(pk_field_names),
             pk_keys_commas=", ".join(pk_field_names),
@@ -69,20 +69,20 @@ ALTER TABLE {sql_schema_code}.{sql_table_name}
             # on_delete_action = 'NO ACTION'
 
             txt += (
-                """---- {sql_schema_code}.{sql_table_name} foreign key constraint {fk_key_field_name}
+                """---- {sql_schema_name}.{sql_table_name} foreign key constraint {fk_key_field_name}
 
-ALTER TABLE {sql_schema_code}.{sql_table_name}
-    ADD CONSTRAINT fk_{sql_schema_code}_{sql_table_name_short}_{rel_sql_table_name_short}_{fk_key_field_name} FOREIGN KEY ({fk_key_field_name})
-    REFERENCES {rel_sql_schema_code}.{rel_sql_table_name}({rel_pk_key_field_name})
+ALTER TABLE {sql_schema_name}.{sql_table_name}
+    ADD CONSTRAINT fk_{sql_schema_name}_{sql_table_name_short}_{rel_sql_table_name_short}_{fk_key_field_name} FOREIGN KEY ({fk_key_field_name})
+    REFERENCES {rel_sql_schema_name}.{rel_sql_table_name}({rel_pk_key_field_name})
     ON UPDATE CASCADE ON DELETE {on_delete_action};
 
 """
             ).format(
-                sql_schema_code=self.sql_schema_code(),
+                sql_schema_name=self.sql_schema_name(),
                 sql_table_name=self.sql_table_name(),
                 sql_table_name_short=self.sql_table_name()[0:5],
                 fk_key_field_name=key,
-                rel_sql_schema_code=relation.sql_schema_code(),
+                rel_sql_schema_name=relation.sql_schema_name(),
                 rel_sql_table_name=relation.sql_table_name(),
                 rel_sql_table_name_short=relation.sql_table_name()[0:5],
                 rel_pk_key_field_name=relation.pk_field_name(),
@@ -96,22 +96,22 @@ ALTER TABLE {sql_schema_code}.{sql_table_name}
 
     def sql_txt_nomenclature_type_constraint(
         self,
-        sql_schema_code,
+        sql_schema_name,
         sql_table_name,
         nomenclature_field_name,
         nomenclature_type,
     ):
 
         # eviter les noms trop long pour eviter les doublons en cas de coupure
-        constraint_name = "check_nom_type_{sql_schema_code}_{sql_table_name}_{nomenclature_field_name}_{nomenclature_type}".format(
-            sql_schema_code=sql_schema_code,
+        constraint_name = "check_nom_type_{sql_schema_name}_{sql_table_name}_{nomenclature_field_name}_{nomenclature_type}".format(
+            sql_schema_name=sql_schema_name,
             sql_table_name=sql_table_name,
             nomenclature_field_name=self.short_name(nomenclature_field_name),
             nomenclature_type=self.short_name(nomenclature_type.lower()),
         )
 
         return f"""
-ALTER TABLE {sql_schema_code}.{sql_table_name}
+ALTER TABLE {sql_schema_name}.{sql_table_name}
         ADD CONSTRAINT {constraint_name}
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique({nomenclature_field_name},'{nomenclature_type.upper()}'))
         NOT VALID;
@@ -133,7 +133,7 @@ ALTER TABLE {sql_schema_code}.{sql_table_name}
                 continue
 
             txt += self.sql_txt_nomenclature_type_constraint(
-                self.sql_schema_code(),
+                self.sql_schema_name(),
                 self.sql_table_name(),
                 key,
                 nomenclature_type,

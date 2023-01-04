@@ -187,8 +187,6 @@ class SchemaModelBase:
         return CorTable
 
     def Model(self):
-        if not self.sql_table_exists():
-            return None
         """
         create and returns schema Model : a class created with type(name, (bases,), dict_model) function
         - name : self.model_name()
@@ -198,20 +196,22 @@ class SchemaModelBase:
         TODO store in global variable and create only if missing
         - avoid to create the model twice
         """
+        if not self.sql_table_exists():
+            return None
+
         # get Model from cache
         if Model := get_global_cache(["schema", self.schema_code(), "model"]):
             return Model
 
         # get Model from existing
         if Model := self.get_existing_model():
-
             return Model
 
         # dict_model used with type() to list properties and methods for class creation
         dict_model = {
             "__tablename__": self.sql_table_name(),
             "__table_args__": {
-                "schema": self.sql_schema_code(),
+                "schema": self.sql_schema_name(),
             },
         }
 

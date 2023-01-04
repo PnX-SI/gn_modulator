@@ -101,11 +101,11 @@ class SchemaMethods(
         Initialise l'ensemble des schémas
         """
         # init class
-        for schema_codes in cls.schema_codes():
-            SchemaMethods(schema_codes)
+        for schema_code in cls.schema_codes():
+            SchemaMethods(schema_code)
 
         # init Model
-        for schema_codes in cls.schema_codes():
-            SchemaMethods(schema_codes).Model()
-        for schema_codes in cls.schema_codes():
-            SchemaMethods(schema_codes).MarshmallowSchema()
+        for schema_code in cls.schema_codes():
+            SchemaMethods(schema_code).Model()
+        for schema_code in cls.schema_codes():
+            SchemaMethods(schema_code).MarshmallowSchema()

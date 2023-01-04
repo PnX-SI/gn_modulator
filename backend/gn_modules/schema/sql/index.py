@@ -31,10 +31,10 @@ class SchemaSqlIndex:
 
         if property_def["type"] == "geometry":
 
-            txt = """CREATE INDEX {sql_schema_code}_{sql_table_name}_{property_key}_idx
-    ON {sql_schema_code}.{sql_table_name}
+            txt = """CREATE INDEX {sql_schema_name}_{sql_table_name}_{property_key}_idx
+    ON {sql_schema_name}.{sql_table_name}
     USING GIST ({property_key});\n""".format(
-                sql_schema_code=self.sql_schema_code(),
+                sql_schema_name=self.sql_schema_name(),
                 sql_table_name=self.sql_table_name(),
                 property_key=property_key,
             )

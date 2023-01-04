@@ -108,7 +108,7 @@ class ModuleBase:
         txt = "--\n-- reset.sql ({})\n--\n\n".format(module_code)
         for schema_code in schema_codes:
             sm = SchemaMethods(schema_code)
-            txt_drop_schema = "-- DROP SCHEMA {} CASCADE;\n".format(sm.sql_schema_code())
+            txt_drop_schema = "-- DROP SCHEMA {} CASCADE;\n".format(sm.sql_schema_name())
             if txt_drop_schema not in txt:
                 txt += txt_drop_schema
 

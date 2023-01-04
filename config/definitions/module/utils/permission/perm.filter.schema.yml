@@ -5,8 +5,7 @@ description: Définition du schema des filtres
 
 meta:
   autoschema: true
-  model_name: TFilters
-  sql_schema_dot_table: gn_permissions.t_filters
+  model: geonature.core.gn_permissions.models.TFilters
   label: filtre
   label_field_name: label_filter
   genre: M

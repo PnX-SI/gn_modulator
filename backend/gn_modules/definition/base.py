@@ -6,6 +6,7 @@ import jsonschema
 from gn_modules.utils.env import config_directory
 from gn_modules.utils.cache import set_global_cache, get_global_cache
 from gn_modules.utils.errors import add_error, get_errors
+from gn_modules.utils.commons import get_class_from_path
 
 
 class DefinitionBase:
@@ -135,6 +136,20 @@ class DefinitionBase:
             )
         ):
             cls.remove_from_cache(definition_type, definition_code)
+
+        # test si le modèle existe (pour les schemas auto)
+        if definition_type == "schema" and definition["meta"].get("autoschema"):
+            model_path = definition["meta"]["model"]
+            try:
+                get_class_from_path(model_path)
+            except Exception:
+                add_error(
+                    msg=f"Le modèle {model_path} n'existe pas",
+                    definition_type=definition_type,
+                    definition_code=definition_code,
+                    code="ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND",
+                )
+                cls.remove_from_cache(definition_type, definition_code)
 
     @classmethod
     def local_check_definition_reference(cls, definition_type, definition_code):

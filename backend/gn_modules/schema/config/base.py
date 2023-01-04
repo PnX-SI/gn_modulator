@@ -104,7 +104,7 @@ class SchemaConfigBase:
             "geometry_field_name": self.geometry_field_name(),
             "model_name": self.model_name(),
             "schema_code": self.schema_code(),
-            "sql_schema_code": self.sql_schema_code(),
+            "sql_schema_name": self.sql_schema_name(),
             "sql_table_name": self.sql_table_name(),
             "page_size": self.page_size(),
         }

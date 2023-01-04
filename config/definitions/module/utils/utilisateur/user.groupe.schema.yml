@@ -6,8 +6,7 @@ description: Définition du schema pour les groupes d'utilisateurs
 meta:
     schema_code: user.groupe
     autoschema: true
-    model_name: CorRole
-    sql_schema_dot_table: utilisateurs.cor_roles
+    model: geonature.core.users.models.CorRole
     label: groupe
     label_field_name: id_role
     genre: M

@@ -5,8 +5,7 @@ description: Définition du schema des medias
 
 meta:
   autoschema: true
-  model_name: TMedias
-  sql_schema_dot_table: gn_commons.t_medias
+  model: geonature.core.gn_commons.models.base.TMedias
   label: média
   label_field_name: title_fr
   genre: M
