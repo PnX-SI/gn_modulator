@@ -13,6 +13,8 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
   mapId; // identifiant HTML pour la table;
   _map;
 
+  firstEdit = true;
+
   editedLayerSubscription;
   modalData = {};
   modalsLayout: any;
@@ -89,13 +91,14 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
       if (dataChanged && this.computedLayout.key) {
         const layer = this._mapService.processData(this.mapId, this.data, {
           key: this.computedLayout.key,
-          zoom: this.computedLayout.zoom,
+          zoom: this.computedLayout.zoom && this.firstEdit,
         });
 
         // initialisation du layer d'edition (s'il edit est à true et s'il n'est pas déjà )
         if (this.computedLayout.edit && !this._map.$editedLayer.getValue()) {
           this._map.$editedLayer.next(layer);
-          this._mapService.zoomOnLayer(this.mapId, layer);
+          this.firstEdit = false;
+          // this._mapService.zoomOnLayer(this.mapId, layer);
         }
       }
     });
