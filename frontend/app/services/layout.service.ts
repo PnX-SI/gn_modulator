@@ -128,7 +128,6 @@ export class ModulesLayoutService {
   computeLayout({ context, data, layout }) {
     if (typeof layout == 'string' && context.module_code && context.object_code) {
       const property = utils.copy(this._mObject.property(context, layout));
-
       // ?? traiter ça dans list form ???
       if (property.schema_code) {
         return {
@@ -150,7 +149,7 @@ export class ModulesLayoutService {
     }
 
     if (utils.isObject(layout)) {
-      const computedLayout = {};
+      const computedLayout: any = {};
       for (const [key, element] of Object.entries(layout)) {
         computedLayout[key] = this.evalLayoutElement({
           element,
@@ -159,6 +158,16 @@ export class ModulesLayoutService {
           context,
         });
       }
+
+      if (!!computedLayout.key) {
+        const property = this._mObject.property(context, computedLayout.key)
+        return {
+          ...property,
+          ...computedLayout
+        }
+      }
+
+
       return computedLayout;
     }
 

@@ -24,6 +24,11 @@ layout:
           - key: date_min
             default: __f__utils.today()
           - date_max
+          - key: id_module
+            type: list_form
+            title: Protocole
+            schema_code: commons.module
+            filters: "__f__`sites.id_site = ${context.params.id_site}`"
           - key: id_dataset
             type: list_form
             title: Jeu de données
@@ -31,6 +36,7 @@ layout:
             page_size: 10
             reload_on_search: true
             filters: __f__data.id_module && `modules.id_module = ${data.id_module}`
+            disabled: __f__!data.id_module
           - key: observers
             type: list_form
             title: Observateurs
@@ -38,11 +44,6 @@ layout:
             multiple: true
             return_object: true
             filters: groupes.listes.code_liste = obsocctax
-          - key: id_module
-            type: list_form
-            title: Protocole
-            schema_code: commons.module
-            filters: "__f__`sites.id_site = ${context.params.id_site}`"
           - direction: row
             items:
               - flex: '0'

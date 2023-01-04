@@ -49,7 +49,6 @@ layout:
                   color: primary
                   description: __f__o.title_create_edit(x)
                   flex: "0"
-                  params: "__f__{ return {id_site: context.params.id_site}}"
                 - type: object
                   display: table
                   items:

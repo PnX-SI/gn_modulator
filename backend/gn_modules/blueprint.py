@@ -92,13 +92,20 @@ def api_layout():
     )
 
 
-@blueprint.route("/schemas/", methods=["GET"])
-def api_schemas():
+@blueprint.route("/schemas/<path:config_path>", methods=["GET"])
+@blueprint.route("/schemas/", methods=["GET"], defaults={"config_path": None})
+def api_schemas(config_path):
     """
     renvoie tous les schémas
     """
 
-    return {
+    schemas = {
         schema_code: {"properties": SchemaMethods(schema_code).properties()}
         for schema_code in SchemaMethods.schema_codes()
     }
+
+    return process_dict_path(
+        schemas,
+        config_path,
+        SchemaMethods.base_url() + "/config/",
+    )

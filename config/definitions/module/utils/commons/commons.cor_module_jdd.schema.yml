@@ -1,10 +1,10 @@
 type: schema
-code: commons.module_jdd
-title: Schema commons.module_jdd
+code: commons.cor_module_jdd
+title: Schema commons.cor_module_jdd
 description: Définition du schema du lien module jdd
 
 meta:
-    schema_code: commons.module_jdd
+    schema_code: commons.cor_module_jdd
     autoschema: true
     model_name: CorModuleDataset
     sql_schema_dot_table: gn_commons.cor_module_dataset
