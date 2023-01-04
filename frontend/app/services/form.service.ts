@@ -60,12 +60,20 @@ export class ModulesFormService {
     return formDefinition;
   }
 
-  processLayoutContext() {}
-
   processLayout(layout, context) {
-    let flat = utils
-      .flatLayout(layout)
-      .map((elem) => (elem.key ? elem : this._mObject.property(context, elem)));
+    let flat = utils.flatLayout(layout).map((elem) => {
+      if (elem.key) {
+        elem.key = this._mLayout.evalLayoutElement({
+          element: elem.key,
+          layout: elem,
+          context,
+          data: null,
+        });
+        return elem;
+      } else {
+        return this._mObject.property(context, elem);
+      }
+    });
 
     let simple = flat.filter((l) => !l.key.includes('.'));
     let dotted: Array<any> = flat
@@ -217,8 +225,11 @@ export class ModulesFormService {
       ![null, undefined].includes(control.value) &&
       !(control.value instanceof Date)
     ) {
-      data[computedLayout.key] = new Date(control.value).toISOString().split('T')[0];
-      control.setValue(data[computedLayout.key]);
+      const val = new Date(control.value).toISOString().split('T')[0];
+      if (data) {
+        data[computedLayout.key] = new Date(control.value).toISOString().split('T')[0];
+      }
+      control.setValue(val);
     }
 
     if (

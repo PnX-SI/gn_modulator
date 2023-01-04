@@ -1,0 +1,11 @@
+type: layout
+code: m_monitoring.button_create
+title: boutton create
+description: Bouton 'nouveau, ajouter', destiné aux tableaux de monitoring
+layout:
+  action: create
+  type: button
+  icon: add
+  color: primary
+  description: __f__o.label_create(x)
+  flex: "0"

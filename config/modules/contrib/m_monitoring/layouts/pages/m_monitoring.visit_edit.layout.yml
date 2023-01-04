@@ -1,0 +1,53 @@
+type: layout
+code: m_monitoring.visit_edit
+title: Layout visit edit
+description: Layout pour l'édition d'une visite
+
+aliases:
+  - &form_fields
+    - hidden: true
+      items:
+        - id_site
+        - id_visit
+        - id_module
+        - key: id_digitiser
+          default: __f__context.current_user?.id_role
+          hidden: true
+    - key: date_min
+      default: __f__utils.today()
+    - date_max
+    - key: id_module
+      type: list_form
+      title: Protocole
+      schema_code: commons.module
+      filters: "__f__`sites.id_site = ${context.params.id_site}`"
+    - key: id_dataset
+      type: list_form
+      title: Jeu de données
+      schema_code: meta.jdd
+      page_size: 10
+      reload_on_search: true
+      filters: __f__data.id_module && `modules.id_module = ${data.id_module}`
+      disabled: __f__!data.id_module
+    - key: observers
+      type: list_form
+      title: Observateurs
+      schema_code: user.role
+      multiple: true
+      return_object: true
+      filters: groupes.listes.code_liste = obsocctax
+
+layout:
+  height_auto: true
+  direction: row
+  items:
+    - type: object
+      object_code: visit
+      items:
+        type: form
+        title: __f__o.title_create_edit(x)
+        items:
+          - overflow: true
+            items: *form_fields
+          - code: m_monitoring.buttons_form
+            flex: "0"

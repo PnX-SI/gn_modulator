@@ -39,7 +39,7 @@ export class ModulesPageService {
 
     const processedData = utils.processData(data, layout);
 
-    const id = this._mObject.objectId(context.module_code, context.object_code, data);
+    const id = this._mObject.objectId({ context, data });
 
     const request = id
       ? this._mData.patch(context.module_code, context.object_code, id, processedData, {
@@ -91,7 +91,7 @@ export class ModulesPageService {
         (data) => {
           this._mLayout.stopActionProcessing('');
           this._commonService.regularToaster('success', `La requete a bien été effectué`);
-          const value = this._mObject.objectId(context.module_code, context.object_code, data);
+          const value = this._mObject.objectId({ context, data });
           this.processAction({
             action: 'details',
             context,
@@ -105,12 +105,9 @@ export class ModulesPageService {
     }
 
     if (action == 'delete') {
-      this._mObject.onDelete(context.module_code, context.object_code, data).subscribe(() => {
+      this._mObject.onDelete({ context, data }).subscribe(() => {
         this._commonService.regularToaster('success', "L'élement a bien été supprimé");
-        if (
-          objectConfig.value ==
-          this._mObject.objectId(context.module_code, context.object_code, data)
-        ) {
+        if (objectConfig.value == this._mObject.objectId({ context, data })) {
           delete objectConfig.value;
         }
 

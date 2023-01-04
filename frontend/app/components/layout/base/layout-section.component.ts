@@ -23,13 +23,24 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
     const items = this.layoutType == 'items' ? this.layout : this.layout.items || [];
 
     this.computedItems = items.map
-      ? items.map((item) =>
-          this._mLayout.computeLayout({
-            layout: item,
-            data: this.data,
-            context: { ...this.context, object_code: item.object_code },
-          })
-        )
+      ? items.map((item) => {
+          if (!utils.isObject(item)) {
+            return item;
+          }
+          const computedItem = {};
+          for (const key of ['label', 'hidden']) {
+            computedItem[key] = this._mLayout.evalLayoutElement({
+              element: item[key],
+              layout: item,
+              data: this.data,
+              context: {
+                ...this.context,
+                object_code: item.object_code,
+              },
+            });
+          }
+          return computedItem;
+        })
       : [];
   }
 }

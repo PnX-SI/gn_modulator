@@ -1,0 +1,45 @@
+type: layout
+code: m_monitoring.site_edit
+title: Layout site edit
+description: Layout pour l'édition d'un site
+
+aliases:
+  - &form_fields
+    - hidden: true
+      items:
+        - id_site
+    - code
+    - name
+    - description
+    - key: id_site_category
+      type: list_form
+      title: Catégorie de site
+      object_code: category
+      module_code: m_monitoring
+    - id_nomenclature_type_site
+    - ownership
+
+layout:
+  height_auto: true
+  direction: row
+  items:
+    - type: object
+      object_code: site
+      items:
+        type: form
+        direction: row
+        items:
+          - type: map
+            key: __f__o.geometry_field_name(x)
+            edit: true
+            gps: true
+            hidden: __f__!o.geometry_field_name(x)
+            zoom: 12
+
+          - items:
+            - title: __f__o.title_create_edit(x)
+              flex : "0"
+            - overflow: true
+              items: *form_fields
+            - code: m_monitoring.buttons_form
+              flex: '0'

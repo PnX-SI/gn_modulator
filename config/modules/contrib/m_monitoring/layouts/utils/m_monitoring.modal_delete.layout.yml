@@ -1,0 +1,20 @@
+type: layout
+code: m_monitoring.modal_delete
+title: modal delete
+description: Fenêtre modale de confirmation de la suppression
+layout:
+  type: modal
+  modal_name: delete
+  title: __f__`Confirmer la suppression ${o.du_label(x)} ${o.data_label(x)}`
+  direction: row
+  items:
+    - type: button
+      title: Suppression
+      action: delete
+      icon: delete
+      color: warn
+    - type: button
+      title: Annuler
+      action: close
+      icon: refresh
+      color: primary

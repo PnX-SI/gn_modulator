@@ -1,0 +1,48 @@
+type: layout
+code: m_monitoring.buttons_form
+title: bouttons form
+description: Bouton 'valider + annuler + supprimer', destiné aux formulaires de monitoring
+layout:
+  flex: "0"
+  direction: row
+  items:
+    - flex: "0"
+      type: button
+      color: primary
+      title: Valider
+      icon: done
+      description: Enregistrer le contenu du formulaire
+      action: submit
+      disabled: __f__!(formGroup.valid )
+    - flex: "0"
+      type: button
+      color: primary
+      title: Annuler
+      icon: refresh
+      description: "Annuler l'édition"
+      action: cancel
+    - flex: "0"
+      type: button
+      color: warn
+      title: Supprimer
+      icon: delete
+      description: __f__o.label_delete(x)
+      hidden: __f__!o.is_action_allowed(x, 'D')
+      action:
+        type: modal
+        modal_name: delete
+    - type: modal
+      modal_name: delete
+      title: Confirmer la suppression de l'élément
+      direction: row
+      items:
+        - type: button
+          title: Suppression
+          action: delete
+          icon: delete
+          color: warn
+        - type: button
+          title: Annuler
+          action: close
+          icon: refresh
+          color: primary

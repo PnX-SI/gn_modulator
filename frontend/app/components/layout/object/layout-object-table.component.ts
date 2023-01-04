@@ -22,8 +22,9 @@ export class ModulesLayoutObjectTableComponent
   tableHeight; // hauteur de la table
 
   params;
-  modalDeleteLayout;
-
+  modalDeleteLayout = {
+    code: 'm_monitoring.modal_delete',
+  };
   _mTable: ModulesTableService;
 
   constructor(_injector: Injector) {
@@ -86,7 +87,7 @@ export class ModulesLayoutObjectTableComponent
     }
 
     if (action == 'delete') {
-      this._mLayout.openModal(this.modalDeleteLayout.modal_name, this.getRowData(row));
+      this._mLayout.openModal('delete', this.getRowData(row));
     }
 
     if (action == 'selected') {
@@ -248,10 +249,6 @@ export class ModulesLayoutObjectTableComponent
   }
 
   processConfig() {
-    this.modalDeleteLayout = this._mObject.modalDeleteLayout(
-      this.objectConfig(),
-      `delete_modal_${this._id}`
-    );
     this.drawTable();
   }
 

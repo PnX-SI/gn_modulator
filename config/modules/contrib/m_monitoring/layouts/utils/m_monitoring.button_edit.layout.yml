@@ -1,0 +1,12 @@
+type: layout
+code: m_monitoring.button_edit
+title: boutton edit
+description: Bouton 'editer', destiné aux page de detail de monitoring
+layout:
+  type: button
+  color: primary
+  title: Éditer
+  description: __f__o.label_edit(x)
+  action: edit
+  hidden: __f__!o.is_action_allowed(x, 'U')
+  flex: "0"

@@ -123,10 +123,6 @@ export class ModulesObjectService {
     return this.objectConfig(moduleCode, objectCode).utils.label_field_name;
   }
 
-  objectId(moduleCode, objectCode, data) {
-    return data[this.pkFieldName(moduleCode, objectCode)];
-  }
-
   objectPreFilters({ context }) {
     return context.prefilters;
   }
@@ -155,10 +151,34 @@ export class ModulesObjectService {
     return this.objectConfigContext(context).display.du_label;
   }
 
+  objectDataLabel({ context, data }) {
+    const label_field_name = this.objectConfigContext(context).utils?.label_field_name;
+    return data && label_field_name && data[label_field_name];
+  }
+
   objectTitleDetails({ context, data }) {
     const du_label = this.objectConfigContext(context).display?.du_label;
-    const label_field_name = this.objectConfigContext(context).utils?.label_field_name;
-    return `Détails ${du_label} ${data && data[label_field_name]}`;
+    return `Détails ${du_label} ${this.objectDataLabel({ context, data })}`;
+  }
+
+  objectLabelDelete({ context, data }) {
+    const le_label = this.objectConfigContext(context).display?.le_label;
+    return `Supprimer ${le_label} ${this.objectDataLabel({ context, data })}`;
+  }
+
+  objectLabelEdit({ context, data }) {
+    const le_label = this.objectConfigContext(context).display?.le_label;
+    return `Modifier ${le_label} ${this.objectDataLabel({ context, data })}`;
+  }
+
+  objectLabelCreate({ context }) {
+    const display = this.objectConfigContext(context).display;
+    return `Création ${display?.d_un_nouveau_label}`;
+  }
+
+  objectId({ context, data }) {
+    const pkFieldName = this.objectConfigContext(context).utils.pk_field_name;
+    return data && pkFieldName && data[pkFieldName];
   }
 
   objectTitleCreateEdit({ context, data }) {
@@ -167,11 +187,8 @@ export class ModulesObjectService {
     }
     const du_label = this.objectConfigContext(context).display.du_label;
     const d_un_nouveau_label = this.objectConfigContext(context).display.d_un_nouveau_label;
-    const labelFieldName = this.objectConfigContext(context).utils.label_field_name;
-    const pkFieldName = this.objectConfigContext(context).utils.pk_field_name;
-    const id = data && data[pkFieldName];
-    return !!id
-      ? `Modification ${du_label} ${data[labelFieldName]}`
+    return !!this.objectId({ context, data })
+      ? `Modification ${du_label} ${this.objectDataLabel({ context, data })}`
       : `Création ${d_un_nouveau_label}`;
   }
 
@@ -212,152 +229,156 @@ export class ModulesObjectService {
       schema_code: this.objectSchemaCode.bind(this),
       label: this.objectLabel.bind(this),
       du_label: this.objectDuLabel.bind(this),
+      data_label: this.objectDataLabel.bind(this),
       labels: this.objectLabels.bind(this),
       tab_label: this.objectTabLabel.bind(this),
       title_details: this.objectTitleDetails.bind(this),
       title_create_edit: this.objectTitleCreateEdit.bind(this),
+      label_delete: this.objectLabelDelete.bind(this),
+      label_edit: this.objectLabelEdit.bind(this),
+      label_create: this.objectLabelCreate.bind(this),
       is_action_allowed: this.objectIsActionAllowed.bind(this),
       geometry_field_name: this.objectGeometryFieldName.bind(this),
       geometry_type: this.objectGeometryType.bind(this),
     };
   }
 
-  processFormLayout(moduleCode, objectCode) {
-    const objectConfig = this.objectConfig(moduleCode, objectCode);
-    const moduleConfig = this._mConfig.moduleConfig(moduleCode);
-    const schemaLayout = objectConfig.form.layout;
-    const geometryType = this.geometryType(moduleCode, objectCode);
-    const geometryFieldName = this.geometryFieldName(moduleCode, objectCode);
-    return {
-      type: 'form',
-      appearance: 'fill',
-      direction: 'row',
-      items: [
-        {
-          type: 'map',
-          key: geometryFieldName,
-          edit: true,
-          geometry_type: geometryType,
-          gps: true,
-          hidden: !geometryFieldName,
-          flex: geometryFieldName ? '1' : '0',
-          zoom: 12,
-        },
-        {
-          items: [
-            // {
-            //   "type": "message",
-            //   "json": "__f__data",
-            //   'flex': '0'
-            // },
-            // {
-            //   "type": "message",
-            //   "json": "__f__formGroup.value",
-            //   'flex': '0'
-            // },
-            {
-              type: 'breadcrumbs',
-              flex: '0',
-            },
-            {
-              title: [
-                '__f__{',
-                `  const id = data.${objectConfig.utils.pk_field_name};`,
-                '  return id',
-                '    ? `Modification ' +
-                  objectConfig.display.du_label +
-                  ' ${data.' +
-                  objectConfig.utils.label_field_name +
-                  '}`',
-                `    : "Création ${objectConfig.display.d_un_nouveau_label}";`,
-                '}',
-              ],
-              flex: '0',
-            },
-            {
-              flex: '0',
-              type: 'message',
-              html: `__f__"Veuillez saisir une geometrie sur la carte"`,
-              class: 'error',
-              hidden: `__f__${!objectConfig.utils.geometry_field_name} || data.${
-                objectConfig.utils.geometry_field_name
-              }?.coordinates`,
-            },
-            {
-              items: schemaLayout,
-              overflow: true,
-            },
-            {
-              flex: '0',
-              direction: 'row',
-              items: [
-                {
-                  flex: '0',
-                  type: 'button',
-                  color: 'primary',
-                  title: 'Valider',
-                  icon: 'done',
-                  description: 'Enregistrer le contenu du formulaire',
-                  action: 'submit',
-                  disabled: '__f__!(formGroup.valid )',
-                },
-                {
-                  flex: '0',
-                  type: 'button',
-                  color: 'primary',
-                  title: 'Annuler',
-                  icon: 'refresh',
-                  description: "Annuler l'édition",
-                  action: 'cancel',
-                },
-                {
-                  // comment le mettre à gauche
-                  flex: '0',
-                  type: 'button',
-                  color: 'warn',
-                  title: 'Supprimer',
-                  icon: 'delete',
-                  description: 'Supprimer le passage à faune',
-                  action: {
-                    type: 'modal',
-                    modal_name: 'delete',
-                  },
+  // processFormLayout(moduleCode, objectCode) {
+  //   const objectConfig = this.objectConfig(moduleCode, objectCode);
+  //   const moduleConfig = this._mConfig.moduleConfig(moduleCode);
+  //   const schemaLayout = objectConfig.form.layout;
+  //   const geometryType = this.geometryType(moduleCode, objectCode);
+  //   const geometryFieldName = this.geometryFieldName(moduleCode, objectCode);
+  //   return {
+  //     type: 'form',
+  //     appearance: 'fill',
+  //     direction: 'row',
+  //     items: [
+  //       {
+  //         type: 'map',
+  //         key: geometryFieldName,
+  //         edit: true,
+  //         geometry_type: geometryType,
+  //         gps: true,
+  //         hidden: !geometryFieldName,
+  //         flex: geometryFieldName ? '1' : '0',
+  //         zoom: 12,
+  //       },
+  //       {
+  //         items: [
+  //           // {
+  //           //   "type": "message",
+  //           //   "json": "__f__data",
+  //           //   'flex': '0'
+  //           // },
+  //           // {
+  //           //   "type": "message",
+  //           //   "json": "__f__formGroup.value",
+  //           //   'flex': '0'
+  //           // },
+  //           {
+  //             type: 'breadcrumbs',
+  //             flex: '0',
+  //           },
+  //           {
+  //             title: [
+  //               '__f__{',
+  //               `  const id = data.${objectConfig.utils.pk_field_name};`,
+  //               '  return id',
+  //               '    ? `Modification ' +
+  //                 objectConfig.display.du_label +
+  //                 ' ${data.' +
+  //                 objectConfig.utils.label_field_name +
+  //                 '}`',
+  //               `    : "Création ${objectConfig.display.d_un_nouveau_label}";`,
+  //               '}',
+  //             ],
+  //             flex: '0',
+  //           },
+  //           {
+  //             flex: '0',
+  //             type: 'message',
+  //             html: `__f__"Veuillez saisir une geometrie sur la carte"`,
+  //             class: 'error',
+  //             hidden: `__f__${!objectConfig.utils.geometry_field_name} || data.${
+  //               objectConfig.utils.geometry_field_name
+  //             }?.coordinates`,
+  //           },
+  //           {
+  //             items: schemaLayout,
+  //             overflow: true,
+  //           },
+  //           {
+  //             flex: '0',
+  //             direction: 'row',
+  //             items: [
+  //               {
+  //                 flex: '0',
+  //                 type: 'button',
+  //                 color: 'primary',
+  //                 title: 'Valider',
+  //                 icon: 'done',
+  //                 description: 'Enregistrer le contenu du formulaire',
+  //                 action: 'submit',
+  //                 disabled: '__f__!(formGroup.valid )',
+  //               },
+  //               {
+  //                 flex: '0',
+  //                 type: 'button',
+  //                 color: 'primary',
+  //                 title: 'Annuler',
+  //                 icon: 'refresh',
+  //                 description: "Annuler l'édition",
+  //                 action: 'cancel',
+  //               },
+  //               {
+  //                 // comment le mettre à gauche
+  //                 flex: '0',
+  //                 type: 'button',
+  //                 color: 'warn',
+  //                 title: 'Supprimer',
+  //                 icon: 'delete',
+  //                 description: 'Supprimer le passage à faune',
+  //                 action: {
+  //                   type: 'modal',
+  //                   modal_name: 'delete',
+  //                 },
 
-                  hidden: `__f__data.ownership > ${moduleConfig.cruved['D']} || !data.${objectConfig.utils.pk_field_name}`,
-                },
-                this.modalDeleteLayout(objectConfig),
-              ],
-            },
-          ],
-        },
-      ],
-    };
-  }
+  //                 hidden: `__f__data.ownership > ${moduleConfig.cruved['D']} || !data.${objectConfig.utils.pk_field_name}`,
+  //               },
+  //               this.modalDeleteLayout(objectConfig),
+  //             ],
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   };
+  // }
 
-  modalDeleteLayout(objectConfig, modalName: any = null) {
-    return {
-      type: 'modal',
-      modal_name: modalName || 'delete',
-      title: `Confirmer la suppression de l'élément`,
-      direction: 'row',
-      items: [
-        {
-          type: 'button',
-          title: 'Suppression',
-          action: 'delete',
-          icon: 'delete',
-          color: 'warn',
-        },
-        {
-          type: 'button',
-          title: 'Annuler',
-          action: 'close',
-          icon: 'refresh',
-          color: 'primary',
-        },
-      ],
-    };
-  }
+  // modalDeleteLayout(objectConfig, modalName: any = null) {
+  //   return {
+  //     type: 'modal',
+  //     modal_name: modalName || 'delete',
+  //     title: `Confirmer la suppression de l'élément`,
+  //     direction: 'row',
+  //     items: [
+  //       {
+  //         type: 'button',
+  //         title: 'Suppression',
+  //         action: 'delete',
+  //         icon: 'delete',
+  //         color: 'warn',
+  //       },
+  //       {
+  //         type: 'button',
+  //         title: 'Annuler',
+  //         action: 'close',
+  //         icon: 'refresh',
+  //         color: 'primary',
+  //       },
+  //     ],
+  //   };
+  // }
 
   processPropertiesLayout(moduleCode, objectCode) {
     const objectConfig = this.objectConfig(moduleCode, objectCode);
@@ -417,7 +438,11 @@ export class ModulesObjectService {
   //   return request;
   // }
 
-  onDelete(moduleCode, objectCode, data) {
-    return this._mData.delete(moduleCode, objectCode, this.objectId(moduleCode, objectCode, data));
+  onDelete({ context, data }) {
+    return this._mData.delete(
+      context.module_code,
+      context.object_code,
+      this.objectId({ context, data })
+    );
   }
 }
