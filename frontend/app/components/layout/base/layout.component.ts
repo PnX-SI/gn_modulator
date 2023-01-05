@@ -349,6 +349,7 @@ export class ModulesLayoutComponent implements OnInit {
         return;
       }
 
+      // remplacer les élements de params
       for (const [paramKey, paramValue] of Object.entries(this.computedLayout.params || {})) {
         layoutTemplateFromCode = utils.replace(
           layoutTemplateFromCode,
@@ -357,12 +358,28 @@ export class ModulesLayoutComponent implements OnInit {
         );
       }
 
+      // remplacer les élements de default
       for (const [paramKey, paramValue] of Object.entries(layoutTemplateFromCode.defaults || {})) {
         layoutTemplateFromCode = utils.replace(
           layoutTemplateFromCode,
           `__${paramKey.toUpperCase()}__`,
           paramValue
         );
+      }
+
+      // checker s'il ne reste pas de params ??
+      const regex = /(__[A-Z]+__)/;
+      let unresolved = JSON.stringify(layoutTemplateFromCode).match(regex);
+
+      if (!!unresolved) {
+        this.layoutTemplateFromCode = {
+          type: 'message',
+          class: 'error',
+          html: `Il y a des champs non résolus dans le template : ${utils
+            .removeDoublons(unresolved)
+            .join(', ')}`,
+        };
+        return;
       }
 
       this.layoutTemplateFromCode = layoutTemplateFromCode.template.layout;

@@ -5,6 +5,9 @@ description: test pour les template de layout (résolus en frontend ??)
 
 defaults:
   x: défaut
+  y:
+    - title: 1
+    - title: 2
 
 template:
   type: layout
@@ -14,3 +17,4 @@ template:
 
   layout:
     title: test (__X__)
+    items: __Y__
