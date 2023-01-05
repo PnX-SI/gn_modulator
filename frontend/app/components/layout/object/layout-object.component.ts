@@ -46,10 +46,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   }
 
   postComputeLayout(dataChanged: any, layoutChanged: any, contextChanged: any): void {
-    this.log({ dataChanged, contextChanged, layoutChanged });
-    if (contextChanged) {
-      this.log(this.context, this.contextSave);
-    }
     if (!utils.fastDeepEqual(this.context.value, this.contextSave?.value)) {
       this.processValue(this.context.value);
     }
@@ -194,8 +190,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     let change = false;
 
     const objectConfig = this.objectConfig();
-
-    this.log('setObject', data);
 
     for (const [key, value] of Object.entries(data)) {
       if (!utils.fastDeepEqual(objectConfig[key], value)) {

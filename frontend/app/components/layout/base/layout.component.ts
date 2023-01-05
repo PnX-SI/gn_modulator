@@ -481,7 +481,7 @@ export class ModulesLayoutComponent implements OnInit {
     // si la taille de l'élément correspond à la taille de la page
     // -> on ne fait rien
 
-    if (elementHeight == bodyHeight && this.computedLayout.style.height == bodyHeight) {
+    if (elementHeight == bodyHeight && this.computedLayout.style?.height == bodyHeight) {
       return;
     }
 

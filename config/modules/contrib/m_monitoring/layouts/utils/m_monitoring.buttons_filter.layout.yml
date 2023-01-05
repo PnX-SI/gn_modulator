@@ -1,0 +1,23 @@
+type: layout
+code: m_monitoring.buttons_filter
+title: bouttons filter
+description: Boutons rechercher + reset filters
+
+layout:
+  flex: "0"
+  direction: row
+  items:
+    - flex: "0"
+      type: button
+      color: primary
+      title: Rechercher
+      icon: done
+      description: Effectuer une recherche avec les filtre définis ci-dessus
+      action: filter
+    - flex: "0"
+      type: button
+      color: primary
+      title: Réinitialiser
+      icon: refresh
+      description: RAZ des filtres
+      action: clear-filters

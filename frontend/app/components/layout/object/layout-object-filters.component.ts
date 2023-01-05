@@ -33,33 +33,12 @@ export class ModulesLayoutObjectFiltersComponent
           flex: '0',
         },
         {
-          // items: this.objectConfig().filter_defs.form.layout,
           items: this.layout.items,
           overflow: true,
         },
         {
           flex: '0',
-          direction: 'row',
-          items: [
-            {
-              flex: '0',
-              type: 'button',
-              color: 'primary',
-              title: 'Rechercher',
-              icon: 'done',
-              description: 'Effectuer une recherche avec les filtre définis ci-dessus',
-              action: 'filter',
-            },
-            {
-              flex: '0',
-              type: 'button',
-              color: 'primary',
-              title: 'Réinitialiser',
-              icon: 'refresh',
-              description: 'RAZ des filtres',
-              action: 'clear-filters',
-            },
-          ],
+          code: 'm_monitoring.buttons_filter',
         },
       ],
     };
@@ -79,11 +58,7 @@ export class ModulesLayoutObjectFiltersComponent
       .map(([key, val]: any) => {
         const field = filterDefs[key]?.field || key;
         const type = filterDefs[key]?.type || '=';
-        let value = val;
-
-        if (filterDefs.key) {
-          value = val[filterDefs.key];
-        }
+        let value = filterDefs[key]?.key ? val[filterDefs[key].key] : val;
         return {
           field,
           type,

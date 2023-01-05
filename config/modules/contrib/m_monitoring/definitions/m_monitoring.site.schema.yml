@@ -66,4 +66,3 @@ required:
 #     - label_infrastructures
 
 properties: !include m_monitoring.site-properties.yml
-filter_defs: !include m_monitoring.site-filter_defs.yml
