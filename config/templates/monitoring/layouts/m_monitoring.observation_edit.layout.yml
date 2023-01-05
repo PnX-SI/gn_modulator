@@ -12,11 +12,11 @@ aliases:
         - key: id_digitiser
           default: __f__context.current_user?.id_role
     - key: cd_nom
-      type: list_form
-      title: Taxon
-      schema_code: tax.taxref
-      page_size: 10
-      reload_on_search: true
+      type: dyn_form
+      type_widget: taxonomy
+      attribut_label: Espèce
+      type_util: taxonomy
+      required: true
 
 layout:
   height_auto: true
