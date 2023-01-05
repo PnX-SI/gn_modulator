@@ -149,7 +149,15 @@ export class ModulesRouteService {
   navigateToPage(moduleCode, pageCode, params, query = true) {
     const url = this.modulePageUrl(moduleCode, pageCode, params, query);
 
-    if (undefined == url) {
+    // verification de l'url
+    // est ce que les variables avec ':' sont résolues
+    // est ce que l'on a un parmètre à null
+    if (['null', ':'].some((c) => url?.includes(c))) {
+      console.error(`url non valide: ${url}`);
+      return;
+    }
+
+    if (!url) {
       return;
     }
     // patch sinon navigateByUrl met des plombes...

@@ -73,9 +73,15 @@ export class ModulesPageService {
         );
         return;
       }
+      const pkParams = {};
+      const pkFieldName = this._mObject.pkFieldName(context.module_code, context.object_code);
 
+      if (!context.params[pkFieldName] && value) {
+        pkParams[pkFieldName] = value;
+      }
       this._mRoute.navigateToPage(context.module_code, pageCode, {
         ...context.params,
+        ...pkParams,
       });
     }
 
