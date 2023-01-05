@@ -144,6 +144,24 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     return of({});
   }
 
+  // renvoie la liste des clés concernées par le layout
+  // sert pour l'appel aux api
+  fields() {
+    if (!this.layout.items) {
+      return this.defaultFields();
+    }
+
+    this._mLayout.getLayoutFields(this.layout.items, this.context, null);
+  }
+
+  /** champs par defaut si non définis dans items  */
+  defaultFields() {
+    const defaultFields = [this.pkFieldName(), this.labelFieldName(), 'ownership'];
+    if (this.computedLayout.display == 'geojson') {
+      defaultFields.push(this.geometryFieldName());
+    }
+  }
+
   /**
    * getOneRow
    * Utilisé par detail et form (et autre ??)
@@ -155,7 +173,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       return of(null);
     }
 
-    const fields = this._mLayout.getLayoutFields(this.layout.items, this.context, null);
+    const fields = this.fields();
 
     return this._mData.getOne(this.moduleCode(), this.objectCode(), value, {
       fields,
@@ -184,6 +202,10 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // champ pour le label
   labelFieldName() {
     return this._mObject.labelFieldName({ context: this.context });
+  }
+
+  geometryFieldName() {
+    return this._mObject.geometryFieldName({ context: this.context });
   }
 
   setObject(data) {

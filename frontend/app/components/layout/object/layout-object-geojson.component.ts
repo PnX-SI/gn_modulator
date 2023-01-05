@@ -173,14 +173,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   popupFields(): Array<any> {
-    const fields = this.computedLayout.items;
-    if (!fields) {
-      return [this.labelFieldName()];
-    }
-    if (!fields.includes('ownership')) {
-      fields.push('ownership');
-    }
-    return fields;
+    return this.computedLayout.popup_fields || this.defaultFields();
   }
 
   onPopupOpen(layer) {
@@ -207,7 +200,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   getData(): Observable<any> {
     this._mapService.setProcessing(this.context.map_id, true);
     const extendedParams = {
-      fields: [this.objectConfig().utils.pk_field_name, this.objectConfig().utils.label_field_name], // fields
+      fields: this.fields(), // fields
       filters: this.getDataFilters() || [],
       prefilters: this.getDataPreFilters() || [],
       as_geojson: true,

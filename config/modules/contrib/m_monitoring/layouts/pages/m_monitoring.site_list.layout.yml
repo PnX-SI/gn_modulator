@@ -5,7 +5,7 @@ description: Layout pour la liste de sites
 
 aliases:
 
-  - &site_map_fields
+  - &site_map_popup_fields
     - name
     - code
     - description
@@ -117,7 +117,7 @@ layout:
       items:
         type: object
         display: geojson
-        items: *site_map_fields
+        popup_fields: *site_map_popup_fields
 
     - items:
       - type: breadcrumbs
