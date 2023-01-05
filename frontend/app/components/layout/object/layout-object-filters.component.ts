@@ -11,8 +11,8 @@ export class ModulesLayoutObjectFiltersComponent
   extends ModulesLayoutObjectComponent
   implements OnInit
 {
-  filterValues: any = {};
-
+  filterFormsData: any = {};
+  filters: any = {};
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'layout-object-filters';
@@ -23,13 +23,18 @@ export class ModulesLayoutObjectFiltersComponent
       height_auto: true,
       type: 'form',
       appearance: 'outline',
+      change:
+        ({ data }) =>
+        (event) =>
+          this.processFiltersFormData(data),
       items: [
         {
           title: 'Filtres',
           flex: '0',
         },
         {
-          items: this.objectConfig().filter_defs.form.layout,
+          // items: this.objectConfig().filter_defs.form.layout,
+          items: this.layout.items,
           overflow: true,
         },
         {
@@ -66,30 +71,39 @@ export class ModulesLayoutObjectFiltersComponent
     this._mLayout.stopActionProcessing('');
   }
 
-  getFilters() {
-    this.objectConfig();
-    const filterDefs = this.objectConfig().filter_defs.defs;
-    return Object.entries(this.filterValues)
-      .filter(([key, value]: any) => ![null, undefined].includes(value))
-      .map(([key, value]: any) => ({
-        field: filterDefs[key].field,
-        type: filterDefs[key].filter_type,
-        value: filterDefs[key].key ? value[filterDefs[key].key] : value,
-      }));
+  processFiltersFormData(data) {
+    const filterDefs = this.computedLayout.filter_defs;
+
+    this.filters = Object.entries(data)
+      .filter(([key, val]: any) => val != null)
+      .map(([key, val]: any) => {
+        const field = filterDefs[key]?.field || key;
+        const type = filterDefs[key]?.type || '=';
+        let value = val;
+
+        if (filterDefs.key) {
+          value = val[filterDefs.key];
+        }
+        return {
+          field,
+          type,
+          value,
+        };
+      });
   }
 
   applyFilters() {
-    this.setObject({ value: null, filters: this.getFilters() });
+    this.setObject({ value: null, filters: this.filters });
   }
 
   clearFilters() {
-    for (const key of Object.keys(this.filterValues)) {
-      this.filterValues[key] = null;
+    for (const key of Object.keys(this.filterFormsData)) {
+      this.filterFormsData[key] = null;
     }
-    const filterValues = utils.copy(this.filterValues);
-    this.filterValues = null;
+    const filterFormsData = utils.copy(this.filterFormsData);
+    this.filterFormsData = null;
     setTimeout(() => {
-      this.filterValues = filterValues;
+      this.filterFormsData = filterFormsData;
       this.applyFilters();
     });
   }

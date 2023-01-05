@@ -12,6 +12,10 @@ export class ModulesSchemaService {
 
   property(schemaCode, key) {
     const schema = utils.copy(this._mConfig.schema(schemaCode));
+    if (!schema) {
+      return {};
+    }
+
     if (key.includes('.')) {
       let keys = key.split('.');
       let keyRel = keys.shift();

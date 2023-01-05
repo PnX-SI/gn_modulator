@@ -159,7 +159,7 @@ export class ModulesLayoutService {
         });
       }
 
-      if (!!computedLayout.key) {
+      if (computedLayout.key) {
         const property = this._mObject.property(context, computedLayout.key);
         return {
           ...property,

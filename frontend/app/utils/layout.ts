@@ -1,3 +1,4 @@
+import utils from '.';
 import utilsCommons from '.';
 
 /**
@@ -59,6 +60,22 @@ const flatLayout = (layout) => {
     return [layout];
   }
 };
+
+// const flatData = (data, baseKey = null) => {
+//   if (utilsCommons.isObject(data)) {
+//     const dataOut = {};
+//     for (const [key, value] of Object.keys(data)) {
+//       const newBaseKey = baseKey ? `${baseKey}.${key}` : key;
+//       dataOut[newBaseKey] = flatData(value)
+//     }
+//     return dataOut
+//   }
+
+//   // TODO array ?
+
+//   return data
+
+// };
 
 export default {
   getLayoutType,

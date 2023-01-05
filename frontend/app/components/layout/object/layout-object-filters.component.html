@@ -1,12 +1,8 @@
-
 <div [attr.id]="_id" class="layout-section" [ngStyle]="computedLayout.style">
-<div v-if="filterValues">
   <modules-layout
     [layout]="processedLayout"
-    [data]="filterValues"
-        (onAction)="processAction($event)"
+    [data]="filterFormsData"
+    [parentContext]="context"
+    (onAction)="processAction($event)"
   ></modules-layout>
-
-</div>
-
 </div>

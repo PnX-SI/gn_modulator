@@ -2,30 +2,129 @@ type: layout
 code: m_monitoring.site_list
 title: Layout site list
 description: Layout pour la liste de sites
+
+aliases:
+
+  - &site_map_fields
+    - name
+    - code
+    - description
+    - nomenclature_type_site.label_fr
+    - category.name
+
+  - &site_table_fields
+    - code
+    - name
+    - category.name
+    - nb_visits
+    - last_visit_date_min
+
+  - &filters_departement |
+    __f__{
+        return data.region
+        ? `area_code in ${utils.departementsForRegion(data.region.area_code).join(';')}`
+        : null
+    }
+
+  - &filters_commune |
+    __f__{
+        if (data.departement) {
+            return `area_code like ${data.departement.area_code}%`
+        }
+        if (data.region) {
+            return utils.departementsForRegion(data.region.area_code)
+                .map(departementCode => `area_code like ${departementCode}%`)
+                .join(',|,')
+        }
+    }
+
+  - &site_filter_defs
+    category:
+      field: category.id_category
+    region:
+      field: areas.id_area
+      key: id_area
+    departement:
+      field: areas.id_area
+      key: id_area
+    commune:
+      field: areas.id_area
+
+  - &site_filter_fields
+    - title: Infos sites
+      flex: "0"
+      items:
+        - key: category
+          type: list_form
+          title: Type de site
+          object_code: category
+          module_code: m_monitoring
+    - title: Localisation
+      display: fieldset
+      items:
+        - key: region
+          title: Région
+          type: list_form
+          return_object: "true"
+          additional_fields:
+            - area_code
+          area_type: REG
+          sort: area_name
+        - reload_on_search: true
+          return_object: true
+          key: departement
+          title: Département
+          type: list_form
+          area_type: DEP
+          additional_fields:
+            - area_code
+          label_field_name: code_name
+          sort: code_name
+          filters: *filters_departement
+        - reload_on_search: true
+          key: commune
+          title: Commune
+          type: list_form
+          area_type: COM
+          label_field_name: name_code
+          filters: *filters_commune
+          sort: area_name
+        - title: Infrastructure
+          key: infrastructure
+          type: list_form
+          object_code: ref_geo.linear_group
+          filters: linears.type.type_code = RTE
+          sort: name
+          reload_on_search: true
+          page_size: 10
+
+
 layout:
   height_auto: true
   direction: row
+  object_code: site
   items:
+
+    - type: object
+      display: filters
+      flex: 1
+      items:
+        flex: "0"
+        items: *site_filter_fields
+      filter_defs: *site_filter_defs
+
     - type: map
+      flex: 2
       items:
         type: object
         display: geojson
-        object_code: site
-        items:
-          - name
-          - code
-          - description
-          - nomenclature_type_site.label_fr
-          - category.name
+        items: *site_map_fields
+
     - type: object
+      flex: 2
       display: table
       sort: last_visit_date_min-
-      object_code: site
-      items:
-        - code
-        - name
-        - category.name
-        - nb_visits
-        - last_visit_date_min
+      items: *site_table_fields
+
 context:
   module_code: m_monitoring

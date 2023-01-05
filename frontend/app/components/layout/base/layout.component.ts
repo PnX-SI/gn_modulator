@@ -367,6 +367,7 @@ export class ModulesLayoutComponent implements OnInit {
     // sauvegarde des données pour la prochaine comparaison
     this.dataSave = dataCopy;
     this.computedLayoutSave = computedLayoutCopy;
+    this.contextSave = contextCopy;
   }
 
   processItems() {}
