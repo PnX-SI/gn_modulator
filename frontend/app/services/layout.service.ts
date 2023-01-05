@@ -137,10 +137,7 @@ export class ModulesLayoutService {
       }
 
       // patch title si parent && label_field_name
-      if (
-        property.parent &&
-        property.key == this._mObject.labelFieldName(context.module_code, context.object_code)
-      ) {
+      if (property.parent && property.key == this._mObject.labelFieldName({ context })) {
         property.title = property.parent.title;
         property.description = property.parent.description;
       }

@@ -178,12 +178,12 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   // champ de clé primaire
   pkFieldName() {
-    return this._mObject.pkFieldName(this.moduleCode(), this.objectCode());
+    return this._mObject.pkFieldName({ context: this.context });
   }
 
   // champ pour le label
   labelFieldName() {
-    return this._mObject.labelFieldName(this.moduleCode(), this.objectCode());
+    return this._mObject.labelFieldName({ context: this.context });
   }
 
   setObject(data) {

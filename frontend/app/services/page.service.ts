@@ -74,7 +74,7 @@ export class ModulesPageService {
         return;
       }
       const pkParams = {};
-      const pkFieldName = this._mObject.pkFieldName(context.module_code, context.object_code);
+      const pkFieldName = this._mObject.pkFieldName({ context });
 
       if (!context.params[pkFieldName] && value) {
         pkParams[pkFieldName] = value;
