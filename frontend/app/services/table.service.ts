@@ -117,9 +117,9 @@ export class ModulesTableService {
    *
    * ajout des bouttons voir / éditer (selon les droits ?)
    */
-  columnsTable(layout, context) {
+  columnsTable(fields, layout, context) {
     //column definition in the columns array
-    return [...this.columnsAction(context), ...this.columns(layout, context)];
+    return [...this.columnsAction(context), ...this.columns(fields, layout, context)];
   }
 
   columnLayoutItem(layoutItem, context) {
@@ -138,11 +138,8 @@ export class ModulesTableService {
     return layoutItem;
   }
 
-  columns(layout, context) {
-    const objectConfig = this._mObject.objectConfigContext(context);
-    // const columns = objectConfig.table.columns;
-
-    const columns = layout.items.map((item) => this.columnLayoutItem(item, context));
+  columns(fields, layout, context) {
+    const columns = fields.map((item) => this.columnLayoutItem(item, context));
 
     return columns.map((col) => {
       const column = utils.copy(col);

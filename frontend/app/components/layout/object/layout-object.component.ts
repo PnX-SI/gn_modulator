@@ -146,20 +146,33 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   // renvoie la liste des clés concernées par le layout
   // sert pour l'appel aux api
-  fields() {
+  fields({ geometry = false, addDefault = false } = {}) {
     if (!this.layout.items) {
-      return this.defaultFields();
+      return this.defaultFields({ geometry });
     }
 
-    this._mLayout.getLayoutFields(this.layout.items, this.context, null);
+    // aout des champs manquants ?
+
+    const fields = this._mLayout.getLayoutFields(this.layout.items, this.context, null);
+
+    if (addDefault) {
+      for (const key of this.defaultFields({ geometry })) {
+        if (!fields.includes(key)) {
+          fields.push(key);
+        }
+      }
+    }
+
+    return fields;
   }
 
   /** champs par defaut si non définis dans items  */
-  defaultFields() {
+  defaultFields({ geometry = false } = {}) {
     const defaultFields = [this.pkFieldName(), this.labelFieldName(), 'ownership'];
-    if (this.computedLayout.display == 'geojson') {
+    if (this.computedLayout.display == 'geojson' && geometry) {
       defaultFields.push(this.geometryFieldName());
     }
+    return defaultFields;
   }
 
   /**

@@ -41,6 +41,10 @@ export class ModulesLayoutObjectTableComponent
     this.setCount();
   }
 
+  columns() {
+    return this._mTable.columnsTable(this.fields(), this.computedLayout, this.context);
+  }
+
   drawTable(): void {
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
@@ -50,7 +54,7 @@ export class ModulesLayoutObjectTableComponent
       ajaxFiltering: true,
       height: this.tableHeight || '200px',
       ajaxRequestFunc: this.ajaxRequestFunc,
-      columns: this._mTable.columnsTable(this.computedLayout, this.context),
+      columns: this.columns(),
       ajaxURL: this.objectConfig().table.url,
       paginationSize: this.computedLayout.page_size || this.objectConfig().utils.page_size,
       pagination: 'remote',
@@ -114,21 +118,6 @@ export class ModulesLayoutObjectTableComponent
    */
   ajaxRequestFunc = (url, config, paramsTable) => {
     return new Promise((resolve, reject) => {
-      const tableColumns = this._mTable.columns(this.computedLayout, this.context);
-
-      // récupération des champs à partir de layout
-      const fields = tableColumns.map((column) => column.field);
-
-      // ajout de ownership s'il n'est pas déjà dans les champs
-      if (!fields.includes('ownership')) {
-        fields.push('ownership');
-      }
-
-      // ajout de la clé primaire si elle n'est pas déjà dans fields
-      if (!fields.includes(this.pkFieldName())) {
-        fields.push(this.pkFieldName());
-      }
-
       // calcul des paramètres
       // TODO traiter les paramètres venant des filtres de la table
       const params = {
@@ -136,6 +125,7 @@ export class ModulesLayoutObjectTableComponent
         page_size: paramsTable.size,
         sort: this._mTable.processTableSorters(paramsTable.sorters),
       };
+
       if (!this.computedLayout.display_filters) {
         params.filters = this.getDataFilters();
       }
@@ -149,7 +139,7 @@ export class ModulesLayoutObjectTableComponent
 
       const extendedParams = {
         ...params, // depuis tabulator
-        fields, // fields
+        fields: this.fields(), // fields
         flat_keys: true, // sortie à plat
       };
 
@@ -161,20 +151,6 @@ export class ModulesLayoutObjectTableComponent
 
       this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams).subscribe(
         (res) => {
-          // process lists
-          // gestion des champs en rel.champ
-          // TODO à faire en backend  avec query param pour dire que l'on souhaite des sortie compatible table ????????
-          // for (const d of res.data) {
-          // for (const column of tableColumns) {
-          // if (column['field'].includes('.') && Array.isArray(d[column['field'].split('.')[0]])) {
-          //   let val = utils.getAttr(d, column['field']);
-          //   val = Array.isArray(val) ? val.join(', ') : val;
-          //   delete d[column['field'].split('.')[0]];
-          //   utils.setAttr(d, column['field'], val);
-          // }
-          // }
-          // }
-
           resolve(res);
           this.onHeightChange(true);
 

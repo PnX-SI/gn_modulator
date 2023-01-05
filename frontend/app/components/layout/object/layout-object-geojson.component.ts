@@ -200,7 +200,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   getData(): Observable<any> {
     this._mapService.setProcessing(this.context.map_id, true);
     const extendedParams = {
-      fields: this.fields(), // fields
+      fields: this.fields({ geometry: true }), // fields
       filters: this.getDataFilters() || [],
       prefilters: this.getDataPreFilters() || [],
       as_geojson: true,
