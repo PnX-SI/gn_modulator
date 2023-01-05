@@ -11,6 +11,7 @@
       [placeholder]="listFormOptions.placeholder"
       [required]="listFormOptions.required"
       [compareWith]="compareFn"
+      [disabled]="computedLayout.disabled"
       (selectionChange)="inputChange($event)"
     >
       <mat-option>

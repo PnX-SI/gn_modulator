@@ -246,7 +246,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     const objectConfig = this.objectConfig();
     for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
-      this.context[key] = this.layout[key] || this.parentContext[key] || objectConfig[key];
+      this.context[key] = layout[key] || this.parentContext[key] || objectConfig[key];
     }
 
     // ici pour filter value, etc....

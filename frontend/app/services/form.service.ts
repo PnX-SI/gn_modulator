@@ -176,9 +176,9 @@ export class ModulesFormService {
       context,
     });
     control.setValidators(this.formValidators(computedLayout));
-    if (computedLayout.disabled) {
-      control.disable();
-    }
+    // if (computedLayout.disabled) {
+    // control.disable();
+    // }
 
     // control pour object
     if (layout.type == 'dict') {

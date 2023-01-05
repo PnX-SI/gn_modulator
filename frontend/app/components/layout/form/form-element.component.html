@@ -17,6 +17,7 @@
         [type]="computedLayout.type"
         [formControl]="formControl"
         [required]="computedLayout.required"
+        [disabled]="computedLayout.disabled"
         [min]="computedLayout.min"
         [max]="computedLayout.max"
         (change)="onInputChange()"
@@ -26,6 +27,7 @@
         *ngIf="'uuid' == computedLayout.type"
         matInput
         type="text"
+        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [formControl]="formControl"
         [required]="computedLayout.required"
@@ -37,6 +39,7 @@
         matInput
         type="number"
         step="1"
+        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [formControl]="formControl"
         [required]="computedLayout.required"
@@ -49,6 +52,7 @@
         *ngIf="['textarea', 'json'].includes(computedLayout.type)"
         matInput
         cdkTextareaAutosize
+        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [cdkAutosizeMinRows]="computedLayout.min_rows"
         [cdkAutosizeMaxRows]="computedLayout.max_rows"

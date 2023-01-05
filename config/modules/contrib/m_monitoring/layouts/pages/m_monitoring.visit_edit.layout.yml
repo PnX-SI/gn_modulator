@@ -5,6 +5,8 @@ description: Layout pour l'édition d'une visite
 
 aliases:
   - &visit_form_fields
+    - type: message
+      json: __f__formGroup.value
     - hidden: true
       items:
         - id_site
@@ -23,7 +25,7 @@ aliases:
       filters: "__f__`sites.id_site = ${context.params.id_site}`"
     - key: id_dataset
       type: list_form
-      title: Jeu de données
+      title: "__f__data.id_module ? 'Jeu de données' : 'Jeu de données (Veuillez entrer un protocole)'"
       schema_code: meta.jdd
       page_size: 10
       reload_on_search: true

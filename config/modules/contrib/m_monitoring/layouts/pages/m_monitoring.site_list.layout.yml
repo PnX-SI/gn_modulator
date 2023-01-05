@@ -104,7 +104,6 @@ layout:
   direction: row
   object_code: site
   items:
-
     - type: object
       display: filters
       flex: 1
