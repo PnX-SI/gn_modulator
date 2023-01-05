@@ -72,6 +72,10 @@ class DefinitionUtils:
             # traitement du local_srid
             data = replace_in_dict(data, "__LOCAL_SRID__", local_srid())
 
+            # on enleve aliases
+            if isinstance(data, dict):
+                data.pop("aliases", None)
+
             return data
 
     @classmethod

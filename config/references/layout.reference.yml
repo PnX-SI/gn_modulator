@@ -20,6 +20,8 @@ properties:
   description:
     type: string
   layout:
-    type: object
+    oneOf:
+      - type: object
+      - type: array
   data:
     type: object

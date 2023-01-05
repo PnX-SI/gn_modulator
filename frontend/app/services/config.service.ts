@@ -13,6 +13,7 @@ export class ModulesConfigService {
     schemas: {},
     modules: {},
     layouts: {},
+    layoutTemplates: {},
   };
 
   constructor(private _mRequest: ModulesRequestService) {}
@@ -70,6 +71,10 @@ export class ModulesConfigService {
     return this._config['layouts'][layoutCode];
   }
 
+  layoutTemplate(layoutTemplateCode) {
+    return this._config['layoutTemplates'][layoutTemplateCode];
+  }
+
   schema(schemaCode) {
     return this._config['schemas'][schemaCode];
   }
@@ -89,9 +94,10 @@ export class ModulesConfigService {
     return Object.keys(this._config.layouts).length
       ? of(this._config.layouts)
       : this._mRequest.request('get', `${this.backendModuleUrl()}/layouts/?as_dict=true`).pipe(
-          mergeMap((layouts) => {
-            this._config.layouts = layouts;
-            return of(this._config.layouts);
+          mergeMap((data) => {
+            this._config.layouts = data.layouts;
+            this._config.layoutTemplates = data.layout_templates;
+            return of(true);
           })
         );
   }

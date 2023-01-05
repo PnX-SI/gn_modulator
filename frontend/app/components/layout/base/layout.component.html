@@ -15,6 +15,17 @@
     ></modules-layout>
   </ng-container>
 
+  <!-- template -->
+  <ng-container *ngIf="layoutType == 'template'">
+    <modules-layout
+      *ngIf="layoutTemplateFromCode"
+      [layout]="layoutTemplateFromCode"
+      [data]="data"
+      [parentContext]="context"
+      (onAction)="processAction($event)"
+    ></modules-layout>
+  </ng-container>
+
   <!-- assert-->
   <ng-container *ngIf="layoutType == 'assert'">
     <div [ngClass]="{ 'test-layout': true, success: assertionIsTrue, error: !assertionIsTrue }">

@@ -60,9 +60,6 @@ export class ModulesLayoutService {
 
     this._utilsObject = this._mObject.utilsObject();
   }
-  getLayoutFromCode(layoutCode): any {
-    return this._mConfig.layout(layoutCode);
-  }
 
   reComputeLayout(name) {
     this.$reComputeLayout.next(true);

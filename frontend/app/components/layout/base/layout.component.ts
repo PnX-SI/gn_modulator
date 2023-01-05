@@ -60,6 +60,8 @@ export class ModulesLayoutComponent implements OnInit {
   // TODO à gérer en backend ?
   layoutFromCode;
 
+  layoutTemplateFromCode;
+
   /** margin for debug display
    * help with debugging nested layout
    */
@@ -319,7 +321,7 @@ export class ModulesLayoutComponent implements OnInit {
     // si layout_code est défini
     // on va chercher le layout correspondant dans la config
     if (this.computedLayout.code && !this.layoutFromCode) {
-      const layoutFromCode = this._mLayout.getLayoutFromCode(this.computedLayout.code);
+      const layoutFromCode = this._mConfig.layout(this.computedLayout.code);
       // message d'erreur pour indiquer que l'on a pas trouvé le layout
       if (!layoutFromCode) {
         this.layoutFromCode = {
@@ -331,6 +333,39 @@ export class ModulesLayoutComponent implements OnInit {
       }
 
       this.layoutFromCode = layoutFromCode.layout;
+    }
+
+    if (this.computedLayout.template_code && !this.layoutTemplateFromCode) {
+      let layoutTemplateFromCode = utils.copy(
+        this._mConfig.layoutTemplate(this.computedLayout.template_code)
+      );
+      // message d'erreur pour indiquer que l'on a pas trouvé le layout
+      if (!layoutTemplateFromCode) {
+        this.layoutTemplateFromCode = {
+          type: 'message',
+          class: 'error',
+          html: `Pas de template trouvée pour le <i>layout_code</i> <b>${this.computedLayout.template_code}</b>`,
+        };
+        return;
+      }
+
+      for (const [paramKey, paramValue] of Object.entries(this.computedLayout.params || {})) {
+        layoutTemplateFromCode = utils.replace(
+          layoutTemplateFromCode,
+          `__${paramKey.toUpperCase()}__`,
+          paramValue
+        );
+      }
+
+      for (const [paramKey, paramValue] of Object.entries(layoutTemplateFromCode.defaults || {})) {
+        layoutTemplateFromCode = utils.replace(
+          layoutTemplateFromCode,
+          `__${paramKey.toUpperCase()}__`,
+          paramValue
+        );
+      }
+
+      this.layoutTemplateFromCode = layoutTemplateFromCode.template.layout;
     }
 
     if (this.computedLayout.overflow) {

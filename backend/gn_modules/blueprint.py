@@ -67,8 +67,9 @@ def api_breadcrumbs(module_code, page_code):
     return ModuleMethods.breadcrumbs(module_code, page_code, request.args.to_dict())
 
 
-@blueprint.route("/layouts/", methods=["GET"])
-def api_layout():
+@blueprint.route("/layouts/<path:config_path>", methods=["GET"])
+@blueprint.route("/layouts/", methods=["GET"], defaults={"config_path": None})
+def api_layout(config_path):
     """
     Renvoie la liste des layouts
     """
@@ -84,11 +85,23 @@ def api_layout():
     # - pour un layout précis
     layout_code = request.args.get("layout_code")
 
+    layout_out = None
     if layout_code:
-        return LayoutMethods.get_layout(layout_code=layout_code)
+        layout_out = LayoutMethods.get_layout(layout_code=layout_code)
+    else:
+        layout_out = {
+            "layouts": LayoutMethods.get_layouts(
+                layout_search_code=layout_search_code, as_dict=as_dict
+            ),
+            "layout_templates": LayoutMethods.get_layouts(
+                layout_search_code=layout_search_code, as_dict=as_dict, is_template=True
+            ),
+        }
 
-    return jsonify(
-        LayoutMethods.get_layouts(layout_search_code=layout_search_code, as_dict=as_dict)
+    return process_dict_path(
+        layout_out,
+        config_path,
+        SchemaMethods.base_url() + "/config/",
     )
 
 
