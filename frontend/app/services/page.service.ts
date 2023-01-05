@@ -73,15 +73,9 @@ export class ModulesPageService {
         );
         return;
       }
-      // const routeParams = { value, ...((layout as any)?.params || {}) };
-      const routeParams = {};
-      // routeParams[]
 
-      routeParams[this._mObject.pkFieldName(context.module_code, context.object_code)] = value;
-      // this._mRoute.navigateToPage(moduleCode, pageCode, routeParams);
       this._mRoute.navigateToPage(context.module_code, pageCode, {
         ...context.params,
-        ...routeParams,
       });
     }
 

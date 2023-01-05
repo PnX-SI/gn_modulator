@@ -57,15 +57,17 @@ properties:
         type: json
         description: "Données additionnelles de l'observation"
         title: Données additionnelles
-details:
-    layout:
-        - id_visit
-        - cd_nom
-        - visit.date_min
-        - taxon.nom_vern
-        - visit.site.name
-        - visit.dataset.dataset_name
-        - visit.observers.nom_complet
+
+# details:
+#     layout:
+#         - id_visit
+#         - cd_nom
+#         - visit.date_min
+#         - taxon.nom_vern
+#         - visit.site.name
+#         - visit.dataset.dataset_name
+#         - visit.observers.nom_complet
+
 form:
     layout:
         -
@@ -82,8 +84,9 @@ form:
             schema_code: tax.taxref
             page_size: 10
             reload_on_search: true
-table:
-    columns:
-        - cd_nom
-        - visit.date_min
-        - taxon.nom_vern
+
+# table:
+#     columns:
+#         - cd_nom
+#         - visit.date_min
+#         - taxon.nom_vern

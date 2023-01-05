@@ -120,11 +120,14 @@ layout:
         display: geojson
         items: *site_map_fields
 
-    - type: object
-      flex: 2
-      display: table
-      sort: last_visit_date_min-
-      items: *site_table_fields
+    - items:
+      - type: breadcrumbs
+        flex: "0"
+      - type: object
+        flex: 2
+        display: table
+        sort: last_visit_date_min-
+        items: *site_table_fields
 
 context:
   module_code: m_monitoring

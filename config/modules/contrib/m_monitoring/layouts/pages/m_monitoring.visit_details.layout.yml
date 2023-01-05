@@ -2,6 +2,29 @@ type: layout
 title: Layout visit details
 description: Layout pour les détails d'une visite
 code: m_monitoring.visit_details
+
+aliases:
+  - &visit_fields_details
+    - hidden: true
+      items:
+        - id_visit
+    - site.name
+    - module.module_label
+    - date_min
+    - nb_observations
+    - digitiser.nom_complet
+    - dataset.dataset_name
+    - dataset.acquisition_framework.acquisition_framework_name
+    - module.module_label
+    - observers.nom_complet
+
+  - &observation_fields_table
+    - taxon.nom_vern
+    - visit.site.name
+    - visit.date_min
+    - visit.observers.nom_complet
+
+
 layout:
   height_auto: true
   items:
@@ -12,45 +35,22 @@ layout:
       items:
         direction: row
         items:
-          - title:  __f__o.title_details(x)
-            items:
-              - hidden: true
-                items:
-                  - id_visit
-              - site.name
-              - module.module_label
-              - date_min
-              - nb_observations
-              - digitiser.nom_complet
-              - dataset.dataset_name
-              - dataset.acquisition_framework.acquisition_framework_name
-              - module.module_label
-              - observers.nom_complet
-              - type: button
-                color: primary
-                title: Éditer
-                description: __f__o.title_create_edit(x)
-                action: edit
-                hidden: __f__!o.is_action_allowed(x, 'U')
-                flex: "0"
+          - items:
+            - title:  __f__o.title_details(x)
+              flex: "0"
+            - overflow: true
+              items: *visit_fields_details
+            - code: m_monitoring.button_edit
+              flex: "0"
           - display: tabs
             items:
               - label: __f__o.tab_label(x)
                 object_code: observation
                 items:
-                  - action: create
-                    type: button
-                    icon: add
-                    color: primary
-                    description: __f__o.title_create_edit(x)
+                  - code: m_monitoring.button_create
                     flex: "0"
-                    params: "__f__{ return {id_visit: context.params.id_visit}}"
                   - type: object
                     display: table
-                    items:
-                      - taxon.nom_vern
-                      - visit.site.name
-                      - visit.date_min
-                      - visit.observers.nom_complet
+                    items: *observation_fields_table
                     sort: taxon.nom_vern
 

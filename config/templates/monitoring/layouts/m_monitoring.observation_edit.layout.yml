@@ -2,10 +2,33 @@ type: layout
 code: m_monitoring.observation_edit
 title: Layout observation edit
 description: Layout pour l'édition d'une observation
+
+aliases:
+  - &observation_form_fields
+    - hidden: true
+      items:
+        - id_observation
+        - id_visit
+        - key: id_digitiser
+          default: __f__context.current_user?.id_role
+    - key: cd_nom
+      type: list_form
+      title: Taxon
+      schema_code: tax.taxref
+      page_size: 10
+      reload_on_search: true
+
 layout:
   height_auto: true
   direction: row
   items:
     - type: object
-      display: form
-      key: observation
+      object_code: observation
+      items:
+        type: form
+        title: __f__o.title_create_edit(x)
+        items:
+          - overflow: true
+            items: *observation_form_fields
+          - code: m_monitoring.buttons_form
+            flex: "0"

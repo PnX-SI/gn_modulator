@@ -4,7 +4,7 @@ title: Layout visit edit
 description: Layout pour l'édition d'une visite
 
 aliases:
-  - &form_fields
+  - &visit_form_fields
     - hidden: true
       items:
         - id_site
@@ -48,6 +48,6 @@ layout:
         title: __f__o.title_create_edit(x)
         items:
           - overflow: true
-            items: *form_fields
+            items: *visit_form_fields
           - code: m_monitoring.buttons_form
             flex: "0"

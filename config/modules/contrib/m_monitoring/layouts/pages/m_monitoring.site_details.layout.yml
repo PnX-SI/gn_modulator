@@ -3,6 +3,26 @@ code: m_monitoring.site_details
 title: Layout site details
 description: Layout pour les details d'un site
 
+aliases:
+  - &site_fields_details
+    - hidden: true
+      items:
+        - id_site
+        - ownership
+    - code
+    - name
+    - description
+    - nb_visits
+
+  - &visit_fields_table
+    - site.name
+    - date_min
+    - nb_observations
+    - digitiser.nom_complet
+    - dataset.dataset_name
+    - observers.nom_complet
+    - module.module_label
+
 context:
   module_code: m_monitoring
 layout:
@@ -21,16 +41,11 @@ layout:
           type: object
           items:
             - title: __f__o.title_details(x)
-              items:
-                - hidden: true
-                  items:
-                    - id_site
-                    - ownership
-                - code
-                - name
-                - description
-                - nb_visits
-                - code: m_monitoring.button_edit
+              flex: "0"
+            - overflow: true
+              items: *site_fields_details
+            - code: m_monitoring.button_edit
+              flex: "0"
 
         - display: tabs
           items:
@@ -38,16 +53,9 @@ layout:
               object_code: visit
               items:
                 - code: m_monitoring.button_create
+                  flex: "0"
                 - type: object
                   display: table
-                  items:
-                    - site.name
-                    - date_min
-                    - nb_observations
-                    - digitiser.nom_complet
-                    - dataset.dataset_name
-                    - observers.nom_complet
-                    - module.module_label
-
+                  items: *visit_fields_table
                   sort: date_min-
 
