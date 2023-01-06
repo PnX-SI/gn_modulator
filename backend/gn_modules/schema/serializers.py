@@ -282,6 +282,26 @@ class SchemaSerializers:
         if not fields:
             fields = [self.pk_field_name()]
 
+        # quand une relation est demandée
+        # on veut éviter de sortir toute la base dans la foulée
+        # par défaut on demande pk et label
+        fields_to_remove = []
+        fields_to_add = []
+
+        for field in fields:
+            property = self.property(field)
+            if not property["type"] == "relation":
+                continue
+            sm = self.cls(property["schema_code"])
+            fields_to_remove.append(field)
+            fields_to_add.append(f"{field}.{sm.pk_field_name()}")
+            fields_to_add.append(f"{field}.{sm.label_field_name()}")
+
+        for f in fields_to_remove:
+            fields.remove(f)
+
+        fields += fields_to_add
+
         kwargs = {"only": fields} if fields else {}
 
         if as_geojson:
