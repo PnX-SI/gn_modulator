@@ -1,0 +1,13 @@
+type: layout
+code: template_test
+title: template de test pour les layout
+
+defaults:
+  x: défaut
+  y:
+    - title: 1
+    - title: 2
+
+layout:
+  title: test (__X__)
+  items: __Y__

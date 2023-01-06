@@ -1,0 +1,6 @@
+type: layout
+code: process_template_unresolved_fields_fail_template
+title: template test ERR_TEMPLATE_UNRESOLVED_FIELDS
+
+truc:
+    __MODULE_CODE__

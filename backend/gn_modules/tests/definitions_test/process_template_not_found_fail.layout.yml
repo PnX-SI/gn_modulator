@@ -1,5 +1,5 @@
-type: use_template
-code: process_template_not_found_fail.layout
+type: layout
+code: process_template_not_found_fail
 title: erreur ERR_TEMPLATE_NOT_FOUND
 description: test retour d'erreur ERR_TEMPLATE_NOT_FOUND
 template_code: template_not_found

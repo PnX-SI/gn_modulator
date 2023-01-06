@@ -113,20 +113,6 @@ class DefinitionBase:
         if definition_type in ["layout", "schema"]:
             cls.check_definition_dynamic_layout(definition_type, definition_code, definition)
 
-        # check template codes
-        if definition_type == "template":
-            template = cls.get_definition("template", definition_code)
-            template_type = template["template"]["type"]
-            if definition_code.split(".")[-1] != template_type:
-                add_error(
-                    msg=f"Le code du template {definition_code} devrait se terminer par '.{template_type}'",
-                    definition_type="template",
-                    definition_code=definition_code,
-                    code="ERR_LOCAL_CHECK_TEMPLATE_CODE",
-                )
-                cls.remove_from_cache("template", definition_code)
-                return
-
         # suppression en cache de la definition si erreur locale
         if len(
             get_errors(
@@ -255,7 +241,7 @@ class DefinitionBase:
         return f"{definition_code}.{definition_type}"
 
     @classmethod
-    def save_in_cache_definition(cls, definition, file_path):
+    def save_in_cache_definition(cls, definition, file_path, check_existing_definition=True):
 
         if isinstance(definition, list):
             add_error(
@@ -296,7 +282,7 @@ class DefinitionBase:
         # test si la données n'existe pas dansun autre fichier
         # et déjà été chargée dans le cache
         # ce qui ne devrait pas être le cas
-        elif cls.get_definition(definition_type, definition_code):
+        elif cls.get_definition(definition_type, definition_code) and check_existing_definition:
             add_error(
                 definition_type=definition_type,
                 definition_code=definition_code,
@@ -308,7 +294,7 @@ class DefinitionBase:
         # check file_name
         # file_path = cls.get_file_path(definition_type, definition_code)
         # file_name = cls.file_name(definition)
-        elif file_path.stem != cls.file_name(definition) and not (definition.get("use_template")):
+        elif file_path.stem != cls.file_name(definition):
             add_error(
                 definition_type=definition_type,
                 definition_code=definition_code,
@@ -462,9 +448,9 @@ class DefinitionBase:
             return
 
         # verification et application des templates
-        cls.check_template_definitions()
-        if get_errors():
-            return
+        # cls.check_template_definitions()
+        # if get_errors():
+        # return
 
         cls.process_templates()
         if get_errors():

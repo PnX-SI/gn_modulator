@@ -1,5 +1,5 @@
-type: use_template
-code: m_monitoring_test_1.exemples.data
+type: data
+code: process_template_code_error_fail
 title: Données exemple m_monitoring_test_1
 description: Donnée d'exemple pour le protocole m_monitoring_test_1
 

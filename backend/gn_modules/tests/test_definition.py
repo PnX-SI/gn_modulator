@@ -5,8 +5,6 @@ Test pour valider
 
 reste à tester (a minima)
 ERR_DEF_EMPTY_FILE
-ERR_USE_TEMPLATE_CODE
-ERR_TEMPLATE_CODE
 """
 
 import pytest
@@ -42,8 +40,6 @@ class TestDefinitions:
         assert len(DefinitionMethods.definition_codes_for_type("module")) > 0
         assert len(DefinitionMethods.definition_codes_for_type("layout")) > 0
         assert len(DefinitionMethods.definition_codes_for_type("schema")) > 0
-        assert len(DefinitionMethods.definition_codes_for_type("template")) > 0
-        assert len(DefinitionMethods.definition_codes_for_type("use_template")) > 0
 
         # on a bien les références
         # - pour les définitions
@@ -176,28 +172,8 @@ class TestDefinitions:
         """
 
         test_process_template(
-            definitions_test_dir / "process_template_not_found_fail.layout.use_template.yml",
+            definitions_test_dir / "process_template_not_found_fail.layout.yml",
             "ERR_TEMPLATE_NOT_FOUND",
-        )
-
-    def test_use_template_code_error_fail(self):
-        """
-        ERR_USE_TEMPLATE_CODE
-        """
-
-        test_process_template(
-            definitions_test_dir / "process_template_code_error_fail.use_template.yml",
-            "ERR_USE_TEMPLATE_CODE",
-        )
-
-    def test_template_code_error_fail(self):
-        """
-        ERR_LOCAL_CHECK_TEMPLATE_CODE
-        """
-
-        test_local_check_definition(
-            definitions_test_dir / "process_template_code_fail.template.yml",
-            "ERR_LOCAL_CHECK_TEMPLATE_CODE",
         )
 
     def test_template_unresolved_fields_fail(self):
@@ -206,11 +182,11 @@ class TestDefinitions:
         """
 
         test_load_definition(
-            definitions_test_dir / "process_template_unresolved_fields_fail.layout.template.yml"
+            definitions_test_dir / "process_template_unresolved_fields_fail_template.layout.yml"
         )
         test_process_template(
             definitions_test_dir
-            / "process_template_unresolved_fields_fail.layout.use_template.yml",
+            / "process_template_unresolved_fields_fail.layout.yml",
             "ERR_TEMPLATE_UNRESOLVED_FIELDS",
         )
 
@@ -226,6 +202,7 @@ class TestDefinitions:
         # possède bien les éléments attendus
 
         definition = DefinitionMethods.get_definition("module", "m_monitoring_test_1")
+        print(definition)
         assert definition.get("pages") is not None
 
         assert definition["code"] == "m_monitoring_test_1"

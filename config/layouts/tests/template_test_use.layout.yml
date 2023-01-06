@@ -1,0 +1,10 @@
+type: layout
+code: template_test_use
+title: test utilisation du template 'template_test'
+
+layout:
+  items:
+    - code: test_template
+    - code: test_template
+      params:
+        x: YOUPLABOOM

@@ -125,12 +125,10 @@ def test_process_template(file_path=None, error_code=None):
     if file_path is None:
         return
 
-    definition = test_local_check_definition(file_path)
+    definition = test_load_definition(file_path)
 
     definition_type, definition_code = DefinitionMethods.get_definition_type_and_code(definition)
 
-    assert definition_type == "use_template"
-
-    DefinitionMethods.process_template(definition_code)
+    DefinitionMethods.process_template(definition_type, definition_code)
 
     check_errors(definition=definition, error_code=error_code, context="process_template")

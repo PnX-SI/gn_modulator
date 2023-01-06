@@ -7,7 +7,7 @@ required:
   - type
   - code
   - title
-  - description
+  # - description
   - layout
 properties:
   type:
