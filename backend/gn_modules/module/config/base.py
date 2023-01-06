@@ -66,8 +66,14 @@ class ModulesConfigBase:
         set_global_cache(["module", module_code, "config"], module_config)
 
         # process de la config
-        cls.process_tree(module_code)
+
+        # params
         cls.process_module_objects(module_code)
+
+        # - pages
+
+        cls.process_pages(module_code)
+        cls.process_tree(module_code)
 
         if module_config.get("registred"):
             cls.process_module_params(module_code)

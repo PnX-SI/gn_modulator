@@ -60,15 +60,15 @@ params:
 tree:
   parc:
 
-pages:
-  parc_list:
-    url: ''
-    layout:
-      code: m_eole.parc_list
-  parc_details:
-    url: parc/:id_site_group
-    layout:
-      code: m_eole.parc_details
+# pages:
+#   parc_list:
+#     url: ''
+#     layout:
+#       code: m_eole.parc_list
+#   parc_details:
+#     url: parc/:id_site_group
+#     layout:
+#       code: m_eole.parc_details
 
 features:
   - m_eole.data

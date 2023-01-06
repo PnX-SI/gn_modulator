@@ -13,10 +13,10 @@ class ModuleBreadCrumbs:
 
         # page parent
         parent_page_code = page_config.get("parent")
-        page_key = page_config["key"]
+        object_code = page_config["object_code"]
 
         # schema name
-        schema_code = module_config["objects"][page_key]["schema_code"]
+        schema_code = module_config["objects"][object_code]["schema_code"]
         sm = SchemaMethods(schema_code)
 
         # url

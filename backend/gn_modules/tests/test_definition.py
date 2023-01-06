@@ -202,6 +202,6 @@ class TestDefinitions:
 
         definition = DefinitionMethods.get_definition("module", "m_monitoring_test_1")
         print(definition)
-        assert definition.get("pages") is not None
+        assert definition.get("pages_definition") is not None
 
         assert definition["code"] == "m_monitoring_test_1"

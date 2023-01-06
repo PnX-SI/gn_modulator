@@ -24,6 +24,73 @@ class ModuleConfigUtils:
         return object_config
 
     @classmethod
+    def schema_code(cls, module_code, object_code):
+        object_config = cls.object_config(module_code, object_code)
+        return object_config["schema_code"]
+
+    @classmethod
+    def layout_code(cls, module_code, object_code, action):
+        return f"{module_code}.{object_code}_{action}"
+
+    @classmethod
+    def page_code(cls, object_code, action):
+        return f"{object_code}_{action}"
+
+    @classmethod
+    def page_url(cls, module_code, object_code, action):
+        if action in ["details", "edit"]:
+            sm = SchemaMethods(cls.schema_code(module_code, object_code))
+            return f"{object_code}_{action}/:{sm.pk_field_name()}"
+        else:
+            return f"{object_code}_{action}"
+
+    @classmethod
+    def default_page_config(cls, module_code, object_code, action):
+
+        sm = SchemaMethods(cls.schema_code(module_code, object_code))
+        default_page_config = {
+            "action": action,
+            "code": cls.page_code(object_code, action),
+            "url": cls.page_url(module_code, object_code, action),
+            "layout": {"code": cls.layout_code(module_code, object_code, action)},
+            "object_code": object_code,
+        }
+
+        if action in ["details", "edit"]:
+            default_page_config["objects"] = {object_code: {"value": f":{sm.pk_field_name()}"}}
+
+        return default_page_config
+
+    @classmethod
+    def process_pages(cls, module_code):
+        module_config = cls.module_config(module_code)
+
+        pages_definition = module_config.get("pages_definition")
+
+        pages = module_config.get("pages")
+
+        if pages or not pages_definition:
+            return
+
+        pages = {}
+
+        for object_code, object_pages_config in pages_definition.items():
+            for action, page_action_config in object_pages_config.items():
+                page_config = copy.deepcopy(
+                    cls.default_page_config(module_code, object_code, action)
+                )
+                for elem_key, elem_value in page_action_config.items():
+                    if elem_key == "objects":
+                        for object_code_, object_config_ in elem_value.items():
+                            page_config["objects"][object_code_] = object_config_
+                    else:
+                        page_config[elem_key] = elem_value
+
+                pages[page_config["code"]] = page_config
+
+        module_config["pages"] = pages
+
+    @classmethod
     def process_tree(cls, module_code):
         """
         gere les ket et parent pour chaque page de la config
@@ -35,31 +102,27 @@ class ModuleConfigUtils:
         if not tree:
             return
 
-        objects = {}
-        cls.process_objects_from_tree(tree, objects)
+        objects_with_parent = {}
+        cls.process_objects_from_tree(tree, objects_with_parent)
 
         # find root
         page_root = None
-        for page_code, page_config in module_config["pages"].items():
-            if page_config["url"] == "":
+        for page_code, page_config in module_config.get("pages", {}).items():
+            if page_config.get("root"):
                 page_root = page_code
-                page_config["root"] = True
+                page_config["url"] = ""
 
         # gestion des pages
         # assignation de key et parent (et type ????) shema_name etc ???
-        for page_code, page_config in module_config["pages"].items():
-            page_key = "_".join(page_code.split("_")[:-1])
-            page_type = page_code.split("_")[-1]
-
+        for page_code, page_config in module_config.get("pages", {}).items():
             page_parent = None
-            if objects.get(page_key, {}).get("parent"):
-                page_parent = f"{objects.get(page_key, {}).get('parent')}_details"
+            object_parent = objects_with_parent.get(page_config["object_code"], {}).get("parent")
+            if object_parent:
+                page_parent = f"{object_parent}_details"
             # assignations
-            page_config["key"] = page_key
-            page_config["type"] = page_type
             if page_parent:
                 page_config["parent"] = page_parent
-            elif page_root and page_root != page_code:
+            elif page_root and page_root != page_config["code"]:
                 page_config["parent"] = page_root
 
     @classmethod
