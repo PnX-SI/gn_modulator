@@ -60,8 +60,6 @@ export class ModulesLayoutComponent implements OnInit {
   // TODO à gérer en backend ?
   layoutFromCode;
 
-  layoutTemplateFromCode;
-
   /** margin for debug display
    * help with debugging nested layout
    */
@@ -321,7 +319,7 @@ export class ModulesLayoutComponent implements OnInit {
     // si layout_code est défini
     // on va chercher le layout correspondant dans la config
     if (this.computedLayout.code && !this.layoutFromCode) {
-      const layoutFromCode = this._mConfig.layout(this.computedLayout.code);
+      let layoutFromCode = this._mConfig.layout(this.computedLayout.code);
       // message d'erreur pour indiquer que l'on a pas trouvé le layout
       if (!layoutFromCode) {
         this.layoutFromCode = {
@@ -332,47 +330,21 @@ export class ModulesLayoutComponent implements OnInit {
         return;
       }
 
-      this.layoutFromCode = layoutFromCode.layout;
-    }
-
-    if (this.computedLayout.template_code && !this.layoutTemplateFromCode) {
-      let layoutTemplateFromCode = utils.copy(
-        this._mConfig.layoutTemplate(this.computedLayout.template_code)
-      );
-      // message d'erreur pour indiquer que l'on a pas trouvé le layout
-      if (!layoutTemplateFromCode) {
-        this.layoutTemplateFromCode = {
-          type: 'message',
-          class: 'error',
-          html: `Pas de template trouvée pour le <i>layout_code</i> <b>${this.computedLayout.template_code}</b>`,
-        };
-        return;
-      }
-
+      const templateParams = {
+        ...(layoutFromCode.defaults || {}),
+        ...(this.computedLayout.params || {}),
+      };
       // remplacer les élements de params
-      for (const [paramKey, paramValue] of Object.entries(this.computedLayout.params || {})) {
-        layoutTemplateFromCode = utils.replace(
-          layoutTemplateFromCode,
-          `__${paramKey.toUpperCase()}__`,
-          paramValue
-        );
-      }
-
-      // remplacer les élements de default
-      for (const [paramKey, paramValue] of Object.entries(layoutTemplateFromCode.defaults || {})) {
-        layoutTemplateFromCode = utils.replace(
-          layoutTemplateFromCode,
-          `__${paramKey.toUpperCase()}__`,
-          paramValue
-        );
+      for (const [paramKey, paramValue] of Object.entries(templateParams)) {
+        layoutFromCode = utils.replace(layoutFromCode, `__${paramKey.toUpperCase()}__`, paramValue);
       }
 
       // checker s'il ne reste pas de params ??
       const regex = /(__[A-Z]+__)/;
-      let unresolved = JSON.stringify(layoutTemplateFromCode).match(regex);
+      let unresolved = JSON.stringify(layoutFromCode).match(regex);
 
       if (!!unresolved) {
-        this.layoutTemplateFromCode = {
+        this.layoutFromCode = {
           type: 'message',
           class: 'error',
           html: `Il y a des champs non résolus dans le template : ${utils
@@ -382,7 +354,7 @@ export class ModulesLayoutComponent implements OnInit {
         return;
       }
 
-      this.layoutTemplateFromCode = layoutTemplateFromCode.template.layout;
+      this.layoutFromCode = layoutFromCode.layout;
     }
 
     if (this.computedLayout.overflow) {

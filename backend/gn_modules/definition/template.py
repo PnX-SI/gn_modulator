@@ -24,9 +24,16 @@ class DefinitionTemplates:
         for definition_type in cls.definition_types():
             for definition_key in cls.definition_codes_for_type(definition_type):
                 definition = cls.get_definition(definition_type, definition_key)
-                if not definition.get('template_code'):
+                if not definition.get("template_code"):
                     continue
                 cls.process_template(definition_type, definition_key)
+
+    @classmethod
+    def get_unresolved_params(cls, definition):
+        """ """
+
+        unresolved_params = re.findall(r"__(.*?)__", json.dumps(definition))
+        return list(dict.fromkeys(unresolved_params))
 
     @classmethod
     def process_template(cls, definition_type, defininition_key):
@@ -70,16 +77,13 @@ class DefinitionTemplates:
                 processed_definition, f"__{param_key.upper()}__", param_item
             )
 
-        for key in ['title', 'code', 'description']:
+        for key in ["title", "code", "description"]:
             processed_definition[key] = definition.get(key)
 
         # check s'il reste des ____
-        remindings__ = re.findall(r"__(.*?)__", json.dumps(processed_definition))
-
-        if remindings__:
-            remindings__str = ", ".join(
-                map(lambda x: f"__{x}__", list(dict.fromkeys(remindings__)))
-            )
+        unresolved_params = cls.get_unresolved_params(processed_definition)
+        if unresolved_params:
+            remindings__str = ", ".join(map(lambda x: f"__{x}__", unresolved_params))
             add_error(
                 msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
                 definition_type="use_template",
@@ -95,5 +99,5 @@ class DefinitionTemplates:
         cls.save_in_cache_definition(
             processed_definition,
             cls.get_file_path(definition_type, defininition_key),
-            check_existing_definition=False
+            check_existing_definition=False,
         )

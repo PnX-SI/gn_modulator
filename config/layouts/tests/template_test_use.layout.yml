@@ -4,7 +4,7 @@ title: test utilisation du template 'template_test'
 
 layout:
   items:
-    - code: test_template
-    - code: test_template
+    - code: template_test
+    - code: template_test
       params:
         x: YOUPLABOOM

@@ -13,7 +13,16 @@ class ModuleBase:
         """
         Renvoie la liste des code de module présents dans les fichiers de config
         """
-        return list(get_global_cache(["module"]).keys())
+
+        module_codes = []
+
+        for module_code in DefinitionMethods.definition_codes_for_type("module"):
+            definition = DefinitionMethods.get_definition("module", module_code)
+            if DefinitionMethods.get_unresolved_params(definition):
+                continue
+            module_codes.append(module_code)
+
+        return module_codes
 
     @classmethod
     def registred_modules(cls):

@@ -157,7 +157,7 @@ class ModuleCommands:
         grammar_type_list = SchemaMethods.grammar_type_list()
 
         if grammar_type and grammar_type not in grammar_type_list:
-            raise SchemaErrors.SchemaGrammarTypeError(
+            raise SchemaMethods.errors.SchemaGrammarTypeError(
                 f"Le type de grammaire choisi {grammar_type} n'est pas valide."
             )
 

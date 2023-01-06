@@ -89,14 +89,9 @@ def api_layout(config_path):
     if layout_code:
         layout_out = LayoutMethods.get_layout(layout_code=layout_code)
     else:
-        layout_out = {
-            "layouts": LayoutMethods.get_layouts(
-                layout_search_code=layout_search_code, as_dict=as_dict
-            ),
-            "layout_templates": LayoutMethods.get_layouts(
-                layout_search_code=layout_search_code, as_dict=as_dict, is_template=True
-            ),
-        }
+        layout_out = LayoutMethods.get_layouts(
+            layout_search_code=layout_search_code, as_dict=as_dict
+        )
 
     return process_dict_path(
         layout_out,

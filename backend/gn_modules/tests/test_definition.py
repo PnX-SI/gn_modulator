@@ -185,8 +185,7 @@ class TestDefinitions:
             definitions_test_dir / "process_template_unresolved_fields_fail_template.layout.yml"
         )
         test_process_template(
-            definitions_test_dir
-            / "process_template_unresolved_fields_fail.layout.yml",
+            definitions_test_dir / "process_template_unresolved_fields_fail.layout.yml",
             "ERR_TEMPLATE_UNRESOLVED_FIELDS",
         )
 

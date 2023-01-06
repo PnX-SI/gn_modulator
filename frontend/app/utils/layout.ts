@@ -20,8 +20,6 @@ const getLayoutType = (layout) => {
     : !layout.type
     ? layout.code
       ? 'code'
-      : layout.template_code
-      ? 'template'
       : 'section'
     : layout.type;
   return layoutType;

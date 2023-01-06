@@ -111,7 +111,6 @@ export class TestLayoutComponent implements OnInit {
           title: `Selection de layout`,
           type: 'list_form',
           api: '/modules/layouts/',
-          items_path: 'layouts',
           value_field_name: 'code',
           label_field_name: 'title',
           title_field_name: 'description',
