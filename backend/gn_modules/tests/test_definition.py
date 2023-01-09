@@ -121,6 +121,7 @@ class TestDefinitions:
     def test_local_check_definition_dynamic(self):
         """
         test de remontée des erreur de validation des layout pour les éléments dynamiques
+        ERR_LOCAL_CHECK_DYNAMIC
         """
 
         test_local_check_definition(

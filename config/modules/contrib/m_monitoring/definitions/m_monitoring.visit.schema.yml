@@ -23,6 +23,7 @@ properties:
     type: uuid
     title: UUID
   date_min:
+    # type: string
     type: date
     title: Date (min)
     description: Date (minimale) associée à la visite

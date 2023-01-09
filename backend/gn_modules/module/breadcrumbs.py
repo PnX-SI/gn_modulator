@@ -41,7 +41,7 @@ class ModuleBreadCrumbs:
                 # todo create ou list ???
 
                 label_page = (
-                    f"Création {sm.label()}" if page_config["type"] == "create" else sm.labels()
+                    f"Création {sm.label()}" if page_config["action"] == "create" else sm.labels()
                 )
 
             label_page = label_page.capitalize()

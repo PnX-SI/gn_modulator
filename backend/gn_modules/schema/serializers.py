@@ -290,7 +290,7 @@ class SchemaSerializers:
 
         for field in fields:
             property = self.property(field)
-            if not property["type"] == "relation":
+            if property is None or property["type"] != "relation":
                 continue
             sm = self.cls(property["schema_code"])
             fields_to_remove.append(field)

@@ -227,8 +227,9 @@ export class ModulesFormService {
     ) {
       const val = new Date(control.value).toISOString().split('T')[0];
       if (data) {
-        data[computedLayout.key] = new Date(control.value).toISOString().split('T')[0];
+        data[computedLayout.key] = val;
       }
+
       control.setValue(val);
     }
 

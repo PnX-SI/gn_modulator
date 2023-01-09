@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { Observable } from '@librairies/rxjs';
+import { Observable, of } from '@librairies/rxjs';
 import { ModulesConfigService } from './config.service';
 import { ModulesRequestService } from './request.service';
 import { HttpClient } from '@angular/common/http';
+
 import utils from '../utils';
 
 @Injectable()
@@ -31,6 +32,11 @@ export class ModulesDataService {
     }
     if (Array.isArray(options?.params?.prefilters)) {
       options.params.prefilters = utils.processFilterArray(options.params.prefilters);
+    }
+
+    //
+    if (JSON.stringify(options.params).includes('__f__')) {
+      return of({ data: [] });
     }
 
     const url = this._mConfig.objectUrl(moduleCode, objectCode, options.value, options.urlSuffix);

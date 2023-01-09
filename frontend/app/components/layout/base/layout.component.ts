@@ -278,6 +278,10 @@ export class ModulesLayoutComponent implements OnInit {
       this.elementData = this.localData;
       this.elementKey = this.context.data_keys.join('.');
     }
+
+    if (this.computedLayout.type == 'date' && this.elementData) {
+      this.elementData = this.elementData.split('-').reverse().join('/');
+    }
   }
 
   // calcul de computedLayout

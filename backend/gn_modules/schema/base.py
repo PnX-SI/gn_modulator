@@ -194,7 +194,7 @@ class SchemaBase:
             rel_prop = self.property(rel_key)
             rel = self.cls(rel_prop["schema_code"])
             return rel.property(key.split(".")[1])
-        return self.properties()[key]
+        return self.properties().get(key)
 
     def has_property(self, key):
         if "." in key:

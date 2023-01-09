@@ -261,7 +261,7 @@ class SchemaRepositoriesBase:
 
         # eager loads ??
         for field in params.get("fields") or []:
-            if field == "ownership":
+            if field in ["ownership", "row_number"]:
                 continue
             _, query = self.custom_getattr(Model, field, query)
 

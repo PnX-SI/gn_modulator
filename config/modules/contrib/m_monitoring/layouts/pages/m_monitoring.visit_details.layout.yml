@@ -52,5 +52,6 @@ layout:
                   - type: object
                     display: table
                     items: *observation_fields_table
+                    prefilters: __f__`id_visit = ${context.params.id_visit}`
                     sort: taxon.nom_vern
 
