@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 import { ModulesFormService } from '../../../services/form.service';
 import { FormGroup } from '@angular/forms';
 
@@ -29,20 +29,6 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     this.initForm();
     this.updateForm();
   }
-
-  // processAction(event) {
-  //   if (event.type == "data-change") {
-  //     this.computeLayout();
-  //   }
-  //   if (event.type == "submit") {
-  //     this.emitAction({
-  //       "action": "submit",
-  //       "data": this.data,
-  //       "layout": this.computedLayout
-  //     })
-  //   }
-  //   this.emitAction(event);
-  // }
 
   updateForm() {
     if (!this.formGroup) {
@@ -89,6 +75,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     this.context.form_group_id = this._id;
     this.context.direction = this.direction;
     this.context.appearance = this.layout.appearance;
+    this.context.skip_required = this.layout.skip_required;
     this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
     this.formGroup.valueChanges.subscribe((value) => {
       this.onFormGroupChange();

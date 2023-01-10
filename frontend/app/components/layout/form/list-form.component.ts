@@ -57,6 +57,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
 
   processListFormConfig() {
     this.listFormOptions = utils.copy(this.computedLayout);
+    this.listFormOptions.module_code = this.context.module_code;
     this.initSearch();
     this.formControl = this.getFormControl();
     this.isLoading = true;

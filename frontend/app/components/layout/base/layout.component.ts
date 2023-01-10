@@ -213,7 +213,14 @@ export class ModulesLayoutComponent implements OnInit {
 
     if (!layout) return;
 
-    for (const key of ['debug', 'form_group_id', 'appearance', 'index', 'map_id']) {
+    for (const key of [
+      'debug',
+      'form_group_id',
+      'appearance',
+      'index',
+      'map_id',
+      'skip_required',
+    ]) {
       if (this.parentContext[key] != null) {
         this.context[key] = this.parentContext[key];
       }
@@ -244,7 +251,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.context.page_code = computedContext.page_code;
     this.context.params = computedContext.params;
 
-    const objectConfig = this.objectConfig();
+    const objectConfig = this.objectConfig() || {};
     for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
       this.context[key] = layout[key] || this.parentContext[key] || objectConfig[key];
     }
@@ -291,6 +298,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.layoutType = this.layoutType || utils.getLayoutType(this.layout);
 
     this.processContext();
+
     // calcul du layout
     this.computedLayout = this._mLayout.computeLayout({
       layout: this.layout,
@@ -298,7 +306,12 @@ export class ModulesLayoutComponent implements OnInit {
       context: this.context,
     });
 
+    // besoin de maj apres pour les données object ?
     // récupération des données associées à this.computedLayout.key
+
+    for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
+      this.context[key] = (this.computedLayout && this.computedLayout[key]) || this.context[key];
+    }
 
     if (this.context.form_group_id) {
       this.formControl = this.getFormControl();
@@ -323,40 +336,10 @@ export class ModulesLayoutComponent implements OnInit {
     // si layout_code est défini
     // on va chercher le layout correspondant dans la config
     if (this.computedLayout.code && !this.layoutFromCode) {
-      let layoutFromCode = this._mConfig.layout(this.computedLayout.code);
-      // message d'erreur pour indiquer que l'on a pas trouvé le layout
-      if (!layoutFromCode) {
-        this.layoutFromCode = {
-          type: 'message',
-          class: 'error',
-          html: `Pas de layout trouvé pour le <i>layout_code</i> <b>${this.computedLayout.code}</b>`,
-        };
-        return;
-      }
-
-      const templateParams = {
-        ...(layoutFromCode.defaults || {}),
-        ...(this.computedLayout.params || {}),
-      };
-      // remplacer les élements de params
-      for (const [paramKey, paramValue] of Object.entries(templateParams)) {
-        layoutFromCode = utils.replace(layoutFromCode, `__${paramKey.toUpperCase()}__`, paramValue);
-      }
-
-      // checker s'il ne reste pas de params ??
-      const regex = /(__[A-Z]+__)/;
-      let unresolved = JSON.stringify(layoutFromCode).match(regex);
-
-      if (!!unresolved) {
-        this.layoutFromCode = {
-          type: 'message',
-          class: 'error',
-          html: `Il y a des champs non résolus dans le template : ${utils
-            .removeDoublons(unresolved)
-            .join(', ')}`,
-        };
-        return;
-      }
+      let layoutFromCode = this._mLayout.getLayoutFromCode(
+        this.computedLayout.code,
+        this.computedLayout.params
+      );
 
       this.layoutFromCode = layoutFromCode.layout;
     }

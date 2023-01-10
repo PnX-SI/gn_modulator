@@ -16,7 +16,7 @@
         [placeholder]="computedLayout.placeholder"
         [type]="computedLayout.type"
         [formControl]="formControl"
-        [required]="computedLayout.required"
+        [required]="computedLayout.required && !context.skip_required"
         [disabled]="computedLayout.disabled"
         [min]="computedLayout.min"
         [max]="computedLayout.max"

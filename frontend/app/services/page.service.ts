@@ -37,15 +37,15 @@ export class ModulesPageService {
 
     const fields = this._mLayout.getLayoutFields(layout, context, data);
 
-    const processedData = utils.processData(data, layout);
+    // const processedData = utils.processData(data, layout);
 
     const id = this._mObject.objectId({ context, data });
 
     const request = id
-      ? this._mData.patch(context.module_code, context.object_code, id, processedData, {
+      ? this._mData.patch(context.module_code, context.object_code, id, data, {
           fields,
         })
-      : this._mData.post(context.module_code, context.object_code, processedData, {
+      : this._mData.post(context.module_code, context.object_code, data, {
           fields,
         });
 
@@ -76,9 +76,10 @@ export class ModulesPageService {
       const pkParams = {};
       const pkFieldName = this._mObject.pkFieldName({ context });
 
-      if (!context.params[pkFieldName] && value) {
+      if (value) {
         pkParams[pkFieldName] = value;
       }
+
       this._mRoute.navigateToPage(context.module_code, pageCode, {
         ...context.params,
         ...pkParams,

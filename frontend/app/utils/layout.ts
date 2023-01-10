@@ -25,41 +25,19 @@ const getLayoutType = (layout) => {
   return layoutType;
 };
 
-const processData = (data, layout) => {
-  for (let elem of flatLayout(layout)) {
-    if (elem.key && elem.type == 'number') {
-      data[elem.key] = data[elem.key] ? parseFloat(data[elem.key]) : data[elem.key];
-    }
-  }
-  return data;
-};
+// const processData = (data, layout) => {
+//   for (let elem of flatLayout(layout)) {
+//     if (elem.key && elem.type == 'number') {
+//       data[elem.key] = data[elem.key] ? parseFloat(data[elem.key]) : data[elem.key];
+//     }
+//   }
+//   return data;
+// };
 
 /** Met à plat tous les layouts
  *
  * TODO array
  */
-const flatLayout = (layout) => {
-  if (layout == null) {
-    return [];
-  }
-  if (Array.isArray(layout)) {
-    return utilsCommons
-      .flatAndRemoveDoublons(layout.map((elem) => flatLayout(elem)))
-      .filter((x) => !!x);
-  }
-  if (utilsCommons.isObject(layout)) {
-    if (layout.key) {
-      return [layout];
-    }
-    if ('items' in layout) {
-      return flatLayout(layout.items);
-    }
-  }
-
-  if (typeof layout == 'string') {
-    return [layout];
-  }
-};
 
 // const flatData = (data, baseKey = null) => {
 //   if (utilsCommons.isObject(data)) {
@@ -79,6 +57,5 @@ const flatLayout = (layout) => {
 
 export default {
   getLayoutType,
-  processData,
-  flatLayout,
+  // processData,
 };

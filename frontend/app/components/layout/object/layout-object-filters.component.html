@@ -1,4 +1,5 @@
 <div [attr.id]="_id" class="layout-section" [ngStyle]="computedLayout.style">
+  {{filters|json}}
   <modules-layout
     [layout]="processedLayout"
     [data]="filterFormsData"

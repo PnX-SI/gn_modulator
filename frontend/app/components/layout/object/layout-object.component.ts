@@ -255,7 +255,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   // Quand une nouvelle valeur est définie
   processValue(value) {
-    if (['form', 'properties'].includes(this.computedLayout.display)) {
+    if (!['geojson', 'table'].includes(this.computedLayout.display)) {
       return this.postProcessLayout();
     }
   }

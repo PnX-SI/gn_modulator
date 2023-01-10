@@ -32,19 +32,19 @@ export class ModulesObjectService {
     }
 
     if (!(moduleCode && objectCode)) {
-      return {};
+      return;
     }
 
     const moduleConfig = this._mConfig.moduleConfig(moduleCode);
 
     if (!moduleConfig) {
-      return {};
+      return;
     }
 
     const objectModuleConfig = this._mConfig.moduleConfig(moduleCode).objects[objectCode];
     if (!objectModuleConfig) {
       // console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
-      return {};
+      return;
     }
 
     if (!(pageCode || params)) {
@@ -56,11 +56,12 @@ export class ModulesObjectService {
     let objectPageConfig: any = {};
     if (pageCode) {
       const pageConfig: any = this._mConfig.pageConfig(moduleCode, pageCode);
-      objectPageConfig = (pageConfig.objects && pageConfig.objects[objectCode]) || {};
+
+      objectPageConfig = (pageConfig?.objects && pageConfig.objects[objectCode]) || {};
     }
 
     let objectConfig = {
-      ...objectModuleConfig,
+      ...(objectModuleConfig || {}),
       ...objectPageConfig,
     };
 
@@ -86,6 +87,15 @@ export class ModulesObjectService {
     return this.objectConfig(
       context.module_code,
       context.object_code,
+      context.page_code,
+      context.params
+    );
+  }
+
+  objectConfigLayout({ context }, object_code = null) {
+    return this.objectConfig(
+      context.module_code,
+      object_code || context.object_code,
       context.page_code,
       context.params
     );
@@ -236,6 +246,7 @@ export class ModulesObjectService {
       is_action_allowed: this.isActionAllowed.bind(this),
       geometry_field_name: this.geometryFieldName.bind(this),
       geometry_type: this.geometryType.bind(this),
+      object: this.objectConfigLayout.bind(this),
     };
   }
 

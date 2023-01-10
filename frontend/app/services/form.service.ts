@@ -29,9 +29,9 @@ export class ModulesFormService {
     return formGroup;
   }
 
-  formValidators(layout) {
+  formValidators(layout, context) {
     const validators = [];
-    if (layout.required) {
+    if (layout.required && !context.skip_required) {
       validators.push(Validators.required);
     }
     if (![undefined, null].includes(layout.min)) {
@@ -61,7 +61,7 @@ export class ModulesFormService {
   }
 
   processLayout(layout, context) {
-    let flat = utils.flatLayout(layout).map((elem) => {
+    let flat = this._mLayout.flatLayout(layout).map((elem) => {
       if (elem.key) {
         elem.key = this._mLayout.evalLayoutElement({
           element: elem.key,
@@ -175,7 +175,7 @@ export class ModulesFormService {
       data,
       context,
     });
-    control.setValidators(this.formValidators(computedLayout));
+    control.setValidators(this.formValidators(computedLayout, context));
     // if (computedLayout.disabled) {
     // control.disable();
     // }

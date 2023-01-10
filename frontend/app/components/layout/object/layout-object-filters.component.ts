@@ -12,7 +12,7 @@ export class ModulesLayoutObjectFiltersComponent
   implements OnInit
 {
   filterFormsData: any = {};
-  filters: any = {};
+  filters: any = [];
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'layout-object-filters';
@@ -22,6 +22,7 @@ export class ModulesLayoutObjectFiltersComponent
     this.processedLayout = {
       height_auto: true,
       type: 'form',
+      skip_required: true,
       appearance: 'outline',
       change:
         ({ data }) =>
@@ -58,13 +59,14 @@ export class ModulesLayoutObjectFiltersComponent
       .map(([key, val]: any) => {
         const field = filterDefs[key]?.field || key;
         const type = filterDefs[key]?.type || '=';
-        let value = filterDefs[key]?.key ? val[filterDefs[key].key] : val;
+        const value = filterDefs[key]?.key ? val[filterDefs[key].key] : utils.getAttr(data, key);
         return {
           field,
           type,
           value,
         };
-      });
+      })
+      .filter(({ field, type, value }) => value != null);
   }
 
   applyFilters() {
@@ -79,6 +81,7 @@ export class ModulesLayoutObjectFiltersComponent
     this.filterFormsData = null;
     setTimeout(() => {
       this.filterFormsData = filterFormsData;
+      this.processFiltersFormData(this.filterFormsData);
       this.applyFilters();
     });
   }

@@ -232,6 +232,11 @@ export class ModulesLayoutObjectTableComponent
     this.drawTable();
   }
 
+  processPreFilters() {
+    this.drawTable();
+    // return this.processObject();
+  }
+
   onHeightChange(force = false) {
     if (!this.table) {
       return;

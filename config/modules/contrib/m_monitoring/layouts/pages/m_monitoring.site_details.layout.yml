@@ -57,6 +57,6 @@ layout:
                 - type: object
                   display: table
                   items: *visit_fields_table
-                  prefilters: __f__`id_site = ${context.params.id_site}`
+                  prefilters: __f__`id_site = ${o.object(x, 'site').value}`
                   sort: date_min-
 

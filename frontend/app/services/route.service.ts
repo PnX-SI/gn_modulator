@@ -148,7 +148,6 @@ export class ModulesRouteService {
 
   navigateToPage(moduleCode, pageCode, params, query = true) {
     const url = this.modulePageUrl(moduleCode, pageCode, params, query);
-
     // verification de l'url
     // est ce que les variables avec ':' sont résolues
     // est ce que l'on a un parmètre à null
@@ -162,6 +161,8 @@ export class ModulesRouteService {
     }
     // patch sinon navigateByUrl met des plombes...
     const baseUrl = window.location.href.replace(this._router.url, '');
-    window.location.href = baseUrl + url;
+    setTimeout(() => {
+      window.location.href = baseUrl + url;
+    });
   }
 }

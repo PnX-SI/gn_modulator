@@ -139,26 +139,38 @@ export class ListFormService {
     if (options.nomenclature_type) {
       options.object_code = 'ref_nom.nomenclature';
       schemaFilters.push(`nomenclature_type.mnemonique = ${options.nomenclature_type}`);
+      options.module_code = 'MODULES';
       options.cache = true;
     }
     if (options.area_type) {
       options.object_code = 'ref_geo.area';
+      options.module_code = 'MODULES';
       schemaFilters.push(`area_type.type_code = ${options.area_type}`);
     }
 
     if (options.schema_code && !options.object_code) {
-      options.object_code = options.schema_code;
+      if (options.module_code) {
+        const moduleConfig = this._mConfig.moduleConfig(options.module_code);
+        const objectConfig: any = Object.values(moduleConfig.objects || {}).find(
+          (objectConfig: any) => objectConfig.schema_name == options.schema_name
+        );
+        if (objectConfig) {
+          options.object_code = objectConfig.object_code;
+        }
+      }
+      if (!options.object_code) {
+        options.object_code = options.schema_code;
+        options.module_code = 'MODULES';
+      }
     }
 
     if (!options.object_code) {
       return of(true);
     }
 
-    const moduleCode = options.module_code || 'MODULES';
+    const objectConfig = this._mObject.objectConfig(options.module_code, options.object_code);
 
-    const objectConfig = this._mObject.objectConfig(moduleCode, options.object_code);
-
-    const objectUrl = this._mConfig.objectUrl(moduleCode, options.object_code);
+    const objectUrl = this._mConfig.objectUrl(options.module_code, options.object_code);
     options.api = options.api || objectUrl;
     options.value_field_name = options.value_field_name || objectConfig.utils.value_field_name;
     options.label_field_name = options.label_field_name || objectConfig.utils.label_field_name;

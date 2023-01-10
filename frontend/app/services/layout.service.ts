@@ -117,6 +117,71 @@ export class ModulesLayoutService {
     return localData;
   }
 
+  flatLayout = (layout) => {
+    if (layout == null) {
+      return [];
+    }
+    if (Array.isArray(layout)) {
+      return utils
+        .flatAndRemoveDoublons(layout.map((elem) => this.flatLayout(elem)))
+        .filter((x) => !!x);
+    }
+    if (utils.isObject(layout)) {
+      if (layout.code) {
+        const layoutFromCode = this.getLayoutFromCode(layout.code, layout.params);
+        return this.flatLayout(layoutFromCode.layout);
+      }
+
+      if (layout.key) {
+        return [layout];
+      }
+      if ('items' in layout) {
+        return this.flatLayout(layout.items);
+      }
+    }
+
+    if (typeof layout == 'string') {
+      return [layout];
+    }
+  };
+
+  getLayoutFromCode(layoutCode, params = {}) {
+    // message d'erreur pour indiquer que l'on a pas trouvé le layout
+    let layoutFromCode = this._mConfig.layout(layoutCode);
+    if (!layoutFromCode) {
+      return {
+        type: 'message',
+        class: 'error',
+        html: `Pas de layout trouvé pour le <i>layout_code</i> <b>${layoutCode}</b>`,
+      };
+    }
+
+    const templateParams = {
+      ...(layoutFromCode.defaults || {}),
+      ...(params || {}),
+    };
+    // remplacer les élements de params
+    for (const [paramKey, paramValue] of Object.entries(templateParams)) {
+      layoutFromCode = utils.replace(layoutFromCode, `__${paramKey.toUpperCase()}__`, paramValue);
+    }
+
+    // checker s'il ne reste pas de params ??
+    const regex = /(__[A-Z]+__)/;
+    let unresolved = JSON.stringify(layoutFromCode).match(regex);
+
+    if (!!unresolved) {
+      return {
+        type: 'message',
+        class: 'error',
+        html: `Il y a des champs non résolus dans le template : ${utils
+          .removeDoublons(unresolved)
+          .join(', ')}`,
+      };
+    }
+
+    return layoutFromCode;
+  }
+
   // /**
   //  * Ici on ne remplace pas layout
   //  * seulement ces éléments qui sont des fonctions

@@ -55,7 +55,8 @@ export class ModulesConfigService {
     if (!moduleConfig) {
       return;
     }
-    const pageConfig = this.moduleConfig(moduleCode).pages[pageCode];
+    const pageConfig =
+      this.moduleConfig(moduleCode).pages && this.moduleConfig(moduleCode).pages[pageCode];
     // if (!pageConfig) {
     // console.error(`La page ${pageCode} module ${moduleCode} n'existe pas`);
     // }

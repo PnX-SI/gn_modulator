@@ -81,6 +81,7 @@ class DefinitionDynamic:
         is_action_allowed: () => {},
         geometry_type: () => {},
         geometry_field_name: () => {},
+        object: () => {},
     },
     context: {},
 }"""
