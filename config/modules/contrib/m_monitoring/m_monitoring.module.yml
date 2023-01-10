@@ -42,21 +42,13 @@ pages_definition:
   site:
     list:
       root: true
-    details:
-      objects:
-        visit:
-          prefilters: id_site = :id_site
-        module:
-          prefilters: sites.id_site = :id_site
+    details: {}
     create:
       layout:
         code: m_monitoring.site_edit
     edit: {}
   visit:
-    details:
-      objects:
-        observation:
-          prefilters: id_visit = :id_visit
+    details: {}
     edit: {}
     create:
       layout:
