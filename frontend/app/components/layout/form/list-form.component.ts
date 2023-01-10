@@ -120,7 +120,8 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
   }
 
   /** remise à zéro de la selection */
-  clearSelection() {
+  clearSelection(event) {
+    event.stopPropagation();
     this.formControl.patchValue(this.listFormOptions.multiple ? [] : null);
   }
 
