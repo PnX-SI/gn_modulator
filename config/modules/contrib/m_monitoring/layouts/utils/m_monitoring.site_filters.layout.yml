@@ -22,48 +22,67 @@ aliases:
         }
     }
 
+defaults:
+
+  info_filters:
+    label: Infos
+    items:
+      - code
+      - name
+      - id_site_category
+
+  localisation_filters:
+    label: Localisation
+    items:
+      - key: region
+        title: Région
+        type: list_form
+        return_object: "true"
+        additional_fields:
+          - area_code
+        area_type: REG
+        sort: area_name
+
+      - reload_on_search: true
+        return_object: true
+        key: departement
+        title: Département
+        type: list_form
+        area_type: DEP
+        additional_fields:
+          - area_code
+        label_field_name: code_name
+        sort: code_name
+        filters: *filters_departement
+
+      - reload_on_search: true
+        key: commune
+        title: Commune
+        type: list_form
+        area_type: COM
+        label_field_name: name_code
+        filters: *filters_commune
+        sort: area_name
+
+      - title: Infrastructure
+        key: infrastructure
+        type: list_form
+        object_code: ref_geo.linear_group
+        module_code: MODULES
+        filters: linears.type.type_code = RTE
+        sort: name
+        reload_on_search: true
+        page_size: 10
+
+  additional_filters:
+    hidden: true
+
+
 layout:
   display: tabs
   items:
-    - label: Infos
-      items:
-        - name
-        - id_site_category
-    - label: Localisation
-      items:
-        - key: region
-          title: Région
-          type: list_form
-          return_object: "true"
-          additional_fields:
-            - area_code
-          area_type: REG
-          sort: area_name
-        - reload_on_search: true
-          return_object: true
-          key: departement
-          title: Département
-          type: list_form
-          area_type: DEP
-          additional_fields:
-            - area_code
-          label_field_name: code_name
-          sort: code_name
-          filters: *filters_departement
-        - reload_on_search: true
-          key: commune
-          title: Commune
-          type: list_form
-          area_type: COM
-          label_field_name: name_code
-          filters: *filters_commune
-          sort: area_name
-        - title: Infrastructure
-          key: infrastructure
-          type: list_form
-          object_code: ref_geo.linear_group
-          module_code: MODULES
-          filters: linears.type.type_code = RTE
-          sort: name
-          reload_on_search: true
-          page_size: 10
+    - __INFO_FILTERS__
+    - __LOCALISATION_FILTERS__
+    - __ADDITIONAL_FILTERS__
+
+

@@ -176,7 +176,7 @@ const replace = (obj, strTest, strReplace) => {
   if (isObject(obj)) {
     const out = {};
     for (const [key, value] of Object.entries(obj)) {
-      out[key] = value == strTest ? strReplace : replace(obj[key], strTest, strReplace);
+      out[key] = replace(obj[key], strTest, strReplace);
     }
     return out;
   }
@@ -186,6 +186,10 @@ const replace = (obj, strTest, strReplace) => {
   }
 
   if (typeof obj == 'string') {
+    obj == strTest && console.log(obj, strTest, strReplace);
+    if (obj == strTest) {
+      return strReplace;
+    }
     return obj.replace(strTest, strReplace);
   }
 
