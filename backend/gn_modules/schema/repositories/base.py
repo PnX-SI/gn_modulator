@@ -149,7 +149,7 @@ class SchemaRepositoriesBase:
         # TODO deserialiser
         """
 
-        self.validate_data(data)
+        self.validate_data(data, check_required=False)
         m = self.get_row(
             value,
             field_name=field_name,

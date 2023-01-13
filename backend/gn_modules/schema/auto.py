@@ -55,14 +55,25 @@ class SchemaAuto:
 
         properties_auto = self.autoproperties(Model)
 
+        required_auto = []
         for key, property in schema_definition.get("properties", {}).items():
-
             if key in properties_auto:
                 properties_auto[key].update(property)
             else:
                 properties_auto[key] = property
 
+            if property.get("required"):
+                required_auto.append(key)
+
         schema_definition["properties"] = properties_auto
+
+        required_auto = [
+            key
+            for key, property in schema_definition.get("properties", {}).items()
+            if property.get("required")
+        ]
+
+        schema_definition["required"] = required_auto
 
         return schema_definition
 
@@ -152,6 +163,7 @@ class SchemaAuto:
         except Exception:
             # print('erreur auto', self.schema_code(), column.key, e)
             return
+
         schema_type = self.cls.c_get_type(type, "sql", "definition")
 
         if not schema_type:

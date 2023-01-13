@@ -218,7 +218,7 @@ export class ModulesLayoutService {
         });
       }
 
-      if (computedLayout.key) {
+      if (computedLayout.key && context.module_code && context.object_code) {
         const property = this._mObject.property(context, computedLayout.key);
         return {
           ...property,

@@ -12,13 +12,6 @@ class SchemaValidation:
     - validate_data : permet de valider une données par rapport au json_schema de l'object courant
     """
 
-    def validate_data(self, data):
-        """
-        permet de valider une données par rapport à self.json_schema
-        """
-
-        jsonschema.validate(instance=data, schema=self.json_schema)
-
     def get_json_schema(self):
         """
         permet de récupérer le json de l'object (et permettre de valider par rapport à ce json_schema par la suite)
@@ -200,7 +193,13 @@ class SchemaValidation:
 
         return schema
 
-    def validate_data(self, data):
+    def validate_data(self, data, check_required=True):
         """ """
 
-        jsonschema.validate(instance=data, schema=self.json_schema)
+        try:
+            jsonschema.validate(instance=data, schema=self.json_schema)
+        except Exception as e:
+            if "is a required property" in e.message and not check_required:
+                pass
+            else:
+                raise e
