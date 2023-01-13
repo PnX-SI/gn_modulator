@@ -20,5 +20,8 @@ class TestRepository:
             "commons.module", data_commons.module(), data_commons.module_update()
         )
 
+    def test_gn_meta_ca(self):
+        test_schema_repository("meta.ca", data_meta.ca(), data_meta.ca_update())
+
     def test_gn_meta_jdd(self):
         test_schema_repository("meta.jdd", data_meta.jdd(), data_meta.jdd_update())

@@ -217,7 +217,12 @@ class SchemaAuto:
         if reflected_column.get("comment"):
             property["description"] = reflected_column.get("comment")
 
-        if reflected_column["nullable"] is False and reflected_column["default"] is None:
+        if (
+            reflected_column["nullable"] is False
+            and reflected_column["default"] is None
+            and column.key != "meta_create_date"
+        ):
+            print(self, column)
             property["required"] = True
 
         return property

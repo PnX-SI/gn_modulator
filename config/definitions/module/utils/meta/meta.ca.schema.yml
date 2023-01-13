@@ -10,7 +10,7 @@ meta:
   model: geonature.core.gn_meta.models.TAcquisitionFramework
   label: "cadre d'acquisition"
   labels: "cadre d'acquistion"
-  label_field_name: truc
+  label_field_name: acquisition_framework_name
   genre: M
   autoschema: true
   properties:

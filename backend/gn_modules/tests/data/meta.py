@@ -7,9 +7,33 @@ from gn_modules.schema import SchemaMethods
 
 def get_acquisition_framework_id():
     sm_ca = SchemaMethods("meta.ca")
-    res = sm_ca.query_list(params={"limit": 1})
-    res = sm_ca.serialize_list(res, ["id_acquisition_framework"])
-    return res[0]["id_acquisition_framework"]
+    ca_data = ca()
+    ca_row = sm_ca.get_row_as_dict(
+        ca_data["acquisition_framework_name"],
+        field_name="acquisition_framework_name",
+    )
+
+    if not ca_row:
+        sm_ca.insert_row(ca_data)
+        ca_row = sm_ca.get_row_as_dict(
+            ca_data["acquisition_framework_name"],
+            field_name="acquisition_framework_name",
+        )
+    return ca_row["id_acquisition_framework"]
+
+
+def ca():
+    return {
+        "acquisition_framework_name": "test pytest",
+        "acquisition_framework_desc": "test pytest",
+        "acquisition_framework_start_date": "2018-10-13",
+    }
+
+
+def ca_update():
+    return {
+        "acquisition_framework_desc": "test pytest 2",
+    }
 
 
 def jdd():
@@ -20,7 +44,6 @@ def jdd():
         "dataset_name": "muche",
         "marine_domain": True,
         "terrestrial_domain": True,
-        "meta_create_date": "2018-11-13T20:20:39+00:00",
     }
 
 
