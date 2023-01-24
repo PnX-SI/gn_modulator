@@ -133,7 +133,7 @@ jobs:
 
         - name: Install core modules database
           run: |
-            geonature upgrade-modules
+            geonature upgrade-modules-db
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
@@ -142,7 +142,7 @@ jobs:
             pip install -e .
         - name: Install GN Modules db
           run: |
-            geonature upgrade-modules
+            geonature upgrade-modules-db
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
