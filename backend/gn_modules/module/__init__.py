@@ -25,6 +25,5 @@ class ModuleMethods(ModuleBase, ModuleBreadCrumbs, ModuleCommands, ModulesConfig
         """
 
         for module_code in cls.module_codes():
-            print(cls.module_codes())
             cls.init_module_config(module_code)
             cls.process_module_assets(module_code)

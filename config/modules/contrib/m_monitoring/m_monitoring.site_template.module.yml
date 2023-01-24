@@ -22,8 +22,8 @@ defaults:
     - last_visit_date_min
 
 module:
-  module_label: Gestionnaire de sites
-  module_desc: Module de gestion de sites. (Vers une version 2 du module monitoring)
+  module_label: __MODULE_LABEL__
+  module_desc: __MODULE_DESC__
   module_picto: fa-puzzle-piece
   active_frontend: true
 objects:
@@ -60,6 +60,9 @@ pages_definition:
     list:
       layout:
         code: m_monitoring.site_list
+        params:
+          site_table_fields: __SITE_TABLE_FIELDS__
+          site_map_popup_fields: __SITE_MAP_POPUP_FIELDS__
       root: true
     details:
       layout:

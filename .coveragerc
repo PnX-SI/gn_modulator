@@ -1,6 +1,0 @@
-[run]
-source =
-    backend/gn_modules/
-omit =
-    backend/gn_modules/migrations/*
-    backend/gn_modules/tests/*
