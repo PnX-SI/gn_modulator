@@ -262,7 +262,6 @@ class DefinitionBase:
             return
 
         definition_type, definition_code = cls.get_definition_type_and_code(definition)
-
         # si definition_type n'est pas défini
         # c'est que le type de configuration n'est pas detecté
         # tolérance pour les fichiers avec '-' ??
