@@ -23,21 +23,24 @@ export class ModulesIndexComponent implements OnInit {
         height_auto: true,
         items: [
           {
-            direction: 'row',
-            class: 'modules-liste',
-            items: this.modules.map((moduleConfig) => ({
-              flex: 'inherit',
-              title: moduleConfig.module.module_label,
-              description: moduleConfig.module.module_desc,
-              href: '/' + moduleConfig.module.module_path,
-              img:
-                this._mConfig.assetsDirectory() +
-                '/' +
-                moduleConfig.code.toLowerCase() +
-                '/module.jpg',
-              type: 'card',
-              class: 'module-card',
-            })),
+            overflow: true,
+            items: {
+              direction: 'row',
+              class: 'modules-liste',
+              items: this.modules.map((moduleConfig) => ({
+                flex: 'inherit',
+                title: moduleConfig.module.module_label,
+                description: moduleConfig.module.module_desc,
+                href: '/' + moduleConfig.module.module_path,
+                img:
+                  this._mConfig.assetsDirectory() +
+                  '/' +
+                  moduleConfig.code.toLowerCase() +
+                  '/module.jpg',
+                type: 'card',
+                class: 'module-card',
+              })),
+            },
           },
         ],
       };
