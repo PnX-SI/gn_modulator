@@ -338,7 +338,7 @@ export class ModulesLayoutComponent implements OnInit {
     if (this.computedLayout.code && !this.layoutFromCode) {
       let layoutFromCode = this._mLayout.getLayoutFromCode(
         this.computedLayout.code,
-        this.computedLayout.params
+        this.computedLayout.template_params
       );
 
       this.layoutFromCode = layoutFromCode.layout;

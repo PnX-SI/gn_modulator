@@ -128,7 +128,7 @@ export class ModulesLayoutService {
     }
     if (utils.isObject(layout)) {
       if (layout.code) {
-        const layoutFromCode = this.getLayoutFromCode(layout.code, layout.params);
+        const layoutFromCode = this.getLayoutFromCode(layout.code, layout.template_params);
         return this.flatLayout(layoutFromCode.layout);
       }
 
@@ -145,7 +145,7 @@ export class ModulesLayoutService {
     }
   };
 
-  getLayoutFromCode(layoutCode, params = {}) {
+  getLayoutFromCode(layoutCode, templateParams = {}) {
     // message d'erreur pour indiquer que l'on a pas trouvé le layout
     let layoutFromCode = this._mConfig.layout(layoutCode);
     if (!layoutFromCode) {
@@ -158,12 +158,12 @@ export class ModulesLayoutService {
       };
     }
 
-    const templateParams = {
-      ...(layoutFromCode.defaults || {}),
-      ...(params || {}),
+    const processedTemplateParams = {
+      ...(layoutFromCode.template_defaults || {}),
+      ...(templateParams || {}),
     };
     // remplacer les élements de params
-    for (const [paramKey, paramValue] of Object.entries(templateParams)) {
+    for (const [paramKey, paramValue] of Object.entries(processedTemplateParams)) {
       layoutFromCode = utils.replace(layoutFromCode, `__${paramKey.toUpperCase()}__`, paramValue);
     }
 
@@ -171,7 +171,6 @@ export class ModulesLayoutService {
     const regex = /(__[A-Z_]+?__)/g;
     let unresolved = JSON.stringify(layoutFromCode).match(regex);
     if (!!unresolved) {
-      console.log(layoutCode, unresolved, utils.removeDoublons(unresolved).join(', '));
       return {
         layout: {
           type: 'message',

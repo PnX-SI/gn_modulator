@@ -3,7 +3,82 @@ code: m_monitoring.site_template
 title: "Module monitoring"
 description: "Module monitoring, apporte les schemas des sites, visites, etc..."
 
-defaults:
+template_defaults:
+
+  site_filters_fields:
+    display: tabs
+    items:
+      - label: Infos
+        items:
+          - code
+          - name
+          - id_site_category
+
+      - label: Localisation
+        items:
+          - key: region
+            title: Région
+            type: list_form
+            return_object: "true"
+            additional_fields:
+              - area_code
+            area_type: REG
+            sort: area_name
+
+          - key: departement
+            title: Département
+            type: list_form
+            reload_on_search: true
+            area_type: DEP
+            return_object: true
+            additional_fields:
+              - area_code
+            label_field_name: code_name
+            sort: code_name
+            filters: |
+              __f__data?.region
+                ? `area_code in ${utils.departementsForRegion(data.region.area_code).join(';')}`
+                : null
+
+          - key: commune
+            reload_on_search: true
+            title: Commune
+            type: list_form
+            area_type: COM
+            label_field_name: name_code
+            filters: |
+              __f__data?.departement
+                ? `area_code like ${data.departement.area_code}%`
+                : data?.region
+                  ? utils.departementsForRegion(data.region.area_code)
+                      .map(departementCode => `area_code like ${departementCode}%`)
+                      .join(',|,')
+                  : null
+            sort: area_name
+
+          - key: infrastructure
+            title: Infrastructure
+            type: list_form
+            object_code: ref_geo.linear_group
+            module_code: MODULES
+            filters: linears.type.type_code = RTE
+            sort: name
+            reload_on_search: true
+            page_size: 10
+
+  site_filters_defs:
+    category:
+      field: category.id_category
+    region:
+      field: areas.id_area
+      key: id_area
+    departement:
+      field: areas.id_area
+      key: id_area
+    commune:
+      field: areas.id_area
+    infrastructure:
+      field: linears.id_linear
 
   site_table_fields:
     - code
@@ -20,6 +95,7 @@ defaults:
     - category.name
     - nb_visits
     - last_visit_date_min
+
 
 module:
   module_label: __MODULE_LABEL__
@@ -60,9 +136,11 @@ pages_definition:
     list:
       layout:
         code: m_monitoring.site_list
-        params:
+        template_params:
           site_table_fields: __SITE_TABLE_FIELDS__
           site_map_popup_fields: __SITE_MAP_POPUP_FIELDS__
+          site_filters_fields: __SITE_FILTERS_FIELDS__
+          site_filters_defs: __SITE_FILTERS_DEFS__
       root: true
     details:
       layout:

@@ -19,6 +19,9 @@ export class ModulesLayoutObjectFiltersComponent
   }
 
   processConfig(): void {
+    if (this.processedLayout) {
+      return;
+    }
     this.processedLayout = {
       height_auto: true,
       type: 'form',

@@ -18,12 +18,9 @@ class ModuleBase:
 
         for module_code in DefinitionMethods.definition_codes_for_type("module"):
             definition = DefinitionMethods.get_definition("module", module_code)
-            if DefinitionMethods.get_unresolved_params(definition):
-                print('unresolved', module_code)
+            if DefinitionMethods.get_unresolved_template_params(definition):
                 continue
             module_codes.append(module_code)
-
-        print(module_codes)
 
         return module_codes
 

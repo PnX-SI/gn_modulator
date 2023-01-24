@@ -2,7 +2,7 @@ type: layout
 code: template_test
 title: template de test pour les layout
 
-defaults:
+template_defaults:
   x: défaut
   y:
     - title: 1

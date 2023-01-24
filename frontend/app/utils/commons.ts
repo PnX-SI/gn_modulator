@@ -186,10 +186,10 @@ const replace = (obj, strTest, strReplace) => {
   }
 
   if (typeof obj == 'string') {
-    obj == strTest && console.log(obj, strTest, strReplace);
     if (obj == strTest) {
       return strReplace;
     }
+
     return obj.replace(strTest, strReplace);
   }
 

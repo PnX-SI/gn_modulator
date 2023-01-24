@@ -4,7 +4,7 @@ title: Module monitoring test 2
 description: Module de test avec entrée par protocole
 
 template_code: m_monitoring.protocol_template
-params:
+template_params:
   module_code: m_monitoring_test_2
   module_label: Monitest_2
   module_desc: Second module de test monitoring V2

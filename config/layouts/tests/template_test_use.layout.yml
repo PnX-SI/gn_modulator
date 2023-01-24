@@ -6,5 +6,5 @@ layout:
   items:
     - code: template_test
     - code: template_test
-      params:
+      template_params:
         x: YOUPLABOOM

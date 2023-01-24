@@ -138,7 +138,10 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // récupération des données
   // peut être redefini
   getData(): Observable<any> {
-    if (!['geojson', 'table'].includes(this.computedLayout.display) && this.getDataValue()) {
+    if (
+      !['geojson', 'table', 'filters'].includes(this.computedLayout.display) &&
+      this.getDataValue()
+    ) {
       return this.getOneRow();
     }
     return of({});

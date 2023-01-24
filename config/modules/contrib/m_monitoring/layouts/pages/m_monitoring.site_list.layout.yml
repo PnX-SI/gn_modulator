@@ -5,18 +5,6 @@ description: Layout pour la liste de sites
 
 aliases:
 
-  - &site_filter_defs
-    category:
-      field: category.id_category
-    region:
-      field: areas.id_area
-      key: id_area
-    departement:
-      field: areas.id_area
-      key: id_area
-    commune:
-      field: areas.id_area
-
 layout:
   height_auto: true
   direction: row
@@ -26,8 +14,8 @@ layout:
       display: filters
       flex: 1
       items:
-        - code: m_monitoring.site_filters
-      filter_defs: *site_filter_defs
+        __SITE_FILTERS_FIELDS__
+      filter_defs: __SITE_FILTERS_DEFS__
 
     - type: map
       flex: 2

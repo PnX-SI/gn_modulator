@@ -29,20 +29,23 @@ class DefinitionTemplates:
                 cls.process_template(definition_type, definition_key)
 
     @classmethod
-    def get_unresolved_params(cls, definition):
+    def get_unresolved_template_params(cls, definition):
         """ """
 
-        unresolved_params = re.findall(r"__(.*?)__", json.dumps(definition))
-        return list(dict.fromkeys(unresolved_params))
+        unresolved_template_params = re.findall(r"__(.*?)__", json.dumps(definition))
+        unresolved_template_params = list(dict.fromkeys(unresolved_template_params))
+        if "f" in unresolved_template_params:
+            unresolved_template_params.remove("f")
+        return list(dict.fromkeys(unresolved_template_params))
 
     @classmethod
-    def process_template(cls, definition_type, defininition_key):
+    def process_template(cls, definition_type, defininition_code):
         """
         traite une definition qui herite d'un template
         """
 
         # definition qui herite du template
-        definition = cls.get_definition(definition_type, defininition_key)
+        definition = cls.get_definition(definition_type, defininition_code)
 
         # check reference ??
 
@@ -56,16 +59,16 @@ class DefinitionTemplates:
             add_error(
                 msg=f"Le template {template_code} n'a pas été trouvé",
                 definition_type=definition_type,
-                definition_code=defininition_key,
+                definition_code=defininition_code,
                 code="ERR_TEMPLATE_NOT_FOUND",
             )
 
-            cls.remove_from_cache(definition_type, defininition_key)
+            cls.remove_from_cache(definition_type, defininition_code)
             return
 
-        template_params = definition.get("params", {})
+        template_params = definition.get("template_params", {})
 
-        template_defaults = template.get("defaults", {})
+        template_defaults = template.get("template_defaults", {})
 
         params = copy.deepcopy(template_defaults)
         params.update(template_params)
@@ -81,23 +84,23 @@ class DefinitionTemplates:
             processed_definition[key] = definition.get(key)
 
         # check s'il reste des ____
-        unresolved_params = cls.get_unresolved_params(processed_definition)
-        if unresolved_params:
-            remindings__str = ", ".join(map(lambda x: f"__{x}__", unresolved_params))
+        unresolved_template_params = cls.get_unresolved_template_params(processed_definition)
+        if unresolved_template_params:
+            remindings__str = ", ".join(map(lambda x: f"__{x}__", unresolved_template_params))
             add_error(
                 msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
-                definition_type="use_template",
-                definition_code=definition,
+                definition_type=processed_definition["type"],
+                definition_code=processed_definition["code"],
                 code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
                 template_file_path=str(cls.get_file_path("template", template_code)),
             )
 
-            cls.remove_from_cache(definition_type, defininition_key)
+            cls.remove_from_cache(definition_type, defininition_code)
 
             return
 
         cls.save_in_cache_definition(
             processed_definition,
-            cls.get_file_path(definition_type, defininition_key),
+            cls.get_file_path(definition_type, defininition_code),
             check_existing_definition=False,
         )
