@@ -239,7 +239,7 @@ class SchemaRepositoriesFilters:
                 filter_value
             )
 
-        elif filter_type == "~" and filter_value != '':
+        elif filter_type == "~" and filter_value != "":
             filter_value_unaccent = unidecode.unidecode(filter_value)
             filters_out = []
             for v in filter_value_unaccent.split(" "):

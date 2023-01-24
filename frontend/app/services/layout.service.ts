@@ -177,9 +177,7 @@ export class ModulesLayoutService {
           type: 'message',
           class: 'error',
           html: `<b>${layoutCode}</b> : champ(s) non résolu(s)
-          <ul><li>${utils
-            .removeDoublons(unresolved)
-            .join('</li><li>')}</li></ul>`,
+          <ul><li>${utils.removeDoublons(unresolved).join('</li><li>')}</li></ul>`,
         },
       };
     }
