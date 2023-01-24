@@ -150,9 +150,11 @@ export class ModulesLayoutService {
     let layoutFromCode = this._mConfig.layout(layoutCode);
     if (!layoutFromCode) {
       return {
-        type: 'message',
-        class: 'error',
-        html: `Pas de layout trouvé pour le <i>layout_code</i> <b>${layoutCode}</b>`,
+        layout: {
+          type: 'message',
+          class: 'error',
+          html: `Pas de layout trouvé pour le <i>layout_code</i> <b>${layoutCode}</b>`,
+        },
       };
     }
 
@@ -166,16 +168,19 @@ export class ModulesLayoutService {
     }
 
     // checker s'il ne reste pas de params ??
-    const regex = /(__[A-Z]+__)/;
+    const regex = /(__[A-Z_]+?__)/g;
     let unresolved = JSON.stringify(layoutFromCode).match(regex);
-
     if (!!unresolved) {
+      console.log(layoutCode, unresolved, utils.removeDoublons(unresolved).join(', '));
       return {
-        type: 'message',
-        class: 'error',
-        html: `Il y a des champs non résolus dans le template : ${utils
-          .removeDoublons(unresolved)
-          .join(', ')}`,
+        layout: {
+          type: 'message',
+          class: 'error',
+          html: `<b>${layoutCode}</b> : champ(s) non résolu(s)
+          <ul><li>${utils
+            .removeDoublons(unresolved)
+            .join('</li><li>')}</li></ul>`,
+        },
       };
     }
 

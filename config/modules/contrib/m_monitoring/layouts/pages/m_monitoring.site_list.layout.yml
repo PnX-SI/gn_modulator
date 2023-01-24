@@ -5,20 +5,6 @@ description: Layout pour la liste de sites
 
 aliases:
 
-  - &site_map_popup_fields
-    - name
-    - code
-    - description
-    - nomenclature_type_site.label_fr
-    - category.name
-
-  - &site_table_fields
-    - code
-    - name
-    - category.name
-    - nb_visits
-    - last_visit_date_min
-
   - &site_filter_defs
     category:
       field: category.id_category
@@ -48,7 +34,7 @@ layout:
       items:
         type: object
         display: geojson
-        popup_fields: *site_map_popup_fields
+        popup_fields: __SITE_MAP_POPUP_FIELDS__
 
     - items:
       - type: breadcrumbs
@@ -57,7 +43,7 @@ layout:
         flex: 2
         display: table
         sort: last_visit_date_min-
-        items: *site_table_fields
+        items: __SITE_TABLE_FIELDS__
 
 context:
   module_code: m_monitoring

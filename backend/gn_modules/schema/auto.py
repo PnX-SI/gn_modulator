@@ -222,7 +222,6 @@ class SchemaAuto:
             and reflected_column["default"] is None
             and column.key != "meta_create_date"
         ):
-            print(self, column)
             property["required"] = True
 
         return property

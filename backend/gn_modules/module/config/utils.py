@@ -52,7 +52,7 @@ class ModuleConfigUtils:
             "action": action,
             "code": cls.page_code(object_code, action),
             "url": cls.page_url(module_code, object_code, action),
-            "layout": {"code": cls.layout_code(module_code, object_code, action)},
+            # "layout": {"code": cls.layout_code(module_code, object_code, action)},
             "object_code": object_code,
         }
 
