@@ -73,7 +73,7 @@ export class ModulesTableService {
       D: 'delete',
     };
 
-    const { actionAllowed, actionMsg } = this._mPage.checkAction(context, action);
+    const { actionAllowed, actionMsg } = this._mObject.checkAction(context, action);
     if (actionAllowed == null) {
       return;
     }
@@ -82,7 +82,7 @@ export class ModulesTableService {
       headerSort: false,
       formatter: (cell, formatterParams, onRendered) => {
         const ownership = cell._cell.row.data['ownership'];
-        const { actionAllowed, actionMsg } = this._mPage.checkAction(context, action, ownership);
+        const { actionAllowed, actionMsg } = this._mObject.checkAction(context, action, ownership);
         return `<span class="table-icon ${actionAllowed ? '' : 'disabled'}"><i class='fa ${
           iconAction[action]
         } action' ${actionAllowed ? 'action="' + actionTxt[action] + '"' : ''}></i></span>`;
@@ -91,7 +91,7 @@ export class ModulesTableService {
       hozAlign: 'center',
       tooltip: (cell) => {
         const ownership = cell._cell.row.data['ownership'];
-        const { actionAllowed, actionMsg } = this._mPage.checkAction(context, action, ownership);
+        const { actionAllowed, actionMsg } = this._mObject.checkAction(context, action, ownership);
         return actionMsg;
       },
     };

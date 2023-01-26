@@ -3,7 +3,7 @@ code: m_monitoring.site_template
 title: "Module monitoring"
 description: "Module monitoring, apporte les schemas des sites, visites, etc..."
 
-template_defaults: !include m_monitoring.site_template.module-tempate_defaults.yml
+config_defaults: !include m_monitoring.site_template.module-tempate_defaults.yml
 
 module:
   module_label: __MODULE_LABEL__

@@ -4,8 +4,8 @@ title: Layout module edit
 description: Layout pour l'édition d'un module
 layout:
   height_auto: true
-  direction: row
   items:
-    - type: object
-      display: form
-      key: module
+    code: m_monitoring.object_form
+    template_params:
+      object_code: module
+      layout: __MODULE_FORM_FIELDS__

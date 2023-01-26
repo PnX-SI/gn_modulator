@@ -13,7 +13,7 @@ export class ModulesContextService {
   object_code;
   current_user;
   params;
-  template_defaults;
+  config;
 
   constructor(private _injector: Injector) {
     this._auth = this._injector.get(AuthService);
@@ -25,7 +25,7 @@ export class ModulesContextService {
     object_code = null,
     page_code = null,
     params = null,
-    template_defaults = null,
+    config = null,
   } = {}) {
     this._mObject._cacheObjectConfig = {};
     this.module_code = module_code || 'MODULES';
@@ -33,7 +33,7 @@ export class ModulesContextService {
     this.page_code = page_code;
     this.params = params || {};
     this.object_code = object_code;
-    this.template_defaults = template_defaults;
+    this.config = config;
   }
 
   getContextElem(elemKey, { layout, context }) {

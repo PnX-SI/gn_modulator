@@ -1,3 +1,8 @@
+module_details_fields:
+  - module_code
+  - module_label
+  - module_desc
+
 site_filters_fields:
   display: tabs
   items:
@@ -6,7 +11,6 @@ site_filters_fields:
         - code
         - name
         - id_site_category
-
     - label: Localisation
       items:
         - key: region

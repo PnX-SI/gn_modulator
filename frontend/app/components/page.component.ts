@@ -96,9 +96,9 @@ export class PageComponent implements OnInit {
             module_code: this.moduleCode,
             page_code: this.pageCode,
             params: this.params,
-            template_defaults: {
-              ...(moduleConfig.template_defaults || {}),
-              ...(moduleConfig.template_params || {}),
+            config: {
+              ...(moduleConfig.config_defaults || {}),
+              ...(moduleConfig.config_params || {}),
             },
           });
           return of(true);

@@ -27,7 +27,9 @@ export class ModulesIndexComponent implements OnInit {
             items: {
               direction: 'row',
               class: 'modules-liste',
-              items: this.modules.map((moduleConfig) => ({
+              items: this.modules
+                .filter(moduleConfig => moduleConfig.registred)
+                .map((moduleConfig) => ({
                 flex: 'inherit',
                 title: moduleConfig.module.module_label,
                 description: moduleConfig.module.module_desc,

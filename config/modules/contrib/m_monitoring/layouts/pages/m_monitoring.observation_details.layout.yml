@@ -11,4 +11,4 @@ layout:
     - code: m_monitoring.object_details
       template_params:
         object_code: observation
-        layout: __OBSERVATION_FIELDS_DETAILS__
+        layout: __OBSERVATION_DETAILS_FIELDS__

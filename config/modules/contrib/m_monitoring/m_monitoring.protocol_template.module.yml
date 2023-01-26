@@ -3,6 +3,8 @@ code: m_monitoring.protocol_template
 title: Template de Module de type protocole monitoré
 description: Template de protocole monitoring (entrée par module)
 
+config_defaults: !include m_monitoring.site_template.module-tempate_defaults.yml
+
 template_defaults:
   module_picto: fa-puzzle-piece
   active_frontend: false
@@ -46,7 +48,13 @@ tree:
         observation: null
 pages_definition:
   module:
-    details: {}
+    details:
+      layout:
+        code: m_monitoring.module_details
+      root: true
+    edit:
+      layout:
+        code: m_monitoring.module_edit
 #   module_details:
 #     url: ""
 #     layout:

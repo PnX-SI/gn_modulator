@@ -336,7 +336,7 @@ export class ModulesLayoutComponent implements OnInit {
     // si layout_code est défini
     // on va chercher le layout correspondant dans la config
     if (this.computedLayout.code && !this.layoutFromCode) {
-      const contextTemplateDefault = this._mContext.template_defaults;
+      const contextTemplateDefault = this._mContext.config;
       const templateParams = {
         ...(contextTemplateDefault || {}),
         ...(this.computedLayout.template_params || {}),

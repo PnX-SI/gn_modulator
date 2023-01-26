@@ -9,11 +9,15 @@ layout:
     - type: map
       items:
         - type: object
-          key: site
+          object_code: site
           display: geojson
-    # - items:
-    #     - type: breadcrumbs
-    #       flex: "0"
+    - items:
+        - type: breadcrumbs
+          flex: "0"
+        - code: m_monitoring.object_details
+          template_params:
+            object_code: 'module'
+            layout: __MODULE_DETAILS_FIELDS__
     #     - key: module
     #       type: object
     #       display: properties

@@ -115,14 +115,16 @@ class ModuleConfigUtils:
         # gestion des pages
         # assignation de key et parent (et type ????) shema_name etc ???
         for page_code, page_config in module_config.get("pages", {}).items():
+            object_code = page_config["object_code"]
             page_parent = None
-            object_parent = objects_with_parent.get(page_config["object_code"], {}).get("parent")
+            object_parent = objects_with_parent.get(object_code, {}).get("parent")
             if object_parent:
                 page_parent = f"{object_parent}_details"
             # assignations
+
             if page_parent:
                 page_config["parent"] = page_parent
-            elif page_root and page_root != page_config["code"]:
+            elif page_root and page_root != page_code:
                 page_config["parent"] = page_root
 
     @classmethod
