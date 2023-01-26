@@ -5,7 +5,7 @@
     <modules-layout
       [layout]="layout.items"
       [data]="objectData"
-      [parentContext]="objectContext"
+      [parentContext]="context"
       (onAction)="processAction($event)"
     ></modules-layout>
   </ng-container>
@@ -26,7 +26,7 @@
     *ngIf="computedLayout.display == 'table'"
     [layout]="layout"
     [data]="data"
-    [parentContext]="objectContext"
+    [parentContext]="context"
   >
   </modules-layout-object-table>
 
@@ -44,7 +44,7 @@
     *ngIf="computedLayout.display == 'filters'"
     [layout]="layout"
     [data]="data"
-    [parentContext]="objectContext"
+    [parentContext]="context"
   >
   </modules-layout-object-filters>
 </ng-container>

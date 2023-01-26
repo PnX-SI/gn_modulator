@@ -56,7 +56,7 @@ export class ModulesPageService {
     const moduleConfig = this._mConfig.moduleConfig(context.module_code);
     const pageConfig = moduleConfig.pages[context.page_code];
     const parentpageCode = pageConfig?.parent;
-    const objectConfig = this._mObject.objectConfigContext({ context });
+    const objectConfig = this._mObject.objectConfigContext(context);
 
     if (['details', 'edit', 'create', 'list'].includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(context.module_code);

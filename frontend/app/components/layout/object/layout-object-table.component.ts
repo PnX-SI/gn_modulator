@@ -149,6 +149,11 @@ export class ModulesLayoutObjectTableComponent
       // pour ne pas trainer sortersça dans l'api
       delete extendedParams['sorters'];
 
+      // patch
+      if (extendedParams.prefilters?.includes('undefined')) {
+        return of({});
+      }
+
       this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams).subscribe(
         (res) => {
           resolve(res);
@@ -206,8 +211,7 @@ export class ModulesLayoutObjectTableComponent
   }
 
   selectRow(value, fieldName: any = null) {
-    //
-    if (!value) {
+    if (!(value && this.table)) {
       return;
     }
 
@@ -234,7 +238,6 @@ export class ModulesLayoutObjectTableComponent
 
   processPreFilters() {
     this.drawTable();
-    // return this.processObject();
   }
 
   onHeightChange(force = false) {

@@ -152,7 +152,7 @@ export class ListFormService {
       if (options.module_code) {
         const moduleConfig = this._mConfig.moduleConfig(options.module_code);
         const objectConfig: any = Object.values(moduleConfig.objects || {}).find(
-          (objectConfig: any) => objectConfig.schema_name == options.schema_name
+          (objectConfig: any) => objectConfig.schema_code == options.schema_code
         );
         if (objectConfig) {
           options.object_code = objectConfig.object_code;

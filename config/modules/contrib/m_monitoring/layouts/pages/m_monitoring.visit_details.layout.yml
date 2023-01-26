@@ -3,45 +3,18 @@ title: Layout visit details
 description: Layout pour les détails d'une visite
 code: m_monitoring.visit_details
 
-aliases:
-  - &visit_fields_details
-    - hidden: true
-      items:
-        - id_visit
-    - site.name
-    - module.module_label
-    - date_min
-    - nb_observations
-    - digitiser.nom_complet
-    - dataset.dataset_name
-    - dataset.acquisition_framework.acquisition_framework_name
-    - module.module_label
-    - observers.nom_complet
-
-  - &observation_fields_table
-    - taxon.nom_vern
-    - visit.site.name
-    - visit.date_min
-    - visit.observers.nom_complet
-
-
 layout:
   height_auto: true
   items:
     - type: breadcrumbs
       flex: "0"
-    - object_code: visit
-      type: object
-      items:
+    - items:
         direction: row
         items:
-          - items:
-            - title:  __f__o.title_details(x)
-              flex: "0"
-            - overflow: true
-              items: *visit_fields_details
-            - code: m_monitoring.button_edit
-              flex: "0"
+          - code: m_monitoring.object_details
+            template_params:
+              object_code: visit
+              layout: __VISIT_DETAILS_FIELDS__
           - display: tabs
             items:
               - label: __f__o.tab_label(x)
@@ -51,7 +24,7 @@ layout:
                     flex: "0"
                   - type: object
                     display: table
-                    items: *observation_fields_table
+                    items: __OBSERVATION_TABLE_FIELDS__
                     prefilters: __f__`id_visit = ${o.object(x, 'visit').value}`
                     sort: taxon.nom_vern
 

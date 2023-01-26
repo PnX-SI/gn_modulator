@@ -3,26 +3,6 @@ code: m_monitoring.site_details
 title: Layout site details
 description: Layout pour les details d'un site
 
-aliases:
-  - &site_fields_details
-    - hidden: true
-      items:
-        - id_site
-        - ownership
-    - code
-    - name
-    - description
-    - nb_visits
-
-  - &visit_fields_table
-    - site.name
-    - date_min
-    - nb_observations
-    - digitiser.nom_complet
-    - dataset.dataset_name
-    - observers.nom_complet
-    - module.module_label
-
 context:
   module_code: m_monitoring
 layout:
@@ -34,19 +14,16 @@ layout:
         - type: object
           display: geojson
           object_code: site
+          prefilters: __f__`id_site = ${o.object(x, 'site').value}`
+          popup_fields: __SITE_MAP_POPUP_FIELDS__
+
     - items:
         - type: breadcrumbs
           flex: "0"
-        - object_code: site
-          type: object
-          items:
-            - title: __f__o.title_details(x)
-              flex: "0"
-            - overflow: true
-              items: *site_fields_details
-            - code: m_monitoring.button_edit
-              flex: "0"
-
+        - code: m_monitoring.object_details
+          template_params:
+            object_code: site
+            layout: __SITE_DETAILS_FIELDS__
         - display: tabs
           items:
             - label: "__f__o.tab_label(x)"
@@ -56,7 +33,7 @@ layout:
                   flex: "0"
                 - type: object
                   display: table
-                  items: *visit_fields_table
+                  items: __VISIT_TABLE_FIELDS__
                   prefilters: __f__`id_site = ${o.object(x, 'site').value}`
                   sort: date_min-
 

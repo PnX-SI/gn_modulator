@@ -1,0 +1,14 @@
+type: layout
+code: m_monitoring.observation_details
+title: Layout observation details
+description: Layout pour les détails d'une observation
+
+layout:
+  height_auto: true
+  items:
+    - type: breadcrumbs
+      flex: "0"
+    - code: m_monitoring.object_details
+      template_params:
+        object_code: observation
+        layout: __OBSERVATION_FIELDS_DETAILS__

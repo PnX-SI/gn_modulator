@@ -22,7 +22,6 @@ import utils from '../../../utils';
 })
 export class ModulesLayoutObjectComponent extends ModulesLayoutComponent implements OnInit {
   objectData; // données relative au schema, récupérées par getData
-  objectContext;
   processedLayout; // layout pour form / details / etc..
 
   /** modules services */
@@ -65,12 +64,6 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     if (this._name == 'layout-object' && this.layout.key) {
       utils.addKey(this.context.data_keys, this.layout.key);
     }
-
-    this.objectContext = {};
-    this.objectContext.module_code = this.context.module_code;
-    this.objectContext.object_code = this.context.object_code;
-    this.objectContext.debug = this.context.debug;
-    this.objectContext.data_keys = [];
   }
 
   /**

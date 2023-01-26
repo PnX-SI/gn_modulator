@@ -23,5 +23,5 @@ properties:
     oneOf:
       - type: object
       - type: array
-  data:
+  args:
     type: object

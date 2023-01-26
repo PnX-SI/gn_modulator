@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ModulesMapService } from '../../../services/map.service';
 import { ModulesLayoutObjectComponent } from './layout-object.component';
-import { Observable } from '@librairies/rxjs';
+import { Observable, of } from '@librairies/rxjs';
 import utils from '../../../utils';
 
 @Component({
@@ -198,6 +198,9 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   getData(): Observable<any> {
+    if (this.getDataPreFilters()?.includes('undefined')) {
+      return of({});
+    }
     this._mapService.setProcessing(this.context.map_id, true);
     const extendedParams = {
       fields: this.fields({ geometry: true }), // fields

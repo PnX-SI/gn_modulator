@@ -1,0 +1,32 @@
+type: layout
+code: m_monitoring.object_form_map
+title: Formulaire pour un object (avec carte)
+args:
+  object_code: object concerné par le Formulaire
+  layout: layout des champs du formulaire
+
+# TODO
+# - paramètres de carte
+#   - geometry_field_name (par defaut)
+#   - edit, gps, zoom
+
+layout:
+  type: object
+  object_code: __OBJECT_CODE__
+  items:
+    type: form
+    direction: row
+    items:
+      - type: map
+        key: __f__o.geometry_field_name(x)
+        edit: true
+        gps: true
+        zoom: 12
+
+      - items:
+        - title: __f__o.title_create_edit(x)
+          flex : "0"
+        - overflow: true
+          items: __LAYOUT__
+        - code: m_monitoring.buttons_form
+          flex: '0'

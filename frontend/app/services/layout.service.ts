@@ -145,7 +145,7 @@ export class ModulesLayoutService {
     }
   };
 
-  getLayoutFromCode(layoutCode, templateParams = {}) {
+  getLayoutFromCode(layoutCode, templateParams) {
     // message d'erreur pour indiquer que l'on a pas trouvé le layout
     let layoutFromCode = this._mConfig.layout(layoutCode);
     if (!layoutFromCode) {
@@ -158,6 +158,7 @@ export class ModulesLayoutService {
       };
     }
 
+    //
     const processedTemplateParams = {
       ...(layoutFromCode.template_defaults || {}),
       ...(templateParams || {}),

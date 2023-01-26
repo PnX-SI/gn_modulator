@@ -13,19 +13,27 @@ export class ModulesContextService {
   object_code;
   current_user;
   params;
+  template_defaults;
 
   constructor(private _injector: Injector) {
     this._auth = this._injector.get(AuthService);
     this._mObject = this._injector.get(ModulesObjectService);
   }
 
-  initContext({ module_code = null, object_code = null, page_code = null, params = null } = {}) {
+  initContext({
+    module_code = null,
+    object_code = null,
+    page_code = null,
+    params = null,
+    template_defaults = null,
+  } = {}) {
     this._mObject._cacheObjectConfig = {};
     this.module_code = module_code || 'MODULES';
     this.page_code = page_code;
     this.page_code = page_code;
     this.params = params || {};
     this.object_code = object_code;
+    this.template_defaults = template_defaults;
   }
 
   getContextElem(elemKey, { layout, context }) {

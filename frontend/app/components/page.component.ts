@@ -84,7 +84,8 @@ export class PageComponent implements OnInit {
           this.routeQueryParams = queryParams;
           this.debug = this.routeQueryParams.debug != undefined;
           setTimeout(() => this._mLayout.reComputeLayout(''), 200);
-          this.moduleParams = this._mConfig.moduleConfig(this.moduleCode).params || {};
+          const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
+          this.moduleParams = moduleConfig.params || {};
           this.params = {
             ...this.routeQueryParams,
             ...this.routeParams,
@@ -95,6 +96,10 @@ export class PageComponent implements OnInit {
             module_code: this.moduleCode,
             page_code: this.pageCode,
             params: this.params,
+            template_defaults: {
+              ...(moduleConfig.template_defaults || {}),
+              ...(moduleConfig.template_params || {}),
+            },
           });
           return of(true);
         })

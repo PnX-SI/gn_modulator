@@ -1,0 +1,16 @@
+type: layout
+code: m_monitoring.object_details
+title: Detail d'un object (champs seulement)
+args:
+  object_code: object concerné
+  layout: layout des champs
+layout:
+  - object_code: __OBJECT_CODE__
+    type: object
+    items:
+      - title: __f__o.title_details(x)
+        flex: "0"
+      - overflow: true
+        items: __LAYOUT__
+      - code: m_monitoring.button_edit
+        flex: "0"
