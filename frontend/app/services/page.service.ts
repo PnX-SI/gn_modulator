@@ -131,5 +131,4 @@ export class ModulesPageService {
       }
     }
   }
-
 }

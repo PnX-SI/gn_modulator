@@ -28,20 +28,20 @@ export class ModulesIndexComponent implements OnInit {
               direction: 'row',
               class: 'modules-liste',
               items: this.modules
-                .filter(moduleConfig => moduleConfig.registred)
+                .filter((moduleConfig) => moduleConfig.registred)
                 .map((moduleConfig) => ({
-                flex: 'inherit',
-                title: moduleConfig.module.module_label,
-                description: moduleConfig.module.module_desc,
-                href: '/' + moduleConfig.module.module_path,
-                img:
-                  this._mConfig.assetsDirectory() +
-                  '/' +
-                  moduleConfig.code.toLowerCase() +
-                  '/module.jpg',
-                type: 'card',
-                class: 'module-card',
-              })),
+                  flex: 'inherit',
+                  title: moduleConfig.module.module_label,
+                  description: moduleConfig.module.module_desc,
+                  href: '/' + moduleConfig.module.module_path,
+                  img:
+                    this._mConfig.assetsDirectory() +
+                    '/' +
+                    moduleConfig.code.toLowerCase() +
+                    '/module.jpg',
+                  type: 'card',
+                  class: 'module-card',
+                })),
             },
           },
         ],

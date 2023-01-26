@@ -5,9 +5,8 @@ description: Layout pour l'édition d'un site
 
 layout:
   height_auto: true
-  direction: row
   items:
-    - code: m_monitoring.object_form_map
-      template_params:
-        object_code: site
-        layout: __SITE_FORM_FIELDS__
+    code: m_monitoring.object_form_map
+    template_params:
+      object_code: site
+      layout: __SITE_FORM_FIELDS__

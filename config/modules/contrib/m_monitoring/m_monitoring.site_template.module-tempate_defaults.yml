@@ -3,6 +3,13 @@ module_details_fields:
   - module_label
   - module_desc
 
+module_form_fields:
+  - hidden: true
+    items:
+      - id_module
+  - module_label
+  - module_desc
+
 site_filters_fields:
   display: tabs
   items:

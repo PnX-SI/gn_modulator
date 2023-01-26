@@ -218,6 +218,9 @@ export class ModulesObjectService {
   }
 
   isActionAllowed({ context, data }, action) {
+    if (!(context.module_code, context.object_code)) {
+      return false;
+    }
     return this.checkAction(context, action, data.ownership).actionAllowed;
   }
 

@@ -68,7 +68,7 @@ export class ModulesFormService {
           layout: elem,
           context,
           data: null,
-        }); 
+        });
         return elem;
       } else {
         return this._mObject.property(context, elem);
