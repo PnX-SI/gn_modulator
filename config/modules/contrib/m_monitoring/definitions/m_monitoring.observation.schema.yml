@@ -8,7 +8,7 @@ meta:
     sql_schema_dot_table: m_monitoring.t_observations
     genre: F
     label: observation
-    label_field_name: cd_nom
+    label_field_name: taxon.nom_vern
     unique:
         - cd_nom
         - id_visit

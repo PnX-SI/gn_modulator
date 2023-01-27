@@ -1,4 +1,5 @@
 from gn_modules.schema import SchemaMethods
+from gn_modules.utils.commons import getAttr
 
 
 class ModuleBreadCrumbs:
@@ -36,7 +37,8 @@ class ModuleBreadCrumbs:
             if data.get(sm.pk_field_name()):
                 m = sm.get_row(data[sm.pk_field_name()], module_code=module_code, params={}).one()
                 data_label = sm.serialize(m, fields=[sm.label_field_name()])
-                label_page = f"{sm.label()} {data_label[sm.label_field_name()]}"
+                # label_page = f"{sm.label()} {data_label[sm.label_field_name()]}"
+                label_page = f"{sm.label()} {getAttr(data_label, sm.label_field_name())}"
             else:
                 # todo create ou list ???
 

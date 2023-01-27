@@ -167,7 +167,7 @@ export class ModulesObjectService {
 
   dataLabel({ context, data }) {
     const label_field_name = this.objectConfigContext(context).utils?.label_field_name;
-    return data && label_field_name && data[label_field_name];
+    return data && label_field_name && utils.getAttr(data, label_field_name);
   }
 
   titleDetails({ context, data }) {

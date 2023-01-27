@@ -182,7 +182,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
       return of(null);
     }
 
-    const fields = this.fields();
+    const fields = this.fields({ addDefault: true });
 
     return this._mData.getOne(this.moduleCode(), this.objectCode(), value, {
       fields,

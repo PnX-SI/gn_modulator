@@ -3,9 +3,6 @@ code: m_monitoring.site_list
 title: Layout site list
 description: Layout pour la liste de sites
 
-template_defaults:
-  
-
 layout:
   height_auto: true
   direction: row

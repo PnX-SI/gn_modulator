@@ -62,3 +62,22 @@ def get_class_from_path(path):
     class_module_name, class_object_name = path.rsplit(".", 1)
     class_module = import_module(class_module_name)
     return getattr(class_module, class_object_name)
+
+
+def getAttr(obj, path, index=0):
+    """
+    pour récupérer des valeurs dans un dict avec des clé en key1.key2 (récursif)
+    """
+    if obj is None:
+        return obj
+
+    if isinstance(path, str):
+        return getAttr(obj, path.split("."), index)
+
+    if isinstance(path, list):
+
+        if index > len(path) - 1:
+            return obj
+        path_cur = path[index]
+        cur = obj[path_cur]
+        return getAttr(cur, path, index + 1)
