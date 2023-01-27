@@ -202,6 +202,7 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   getData(): Observable<any> {
     if (this.getDataPreFilters()?.includes('undefined')) {
+      console.error('prefilter inconnu');
       return of({});
     }
     this._mapService.setProcessing(this.context.map_id, true);

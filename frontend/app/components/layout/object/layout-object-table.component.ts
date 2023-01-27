@@ -151,6 +151,7 @@ export class ModulesLayoutObjectTableComponent
 
       // patch
       if (extendedParams.prefilters?.includes('undefined')) {
+        console.error('prefilter inconnu');
         return of({});
       }
 
@@ -202,6 +203,10 @@ export class ModulesLayoutObjectTableComponent
     }
 
     // TODO une seule requete pour les getPageNumber et setPage ??
+    if (this.params.prefilters?.includes('undefined')) {
+      console.error('prefilter inconnu');
+      return;
+    }
     this._mData
       .getPageNumber(this.moduleCode(), this.objectCode(), value, this.params)
       .subscribe((res) => {
