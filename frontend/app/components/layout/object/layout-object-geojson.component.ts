@@ -157,9 +157,12 @@ export class ModulesLayoutObjectGeoJSONComponent
       .join('\n');
     propertiesHTML += '</ul>\n';
 
-    const htmlDetails = '<button action="details">Details</button>';
-    const condEdit = properties['ownership'] <= this.moduleConfig().cruved['U'];
-    const htmlEdit = condEdit ? '<button action="edit">Éditer</button>' : '';
+    const htmlDetails = this._mObject.checkAction(this.context, 'R').actionAllowed
+      ? '<button action="details">Details</button>'
+      : '';
+    const htmlEdit = this._mObject.checkAction(this.context, 'U').actionAllowed
+      ? '<button action="edit">Éditer</button>'
+      : '';
 
     const html = `
     <h4>${label || ''}</h4>
