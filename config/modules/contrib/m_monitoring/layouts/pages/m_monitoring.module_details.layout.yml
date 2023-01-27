@@ -18,9 +18,18 @@ layout:
           template_params:
             object_code: 'module'
             layout: __MODULE_DETAILS_FIELDS__
-    #     - key: module
-    #       type: object
-    #       display: properties
+        - display: tabs
+          items:
+            - label: __f__o.tab_label(x)
+              object_code: site
+              items:
+                - code: m_monitoring.button_create
+                  flex: "0"
+                - type: object
+                  display: table
+                  sort: last_visit_date_min-
+                  items: __SITE_TABLE_FIELDS__
+
     #     - display: tabs
     #       items:
     #         - label: "__f__`Sites (${data.site.filtered}/${data.site.total})`"

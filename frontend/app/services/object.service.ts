@@ -221,7 +221,8 @@ export class ModulesObjectService {
     if (!(context.module_code, context.object_code)) {
       return false;
     }
-    return this.checkAction(context, action, data.ownership).actionAllowed;
+    const checkAction = this.checkAction(context, action, data?.ownership);
+    return checkAction.actionAllowed;
   }
 
   /** checkAction
@@ -259,17 +260,20 @@ export class ModulesObjectService {
    */
   checkAction(context, action, ownership = null) {
     // 1) cruved defini pour cet objet ?
+
     const objectConfig = this.objectConfigContext(context);
+
     const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
     const testObjectCruved = (objectConfig.cruved || '').includes(action);
 
-    if ('RU'.includes(action)) {
+    if ('CRU'.includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
       const pageCodeAction = {
         R: 'details',
         U: 'edit',
+        C: 'create',
       };
       const pageCode = `${context.object_code}_${pageCodeAction[action]}`;
       const pageExists = Object.keys(moduleConfig.pages).includes(pageCode);

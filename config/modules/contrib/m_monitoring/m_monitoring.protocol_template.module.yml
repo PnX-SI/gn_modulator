@@ -55,87 +55,35 @@ pages_definition:
     edit:
       layout:
         code: m_monitoring.module_edit
-#   module_details:
-#     url: ""
-#     layout:
-#       code: m_monitoring.module_details
-#     objects:
-#       module:
-#         value: ":id_module"
-#   module_edit:
-#     url: module_edit
-#     layout:
-#       code: m_monitoring.module_edit
-#     objects:
-#       module:
-#         value: ":id_module"
-#   site_details:
-#     url: "site_details/:id_site"
-#     layout:
-#       code: m_monitoring.site_details
-#     objects:
-#       site:
-#         value: ":id_site"
-#       visit:
-#         prefilters: "id_site = :id_site"
-#   site_edit:
-#     url: "site_edit/:id_site"
-#     layout:
-#       code: m_monitoring.site_edit
-#     objects:
-#       site:
-#         value: ":id_site"
-#   site_create:
-#     url: site_create
-#     layout:
-#       code: m_monitoring.site_edit
-#     defaults:
-#       modules:
-#         - id_module: ":id_module"
-#   visit_details:
-#     url: "visit_details/:id_visit"
-#     layout:
-#       code: m_monitoring.visit_details
-#     objects:
-#       visit:
-#         value: ":id_visit"
-#       observation:
-#         prefilters: "id_visit = :id_visit"
-#   visit_edit:
-#     url: "visit_edit/:id_visit"
-#     layout:
-#       code: m_monitoring.visit_edit
-#     objects:
-#       visit:
-#         value: ":id_visit"
-#   visit_create:
-#     url: visit_create
-#     layout:
-#       code: m_monitoring.visit_edit
-#     objects:
-#       visit:
-#         defaults:
-#           id_module: ":id_module"
-#           id_site: ":id_site"
-#   observation_details:
-#     url: "observation_details/:id_observation"
-#     layout:
-#       code: m_monitoring.observation_details
-#     objects:
-#       observation:
-#         value: ":id_observation"
-#   observation_edit:
-#     url: "observation_edit/:id_observation"
-#     layout:
-#       code: m_monitoring.observation_edit
-#     objects:
-#       observation:
-#         value: ":id_observation"
-#   observation_create:
-#     url: observation_create
-#     layout:
-#       code: m_monitoring.observation_edit
-#     objects:
-#       observation:
-#         defaults:
-#           id_visit: ":id_visit"
+  site:
+    details:
+      layout:
+        code: m_monitoring.site_details
+    edit:
+      layout:
+        code: m_monitoring.site_edit
+    create:
+      layout:
+        code: m_monitoring.site_edit
+
+  visit:
+   details:
+      layout:
+        code: m_monitoring.visit_details
+      edit:
+        layout:
+          code: m_monitoring.visit_edit
+      create:
+        layout:
+          code: m_monitoring.visit_edit
+
+  observation:
+    details:
+      layout:
+        code: m_monitoring.observation_details
+    edit:
+      layout:
+        code: m_monitoring.observation_edit
+    create:
+      layout:
+        code: m_monitoring.observation_edit

@@ -91,17 +91,25 @@ export class ListFormService {
     if (!options.default_item) {
       return of(liste);
     }
-
     // recherche de la valeur dans la liste
     // recherce de la valeur par api et ajout dans la liste
-    const value = liste.items.find((item) =>
-      Object.entries(options.default_item).every(([key, value]) => item[key] == value)
+
+    const defaultItems = options.multiple ? options.default_item : [options.default_item];
+    const values = defaultItems.map((defaultItem) =>
+      liste.items.find((item) =>
+        Object.entries(defaultItem).every(([key, value]) => {
+          return item[key] == value;
+        })
+      )
     );
-    if (!value) {
+
+    if (values.includes(null)) {
       // message, erreur ?
       console.error(`Pas de valeur trouvée pour ${JSON.stringify(options.default_item)}`);
       return of(liste);
     }
+
+    const value = options.multiple ? values : values[0];
     const controlValue = options.return_object ? value : value[options.value_field_name];
     control.patchValue(controlValue);
 

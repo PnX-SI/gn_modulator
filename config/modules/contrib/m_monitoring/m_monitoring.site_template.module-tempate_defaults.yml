@@ -88,6 +88,7 @@ site_form_fields:
   - hidden: true
     items:
       - id_site
+      - ownership
   - code
   - name
   - description
@@ -97,7 +98,14 @@ site_form_fields:
     object_code: category
     module_code: m_monitoring
   - id_nomenclature_type_site
-  - ownership
+  - key: modules
+    type: list_form
+    multiple: true
+    return_object: true
+    default_item: |
+      __f__context.params.id_module
+        ? [{ id_module: context.params.id_module }]
+        : null
 
 site_table_fields:
   - code
