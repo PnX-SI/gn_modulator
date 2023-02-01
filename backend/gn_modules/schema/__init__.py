@@ -38,7 +38,6 @@ class SchemaMethods(
     SchemaTypes,
     SchemaValidation,
 ):
-
     errors = errors
 
     def __init__(self, schema_code):

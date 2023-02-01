@@ -48,7 +48,6 @@ class SchemaBaseImports:
         return infos
 
     def get_foreign_key(self, key_process, rel_test_values, process_one=False):
-
         sm_rel = self.cls(self.property(key_process)["schema_code"])
         if isinstance(rel_test_values, dict):
             sm_rel.get_foreign_keys(rel_test_values)
@@ -98,7 +97,6 @@ class SchemaBaseImports:
             )
 
     def get_foreign_keys(self, d):
-
         for key in d:
             if not (
                 (key in self.column_keys() and self.column(key).get("foreign_key"))
@@ -128,7 +126,6 @@ class SchemaBaseImports:
         self.process_geoms(d)
 
     def clean_data(self, d):
-
         for key in copy.copy(d):
             if key not in self.properties():
                 if self.schema_code() == "schemas.utils.utilisateur.organisme":
@@ -154,7 +151,6 @@ class SchemaBaseImports:
 
     @classmethod
     def process_data_item(cls, data_item, file_path):
-
         clear_global_cache(["import_pk_keys"])
         schema_code = data_item["schema_code"]
         sm = cls(schema_code)
@@ -171,7 +167,6 @@ class SchemaBaseImports:
             i = i + 1
             # validate_data
             try:
-
                 # pre traitement
                 values = [d.get(key) for key in test_keys]
                 value = ", ".join([str(value) for value in values])

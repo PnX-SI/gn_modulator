@@ -17,7 +17,6 @@ class YmlLoader(yaml.CLoader):
         super(YmlLoader, self).__init__(stream)
 
     def include(self, node):
-
         filename = os.path.join(self._root, self.construct_scalar(node))
 
         with open(filename, "r") as f:
@@ -97,7 +96,6 @@ class DefinitionUtils:
 
         # - dictionnaire
         if isinstance(item, dict):
-
             # patch pourris avec les data pour schema_code et commons.table_location
             if (
                 key_name == "schema_code"

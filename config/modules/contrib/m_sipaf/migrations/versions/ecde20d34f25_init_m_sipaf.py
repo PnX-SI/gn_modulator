@@ -17,7 +17,6 @@ depends_on = "modules"
 
 
 def upgrade():
-
     # Creation du schema assiocié au module m_sipaf
     sql_files = ["m_sipaf/schema.sql"]
     for sql_file in sql_files:
@@ -28,7 +27,6 @@ def upgrade():
 
 
 def downgrade():
-
     # Suppression du schema associé au module m_sipaf
     sql_files = ["m_sipaf/reset.sql"]
     for sql_file in sql_files:

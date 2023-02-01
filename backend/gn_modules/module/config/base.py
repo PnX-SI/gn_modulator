@@ -83,7 +83,6 @@ class ModulesConfigBase:
 
     @classmethod
     def modules_config_with_cruved(cls):
-
         return {
             module_code: cls.module_config_with_cruved(module_code)
             for module_code in cls.module_codes()

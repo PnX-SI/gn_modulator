@@ -145,7 +145,6 @@ class SchemaBulkImports:
 
     @classmethod
     def bulk_import_process_relations(cls, schema_code, raw_import_table, verbose):
-
         sm = cls(schema_code)
 
         columns = cls.get_table_columns(raw_import_table)
@@ -244,7 +243,6 @@ DELETE FROM {cor_table} t
         """
 
         with open(file_path, "r") as f:
-
             # on récupère la premiere ligne du csv pour avoir le nom des colonnes
             first_line = f.readline()
 

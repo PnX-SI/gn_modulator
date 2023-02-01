@@ -47,7 +47,6 @@ class SchemaBase:
         print(json.dumps(d, indent=indent, sort_keys=True, ensure_ascii=False))
 
     def get_schema(self, columns_only=False):
-
         # import pdb; pdb.set_trace()
         schema = self.json_schema
 
@@ -67,7 +66,6 @@ class SchemaBase:
         return self.attr("required", [])
 
     def is_required(self, key):
-
         return key in self.properties() and (
             self.properties()[key].get("required")
             or key in self.required()
@@ -187,7 +185,6 @@ class SchemaBase:
         return self.definition["properties"]
 
     def property(self, key):
-
         if "." in key:
             # on cherche la relation
             rel_key = key.split(".")[0]
@@ -208,7 +205,6 @@ class SchemaBase:
         return self.properties().get(key) is not None
 
     def columns(self, sort=False):
-
         column = {}
 
         for key in self.column_keys(sort=sort):
@@ -217,7 +213,6 @@ class SchemaBase:
         return column
 
     def column_properties(self, sort=False):
-
         column = {}
 
         for key in self.column_properties_keys(sort=sort):
@@ -226,7 +221,6 @@ class SchemaBase:
         return column
 
     def relationships(self):
-
         relationship = {}
         for key in self.relationship_keys():
             relationship[key] = self.properties()[key]
@@ -291,7 +285,6 @@ class SchemaBase:
         return list(dict.fromkeys(deps))
 
     def remove_field(self, field_name, schema):
-
         if isinstance(schema, dict):
             schema_out = {}
             for k, v in schema.items():
@@ -324,7 +317,6 @@ class SchemaBase:
             return ", ".join([self.process_csv_data(key, d) for d in data])
 
         if isinstance(data, dict):
-
             if not key:
                 return "_".join([self.process_csv_data(None, data[k]) for k in data.keys()])
 
@@ -338,7 +330,6 @@ class SchemaBase:
             return self.process_csv_data(None, data[key], options)
 
         if labels := options.get("labels"):
-
             if data is True:
                 return labels[0] if len(labels) > 0 else True
             elif data is False:

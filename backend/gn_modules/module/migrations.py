@@ -46,7 +46,6 @@ class ModuleMigration:
 
     @classmethod
     def make_migration_links(cls, module_code):
-
         # liens symboliques des fichier de migration
         for f in cls.migration_files(module_code, link=False):
             f_link = cls.migrations_dir() / "versions" / f.name
@@ -70,7 +69,6 @@ class ModuleMigration:
 
     @classmethod
     def remove_migration_links(cls, module_code):
-
         for f in cls.migration_files(module_code, link=True):
             f.unlink()
 

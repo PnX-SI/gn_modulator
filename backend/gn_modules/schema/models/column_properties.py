@@ -28,7 +28,6 @@ class SchemaModelColumnProperties:
         return column_property(cp_query)
 
     def cp_select(self, key, column_property_def, Model):
-
         column_property_type = column_property_def.get("column_property")
         if column_property_type == "nb":
             return select([func.count("*")])
@@ -93,7 +92,6 @@ class SchemaModelColumnProperties:
         )
 
     def column_property_util_relation_where_conditions(self, key, column_property_def, Model):
-
         relation, _ = self.custom_getattr(Model, column_property_def["relation_key"])
         rel = self.cls(self.property(column_property_def["relation_key"])["schema_code"])
         conditions = relation

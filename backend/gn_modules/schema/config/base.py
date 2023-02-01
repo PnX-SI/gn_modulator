@@ -41,13 +41,11 @@ class SchemaConfigBase:
         column_keys = self.attr(layout_field) or self.columns()
 
         for key in column_keys:
-
             """
             relations un seul . pour l'instant
             """
             column_def = {}
             if "." in key:
-
                 (key_relationship, key_column) = key.split(".")
                 relation_def = self.relationship(key_relationship)
                 # relation = self.cls(relation_def["schema_code"])

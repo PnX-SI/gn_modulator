@@ -119,7 +119,6 @@ def test_global_check_definition(file_path=None, error_code=None):
 
 
 def test_process_template(file_path=None, error_code=None):
-
     clear_errors()
 
     if file_path is None:

@@ -4,7 +4,6 @@ from utils_flask_sqla.migrations.utils import logger
 
 
 def table_exists(table):
-
     txt_table_exists = (
         op.get_bind()
         .execute(
@@ -20,7 +19,6 @@ def table_exists(table):
 
 
 def import_csv_file(csvfile_path, temporary_table):
-
     cursor = op.get_bind().connection.cursor()
 
     data_dir = context.get_x_argument(as_dictionary=True).get("data-directory")

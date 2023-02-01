@@ -78,7 +78,6 @@ class SchemaAuto:
         return schema_definition
 
     def autoproperties(self, Model):
-
         properties = {}
 
         sql_table_name = Model.__tablename__
@@ -88,7 +87,6 @@ class SchemaAuto:
 
         # columns
         for column in Model.__table__.columns:
-
             if not hasattr(Model, column.key):
                 continue
             column_auto = self.process_column_auto(
@@ -152,7 +150,6 @@ class SchemaAuto:
         return property
 
     def process_column_auto(self, column, reflected_columns, sql_schema_name, sql_table_name):
-
         type = str(column.type)
 
         # PATCH pour les VARCHAR(<nb>)
@@ -205,7 +202,6 @@ class SchemaAuto:
             property["schema_code"] = schema_code
 
             if schema_code == "ref_nom.nomenclature":
-
                 # nomenclature_type
                 nomenclature_type = self.reflect_nomenclature_type(
                     sql_schema_name, sql_table_name, column.key

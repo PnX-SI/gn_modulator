@@ -17,7 +17,6 @@ def unaccent(input_str):
 
 
 def replace_in_dict(data, value_test, value):
-
     """
      replace dans un dictionnaire
      par ex:
@@ -75,7 +74,6 @@ def getAttr(obj, path, index=0):
         return getAttr(obj, path.split("."), index)
 
     if isinstance(path, list):
-
         if index > len(path) - 1:
             return obj
         path_cur = path[index]

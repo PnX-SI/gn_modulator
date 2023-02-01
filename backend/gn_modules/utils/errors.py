@@ -13,7 +13,6 @@ def add_error(
     file_path=None,
     template_file_path=None,
 ):
-
     if msg is None:
         raise Exception("msg is None")
 
@@ -115,7 +114,6 @@ def errors_txt():
 
     # Rappel du nombre d'erreur si élevé
     if len(errors) > 5:
-
         txt_errors += f"\n {txt_nb_errors}"
 
     return txt_errors

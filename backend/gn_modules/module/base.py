@@ -83,7 +83,6 @@ class ModuleBase:
 
     @classmethod
     def create_schema_sql(cls, module_code, force=False):
-
         module_config = cls.module_config(module_code)
         schema_codes = module_config["schemas"]
 
@@ -128,7 +127,6 @@ class ModuleBase:
 
     @classmethod
     def process_module_features(cls, module_code):
-
         module_config = cls.module_config(module_code)
         data_codes = module_config.get("features", [])
 

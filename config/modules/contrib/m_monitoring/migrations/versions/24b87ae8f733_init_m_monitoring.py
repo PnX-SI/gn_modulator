@@ -16,7 +16,6 @@ depends_on = "modules"
 
 
 def upgrade():
-
     # Creation du schema assiocié au module m_monitoring
     sql_files = ["m_monitoring/schema.sql"]
     for sql_file in sql_files:
@@ -27,7 +26,6 @@ def upgrade():
 
 
 def downgrade():
-
     # Suppression du schema associé au module m_monitoring
     sql_files = ["m_monitoring/reset.sql"]
     for sql_file in sql_files:

@@ -68,7 +68,6 @@ class SchemaRepositoriesFilters:
         cur_ops = []
 
         for elem in filter_array:
-
             loop_filter = None
 
             # récursivité sur les listes
@@ -93,7 +92,6 @@ class SchemaRepositoriesFilters:
                 )
 
             if loop_filter is not None:
-
                 # on prend le dernier opérateur de la liste ou bien '*' par défaut
                 op = cur_ops.pop() if len(cur_ops) > 0 else "*"
 
@@ -147,13 +145,11 @@ class SchemaRepositoriesFilters:
         nb_filters = len(filters)
         index = 0
         while index < nb_filters:
-
             # calcul du filtre {field, type, value}
             filter = self.parse_filter(filters[index])
 
             # si on tombe sur une parenthèse ouvrante
             if filter == "[":
-
                 # on cherche l'index de la parenthèse fermante ] correspondante
                 index_close = self.find_index_close(index, filters)
 
@@ -261,7 +257,6 @@ class SchemaRepositoriesFilters:
             filter_out = model_attribute <= filter_value
 
         elif filter_type == "=":
-
             filter_out = (
                 model_attribute
                 == filter_value

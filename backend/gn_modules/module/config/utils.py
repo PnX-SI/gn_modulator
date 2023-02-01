@@ -46,7 +46,6 @@ class ModuleConfigUtils:
 
     @classmethod
     def default_page_config(cls, module_code, object_code, action):
-
         sm = SchemaMethods(cls.schema_code(module_code, object_code))
         default_page_config = {
             "action": action,
@@ -153,7 +152,6 @@ class ModuleConfigUtils:
 
         # on boucle sur tous les éléments de params
         for key_param, param_config in params.items():
-
             # récupération du schema (par ordre de priorité)
             # - depuis schema_code
             # - depuis object_code -> schema_code de l'object
@@ -193,7 +191,6 @@ class ModuleConfigUtils:
         module_config["schemas"] = []
 
         for object_code, object_module_config in module_config["objects"].items():
-
             object_module_config["schema_code"] = object_module_config.get(
                 "schema_code", object_code
             )
@@ -229,7 +226,6 @@ class ModuleConfigUtils:
         # a faire dans definition
         # - pour chaque export défini dans la config du module
         for export_code, export_definition in module_config.get("exports", {}).items():
-
             #  - on lui assigne son export_code
             export_definition["export_code"] = export_code
 
@@ -259,7 +255,6 @@ class ModuleConfigUtils:
 
         # pour tous les object d'un module
         for object_code, object_definition in module_config["objects"].items():
-
             # on récupère schema methodes
             sm = SchemaMethods(object_definition["schema_code"])
 

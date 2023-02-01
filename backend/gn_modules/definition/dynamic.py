@@ -115,7 +115,6 @@ class DefinitionDynamic:
             return
 
         if cls.is_dynamic_element(element):
-
             str_function = cls.str_function(element)
 
             str_x_for_test = cls.str_x_for_test()

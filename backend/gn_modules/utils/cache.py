@@ -28,7 +28,6 @@ def clear_global_cache(keys):
 
 
 def get_global_cache(keys, default=None):
-
     if not isinstance(keys, list):
         raise CacheKeysNotListError(f"La variable 'keys' n'est pas une liste {keys}")
 
@@ -42,14 +41,12 @@ def get_global_cache(keys, default=None):
 
 
 def set_global_cache(keys, value):
-
     if not isinstance(keys, list):
         raise CacheKeysNotListError(f"La variable 'keys' n'est pas une liste {keys}")
 
     current = global_cache
 
     for index, key in enumerate(keys):
-
         if index == len(keys) - 1:
             current[key] = value
         else:

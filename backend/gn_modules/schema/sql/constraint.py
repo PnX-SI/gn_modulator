@@ -59,7 +59,6 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
         txt = ""
 
         for key, column_def in self.columns().items():
-
             if not column_def.get("foreign_key"):
                 continue
 
@@ -101,7 +100,6 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
         nomenclature_field_name,
         nomenclature_type,
     ):
-
         # eviter les noms trop long pour eviter les doublons en cas de coupure
         constraint_name = "check_nom_type_{sql_schema_name}_{sql_table_name}_{nomenclature_field_name}_{nomenclature_type}".format(
             sql_schema_name=sql_schema_name,
@@ -126,7 +124,6 @@ ALTER TABLE {sql_schema_name}.{sql_table_name}
         txt = ""
 
         for key, column_def in self.columns().items():
-
             nomenclature_type = column_def.get("nomenclature_type")
 
             if not nomenclature_type:

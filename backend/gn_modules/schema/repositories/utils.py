@@ -9,7 +9,6 @@ class SchemaRepositoriesUtil:
     __abstract__ = True
 
     def custom_getattr(self, Model, field_name, query=None, condition=None):
-
         """
         getattr pour un modèle, étendu pour pouvoir traiter les 'rel.field_name'
 
@@ -29,7 +28,6 @@ class SchemaRepositoriesUtil:
         """
 
         if "." not in field_name:
-
             # cas simple
             model_attribute = getattr(Model, field_name)
 
@@ -66,7 +64,6 @@ class SchemaRepositoriesUtil:
         order_bys = []
 
         for s in sort:
-
             sort_dir = "+"
             sort_field = s
             if s[-1] == "-":
@@ -87,7 +84,6 @@ class SchemaRepositoriesUtil:
         return order_bys, query
 
     def get_sorter(self, Model, sorter, query):
-
         sort_field = sorter["field"]
         sort_dir = sorter["dir"]
 

@@ -4,5 +4,4 @@ from .existing import SchemaModelExisting
 
 
 class SchemaModel(SchemaModelBase, SchemaModelColumnProperties, SchemaModelExisting):
-
     pass

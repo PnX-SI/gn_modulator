@@ -75,7 +75,6 @@ class DefinitionBase:
 
         # test si les fichiers de référence ont bien été chargés
         for reference_code in cls.definition_codes_for_type("reference"):
-
             reference = cls.get_definition("reference", reference_code)
             try:
                 jsonschema.Draft7Validator.check_schema(reference)
@@ -156,7 +155,6 @@ class DefinitionBase:
         definition_reference = cls.get_definition("reference", definition_reference_code)
 
         if definition_reference is None:
-
             add_error(
                 definition_type=definition_type,
                 definition_code=definition_code,
@@ -235,14 +233,12 @@ class DefinitionBase:
 
     @classmethod
     def file_name(cls, definition):
-
         definition_type, definition_code = cls.get_definition_type_and_code(definition)
 
         return f"{definition_code}.{definition_type}"
 
     @classmethod
     def save_in_cache_definition(cls, definition, file_path, check_existing_definition=True):
-
         if isinstance(definition, list):
             add_error(
                 definition_type="definition",
@@ -266,7 +262,6 @@ class DefinitionBase:
         # c'est que le type de configuration n'est pas detecté
         # tolérance pour les fichiers avec '-' ??
         if not definition_type:
-
             # fichiers avec '-' destinés à être inclu dans d'autres fichiers ??
             if "-" in file_path.stem or file_path.stem == "config":
                 return
@@ -308,7 +303,6 @@ class DefinitionBase:
 
     @classmethod
     def load_definition_file(cls, file_path):
-
         # chargement du fichier yml
         try:
             definition = cls.load_definition_from_file(file_path)
@@ -388,7 +382,6 @@ class DefinitionBase:
         )
 
         if missing_schema_codes:
-
             missings_schema_code_txt = ", ".join(map(lambda x: f"'{x}'", missing_schema_codes))
             add_error(
                 definition_code=definition_code,

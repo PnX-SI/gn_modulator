@@ -7,7 +7,6 @@ from . import errors
 class ModuleCommands:
     @classmethod
     def remove_module(cls, module_code, force=False):
-
         try:
             module_config = cls.module_config(module_code)
         except cls.errors.ModuleNotFoundError as e:
@@ -65,7 +64,6 @@ class ModuleCommands:
 
     @classmethod
     def install_module(cls, module_code, force=False):
-
         print("Installation du module {}".format(module_code))
 
         # test si les dépendances sont installées
@@ -111,7 +109,6 @@ class ModuleCommands:
 
     @classmethod
     def init_module(cls, module_code, force):
-
         try:
             module_config = cls.module_config(module_code)
 
@@ -170,7 +167,6 @@ class ModuleCommands:
             grammar_list.append(sm.config_display())
 
         else:
-
             modules_config = cls.modules_config()
 
             # si module_code est défini on ne prend que celui là

@@ -23,7 +23,6 @@ class SchemaModelBase:
         return self.attr("meta.model_name", "T{}".format(self.schema_code("pascal_case")))
 
     def get_db_type(self, column):
-
         field_type = column.get("type")
 
         if field_type == "integer":
@@ -86,7 +85,6 @@ class SchemaModelBase:
             return uuid.uuid4
 
     def process_relation_model(self, key, relationship_def, Model):
-
         relation = self.cls(relationship_def["schema_code"])
 
         if not relation.Model():
@@ -141,7 +139,6 @@ class SchemaModelBase:
         return relationship
 
     def CorTable(self, relation_def):
-
         # cas cor_schema_code
         if cor_schema_code := relation_def.get("cor_schema_code"):
             sm_cor = self.cls(cor_schema_code)
@@ -219,7 +216,6 @@ class SchemaModelBase:
 
         # process properties
         for key, column_def in self.columns().items():
-
             if column_def.get("column_property") is not None:
                 continue
 

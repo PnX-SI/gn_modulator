@@ -18,7 +18,6 @@ class SchemaConfigFilters:
         }
 
     def config_filters_form_schema(self):
-
         filters_defs = self.attr("filter_defs.defs", {})
         properties = {
             key_filter: {

@@ -158,7 +158,6 @@ FROM pre_process
 
         # pour les nomenclature (on rajoute le type)
         if nomenclature_type := property.get("nomenclature_type"):
-
             return f"""CASE
         WHEN {key} IS NOT NULL AND {key} NOT LIKE '%%|%%' THEN CONCAT('{nomenclature_type}|', {key})
         ELSE {key}
@@ -260,11 +259,9 @@ FROM {raw_import_view} t
         # couf pour permttre de faire les liens entre les join quand il y en a plusieurs
         link_joins = {}
         for index_unique, k_unique in enumerate(uniques):
-
             var_key = self.var_key(key, k_unique, index_unique, link_joins, alias_main)
 
             if self.property(k_unique).get("foreign_key"):
-
                 if k_unique in solved_keys:
                     link_joins[k_unique] = solved_keys[k_unique]
                 else:
@@ -344,7 +341,6 @@ FROM {raw_import_view} t
     def txt_import_view_to_insert(
         cls, schema_code, processed_import_view, dest_table=None, keys=None
     ):
-
         sm = cls(schema_code)
 
         table_name = dest_table or sm.sql_schema_dot_table()
@@ -377,7 +373,6 @@ FROM {processed_import_view}
 
     @classmethod
     def txt_import_view_to_update(cls, schema_code, processed_import_view):
-
         sm = cls(schema_code)
 
         columns = cls.get_table_columns(processed_import_view)
@@ -430,7 +425,6 @@ AND {txt_update_conditions}
 
     @classmethod
     def txt_nb_update(cls, schema_code, processed_import_view):
-
         sm = cls(schema_code)
 
         columns = cls.get_table_columns(processed_import_view)

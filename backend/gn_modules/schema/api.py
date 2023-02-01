@@ -127,7 +127,6 @@ class SchemaApi:
         """
 
         def get_rest(self_mv, value=None):
-
             if value:
                 try:
                     return get_one_rest(value)
@@ -138,7 +137,6 @@ class SchemaApi:
                 return get_list_rest()
 
         def get_one_rest(value):
-
             params = self.parse_request_args(request, object_definition)
 
             try:
@@ -158,7 +156,6 @@ class SchemaApi:
             )
 
         def get_list_rest(additional_params={}):
-
             params = {**self.parse_request_args(request, object_definition), **additional_params}
 
             cruved_type = params.get("cruved_type") or "R"
@@ -196,7 +193,6 @@ class SchemaApi:
             return out
 
         def post_rest(self_mv):
-
             data = request.get_json()
             params = self.parse_request_args(request, object_definition)
 
@@ -211,7 +207,6 @@ class SchemaApi:
             )
 
         def patch_rest(self_mv, value):
-
             data = request.get_json()
             params = self.parse_request_args(request, object_definition)
 
@@ -232,7 +227,6 @@ class SchemaApi:
             )
 
         def delete_rest(self_mv, value):
-
             params = self.parse_request_args(request, object_definition)
 
             m = self.get_row(

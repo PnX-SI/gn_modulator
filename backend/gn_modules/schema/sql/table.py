@@ -134,7 +134,6 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
 
         # liste des champs
         for key, column_def in self.columns().items():
-
             if column_def.get("column_property") is not None:
                 continue
 
@@ -159,11 +158,9 @@ CREATE TABLE {sql_schema_name}.{sql_table_name} (""".format(
         return txt
 
     def sql_txt_comments(self):
-
         txt = ""
 
         for key, column_def in self.columns().items():
-
             if column_def.get("description") is None:
                 continue
             txt += "COMMENT ON COLUMN {sql_schema_name}.{sql_table_name}.{key} IS '{description}';\n".format(

@@ -136,7 +136,6 @@ class SchemaSerializers:
         ]
 
     def process_relation_marshmallow(self, relation_key, relation_def):
-
         # kwargs = {}
         # kwargs['exclude_relations'] = [self.opposite_relation_def(relation_def)]
 
@@ -188,7 +187,6 @@ class SchemaSerializers:
 
         @pre_load
         def pre_load_make_object(self_marshmallow, data, **kwargs):
-
             for key in self.pk_field_names():
                 if key in data and data[key] is None:
                     print("\nmarsh remove pk null\n", key)
@@ -313,7 +311,6 @@ class SchemaSerializers:
 
         # pour gérer les champs supplémentaire (ownership, row_number, etc....)
         if isinstance(m, tuple):
-
             keys = list(m.keys())
             if len(keys) > 1:
                 keys = keys[1:]
@@ -374,7 +371,6 @@ class SchemaSerializers:
         kwargs = {"only": fields} if fields else {}
 
         if as_geojson:
-
             geometry_field_name = geometry_field_name or self.attr("meta.geometry_field_name")
             if fields and geometry_field_name not in fields:
                 fields.append(geometry_field_name)
@@ -386,7 +382,6 @@ class SchemaSerializers:
 
         # pour gérer les champs supplémentaire (ownership, row_number, etc....)
         if len(data_list) and isinstance(m_list[0], tuple):
-
             keys = list(m_list[0].keys())
             if len(keys) > 1:
                 keys = keys[1:]
@@ -396,14 +391,12 @@ class SchemaSerializers:
                         data_list[index][key] = getattr(res, key)
 
         if as_geojson:
-
             features = []
             for data in data_list:
                 features.append(self.as_geojson(data, geometry_field_name))
             return {"type": "FeatureCollection", "features": features}
 
         else:
-
             if flat_keys:
                 return [{key: self.process_csv_data(key, d) for key in fields} for d in data_list]
             return data_list

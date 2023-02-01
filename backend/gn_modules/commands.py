@@ -38,7 +38,6 @@ def cmd_install_module(module_code, force=False):
     module_codes = ModuleMethods.module_codes()
 
     if module_code is None or module_code not in module_codes:
-
         print("registred", ModuleMethods.registred_modules())
         print("unregistred", ModuleMethods.unregistred_modules())
         print()

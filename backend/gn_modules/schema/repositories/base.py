@@ -18,7 +18,6 @@ class SchemaRepositoriesBase:
     """
 
     def value_filters(self, value, field_name=None):
-
         if not field_name:
             field_name = self.pk_field_name()
 
@@ -305,7 +304,6 @@ class SchemaRepositoriesBase:
         return query
 
     def get_query_infos(self, module_code="MODULES", cruved_type="R", params={}, url=None):
-
         count_total = self.query_list(
             module_code=module_code, cruved_type="R", params=params, query_type="total"
         ).count()
@@ -363,7 +361,6 @@ class SchemaRepositoriesBase:
         return query_infos
 
     def get_page_number(self, value, module_code, cruved_type, params):
-
         params["fields"] = ["row_number"]
 
         query_list = self.query_list(module_code, cruved_type, params, "page_number")

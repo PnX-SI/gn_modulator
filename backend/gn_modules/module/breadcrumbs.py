@@ -32,7 +32,6 @@ class ModuleBreadCrumbs:
 
         # dans le cas ou l'on a une page parent, on refait un appel à breadcrumbs
         if parent_page_code:
-
             # label ???
             if data.get(sm.pk_field_name()):
                 m = sm.get_row(data[sm.pk_field_name()], module_code=module_code, params={}).one()

@@ -19,13 +19,11 @@ class SchemaRepositoriesCruved:
     """
 
     def expression_ownership(self):
-
         Model = self.Model()
 
         if self.attr("meta.check_cruved") is None:
             return literal(0)
         else:
-
             return case(
                 [
                     (Model.actors.any(id_role=g.current_user.id_role), 1),

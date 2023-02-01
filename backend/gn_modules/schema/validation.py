@@ -71,7 +71,6 @@ class SchemaValidation:
                 properties[key]["$ref"] = ref
 
             if relation_def["relation_type"] == "1-n":
-
                 properties[key]["type"] = "array"
                 properties[key]["items"] = {"$ref": ref}
                 properties[key] = {"oneOf": [{"type": "null"}, properties[key]]}
@@ -94,7 +93,6 @@ class SchemaValidation:
         return schema_code.replace(".", "_")
 
     def set_definition(self, definitions, schema_code, schema):
-
         schema_definition_id = self.cls.defs_id(schema_code)
 
         schema_definition = {}
@@ -169,7 +167,6 @@ class SchemaValidation:
             return [self.process_json_schema(elem) for elem in schema]
 
         if isinstance(schema, dict):
-
             if schema.get("type") in ["date", "datetime", "uuid"]:
                 schema["format"] = schema.get("format", schema.get("type"))
                 schema["type"] = "string"
