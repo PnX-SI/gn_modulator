@@ -129,7 +129,7 @@ def cmd_doc_schema(schema_code, force=False):
 
 @click.command("import")
 @click.option("-s", "schema_code")
-@click.option("-d", "data_file_path", type=click.Path(exists=True))
+@click.option("-d", "data_path", type=click.Path(exists=True))
 @click.option(
     "-p",
     "--pre-process",
@@ -139,18 +139,17 @@ def cmd_doc_schema(schema_code, force=False):
 )
 @click.option(
     "-i",
-    "--import-file",
-    "import_file_path",
-    type=click.Path(exists=True),
-    help="chemin vers le fichier json d'imports",
+    "--import-code",
+    "import_code",
+    help="code de l'import de ficher",
 )
 @click.option("-v", "--verbose", is_flag=True, help="affiche les commandes sql")
 @click.option("-k", "--keep-raw", is_flag=True, help="garde le csv en base")
 @with_appcontext
 def cmd_import_bulk_data(
     schema_code=None,
-    import_file_path=None,
-    data_file_path=None,
+    import_code=None,
+    data_path=None,
     pre_process_file_path=None,
     verbose=False,
     keep_raw=False,
@@ -159,17 +158,17 @@ def cmd_import_bulk_data(
     importe des données pour un schema
     """
 
-    if schema_code and data_file_path:
+    if schema_code and data_path:
         SchemaMethods.process_csv_file(
             schema_code=schema_code,
-            data_file_path=data_file_path,
+            data_file_path=data_path,
             pre_process_file_path=pre_process_file_path,
             verbose=verbose,
             keep_raw=keep_raw,
         )
 
-    if import_file_path:
-        SchemaMethods.process_import_file(import_file_path, verbose)
+    if import_code:
+        SchemaMethods.process_import_file(import_code, data_path, verbose)
 
     return True
 

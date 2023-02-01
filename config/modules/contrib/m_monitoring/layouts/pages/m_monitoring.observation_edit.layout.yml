@@ -10,7 +10,7 @@ layout:
     - type: object
       object_code: observation
       items:
-        code: m_monitoring.object_form
+        code: utils.object_form
         template_params:
           object_code: observation
           layout: __OBSERVATION_FORM_FIELDS__

@@ -117,11 +117,11 @@
   </ng-container>
 
   <!-- dynform-->
-  <ng-container *ngIf="computedLayout.type == 'dyn_form'">
+  <ng-container *ngIf="computedLayout.type == 'dyn_form' && !!formControl">
     <pnx-dynamic-form
       class="dynamic-form padding-sm"
       [formDef]="formDef"
-      [form]="formControl"
+      [form]="localFormGroup"
     >
     </pnx-dynamic-form>
   </ng-container>

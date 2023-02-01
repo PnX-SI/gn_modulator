@@ -52,7 +52,7 @@ class ModuleConfigUtils:
             "action": action,
             "code": cls.page_code(object_code, action),
             "url": cls.page_url(module_code, object_code, action),
-            # "layout": {"code": cls.layout_code(module_code, object_code, action)},
+            "layout": {"code": cls.layout_code(module_code, object_code, action)},
             "object_code": object_code,
         }
 
@@ -79,7 +79,7 @@ class ModuleConfigUtils:
                 page_config = copy.deepcopy(
                     cls.default_page_config(module_code, object_code, action)
                 )
-                for elem_key, elem_value in page_action_config.items():
+                for elem_key, elem_value in (page_action_config or {}).items():
                     if elem_key == "objects":
                         for object_code_, object_config_ in elem_value.items():
                             page_config["objects"][object_code_] = object_config_

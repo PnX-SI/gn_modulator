@@ -42,7 +42,7 @@ export class ModulesLayoutObjectFiltersComponent
         },
         {
           flex: '0',
-          code: 'm_monitoring.buttons_filter',
+          code: 'utils.buttons_filter',
         },
       ],
     };

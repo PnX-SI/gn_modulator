@@ -25,7 +25,7 @@ const addKey = (keys, key) => {
 };
 
 const getAttr = (obj, paths, index = 0) => {
-  if (!paths) {
+  if (paths == null) {
     return obj;
   }
 
@@ -45,7 +45,10 @@ const getAttr = (obj, paths, index = 0) => {
     return obj;
   }
 
-  const path = paths[index];
+  let path = paths[index];
+  if (Number.isInteger(Number.parseInt(path))) {
+    path = Number.parseInt(path);
+  }
 
   if (Array.isArray(obj) && !Number.isInteger(path)) {
     return obj.map((elem) => getAttr(elem, paths, index));

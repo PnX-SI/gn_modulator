@@ -268,7 +268,7 @@ class DefinitionBase:
         if not definition_type:
 
             # fichiers avec '-' destinés à être inclu dans d'autres fichiers ??
-            if "-" in file_path.stem:
+            if "-" in file_path.stem or file_path.stem == "config":
                 return
 
             add_error(

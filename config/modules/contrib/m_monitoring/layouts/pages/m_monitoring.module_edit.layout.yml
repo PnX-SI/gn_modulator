@@ -5,7 +5,7 @@ description: Layout pour l'édition d'un module
 layout:
   height_auto: true
   items:
-    code: m_monitoring.object_form
+    code: utils.object_form
     template_params:
       object_code: module
       layout: __MODULE_FORM_FIELDS__

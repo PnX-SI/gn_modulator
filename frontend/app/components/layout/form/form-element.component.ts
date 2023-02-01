@@ -20,26 +20,23 @@ export class ModulesFormElementComponent
   }
 
   postProcessLayout(): void {
-    this.formControl = this.getFormControl();
     if (this.computedLayout.type == 'dyn_form') {
       this.formDef = this._mLayout.toFormDef(this.computedLayout);
     }
   }
 
   onCheckboxChange(event) {
-    this.getFormControl().patchValue(event);
+    this.formControl.patchValue(event);
   }
 
   onInputChange() {
-    const formControl = this.getFormControl();
-
     if (this.computedLayout.type == 'number') {
-      formControl.patchValue(parseFloat(formControl.value));
-      this.data[this.computedLayout.key] = formControl.value;
+      this.formControl.patchValue(parseFloat(this.formControl.value));
+      this.data[this.computedLayout.key] = this.formControl.value;
     }
     if (this.computedLayout.type == 'integer') {
-      formControl.patchValue(parseInt(formControl.value));
-      this.data[this.computedLayout.key] = formControl.value;
+      this.formControl.patchValue(parseInt(this.formControl.value));
+      this.data[this.computedLayout.key] = this.formControl.value;
     }
 
     this.computedLayout.change && this.computedLayout.change();

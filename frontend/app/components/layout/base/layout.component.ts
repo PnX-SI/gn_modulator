@@ -76,6 +76,7 @@ export class ModulesLayoutComponent implements OnInit {
   elementKey;
 
   formControl;
+  localFormGroup;
 
   // nom du composant (pour le debug)
   _name: string;
@@ -161,17 +162,6 @@ export class ModulesLayoutComponent implements OnInit {
   // pour les logs avec info sur _name, type, id
   log(...args) {
     console.log(this._name, this.layout && this.layout.type, this._id, ...args);
-  }
-
-  getFormControl() {
-    if (!this.computedLayout) {
-      return null;
-    }
-
-    return this._mForm.getFormControl(this.context.form_group_id, [
-      ...this.context.data_keys,
-      this.computedLayout.key,
-    ]);
   }
 
   // à redéfinir pour effectuer des actions apres computedLayout
@@ -291,6 +281,17 @@ export class ModulesLayoutComponent implements OnInit {
     }
   }
 
+  processFormControl() {
+    if (!this.computedLayout) {
+      return null;
+    }
+    this.localFormGroup = this._mForm.getFormControl(
+      this.context.form_group_id,
+      this.context.data_keys
+    );
+    this.formControl = this._mForm.getFormControl(this.localFormGroup, this.computedLayout.key);
+  }
+
   // calcul de computedLayout
   // pour prendre en compte les paramètre qui sont des functions
   computeLayout() {
@@ -314,7 +315,7 @@ export class ModulesLayoutComponent implements OnInit {
     }
 
     if (this.context.form_group_id) {
-      this.formControl = this.getFormControl();
+      this.processFormControl();
     }
 
     this.processElementData();

@@ -103,7 +103,11 @@ export class ModulesObjectService {
 
   property(context, key) {
     const schemaCode = this.objectConfigContext(context).schema_code;
-    return this._mSchema.property(schemaCode, key);
+    const keys = [...(context.data_keys || []), key].join('.');
+    return {
+      ...this._mSchema.property(schemaCode, keys),
+      key,
+    };
   }
 
   setObjectConfig(context, config) {

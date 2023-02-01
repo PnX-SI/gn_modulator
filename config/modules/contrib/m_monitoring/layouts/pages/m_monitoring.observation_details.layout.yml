@@ -8,7 +8,7 @@ layout:
   items:
     - type: breadcrumbs
       flex: "0"
-    - code: m_monitoring.object_details
+    - code: utils.object_details
       template_params:
         object_code: observation
         layout: __OBSERVATION_DETAILS_FIELDS__

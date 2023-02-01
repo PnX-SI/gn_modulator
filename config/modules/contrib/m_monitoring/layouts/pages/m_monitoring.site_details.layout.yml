@@ -20,7 +20,7 @@ layout:
     - items:
         - type: breadcrumbs
           flex: "0"
-        - code: m_monitoring.object_details
+        - code: utils.object_details
           template_params:
             object_code: site
             layout: __SITE_DETAILS_FIELDS__
@@ -29,7 +29,7 @@ layout:
             - label: __f__o.tab_label(x)
               object_code: visit
               items:
-                - code: m_monitoring.button_create
+                - code: utils.button_create
                   flex: "0"
                 - type: object
                   display: table

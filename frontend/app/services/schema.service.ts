@@ -11,16 +11,18 @@ export class ModulesSchemaService {
   }
 
   property(schemaCode, key) {
-    const schema = utils.copy(this._mConfig.schema(schemaCode));
+    const schema = this._mConfig.schema(schemaCode);
     if (!schema) {
       return {};
     }
 
     if (key.includes('.')) {
-      let keys = key.split('.');
+      let keys = key.split('.').filter((k) => !Number.isInteger(Number.parseInt(k)));
       let keyRel = keys.shift();
       let keyProp = keys.join('.');
+
       let propertyRel = this.property(schemaCode, keyRel);
+
       let propertyProp = this.property(propertyRel.schema_code, keyProp);
       if (propertyProp.parent) {
         propertyProp.parent.parent = propertyRel;
@@ -35,7 +37,7 @@ export class ModulesSchemaService {
 
     return {
       key,
-      ...schema.properties[key],
+      ...utils.copy(schema.properties[key]),
     };
   }
 }

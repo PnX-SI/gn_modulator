@@ -1,23 +1,27 @@
 from geonature.utils.env import db
 from pathlib import Path
+from gn_modules.definition import DefinitionMethods
 
 schema_import = "gn_modules_import"
 
 
 class SchemaBulkImports:
     @classmethod
-    def process_import_file(cls, import_file_path, verbose=False):
+    def process_import_file(cls, import_code, data_path, verbose=False):
         """
         import_file est le chemin vers un fichier json qui contient
         les différents fichiers à importer
         """
 
-        data = cls.load_yml_file(import_file_path)
-
-        for d in data:
-            data_file_path = Path(import_file_path).parent / d["data"]
+        # data = cls.load_yml_file(import_file_path)
+        import_definition = DefinitionMethods.get_definition("import", import_code)
+        import_definition_file_path = DefinitionMethods.get_file_path("import", import_code)
+        for d in import_definition["items"]:
+            data_file_path = Path(data_path) / d["data"] if d.get("data") else Path(data_path)
             pre_process_file_path = (
-                Path(import_file_path).parent / d["pre_process"] if d.get("pre_process") else None
+                Path(import_definition_file_path).parent / d["pre_process"]
+                if d.get("pre_process")
+                else None
             )
             cls.process_csv_file(
                 schema_code=d["schema_code"],
@@ -123,7 +127,7 @@ class SchemaBulkImports:
         ).scalar()
 
         print(
-            f"   - {schema_code} CSV {nb_csv} RAW {nb_raw} PROCESSED {nb_processed} INSERT {nb_insert} UPDATE {nb_update} AVANT {nb_schema_avant} APRES {nb_schema_apres}"
+            f"   - {schema_code} CSV {nb_csv} RAW {nb_raw} PROCESSED {nb_processed} INSERT {nb_insert} UPDATE {nb_update}"
         )
 
         # 4-2) UPDATE

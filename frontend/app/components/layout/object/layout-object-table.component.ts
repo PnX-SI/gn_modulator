@@ -23,9 +23,12 @@ export class ModulesLayoutObjectTableComponent
 
   params;
   modalDeleteLayout = {
-    code: 'm_monitoring.modal_delete',
+    code: 'utils.modal_delete',
   };
   _mTable: ModulesTableService;
+
+  // données récupérées par un appel à getPage
+  pageData: any;
 
   constructor(_injector: Injector) {
     super(_injector);
@@ -155,8 +158,15 @@ export class ModulesLayoutObjectTableComponent
         return of({});
       }
 
-      this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams).subscribe(
+      const observable = this.pageData
+        ? of(this.pageData)
+        : this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams);
+
+      observable.subscribe(
         (res) => {
+          if (this.pageData) {
+            this.pageData = null;
+          }
           resolve(res);
           this.onHeightChange(true);
 
@@ -211,6 +221,8 @@ export class ModulesLayoutObjectTableComponent
       .getPageNumber(this.moduleCode(), this.objectCode(), value, this.params)
       .subscribe((res) => {
         // set Page
+        this.pageData = res;
+
         this.table.setPage(res.page);
       });
   }

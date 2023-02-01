@@ -1,0 +1,288 @@
+type: schema
+code: m_sipaf.pf
+title: schema passage faune
+description: schema pour les passages à faune
+
+meta:
+    sql_processing: true
+    sql_schema_dot_table: m_sipaf.t_passages_faune
+    genre: M
+    label: passage à faune
+    labels: passages à faune
+    label_field_name: code_passage_faune
+    geometry_field_name: geom
+    unique:
+        - code_passage_faune
+    check_cruved: true
+
+properties:
+  id_passage_faune:
+      type: integer
+      title: ID
+      primary_key: true
+  code_passage_faune:
+      type: string
+      title: Code passage faune
+      required: true
+      description: "Code permettant d'identifier le passage à faune de manière unique (texte)"
+  uuid_passage_faune:
+      type: uuid
+      title: UUID
+      default: uuid
+      description: Identifiant universel unique au format uuid (uuid_pf)
+  pi_ou_ps:
+      type: boolean
+      title: Positionnement
+      description: Positionnement du passage vis-à vis de l’infrastructure (inférieur (False) ou supérieur (True))
+      labels:
+          - Supérieur
+          - Inférieur
+  geom:
+      type: geometry
+      geometry_type: geometry
+      srid: 4326
+      title: Geometrie (4326)
+      description: Geometrie du passage faune (SRID=4326)
+      index: true
+      required: true
+  geom_local:
+      type: geometry
+      geometry_type: geometry
+      srid: __LOCAL_SRID__
+      title: Geometrie locale (__LOCAL_SRID__)
+      description: Géométrie locale du passage faune (SRID=__LOCAL_SRID__)
+      index: true
+      trigger:
+          name: copy_geom
+          key: geom
+  pk:
+      type: number
+      title: Point kilométrique
+      description: Point kilométrique
+      min: 0
+  pr:
+      type: integer
+      title: Point Repère
+      description: Point repère
+      min: 0
+  pr_abs:
+      type: integer
+      title: Point repère abscisse (m)
+      description: Distance en abscisse curviligne depuis le dernier PR
+      min: 0
+  code_ouvrage_gestionnaire:
+      type: string
+      title: Code ouvrage gestionnaire
+      description: Code de l’ouvrage (pour le gestionnaire)
+  nom_usuel_passage_faune:
+      type: string
+      title: Nom Passage Faune
+      description: "Nom usuel utilisé pour dénommer l'ouvrage (nom_usuel_pf)"
+  issu_requalification:
+      type: boolean
+      title: Requalification
+      description: "L'ouvrage est issu d'une opération de requalification ?"
+      labels:
+          - Oui
+          - Non
+  date_creation_ouvrage:
+      type: date
+      title: Date de réalisation
+      description: "Date de la réalisation de l'ouvrage"
+  date_requalification_ouvrage:
+      type: date
+      title: Date de requalification
+      description: "Date de la requalification de l'ouvrage"
+  largeur_ouvrage:
+      type: number
+      title: Largeur ouvrage (m)
+      description: "Largeur de l'ouvrage en mètre"
+      min: 0
+  hauteur_ouvrage:
+      type: number
+      title: Hauteur ouvrage (m)
+      description: "Hauteur de l'ouvrage en mètre"
+      min: 0
+  longueur_franchissement:
+      type: number
+      title: Longueur de franchissement (m)
+      description: "Longueur de franchissement de l'ouvrage en mètres (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)"
+      min: 0
+  diametre:
+      type: number
+      title: Diamètre (m)
+      description: Diamètre de la buse en mètre
+      min: 0
+  largeur_dispo_faune:
+      type: number
+      title: Largeur disponible (m)
+      description: "Largeur de l'ouvrage effectivement disponible pour la faune en mètre"
+      min: 0
+  hauteur_dispo_faune:
+      type: number
+      title: Hauteur disponible (m)
+      description: "Hauteur de l'ouvrage effectivement disponible pour la faune en mètre"
+      min: 0
+  id_nomenclature_ouvrage_specificite:
+      type: integer
+      title: Spécificité du passage faune
+      description: Exclusivité pour le passage faune (specificite)
+      foreign_key: true
+      schema_code: ref_nom.nomenclature
+      nomenclature_type: PF_OUVRAGE_SPECIFICITE
+  nomenclatures_ouvrage_type:
+      type: relation
+      relation_type: n-n
+      title: "Type d'ouvrage"
+      description: "Type d'ouvrage d'art (lb_type_ouvrage)"
+      schema_dot_table: m_sipaf.cor_pf_nomenclature_ouvrage_type
+      schema_code: ref_nom.nomenclature
+      nomenclature_type: PF_OUVRAGE_TYPE
+  nomenclatures_ouvrage_materiaux:
+      type: relation
+      relation_type: n-n
+      schema_code: ref_nom.nomenclature
+      schema_dot_table: m_sipaf.cor_pf_nomenclature_ouvrage_materiaux
+      title: Matériaux
+      description: "Matériaux composant l'ouvrage d'art (lb_materiaux)"
+      nomenclature_type: PF_OUVRAGE_MATERIAUX
+  ouvrage_hydrau:
+      type: boolean
+      title: Ouvrage hydraulique ?
+      description: Ouvrage hydraulique ou non
+      labels:
+          - Oui
+          - Non
+  id_nomenclature_ouvrage_hydrau_position:
+      type: integer
+      title: Ouvrage hydraulique Position
+      description: Ouvrage hydraulique Position (ouvrage_hydrau_position)
+      foreign_key: true
+      schema_code: ref_nom.nomenclature
+      nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
+  id_nomenclature_ouvrage_hydrau_banq_caract:
+      type: integer
+      title: Caractérisation banquette
+      description: "Caractérisation de la baquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)"
+      nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
+      foreign_key: true
+      schema_code: ref_nom.nomenclature
+  id_nomenclature_ouvrage_hydrau_banq_type:
+      type: integer
+      title: Type de banquette
+      description: "Type de la baquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_type_banquette)"
+      foreign_key: true
+      schema_code: ref_nom.nomenclature
+      nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+  ouvrag_hydrau_tirant_air:
+      type: number
+      title: "Tirant d'air banquette (m)"
+      description: " Tirant d'air existant entre la banquette et le plafond de l'ouvrage, en mètre"
+  source:
+      type: string
+      title: Source
+      description: Source de la donnée
+  nomenclature_ouvrage_specificite:
+      type: relation
+      relation_type: n-1
+      title: Spécificité du passage faune
+      description: Exclusivité pour le passage faune
+      local_key: id_nomenclature_ouvrage_specificite
+      schema_code: ref_nom.nomenclature
+  nomenclature_ouvrage_hydrau_position:
+      type: relation
+      relation_type: n-1
+      schema_code: ref_nom.nomenclature
+      title: Position banquette
+      local_key: id_nomenclature_ouvrage_hydrau_position
+  nomenclature_ouvrage_hydrau_banq_caract:
+      type: relation
+      relation_type: n-1
+      schema_code: ref_nom.nomenclature
+      title: OH Caractrisation banquette
+      local_key: id_nomenclature_ouvrage_hydrau_banq_caract
+  nomenclature_ouvrage_hydro_banq_type:
+      type: relation
+      relation_type: n-1
+      schema_code: ref_nom.nomenclature
+      title: OH type de banquette
+      local_key: id_nomenclature_ouvrage_hydrau_banq_type
+  areas:
+      type: relation
+      title: Areas
+      relation_type: n-n
+      schema_code: ref_geo.area
+      schema_dot_table: m_sipaf.cor_area_pf
+      trigger:
+          name: intersect_ref_geo
+          key: geom_local
+          'on': geom
+  linears:
+      type: relation
+      title: Linéaires
+      relation_type: n-n
+      schema_code: ref_geo.linear
+      schema_dot_table: m_sipaf.cor_linear_pf
+      trigger:
+          name: d_within
+          distance: 100
+          key: geom_local
+          'on': geom
+          partition:
+              - id_type
+  actors:
+      type: relation
+      relation_type: 1-n
+      foreign_key: id_passage_faune
+      schema_code: m_sipaf.actor
+      title: Acteurs
+      description: Les acteur du passage à faune
+  medias:
+      type: relation
+      title: medias
+      relation_type: n-n
+      schema_code: commons.media
+      schema_dot_table: m_sipaf.cor_media_pf
+  geom_x:
+      type: number
+      title: Longitude
+      column_property: st_x
+      key: geom
+  geom_y:
+      type: number
+      title: Longitude
+      column_property: st_y
+      key: geom
+  geom_text:
+      type: string
+      title: Geométrie (text)
+      column_property: st_astext
+      key: geom
+  label_infrastructures:
+      type: string
+      title: Infrastructure traversée
+      column_property: label
+      relation_key: linears
+      label_key: linear_name
+      filters: type.type_code = RTE
+  label_communes:
+      type: string
+      title: Commune(s)
+      column_property: label
+      relation_key: areas
+      label_key: area_name
+      filters: area_type.type_code in COM
+  label_departements:
+      type: string
+      title: Departement(s)
+      column_property: label
+      relation_key: areas
+      label_key: area_name
+      filters: area_type.type_code in DEP
+  label_regions:
+      type: string
+      title: Région(s)
+      column_property: label
+      relation_key: areas
+      label_key: area_name
+      filters: area_type.type_code in REG

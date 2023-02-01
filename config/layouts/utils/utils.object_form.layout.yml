@@ -1,5 +1,5 @@
 type: layout
-code: m_monitoring.object_form
+code: utils.object_form
 title: Formulaire pour un object (sans carte)
 args:
   object_code: object concerné par le Formulaire
@@ -14,5 +14,5 @@ layout:
     items:
       - overflow: true
         items: __LAYOUT__
-      - code: m_monitoring.buttons_form
+      - code: utils.buttons_form
         flex: "0"

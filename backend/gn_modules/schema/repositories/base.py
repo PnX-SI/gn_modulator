@@ -3,6 +3,7 @@
 """
 
 import math
+import re
 import copy
 from geonature.utils.env import db
 
@@ -327,15 +328,25 @@ class SchemaRepositoriesBase:
             page = params.get("page") or 1
 
         if url:
-            if f"page={page}" not in url:
-                preff = "&" if "?" in url else "?"
-                url += f"{preff}page={page}"
+            # supprimer
+            url_base = re.sub("page=[0-9]&?", "", url)
+
+            if "?" not in url_base:
+                url_base += "?"
+
+            url = url_base + "&page={page}"
+
+            # if f"page={page}" not in url:
+            #     preff = "&" if "?" in url else "?"
+            #     url += f"{preff}page={page}"
+
             if page != 1:
-                url_previous = url.replace(f"page={page}", f"page={page-1}")
+                url_previous = url_base + f"&page={page -1}"
+
             if page != last_page:
-                url_next = url.replace(f"page={page}", f"page={page+1}")
-            url_first = url.replace(f"page={page}", "page=1")
-            url_last = url.replace(f"page={page}", f"page={last_page}")
+                url_next = url_base + f"&page={page -1}"
+            url_first = url_base + "&page=1"
+            url_last = url_base + f"&page={last_page}"
 
         query_infos = {
             "page": page,

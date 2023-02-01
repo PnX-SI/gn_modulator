@@ -6,7 +6,7 @@ description: Layout pour l'édition d'une visite
 layout:
   height_auto: true
   items:
-    code: m_monitoring.object_form
+    code: utils.object_form
     template_params:
       object_code: visit
       layout: __VISIT_FORM_FIELDS__

@@ -157,9 +157,10 @@ class SchemaApi:
                 m, fields=params.get("fields"), as_geojson=params.get("as_geojson")
             )
 
-        def get_list_rest():
+        def get_list_rest(additional_params={}):
 
-            params = self.parse_request_args(request, object_definition)
+            params = {**self.parse_request_args(request, object_definition), **additional_params}
+
             cruved_type = params.get("cruved_type") or "R"
             query_infos = self.get_query_infos(
                 module_code=module_code,
@@ -257,11 +258,16 @@ class SchemaApi:
             """ """
 
             params = self.parse_request_args(request, object_definition)
-            return {
-                "page": self.get_page_number(
-                    value, module_code, params.get("cruved_type") or "R", params
-                )
-            }
+            page_number = self.get_page_number(
+                value, module_code, params.get("cruved_type") or "R", params
+            )
+
+            return get_list_rest(additional_params={"page": page_number})
+            # return {
+            # "page": self.get_page_number(
+            # value, module_code, params.get("cruved_type") or "R", params
+            # )
+            # }
 
         def get_export(self_mv, export_code):
             """

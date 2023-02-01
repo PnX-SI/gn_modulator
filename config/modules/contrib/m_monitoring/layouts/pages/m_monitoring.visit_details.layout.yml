@@ -11,7 +11,7 @@ layout:
     - items:
         direction: row
         items:
-          - code: m_monitoring.object_details
+          - code: utils.object_details
             template_params:
               object_code: visit
               layout: __VISIT_DETAILS_FIELDS__
@@ -20,7 +20,7 @@ layout:
               - label: __f__o.tab_label(x)
                 object_code: observation
                 items:
-                  - code: m_monitoring.button_create
+                  - code: utils.button_create
                     flex: "0"
                   - type: object
                     display: table

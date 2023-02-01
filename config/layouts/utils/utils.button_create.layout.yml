@@ -1,5 +1,5 @@
 type: layout
-code: m_monitoring.button_create
+code: utils.button_create
 title: boutton create
 description: Bouton 'nouveau, ajouter', destiné aux tableaux de monitoring
 layout:

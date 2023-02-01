@@ -58,8 +58,10 @@ class ModuleMigration:
         data_dir = cls.migrations_dir(module_code) / "data"
         data_link = cls.migrations_dir() / "data" / module_code.lower()
 
-        if data_link.exists():
+        try:
             data_link.unlink()
+        except Exception:
+            pass
 
         if data_dir.exists():
             data_link.symlink_to(data_dir)

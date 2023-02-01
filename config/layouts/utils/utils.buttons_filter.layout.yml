@@ -1,5 +1,5 @@
 type: layout
-code: m_monitoring.buttons_filter
+code: utils.buttons_filter
 title: bouttons filter
 description: Boutons rechercher + reset filters
 

@@ -1,5 +1,5 @@
 type: layout
-code: m_monitoring.site_list
+code: m_sipaf.site_list
 title: Layout site list
 description: Layout pour la liste de sites
 
@@ -30,7 +30,7 @@ layout:
       - type: object
         flex: 2
         display: table
-        sort: last_visit_date_min-
+        sort: code_passage_faune
         items: __SITE_TABLE_FIELDS__
 
 context:

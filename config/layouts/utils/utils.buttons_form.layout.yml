@@ -1,5 +1,5 @@
 type: layout
-code: m_monitoring.buttons_form
+code: utils.buttons_form
 title: bouttons form
 description: Bouton 'valider + annuler + supprimer', destiné aux formulaires de monitoring
 layout:

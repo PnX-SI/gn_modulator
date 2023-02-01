@@ -193,18 +193,19 @@ export class ModulesLayoutService {
   computeLayout({ context, data, layout }) {
     if (typeof layout == 'string' && context.module_code && context.object_code) {
       const property = utils.copy(this._mObject.property(context, layout));
+
+      // patch title si parent && label_field_name
+      if (property.parent) {
+        property.title = property.parent.title;
+        property.description = property.parent.description;
+      }
+
       // ?? traiter ça dans list form ???
       if (property.schema_code) {
         return {
           ...property,
           type: 'list_form',
         };
-      }
-
-      // patch title si parent && label_field_name
-      if (property.parent && property.key == this._mObject.labelFieldName({ context })) {
-        property.title = property.parent.title;
-        property.description = property.parent.description;
       }
 
       return property;
@@ -316,7 +317,8 @@ export class ModulesLayoutService {
       );
     }
     /** key - array ou object */
-    if (layoutType == 'key' && ['array', 'dict'].includes(layout.type)) {
+
+    if (['array', 'dict'].includes(layoutType)) {
       const newBaseKey = baseKey ? `${baseKey}.${layout.key}` : layout.key;
       return utils.flatAndRemoveDoublons(
         this.getLayoutFields(layout.items, context, data, newBaseKey)

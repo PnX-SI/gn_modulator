@@ -1,5 +1,5 @@
 type: layout
-code: m_monitoring.button_edit
+code: utils.button_edit
 title: boutton edit
 description: Bouton 'editer', destiné aux page de detail de monitoring
 layout:
