@@ -79,8 +79,6 @@ CREATE TABLE m_sipaf.cor_actor_pf (
 
 
 ALTER TABLE m_sipaf.t_passages_faune ADD CONSTRAINT unique_m_sipaf_t_passages_faune_code_passage_faune UNIQUE(code_passage_faune);
-
-ALTER TABLE m_sipaf.cor_actor_pf ADD CONSTRAINT unique_m_sipaf_cor_actor_pf_id_nomenclature_type_actor_id_organism_id_role_id_passage_faune UNIQUE(id_nomenclature_type_actor, id_organism, id_role, id_passage_faune);
 ---- m_sipaf.t_passages_faune primary key constraint
 
 ALTER TABLE m_sipaf.t_passages_faune

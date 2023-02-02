@@ -13,6 +13,7 @@ from geonature.utils.env import ma
 from .errors import SchemaProcessedPropertyError
 from gn_modules.utils.cache import get_global_cache, set_global_cache
 from sqlalchemy.orm.exc import NoResultFound
+from geonature.utils.env import db
 
 
 class GeojsonSerializationField(fields.Field):

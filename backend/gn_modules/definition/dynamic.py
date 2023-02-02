@@ -144,6 +144,9 @@ f(x);"""
                 # par exemple ommetre data.site.value (avec data.site undefined)
                 if "Uncaught TypeError: Cannot read property" in str(e):
                     pass
+
+                elif "Uncaught TypeError: formGroup" in str(e):
+                    pass
                 # elif "Uncaught TypeError: utils." in str(e) and "is not a function" in str(e):
                 # pass
                 else:

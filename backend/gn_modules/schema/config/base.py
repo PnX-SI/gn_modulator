@@ -15,11 +15,11 @@ class SchemaConfigBase:
         return {
             "display": self.config_display(object_definition),
             "utils": self.config_utils(),
-            "form": self.config_form(),
-            "table": self.config_table(),
-            "map": self.config_map(),
-            "filter_defs": self.config_filters(),
-            "details": self.config_details(),
+            # "form": self.config_form(),
+            # "table": self.config_table(),
+            # "map": self.config_map(),
+            # "filter_defs": self.config_filters(),
+            # "details": self.config_details(),
             "properties": self.properties(),
             "json_schema": self.json_schema,
         }

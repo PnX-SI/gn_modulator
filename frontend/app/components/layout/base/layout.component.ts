@@ -199,6 +199,10 @@ export class ModulesLayoutComponent implements OnInit {
 
     // à clarifier
 
+    if (!this.parentContext) {
+      return;
+    }
+
     const layout = this.computedLayout || this.layout;
 
     if (!layout) return;
@@ -264,7 +268,7 @@ export class ModulesLayoutComponent implements OnInit {
   postProcessContext() {}
 
   processElementData() {
-    if (!this.computedLayout) {
+    if (!(this.computedLayout && this.context.data_keys)) {
       return;
     }
 

@@ -27,6 +27,8 @@ properties:
         type: string
         title: password
         load_only: true
+    identifiant:
+        required: true
     nom_complet:
         type: string
         title: Nom complet

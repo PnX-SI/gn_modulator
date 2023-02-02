@@ -38,6 +38,7 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
       form_group_id: this.context.form_group_id,
       data_keys,
       index,
+      debug: this.context.debug,
     };
     for (const key of Object.keys(this.context).filter(
       (key) => !['form_group_id', 'data_keys'].includes(key)
@@ -50,12 +51,7 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
 
   processAction(action) {
     if (action.type == 'remove-array-element') {
-      this.data[this.layout.key].splice(action.index, 1);
-      this._formService.setControl({
-        context: this.context,
-        data: this.data,
-        layout: this.computedLayout,
-      });
+      this.localData[this.layout.key].splice(action.index, 1);
       this._mLayout.reComputeLayout('');
     } else {
       this.emitAction(action);
@@ -63,13 +59,7 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
   }
 
   addArrayElement() {
-    this.data[this.layout.key].push({});
-    this._formService.setControl({
-      context: this.context,
-      data: this.data,
-      layout: this.computedLayout,
-    });
-    // pour forcer le check de la validation ??
+    this.localData[this.layout.key].push({});
     this._mLayout.reComputeLayout('');
   }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { ModulesFormService } from '../../../services/form.service';
 import { FormGroup } from '@angular/forms';
+import utils from '../../../utils';
 
 import { ModulesLayoutComponent } from '../base/layout.component';
 
@@ -36,12 +37,17 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     }
     this.listenToChanges = false;
     this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
+    this.formGroup.patchValue({});
     this.listenToChanges = true;
     // test du change ici ???
   }
 
   onFormGroupChange() {
-    if (!this.listenToChanges || this._formService.isEqual(this.formGroup.value, this.data)) {
+    if (
+      !this.data ||
+      !this.listenToChanges ||
+      this._formService.isEqual(this.formGroup.value, this.data)
+    ) {
       return;
     }
     const dataChanged = {};
@@ -62,7 +68,9 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
   }
 
   postComputeLayout(dataChanged, layoutChanged): void {
-    this.updateForm();
+    if (dataChanged || layoutChanged) {
+      this.updateForm();
+    }
   }
 
   initForm() {

@@ -96,7 +96,7 @@ def api_layout(config_path):
     return process_dict_path(
         layout_out,
         config_path,
-        SchemaMethods.base_url() + "/config/",
+        SchemaMethods.base_url() + "/layouts/",
     )
 
 
@@ -108,12 +108,15 @@ def api_schemas(config_path):
     """
 
     schemas = {
-        schema_code: {"properties": SchemaMethods(schema_code).properties()}
+        schema_code: {
+            "properties": SchemaMethods(schema_code).properties(),
+            "required": SchemaMethods(schema_code).attr("required"),
+        }
         for schema_code in SchemaMethods.schema_codes()
     }
 
     return process_dict_path(
         schemas,
         config_path,
-        SchemaMethods.base_url() + "/config/",
+        SchemaMethods.base_url() + "/schemas/",
     )

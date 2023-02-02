@@ -9,6 +9,7 @@ import {
 import { ModulesLayoutService } from './layout.service';
 import { ModulesObjectService } from './object.service';
 import utils from '../utils';
+import form from '../utils/form';
 
 @Injectable()
 export class ModulesFormService {
@@ -137,12 +138,20 @@ export class ModulesFormService {
     }
 
     const localData = this.getData(context, data);
+    const formControl = this.getFormControl(context.form_group_id, context.data_keys);
     if (localData) {
-      this.getFormControl(context.form_group_id, context.data_keys).patchValue(localData);
+      formControl.patchValue(localData);
+    } else {
+      formControl.updateValueAndValidity();
     }
   }
 
   getFormControl(formControl, key) {
+    if (formControl == null) {
+      console.error('formControl est null');
+      return;
+    }
+
     if (!utils.isObject(formControl)) {
       return this.getFormControl(this._mLayout.getFormControl(formControl), key);
     }
@@ -159,7 +168,11 @@ export class ModulesFormService {
           formControl = this.getFormControl(formControl, k);
         }
       } else {
-        formControl = Number.isInteger(key) ? formControl.at(key) : formControl.get(key);
+        if (Number.isInteger(Number.parseInt(key))) {
+          formControl = formControl.at(Number.parseInt(key));
+        } else {
+          formControl = formControl.get(key);
+        }
       }
     }
 
@@ -169,7 +182,6 @@ export class ModulesFormService {
   /** configure un control en fonction d'un layout */
   setControl({ context, data, layout }) {
     let control = this.getFormControl(context.form_group_id, [...context.data_keys, layout.key]);
-    // console.assert(!!control, { key: layout.key, control: Object.keys(formGroup.value) });
     let computedLayout = this._mLayout.computeLayout({
       layout,
       data,
@@ -185,29 +197,24 @@ export class ModulesFormService {
       const objectContext = { ...context };
       objectContext.data_keys = utils.copy(context.data_keys);
       utils.addKey(objectContext.data_keys, layout.key);
-
       this.setControls({ context: objectContext, data, layout: layout.items });
     }
 
     // control pour array
     if (layout.type == 'array') {
-      let controlData = (data || {})[layout.key] || [];
+      let controlData = utils.getAttr(data || {}, [...context.data_keys, computedLayout.key]) || [];
       if (controlData.length == control.value.length) {
         return;
       }
-
       control.clear();
       for (let [index, elem] of Object.entries(controlData)) {
         let elemControl = this.createFormGroup(layout.items, context);
-        // this.setControls(elemControl, layout.items, elem, globalData);
-        const data_keys = utils.copy(context.data_keys) || [];
-        utils.addKey(data_keys, layout.key);
-        const arrayItemContext = {
-          form_group_id: context.form_group_id,
-          data_keys,
-        };
         control.push(elemControl);
-        this.setControls({ context: arrayItemContext, data, layout: data.items });
+        const arrayItemContext = {
+          ...context,
+          data_keys: utils.addKey(utils.copy(context.data_keys), `${layout.key}.${index}`),
+        };
+        this.setControls({ context: arrayItemContext, data, layout: layout.items });
       }
     }
 
@@ -244,6 +251,7 @@ export class ModulesFormService {
       data[computedLayout.key] = correctValue;
       control.setValue(correctValue);
     }
+    control.updateValueAndValidity();
   }
 
   /** pour mettre à jour les données sans casser les références */

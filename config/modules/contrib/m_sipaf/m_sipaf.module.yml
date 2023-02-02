@@ -10,6 +10,10 @@ module:
   module_desc: Module permettant la visualisation et la gestion des passages à Faune de France
   module_picto: fa-puzzle-piece
 
+features:
+  - m_sipaf.utils
+
+
 objects:
   site:
     schema_code: m_sipaf.pf

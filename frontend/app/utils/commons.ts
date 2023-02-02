@@ -22,6 +22,7 @@ const addKey = (keys, key) => {
   for (const k of key.split('.')) {
     keys.push(k);
   }
+  return keys;
 };
 
 const getAttr = (obj, paths, index = 0) => {

@@ -13,6 +13,7 @@ meta:
     geometry_field_name: geom
     unique:
         - code_passage_faune
+    unique_in_db: true
     check_cruved: true
 
 properties:

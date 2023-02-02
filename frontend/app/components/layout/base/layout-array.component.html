@@ -33,6 +33,7 @@
             color="primary"
             aria-label="Example icon button with a menu icon"
             [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
+            [disabled]="!formControl?.valid"
             (click)="addArrayElement()"
             (onAction)="processAction($event)"
           >

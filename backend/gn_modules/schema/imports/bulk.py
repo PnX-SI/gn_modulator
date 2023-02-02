@@ -109,9 +109,9 @@ class SchemaBulkImports:
         nb_update = cls.c_sql_exec_txt(
             cls.txt_nb_update(schema_code, processed_import_view)
         ).scalar()
-        nb_schema_avant = cls.c_sql_exec_txt(
-            f"SELECT COUNT(*) FROM {cls(schema_code).sql_schema_dot_table()}"
-        ).scalar()
+        # nb_schema_avant = cls.c_sql_exec_txt(
+        #     f"SELECT COUNT(*) FROM {cls(schema_code).sql_schema_dot_table()}"
+        # ).scalar()
 
         # return
         # 4) INSERT / UPDATE
@@ -122,9 +122,9 @@ class SchemaBulkImports:
         verbose and print(txt_import_view_to_insert)
         cls.c_sql_exec_txt(txt_import_view_to_insert)
 
-        nb_schema_apres = cls.c_sql_exec_txt(
-            f"SELECT COUNT(*) FROM {cls(schema_code).sql_schema_dot_table()}"
-        ).scalar()
+        # nb_schema_apres = cls.c_sql_exec_txt(
+        #     f"SELECT COUNT(*) FROM {cls(schema_code).sql_schema_dot_table()}"
+        # ).scalar()
 
         print(
             f"   - {schema_code} CSV {nb_csv} RAW {nb_raw} PROCESSED {nb_processed} INSERT {nb_insert} UPDATE {nb_update}"

@@ -286,6 +286,7 @@ FROM {raw_import_view} t
                 f"{alias_join}.{k_unique} = {var_key}"
                 if self.is_required(k_unique)
                 else f"({alias_join}.{k_unique} = {var_key} OR ({alias_join}.{k_unique} IS NULL AND {var_key} IS NULL))"
+                # else f"({var_key} IS NOT NULL) AND ({alias_join}.{k_unique} = {var_key})"
             )
             v_join_on.append(txt_join_on)
 

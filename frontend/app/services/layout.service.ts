@@ -196,7 +196,7 @@ export class ModulesLayoutService {
 
       // patch title si parent && label_field_name
       if (property.parent) {
-        property.title = property.parent.title;
+        property.title = property.title || property.parent.title;
         property.description = property.parent.description;
       }
 
@@ -296,7 +296,7 @@ export class ModulesLayoutService {
    */
   toFormDef(layout) {
     const formDef = utils.copy(layout);
-    formDef.attribut_label = formDef.attribut_label || layout.title;
+    formDef.attribut_label = formDef.attribut_label;
     formDef.attribut_name = formDef.attribut_name || layout.key;
     return formDef;
   }

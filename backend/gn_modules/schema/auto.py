@@ -105,7 +105,7 @@ class SchemaAuto:
             properties[k] = {
                 "type": "string",
                 # "column_property": "label",
-                "title": k,
+                # "title": k,
             }
 
         # relationships
@@ -136,7 +136,7 @@ class SchemaAuto:
                 else "n-n"
             ),
             "schema_code": schema_code,
-            "title": relation_key,
+            # "title": relation_key,
         }
 
         if property["relation_type"] == "n-n":
@@ -171,7 +171,10 @@ class SchemaAuto:
                 f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
             )
 
-        property = {"type": schema_type["type"], "title": column.key}
+        property = {
+            "type": schema_type["type"],
+            # "title": column.key
+        }
 
         if schema_type["type"] == "geometry":
             if schema_type["srid"] == -1:

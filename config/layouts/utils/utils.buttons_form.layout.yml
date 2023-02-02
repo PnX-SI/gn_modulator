@@ -13,7 +13,7 @@ layout:
       icon: done
       description: Enregistrer le contenu du formulaire
       action: submit
-      disabled: __f__!(formGroup.valid )
+      disabled: __f__!formGroup.valid
     - flex: "0"
       type: button
       color: primary

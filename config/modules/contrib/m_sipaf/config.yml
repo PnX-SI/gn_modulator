@@ -206,12 +206,18 @@ site_form_fields:
     items:
       direction: row
       items:
-        - key: id_role
-          type: list_form
-        - key: id_organism
-          type: list_form
-        - key: id_nomenclature_type_actor
-          type: list_form
+        - id_role
+        - id_organism
+        - id_nomenclature_type_actor
+        # - hidden: true
+          # items:
+            # - id_passage_faune
+        # - key: id_role
+        #   type: list_form
+        # - key: id_organism
+        #   type: list_form
+        # - key: id_nomenclature_type_actor
+        #   type: list_form
   - title: Localisation
     display: fieldset
     items:

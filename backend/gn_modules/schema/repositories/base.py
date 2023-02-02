@@ -150,6 +150,7 @@ class SchemaRepositoriesBase:
         """
 
         self.validate_data(data, check_required=False)
+
         m = self.get_row(
             value,
             field_name=field_name,
@@ -163,7 +164,9 @@ class SchemaRepositoriesBase:
             return m, False
 
         db.session.flush()
+
         self.unserialize(m, data)
+
         db.session.commit()
 
         return m, True

@@ -38,6 +38,7 @@ export class ModulesSchemaService {
     return {
       key,
       ...utils.copy(schema.properties[key]),
+      required: schema?.properties[key]?.required || (schema.required || []).includes(key),
     };
   }
 }
