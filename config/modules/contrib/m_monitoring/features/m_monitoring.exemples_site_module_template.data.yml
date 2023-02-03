@@ -6,7 +6,7 @@ description: permet d'ajouter une liste de site à un module
 items:
   - schema_code: commons.cor_module_jdd
     items:
-      - { id_module: __MODULE_CODE__, id_dataset: [m_monitoring_test, m_monitoring_test]}
+      - { id_module: __MODULE_CODE__, id_dataset: [m_monitoring_exemple, m_monitoring_exemple]}
   - schema_code: m_monitoring.cor_site_module
     items:
       - { id_module: __MODULE_CODE__, id_site: AL1 }
