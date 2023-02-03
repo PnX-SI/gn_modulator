@@ -305,6 +305,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.processContext();
 
     // calcul du layout
+
     this.computedLayout = this._mLayout.computeLayout({
       layout: this.layout,
       data: this.data,

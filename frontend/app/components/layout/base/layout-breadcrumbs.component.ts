@@ -23,9 +23,11 @@ export class ModulesLayoutBreadcrumbsComponent extends ModulesLayoutComponent im
     this._mData = this._injector.get(ModulesDataService);
   }
 
-  postComputeLayout(dataChanged: any, layoutChanged: any): void {
-    this._mData
-      .getBreadcrumbs(this.context)
-      .subscribe((breadcrumbs) => (this.breadcrumbs = breadcrumbs));
+  postComputeLayout(dataChanged: any, layoutChanged: any, contextChanged: any): void {
+    if (contextChanged) {
+      this._mData
+        .getBreadcrumbs(this.context)
+        .subscribe((breadcrumbs) => (this.breadcrumbs = breadcrumbs));
+    }
   }
 }

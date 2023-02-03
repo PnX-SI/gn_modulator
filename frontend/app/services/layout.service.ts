@@ -15,6 +15,7 @@ export class ModulesLayoutService {
   _utilsObject: any;
 
   _formControls = {};
+  _properties = {};
 
   constructor(private _injector: Injector) {
     this._mConfig = this._injector.get(ModulesConfigService);
@@ -190,9 +191,17 @@ export class ModulesLayoutService {
   //  * seulement ces éléments qui sont des fonctions
   //  */
 
+  propertyKey(context, layout) {
+    return `${context.module_code}_${context.object_code}_${context.data_keys.join('.')}.${layout}`;
+  }
+
   computeLayout({ context, data, layout }) {
     if (typeof layout == 'string' && context.module_code && context.object_code) {
-      const property = utils.copy(this._mObject.property(context, layout));
+      if (this._properties[this.propertyKey(context, layout)]) {
+        return this._properties[this.propertyKey(context, layout)];
+      }
+
+      let property = utils.copy(this._mObject.property(context, layout));
 
       // patch title si parent && label_field_name
       if (property.parent) {
@@ -202,11 +211,10 @@ export class ModulesLayoutService {
 
       // ?? traiter ça dans list form ???
       if (property.schema_code) {
-        return {
-          ...property,
-          type: 'list_form',
-        };
+        property.type = 'list_form';
       }
+
+      this._properties[this.propertyKey(context, layout)] = property;
 
       return property;
     }
