@@ -68,7 +68,6 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
 
   postComputeLayout(dataChanged, layoutChanged): void {
     if (dataChanged || layoutChanged) {
-      console.log('update form')
       this.updateForm();
     }
   }

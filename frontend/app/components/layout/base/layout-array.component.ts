@@ -28,7 +28,6 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
       return;
     }
     this.arrayItemsContext = this.elementData.map((d, index) => this.arrayItemContext(index));
-    this.log('ppc')
   }
 
   arrayItemContext(index) {
@@ -61,8 +60,7 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
 
   addArrayElement() {
     this.localData[this.layout.key].push({});
-    this._mLayout.reComputeLayout()
-    setTimeout(() => this._mLayout.reComputeLayout(), 10)
-    
+    this._mLayout.reComputeLayout();
+    setTimeout(() => this._mLayout.reComputeLayout(), 10);
   }
 }
