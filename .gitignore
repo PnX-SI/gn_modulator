@@ -7,6 +7,8 @@ config/modules/externals/*
 
 backend/gn_modules/migrations/data/m_*
 
+frontend/app/module.config.ts
+
 #!migrations/data/*.sql
 backend/gn_modules/migrations/versions/*
 !backend/gn_modules/migrations/versions/*_gn_modules.py

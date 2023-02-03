@@ -9,6 +9,7 @@ module:
   module_label: Passages faune
   module_desc: Module permettant la visualisation et la gestion des passages à Faune de France
   module_picto: fa-puzzle-piece
+  active_frontend: true
 
 features:
   - m_sipaf.utils

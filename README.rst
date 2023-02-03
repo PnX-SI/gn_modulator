@@ -8,13 +8,15 @@ Présentation
 
 Installation
 ============
+
+Compatible avec la version 2.11.2 de GeoNature
 Se placer dans le répertoire backend de GeoNature et activer le virtualenv
 
 ``source venv/bin/activate``
 
 Lancer la commande d'installation
 
-``geonature install_packaged_gn_module <MON_CHEMIN_ABSOLUE_VERS_LE_MODULE /modules``
+``geonature install_gn_module <MON_CHEMIN_ABSOLU_VERS_LE_MODULE> MODULES``
 
 Installation de sous-modules
 ----------------------------

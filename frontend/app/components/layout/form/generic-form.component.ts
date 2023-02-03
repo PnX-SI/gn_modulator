@@ -37,7 +37,6 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     }
     this.listenToChanges = false;
     this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
-    this.formGroup.patchValue({});
     this.listenToChanges = true;
     // test du change ici ???
   }
@@ -69,6 +68,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
 
   postComputeLayout(dataChanged, layoutChanged): void {
     if (dataChanged || layoutChanged) {
+      console.log('update form')
       this.updateForm();
     }
   }

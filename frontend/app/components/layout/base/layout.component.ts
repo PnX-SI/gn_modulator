@@ -288,7 +288,7 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   processFormControl() {
-    if (!this.computedLayout) {
+    if (!(this.computedLayout && this.context.form_group_id)) {
       return null;
     }
     this.localFormGroup = this._mForm.getFormControl(

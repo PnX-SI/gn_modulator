@@ -28,6 +28,7 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
       return;
     }
     this.arrayItemsContext = this.elementData.map((d, index) => this.arrayItemContext(index));
+    this.log('ppc')
   }
 
   arrayItemContext(index) {
@@ -52,7 +53,7 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
   processAction(action) {
     if (action.type == 'remove-array-element') {
       this.localData[this.layout.key].splice(action.index, 1);
-      setTimeout(() => this._mLayout.reComputeLayout())
+      this._mLayout.reComputeLayout();
     } else {
       this.emitAction(action);
     }
@@ -60,6 +61,8 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
 
   addArrayElement() {
     this.localData[this.layout.key].push({});
-    setTimeout(() => this._mLayout.reComputeLayout())
+    this._mLayout.reComputeLayout()
+    setTimeout(() => this._mLayout.reComputeLayout(), 10)
+    
   }
 }

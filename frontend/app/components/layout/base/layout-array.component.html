@@ -19,6 +19,7 @@
           *ngFor="let elem of elementData || []; let index = index"
         >
           <modules-layout
+            *ngIf="!!arrayItemsContext[index]"
             [data]="data"
             [layout]="computedLayout.items"
             [parentContext]="arrayItemsContext[index]"
