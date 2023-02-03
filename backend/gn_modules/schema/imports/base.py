@@ -112,7 +112,7 @@ class SchemaBaseImports:
                 d[k] = d.get(k, d[key])
 
     def process_geoms(self, d):
-        # boucle sur les valeur de d associées  à une geometrie
+        return
         for key in filter(lambda key: self.property(key)["type"] == "geometry", d):
             pass
             # d[key] = {

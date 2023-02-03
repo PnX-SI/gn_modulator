@@ -3,443 +3,382 @@ code: m_sipaf.utils
 title: Data utils m_sipaf
 description: feature pour sipaf (nomenclature, groupe de module)
 items:
-    -
-        schema_code: modules.group
-        items:
-            -
-                name: SI Passage Faune
-                code: SIPAF
-                description: Modules associés aux passage à faune
-                modules:
-                    - m_sipaf
-    -
-        schema_code: commons.table_location
-        items:
-            -
-                table_desc: Table centralisant les passages à faune
-                schema_code: m_sipaf
-                table_name: t_passages_faune
-                pk_field: id_passage_faune
-                uuid_field_name: uuid_passage_faune
-    -
-        schema_code: ref_nom.type
-        items:
-            -
-                mnemonique: PF_OUVRAGE_MATERIAUX
-                label_default: Matériaux
-                definition_default: "Matériaux composant l'ouvrage"
-                source: SIPAF
-            -
-                mnemonique: PF_OUVRAGE_HYDRAULIQUE_POSITION
-                label_default: OH Position
-                definition_default: "Position de l'ouvrage hydrolique"
-                source: SIPAF
-            -
-                mnemonique: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
-                label_default: OH Caractrisation banquette
-                definition_default: Caractérisation de la banquette pour un ouvrage hydraulique
-                source: SIPAF
-            -
-                mnemonique: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-                label_default: OH Type de banquette
-                definition_default: Type de banquette pour un ouvrage hydrolique
-                source: SIPAF
-            -
-                mnemonique: PF_INFRASTRUCTURE_TYPE
-                label_default: "Type d'infrastructure"
-                definition_default: "Type d'infrastructure pour les passages à faune"
-                source: SIPAF
-            -
-                mnemonique: PF_OUVRAGE_SPECIFICITE
-                label_default: Spécificité
-                definition_default: Exclusivité du passage pour le passage de la faune
-                source: SIPAF
-            -
-                mnemonique: PF_OUVRAGE_TYPE
-                label_default: "Type d'ouvrage"
-                definition_default: "Type d'ouvrage d'art pour le passage faune"
-                source: SIPAF
-            -
-                mnemonique: PF_TYPE_ACTOR
-                label_default: "Type d'acteur"
-                definition_default: "Type d'acteur pour les passages faune"
-                source: SIPAF
-    -
-        schema_code: ref_nom.nomenclature
-        items:
-            -
-                id_type: PF_OUVRAGE_MATERIAUX
-                cd_nomenclature: BET
-                mnemonique: Béta.
-                label_default: Béton
-                definition_default: Béton
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_MATERIAUX
-                cd_nomenclature: MET
-                mnemonique: Mét.
-                label_default: Métal
-                definition_default: Métal
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_MATERIAUX
-                cd_nomenclature: PLT
-                mnemonique: Pla.
-                label_default: Plastique
-                definition_default: Plastique
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_MATERIAUX
-                cd_nomenclature: BOI
-                mnemonique: Boi.
-                label_default: Bois
-                definition_default: Bois
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_MATERIAUX
-                cd_nomenclature: MAC
-                mnemonique: Maç.
-                label_default: Maçonnerie
-                definition_default: Maçonnerie
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_MATERIAUX
-                cd_nomenclature: AUT
-                mnemonique: Aut.
-                label_default: Autre
-                definition_default: Autre
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_MATERIAUX
-                cd_nomenclature: IND
-                mnemonique: Ind.
-                label_default: Indéterminé
-                definition_default: Indéterminé
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
-                cd_nomenclature: RD
-                mnemonique: R. d.
-                label_default: Rive droite
-                definition_default: Rive droite
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
-                cd_nomenclature: RG
-                mnemonique: R. g.
-                label_default: Rive Gauche
-                definition_default: Rive Gauche
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
-                cd_nomenclature: RGD
-                mnemonique: 'R. g. & d.'
-                label_default: Rive gauche et rive droite
-                definition_default: Rive gauche et rive droite (la rive se détermine dans le sens amont/aval)
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
-                cd_nomenclature: SIM
-                mnemonique: Spl.
-                label_default: Simple
-                definition_default: Banquette simple
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
-                cd_nomenclature: DOU
-                mnemonique: Dbl.
-                label_default: Double
-                definition_default: Banquette double
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-                cd_nomenclature: NAT
-                mnemonique: Nat.
-                label_default: Banquette naturelle
-                definition_default: Banquette naturelle / bande enherbée
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-                cd_nomenclature: BET
-                mnemonique: Bet.
-                label_default: Banquette béton
-                definition_default: Banquette béton
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-                cd_nomenclature: ECB
-                mnemonique: Ecb.
-                label_default: Encorbellement
-                definition_default: Encorbellement
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-                cd_nomenclature: POF
-                mnemonique: Po. F.
-                label_default: Ponton flottant
-                definition_default: Ponton flottant
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-                cd_nomenclature: AUT
-                mnemonique: Aut.
-                label_default: Autre
-                definition_default: Autre
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_INFRASTRUCTURE_TYPE
-                cd_nomenclature: AU
-                mnemonique: Auto.
-                label_default: Autoroute
-                definition_default: Autoroute
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_INFRASTRUCTURE_TYPE
-                cd_nomenclature: RN
-                mnemonique: R. N.
-                label_default: Route Nationale
-                definition_default: Route Nationale
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_INFRASTRUCTURE_TYPE
-                cd_nomenclature: RD
-                mnemonique: R. D.
-                label_default: Route Départementale
-                definition_default: Route Départementale
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_INFRASTRUCTURE_TYPE
-                cd_nomenclature: VF
-                mnemonique: V. F.
-                label_default: Voie ferrée
-                definition_default: Voie ferrée
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_INFRASTRUCTURE_TYPE
-                cd_nomenclature: CA
-                mnemonique: Ca.
-                label_default: Canal / Rivère navigable
-                definition_default: Canal / Rivère navigable
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_SPECIFICITE
-                cd_nomenclature: SPE
-                mnemonique: Spé.
-                label_default: Spécifique
-                definition_default: Ouvrage construit que pour le passage des animaux
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_SPECIFICITE
-                cd_nomenclature: MIX
-                mnemonique: Mixt.
-                label_default: Mixte
-                definition_default: Ouvrage mixte construit pour le passage des animaux concomitamment à un ou plusieurs autres usages
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_SPECIFICITE
-                cd_nomenclature: ND
-                mnemonique: Non déd.
-                label_default: Non dédié
-                definition_default: Ouvrage non dédié au passage de la faune mais pouvant servir à cet usage
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: BUS
-                mnemonique: Bus.
-                label_default: Buse
-                definition_default: Buse
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: CAD
-                mnemonique: Cad.
-                label_default: Cadre
-                definition_default: Cadre
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: VOU+R
-                mnemonique: Voût. Rad.
-                label_default: Voûte avec radier
-                definition_default: Voûte maçonnée avec radier
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: AUT
-                mnemonique: Aut.
-                label_default: Autre (préciser)
-                definition_default: Autre (préciser)
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: POR
-                mnemonique: Por.
-                label_default: Portique
-                definition_default: Portique en béton
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: VOU
-                mnemonique: Voû.
-                label_default: Voûte sans radier
-                definition_default: Voûte maçonnée sans radier
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: DAL+P
-                mnemonique: Dal. pal.
-                label_default: Dalle et palpaplanche
-                definition_default: Dalle et palpaplanche
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: DAL
-                mnemonique: Dal.
-                label_default: Dalle
-                definition_default: Dalle
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: ARC
-                mnemonique: Arc.
-                label_default: Arc
-                definition_default: Arc
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: VIA
-                mnemonique: via.
-                label_default: Viaduc
-                definition_default: Viaduc
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: PON
-                mnemonique: pon.
-                label_default: Pont
-                definition_default: Pont
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: CAN
-                mnemonique: can.
-                label_default: Canalisation
-                definition_default: Canalisation
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: DALO
-                mnemonique: dalo.
-                label_default: Dalot
-                definition_default: Dalot
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: DIAB
-                mnemonique: diab.
-                label_default: Diabolo
-                definition_default: Diabolo
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: TRA
-                mnemonique: Tra.
-                label_default: Tranchée
-                definition_default: Tranchée
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_OUVRAGE_TYPE
-                cd_nomenclature: TUN
-                mnemonique: Tun.
-                label_default: Tunnel
-                definition_default: Tunnel
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_TYPE_ACTOR
-                cd_nomenclature: PRO
-                mnemonique: Prop.
-                label_default: Propriétaire
-                definition_default: Propriétaire du passage faune
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_TYPE_ACTOR
-                cd_nomenclature: CON
-                mnemonique: Conc.
-                label_default: Concessionaire
-                definition_default: Concessionnaire
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_TYPE_ACTOR
-                cd_nomenclature: INT
-                mnemonique: Int.
-                label_default: Intervenant
-                definition_default: Intervenant sur ce passage faune
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_TYPE_ACTOR
-                cd_nomenclature: GES
-                mnemonique: Ges.
-                label_default: Gestionnaire
-                definition_default: Gestionnaire du passage faune
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_TYPE_ACTOR
-                cd_nomenclature: ETA
-                mnemonique: État
-                label_default: État
-                definition_default: État
-                source: SIPAF
-                active: true
-            -
-                id_type: PF_TYPE_ACTOR
-                cd_nomenclature: DEP
-                mnemonique: Dépt.
-                label_default: Département
-                definition_default: Département
-                source: SIPAF
-                active: true
+  - schema_code: modules.group
+    items:
+      - name: SI Passage Faune
+        code: SIPAF
+        description: Modules associés aux passage à faune
+        modules:
+          - m_sipaf
+  - schema_code: commons.table_location
+    items:
+      - table_desc: Table centralisant les passages à faune
+        schema_name: m_sipaf
+        table_name: t_passages_faune
+        pk_field: id_passage_faune
+        uuid_field_name: uuid_passage_faune
+  - schema_code: ref_nom.type
+    items:
+      - mnemonique: PF_OUVRAGE_MATERIAUX
+        label_default: Matériaux
+        definition_default: "Matériaux composant l'ouvrage"
+        source: SIPAF
+      - mnemonique: PF_OUVRAGE_HYDRAULIQUE_POSITION
+        label_default: OH Position
+        definition_default: "Position de l'ouvrage hydrolique"
+        source: SIPAF
+      - mnemonique: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
+        label_default: OH Caractrisation banquette
+        definition_default: Caractérisation de la banquette pour un ouvrage hydraulique
+        source: SIPAF
+      - mnemonique: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+        label_default: OH Type de banquette
+        definition_default: Type de banquette pour un ouvrage hydrolique
+        source: SIPAF
+      - mnemonique: PF_INFRASTRUCTURE_TYPE
+        label_default: "Type d'infrastructure"
+        definition_default: "Type d'infrastructure pour les passages à faune"
+        source: SIPAF
+      - mnemonique: PF_OUVRAGE_SPECIFICITE
+        label_default: Spécificité
+        definition_default: Exclusivité du passage pour le passage de la faune
+        source: SIPAF
+      - mnemonique: PF_OUVRAGE_TYPE
+        label_default: "Type d'ouvrage"
+        definition_default: "Type d'ouvrage d'art pour le passage faune"
+        source: SIPAF
+      - mnemonique: PF_TYPE_ACTOR
+        label_default: "Type d'acteur"
+        definition_default: "Type d'acteur pour les passages faune"
+        source: SIPAF
+  - schema_code: ref_nom.nomenclature
+    items:
+      - id_type: PF_OUVRAGE_MATERIAUX
+        cd_nomenclature: BET
+        mnemonique: Béta.
+        label_default: Béton
+        definition_default: Béton
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_MATERIAUX
+        cd_nomenclature: MET
+        mnemonique: Mét.
+        label_default: Métal
+        definition_default: Métal
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_MATERIAUX
+        cd_nomenclature: PLT
+        mnemonique: Pla.
+        label_default: Plastique
+        definition_default: Plastique
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_MATERIAUX
+        cd_nomenclature: BOI
+        mnemonique: Boi.
+        label_default: Bois
+        definition_default: Bois
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_MATERIAUX
+        cd_nomenclature: MAC
+        mnemonique: Maç.
+        label_default: Maçonnerie
+        definition_default: Maçonnerie
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_MATERIAUX
+        cd_nomenclature: AUT
+        mnemonique: Aut.
+        label_default: Autre
+        definition_default: Autre
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_MATERIAUX
+        cd_nomenclature: IND
+        mnemonique: Ind.
+        label_default: Indéterminé
+        definition_default: Indéterminé
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
+        cd_nomenclature: RD
+        mnemonique: R. d.
+        label_default: Rive droite
+        definition_default: Rive droite
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
+        cd_nomenclature: RG
+        mnemonique: R. g.
+        label_default: Rive Gauche
+        definition_default: Rive Gauche
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
+        cd_nomenclature: RGD
+        mnemonique: "R. g. & d."
+        label_default: Rive gauche et rive droite
+        definition_default: Rive gauche et rive droite (la rive se détermine dans le sens amont/aval)
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
+        cd_nomenclature: SIM
+        mnemonique: Spl.
+        label_default: Simple
+        definition_default: Banquette simple
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
+        cd_nomenclature: DOU
+        mnemonique: Dbl.
+        label_default: Double
+        definition_default: Banquette double
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+        cd_nomenclature: NAT
+        mnemonique: Nat.
+        label_default: Banquette naturelle
+        definition_default: Banquette naturelle / bande enherbée
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+        cd_nomenclature: BET
+        mnemonique: Bet.
+        label_default: Banquette béton
+        definition_default: Banquette béton
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+        cd_nomenclature: ECB
+        mnemonique: Ecb.
+        label_default: Encorbellement
+        definition_default: Encorbellement
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+        cd_nomenclature: POF
+        mnemonique: Po. F.
+        label_default: Ponton flottant
+        definition_default: Ponton flottant
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+        cd_nomenclature: AUT
+        mnemonique: Aut.
+        label_default: Autre
+        definition_default: Autre
+        source: SIPAF
+        active: true
+      - id_type: PF_INFRASTRUCTURE_TYPE
+        cd_nomenclature: AU
+        mnemonique: Auto.
+        label_default: Autoroute
+        definition_default: Autoroute
+        source: SIPAF
+        active: true
+      - id_type: PF_INFRASTRUCTURE_TYPE
+        cd_nomenclature: RN
+        mnemonique: R. N.
+        label_default: Route Nationale
+        definition_default: Route Nationale
+        source: SIPAF
+        active: true
+      - id_type: PF_INFRASTRUCTURE_TYPE
+        cd_nomenclature: RD
+        mnemonique: R. D.
+        label_default: Route Départementale
+        definition_default: Route Départementale
+        source: SIPAF
+        active: true
+      - id_type: PF_INFRASTRUCTURE_TYPE
+        cd_nomenclature: VF
+        mnemonique: V. F.
+        label_default: Voie ferrée
+        definition_default: Voie ferrée
+        source: SIPAF
+        active: true
+      - id_type: PF_INFRASTRUCTURE_TYPE
+        cd_nomenclature: CA
+        mnemonique: Ca.
+        label_default: Canal / Rivère navigable
+        definition_default: Canal / Rivère navigable
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_SPECIFICITE
+        cd_nomenclature: SPE
+        mnemonique: Spé.
+        label_default: Spécifique
+        definition_default: Ouvrage construit que pour le passage des animaux
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_SPECIFICITE
+        cd_nomenclature: MIX
+        mnemonique: Mixt.
+        label_default: Mixte
+        definition_default: Ouvrage mixte construit pour le passage des animaux concomitamment à un ou plusieurs autres usages
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_SPECIFICITE
+        cd_nomenclature: ND
+        mnemonique: Non déd.
+        label_default: Non dédié
+        definition_default: Ouvrage non dédié au passage de la faune mais pouvant servir à cet usage
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: BUS
+        mnemonique: Bus.
+        label_default: Buse
+        definition_default: Buse
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: CAD
+        mnemonique: Cad.
+        label_default: Cadre
+        definition_default: Cadre
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: VOU+R
+        mnemonique: Voût. Rad.
+        label_default: Voûte avec radier
+        definition_default: Voûte maçonnée avec radier
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: AUT
+        mnemonique: Aut.
+        label_default: Autre (préciser)
+        definition_default: Autre (préciser)
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: POR
+        mnemonique: Por.
+        label_default: Portique
+        definition_default: Portique en béton
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: VOU
+        mnemonique: Voû.
+        label_default: Voûte sans radier
+        definition_default: Voûte maçonnée sans radier
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: DAL+P
+        mnemonique: Dal. pal.
+        label_default: Dalle et palpaplanche
+        definition_default: Dalle et palpaplanche
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: DAL
+        mnemonique: Dal.
+        label_default: Dalle
+        definition_default: Dalle
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: ARC
+        mnemonique: Arc.
+        label_default: Arc
+        definition_default: Arc
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: VIA
+        mnemonique: via.
+        label_default: Viaduc
+        definition_default: Viaduc
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: PON
+        mnemonique: pon.
+        label_default: Pont
+        definition_default: Pont
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: CAN
+        mnemonique: can.
+        label_default: Canalisation
+        definition_default: Canalisation
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: DALO
+        mnemonique: dalo.
+        label_default: Dalot
+        definition_default: Dalot
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: DIAB
+        mnemonique: diab.
+        label_default: Diabolo
+        definition_default: Diabolo
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: TRA
+        mnemonique: Tra.
+        label_default: Tranchée
+        definition_default: Tranchée
+        source: SIPAF
+        active: true
+      - id_type: PF_OUVRAGE_TYPE
+        cd_nomenclature: TUN
+        mnemonique: Tun.
+        label_default: Tunnel
+        definition_default: Tunnel
+        source: SIPAF
+        active: true
+      - id_type: PF_TYPE_ACTOR
+        cd_nomenclature: PRO
+        mnemonique: Prop.
+        label_default: Propriétaire
+        definition_default: Propriétaire du passage faune
+        source: SIPAF
+        active: true
+      - id_type: PF_TYPE_ACTOR
+        cd_nomenclature: CON
+        mnemonique: Conc.
+        label_default: Concessionaire
+        definition_default: Concessionnaire
+        source: SIPAF
+        active: true
+      - id_type: PF_TYPE_ACTOR
+        cd_nomenclature: INT
+        mnemonique: Int.
+        label_default: Intervenant
+        definition_default: Intervenant sur ce passage faune
+        source: SIPAF
+        active: true
+      - id_type: PF_TYPE_ACTOR
+        cd_nomenclature: GES
+        mnemonique: Ges.
+        label_default: Gestionnaire
+        definition_default: Gestionnaire du passage faune
+        source: SIPAF
+        active: true
+      - id_type: PF_TYPE_ACTOR
+        cd_nomenclature: ETA
+        mnemonique: État
+        label_default: État
+        definition_default: État
+        source: SIPAF
+        active: true
+      - id_type: PF_TYPE_ACTOR
+        cd_nomenclature: DEP
+        mnemonique: Dépt.
+        label_default: Département
+        definition_default: Département
+        source: SIPAF
+        active: true
