@@ -241,9 +241,10 @@ properties:
   medias:
       type: relation
       title: medias
-      relation_type: n-n
+      relation_type: 1-n
+      foreign_key: uuid_attached_row
+      local_key: uuid_passage_faune
       schema_code: commons.media
-      schema_dot_table: m_sipaf.cor_media_pf
   geom_x:
       type: number
       title: Longitude

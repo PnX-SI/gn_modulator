@@ -117,6 +117,7 @@
 
   <!-- dynform-->
   <ng-container *ngIf="computedLayout.type == 'dyn_form' && !!formControl">
+    {{localFormGroup.controls.medias.valid}}
     <pnx-dynamic-form
       class="dynamic-form padding-sm"
       [formDef]="formDef"

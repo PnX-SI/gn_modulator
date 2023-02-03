@@ -187,6 +187,8 @@ properties:
               type: string
             foreign_key:
               type: string
+            local_key:
+              type: string 
             relation_type:
               enum:
                 - 1-n

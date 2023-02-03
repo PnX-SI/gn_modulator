@@ -101,7 +101,14 @@ class SchemaModelBase:
             # test si obligatoire
             rel = self.cls(relationship_def["schema_code"])
 
-            # foreign_column = rel.property(relationship_def['foreign_key'])
+            if relationship_def.get("local_key"):
+                local_key = relationship_def.get("local_key") or self.pk_field_name()
+                foreign_key = relationship_def.get("foreign_key")
+                kwargs["primaryjoin"] = getattr(self.Model(), local_key) == getattr(
+                    relation.Model(), foreign_key
+                )
+                kwargs["foreign_keys"] = [getattr(relation.Model(), foreign_key)]
+
             if rel.is_required(relationship_def["foreign_key"]):
                 kwargs["cascade"] = "all, delete, delete-orphan"
             # if foreign_column.requi

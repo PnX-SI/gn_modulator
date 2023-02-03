@@ -291,10 +291,15 @@ class SchemaSerializers:
             property = self.property(field)
             if property is None or property["type"] != "relation":
                 continue
-            sm = self.cls(property["schema_code"])
+            sm_rel = self.cls(property["schema_code"])
+
             fields_to_remove.append(field)
-            fields_to_add.append(f"{field}.{sm.pk_field_name()}")
-            fields_to_add.append(f"{field}.{sm.label_field_name()}")
+            if default_fields := sm_rel.attr("meta.default_fields"):
+                for rel_field in default_fields:
+                    fields_to_add.append(f"{field}.{rel_field}")
+            else:
+                fields_to_add.append(f"{field}.{sm_rel.pk_field_name()}")
+                fields_to_add.append(f"{field}.{sm_rel.label_field_name()}")
 
         for f in fields_to_remove:
             fields.remove(f)

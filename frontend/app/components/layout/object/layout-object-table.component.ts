@@ -58,7 +58,7 @@ export class ModulesLayoutObjectTableComponent
       height: this.tableHeight || '200px',
       ajaxRequestFunc: this.ajaxRequestFunc,
       columns: this.columns(),
-      ajaxURL: this.objectConfig().table.url,
+      ajaxURL: this._mConfig.objectUrl(this.context.module_code, this.context.object_code),
       paginationSize: this.computedLayout.page_size || this.objectConfig().utils.page_size,
       pagination: 'remote',
       headerFilterLiveFilterDelay: 600,

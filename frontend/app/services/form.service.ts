@@ -8,15 +8,17 @@ import {
 } from '@angular/forms';
 import { ModulesLayoutService } from './layout.service';
 import { ModulesObjectService } from './object.service';
+import { MediaService } from '@geonature_common/service/media.service';
+
 import utils from '../utils';
-import form from '../utils/form';
 
 @Injectable()
 export class ModulesFormService {
   constructor(
     private _formBuilder: FormBuilder,
     private _mLayout: ModulesLayoutService,
-    private _mObject: ModulesObjectService
+    private _mObject: ModulesObjectService,
+    private _mediaService: MediaService
   ) {}
 
   /** Configuration */
@@ -43,6 +45,9 @@ export class ModulesFormService {
     }
     if (layout.type == 'integer') {
       validators.push(this.integerValidator());
+    }
+    if (layout.type_widget == 'medias') {
+      validators.push(this._mediaService.mediasValidator());
     }
 
     return validators;
@@ -298,7 +303,9 @@ export class ModulesFormService {
     return utils.isObject(formValue)
       ? !utils.isObject(data)
         ? false
-        : Object.entries(formValue).every(([k, v]) => this.isEqual(v, data[k]))
+        : Object.entries(formValue)
+            .filter(([k, v]) => k != 'pendingRequest')
+            .every(([k, v]) => this.isEqual(v, data[k]))
       : Array.isArray(formValue)
       ? !Array.isArray(data)
         ? false

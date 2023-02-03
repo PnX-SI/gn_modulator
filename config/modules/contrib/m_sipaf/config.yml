@@ -286,3 +286,5 @@ site_form_fields:
         key: medias
         type_widget: medias
         schema_dot_table: m_sipaf.t_passages_faune
+        details: []
+        

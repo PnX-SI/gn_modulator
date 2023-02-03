@@ -12,3 +12,12 @@ meta:
   unique:
     - id_table_location
     - title_fr
+  default_fields:
+    - id_media
+    - uuid_attached_row
+    - title_fr
+    - media_url
+    - media_path
+    - author
+    - description_fr
+    - id_nomenclature_media_type
