@@ -62,15 +62,15 @@ export class ModulesLayoutService {
     this._utilsObject = this._mObject.utilsObject();
   }
 
-  reComputeLayout(name) {
+  reComputeLayout(name=null) {
     this.$reComputeLayout.next(true);
   }
 
-  reComputeHeight(name) {
+  reComputeHeight(name=null) {
     this.$reComputedHeight.next(true);
   }
 
-  reDrawElem(name) {
+  reDrawElem(name=null) {
     this.$reDrawElem.next(true);
   }
 

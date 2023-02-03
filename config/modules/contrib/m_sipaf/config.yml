@@ -210,8 +210,8 @@ site_form_fields:
         - id_organism
         - id_nomenclature_type_actor
         # - hidden: true
-          # items:
-            # - id_passage_faune
+        # items:
+        # - id_passage_faune
         # - key: id_role
         #   type: list_form
         # - key: id_organism
@@ -287,4 +287,3 @@ site_form_fields:
         type_widget: medias
         schema_dot_table: m_sipaf.t_passages_faune
         details: []
-        

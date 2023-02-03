@@ -129,7 +129,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.processLayout();
 
     // subscription pour recalculer le layout
-    this._mLayout.$reComputeLayout.pipe(debounceTime(200)).subscribe(() => {
+    this._mLayout.$reComputeLayout.pipe(debounceTime(100)).subscribe(() => {
       this.computeLayout();
     });
 
