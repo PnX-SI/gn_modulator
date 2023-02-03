@@ -1,7 +1,7 @@
 Procédure pour une installation de sipaf
 
 Préalable:
-- récupérer les données route et pf
+- récupérer les données route et pf et placer les fichiers dans <data_dir_path>
 
 ::
 
@@ -17,7 +17,7 @@ Préalable:
     geonature modules import -i ref_geo.route -d  <data_dir_path>
 
     # Import des données sipaf (v5 pour l'exemple)
-    geonature modules import -i m_sipaf.pf_exemples -d  ~/m_sipaf/import/data/
+    geonature modules import -i m_sipaf.pf_exemples -d  <data_dir_path>
 
     ## Monitoring
     geonature modules install m_monitoring
