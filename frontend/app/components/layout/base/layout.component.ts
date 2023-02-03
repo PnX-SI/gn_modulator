@@ -13,6 +13,8 @@ import { ModulesContextService } from '../../../services/context.service';
 import { ModulesFormService } from '../../../services/form.service';
 import { ModulesObjectService } from '../../../services/object.service';
 
+import { debounceTime } from '@librairies/rxjs/operators';
+
 import utils from '../../../utils';
 
 /** Composant de base pour les layouts */
@@ -127,7 +129,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.processLayout();
 
     // subscription pour recalculer le layout
-    this._mLayout.$reComputeLayout.subscribe(() => {
+    this._mLayout.$reComputeLayout.pipe(debounceTime(200)).subscribe(() => {
       this.computeLayout();
     });
 
@@ -305,7 +307,6 @@ export class ModulesLayoutComponent implements OnInit {
     this.processContext();
 
     // calcul du layout
-
     this.computedLayout = this._mLayout.computeLayout({
       layout: this.layout,
       data: this.data,
