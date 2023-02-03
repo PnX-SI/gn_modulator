@@ -1,11 +1,12 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewEncapsulation } from '@angular/core';
 import { ModulesMapService } from '../../../services/map.service';
 import { ModulesLayoutComponent } from './layout.component';
 import utils from '../../../utils';
 @Component({
   selector: 'modules-layout-map',
   templateUrl: 'layout-map.component.html',
-  styleUrls: ['../../base/base.scss', 'layout-map.component.scss'],
+  styleUrls: ['layout-map.component.scss', '../../base/base.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements OnInit {
   _mapService: ModulesMapService;

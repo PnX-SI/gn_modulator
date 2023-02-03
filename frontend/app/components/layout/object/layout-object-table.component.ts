@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewEncapsulation } from '@angular/core';
 import { ModulesLayoutObjectComponent } from './layout-object.component';
 import { Observable, of } from '@librairies/rxjs';
 import { ModulesTableService } from '../../../services/table.service';
@@ -9,7 +9,8 @@ import utils from '../../../utils';
 @Component({
   selector: 'modules-layout-object-table',
   templateUrl: 'layout-object-table.component.html',
-  styleUrls: ['../../base/base.scss', 'layout-object-table.component.scss'],
+  styleUrls: ['../../base/base.scss', './layout-object-table.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ModulesLayoutObjectTableComponent
   extends ModulesLayoutObjectComponent
