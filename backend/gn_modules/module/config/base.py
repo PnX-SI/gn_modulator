@@ -73,6 +73,7 @@ class ModulesConfigBase:
         # - pages
 
         cls.process_pages(module_code)
+
         cls.process_tree(module_code)
 
         if module_config.get("registred"):

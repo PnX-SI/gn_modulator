@@ -197,7 +197,7 @@ class SchemaRepositoriesBase:
         - row_number (si dans fields)
         """
 
-        fields = params.get("fields", [])
+        fields = params.get("fields") or []
 
         # cruved
         if "ownership" in fields:
@@ -215,7 +215,7 @@ class SchemaRepositoriesBase:
         """
         pour n'avoir dans la requête que les champs demandés
         """
-        fields = params.get("fields", [])
+        fields = params.get("fields") or []
         for pk_field_name in self.pk_field_names():
             if pk_field_name not in fields:
                 fields.append(pk_field_name)

@@ -5,6 +5,7 @@
 """
 
 from sqlalchemy import inspect
+from gn_modules.utils.cache import get_global_cache, set_global_cache
 
 from geonature.utils.env import db
 
@@ -63,7 +64,6 @@ class SchemaSqlBase:
         return self.sql_schema_dot_table().split(".")[1]
 
     def sql_schema_dot_table(self):
-        sql_schema_dot_table = self.attr("meta.sql_schema_dot_table")
         return self.cls.c_get_sql_schema_dot_table_from_definition(self.schema_code())
 
     @classmethod
@@ -90,8 +90,16 @@ class SchemaSqlBase:
         return cls.c_sql_table_exists(sql_schema_name, sql_table_name)
 
     @classmethod
+    def table_names(cls, sql_schema_name):
+        table_names = get_global_cache(["table_names", sql_schema_name])
+        if table_names is None:
+            table_names = inspect(db.engine).get_table_names(sql_schema_name)
+            set_global_cache(["table_names", sql_schema_name], table_names)
+        return table_names
+
+    @classmethod
     def c_sql_table_exists(cls, sql_schema_name, sql_table_name):
-        return sql_table_name.lower() in inspect(db.engine).get_table_names(sql_schema_name)
+        return sql_table_name.lower() in cls.table_names(sql_schema_name)
 
     @classmethod
     def c_sql_schema_exists(cls, sql_schema_name):

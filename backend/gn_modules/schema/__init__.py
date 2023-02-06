@@ -106,5 +106,7 @@ class SchemaMethods(
         # init Model
         for schema_code in cls.schema_codes():
             SchemaMethods(schema_code).Model()
+
+        # init MarshmallowSchema
         for schema_code in cls.schema_codes():
             SchemaMethods(schema_code).MarshmallowSchema()

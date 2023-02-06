@@ -335,9 +335,8 @@ class SchemaSerializers:
         field_name=None,
         module_code="MODULES",
         cruved_type="R",
-        params={},
-        query_type="all",
         fields=None,
+        query_type="all",
         as_geojson=False,
         geometry_field_name=None,
     ):
@@ -351,7 +350,7 @@ class SchemaSerializers:
                 field_name=field_name,
                 module_code=module_code,
                 cruved_type=cruved_type,
-                params=params,
+                params={"fields": fields},
                 query_type=query_type,
             ).one()
 

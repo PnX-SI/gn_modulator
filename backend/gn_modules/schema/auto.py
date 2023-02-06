@@ -8,6 +8,7 @@ from geonature.utils.env import db
 from .errors import SchemaAutoError
 from gn_modules.utils.cache import get_global_cache, set_global_cache
 from gn_modules.utils.commons import get_class_from_path
+from gn_modules.utils.env import local_srid
 
 cor_type_db_schema = {
     "INTEGER": "integer",
@@ -83,15 +84,11 @@ class SchemaAuto:
         sql_table_name = Model.__tablename__
         sql_schema_name = Model.__table__.schema
 
-        reflected_columns = self.insp().get_columns(sql_table_name, schema=sql_schema_name)
-
         # columns
         for column in Model.__table__.columns:
             if not hasattr(Model, column.key):
                 continue
-            column_auto = self.process_column_auto(
-                column, reflected_columns, sql_schema_name, sql_table_name
-            )
+            column_auto = self.process_column_auto(column, sql_schema_name, sql_table_name)
             if column_auto:
                 properties[column.key] = column_auto
 
@@ -149,17 +146,11 @@ class SchemaAuto:
 
         return property
 
-    def process_column_auto(self, column, reflected_columns, sql_schema_name, sql_table_name):
+    def process_column_auto(self, column, sql_schema_name, sql_table_name):
         type = str(column.type)
 
-        # PATCH pour les VARCHAR(<nb>)
         if "VARCHAR(" in type:
             type = "VARCHAR"
-        try:
-            reflected_column = next(x for x in reflected_columns if x["name"] == column.key)
-        except Exception:
-            # print('erreur auto', self.schema_code(), column.key, e)
-            return
 
         schema_type = self.cls.c_get_type(type, "sql", "definition")
 
@@ -178,13 +169,14 @@ class SchemaAuto:
 
         if schema_type["type"] == "geometry":
             if schema_type["srid"] == -1:
-                schema_type["srid"] = db.engine.execute(
-                    f"SELECT FIND_SRID('{sql_schema_name}', '{sql_table_name}', '{column.key}')"
-                ).scalar()
+                schema_type["srid"] = local_srid()
+                # schema_type["srid"] = db.engine.execute(
+                #     f"SELECT FIND_SRID('{sql_schema_name}', '{sql_table_name}', '{column.key}')"
+                # ).scalar()
             property["srid"] = schema_type["srid"]
             property["geometry_type"] = schema_type["geometry_type"]
             property["geometry_type"] = (
-                reflected_column["type"].geometry_type.lower() or schema_type["geometry_type"]
+                column.type.geometry_type.lower() or schema_type["geometry_type"]
             )
 
         # primary_key
@@ -213,25 +205,35 @@ class SchemaAuto:
                 # property.pop('foreign_key')
 
         # commentaires
-        if reflected_column.get("comment"):
-            property["description"] = reflected_column.get("comment")
+        if column.comment:
+            property["description"] = column.comment
 
         if (
-            reflected_column["nullable"] is False
-            and reflected_column["default"] is None
+            column.nullable is False
+            and column.primary_key is False
+            and column.default is None
             and column.key != "meta_create_date"
         ):
             property["required"] = True
 
         return property
 
+    def get_check_constraints(self, sql_schema_name, sql_table_name):
+        check_constraints = get_global_cache(["check_contraints", sql_schema_name, sql_table_name])
+        if check_constraints is None:
+            check_constraints = self.insp().get_check_constraints(
+                sql_table_name, schema=sql_schema_name
+            )
+            set_global_cache(
+                ["check_contraints", sql_schema_name, sql_table_name], check_constraints
+            )
+        return check_constraints
+
     def reflect_nomenclature_type(self, sql_schema_name, sql_table_name, column_key):
         """
         va chercher les type de nomenclature depuis les contraintes 'check_nomenclature_type'
         """
-        check_constraints = self.insp().get_check_constraints(
-            sql_table_name, schema=sql_schema_name
-        )
+        check_constraints = self.get_check_constraints(sql_schema_name, sql_table_name)
         for check_constraint in check_constraints:
             sqltext = check_constraint["sqltext"]
             s_test1 = "ref_nomenclatures.check_nomenclature_type_by_mnemonique({}, '".format(
