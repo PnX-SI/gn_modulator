@@ -16,7 +16,9 @@ export class ModulesIndexComponent implements OnInit {
   ngOnInit() {
     this._mConfig.init().subscribe(() => {
       const modules = this._mConfig.modulesConfig();
-      this.modules = Object.values(modules).filter((m) => (m as any).code != 'MODULES');
+      this.modules = Object.values(modules).filter(
+        (m) => (m as any).code != this._mConfig.MODULE_CODE
+      );
       this.layout = {
         title: 'Liste des modules',
         class: 'modules',

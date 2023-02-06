@@ -439,11 +439,6 @@ class DefinitionBase:
         if get_errors():
             return
 
-        # verification et application des templates
-        # cls.check_template_definitions()
-        # if get_errors():
-        # return
-
         cls.process_templates()
         if get_errors():
             return

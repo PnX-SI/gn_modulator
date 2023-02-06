@@ -64,7 +64,7 @@ site_filters_fields:
           title: Infrastructure
           type: list_form
           object_code: ref_geo.linear_group
-          module_code: MODULES
+          module_code: __REF_MODULE_CODE__
           filters: linears.type.type_code = RTE
           sort: name
           reload_on_search: true

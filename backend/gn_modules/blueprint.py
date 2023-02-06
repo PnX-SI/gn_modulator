@@ -7,8 +7,9 @@ from gn_modules.layout import LayoutMethods
 from gn_modules import init_gn_modules
 from gn_modules.utils.api import process_dict_path
 from gn_modules.utils.errors import get_errors, errors_txt
+from gn_modules import MODULE_CODE
 
-blueprint = Blueprint("modules", __name__)
+blueprint = Blueprint(MODULE_CODE.lower(), __name__)
 
 # Creation des commandes pour modules
 blueprint.cli.short_help = "Commandes pour l' administration du module MODULES"

@@ -5,6 +5,7 @@ from gn_modules.utils.files import symlink
 from gn_modules.schema import SchemaMethods
 from gn_modules.utils.cache import get_global_cache
 from gn_modules.definition import DefinitionMethods
+from gn_modules import MODULE_CODE
 
 
 class ModuleBase:
@@ -148,7 +149,7 @@ class ModuleBase:
         dans le dossier 'static/external_assets/modules/{module_code.lower()}'
         """
 
-        if module_code == "MODULES":
+        if module_code == MODULE_CODE:
             return []
 
         module_assets_dir = Path(cls.module_dir_path(module_code)) / "assets"

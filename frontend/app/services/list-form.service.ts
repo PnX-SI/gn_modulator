@@ -147,12 +147,12 @@ export class ListFormService {
     if (options.nomenclature_type) {
       options.object_code = 'ref_nom.nomenclature';
       schemaFilters.push(`nomenclature_type.mnemonique = ${options.nomenclature_type}`);
-      options.module_code = 'MODULES';
+      options.module_code = this._mConfig.MODULE_CODE;
       options.cache = true;
     }
     if (options.area_type) {
       options.object_code = 'ref_geo.area';
-      options.module_code = 'MODULES';
+      options.module_code = this._mConfig.MODULE_CODE;
       schemaFilters.push(`area_type.type_code = ${options.area_type}`);
     }
 
@@ -168,7 +168,7 @@ export class ListFormService {
       }
       if (!options.object_code) {
         options.object_code = options.schema_code;
-        options.module_code = 'MODULES';
+        options.module_code = this._mConfig.MODULE_CODE;
       }
     }
 

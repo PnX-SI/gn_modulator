@@ -19,7 +19,7 @@ aliases:
       type: string
 
 context:
-  module_code: MODULES
+  module_code: __REF_MODULE_CODE__
   object_code: commons.module
 
 layout:

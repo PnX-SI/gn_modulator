@@ -19,6 +19,9 @@ export class ModulesConfigService {
 
   /** Configuration */
 
+  MODULE_CODE = ModuleConfig.MODULE_CODE;
+  MODULE_URL = ModuleConfig.MODULE_URL;
+
   init() {
     return forkJoin({
       config: this.getModulesConfig(),

@@ -1,7 +1,7 @@
 type: module
-code: MODULES
-title: Module 'MODULES'
-description: Définition du module MODULES (ouverture des routes communes (cruved R seulement))
+code: __REF_MODULE_CODE__
+title: Module '__REF_MODULE_CODE__'
+description: Définition du module __REF_MODULE_CODE__ (ouverture des routes communes (cruved R seulement))
 module:
     module_label: Module de module
     module_desc: MonitoringV2

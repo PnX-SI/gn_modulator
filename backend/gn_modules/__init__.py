@@ -1,4 +1,4 @@
-MODULE_CODE = "MODULES"
+MODULE_CODE = "MODULATOR"
 MODULE_PICTO = "fa-puzzle-piece"
 
 from .definition import DefinitionMethods

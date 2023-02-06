@@ -10,6 +10,7 @@ from geonature.utils.env import db
 from sqlalchemy import func
 from sqlalchemy.orm import defer
 from .. import errors
+from gn_modules import MODULE_CODE
 
 
 class SchemaRepositoriesBase:
@@ -43,7 +44,7 @@ class SchemaRepositoriesBase:
         self,
         value,
         field_name=None,
-        module_code="MODULES",
+        module_code=MODULE_CODE,
         cruved_type="R",
         params={},
         query_type="all",
@@ -142,7 +143,7 @@ class SchemaRepositoriesBase:
 
         return False
 
-    def update_row(self, value, data, field_name=None, module_code="MODULES", params={}):
+    def update_row(self, value, data, field_name=None, module_code=MODULE_CODE, params={}):
         """
         update row (Model.<field_name> == value) with data
 
@@ -171,7 +172,7 @@ class SchemaRepositoriesBase:
 
         return m, True
 
-    def delete_row(self, value, field_name=None, module_code="MODULES", params={}):
+    def delete_row(self, value, field_name=None, module_code=MODULE_CODE, params={}):
         """
         delete row (Model.<field_name> == value)
         """
@@ -245,7 +246,7 @@ class SchemaRepositoriesBase:
                 pass
         return query
 
-    def query_list(self, module_code="MODULES", cruved_type="R", params={}, query_type=None):
+    def query_list(self, module_code=MODULE_CODE, cruved_type="R", params={}, query_type=None):
         """
         query_type: all|update|delete|total|filtered
 
@@ -306,7 +307,7 @@ class SchemaRepositoriesBase:
 
         return query
 
-    def get_query_infos(self, module_code="MODULES", cruved_type="R", params={}, url=None):
+    def get_query_infos(self, module_code=MODULE_CODE, cruved_type="R", params={}, url=None):
         count_total = self.query_list(
             module_code=module_code, cruved_type="R", params=params, query_type="total"
         ).count()

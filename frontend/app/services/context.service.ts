@@ -1,13 +1,14 @@
 import { Injectable, Injector } from '@angular/core';
 import { AuthService } from '@geonature/components/auth/auth.service';
 import { ModulesObjectService } from './object.service';
+import { ModulesConfigService } from './config.service';
 
 import utils from '../utils';
 @Injectable()
 export class ModulesContextService {
   _auth: AuthService;
   _mObject: ModulesObjectService;
-
+  _mConfig: ModulesConfigService;
   module_code;
   page_code;
   object_code;
@@ -18,6 +19,7 @@ export class ModulesContextService {
   constructor(private _injector: Injector) {
     this._auth = this._injector.get(AuthService);
     this._mObject = this._injector.get(ModulesObjectService);
+    this._mConfig = this._injector.get(ModulesConfigService);
   }
 
   initContext({
@@ -28,7 +30,7 @@ export class ModulesContextService {
     config = null,
   } = {}) {
     this._mObject._cacheObjectConfig = {};
-    this.module_code = module_code || 'MODULES';
+    this.module_code = module_code || this._mConfig.MODULE_CODE;
     this.page_code = page_code;
     this.page_code = page_code;
     this.params = params || {};

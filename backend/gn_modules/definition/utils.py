@@ -4,6 +4,7 @@ import yaml
 from pathlib import Path
 from gn_modules.utils.env import local_srid
 from gn_modules.utils.commons import replace_in_dict
+from gn_modules import MODULE_CODE
 
 
 class YmlLoader(yaml.CLoader):
@@ -70,6 +71,7 @@ class DefinitionUtils:
 
             # traitement du local_srid
             data = replace_in_dict(data, "__LOCAL_SRID__", local_srid())
+            data = replace_in_dict(data, "__REF_MODULE_CODE__", MODULE_CODE)
 
             # on enleve aliases
             if isinstance(data, dict):

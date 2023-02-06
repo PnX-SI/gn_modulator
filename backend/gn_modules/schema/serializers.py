@@ -12,6 +12,7 @@ from utils_flask_sqla_geo.utilsgeometry import remove_third_dimension
 from geonature.utils.env import ma
 from .errors import SchemaProcessedPropertyError
 from gn_modules.utils.cache import get_global_cache, set_global_cache
+from gn_modules import MODULE_CODE
 from sqlalchemy.orm.exc import NoResultFound
 from geonature.utils.env import db
 
@@ -333,7 +334,7 @@ class SchemaSerializers:
         self,
         value,
         field_name=None,
-        module_code="MODULES",
+        module_code=MODULE_CODE,
         cruved_type="R",
         fields=None,
         query_type="all",
