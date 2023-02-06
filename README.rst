@@ -23,7 +23,7 @@ Installation de sous-modules
 
 La commande suivante permet d'installer des sous-modules
 
-``geonature modules install <module_code>``
+``geonature modulator install <module_code>``
 
 Il faut au préalable placer la configuration du sous-module dans le dossier ``<gn_modules>/config/modules``
 
@@ -37,7 +37,7 @@ Il faut au préalable placer la configuration du sous-module dans le dossier ``<
 Des sous-modules sont déjà présents dans le dossier ``<gn_modules>/config/modules/contrib``
 
 * Le module gestionnaire de site
-    * ``geonature modules install m_monitoring``
+    * ``geonature modulator install m_monitoring``
     * Défini les tables suivantes
         * site
         * groupe de sites
@@ -46,14 +46,14 @@ Des sous-modules sont déjà présents dans le dossier ``<gn_modules>/config/mod
     * les api (liste, get, post, patch, delete) associées
     * Les pages associées au module suivent la hierachie:
         * site -> visite -> observation
-    * des données d'exemples peuvent être ajoutées avec la commande ``geonature modules features m_monitoring.exemples``
+    * des données d'exemples peuvent être ajoutées avec la commande ``geonature modulator features m_monitoring.exemples``
 
 
 * Un protocole de test pour le module monitoring
     * Il fauyt avoir installé au préalable le sous-module ``m_monitoring``
-    * ``geonature modules install m_protocol_test``
+    * ``geonature modulator install m_protocol_test``
         * module (protocole) -> site -> visite -> observation
-    * des données d'exemples peuvent être ajoutées avec la commande ``geonature modules features m_monitoring.exemples``
+    * des données d'exemples peuvent être ajoutées avec la commande ``geonature modulator features m_monitoring.exemples``
 
 Développement
 =============

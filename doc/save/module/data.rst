@@ -53,13 +53,13 @@ La commande permet d'insérer (ou de mettre à jour si les éléments existent d
 
 ::
 
-    geonature modules process_data -d <data_code>
+    geonature modulator process_data -d <data_code>
 
 par exemple
 
 ::
 
-    geonature modules process_data -d data
+    geonature modulator process_data -d data
 
 
 va insérer ou mettre à jour les données du fichier ``<gn_modules>/config/data/test.json``.

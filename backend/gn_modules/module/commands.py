@@ -121,7 +121,7 @@ class ModuleCommands:
             print(
                 "Pour reinitialiser le module, vous devez le supprimmer au préalable avec la commande suivante"
             )
-            print("geonature modules remove {}".format(module_code))
+            print("geonature modulator remove {}".format(module_code))
             return
 
         print("Initialisation du module {}".format(module_code))

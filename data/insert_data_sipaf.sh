@@ -80,9 +80,9 @@ psqla -f ${data_dir}/reset_sipaf.sql
 gn_venv
 
 # patch pourris maj modules en attendant alembic
-geonature modules sql_process -n modules.module -e
+geonature modulator sql_process -n modules.module -e
 
-geonature modules install SIPAF
+geonature modulator install SIPAF
 
 psqla -f ${source_sql}
 cat ${source_csv} | psqla -c "COPY sipaf.tmp_import_sipaf FROM STDIN CSV HEADER DELIMITER ';';"
@@ -91,7 +91,7 @@ cat ${source_csv} | psqla -c "COPY sipaf.tmp_import_sipaf FROM STDIN CSV HEADER 
 # insert routes
 ${data_dir}/insert_routes.sh -g "${geonature_dir}"
 
-geonature modules data ${data_dir}/../config/modules/sipaf/features/pf.json
+geonature modulator data ${data_dir}/../config/modules/sipaf/features/pf.json
 
 # psqla -f ${data_dir}/import_sipaf.sql
 # psqla -f ${data_dir}/patch_sipaf_dataset.sql

@@ -26,7 +26,7 @@ et de détecter plus facilement si une erreur s'est glissée dans la configurati
 
 ::
 
-    geonature modules grammar
+    geonature modulator grammar
 
 
 Des options sont displonibles pour n'afficher qu'un ensemble restreint de ces éléments.
@@ -36,7 +36,7 @@ Des options sont displonibles pour n'afficher qu'un ensemble restreint de ces é
 - ``-o``: ``object_code`` pour un object donné (l'option ``module_code`` doit être choisie)
 - ``-g``: ``grammar_type`` pour ne voir qu'un type donné, à choisir parmis ``label``, ``labels``, ``le_label``, ``les_labels``, ``un_label``, ``des_labels``, ``un_nouveau_label``, ``du_nouveau_label``, ``d_un_nouveau_label``, ``des_nouveaux_labels``, ``du_label``.
 
-Par exemple, la commande ``geonature modules grammar -m m_monitoring`` va afficher la sortie suivante
+Par exemple, la commande ``geonature modulator grammar -m m_monitoring`` va afficher la sortie suivante
 
 ::
 
