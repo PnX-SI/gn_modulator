@@ -144,7 +144,7 @@ export class ModulesRouteService {
       url += `?${queryParams.join('&')}`;
     }
 
-    return `/modules/${moduleConfig.code.toLowerCase()}/${url}`;
+    return `${this._mConfig.MODULE_URL}/${moduleConfig.code.toLowerCase()}/${url}`;
   }
 
   navigateToPage(moduleCode, pageCode, params, query = true) {
