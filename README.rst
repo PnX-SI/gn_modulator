@@ -16,7 +16,7 @@ Se placer dans le répertoire backend de GeoNature et activer le virtualenv
 
 Lancer la commande d'installation
 
-``geonature install_gn_module <MON_CHEMIN_ABSOLU_VERS_LE_MODULE> MODULES``
+``geonature install_gn_module <MON_CHEMIN_ABSOLU_VERS_LE_MODULE> MODULATOR``
 
 Installation de sous-modules
 ----------------------------
