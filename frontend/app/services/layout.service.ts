@@ -62,7 +62,7 @@ export class ModulesLayoutService {
     this._utilsObject = this._mObject.utilsObject();
   }
 
-  reComputeLayout(name:any = null) {
+  reComputeLayout(name: any = null) {
     this.$reComputeLayout.next(true);
   }
 
