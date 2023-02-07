@@ -29,7 +29,7 @@ Lancer la commande d'installation
 geonature install_gn_module <MON_CHEMIN_ABSOLU_VERS_LE_MODULE> MODULATOR
 ```
 
-- [Liste des commandes du module](./doc/commandes.rst)
+- [Liste des commandes du module](./doc/commandes.md)
 
 ### Installation de sous-modules
 
@@ -80,4 +80,4 @@ Des sous-modules sont déjà présents dans le dossier
 ## Création d'un sous-module
 
 La méthode pour créer un sous-module est exposée
-[ici](./doc/creation_module.rst)
+[ici](./doc/creation_module.md)
