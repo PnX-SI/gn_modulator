@@ -25,7 +25,10 @@ layout:
     - items:
       - type: breadcrumbs
         flex: "0"
-      - code: utils.button_create
+      - direction: row
+        items:
+          - code: utils.button_create
+          - title: 'EXPORT'
         flex: "0"
       - type: object
         flex: 2

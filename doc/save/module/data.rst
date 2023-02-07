@@ -11,9 +11,9 @@ pour d'autres type de nomenclature (et à l'avenir pour d'autres types de donné
 Fichier de données
 ------------------
 
-Les fichiers de données au format ``.json`` sont placé dans le dossier ``<gn_modules>/config/data/``
+Les fichiers de données au format ``.json`` sont placé dans le dossier ``<gn_modulator>/config/data/``
 
-par exemple le fichier ``<gn_modules>/config/data/test.json``
+par exemple le fichier ``<gn_modulator>/config/data/test.json``
 
 ::
 
@@ -43,7 +43,7 @@ par exemple le fichier ``<gn_modules>/config/data/test.json``
         ]
     }
 
-Ils seronts validées par le schema présent dans le fichier ``<gn_modules>/config/schema/data/data.json``
+Ils seronts validées par le schema présent dans le fichier ``<gn_modulator>/config/schema/data/data.json``
 
 
 Commande process_data
@@ -62,10 +62,10 @@ par exemple
     geonature modulator process_data -d data
 
 
-va insérer ou mettre à jour les données du fichier ``<gn_modules>/config/data/test.json``.
+va insérer ou mettre à jour les données du fichier ``<gn_modulator>/config/data/test.json``.
 
 * si un point est présent dans le paramètre on ira chercher le fichier dans l'arobrescence correspondante.
-    * ``<test.exemple>`` correspond au fichier ``<gn_modules>/config/data/test/exemple``
+    * ``<test.exemple>`` correspond au fichier ``<gn_modulator>/config/data/test/exemple``
 
 * si le chemin concerné est un répertoire, tous les fichiers de ce répertoire seront pris en compte
 

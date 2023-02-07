@@ -7,8 +7,8 @@ Préalable:
 
     source <GeoNature>/backend/venv/bin/activate
 
-    # Installation du module geonature gn_modules
-    geonature install-gn-module ~/gn_modules MODULATOR
+    # Installation du module geonature gn_modulator
+    geonature install-gn-module ~/gn_modulator MODULATOR
 
     # Installation du sous-module
     geonature modulator install m_sipaf

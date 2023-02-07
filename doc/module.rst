@@ -25,11 +25,11 @@ Commandes
 
 - ``geonature modulator install <module_code>``
   - installe le module
-    - fait un lien symbolique des fichiers alembic vers le repertoire <gn_modules>/migrations_versions
+    - fait un lien symbolique des fichiers alembic vers le repertoire <gn_modulator>/migrations_versions
     - joue la migration alembic upgrade de la branche ``<module_code>``
 
 - ``geonature modulator remove <module_code>``
   - supprime le module
     - joue la migration alembic downgrade de la branche ``<module_code>``
-    - supprime les liens symbloques liés à ce module dans le répertoire ``<gn_modules>/migrations_versions``
+    - supprime les liens symbloques liés à ce module dans le répertoire ``<gn_modulator>/migrations_versions``
 

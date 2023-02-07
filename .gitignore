@@ -5,13 +5,13 @@ node_modules
 config/modules/externals/*
 # !config/modules/contrib/*
 
-backend/gn_modules/migrations/data/m_*
+backend/gn_modulator/migrations/data/m_*
 
 frontend/app/module.config.ts
 
 #!migrations/data/*.sql
-backend/gn_modules/migrations/versions/*
-!backend/gn_modules/migrations/versions/*_gn_modules.py
+backend/gn_modulator/migrations/versions/*
+!backend/gn_modulator/migrations/versions/*_gn_modulator.py
 
 !.gitkeep
 

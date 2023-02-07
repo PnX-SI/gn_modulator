@@ -25,16 +25,16 @@ La commande suivante permet d'installer des sous-modules
 
 ``geonature modulator install <module_code>``
 
-Il faut au préalable placer la configuration du sous-module dans le dossier ``<gn_modules>/config/modules``
+Il faut au préalable placer la configuration du sous-module dans le dossier ``<gn_modulator>/config/modules``
 
-* idéalement dans le dossier ``<gn_modules>/config/modules/externals`` pour les sous-modules externes
+* idéalement dans le dossier ``<gn_modulator>/config/modules/externals`` pour les sous-modules externes
 * cela peut être une copie ou un lien symbolique vers le dossier
 * le formalisme pour les codes des sous-modules est le suivante
     * en minuscule
     * preffixé par ``m_``
     * par exemple ``m_sipaf``, ``m_monitoring``, ``m_protocol_test``
 
-Des sous-modules sont déjà présents dans le dossier ``<gn_modules>/config/modules/contrib``
+Des sous-modules sont déjà présents dans le dossier ``<gn_modulator>/config/modules/contrib``
 
 * Le module gestionnaire de site
     * ``geonature modulator install m_monitoring``

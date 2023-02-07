@@ -6,7 +6,7 @@ testpaths = [
 
 [tool.coverage.run]
 source = [
-    "gn_modules",
+    "gn_modulator",
 ]
 omit = [
     "*/tests/*",

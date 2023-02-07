@@ -36,7 +36,7 @@ chargement / sauvegarde du schema
 - depuis la base:
   - lecture / ecriture
   - ?? ou stocker les schemas,
-    - 'gn_modules.t_schemas' en jsonb
+    - 'gn_modulator.t_schemas' en jsonb
     - manque de maturité mais intéressant plus tard
 
 validation

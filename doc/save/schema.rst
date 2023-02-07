@@ -66,7 +66,7 @@ Un exemple
         "$meta": {
             "name": "example",
             "module": "test",
-            "description": "Objet Example pour le sous module Test, permet de démontrer la viabilité de gn_modules",
+            "description": "Objet Example pour le sous module Test, permet de démontrer la viabilité de gn_modulator",
             "label": "exemple",
             "genre" : "M"
         },

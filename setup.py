@@ -11,24 +11,24 @@ with (root_dir / "requirements.in").open() as f:
     requirements = f.read().splitlines()
 
 setuptools.setup(
-    name="gn_modules",
+    name="gn_modulator",
     version=version,
     description="Module de modules",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     maintainer="PNX",
-    url="https://github.com/joelclems/gn_modules",
+    url="https://github.com/joelclems/gn_modulator",
     packages=setuptools.find_packages("backend"),
     package_dir={"": "backend"},
-    package_data={"gn_modules.migrations": ["data/*.sql", "data/**/*.sql"]},
+    package_data={"gn_modulator.migrations": ["data/*.sql", "data/**/*.sql"]},
     install_requires=requirements,
     entry_points={
         "gn_module": [
-            "code = gn_modules:MODULE_CODE",
-            "picto = gn_modules:MODULE_PICTO",
-            "blueprint = gn_modules.blueprint:blueprint",
-            "migrations = gn_modules.migrations:versions",
-            "config_schema = gn_modules.conf_schema_toml:GnModuleSchemaConf",
+            "code = gn_modulator:MODULE_CODE",
+            "picto = gn_modulator:MODULE_PICTO",
+            "blueprint = gn_modulator.blueprint:blueprint",
+            "migrations = gn_modulator.migrations:versions",
+            "config_schema = gn_modulator.conf_schema_toml:GnModuleSchemaConf",
         ],
     },
     classifiers=[

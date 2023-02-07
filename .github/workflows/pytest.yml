@@ -44,7 +44,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-        - name: Clone gn_modules repository
+        - name: Clone gn_modulator repository
           uses: actions/checkout@v3
           with:
             submodules: recursive
@@ -156,7 +156,7 @@ jobs:
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
-        - name: Pytest gn_modules
+        - name: Pytest gn_modulator
           run: pytest -v --cov --cov-report xml
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml

@@ -1,5 +1,5 @@
 {
-  "name": "gn_modules",
+  "name": "gn_modulator",
   "version": "0.0.1",
   "description": "Module de modules",
   "main": "index.js",

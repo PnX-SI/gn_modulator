@@ -18,7 +18,7 @@ Les schemas
 ========
 
 - ``schema_code`` : nom du schema
-- ``slq_processing``: le sql est généré par gn_modules
+- ``slq_processing``: le sql est généré par gn_modulator
 - ``sql_schema_dot_table``: table dans la base postgres
 - ``label``: Nom utilisé en frontend
 - ``labels``: *optionel*, nom utilisé pour le pluriel

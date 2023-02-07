@@ -12,7 +12,7 @@ from sqlalchemy.sql import text
 revision = "24b87ae8f733"
 down_revision = None
 branch_labels = "m_monitoring"
-depends_on = "modules"
+depends_on = "modulator"
 
 
 def upgrade():
@@ -20,7 +20,7 @@ def upgrade():
     sql_files = ["m_monitoring/schema.sql"]
     for sql_file in sql_files:
         operations = pkg_resources.resource_string(
-            "gn_modules.migrations", f"data/{sql_file}"
+            "gn_modulator.migrations", f"data/{sql_file}"
         ).decode("utf-8")
         op.get_bind().execute(text(operations))
 
@@ -30,6 +30,6 @@ def downgrade():
     sql_files = ["m_monitoring/reset.sql"]
     for sql_file in sql_files:
         operations = pkg_resources.resource_string(
-            "gn_modules.migrations", f"data/{sql_file}"
+            "gn_modulator.migrations", f"data/{sql_file}"
         ).decode("utf-8")
         op.get_bind().execute(text(operations))

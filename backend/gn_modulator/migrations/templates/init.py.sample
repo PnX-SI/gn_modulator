@@ -1,0 +1,34 @@
+'''init sous-module {{module_code.lower()}}
+
+Revision ID: {{revision_id}}
+Create Date: {{revision_date}}
+'''
+
+import pkg_resources
+from alembic import op
+from sqlalchemy.sql import text
+from gn_modulator.module import ModuleMethods
+
+# revision identifiers, used by Alembic.
+revision = '{{ revision_id}}'
+down_revision = None
+branch_labels = ('{{ module_code.lower() }}')
+depends_on = ('modules')
+
+
+def upgrade():
+
+
+    # Creation du schema assiocié au module {{module_code}}
+    sql_files = ['{{module_code.lower()}}/schema.sql']
+    for sql_file in sql_files:
+        operations = pkg_resources.resource_string("gn_modulator.migrations", f"data/{sql_file}").decode('utf-8')
+        op.get_bind().execute(text(operations))
+
+def downgrade():
+
+    # Suppression du schema associé au module {{module_code}}
+    sql_files = ['{{module_code.lower()}}/reset.sql']
+    for sql_file in sql_files:
+        operations = pkg_resources.resource_string("gn_modulator.migrations", f"data/{sql_file}").decode('utf-8')
+        op.get_bind().execute(text(operations))

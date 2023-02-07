@@ -110,9 +110,9 @@ La validation des étapes 1 et 2 devrait assurer la pérénité du projet.
 - **configuration**:
   - pouvoir stocker la version du sous module, la version requise du module, de gn (fourchette)
 - **SQL**
-  - [ ] Utilisation d'alembic, pour créer / mettre à jour (surement plus difficile) les schema de gn_modules / des sous modules
+  - [ ] Utilisation d'alembic, pour créer / mettre à jour (surement plus difficile) les schema de gn_modulator / des sous modules
 - **backend** :
-  - [ ] test compatibilité en versions GN / gn_modules / sous-module
+  - [ ] test compatibilité en versions GN / gn_modulator / sous-module
 
 ### étape 5 : pouvoir créer un module et gérer la configuration depuis le navigateur (mode admin)
 - **configuration** :

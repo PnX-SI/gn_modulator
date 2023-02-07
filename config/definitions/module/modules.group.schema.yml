@@ -5,7 +5,7 @@ description: Définition du schema des groupes de sous-modules
 
 meta:
     sql_processing: true
-    sql_schema_dot_table: gn_modules.t_module_groups
+    sql_schema_dot_table: gn_modulator.t_module_groups
     label: Groupe de modules
     labels: Groupes de modules
     label_field_name: name
@@ -31,6 +31,6 @@ properties:
         relation_type: n-n
         title: modules
         description: Liste des modules du groupe
-        schema_dot_table: gn_modules.cor_module_groupe
+        schema_dot_table: gn_modulator.cor_module_groupe
         schema_code: commons.module
         backref: groups

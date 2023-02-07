@@ -7,13 +7,13 @@ Create Date: 2023-02-01 12:48:24.613956
 import pkg_resources
 from alembic import op
 from sqlalchemy.sql import text
-from gn_modules.module import ModuleMethods
+from gn_modulator.module import ModuleMethods
 
 # revision identifiers, used by Alembic.
 revision = "ecde20d34f25"
 down_revision = None
 branch_labels = "m_sipaf"
-depends_on = "modules"
+depends_on = "modulator"
 
 
 def upgrade():
@@ -21,7 +21,7 @@ def upgrade():
     sql_files = ["m_sipaf/schema.sql"]
     for sql_file in sql_files:
         operations = pkg_resources.resource_string(
-            "gn_modules.migrations", f"data/{sql_file}"
+            "gn_modulator.migrations", f"data/{sql_file}"
         ).decode("utf-8")
         op.get_bind().execute(text(operations))
 
@@ -31,6 +31,6 @@ def downgrade():
     sql_files = ["m_sipaf/reset.sql"]
     for sql_file in sql_files:
         operations = pkg_resources.resource_string(
-            "gn_modules.migrations", f"data/{sql_file}"
+            "gn_modulator.migrations", f"data/{sql_file}"
         ).decode("utf-8")
         op.get_bind().execute(text(operations))
