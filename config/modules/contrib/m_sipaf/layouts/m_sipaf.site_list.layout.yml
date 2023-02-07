@@ -28,7 +28,13 @@ layout:
       - direction: row
         items:
           - code: utils.button_create
-          - title: 'EXPORT'
+            flex: "0"
+          - flex: "0"
+            type: object
+            display: export
+            icon: file
+            key: pf
+            export_code: m_sipaf.pf
         flex: "0"
       - type: object
         flex: 2
