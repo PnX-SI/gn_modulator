@@ -5,7 +5,7 @@ description: Définition du schema des visite de monitoring
 
 meta:
   sql_processing: true
-  sql_schema_dot_table: m_monitoring.t_visits
+  sql_schema_dot_table: pr_monitoring.t_visits
   genre: F
   label: visite
   label_field_name: date_min
@@ -71,7 +71,7 @@ properties:
     schema_code: user.role
     title: Observateurs
     description: Observateurs liés à la visite
-    schema_dot_table: m_monitoring.cor_visit_observer
+    schema_dot_table: pr_monitoring.cor_visit_observer
   id_dataset:
     type: integer
     foreign_key: true

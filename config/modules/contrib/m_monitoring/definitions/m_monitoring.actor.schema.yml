@@ -8,7 +8,7 @@ required:
     - id_nomenclature_type_actor
 meta:
     sql_processing: true
-    sql_schema_dot_table: m_monitoring.cor_site_actor
+    sql_schema_dot_table: pr_monitoring.cor_site_actor
     genre: M
     label: Acteur
     label_field_name: id_nomenclature_role_actor

@@ -9,7 +9,7 @@ required:
 meta:
     schema_code: m_sipaf.actor
     sql_processing: true
-    sql_schema_dot_table: m_sipaf.cor_actor_pf
+    sql_schema_dot_table: pr_sipaf.cor_actor_pf
     genre: M
     label: Acteur
     label_field_name: id_nomenclature_type_actor

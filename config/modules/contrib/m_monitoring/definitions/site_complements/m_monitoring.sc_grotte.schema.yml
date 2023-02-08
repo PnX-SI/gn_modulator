@@ -8,7 +8,7 @@ description: >
 meta:
     schema_code: m_monitoring.sc_grotte
     sql_processing: true
-    sql_schema_dot_table: m_monitoring.sc_grotte
+    sql_schema_dot_table: pr_monitoring.sc_grotte
     genre: M
     label: Donnée grotte
     labels: Données grotte

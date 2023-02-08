@@ -3,7 +3,7 @@ code: m_monitoring.cor_site_module
 title: Schema cor_site_module
 description: Définition du schema de la relation cor_site_module
 meta:
-  sql_schema_dot_table: m_monitoring.cor_site_module
+  sql_schema_dot_table: pr_monitoring.cor_site_module
   label: Lien sites modules
   label_field_name: id_site
   genre: M

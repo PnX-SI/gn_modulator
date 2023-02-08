@@ -285,5 +285,5 @@ site_form_fields:
       - type: dyn_form
         key: medias
         type_widget: medias
-        schema_dot_table: m_sipaf.t_passages_faune
+        schema_dot_table: pr_sipaf.t_passages_faune
         details: []

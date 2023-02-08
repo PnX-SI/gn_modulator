@@ -7,7 +7,7 @@ description: >
 
 meta:
     sql_processing: true
-    sql_schema_dot_table: m_monitoring.sc_arbre_loge
+    sql_schema_dot_table: pr_monitoring.sc_arbre_loge
     genre: M
     label: Donnée arbre à loge
     labels: Données arbre à loge

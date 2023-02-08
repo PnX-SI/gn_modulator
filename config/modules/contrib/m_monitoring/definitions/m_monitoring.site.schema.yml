@@ -5,7 +5,7 @@ description: Définition du schema des sites de monitoring
 
 meta:
   sql_processing: true
-  sql_schema_dot_table: m_monitoring.t_sites
+  sql_schema_dot_table: pr_monitoring.t_sites
   genre: M
   label: site
   label_field_name: name
@@ -138,14 +138,14 @@ properties:
       schema_code: m_monitoring.site_group
       title: Groupes de sites
       description: Groupes de sites associés au site
-      schema_dot_table: m_monitoring.cor_site_group
+      schema_dot_table: pr_monitoring.cor_site_group
   modules:
       type: relation
       relation_type: n-n
       schema_code: commons.module
       title: Modules
       description: Modules associé au site
-      # schema_dot_table: m_monitoring.cor_site_module
+      # schema_dot_table: pr_monitoring.cor_site_module
       cor_schema_code: m_monitoring.cor_site_module
       backref: sites
   areas:
@@ -153,7 +153,7 @@ properties:
       title: Areas
       relation_type: n-n
       schema_code: ref_geo.area
-      schema_dot_table: m_monitoring.cor_area_site
+      schema_dot_table: pr_monitoring.cor_area_site
       trigger:
           name: intersect_ref_geo
           key: geom_local
@@ -163,7 +163,7 @@ properties:
       title: Linéaires
       relation_type: n-n
       schema_code: ref_geo.linear
-      schema_dot_table: m_monitoring.cor_linear_site
+      schema_dot_table: pr_monitoring.cor_linear_site
       trigger:
           name: d_within
           distance: 100

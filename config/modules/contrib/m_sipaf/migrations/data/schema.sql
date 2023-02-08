@@ -3,13 +3,13 @@
 -- and dependencies : m_sipaf.actor
 
 
----- sql schema m_sipaf
+---- sql schema pr_sipaf
 
-CREATE SCHEMA IF NOT EXISTS m_sipaf;
+CREATE SCHEMA IF NOT EXISTS pr_sipaf;
 
----- table m_sipaf.t_passages_faune
+---- table pr_sipaf.t_passages_faune
 
-CREATE TABLE m_sipaf.t_passages_faune (
+CREATE TABLE pr_sipaf.t_passages_faune (
     id_passage_faune SERIAL NOT NULL,
     code_passage_faune VARCHAR NOT NULL,
     uuid_passage_faune UUID NOT NULL DEFAULT public.uuid_generate_v4(),
@@ -39,36 +39,36 @@ CREATE TABLE m_sipaf.t_passages_faune (
     source VARCHAR
 );
 
-COMMENT ON COLUMN m_sipaf.t_passages_faune.code_passage_faune IS 'Code permettant d''identifier le passage à faune de manière unique (texte)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.uuid_passage_faune IS 'Identifiant universel unique au format uuid (uuid_pf)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.pi_ou_ps IS 'Positionnement du passage vis-à vis de l’infrastructure (inférieur (False) ou supérieur (True))';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.geom IS 'Geometrie du passage faune (SRID=4326)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.geom_local IS 'Géométrie locale du passage faune (SRID=2154)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.pk IS 'Point kilométrique';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.pr IS 'Point repère';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.pr_abs IS 'Distance en abscisse curviligne depuis le dernier PR';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.code_ouvrage_gestionnaire IS 'Code de l’ouvrage (pour le gestionnaire)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.nom_usuel_passage_faune IS 'Nom usuel utilisé pour dénommer l''ouvrage (nom_usuel_pf)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.issu_requalification IS 'L''ouvrage est issu d''une opération de requalification ?';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.date_creation_ouvrage IS 'Date de la réalisation de l''ouvrage';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.date_requalification_ouvrage IS 'Date de la requalification de l''ouvrage';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.largeur_ouvrage IS 'Largeur de l''ouvrage en mètre';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.hauteur_ouvrage IS 'Hauteur de l''ouvrage en mètre';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.longueur_franchissement IS 'Longueur de franchissement de l''ouvrage en mètres (ne prend pas en compte l''épaisseur des matériaux et éventuels obstacles)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.diametre IS 'Diamètre de la buse en mètre';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.largeur_dispo_faune IS 'Largeur de l''ouvrage effectivement disponible pour la faune en mètre';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.hauteur_dispo_faune IS 'Hauteur de l''ouvrage effectivement disponible pour la faune en mètre';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.id_nomenclature_ouvrage_specificite IS 'Exclusivité pour le passage faune (specificite)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.ouvrage_hydrau IS 'Ouvrage hydraulique ou non';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_position IS 'Ouvrage hydraulique Position (ouvrage_hydrau_position)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_banq_caract IS 'Caractérisation de la baquette dans le cas d''un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_banq_type IS 'Type de la baquette dans le cas d''un ouvrage hydraulique (ouvrage_hydrau_type_banquette)';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.ouvrag_hydrau_tirant_air IS ' Tirant d''air existant entre la banquette et le plafond de l''ouvrage, en mètre';
-COMMENT ON COLUMN m_sipaf.t_passages_faune.source IS 'Source de la donnée';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.code_passage_faune IS 'Code permettant d''identifier le passage à faune de manière unique (texte)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.uuid_passage_faune IS 'Identifiant universel unique au format uuid (uuid_pf)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.pi_ou_ps IS 'Positionnement du passage vis-à vis de l’infrastructure (inférieur (False) ou supérieur (True))';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.geom IS 'Geometrie du passage faune (SRID=4326)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.geom_local IS 'Géométrie locale du passage faune (SRID=2154)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.pk IS 'Point kilométrique';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.pr IS 'Point repère';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.pr_abs IS 'Distance en abscisse curviligne depuis le dernier PR';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.code_ouvrage_gestionnaire IS 'Code de l’ouvrage (pour le gestionnaire)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.nom_usuel_passage_faune IS 'Nom usuel utilisé pour dénommer l''ouvrage (nom_usuel_pf)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.issu_requalification IS 'L''ouvrage est issu d''une opération de requalification ?';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.date_creation_ouvrage IS 'Date de la réalisation de l''ouvrage';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.date_requalification_ouvrage IS 'Date de la requalification de l''ouvrage';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.largeur_ouvrage IS 'Largeur de l''ouvrage en mètre';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.hauteur_ouvrage IS 'Hauteur de l''ouvrage en mètre';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.longueur_franchissement IS 'Longueur de franchissement de l''ouvrage en mètres (ne prend pas en compte l''épaisseur des matériaux et éventuels obstacles)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.diametre IS 'Diamètre de la buse en mètre';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.largeur_dispo_faune IS 'Largeur de l''ouvrage effectivement disponible pour la faune en mètre';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.hauteur_dispo_faune IS 'Hauteur de l''ouvrage effectivement disponible pour la faune en mètre';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_specificite IS 'Exclusivité pour le passage faune (specificite)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.ouvrage_hydrau IS 'Ouvrage hydraulique ou non';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_position IS 'Ouvrage hydraulique Position (ouvrage_hydrau_position)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_banq_caract IS 'Caractérisation de la baquette dans le cas d''un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_banq_type IS 'Type de la baquette dans le cas d''un ouvrage hydraulique (ouvrage_hydrau_type_banquette)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.ouvrag_hydrau_tirant_air IS ' Tirant d''air existant entre la banquette et le plafond de l''ouvrage, en mètre';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.source IS 'Source de la donnée';
 
----- table m_sipaf.cor_actor_pf
+---- table pr_sipaf.cor_actor_pf
 
-CREATE TABLE m_sipaf.cor_actor_pf (
+CREATE TABLE pr_sipaf.cor_actor_pf (
     id_actor SERIAL NOT NULL,
     id_passage_faune INTEGER NOT NULL,
     id_organism INTEGER,
@@ -78,99 +78,99 @@ CREATE TABLE m_sipaf.cor_actor_pf (
 
 
 
-ALTER TABLE m_sipaf.t_passages_faune ADD CONSTRAINT unique_m_sipaf_t_passages_faune_code_passage_faune UNIQUE(code_passage_faune);
----- m_sipaf.t_passages_faune primary key constraint
+ALTER TABLE pr_sipaf.t_passages_faune ADD CONSTRAINT unique_pr_sipaf_t_passages_faune_code_passage_faune UNIQUE(code_passage_faune);
+---- pr_sipaf.t_passages_faune primary key constraint
 
-ALTER TABLE m_sipaf.t_passages_faune
-    ADD CONSTRAINT pk_m_sipaf_t_passages_faune_id_passage_faune PRIMARY KEY (id_passage_faune);
-
-
----- m_sipaf.cor_actor_pf primary key constraint
-
-ALTER TABLE m_sipaf.cor_actor_pf
-    ADD CONSTRAINT pk_m_sipaf_cor_actor_pf_id_actor PRIMARY KEY (id_actor);
+ALTER TABLE pr_sipaf.t_passages_faune
+    ADD CONSTRAINT pk_pr_sipaf_t_passages_faune_id_passage_faune PRIMARY KEY (id_passage_faune);
 
 
----- m_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_specificite
+---- pr_sipaf.cor_actor_pf primary key constraint
 
-ALTER TABLE m_sipaf.t_passages_faune
-    ADD CONSTRAINT fk_m_sipaf_t_pas_t_nom_id_nomenclature_ouvrage_specificite FOREIGN KEY (id_nomenclature_ouvrage_specificite)
+ALTER TABLE pr_sipaf.cor_actor_pf
+    ADD CONSTRAINT pk_pr_sipaf_cor_actor_pf_id_actor PRIMARY KEY (id_actor);
+
+
+---- pr_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_specificite
+
+ALTER TABLE pr_sipaf.t_passages_faune
+    ADD CONSTRAINT fk_pr_sipaf_t_pas_t_nom_id_nomenclature_ouvrage_specificite FOREIGN KEY (id_nomenclature_ouvrage_specificite)
     REFERENCES ref_nomenclatures.t_nomenclatures(id_nomenclature)
     ON UPDATE CASCADE ON DELETE SET NULL;
 
----- m_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_hydrau_position
+---- pr_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_hydrau_position
 
-ALTER TABLE m_sipaf.t_passages_faune
-    ADD CONSTRAINT fk_m_sipaf_t_pas_t_nom_id_nomenclature_ouvrage_hydrau_position FOREIGN KEY (id_nomenclature_ouvrage_hydrau_position)
+ALTER TABLE pr_sipaf.t_passages_faune
+    ADD CONSTRAINT fk_pr_sipaf_t_pas_t_nom_id_nomenclature_ouvrage_hydrau_position FOREIGN KEY (id_nomenclature_ouvrage_hydrau_position)
     REFERENCES ref_nomenclatures.t_nomenclatures(id_nomenclature)
     ON UPDATE CASCADE ON DELETE SET NULL;
 
----- m_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_hydrau_banq_caract
+---- pr_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_hydrau_banq_caract
 
-ALTER TABLE m_sipaf.t_passages_faune
-    ADD CONSTRAINT fk_m_sipaf_t_pas_t_nom_id_nomenclature_ouvrage_hydrau_banq_caract FOREIGN KEY (id_nomenclature_ouvrage_hydrau_banq_caract)
+ALTER TABLE pr_sipaf.t_passages_faune
+    ADD CONSTRAINT fk_pr_sipaf_t_pas_t_nom_id_nomenclature_ouvrage_hydrau_banq_caract FOREIGN KEY (id_nomenclature_ouvrage_hydrau_banq_caract)
     REFERENCES ref_nomenclatures.t_nomenclatures(id_nomenclature)
     ON UPDATE CASCADE ON DELETE SET NULL;
 
----- m_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_hydrau_banq_type
+---- pr_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_hydrau_banq_type
 
-ALTER TABLE m_sipaf.t_passages_faune
-    ADD CONSTRAINT fk_m_sipaf_t_pas_t_nom_id_nomenclature_ouvrage_hydrau_banq_type FOREIGN KEY (id_nomenclature_ouvrage_hydrau_banq_type)
+ALTER TABLE pr_sipaf.t_passages_faune
+    ADD CONSTRAINT fk_pr_sipaf_t_pas_t_nom_id_nomenclature_ouvrage_hydrau_banq_type FOREIGN KEY (id_nomenclature_ouvrage_hydrau_banq_type)
     REFERENCES ref_nomenclatures.t_nomenclatures(id_nomenclature)
     ON UPDATE CASCADE ON DELETE SET NULL;
 
 
----- m_sipaf.cor_actor_pf foreign key constraint id_passage_faune
+---- pr_sipaf.cor_actor_pf foreign key constraint id_passage_faune
 
-ALTER TABLE m_sipaf.cor_actor_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_a_t_pas_id_passage_faune FOREIGN KEY (id_passage_faune)
-    REFERENCES m_sipaf.t_passages_faune(id_passage_faune)
+ALTER TABLE pr_sipaf.cor_actor_pf
+    ADD CONSTRAINT fk_pr_sipaf_cor_a_t_pas_id_passage_faune FOREIGN KEY (id_passage_faune)
+    REFERENCES pr_sipaf.t_passages_faune(id_passage_faune)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
----- m_sipaf.cor_actor_pf foreign key constraint id_organism
+---- pr_sipaf.cor_actor_pf foreign key constraint id_organism
 
-ALTER TABLE m_sipaf.cor_actor_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_a_bib_o_id_organism FOREIGN KEY (id_organism)
+ALTER TABLE pr_sipaf.cor_actor_pf
+    ADD CONSTRAINT fk_pr_sipaf_cor_a_bib_o_id_organism FOREIGN KEY (id_organism)
     REFERENCES utilisateurs.bib_organismes(id_organisme)
     ON UPDATE CASCADE ON DELETE SET NULL;
 
----- m_sipaf.cor_actor_pf foreign key constraint id_role
+---- pr_sipaf.cor_actor_pf foreign key constraint id_role
 
-ALTER TABLE m_sipaf.cor_actor_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_a_t_rol_id_role FOREIGN KEY (id_role)
+ALTER TABLE pr_sipaf.cor_actor_pf
+    ADD CONSTRAINT fk_pr_sipaf_cor_a_t_rol_id_role FOREIGN KEY (id_role)
     REFERENCES utilisateurs.t_roles(id_role)
     ON UPDATE CASCADE ON DELETE SET NULL;
 
----- m_sipaf.cor_actor_pf foreign key constraint id_nomenclature_type_actor
+---- pr_sipaf.cor_actor_pf foreign key constraint id_nomenclature_type_actor
 
-ALTER TABLE m_sipaf.cor_actor_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_a_t_nom_id_nomenclature_type_actor FOREIGN KEY (id_nomenclature_type_actor)
+ALTER TABLE pr_sipaf.cor_actor_pf
+    ADD CONSTRAINT fk_pr_sipaf_cor_a_t_nom_id_nomenclature_type_actor FOREIGN KEY (id_nomenclature_type_actor)
     REFERENCES ref_nomenclatures.t_nomenclatures(id_nomenclature)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 ---- nomenclature check type constraints
 
-ALTER TABLE m_sipaf.t_passages_faune
-        ADD CONSTRAINT check_nom_type_m_sipaf_t_passages_faune_id_ite_pf_ite
+ALTER TABLE pr_sipaf.t_passages_faune
+        ADD CONSTRAINT check_nom_type_pr_sipaf_t_passages_faune_id_ite_pf_ite
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_ouvrage_specificite,'PF_OUVRAGE_SPECIFICITE'))
         NOT VALID;
 
 
-ALTER TABLE m_sipaf.t_passages_faune
-        ADD CONSTRAINT check_nom_type_m_sipaf_t_passages_faune_id_ion_pf_ion
+ALTER TABLE pr_sipaf.t_passages_faune
+        ADD CONSTRAINT check_nom_type_pr_sipaf_t_passages_faune_id_ion_pf_ion
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_ouvrage_hydrau_position,'PF_OUVRAGE_HYDRAULIQUE_POSITION'))
         NOT VALID;
 
 
-ALTER TABLE m_sipaf.t_passages_faune
-        ADD CONSTRAINT check_nom_type_m_sipaf_t_passages_faune_id_act_pf_act
+ALTER TABLE pr_sipaf.t_passages_faune
+        ADD CONSTRAINT check_nom_type_pr_sipaf_t_passages_faune_id_act_pf_act
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_ouvrage_hydrau_banq_caract,'PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT'))
         NOT VALID;
 
 
-ALTER TABLE m_sipaf.t_passages_faune
-        ADD CONSTRAINT check_nom_type_m_sipaf_t_passages_faune_id_ype_pf_ype
+ALTER TABLE pr_sipaf.t_passages_faune
+        ADD CONSTRAINT check_nom_type_pr_sipaf_t_passages_faune_id_ype_pf_ype
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_ouvrage_hydrau_banq_type,'PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE'))
         NOT VALID;
 
@@ -178,151 +178,127 @@ ALTER TABLE m_sipaf.t_passages_faune
 
 ---- nomenclature check type constraints
 
-ALTER TABLE m_sipaf.cor_actor_pf
-        ADD CONSTRAINT check_nom_type_m_sipaf_cor_actor_pf_id_tor_pf_tor
+ALTER TABLE pr_sipaf.cor_actor_pf
+        ADD CONSTRAINT check_nom_type_pr_sipaf_cor_actor_pf_id_tor_pf_tor
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_type_actor,'PF_TYPE_ACTOR'))
         NOT VALID;
 
 
 
--- cor m_sipaf.cor_pf_nomenclature_ouvrage_type
+-- cor pr_sipaf.cor_pf_nomenclature_ouvrage_type
 
-CREATE TABLE IF NOT EXISTS m_sipaf.cor_pf_nomenclature_ouvrage_type (
+CREATE TABLE IF NOT EXISTS pr_sipaf.cor_pf_nomenclature_ouvrage_type (
     id_passage_faune INTEGER NOT NULL NOT NULL,
     id_nomenclature INTEGER NOT NULL NOT NULL
 );
 
 
----- m_sipaf.cor_pf_nomenclature_ouvrage_type primary keys contraints
+---- pr_sipaf.cor_pf_nomenclature_ouvrage_type primary keys contraints
 
-ALTER TABLE m_sipaf.cor_pf_nomenclature_ouvrage_type
-    ADD CONSTRAINT pk_m_sipaf_cor_pf_nomenclature_ouvrage_type_id_passage_faune_id_nomenclature PRIMARY KEY (id_passage_faune, id_nomenclature);
+ALTER TABLE pr_sipaf.cor_pf_nomenclature_ouvrage_type
+    ADD CONSTRAINT pk_pr_sipaf_cor_pf_nomenclature_ouvrage_type_id_passage_faune_id_nomenclature PRIMARY KEY (id_passage_faune, id_nomenclature);
 
----- m_sipaf.cor_pf_nomenclature_ouvrage_type foreign keys contraints
+---- pr_sipaf.cor_pf_nomenclature_ouvrage_type foreign keys contraints
 
-ALTER TABLE m_sipaf.cor_pf_nomenclature_ouvrage_type
-    ADD CONSTRAINT fk_m_sipaf_cor_pf_nomenclature_ouvrage_type_id_passage_faune FOREIGN KEY (id_passage_faune)
-    REFERENCES m_sipaf.t_passages_faune (id_passage_faune)
+ALTER TABLE pr_sipaf.cor_pf_nomenclature_ouvrage_type
+    ADD CONSTRAINT fk_pr_sipaf_cor_pf_nomenclature_ouvrage_type_id_passage_faune FOREIGN KEY (id_passage_faune)
+    REFERENCES pr_sipaf.t_passages_faune (id_passage_faune)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE m_sipaf.cor_pf_nomenclature_ouvrage_type
-    ADD CONSTRAINT fk_m_sipaf_cor_pf_nomenclature_ouvrage_type_id_nomenclature FOREIGN KEY (id_nomenclature)
+ALTER TABLE pr_sipaf.cor_pf_nomenclature_ouvrage_type
+    ADD CONSTRAINT fk_pr_sipaf_cor_pf_nomenclature_ouvrage_type_id_nomenclature FOREIGN KEY (id_nomenclature)
     REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE m_sipaf.cor_pf_nomenclature_ouvrage_type
-        ADD CONSTRAINT check_nom_type_m_sipaf_cor_pf_nomenclature_ouvrage_type_id_ure_pf_ype
+ALTER TABLE pr_sipaf.cor_pf_nomenclature_ouvrage_type
+        ADD CONSTRAINT check_nom_type_pr_sipaf_cor_pf_nomenclature_ouvrage_type_id_ure_pf_ype
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature,'PF_OUVRAGE_TYPE'))
         NOT VALID;
 
--- cor m_sipaf.cor_pf_nomenclature_ouvrage_materiaux
+-- cor pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux
 
-CREATE TABLE IF NOT EXISTS m_sipaf.cor_pf_nomenclature_ouvrage_materiaux (
+CREATE TABLE IF NOT EXISTS pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux (
     id_passage_faune INTEGER NOT NULL NOT NULL,
     id_nomenclature INTEGER NOT NULL NOT NULL
 );
 
 
----- m_sipaf.cor_pf_nomenclature_ouvrage_materiaux primary keys contraints
+---- pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux primary keys contraints
 
-ALTER TABLE m_sipaf.cor_pf_nomenclature_ouvrage_materiaux
-    ADD CONSTRAINT pk_m_sipaf_cor_pf_nomenclature_ouvrage_materiaux_id_passage_faune_id_nomenclature PRIMARY KEY (id_passage_faune, id_nomenclature);
+ALTER TABLE pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux
+    ADD CONSTRAINT pk_pr_sipaf_cor_pf_nomenclature_ouvrage_materiaux_id_passage_faune_id_nomenclature PRIMARY KEY (id_passage_faune, id_nomenclature);
 
----- m_sipaf.cor_pf_nomenclature_ouvrage_materiaux foreign keys contraints
+---- pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux foreign keys contraints
 
-ALTER TABLE m_sipaf.cor_pf_nomenclature_ouvrage_materiaux
-    ADD CONSTRAINT fk_m_sipaf_cor_pf_nomenclature_ouvrage_materiaux_id_passage_faune FOREIGN KEY (id_passage_faune)
-    REFERENCES m_sipaf.t_passages_faune (id_passage_faune)
+ALTER TABLE pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux
+    ADD CONSTRAINT fk_pr_sipaf_cor_pf_nomenclature_ouvrage_materiaux_id_passage_faune FOREIGN KEY (id_passage_faune)
+    REFERENCES pr_sipaf.t_passages_faune (id_passage_faune)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE m_sipaf.cor_pf_nomenclature_ouvrage_materiaux
-    ADD CONSTRAINT fk_m_sipaf_cor_pf_nomenclature_ouvrage_materiaux_id_nomenclature FOREIGN KEY (id_nomenclature)
+ALTER TABLE pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux
+    ADD CONSTRAINT fk_pr_sipaf_cor_pf_nomenclature_ouvrage_materiaux_id_nomenclature FOREIGN KEY (id_nomenclature)
     REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE m_sipaf.cor_pf_nomenclature_ouvrage_materiaux
-        ADD CONSTRAINT check_nom_type_m_sipaf_cor_pf_nomenclature_ouvrage_materiaux_id_ure_pf_aux
+ALTER TABLE pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux
+        ADD CONSTRAINT check_nom_type_pr_sipaf_cor_pf_nomenclature_ouvrage_materiaux_id_ure_pf_aux
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature,'PF_OUVRAGE_MATERIAUX'))
         NOT VALID;
 
--- cor m_sipaf.cor_area_pf
+-- cor pr_sipaf.cor_area_pf
 
-CREATE TABLE IF NOT EXISTS m_sipaf.cor_area_pf (
+CREATE TABLE IF NOT EXISTS pr_sipaf.cor_area_pf (
     id_passage_faune INTEGER NOT NULL NOT NULL,
     id_area INTEGER NOT NULL NOT NULL
 );
 
 
----- m_sipaf.cor_area_pf primary keys contraints
+---- pr_sipaf.cor_area_pf primary keys contraints
 
-ALTER TABLE m_sipaf.cor_area_pf
-    ADD CONSTRAINT pk_m_sipaf_cor_area_pf_id_passage_faune_id_area PRIMARY KEY (id_passage_faune, id_area);
+ALTER TABLE pr_sipaf.cor_area_pf
+    ADD CONSTRAINT pk_pr_sipaf_cor_area_pf_id_passage_faune_id_area PRIMARY KEY (id_passage_faune, id_area);
 
----- m_sipaf.cor_area_pf foreign keys contraints
+---- pr_sipaf.cor_area_pf foreign keys contraints
 
-ALTER TABLE m_sipaf.cor_area_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_area_pf_id_passage_faune FOREIGN KEY (id_passage_faune)
-    REFERENCES m_sipaf.t_passages_faune (id_passage_faune)
+ALTER TABLE pr_sipaf.cor_area_pf
+    ADD CONSTRAINT fk_pr_sipaf_cor_area_pf_id_passage_faune FOREIGN KEY (id_passage_faune)
+    REFERENCES pr_sipaf.t_passages_faune (id_passage_faune)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE m_sipaf.cor_area_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_area_pf_id_area FOREIGN KEY (id_area)
+ALTER TABLE pr_sipaf.cor_area_pf
+    ADD CONSTRAINT fk_pr_sipaf_cor_area_pf_id_area FOREIGN KEY (id_area)
     REFERENCES ref_geo.l_areas (id_area)
     ON UPDATE CASCADE ON DELETE CASCADE;
--- cor m_sipaf.cor_linear_pf
+-- cor pr_sipaf.cor_linear_pf
 
-CREATE TABLE IF NOT EXISTS m_sipaf.cor_linear_pf (
+CREATE TABLE IF NOT EXISTS pr_sipaf.cor_linear_pf (
     id_passage_faune INTEGER NOT NULL NOT NULL,
     id_linear INTEGER NOT NULL NOT NULL
 );
 
 
----- m_sipaf.cor_linear_pf primary keys contraints
+---- pr_sipaf.cor_linear_pf primary keys contraints
 
-ALTER TABLE m_sipaf.cor_linear_pf
-    ADD CONSTRAINT pk_m_sipaf_cor_linear_pf_id_passage_faune_id_linear PRIMARY KEY (id_passage_faune, id_linear);
+ALTER TABLE pr_sipaf.cor_linear_pf
+    ADD CONSTRAINT pk_pr_sipaf_cor_linear_pf_id_passage_faune_id_linear PRIMARY KEY (id_passage_faune, id_linear);
 
----- m_sipaf.cor_linear_pf foreign keys contraints
+---- pr_sipaf.cor_linear_pf foreign keys contraints
 
-ALTER TABLE m_sipaf.cor_linear_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_linear_pf_id_passage_faune FOREIGN KEY (id_passage_faune)
-    REFERENCES m_sipaf.t_passages_faune (id_passage_faune)
+ALTER TABLE pr_sipaf.cor_linear_pf
+    ADD CONSTRAINT fk_pr_sipaf_cor_linear_pf_id_passage_faune FOREIGN KEY (id_passage_faune)
+    REFERENCES pr_sipaf.t_passages_faune (id_passage_faune)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE m_sipaf.cor_linear_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_linear_pf_id_linear FOREIGN KEY (id_linear)
+ALTER TABLE pr_sipaf.cor_linear_pf
+    ADD CONSTRAINT fk_pr_sipaf_cor_linear_pf_id_linear FOREIGN KEY (id_linear)
     REFERENCES ref_geo.l_linears (id_linear)
-    ON UPDATE CASCADE ON DELETE CASCADE;
--- cor m_sipaf.cor_media_pf
-
-CREATE TABLE IF NOT EXISTS m_sipaf.cor_media_pf (
-    id_passage_faune INTEGER NOT NULL NOT NULL,
-    id_media INTEGER NOT NULL NOT NULL
-);
-
-
----- m_sipaf.cor_media_pf primary keys contraints
-
-ALTER TABLE m_sipaf.cor_media_pf
-    ADD CONSTRAINT pk_m_sipaf_cor_media_pf_id_passage_faune_id_media PRIMARY KEY (id_passage_faune, id_media);
-
----- m_sipaf.cor_media_pf foreign keys contraints
-
-ALTER TABLE m_sipaf.cor_media_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_media_pf_id_passage_faune FOREIGN KEY (id_passage_faune)
-    REFERENCES m_sipaf.t_passages_faune (id_passage_faune)
-    ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE m_sipaf.cor_media_pf
-    ADD CONSTRAINT fk_m_sipaf_cor_media_pf_id_media FOREIGN KEY (id_media)
-    REFERENCES gn_commons.t_medias (id_media)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 -- Triggers
 
 
-CREATE OR REPLACE FUNCTION m_sipaf.fn_tri_insert_t_passages_faune_copy_geom_to_geom_local()
+CREATE OR REPLACE FUNCTION pr_sipaf.fn_tri_insert_t_passages_faune_copy_geom_to_geom_local()
     RETURNS trigger AS
         $BODY$
             DECLARE
@@ -334,20 +310,20 @@ CREATE OR REPLACE FUNCTION m_sipaf.fn_tri_insert_t_passages_faune_copy_geom_to_g
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE TRIGGER m_sipaf_tri_insert_t_passages_faune_copy_geom_to_geom_local
-    BEFORE INSERT ON m_sipaf.t_passages_faune
+CREATE TRIGGER pr_sipaf_tri_insert_t_passages_faune_copy_geom_to_geom_local
+    BEFORE INSERT ON pr_sipaf.t_passages_faune
     FOR EACH ROW
-        EXECUTE PROCEDURE m_sipaf.fn_tri_insert_t_passages_faune_copy_geom_to_geom_local();
+        EXECUTE PROCEDURE pr_sipaf.fn_tri_insert_t_passages_faune_copy_geom_to_geom_local();
 
-CREATE TRIGGER m_sipaf_tri_update_t_passages_faune_copy_geom_to_geom_local
-    BEFORE UPDATE OF geom ON m_sipaf.t_passages_faune
+CREATE TRIGGER pr_sipaf_tri_update_t_passages_faune_copy_geom_to_geom_local
+    BEFORE UPDATE OF geom ON pr_sipaf.t_passages_faune
     FOR EACH ROW
-        EXECUTE PROCEDURE m_sipaf.fn_tri_insert_t_passages_faune_copy_geom_to_geom_local();
+        EXECUTE PROCEDURE pr_sipaf.fn_tri_insert_t_passages_faune_copy_geom_to_geom_local();
 
----- Trigger intersection m_sipaf.t_passages_faune.geom_local avec le ref_geo
+---- Trigger intersection pr_sipaf.t_passages_faune.geom_local avec le ref_geo
 
 
-CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_insert_cor_area_pf_on_each_statement()
+CREATE OR REPLACE FUNCTION pr_sipaf.fct_trig_insert_cor_area_pf_on_each_statement()
     RETURNS trigger AS
         $BODY$
             DECLARE
@@ -357,7 +333,7 @@ CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_insert_cor_area_pf_on_each_statement
                     t.id_passage_faune
                     FROM NEW as t
                 )
-                INSERT INTO m_sipaf.cor_area_pf (
+                INSERT INTO pr_sipaf.cor_area_pf (
                     id_area,
                     id_passage_faune
                 )
@@ -380,12 +356,12 @@ CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_insert_cor_area_pf_on_each_statement
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_update_cor_area_pf_on_row()
+CREATE OR REPLACE FUNCTION pr_sipaf.fct_trig_update_cor_area_pf_on_row()
     RETURNS trigger AS
         $BODY$
             BEGIN
-                DELETE FROM m_sipaf.cor_area_pf WHERE id_passage_faune = NEW.id_passage_faune;
-                INSERT INTO m_sipaf.cor_area_pf (
+                DELETE FROM pr_sipaf.cor_area_pf WHERE id_passage_faune = NEW.id_passage_faune;
+                INSERT INTO pr_sipaf.cor_area_pf (
                     id_area,
                     id_passage_faune
                 )
@@ -393,7 +369,7 @@ CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_update_cor_area_pf_on_row()
                     a.id_area,
                     t.id_passage_faune
                 FROM ref_geo.l_areas a
-                JOIN m_sipaf.t_passages_faune t
+                JOIN pr_sipaf.t_passages_faune t
                     ON public.ST_INTERSECTS(ST_TRANSFORM(t.geom_local, 2154), a.geom)
                 WHERE
                     a.enable IS TRUE
@@ -409,12 +385,12 @@ CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_update_cor_area_pf_on_row()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION m_sipaf.process_all_cor_area_pf()
+CREATE OR REPLACE FUNCTION pr_sipaf.process_all_cor_area_pf()
     RETURNS INTEGER AS
         $BODY$
             BEGIN
-                DELETE FROM m_sipaf.cor_area_pf;
-                INSERT INTO m_sipaf.cor_area_pf (
+                DELETE FROM pr_sipaf.cor_area_pf;
+                INSERT INTO pr_sipaf.cor_area_pf (
                     id_area,
                     id_passage_faune
                 )
@@ -422,7 +398,7 @@ CREATE OR REPLACE FUNCTION m_sipaf.process_all_cor_area_pf()
                     a.id_area,
                     t.id_passage_faune
                 FROM ref_geo.l_areas a
-                JOIN m_sipaf.t_passages_faune t
+                JOIN pr_sipaf.t_passages_faune t
                     ON public.ST_INTERSECTS(ST_TRANSFORM(t.geom_local, 2154), a.geom)
                 WHERE
                     a.enable IS TRUE
@@ -437,26 +413,26 @@ CREATE OR REPLACE FUNCTION m_sipaf.process_all_cor_area_pf()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE TRIGGER trg_insert_m_sipaf_cor_area_pf
-    AFTER INSERT ON m_sipaf.t_passages_faune
+CREATE TRIGGER trg_insert_pr_sipaf_cor_area_pf
+    AFTER INSERT ON pr_sipaf.t_passages_faune
     REFERENCING NEW TABLE AS NEW
     FOR EACH STATEMENT
-        EXECUTE PROCEDURE m_sipaf.fct_trig_insert_cor_area_pf_on_each_statement();
+        EXECUTE PROCEDURE pr_sipaf.fct_trig_insert_cor_area_pf_on_each_statement();
 
-CREATE TRIGGER trg_update_m_sipaf_cor_area_pf
-    AFTER UPDATE OF geom ON m_sipaf.t_passages_faune
+CREATE TRIGGER trg_update_pr_sipaf_cor_area_pf
+    AFTER UPDATE OF geom ON pr_sipaf.t_passages_faune
     FOR EACH ROW
-        EXECUTE PROCEDURE m_sipaf.fct_trig_update_cor_area_pf_on_row();
+        EXECUTE PROCEDURE pr_sipaf.fct_trig_update_cor_area_pf_on_row();
 
----- Trigger m_sipaf.t_passages_faune.geom_local avec une distance de 100 avec ref_geo.l_linears.id_linear
+---- Trigger pr_sipaf.t_passages_faune.geom_local avec une distance de 100 avec ref_geo.l_linears.id_linear
 
 
-CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_insert_cor_linear_pf_on_each_statement()
+CREATE OR REPLACE FUNCTION pr_sipaf.fct_trig_insert_cor_linear_pf_on_each_statement()
     RETURNS trigger AS
         $BODY$
             DECLARE
             BEGIN
-                INSERT INTO m_sipaf.cor_linear_pf (
+                INSERT INTO pr_sipaf.cor_linear_pf (
                     id_linear,
                     id_passage_faune
                 )
@@ -483,12 +459,12 @@ CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_insert_cor_linear_pf_on_each_stateme
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_update_cor_linear_pf_on_row()
+CREATE OR REPLACE FUNCTION pr_sipaf.fct_trig_update_cor_linear_pf_on_row()
     RETURNS trigger AS
         $BODY$
             BEGIN
-                DELETE FROM m_sipaf.cor_linear_pf WHERE id_passage_faune = NEW.id_passage_faune;
-                INSERT INTO m_sipaf.cor_linear_pf (
+                DELETE FROM pr_sipaf.cor_linear_pf WHERE id_passage_faune = NEW.id_passage_faune;
+                INSERT INTO pr_sipaf.cor_linear_pf (
                     id_linear,
                     id_passage_faune
                 )
@@ -497,7 +473,7 @@ CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_update_cor_linear_pf_on_row()
                         l.id_linear,
                         t.id_passage_faune,
                         ROW_NUMBER() OVER (PARTITION BY t.id_passage_faune, id_type) As rank
-                        FROM m_sipaf.t_passages_faune AS t
+                        FROM pr_sipaf.t_passages_faune AS t
                         JOIN ref_geo.l_linears l
                             ON ST_DWITHIN(t.geom_local, l.geom, 100)
                         WHERE
@@ -517,12 +493,12 @@ CREATE OR REPLACE FUNCTION m_sipaf.fct_trig_update_cor_linear_pf_on_row()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE OR REPLACE FUNCTION m_sipaf.process_all_cor_linear_pf()
+CREATE OR REPLACE FUNCTION pr_sipaf.process_all_cor_linear_pf()
     RETURNS INTEGER AS
         $BODY$
             BEGIN
-                DELETE FROM m_sipaf.cor_linear_pf;
-                INSERT INTO m_sipaf.cor_linear_pf (
+                DELETE FROM pr_sipaf.cor_linear_pf;
+                INSERT INTO pr_sipaf.cor_linear_pf (
                     id_linear,
                     id_passage_faune
                 )
@@ -531,7 +507,7 @@ CREATE OR REPLACE FUNCTION m_sipaf.process_all_cor_linear_pf()
                         l.id_linear,
                         t.id_passage_faune,
                         ROW_NUMBER() OVER (PARTITION BY t.id_passage_faune, id_type) As rank
-                        FROM m_sipaf.t_passages_faune AS t
+                        FROM pr_sipaf.t_passages_faune AS t
                         JOIN ref_geo.l_linears l
                             ON ST_DWITHIN(t.geom_local, l.geom, 100)
                         WHERE l.enable = TRUE
@@ -549,26 +525,26 @@ CREATE OR REPLACE FUNCTION m_sipaf.process_all_cor_linear_pf()
     LANGUAGE plpgsql VOLATILE
     COST 100;
 
-CREATE TRIGGER trg_insert_m_sipaf_cor_linear_pf
-    AFTER INSERT ON m_sipaf.t_passages_faune
+CREATE TRIGGER trg_insert_pr_sipaf_cor_linear_pf
+    AFTER INSERT ON pr_sipaf.t_passages_faune
     REFERENCING NEW TABLE AS NEW
     FOR EACH STATEMENT
-        EXECUTE PROCEDURE m_sipaf.fct_trig_insert_cor_linear_pf_on_each_statement();
+        EXECUTE PROCEDURE pr_sipaf.fct_trig_insert_cor_linear_pf_on_each_statement();
 
-CREATE TRIGGER trg_update_m_sipaf_cor_linear_pf
-    AFTER UPDATE OF geom ON m_sipaf.t_passages_faune
+CREATE TRIGGER trg_update_pr_sipaf_cor_linear_pf
+    AFTER UPDATE OF geom ON pr_sipaf.t_passages_faune
     FOR EACH ROW
-        EXECUTE PROCEDURE m_sipaf.fct_trig_update_cor_linear_pf_on_row();
+        EXECUTE PROCEDURE pr_sipaf.fct_trig_update_cor_linear_pf_on_row();
 
 
 
 -- Indexes
 
 
-CREATE INDEX m_sipaf_t_passages_faune_geom_idx
-    ON m_sipaf.t_passages_faune
+CREATE INDEX pr_sipaf_t_passages_faune_geom_idx
+    ON pr_sipaf.t_passages_faune
     USING GIST (geom);
-CREATE INDEX m_sipaf_t_passages_faune_geom_local_idx
-    ON m_sipaf.t_passages_faune
+CREATE INDEX pr_sipaf_t_passages_faune_geom_local_idx
+    ON pr_sipaf.t_passages_faune
     USING GIST (geom_local);
 

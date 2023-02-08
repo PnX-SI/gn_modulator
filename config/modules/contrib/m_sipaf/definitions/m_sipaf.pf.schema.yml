@@ -5,7 +5,7 @@ description: schema pour les passages à faune
 
 meta:
     sql_processing: true
-    sql_schema_dot_table: m_sipaf.t_passages_faune
+    sql_schema_dot_table: pr_sipaf.t_passages_faune
     genre: M
     label: passage à faune
     labels: passages à faune
@@ -136,14 +136,14 @@ properties:
       relation_type: n-n
       title: "Type d'ouvrage"
       description: "Type d'ouvrage d'art (lb_type_ouvrage)"
-      schema_dot_table: m_sipaf.cor_pf_nomenclature_ouvrage_type
+      schema_dot_table: pr_sipaf.cor_pf_nomenclature_ouvrage_type
       schema_code: ref_nom.nomenclature
       nomenclature_type: PF_OUVRAGE_TYPE
   nomenclatures_ouvrage_materiaux:
       type: relation
       relation_type: n-n
       schema_code: ref_nom.nomenclature
-      schema_dot_table: m_sipaf.cor_pf_nomenclature_ouvrage_materiaux
+      schema_dot_table: pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux
       title: Matériaux
       description: "Matériaux composant l'ouvrage d'art (lb_materiaux)"
       nomenclature_type: PF_OUVRAGE_MATERIAUX
@@ -213,7 +213,7 @@ properties:
       title: Areas
       relation_type: n-n
       schema_code: ref_geo.area
-      schema_dot_table: m_sipaf.cor_area_pf
+      schema_dot_table: pr_sipaf.cor_area_pf
       trigger:
           name: intersect_ref_geo
           key: geom_local
@@ -223,7 +223,7 @@ properties:
       title: Linéaires
       relation_type: n-n
       schema_code: ref_geo.linear
-      schema_dot_table: m_sipaf.cor_linear_pf
+      schema_dot_table: pr_sipaf.cor_linear_pf
       trigger:
           name: d_within
           distance: 100

@@ -5,7 +5,7 @@ description: Définition du schema des observations de monitoring
 
 meta:
     sql_processing: 'true'
-    sql_schema_dot_table: m_monitoring.t_observations
+    sql_schema_dot_table: pr_monitoring.t_observations
     genre: F
     label: observation
     label_field_name: taxon.nom_vern
