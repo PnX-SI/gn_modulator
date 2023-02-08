@@ -70,9 +70,10 @@ class ModuleBase:
             "module_desc": module_config["module"]["module_desc"],
             "module_picto": module_config["module"]["module_picto"],
             "active_frontend": module_config["module"].get("active_frontend") or False,
-            "module_path": "modules/{}".format(module_code.lower()),
+            "module_path": f"{MODULE_CODE.lower()}/{module_code.lower()}",
             "active_backend": False,
         }
+        print(module_row_data)
         try:
             schema_module.update_row(module_code, module_row_data, field_name="module_code")
         except NoResultFound:

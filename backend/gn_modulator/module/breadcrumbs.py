@@ -1,5 +1,6 @@
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.commons import getAttr
+from gn_modulator import MODULE_CODE
 
 
 class ModuleBreadCrumbs:
@@ -26,7 +27,7 @@ class ModuleBreadCrumbs:
             url_page = url_page.replace(f":{key}", str(value))
 
         # full url
-        url_page = f"#/modules/{module_code}/{url_page}"
+        url_page = f"#/{MODULE_CODE.lower()}/{module_code}/{url_page}"
 
         parent_breadcrumbs = []
 
@@ -69,6 +70,6 @@ class ModuleBreadCrumbs:
         else:
             # racine du module on met le nom du module
             breadcrumb = [{"url": url_page, "label": f"{module_config['module']['module_label']}"}]
-            parent_breadcrumbs = [{"url": "#/modules/", "label": "Modules"}]
+            parent_breadcrumbs = [{"url": f"#/{MODULE_CODE.lower()}/", "label": "Modules"}]
 
         return parent_breadcrumbs + breadcrumb
