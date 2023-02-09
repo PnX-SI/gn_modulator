@@ -1,0 +1,21 @@
+
+type: schema
+code: meta.ca_actor
+title: schema acteur ca
+description: Définition du schema pour les acteurs liés aux cadres d'acquisition
+meta:
+  schema_code: m_sipaf.actor
+  genre: M
+  label: Acteur
+  label_field_name: id_nomenclature_type_actor
+  unique:
+    - id_nomenclature_type_actor
+    - id_organism
+    - id_role
+    - id_passage_faune
+  model: geonature.core.gn_meta.models.CorAcquisitionFrameworkActor
+  relations:
+    - role
+    - organism
+    - nomenclature_actor_role
+  autoschema: true
