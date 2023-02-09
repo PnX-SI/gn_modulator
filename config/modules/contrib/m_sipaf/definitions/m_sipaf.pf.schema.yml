@@ -139,6 +139,9 @@ properties:
       schema_dot_table: pr_sipaf.cor_pf_nomenclature_ouvrage_type
       schema_code: ref_nom.nomenclature
       nomenclature_type: PF_OUVRAGE_TYPE
+  ouvrage_type_autre:
+      type: string
+      title: Autre type d'ouvrage
   nomenclatures_ouvrage_materiaux:
       type: relation
       relation_type: n-n

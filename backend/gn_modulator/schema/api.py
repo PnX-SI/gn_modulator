@@ -9,7 +9,7 @@ from geonature.core.gn_permissions import decorators as permissions
 
 # from geonature.utils.config import config
 from gn_modulator import MODULE_CODE
-from gn_modulator.utils.cache import get_global_cache
+from gn_modulator.definition import DefinitionMethods
 import sqlparse
 
 
@@ -91,6 +91,7 @@ class SchemaApi:
             "as_csv": self.load_param(request.args.get("as_csv", "false")),
             "cruved_type": self.load_param(request.args.get("cruved_type", "null")),
             "sql": self.load_param(request.args.get("sql", "null")),
+            "test": self.load_param(request.args.get("test", "null")),
         }
 
         if "prefilters" in object_definition:
@@ -273,7 +274,7 @@ class SchemaApi:
             """
 
             # récupération de la configuration de l'export
-            export_definition = get_global_cache(["exports", export_code], "definition")
+            export_definition = DefinitionMethods.get_definition("export", export_code)
 
             # renvoie une erreur si l'export n'est pas trouvé
             if export_definition is None:
@@ -381,7 +382,7 @@ class SchemaApi:
             )
 
         # export
-        if "E" in cruved and object_definition.get("exports"):
+        if "E" in cruved:  # and object_definition.get("exports"):
             bp.add_url_rule(
                 f"/{object_code}/exports/<export_code>",
                 view_func=view_func_export,

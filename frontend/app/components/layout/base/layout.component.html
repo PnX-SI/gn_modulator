@@ -128,7 +128,7 @@
         mat-raised-button
         [href]="computedLayout.href"
         color="primary"
-        matTooltip="computedLayout.description"
+        [matTooltip]="computedLayout.description"
       >
         <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
         {{ computedLayout.title }}

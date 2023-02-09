@@ -229,6 +229,13 @@ export class ModulesObjectService {
     return checkAction.actionAllowed;
   }
 
+  urlExport({ context }, exportCode) {
+    return this._mConfig.exportUrl(context.module_code, context.object_code, exportCode, {
+      prefilters: context.prefilters,
+      filters: context.filters,
+    });
+  }
+
   /** checkAction
    * Fonction pour vérifier
    *   so l'action peut être effectuée
@@ -270,7 +277,6 @@ export class ModulesObjectService {
     const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
     const testObjectCruved = (objectConfig.cruved || '').includes(action);
-
     if ('CRU'.includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
@@ -365,6 +371,7 @@ export class ModulesObjectService {
       geometry_field_name: this.geometryFieldName.bind(this),
       geometry_type: this.geometryType.bind(this),
       object: this.objectConfigLayout.bind(this),
+      url_export: this.urlExport.bind(this),
     };
   }
 

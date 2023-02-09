@@ -145,8 +145,14 @@ site_details_fields:
         - direction: row
           items:
             - nomenclature_ouvrage_specificite.label_fr
-            - nomenclatures_ouvrage_type.label_fr
             - nomenclatures_ouvrage_materiaux.label_fr
+        - direction: row
+          items:
+            - nomenclatures_ouvrage_type.label_fr
+            - key: nomenclatures_ouvrage_type.cd_nomenclature
+              hidden: true
+            - key: ouvrage_type_autre
+              hidden: __f__!data.nomenclatures_ouvrage_type.some(n => n.cd_nomenclature == 'AUT')
         - direction: row
           items:
             - pi_ou_ps
@@ -209,15 +215,6 @@ site_form_fields:
         - id_role
         - id_organism
         - id_nomenclature_type_actor
-        # - hidden: true
-        # items:
-        # - id_passage_faune
-        # - key: id_role
-        #   type: list_form
-        # - key: id_organism
-        #   type: list_form
-        # - key: id_nomenclature_type_actor
-        #   type: list_form
   - title: Localisation
     display: fieldset
     items:
@@ -243,14 +240,22 @@ site_form_fields:
         items:
           - key: id_nomenclature_ouvrage_specificite
             type: list_form
-          - key: nomenclatures_ouvrage_type
-            type: list_form
-            multiple: true
-            return_object: true
           - key: nomenclatures_ouvrage_materiaux
             type: list_form
             multiple: true
             return_object: true
+      - direction: row
+        items:
+          - key: nomenclatures_ouvrage_type
+            type: list_form
+            multiple: true
+            return_object: true
+            additional_fields: ['cd_nomenclature']
+          - key: ouvrage_type_autre
+            type: string
+            hidden: __f__!data.nomenclatures_ouvrage_type.some(n => n.cd_nomenclature == 'AUT')
+            required: __f__data.nomenclatures_ouvrage_type.some(n => n.cd_nomenclature == 'AUT')
+
   - title: Dimensions
     display: fieldset
     items:

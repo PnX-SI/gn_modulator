@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from .commands import commands
 from .schema import SchemaMethods
+from .definition import DefinitionMethods
 from sqlalchemy.exc import NoForeignKeysError
 from gn_modulator.module import ModuleMethods
 from gn_modulator.layout import LayoutMethods

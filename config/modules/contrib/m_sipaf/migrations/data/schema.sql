@@ -31,6 +31,7 @@ CREATE TABLE pr_sipaf.t_passages_faune (
     largeur_dispo_faune FLOAT,
     hauteur_dispo_faune FLOAT,
     id_nomenclature_ouvrage_specificite INTEGER,
+    ouvrage_type_autre VARCHAR,
     ouvrage_hydrau BOOLEAN,
     id_nomenclature_ouvrage_hydrau_position INTEGER,
     id_nomenclature_ouvrage_hydrau_banq_caract INTEGER,

@@ -225,23 +225,23 @@ class ModuleConfigUtils:
         # Traitement des exports
         # a faire dans definition
         # - pour chaque export défini dans la config du module
-        for export_code, export_definition in module_config.get("exports", {}).items():
-            #  - on lui assigne son export_code
-            export_definition["export_code"] = export_code
+        # for export_code, export_definition in module_config.get("exports", {}).items():
+        #     #  - on lui assigne son export_code
+        #     export_definition["export_code"] = export_code
 
-            # test si l'export existe déjà
-            if get_global_cache(["exports", export_code]):
-                raise cls.errors.ModuleConfigError(
-                    f"L'export {export_code} à déjà été défini par ailleurs, le code de l'export doit être unique"
-                )
+        #     # test si l'export existe déjà
+        #     if get_global_cache(["exports", export_code]):
+        #         raise cls.errors.ModuleConfigError(
+        #             f"L'export {export_code} à déjà été défini par ailleurs, le code de l'export doit être unique"
+        #         )
 
-            #  - on l'assigne à son object
-            object_config = module_config["objects"][export_definition["object_code"]]
-            object_config["exports"] = object_config.get("exports", [])
-            object_config["exports"].append(export_code)
+        #     #  - on l'assigne à son object
+        #     object_config = module_config["objects"][export_definition["object_code"]]
+        #     object_config["exports"] = object_config.get("exports", [])
+        #     object_config["exports"].append(export_code)
 
-            # mise en cache pour pouvoir s'en reservir par ailleurs
-            set_global_cache(["exports", export_code], export_definition)
+        #     # mise en cache pour pouvoir s'en reservir par ailleurs
+        #     set_global_cache(["exports", export_code], export_definition)
 
     @classmethod
     def process_module_api(cls, module_code):

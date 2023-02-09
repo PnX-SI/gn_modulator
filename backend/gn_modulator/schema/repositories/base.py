@@ -11,6 +11,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import defer
 from .. import errors
 from gn_modulator import MODULE_CODE
+from sqlalchemy import orm, and_, nullslast
 
 
 class SchemaRepositoriesBase:
@@ -264,15 +265,19 @@ class SchemaRepositoriesBase:
             query = query.distinct()
 
         # eager loads ??
-        for field in params.get("fields") or []:
-            if field in ["ownership", "row_number"]:
-                continue
-            _, query = self.custom_getattr(Model, field, query)
 
         # simplifier la requete
         query = self.defer_fields(query, params)
 
         order_bys, query = self.get_sorters(Model, params.get("sort", []), query)
+
+        # if params.get('test'):
+        #     print('test')
+        #     query = query.options(
+        #         orm.joinedload(
+        #             Model.nomenclature_ouvrage_specificite
+        #         ).load_only(self.cls('ref_nom.nomenclature').Model().label_fr, self.cls('ref_nom.nomenclature').Model().cd_nomenclature)
+        #     )
 
         # ajout colonnes row_number, ownership (cruved)
         query = self.process_query_columns(params, query, order_bys)

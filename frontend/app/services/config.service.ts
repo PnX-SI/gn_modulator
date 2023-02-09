@@ -122,9 +122,9 @@ export class ModulesConfigService {
     return this.backendUrl() + '/static/external_assets/modules';
   }
 
-  exportUrl(moduleCode, objectCode, exportName, options: any = {}) {
+  exportUrl(moduleCode, objectCode, exportCode, options: any = {}) {
     const url = this._mRequest.url(
-      `${this.backendUrl()}/${moduleCode}/${objectCode}/exports/${exportName}`,
+      `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectCode}/exports/${exportCode}`,
       {
         prefilters: options.prefilters,
         filters: options.filters,

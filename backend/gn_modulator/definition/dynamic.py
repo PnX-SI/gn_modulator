@@ -82,6 +82,7 @@ class DefinitionDynamic:
         geometry_type: () => {},
         geometry_field_name: () => {},
         object: () => {},
+        url_export: () => {}
     },
     context: {},
 }"""

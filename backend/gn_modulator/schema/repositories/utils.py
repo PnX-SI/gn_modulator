@@ -51,9 +51,7 @@ class SchemaRepositoriesUtil:
                 relation_entity = orm.aliased(relationship.mapper.entity)
 
                 query = query.join(relation_entity, relationship, isouter=True)
-
-                # query = query.options(orm.contains_eager(relationship))
-
+                # query = query.options(orm.joinedload(relationship))
             elif condition:
                 # TODO gérer les alias si filtres un peu plus tordus ??
                 query = and_(query, relationship._query_clause_element())

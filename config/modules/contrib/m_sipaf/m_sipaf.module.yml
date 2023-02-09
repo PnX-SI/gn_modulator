@@ -18,7 +18,7 @@ features:
 objects:
   site:
     schema_code: m_sipaf.pf
-    cruved: CRUD
+    cruved: CRUDE
 
 tree:
   pf:

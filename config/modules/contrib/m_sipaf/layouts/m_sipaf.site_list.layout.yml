@@ -22,22 +22,22 @@ layout:
         display: geojson
         popup_fields: __SITE_MAP_POPUP_FIELDS__
 
-    - items:
+    - flex: 2
+      items:
       - type: breadcrumbs
         flex: "0"
       - direction: row
         items:
           - code: utils.button_create
             flex: "0"
-          - flex: "0"
-            type: object
-            display: export
-            icon: file
-            key: pf
-            export_code: m_sipaf.pf
+          - type: button
+            flex: "0"
+            icon: download
+            description: Télécharger les passages à faune (sélection appliquée)
+            href: __f__o.url_export(x, 'm_sipaf.pf')
+            hidden: __f__!o.is_action_allowed(x, 'E')
         flex: "0"
       - type: object
-        flex: 2
         display: table
         sort: code_passage_faune
         items: __SITE_TABLE_FIELDS__

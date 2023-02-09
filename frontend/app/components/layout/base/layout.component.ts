@@ -285,6 +285,10 @@ export class ModulesLayoutComponent implements OnInit {
     if (this.computedLayout.type == 'date' && this.elementData) {
       this.elementData = this.elementData.split('-').reverse().join('/');
     }
+
+    if (this._name == 'layout-element' && Array.isArray(this.elementData)) {
+      this.elementData = this.elementData.join(', ');
+    }
   }
 
   processFormControl() {

@@ -348,6 +348,13 @@ export class ModulesLayoutService {
       return [];
     }
 
-    return [baseKey ? `${baseKey}.${key}` : key];
+    let keys = [key];
+
+    if (layout.additional_fields) {
+      keys = [...keys, ...layout.additional_fields.map((k) => `${key}.${k}`)];
+      console.log(keys);
+    }
+
+    return keys.map((k) => (baseKey ? `${baseKey}.${k}` : k));
   }
 }
