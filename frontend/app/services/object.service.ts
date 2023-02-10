@@ -75,7 +75,7 @@ export class ModulesObjectService {
       objectConfig = utils.replace(objectConfig, `:${paramKey}`, paramValue);
     }
 
-    this._cacheObjectConfig[cacheKey] = objectConfig;
+    this._cacheObjectConfig[cacheKey] = utils.copy(objectConfig);
     return objectConfig;
   }
 
@@ -150,19 +150,19 @@ export class ModulesObjectService {
   }
 
   schemaCode({ context }) {
-    return this.objectConfigContext(context).schema_code;
+    return this.objectConfigContext(context)?.schema_code;
   }
 
   label({ context }) {
-    return this.objectConfigContext(context).display.label;
+    return this.objectConfigContext(context)?.display.label;
   }
 
   labels({ context }) {
-    return this.objectConfigContext(context).display.labels;
+    return this.objectConfigContext(context)?.display.labels;
   }
 
   duLabel({ context }) {
-    return this.objectConfigContext(context).display.du_label;
+    return this.objectConfigContext(context)?.display.du_label;
   }
 
   display({ context }) {
@@ -170,32 +170,32 @@ export class ModulesObjectService {
   }
 
   dataLabel({ context, data }) {
-    const label_field_name = this.objectConfigContext(context).utils?.label_field_name;
+    const label_field_name = this.objectConfigContext(context)?.utils?.label_field_name;
     return data && label_field_name && utils.getAttr(data, label_field_name);
   }
 
   titleDetails({ context, data }) {
-    const du_label = this.objectConfigContext(context).display?.du_label;
+    const du_label = this.objectConfigContext(context)?.display?.du_label;
     return `Détails ${du_label} ${this.dataLabel({ context, data })}`;
   }
 
   labelDelete({ context, data }) {
-    const le_label = this.objectConfigContext(context).display?.le_label;
+    const le_label = this.objectConfigContext(context)?.display?.le_label;
     return `Supprimer ${le_label} ${this.dataLabel({ context, data })}`;
   }
 
   labelEdit({ context, data }) {
-    const le_label = this.objectConfigContext(context).display?.le_label;
+    const le_label = this.objectConfigContext(context)?.display?.le_label;
     return `Modifier ${le_label} ${this.dataLabel({ context, data })}`;
   }
 
   labelCreate({ context }) {
-    const display = this.objectConfigContext(context).display;
+    const display = this.objectConfigContext(context)?.display;
     return `Création ${display?.d_un_nouveau_label}`;
   }
 
   objectId({ context, data }) {
-    const pkFieldName = this.objectConfigContext(context).utils.pk_field_name;
+    const pkFieldName = this.objectConfigContext(context)?.utils.pk_field_name;
     return data && pkFieldName && data[pkFieldName];
   }
 
@@ -203,8 +203,8 @@ export class ModulesObjectService {
     if (!(context.module_code && context.object_code)) {
       return;
     }
-    const du_label = this.objectConfigContext(context).display.du_label;
-    const d_un_nouveau_label = this.objectConfigContext(context).display.d_un_nouveau_label;
+    const du_label = this.objectConfigContext(context)?.display.du_label;
+    const d_un_nouveau_label = this.objectConfigContext(context)?.display.d_un_nouveau_label;
     return !!this.objectId({ context, data })
       ? `Modification ${du_label} ${this.dataLabel({ context, data })}`
       : `Création ${d_un_nouveau_label}`;

@@ -11,8 +11,7 @@ layout:
     - type: object
       display: filters
       flex: 1
-      items:
-        __SITE_FILTERS_FIELDS__
+      items: __SITE_FILTERS_FIELDS__
       filter_defs: __SITE_FILTERS_DEFS__
 
     - type: map
@@ -24,23 +23,23 @@ layout:
 
     - flex: 2
       items:
-      - type: breadcrumbs
-        flex: "0"
-      - direction: row
-        items:
-          - code: utils.button_create
-            flex: "0"
-          - type: button
-            flex: "0"
-            icon: download
-            description: Télécharger les passages à faune (sélection appliquée)
-            href: __f__o.url_export(x, 'm_sipaf.pf')
-            hidden: __f__!o.is_action_allowed(x, 'E')
-        flex: "0"
-      - type: object
-        display: table
-        sort: code_passage_faune
-        items: __SITE_TABLE_FIELDS__
+        - type: breadcrumbs
+          flex: "0"
+        - direction: row
+          items:
+            - code: utils.button_create
+              flex: "0"
+            - type: button
+              flex: "0"
+              icon: download
+              description: Télécharger les passages à faune (sélection appliquée)
+              href: __f__o.url_export(x, 'm_sipaf.pf')
+              hidden: __f__!o.is_action_allowed(x, 'E')
+          flex: "0"
+        - type: object
+          display: table
+          sort: code_passage_faune
+          items: __SITE_TABLE_FIELDS__
 
 context:
   module_code: m_monitoring

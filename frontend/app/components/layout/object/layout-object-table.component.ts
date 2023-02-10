@@ -22,7 +22,7 @@ export class ModulesLayoutObjectTableComponent
   tab = document.createElement('div'); // element
   tableHeight; // hauteur de la table
 
-  params;
+  apiParams;
   modalDeleteLayout = {
     code: 'utils.modal_delete',
   };
@@ -148,8 +148,7 @@ export class ModulesLayoutObjectTableComponent
       };
 
       // on garde les paramètres en mémoire pour les utiliser dans getPageNumber();
-      this.params = extendedParams;
-
+      this.apiParams = utils.copy(extendedParams);
       // pour ne pas trainer sortersça dans l'api
       delete extendedParams['sorters'];
 
@@ -161,7 +160,7 @@ export class ModulesLayoutObjectTableComponent
 
       const observable = this.pageData
         ? of(this.pageData)
-        : this._mData.getList(this.moduleCode(), this.objectCode(), extendedParams);
+        : this._mData.getList(this.moduleCode(), this.objectCode(), this.apiParams);
 
       observable.subscribe(
         (res) => {
@@ -208,18 +207,17 @@ export class ModulesLayoutObjectTableComponent
     if (!value) {
       return;
     }
-
     if (this.selectRow(value)) {
       return;
     }
 
     // TODO une seule requete pour les getPageNumber et setPage ??
-    if (this.params.prefilters?.includes('undefined')) {
+    if (this.apiParams.prefilters?.includes('undefined')) {
       console.error('prefilter inconnu');
       return;
     }
     this._mData
-      .getPageNumber(this.moduleCode(), this.objectCode(), value, this.params)
+      .getPageNumber(this.moduleCode(), this.objectCode(), value, this.apiParams)
       .subscribe((res) => {
         // set Page
         this.pageData = res;

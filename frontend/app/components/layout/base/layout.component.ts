@@ -113,6 +113,8 @@ export class ModulesLayoutComponent implements OnInit {
 
   utils; // pour acceder à utils dans les templates
 
+  _subs = {};
+
   constructor(protected _injector: Injector) {
     this._name = 'layout';
     this._id = Math.round(Math.random() * 1e10);
@@ -129,19 +131,21 @@ export class ModulesLayoutComponent implements OnInit {
     this.processLayout();
 
     // subscription pour recalculer le layout
-    this._mLayout.$reComputeLayout.pipe(debounceTime(100)).subscribe(() => {
-      this.computeLayout();
-    });
+    this._subs['reComputeLayout'] = this._mLayout.$reComputeLayout
+      .pipe(debounceTime(100))
+      .subscribe(() => {
+        this.computeLayout();
+      });
 
-    this._mLayout.$refreshData.subscribe((objectCode) => {
+    this._subs['refreshData'] = this._mLayout.$refreshData.subscribe((objectCode) => {
       this.refreshData(objectCode);
     });
 
-    this._mLayout.$reComputedHeight.subscribe(() => {
+    this._subs['recompHeight'] = this._mLayout.$reComputedHeight.subscribe(() => {
       this.onHeightChange();
     });
 
-    this._mLayout.$reDrawElem.subscribe(() => {
+    this._subs['redrawElem'] = this._mLayout.$reDrawElem.subscribe(() => {
       this.onRedrawElem();
     });
 
@@ -661,4 +665,10 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   refreshData(objectCode) {}
+
+  ngOnDestroy() {
+    for (const [subKey, sub] of Object.entries(this._subs)) {
+      sub && (sub as any).unsubscribe();
+    }
+  }
 }

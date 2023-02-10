@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class PageNotFoundComponent implements OnInit {
   routesLoaded = false;
 
+  _sub;
   constructor(
     private _mConfig: ModulesConfigService,
     private _mRoute: ModulesRouteService,
@@ -25,8 +26,12 @@ export class PageNotFoundComponent implements OnInit {
     // si les pages ne spont pas encore chargées
     // - on s'assure qu'elles le soient avec _mRoute.initRoutes
     // - on recharge la page
-    this._mRoute.initRoutes().subscribe(() => {
+    this._sub = this._mRoute.initRoutes().subscribe(() => {
       this._mRoute.reloadPage();
     });
+  }
+
+  ngOnDestroy() {
+    this._sub && this._sub.unsubscribe();
   }
 }

@@ -25,9 +25,12 @@ export class ModulesLayoutBreadcrumbsComponent extends ModulesLayoutComponent im
 
   postComputeLayout(dataChanged: any, layoutChanged: any, contextChanged: any): void {
     if (contextChanged) {
-      this._mData
+      this._subs['breadcrumbs'] = this._mData
         .getBreadcrumbs(this.context)
-        .subscribe((breadcrumbs) => (this.breadcrumbs = breadcrumbs));
+        .subscribe((breadcrumbs) => {
+          this.breadcrumbs = breadcrumbs;
+          this._subs['breadcrumbs'].unsubscribe();
+        });
     }
   }
 }

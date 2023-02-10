@@ -12,9 +12,12 @@ export class ModulesIndexComponent implements OnInit {
   groups = [];
   modules;
   layout: {};
+
+  _sub;
+
   constructor(private _mConfig: ModulesConfigService, private _mRoute: ModulesRouteService) {}
   ngOnInit() {
-    this._mConfig.init().subscribe(() => {
+    this._sub = this._mConfig.init().subscribe(() => {
       const modules = this._mConfig.modulesConfig();
       this.modules = Object.values(modules).filter(
         (m) => (m as any).code != this._mConfig.MODULE_CODE
@@ -49,5 +52,9 @@ export class ModulesIndexComponent implements OnInit {
         ],
       };
     });
+  }
+
+  ngOnDestroy() {
+    this._sub.unsubscribe();
   }
 }

@@ -63,6 +63,7 @@ export class PageComponent implements OnInit {
     // - route params
     // - route query params
     // - breadcrumbs
+    this.pageInitialized = false;
     this._mConfig
       .init()
       .pipe(
