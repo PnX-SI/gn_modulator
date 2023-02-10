@@ -22,5 +22,7 @@ Préalable:
     ## Monitoring
     geonature modulator install m_monitoring
     geonature modulator install m_monitoring_test_1
+    geonature modulator install m_monitoring_test_2
     geonature modulator features m_monitoring.exemples
     geonature modulator features m_monitoring_test_1.exemples
+    geonature modulator features m_monitoring_test_2.exemples
