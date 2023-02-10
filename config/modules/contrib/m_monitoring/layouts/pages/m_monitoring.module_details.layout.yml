@@ -27,7 +27,6 @@ layout:
                   flex: "0"
                 - type: object
                   display: table
-                  page_size: 2
                   sort: last_visit_date_min-
                   items: __SITE_TABLE_FIELDS__
 
