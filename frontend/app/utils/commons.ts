@@ -216,7 +216,7 @@ const processFilterArray = (filters) => {
               : `${f.field} ${f.type} ${f.value}`
             : f
         )
-        .join(', ')
+        .join(',')
     : '';
   return filtersOut;
 };

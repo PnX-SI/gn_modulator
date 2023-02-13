@@ -3,7 +3,7 @@ site_filters_fields:
   items:
     - label: Infos
       items:
-        - code_ouvrage_gestionnaire
+        - code_passage_faune
         - nom_usuel_passage_faune
         - nomenclatures_ouvrage_materiaux
         - key: pi_ou_ps
@@ -68,6 +68,12 @@ site_filters_fields:
           page_size: 10
 
 site_filters_defs:
+  code_passage_faune:
+    type: ilike
+  nom_usuel_passage_faune:
+    type: ilike
+  code_ouvrage_gestionnaire:
+    type: ilike
   region:
     field: areas.id_area
     key: id_area
@@ -76,7 +82,7 @@ site_filters_defs:
     key: id_area
   commune:
     field: areas.id_area
-  infrastructure:
+  infracode_passagestructure:
     field: linears.groups.id_group
   nomenclatures_ouvrage_materiaux:
     field: nomenclatures_ouvrage_materiaux.id_nomenclature

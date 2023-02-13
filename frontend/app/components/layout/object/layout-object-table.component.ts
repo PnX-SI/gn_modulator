@@ -130,6 +130,8 @@ export class ModulesLayoutObjectTableComponent
         sort: this._mTable.processTableSorters(paramsTable.sorters),
       };
 
+      delete params['sorters'];
+
       if (!this.computedLayout.display_filters) {
         params.filters = this.getDataFilters();
       }

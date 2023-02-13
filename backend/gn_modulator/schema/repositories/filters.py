@@ -224,13 +224,15 @@ class SchemaRepositoriesFilters:
 
         filter_out = None
 
-        filter_field = filter["field"]
+        filter_field = filter["field"].strip()
         filter_type = filter["type"]
         filter_value = filter.get("value", None)
 
         model_attribute, query = self.custom_getattr(Model, filter_field, query, condition)
 
         if filter_type in ["like", "ilike"]:
+            if "%" not in filter_value:
+                filter_value = f"%{filter_value}%"
             filter_out = getattr(unaccent(cast(model_attribute, db.String)), filter_type)(
                 filter_value
             )
