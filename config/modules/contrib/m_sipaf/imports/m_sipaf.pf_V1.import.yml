@@ -1,0 +1,16 @@
+type: import
+code: m_sipaf.pf_V1
+title: Données d'exemple m_sipaf
+description: import données d'exemple de passage à faune pour SIPAF
+items:
+  - schema_code: user.organisme
+    data: pf_V1.csv
+    pre_process: scripts/ppi_organism_V1.sql
+  - schema_code: m_sipaf.pf
+    data: pf_V1.csv
+    pre_process: scripts/ppi_pf_V1.sql
+    keep_raw: true
+  - schema_code: m_sipaf.actor
+    data: pf_V1.csv
+    pre_process: scripts/ppi_actor_V1.sql
+    keep_raw: true

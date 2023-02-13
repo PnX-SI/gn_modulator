@@ -62,12 +62,11 @@ class SchemaBulkImports:
             cls.c_sql_exec_txt(f"DROP VIEW IF EXISTS {raw_import_view} CASCADE")
 
         # 1) csv -> table temporaire
-        if not (cls.c_sql_schema_dot_table_exists(raw_import_table) and keep_raw):
+        if not keep_raw:
             print(f"-- import csv_file {data_file_path.name} into {raw_import_table}")
             cls.bulk_import_process_csv(schema_code, data_file_path, raw_import_table)
 
         nb_csv = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_table}").scalar()
-
         # 2) pre-process
         if pre_process_file_path is not None:
             with open(pre_process_file_path, "r") as f:
@@ -253,6 +252,7 @@ DELETE FROM {cor_table} t
             cls.c_sql_exec_txt(txt_create_temporary_table_for_csv_import)
 
             # on copie les données dans la table temporaire
+            print("copy file")
             txt_copy_from_csv = cls.txt_copy_from_csv(raw_import_table, first_line)
             db.session.connection().connection.cursor().copy_expert(txt_copy_from_csv, f)
             db.session.commit()
