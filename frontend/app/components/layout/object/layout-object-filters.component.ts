@@ -70,7 +70,7 @@ export class ModulesLayoutObjectFiltersComponent
         };
       })
       .filter(({ field, type, value }) => value != null && value != '')
-      .map(({ field, type, value }) =>`${field} ${type} ${value}`)
+      .map(({ field, type, value }) => `${field} ${type} ${value}`)
       .join(', ');
   }
 
