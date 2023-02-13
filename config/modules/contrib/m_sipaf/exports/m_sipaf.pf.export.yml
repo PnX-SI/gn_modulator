@@ -8,9 +8,6 @@ object_code: site
 module_code: m_sipaf
 fields:
   - id_passage_faune
-  - nomenclature_ouvrage_specificite.label_fr
-fields_:
-  - id_passage_faune
   - code_passage_faune
   - code_ouvrage_gestionnaire
   - nom_usuel_passage_faune

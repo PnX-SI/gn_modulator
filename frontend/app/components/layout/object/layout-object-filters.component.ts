@@ -69,7 +69,9 @@ export class ModulesLayoutObjectFiltersComponent
           value,
         };
       })
-      .filter(({ field, type, value }) => value != null && value != '');
+      .filter(({ field, type, value }) => value != null && value != '')
+      .map(({ field, type, value }) =>`${field} ${type} ${value}`)
+      .join(', ');
   }
 
   applyFilters() {
