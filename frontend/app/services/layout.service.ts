@@ -66,11 +66,11 @@ export class ModulesLayoutService {
     this.$reComputeLayout.next(true);
   }
 
-  reComputeHeight(name = null) {
+  reComputeHeight(name: any = null) {
     this.$reComputedHeight.next(true);
   }
 
-  reDrawElem(name = null) {
+  reDrawElem(name: any = null) {
     this.$reDrawElem.next(true);
   }
 

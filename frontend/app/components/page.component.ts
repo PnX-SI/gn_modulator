@@ -43,6 +43,7 @@ export class PageComponent implements OnInit {
   pageCode;
   params;
 
+  _sub;
   constructor(private _injector: Injector) {
     this._route = this._injector.get(ActivatedRoute);
     this._mConfig = this._injector.get(ModulesConfigService);
@@ -64,7 +65,7 @@ export class PageComponent implements OnInit {
     // - route query params
     // - breadcrumbs
     this.pageInitialized = false;
-    this._mConfig
+    this._sub = this._mConfig
       .init()
       .pipe(
         mergeMap(() => {
@@ -144,5 +145,9 @@ export class PageComponent implements OnInit {
         layout: event.layout,
       });
     }
+  }
+
+  ngOnDestroy() {
+    this._sub && this._sub.unsubscribe();
   }
 }

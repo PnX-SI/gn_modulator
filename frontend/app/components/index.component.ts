@@ -55,6 +55,6 @@ export class ModulesIndexComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this._sub.unsubscribe();
+    this._sub && this._sub.unsubscribe();
   }
 }

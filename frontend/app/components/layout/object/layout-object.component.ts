@@ -102,6 +102,8 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   processTotalFiltered(response) {
     if (![null, undefined].includes(response.total)) {
       this.setObject({ nb_total: response.total, nb_filtered: response.filtered });
+      this.context.nb_total = response.total;
+      this.context.nb_filtered = response.filtered;
       this._mLayout.reComputeLayout('totalfilter');
     }
   }

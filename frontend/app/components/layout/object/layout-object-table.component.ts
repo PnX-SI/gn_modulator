@@ -152,6 +152,8 @@ export class ModulesLayoutObjectTableComponent
       // pour ne pas trainer sortersça dans l'api
       delete extendedParams['sorters'];
 
+      this._mLayout.reComputeHeight();
+
       // patch
       if (extendedParams.prefilters?.includes('undefined')) {
         console.error('prefilter inconnu');
