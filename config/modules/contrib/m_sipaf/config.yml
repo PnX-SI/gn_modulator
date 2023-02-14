@@ -138,6 +138,7 @@ site_details_fields:
                     - label_infrastructures
                     - label_communes
                     - label_departements
+                    - label_regions
             - title: Localisation
               display: fieldset
               items:
