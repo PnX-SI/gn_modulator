@@ -42,7 +42,7 @@ class SchemaExport:
             return jsonify([]), 404
 
         data_csv = []
-        keys = res_list[0].keys()
+        keys = params.get("fields")
         data_csv.append(self.process_csv_keys(keys))
         data_csv += [[self.process_csv_data(key, d) for key in keys] for d in res_list]
         response = Response(iter_csv(data_csv), mimetype="text/csv")
