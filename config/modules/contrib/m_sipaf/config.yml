@@ -101,201 +101,209 @@ site_map_popup_fields:
   - label_infrastructures
 
 site_details_fields:
+  display: tabs
   items:
-    - title: Informations
-      display: fieldset
+    - label: Propriétés
       items:
-        - direction: row
-          items:
-            - code_passage_faune
-            - code_ouvrage_gestionnaire
-            - nom_usuel_passage_faune
-            - uuid_passage_faune
-        - direction: row
-          items:
-            - date_creation_ouvrage
-            - issu_requalification
-            - date_requalification_ouvrage
-    - display: fieldset
-      key: actors
-      type: array
-      items:
-        direction: row
-        items:
-          - role.nom_role
-          - organisme.nom_organisme
-          - nomenclature_type_actor.label_fr
-    - direction: row
-      items:
-        - title: Référentiel
+        - title: Informations
           display: fieldset
           items:
-            - items:
-                - label_infrastructures
-                - label_communes
-                - label_departements
+            - direction: row
+              items:
+                - code_passage_faune
+                - code_ouvrage_gestionnaire
+                - nom_usuel_passage_faune
+                - uuid_passage_faune
+            - direction: row
+              items:
+                - date_creation_ouvrage
+                - issu_requalification
+                - date_requalification_ouvrage
+        - display: fieldset
+          key: actors
+          type: array
+          items:
+            direction: row
+            items:
+              - role.nom_role
+              - organisme.nom_organisme
+              - nomenclature_type_actor.label_fr
+        - direction: row
+          items:
+            - title: Référentiel
+              display: fieldset
+              items:
+                - items:
+                    - label_infrastructures
+                    - label_communes
+                    - label_departements
+            - title: Localisation
+              display: fieldset
+              items:
+                - direction: row
+                  items:
+                    - geom_x
+                    - geom_y
+                - items:
+                    - pk
+                    - pr
+                    - pr_abs
+        - title: Caractéristiques
+          display: fieldset
+          items:
+            - direction: row
+              items:
+                - nomenclature_ouvrage_specificite.label_fr
+                - nomenclatures_ouvrage_materiaux.label_fr
+            - direction: row
+              items:
+                - nomenclatures_ouvrage_type.label_fr
+                - key: nomenclatures_ouvrage_type.cd_nomenclature
+                  hidden: true
+                - key: ouvrage_type_autre
+                  hidden: __f__!data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+            - direction: row
+              items:
+                - pi_ou_ps
+                - ouvrage_hydrau
+        - title: Dimensions
+          display: fieldset
+          items:
+            - direction: row
+              items:
+                - largeur_ouvrage
+                - hauteur_ouvrage
+                - longueur_franchissement
+            - direction: row
+              items:
+                - largeur_dispo_faune
+                - hauteur_dispo_faune
+                - diametre
+        - title: Banquette (Ouvrages hydrauliques)
+          display: fieldset
+          hidden: "__f__!data.ouvrage_hydrau"
+          items:
+            - direction: row
+              items:
+                - nomenclature_ouvrage_hydrau_position.label_fr
+                - nomenclature_ouvrage_hydrau_banq_caract.label_fr
+                - nomenclature_ouvrage_hydro_banq_type.label_fr
+                - ouvrag_hydrau_tirant_air
+    - label: __f__`Médias (${data?.medias?.length || 0})`
+      items:
+        title: Médias
+        items:
+          - type: medias
+            key: medias
+
+site_form_fields:
+  display: tabs
+  items:
+    - label: Propriétés
+      items:
+        - hidden: true
+          items:
+            - geom
+            - key: id_passage_faune
+              required: false
+        - title: Informations
+          display: fieldset
+          items:
+            - direction: row
+              items:
+                - code_passage_faune
+                - code_ouvrage_gestionnaire
+                - nom_usuel_passage_faune
+            - direction: row
+              items:
+                - date_creation_ouvrage
+                - issu_requalification
+                - date_requalification_ouvrage
+        - title: Acteurs
+          type: array
+          key: actors
+          display: fieldset
+          items:
+            direction: row
+            items:
+              - id_role
+              - id_organism
+              - id_nomenclature_type_actor
         - title: Localisation
           display: fieldset
           items:
             - direction: row
               items:
-                - geom_x
-                - geom_y
-            - items:
                 - pk
                 - pr
                 - pr_abs
-    - title: Caractéristiques
-      display: fieldset
+        - title: Caractéristiques
+          display: fieldset
+          items:
+            - direction: row
+              items:
+                - key: pi_ou_ps
+                  type: list_form
+                  items:
+                    - value: true
+                      label: Passage supérieur
+                    - value: false
+                      label: Passage inférieur
+                - ouvrage_hydrau
+            - direction: row
+              items:
+                - key: id_nomenclature_ouvrage_specificite
+                  type: list_form
+                - key: nomenclatures_ouvrage_materiaux
+                  type: list_form
+                  multiple: true
+                  return_object: true
+            - direction: row
+              items:
+                - key: nomenclatures_ouvrage_type
+                  type: list_form
+                  multiple: true
+                  return_object: true
+                  additional_fields: ["cd_nomenclature"]
+                - key: ouvrage_type_autre
+                  description: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+                  type: string
+                  hidden: __f__!data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+                  required: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+
+        - title: Dimensions
+          display: fieldset
+          items:
+            - direction: row
+              items:
+                - largeur_ouvrage
+                - hauteur_ouvrage
+                - longueur_franchissement
+            - direction: row
+              items:
+                - largeur_dispo_faune
+                - hauteur_dispo_faune
+                - diametre
+        - title: Banquette
+          hidden: "__f__!data.ouvrage_hydrau"
+          display: fieldset
+          items:
+            - direction: row
+              items:
+                - key: id_nomenclature_ouvrage_hydrau_position
+                  type: list_form
+                - key: id_nomenclature_ouvrage_hydrau_banq_type
+                  type: list_form
+            - direction: row
+              items:
+                - key: id_nomenclature_ouvrage_hydrau_banq_caract
+                  type: list_form
+                - ouvrag_hydrau_tirant_air
+    - label: __f__ `Médias (${data?.medias?.length || 0})`
+      title: Médias
       items:
-        - direction: row
-          items:
-            - nomenclature_ouvrage_specificite.label_fr
-            - nomenclatures_ouvrage_materiaux.label_fr
-        - direction: row
-          items:
-            - nomenclatures_ouvrage_type.label_fr
-            - key: nomenclatures_ouvrage_type.cd_nomenclature
-              hidden: true
-            - key: ouvrage_type_autre
-              hidden: __f__!data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
-        - direction: row
-          items:
-            - pi_ou_ps
-            - ouvrage_hydrau
-    - title: Dimensions
-      display: fieldset
-      items:
-        - direction: row
-          items:
-            - largeur_ouvrage
-            - hauteur_ouvrage
-            - longueur_franchissement
-        - direction: row
-          items:
-            - largeur_dispo_faune
-            - hauteur_dispo_faune
-            - diametre
-    - title: Banquette (Ouvrages hydrauliques)
-      display: fieldset
-      hidden: "__f__!data.ouvrage_hydrau"
-      items:
-        - direction: row
-          items:
-            - nomenclature_ouvrage_hydrau_position.label_fr
-            - nomenclature_ouvrage_hydrau_banq_caract.label_fr
-            - nomenclature_ouvrage_hydro_banq_type.label_fr
-            - ouvrag_hydrau_tirant_air
-    - title: Médias
-      display: fieldset
-      items:
-        - type: medias
+        - type: dyn_form
           key: medias
-
-site_form_fields:
-  - hidden: true
-    items:
-      - geom
-      - key: id_passage_faune
-        required: false
-  - title: Informations
-    display: fieldset
-    items:
-      - direction: row
-        items:
-          - code_passage_faune
-          - code_ouvrage_gestionnaire
-          - nom_usuel_passage_faune
-      - direction: row
-        items:
-          - date_creation_ouvrage
-          - issu_requalification
-          - date_requalification_ouvrage
-  - title: Acteurs
-    type: array
-    key: actors
-    display: fieldset
-    items:
-      direction: row
-      items:
-        - id_role
-        - id_organism
-        - id_nomenclature_type_actor
-  - title: Localisation
-    display: fieldset
-    items:
-      - direction: row
-        items:
-          - pk
-          - pr
-          - pr_abs
-  - title: Caractéristiques
-    display: fieldset
-    items:
-      - direction: row
-        items:
-          - key: pi_ou_ps
-            type: list_form
-            items:
-              - value: true
-                label: Passage supérieur
-              - value: false
-                label: Passage inférieur
-          - ouvrage_hydrau
-      - direction: row
-        items:
-          - key: id_nomenclature_ouvrage_specificite
-            type: list_form
-          - key: nomenclatures_ouvrage_materiaux
-            type: list_form
-            multiple: true
-            return_object: true
-      - direction: row
-        items:
-          - key: nomenclatures_ouvrage_type
-            type: list_form
-            multiple: true
-            return_object: true
-            additional_fields: ['cd_nomenclature']
-          - key: ouvrage_type_autre
-            description: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
-            type: string
-            hidden: __f__!data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
-            required: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
-
-  - title: Dimensions
-    display: fieldset
-    items:
-      - direction: row
-        items:
-          - largeur_ouvrage
-          - hauteur_ouvrage
-          - longueur_franchissement
-      - direction: row
-        items:
-          - largeur_dispo_faune
-          - hauteur_dispo_faune
-          - diametre
-  - title: Banquette
-    hidden: "__f__!data.ouvrage_hydrau"
-    display: fieldset
-    items:
-      - direction: row
-        items:
-          - key: id_nomenclature_ouvrage_hydrau_position
-            type: list_form
-          - key: id_nomenclature_ouvrage_hydrau_banq_type
-            type: list_form
-      - direction: row
-        items:
-          - key: id_nomenclature_ouvrage_hydrau_banq_caract
-            type: list_form
-          - ouvrag_hydrau_tirant_air
-  - display: fieldset
-    title: Médias
-    items:
-      - type: dyn_form
-        key: medias
-        type_widget: medias
-        schema_dot_table: pr_sipaf.t_passages_faune
-        details: []
+          type_widget: medias
+          schema_dot_table: pr_sipaf.t_passages_faune
+          details: []
