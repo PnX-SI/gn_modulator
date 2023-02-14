@@ -1,0 +1,15 @@
+type: schema
+code: occtax.releve
+title: Schema occtax.releve
+description: Définition du schema occtax des relevés
+
+meta:
+    autoschema: true
+    model: occtax.models.TRelevesOccurrence
+    genre: M
+    label: relevé
+    label_field_name: unique_id_sinp_grp
+    unique:
+      - unique_id_sinp_grp
+    relations:
+      - t_occurrences_occtax

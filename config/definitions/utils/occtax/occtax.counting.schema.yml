@@ -1,0 +1,16 @@
+type: schema
+code: occtax.counting
+title: Schema occtax.counting
+description: Définition du schema occtax des dénombrement
+
+meta:
+    autoschema: true
+    model: occtax.models.CorCountingOccurrence
+    genre: F
+    label: occurrence
+    label_field_name: unique_id_sinp_occtax
+    unique:
+      - unique_id_sinp_occtax
+      - id_occurrence_occtax
+    relations:
+      - t_occurrences_occtax
