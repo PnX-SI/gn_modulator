@@ -158,7 +158,7 @@ site_details_fields:
             - key: nomenclatures_ouvrage_type.cd_nomenclature
               hidden: true
             - key: ouvrage_type_autre
-              hidden: __f__!data.nomenclatures_ouvrage_type.some(n => n.cd_nomenclature == 'AUT')
+              hidden: __f__!data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
         - direction: row
           items:
             - pi_ou_ps
@@ -258,9 +258,10 @@ site_form_fields:
             return_object: true
             additional_fields: ['cd_nomenclature']
           - key: ouvrage_type_autre
+            description: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
             type: string
-            hidden: __f__!data.nomenclatures_ouvrage_type.some(n => n.cd_nomenclature == 'AUT')
-            required: __f__data.nomenclatures_ouvrage_type.some(n => n.cd_nomenclature == 'AUT')
+            hidden: __f__!data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+            required: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
 
   - title: Dimensions
     display: fieldset

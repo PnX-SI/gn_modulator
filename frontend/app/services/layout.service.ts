@@ -352,7 +352,6 @@ export class ModulesLayoutService {
 
     if (layout.additional_fields) {
       keys = [...keys, ...layout.additional_fields.map((k) => `${key}.${k}`)];
-      console.log(keys);
     }
 
     return keys.map((k) => (baseKey ? `${baseKey}.${k}` : k));
