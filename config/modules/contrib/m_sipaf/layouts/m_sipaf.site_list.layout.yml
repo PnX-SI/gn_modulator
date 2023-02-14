@@ -32,7 +32,7 @@ layout:
             - type: button
               flex: "0"
               icon: download
-              description: Télécharger les passages à faune (sélection appliquée)
+              description: Télécharger les passages à faune (les filtres sont appliqués)
               href: __f__o.url_export(x, 'm_sipaf.pf')
               hidden: __f__!o.is_action_allowed(x, 'E')
           flex: "0"

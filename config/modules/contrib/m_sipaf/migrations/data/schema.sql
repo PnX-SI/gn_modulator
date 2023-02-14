@@ -62,8 +62,8 @@ COMMENT ON COLUMN pr_sipaf.t_passages_faune.hauteur_dispo_faune IS 'Hauteur de l
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_specificite IS 'Exclusivité pour le passage faune (specificite)';
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.ouvrage_hydrau IS 'Ouvrage hydraulique ou non';
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_position IS 'Ouvrage hydraulique Position (ouvrage_hydrau_position)';
-COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_banq_caract IS 'Caractérisation de la baquette dans le cas d''un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)';
-COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_banq_type IS 'Type de la baquette dans le cas d''un ouvrage hydraulique (ouvrage_hydrau_type_banquette)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_banq_caract IS 'Caractérisation de la banquette dans le cas d''un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_nomenclature_ouvrage_hydrau_banq_type IS 'Type de la banquette dans le cas d''un ouvrage hydraulique (ouvrage_hydrau_type_banquette)';
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.ouvrag_hydrau_tirant_air IS ' Tirant d''air existant entre la banquette et le plafond de l''ouvrage, en mètre';
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.source IS 'Source de la donnée';
 
