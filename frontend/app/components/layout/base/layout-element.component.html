@@ -1,6 +1,5 @@
 <!-- form -->
 
-
 <ng-container *ngIf="context.form_group_id">
   <modules-form-element
     [data]="data"
@@ -25,16 +24,24 @@
         </mat-icon>
       </div>
       <div class="layout-key-value">
-        <ng-container
-          *ngIf="[null, undefined].includes(elementData); else displayValue"
+        <ng-container *ngIf="[null, undefined].includes(elementData); else displayValue"
           >...</ng-container
         >
         <ng-template #displayValue>
-          {{ elementData }}
+          <ng-container *ngIf="computedLayout.labels">
+            <ng-container *ngIf="elementData">
+              {{ computedLayout.labels[0] }}
+            </ng-container>
+            <ng-container *ngIf="!elementData">
+              {{ computedLayout.labels[1] }}
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngIf="!computedLayout.labels">
+            {{ elementData }}
+          </ng-container>
         </ng-template>
       </div>
     </div>
   </div>
 </ng-container>
-
-
