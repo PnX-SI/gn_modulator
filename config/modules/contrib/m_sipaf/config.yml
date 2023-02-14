@@ -314,7 +314,7 @@ site_form_fields:
             - hidden: __f__!data?.medias?.some(m => !m.title_fr)
               type: message
               class: warning
-              html: Le champs 'title' du média est obligatoire
+              html: Le champs 'Titre' du média est obligatoire
             - type: dyn_form
               key: medias
               type_widget: medias
