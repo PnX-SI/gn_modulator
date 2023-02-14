@@ -11,6 +11,7 @@ fields:
   - code_passage_faune
   - code_ouvrage_gestionnaire
   - nom_usuel_passage_faune
+  - pi_ou_ps
   - geom_x
   - geom_y
   - geom_text
@@ -30,7 +31,6 @@ fields:
   - nomenclature_ouvrage_hydrau_position.label_fr
   - nomenclature_ouvrage_hydrau_banq_caract.label_fr
   - nomenclature_ouvrage_hydro_banq_type.label_fr
-  - nomenclature_ouvrage_hydrau_position.label_fr
   - label_communes
   - label_departements
   - label_infrastructures
