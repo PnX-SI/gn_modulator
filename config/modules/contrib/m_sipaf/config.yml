@@ -192,7 +192,7 @@ site_details_fields:
                 - ouvrag_hydrau_tirant_air
     - label: __f__`Médias (${data?.medias?.length || 0})`
       items:
-        title: '__f__data?.medias?.length ? "" : "Aucun médias pour ce passage faune"'
+        title: '__f__data?.medias?.length ? "" : "Aucun média pour ce passage faune"'
         items:
           - type: medias
             key: medias
@@ -202,6 +202,10 @@ site_form_fields:
   items:
     - label: Propriétés
       items:
+        - type: message
+          hidden: __f__(data && data[o.geometry_field_name(x)])
+          html: Veuillez saisir une géométrie sur la carte
+          class: warning
         - hidden: true
           items:
             - geom
