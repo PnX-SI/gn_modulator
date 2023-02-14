@@ -26,3 +26,5 @@ objects:
         cruved: R
     tax.taxref:
         cruved: R
+    tax.taxsearch:
+        cruved: R

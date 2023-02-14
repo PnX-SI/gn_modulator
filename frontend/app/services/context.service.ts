@@ -36,6 +36,7 @@ export class ModulesContextService {
     this.params = params || {};
     this.object_code = object_code;
     this.config = config;
+    this.current_user = this._auth.getCurrentUser();
   }
 
   getContextElem(elemKey, { layout, context }) {

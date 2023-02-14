@@ -93,7 +93,10 @@ class SchemaSqlBase:
     def table_names(cls, sql_schema_name):
         table_names = get_global_cache(["table_names", sql_schema_name])
         if table_names is None:
-            table_names = inspect(db.engine).get_table_names(sql_schema_name)
+            inspector = inspect(db.engine)
+            table_names = inspector.get_table_names(sql_schema_name) + inspector.get_view_names(
+                sql_schema_name
+            )
             set_global_cache(["table_names", sql_schema_name], table_names)
         return table_names
 

@@ -156,9 +156,11 @@ visit_details_fields:
 visit_form_fields:
   - hidden: true
     items:
-      - id_site
+      - key: id_site
+        default: __f__context.params.id_site
       - id_visit
-      - id_module
+      - key: id_module
+        default: __f__context.params.id_module
       - key: id_digitiser
         default: __f__context.current_user?.id_role
         hidden: true
@@ -187,14 +189,14 @@ visit_form_fields:
     filters: groupes.listes.code_liste = obsocctax
 
 observation_table_fields:
-  - taxon.nom_vern
+  - taxon.lb_nom
   - visit.site.name
   - visit.date_min
   - visit.observers.nom_complet
 
 observation_details_fields:
   - visit.date_min
-  - taxon.nom_vern
+  - taxon.lb_nom
   - visit.site.name
   - visit.dataset.dataset_name
   - visit.observers.nom_complet
@@ -203,12 +205,17 @@ observation_form_fields:
   - hidden: true
     items:
       - id_observation
-      - id_visit
+      - key: id_visit
+        default: __f__context.params.id_visit
       - key: id_digitiser
         default: __f__context.current_user?.id_role
-  - key: cd_nom
-    type: dyn_form
-    type_widget: taxonomy
-    attribut_label: Espèce
-    type_util: taxonomy
-    required: true
+  - key: taxon
+    type: list_form
+    object_code: tax.taxsearch
+    module_code: MODULATOR
+    reload_on_search: true
+    return_object: true
+    value_field_name: cd_nom
+    label_field_name: search_name
+    page_size: 10
+    sort: search_name

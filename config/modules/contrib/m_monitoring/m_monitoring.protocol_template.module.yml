@@ -10,10 +10,10 @@ template_defaults:
   active_frontend: false
 
 module:
-    module_label: __MODULE_LABEL__
-    module_desc: __MODULE_DESC__
-    module_picto: __MODULE_PICTO__
-    active_frontend: __ACTIVE_FRONTEND__
+  module_label: __MODULE_LABEL__
+  module_desc: __MODULE_DESC__
+  module_picto: __MODULE_PICTO__
+  active_frontend: __ACTIVE_FRONTEND__
 dependencies:
   - m_monitoring
 params:
@@ -67,15 +67,15 @@ pages_definition:
         code: m_monitoring.site_edit
 
   visit:
-   details:
+    details:
       layout:
         code: m_monitoring.visit_details
-      edit:
-        layout:
-          code: m_monitoring.visit_edit
-      create:
-        layout:
-          code: m_monitoring.visit_edit
+    edit:
+      layout:
+        code: m_monitoring.visit_edit
+    create:
+      layout:
+        code: m_monitoring.visit_edit
 
   observation:
     details:

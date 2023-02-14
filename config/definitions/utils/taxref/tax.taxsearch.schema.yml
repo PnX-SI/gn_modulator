@@ -1,0 +1,13 @@
+type: schema
+code: tax.taxsearch
+title: Schema tax.taxsearch
+description: Définition du schema de taxonomie pour la recherche de taxon
+
+meta:
+    autoschema: true
+    model: apptax.taxonomie.models.VMTaxrefListForautocomplete
+    genre: F
+    label: taxonomie
+    label_field_name: search_name
+    unique:
+        - cd_nom

@@ -250,6 +250,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.context.object_code = computedContext.object_code;
     this.context.page_code = computedContext.page_code;
     this.context.params = computedContext.params;
+    this.context.current_user = computedContext.current_user;
 
     const objectConfig = this.objectConfig() || {};
     for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {

@@ -253,7 +253,9 @@ export class ModulesFormService {
       const correctValue =
         computedLayout.type == 'integer' ? parseInt(control.value) : parseFloat(control.value);
 
-      data[computedLayout.key] = correctValue;
+      if(data) {
+        data[computedLayout.key] = correctValue;
+      }
       control.setValue(correctValue);
     }
     control.updateValueAndValidity();

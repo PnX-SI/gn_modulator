@@ -42,6 +42,11 @@ export class ListFormService {
         this.processListeLengthisOne(options, control, liste);
         return of(liste);
       }),
+      // mergeMap((liste) => {
+      //   let values = options.multiple ? control.value : [ control.value ]
+      //   values = options.return_object ? values.map(v => v[options.valueFieldName]) : values;
+      //   return of(liste)
+      // }),
       mergeMap((liste) => {
         // on va tester si l'element est bien dans la liste et est bien celui de la liste
         if (options.return_object && control.value && control.value[options.valueFieldName]) {
