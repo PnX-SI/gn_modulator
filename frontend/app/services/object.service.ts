@@ -122,7 +122,7 @@ export class ModulesObjectService {
   }
 
   geometryFieldName({ context }) {
-    return this.objectConfig(context.module_code, context.object_code).utils.geometry_field_name;
+    return this.objectConfig(context.module_code, context.object_code)?.utils.geometry_field_name;
   }
 
   geometryType({ context }) {
