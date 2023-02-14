@@ -13,7 +13,7 @@ items:
   - schema_code: commons.table_location
     items:
       - table_desc: Table centralisant les passages à faune
-        schema_name: m_sipaf
+        schema_name: pr_sipaf
         table_name: t_passages_faune
         pk_field: id_passage_faune
         uuid_field_name: uuid_passage_faune
