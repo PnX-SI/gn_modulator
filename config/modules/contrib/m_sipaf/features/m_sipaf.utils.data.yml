@@ -28,7 +28,7 @@ items:
         definition_default: "Position de l'ouvrage hydrolique"
         source: SIPAF
       - mnemonique: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
-        label_default: OH Caractrisation banquette
+        label_default: OH Caractérisation banquette
         definition_default: Caractérisation de la banquette pour un ouvrage hydraulique
         source: SIPAF
       - mnemonique: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
