@@ -39,13 +39,16 @@
               *ngIf="!computedItems[index].hidden"
               class="layout-section"
             >
-              <modules-layout
-                [data]="data"
-                [layout]="item"
-                [parentContext]="context"
-                (onAction)="processAction($event)"
-              >
-              </modules-layout>
+              <div class="layout-tab">
+                <modules-layout
+                  class="layout-tab"
+                  [data]="data"
+                  [layout]="item"
+                  [parentContext]="context"
+                  (onAction)="processAction($event)"
+                >
+                </modules-layout>
+              </div>
             </mat-tab>
           </ng-container>
         </mat-tab-group>
