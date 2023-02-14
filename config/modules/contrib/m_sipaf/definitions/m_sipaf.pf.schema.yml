@@ -30,7 +30,7 @@ properties:
       type: uuid
       title: UUID
       default: uuid
-      description: Identifiant universel unique au format uuid (uuid_pf)
+      description: Identifiant universel unique au format UUID (uuid_pf)
   pi_ou_ps:
       type: boolean
       title: Positionnement
@@ -43,7 +43,7 @@ properties:
       geometry_type: geometry
       srid: 4326
       title: Geometrie (4326)
-      description: Geometrie du passage faune (SRID=4326)
+      description: Géometrie du passage à faune (SRID=4326)
       index: true
       required: true
   geom_local:
@@ -51,7 +51,7 @@ properties:
       geometry_type: geometry
       srid: __LOCAL_SRID__
       title: Geometrie locale (__LOCAL_SRID__)
-      description: Géométrie locale du passage faune (SRID=__LOCAL_SRID__)
+      description: Géométrie locale du passage à faune (SRID=__LOCAL_SRID__)
       index: true
       trigger:
           name: copy_geom
@@ -148,11 +148,11 @@ properties:
       schema_code: ref_nom.nomenclature
       schema_dot_table: pr_sipaf.cor_pf_nomenclature_ouvrage_materiaux
       title: Matériaux
-      description: "Matériaux composant l'ouvrage d'art (lb_materiaux)"
+      description: "Matériaux composants l'ouvrage d'art (lb_materiaux)"
       nomenclature_type: PF_OUVRAGE_MATERIAUX
   ouvrage_hydrau:
       type: boolean
-      title: Ouvrage hydraulique ?
+      title: Ouvrage hydraulique
       description: Ouvrage hydraulique ou non
       labels:
           - Oui
@@ -167,14 +167,14 @@ properties:
   id_nomenclature_ouvrage_hydrau_banq_caract:
       type: integer
       title: Caractérisation banquette
-      description: "Caractérisation de la baquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)"
+      description: "Caractérisation de la banquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)"
       nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
       foreign_key: true
       schema_code: ref_nom.nomenclature
   id_nomenclature_ouvrage_hydrau_banq_type:
       type: integer
       title: Type de banquette
-      description: "Type de la baquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_type_banquette)"
+      description: "Type de la banquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_type_banquette)"
       foreign_key: true
       schema_code: ref_nom.nomenclature
       nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
@@ -203,7 +203,7 @@ properties:
       type: relation
       relation_type: n-1
       schema_code: ref_nom.nomenclature
-      title: OH Caractrisation banquette
+      title: OH Caractérisation banquette
       local_key: id_nomenclature_ouvrage_hydrau_banq_caract
   nomenclature_ouvrage_hydro_banq_type:
       type: relation
@@ -240,7 +240,7 @@ properties:
       foreign_key: id_passage_faune
       schema_code: m_sipaf.actor
       title: Acteurs
-      description: Les acteur du passage à faune
+      description: Acteurs du passage à faune
   medias:
       type: relation
       title: medias
@@ -250,7 +250,7 @@ properties:
       schema_code: commons.media
   geom_x:
       type: number
-      title: Longitude
+      title: Latitude
       column_property: st_x
       key: geom
   geom_y:
@@ -279,7 +279,7 @@ properties:
       filters: area_type.type_code in COM
   label_departements:
       type: string
-      title: Departement(s)
+      title: Département(s)
       column_property: label
       relation_key: areas
       label_key: area_name
