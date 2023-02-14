@@ -21,6 +21,7 @@
         [min]="computedLayout.min"
         [max]="computedLayout.max"
         (change)="onInputChange()"
+        [errorStateMatcher]="_mForm.matcher"
       />
 
       <input

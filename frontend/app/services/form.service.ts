@@ -1,25 +1,40 @@
 import { Injectable } from '@angular/core';
 import {
   FormBuilder,
+  FormControl,
   Validators,
   ValidatorFn,
   ValidationErrors,
   AbstractControl,
+  FormGroupDirective,
+  NgForm,
 } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { ModulesLayoutService } from './layout.service';
 import { ModulesObjectService } from './object.service';
 import { MediaService } from '@geonature_common/service/media.service';
 
 import utils from '../utils';
 
+/** Error when invalid control is dirty, touched, or submitted. */
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
+
 @Injectable()
 export class ModulesFormService {
+  matcher;
   constructor(
     private _formBuilder: FormBuilder,
     private _mLayout: ModulesLayoutService,
     private _mObject: ModulesObjectService,
     private _mediaService: MediaService
-  ) {}
+  ) {
+    this.matcher = new MyErrorStateMatcher();
+  }
 
   /** Configuration */
 
@@ -259,6 +274,8 @@ export class ModulesFormService {
       control.setValue(correctValue);
     }
     control.updateValueAndValidity();
+    control.markAsDirty();
+    control.parent.markAsDirty();
   }
 
   /** pour mettre à jour les données sans casser les références */
