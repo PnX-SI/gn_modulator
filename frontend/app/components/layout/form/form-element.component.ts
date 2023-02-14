@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges, Injector } from '@angular/core';
 import { ModulesLayoutComponent } from '../base/layout.component';
+import { distinctUntilChanged, debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'modules-form-element',
@@ -22,6 +23,15 @@ export class ModulesFormElementComponent
   postProcessLayout(): void {
     if (this.computedLayout.type == 'dyn_form') {
       this.formDef = this._mLayout.toFormDef(this.computedLayout);
+      if (!this._subs['dynChange']) {
+        this._subs['dynChange'] = this.formControl.valueChanges
+          .pipe(debounceTime(50))
+          .subscribe((change) => {
+            setTimeout(() => {
+              this._mLayout.reComputeLayout('dyn change');
+            }, 50);
+          });
+      }
     }
   }
 

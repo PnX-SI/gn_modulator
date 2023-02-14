@@ -310,8 +310,12 @@ site_form_fields:
     - label: __f__ `Médias (${data?.medias?.length || 0})`
       items:
           items:
-            type: dyn_form
-            key: medias
-            type_widget: medias
-            schema_dot_table: pr_sipaf.t_passages_faune
-            details: []
+            - hidden: __f__!data?.medias?.some(m => !m.title_fr)
+              type: message
+              class: warning
+              html: Le champs 'title' du média est obligatoire
+            - type: dyn_form
+              key: medias
+              type_widget: medias
+              schema_dot_table: pr_sipaf.t_passages_faune
+              details: []

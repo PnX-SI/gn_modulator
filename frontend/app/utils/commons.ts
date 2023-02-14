@@ -15,7 +15,12 @@ const copy = (obj) => {
   if (!obj) {
     return obj;
   }
-  return JSON.parse(JSON.stringify(obj));
+
+  try {
+    return JSON.parse(JSON.stringify(obj));
+  } catch (e) {
+    console.error('erreur copy', obj, e);
+  }
 };
 
 const addKey = (keys, key) => {
