@@ -54,12 +54,12 @@ SELECT
 geonature modules import -i <import_code> -d <data_dir>
 ```
 
-avec 
-    - <import_code> le code de l'import 
-    - <data_dir> liens vers le dossier contenant les données
+avec:
+    - `<import_code>` le code de l'import
+    - `<data_dir>` liens vers le dossier contenant les données
 
-    Nous avons par exemple l'import de code `m_sipaf.pf_V1` et défini dans le fichier [`m_sipaf.pf_V1.import.yml`](../config/modules/m_sipaf/imports/m_sipaf.pf_V1) qui permet d'importer les organismes, passages à - faune et acteurs depuis le même fichier csv et avec un mapping spécifique à chaque destinaire.
-    Cet
+Nous avons par exemple l'import de code `m_sipaf.pf_V1` et défini dans le fichier [m_sipaf.pf_V1.import.yml](../config/modules/m_sipaf/imports/m_sipaf.pf_V1) qui permet d'importer les organismes, passages à - faune et acteurs depuis le même fichier csv et avec un mapping spécifique à chaque destinaire.
+
 
 ```
 type: import
