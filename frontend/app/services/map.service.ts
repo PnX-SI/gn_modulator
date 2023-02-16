@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ModulesConfigService } from './config.service';
 import { ModulesLayoutService } from './layout.service';
+import { MapService } from '@geonature_common/map/map.service';
+
 import * as L from '@librairies/leaflet';
 import '@geoman-io/leaflet-geoman-free';
 
@@ -10,7 +12,11 @@ import mapMethods from './map';
 
 @Injectable()
 export class ModulesMapService {
-  constructor(private _mConfig: ModulesConfigService, private _mLayout: ModulesLayoutService) {
+  constructor(
+    private _mConfig: ModulesConfigService,
+    private _mLayout: ModulesLayoutService,
+    private _gnMapService: MapService
+  ) {
     /** on récupère touts les méthodes definies dans les fichiers du répertoire ./map/ */
     for (const methods of Object.values(mapMethods)) {
       for (const [key, value] of Object.entries(methods)) {

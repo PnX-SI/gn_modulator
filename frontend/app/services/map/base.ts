@@ -1,6 +1,5 @@
 import utils from '../../utils';
 import * as L from '@librairies/leaflet';
-import { CustomMarkerIcon } from '@geonature_common/map/marker/marker.component';
 
 export default {
   waitForMap(mapId, maxRetries = null): Promise<L.map> {

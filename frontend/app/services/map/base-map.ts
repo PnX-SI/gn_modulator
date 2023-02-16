@@ -41,6 +41,8 @@ export default {
         map.addLayer(baseControl[basemap.name]);
       }
     });
-    L.control.layers(baseControl).addTo(map);
+
+    const overlaysLayers = this._gnMapService.createOverLayers(map);
+    L.control.layers(baseControl, overlaysLayers).addTo(map);
   },
 };
