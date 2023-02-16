@@ -3,19 +3,13 @@ code: ref_geo.route
 title: import ref_geo.route
 description: scenario d'import de données pour le ref_geo lineaire (route, autoroute)
 items:
-    -
-        schema_code: ref_geo.linear_type
-        data: linear_type.csv
-    -
-        schema_code: ref_geo.area_type
-        data: area_type.csv
-    -
-        schema_code: ref_geo.linear_group
-        data: TRONCON_DE_ROUTE_NATIONALE_AUTOROUTE.csv
-        pre_process: scripts/ppi_groupe_route_na.sql
-    -
-        schema_code: ref_geo.linear
-        ref_geo.linear: ref_geo.linear
-        data: TRONCON_DE_ROUTE_NATIONALE_AUTOROUTE.csv
-        pre_process: scripts/ppi_troncon_route_na.sql
-        keep_raw: true
+  - schema_code: ref_geo.linear_type
+    data: linear_type.csv
+  - schema_code: ref_geo.linear_group
+    data: TRONCON_DE_ROUTE_NATIONALE_AUTOROUTE.csv
+    pre_process: scripts/ppi_groupe_route_na.sql
+  - schema_code: ref_geo.linear
+    ref_geo.linear: ref_geo.linear
+    data: TRONCON_DE_ROUTE_NATIONALE_AUTOROUTE.csv
+    pre_process: scripts/ppi_troncon_route_na.sql
+    keep_raw: true
