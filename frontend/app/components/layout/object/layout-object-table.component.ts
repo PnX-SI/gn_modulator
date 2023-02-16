@@ -22,6 +22,7 @@ export class ModulesLayoutObjectTableComponent
   tab = document.createElement('div'); // element
   tableHeight; // hauteur de la table
 
+  pageSize;
   apiParams;
   modalDeleteLayout = {
     code: 'utils.modal_delete',
@@ -50,6 +51,7 @@ export class ModulesLayoutObjectTableComponent
   }
 
   drawTable(): void {
+    this.pageSize = this.pageSize || this.computedLayout.page_size || 10;
     this.table = new Tabulator(this.tab, {
       langs: tabulatorLangs,
       locale: 'fr',
@@ -60,7 +62,7 @@ export class ModulesLayoutObjectTableComponent
       ajaxRequestFunc: this.ajaxRequestFunc,
       columns: this.columns(),
       ajaxURL: this._mConfig.objectUrl(this.context.module_code, this.context.object_code),
-      paginationSize: this.computedLayout.page_size || this.objectConfig().utils.page_size,
+      paginationSize: this.pageSize,
       pagination: 'remote',
       headerFilterLiveFilterDelay: 600,
       ajaxSorting: true,
@@ -284,6 +286,11 @@ export class ModulesLayoutObjectTableComponent
       }
       this.tableHeight = `${elem.clientHeight}px`;
       this.table.setHeight(this.tableHeight);
+      const pageSize = Math.floor((elem.clientHeight - 90) / 50);
+      if (!this.computedLayout.page_size && this.pageSize != pageSize) {
+        this.pageSize = pageSize;
+        this.drawTable();
+      }
     }, 10);
   }
 
