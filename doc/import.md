@@ -10,11 +10,12 @@ geonature modules import
 
 
 #### Import simple depuis un fichier csv *(bien formatté)*
+
 ```
-    geonature modules import -s m_sipaf.pf -d <chemin vers le fichier csv>
+geonature modules import -s m_sipaf.pf -d <chemin vers le fichier csv>
 ```
 
-Cette commande va intégrer (s'il y a correspondance des champs), pour chaque ligne du fichier csv il peut s'agir
+Cette commande va intégrer (s'il y a correspondance des champs), pour chaque ligne du fichier csv il peut s'agir :
 - d'une insertion si la données n'exisite pas
 - d'une mise à jour si la données est modifié
 - si la ligne existe et que la données n'est pas modifiée on ne fait rien
@@ -22,12 +23,13 @@ Cette commande va intégrer (s'il y a correspondance des champs), pour chaque li
 #### Import avec mapping des données
 
 ```
-    geonature modules import -s m_sipaf.pf -d <chemin vers le fichier csv> -p <chemin vers le fichier pre_process.sql de mapping>
+geonature modules import -s m_sipaf.pf -d <chemin vers le fichier csv> -p <chemin vers le fichier pre_process.sql de mapping>
 ```
- où preprocess est une vue qui va transormer les colonnes du fichier csv en colonnes assimilable par la table destinataires. (il est très important de garder les noms `:pre_processed_import_view` et `:raw_import_table`)
 
- ```
- DROP VIEW IF EXISTS :pre_processed_import_view;
+où `pre_process` est une vue qui va transformer les colonnes du fichier csv en colonnes assimilables par la table destinataire. (il est très important de garder les noms `:pre_processed_import_view` et `:raw_import_table`)
+
+```
+DROP VIEW IF EXISTS :pre_processed_import_view;
 CREATE VIEW :pre_processed_import_view AS
 SELECT
 	uuid_pf AS id_passage_faune,
@@ -43,15 +45,16 @@ SELECT
 	FROM :raw_import_table t
 	WHERE nom_organism IS NOT NULL AND nom_organism != ''
 ;
- ```
+```
 
 
 #### Plusieurs imports depuis un fichier csv
+
 ```
-    geonature modules import -i import/pf.yml
+geonature modules import -i import/pf.yml
 ```
 
-avec le fichier `pf.yml` qui permet d'importer organismes, passages à faune et acteurs depuis le même fichier csv et avec un mapping spécifique à chaque destinaire.
+avec le fichier `pf.yml` qui permet d'importer les organismes, passages à faune et acteurs depuis le même fichier csv et avec un mapping spécifique à chaque destinaire.
 
 ```
 -
