@@ -17,12 +17,4 @@ Préalable:
     geonature modulator import -i ref_geo.route -d  <data_dir_path>
 
     # Import des données sipaf (v5 pour l'exemple)
-    geonature modulator import -i m_sipaf.pf_exemples -d  <data_dir_path>
-
-    ## Monitoring
-    geonature modulator install m_monitoring
-    geonature modulator install m_monitoring_test_1
-    geonature modulator install m_monitoring_test_2
-    geonature modulator features m_monitoring.exemples
-    geonature modulator features m_monitoring_test_1.exemples
-    geonature modulator features m_monitoring_test_2.exemples
+    geonature modulator import -i m_sipaf.pf_V1 -d  <data_dir_path>
