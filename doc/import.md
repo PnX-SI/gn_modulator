@@ -51,25 +51,31 @@ SELECT
 #### Plusieurs imports depuis un fichier csv
 
 ```
-geonature modules import -i import/pf.yml
+geonature modules import -i <import_code> -d <data_dir>
 ```
 
-avec le fichier `pf.yml` qui permet d'importer les organismes, passages à faune et acteurs depuis le même fichier csv et avec un mapping spécifique à chaque destinaire.
+avec 
+    - <import_code> le code de l'import 
+    - <data_dir> liens vers le dossier contenant les données
+
+    Nous avons par exemple l'import de code `m_sipaf.pf_V1` et défini dans le fichier [`m_sipaf.pf_V1.import.yml`](../config/modules/m_sipaf/imports/m_sipaf.pf_V1) qui permet d'importer les organismes, passages à - faune et acteurs depuis le même fichier csv et avec un mapping spécifique à chaque destinaire.
+    Cet
 
 ```
--
-    schema_code: user.organisme
-    data: data/pf.csv
-    pre_process: scripts/ppi_organism.sql
--
-    schema_code: m_sipaf.pf
-    data: data/pf.csv
-    pre_process: scripts/ppi_pf.sql
+type: import
+code: m_sipaf.pf_V1
+title: Données d'exemple m_sipaf
+description: import données d'exemple de passage à faune pour SIPAF
+items:
+  - schema_code: user.organisme
+    data: pf_V1.csv
+    pre_process: scripts/ppi_organism_V1.sql
+  - schema_code: m_sipaf.pf
+    data: pf_V1.csv
+    pre_process: scripts/ppi_pf_V1.sql
     keep_raw: true
--
-    schema_code: m_sipaf.actor
-    data: data/pf.csv
-    pre_process: scripts/ppi_actor.sql
+  - schema_code: m_sipaf.actor
+    data: pf_V1.csv
+    pre_process: scripts/ppi_actor_V1.sql
     keep_raw: true
-
 ```
