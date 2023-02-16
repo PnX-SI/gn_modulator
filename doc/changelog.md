@@ -1,10 +1,14 @@
 # Changelog
 
-## 1.0.1 (unreleased)
+## 1.0.1 (16-02-2023)
 
-### Améliorations
+**✨ Améliorations**
 
-- tables: adaptation automatique du nombre de colonnes demandées (`page_size`) à la hauteur du composant (pour éviter les zones vides)
+- Listes des objets : adaptation automatique du nombre d'objets demandées (`page_size`) en fonction de la hauteur du composant (pour éviter les zones vides)
+
+**🐛 Corrections**
+
+- SIPAF : Correction de l'import du référentiel de linéaires (routes, autoroutes)
 
 ## 1.0.0 (16-02-2023)
 
