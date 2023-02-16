@@ -8,7 +8,7 @@ config_params: !include ./config.yml
 module:
   module_label: Passages faune
   module_desc: Module permettant la visualisation et la gestion des passages à Faune de France
-  module_picto: fa-puzzle-piece
+  module_picto: fa-road
   active_frontend: true
 
 features:
