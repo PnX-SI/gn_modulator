@@ -78,7 +78,7 @@ export default {
     return zoom || this._mConfig.appConfig().MAPCONFIG.ZOOM_LEVEL;
   },
 
-  setCenter(mapId, center = null) {
+  setCenter(mapId, center:any = null) {
     if (!this.getMap(mapId)) {
       return;
     }

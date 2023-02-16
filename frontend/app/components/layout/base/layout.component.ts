@@ -215,7 +215,6 @@ export class ModulesLayoutComponent implements OnInit {
 
     for (const key of [
       'debug',
-      'form_group_id',
       'appearance',
       'index',
       'map_id',
@@ -224,6 +223,10 @@ export class ModulesLayoutComponent implements OnInit {
       if (this.parentContext[key] != null) {
         this.context[key] = this.parentContext[key];
       }
+    }
+    
+    if (this._name != 'form') {
+      this.context['form_group_id'] = this.parentContext['form_group_id']
     }
 
     if (this.debug !== undefined) {

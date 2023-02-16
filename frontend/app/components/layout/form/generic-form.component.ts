@@ -76,7 +76,6 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     if (this.formGroup) {
       return;
     }
-
     this.formGroup = this._mForm.initForm(this.layout, this._id, this.context);
 
     this.context.form_group_id = this._id;

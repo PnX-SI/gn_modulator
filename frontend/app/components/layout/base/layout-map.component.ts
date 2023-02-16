@@ -46,6 +46,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
         type: 'Point',
         coordinates: [event.data.lon, event.data.lat],
       });
+      this._mapService.setCenter(this.mapId, [event.data.lat, event.data.lon]);
     }
   }
 
