@@ -1,15 +1,15 @@
-## Import de données
+# Import de données
 
-### Commande d'import
+## Commande d'import
 
 ```
 geonature modules import
 ```
 
-### Exemple d'import de données
+## Exemple d'import de données
 
 
-#### Import simple depuis un fichier csv *(bien formatté)*
+### Import simple depuis un fichier CSV *(bien formaté)*
 
 ```
 geonature modules import -s m_sipaf.pf -d <chemin vers le fichier csv>
@@ -20,7 +20,7 @@ Cette commande va intégrer (s'il y a correspondance des champs), pour chaque li
 - d'une mise à jour si la données est modifié
 - si la ligne existe et que la données n'est pas modifiée on ne fait rien
 
-#### Import avec mapping des données
+### Import avec mapping des données
 
 ```
 geonature modules import -s m_sipaf.pf -d <chemin vers le fichier csv> -p <chemin vers le fichier pre_process.sql de mapping>
@@ -48,18 +48,18 @@ SELECT
 ```
 
 
-#### Plusieurs imports depuis un fichier csv
+### Plusieurs imports depuis un fichier CSV
 
 ```
 geonature modules import -i <import_code> -d <data_dir>
 ```
 
-avec:
-    - `<import_code>` le code de l'import
-    - `<data_dir>` liens vers le dossier contenant les données
+avec :
 
-Nous avons par exemple l'import de code `m_sipaf.pf_V1` et défini dans le fichier [m_sipaf.pf_V1.import.yml](../config/modules/contrib/m_sipaf/imports/m_sipaf.pf_V1.import.yml) qui permet d'importer les organismes, passages à - faune et acteurs depuis le même fichier csv et avec un mapping spécifique à chaque destinaire.
+- `<import_code>` : le code de l'import
+- `<data_dir>` : lien vers le dossier contenant les données
 
+Nous avons par exemple l'import de code `m_sipaf.pf_V1` et défini dans le fichier [m_sipaf.pf_V1.import.yml](../config/modules/contrib/m_sipaf/imports/m_sipaf.pf_V1.import.yml) qui permet d'importer les organismes, passages à faune et acteurs depuis le même fichier CSV et avec un mapping spécifique à chaque destinaire.
 
 ```
 type: import
