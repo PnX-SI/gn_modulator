@@ -119,6 +119,8 @@ site_details_fields:
                 - date_creation_ouvrage
                 - issu_requalification
                 - date_requalification_ouvrage
+                - key: digitiser.nom_complet
+                  title: Numerisateur
         - display: fieldset
           key: actors
           type: array
@@ -209,6 +211,9 @@ site_form_fields:
           class: warning
         - hidden: true
           items:
+            - key: id_digitiser
+              default: __f__context.current_user?.id_role
+              hidden: true
             - geom
             - key: id_passage_faune
               required: false

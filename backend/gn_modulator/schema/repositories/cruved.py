@@ -3,10 +3,8 @@
 """
 
 from flask import g
-from sqlalchemy import (
-    case,
-    literal,
-)
+from sqlalchemy import case, literal, or_
+
 from geonature.core.gn_permissions.tools import get_scopes_by_action
 
 
@@ -26,7 +24,13 @@ class SchemaRepositoriesCruved:
         else:
             return case(
                 [
-                    (Model.actors.any(id_role=g.current_user.id_role), 1),
+                    (
+                        or_(
+                            Model.actors.any(id_role=g.current_user.id_role),
+                            Model.id_digitiser == g.current_user.id_role,
+                        ),
+                        1,
+                    ),
                     (Model.actors.any(id_organism=g.current_user.id_organisme), 2),
                 ],
                 else_=3,

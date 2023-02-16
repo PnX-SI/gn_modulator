@@ -31,6 +31,19 @@ properties:
       title: UUID
       default: uuid
       description: Identifiant universel unique au format UUID (uuid_pf)
+  id_digitiser:
+      type: integer
+      foreign_key: true
+      schema_code: user.role
+      title: Numérisateur
+      description: Personne qui a saisi la donnée
+  digitiser:
+      type: relation
+      relation_type: n-1
+      schema_code: user.role
+      title: Numérisateur
+      description: Personne qui a saisi la donnée
+      local_key: id_digitiser
   pi_ou_ps:
       type: boolean
       title: Positionnement

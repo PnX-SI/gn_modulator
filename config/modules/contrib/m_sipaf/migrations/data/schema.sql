@@ -13,6 +13,7 @@ CREATE TABLE pr_sipaf.t_passages_faune (
     id_passage_faune SERIAL NOT NULL,
     code_passage_faune VARCHAR NOT NULL,
     uuid_passage_faune UUID NOT NULL DEFAULT public.uuid_generate_v4(),
+    id_digitiser INTEGER,
     pi_ou_ps BOOLEAN,
     geom GEOMETRY(GEOMETRY, 4326) NOT NULL,
     geom_local GEOMETRY(GEOMETRY, 2154),
@@ -41,10 +42,11 @@ CREATE TABLE pr_sipaf.t_passages_faune (
 );
 
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.code_passage_faune IS 'Code permettant d''identifier le passage à faune de manière unique (texte)';
-COMMENT ON COLUMN pr_sipaf.t_passages_faune.uuid_passage_faune IS 'Identifiant universel unique au format uuid (uuid_pf)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.uuid_passage_faune IS 'Identifiant universel unique au format UUID (uuid_pf)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.id_digitiser IS 'Personne qui a saisi la donnée';
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.pi_ou_ps IS 'Positionnement du passage vis-à vis de l’infrastructure (inférieur (False) ou supérieur (True))';
-COMMENT ON COLUMN pr_sipaf.t_passages_faune.geom IS 'Geometrie du passage faune (SRID=4326)';
-COMMENT ON COLUMN pr_sipaf.t_passages_faune.geom_local IS 'Géométrie locale du passage faune (SRID=2154)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.geom IS 'Géometrie du passage à faune (SRID=4326)';
+COMMENT ON COLUMN pr_sipaf.t_passages_faune.geom_local IS 'Géométrie locale du passage à faune (SRID=2154)';
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.pk IS 'Point kilométrique';
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.pr IS 'Point repère';
 COMMENT ON COLUMN pr_sipaf.t_passages_faune.pr_abs IS 'Distance en abscisse curviligne depuis le dernier PR';
@@ -91,6 +93,13 @@ ALTER TABLE pr_sipaf.t_passages_faune
 ALTER TABLE pr_sipaf.cor_actor_pf
     ADD CONSTRAINT pk_pr_sipaf_cor_actor_pf_id_actor PRIMARY KEY (id_actor);
 
+
+---- pr_sipaf.t_passages_faune foreign key constraint id_digitiser
+
+ALTER TABLE pr_sipaf.t_passages_faune
+    ADD CONSTRAINT fk_pr_sipaf_t_pas_t_rol_id_digitiser FOREIGN KEY (id_digitiser)
+    REFERENCES utilisateurs.t_roles(id_role)
+    ON UPDATE CASCADE ON DELETE SET NULL;
 
 ---- pr_sipaf.t_passages_faune foreign key constraint id_nomenclature_ouvrage_specificite
 

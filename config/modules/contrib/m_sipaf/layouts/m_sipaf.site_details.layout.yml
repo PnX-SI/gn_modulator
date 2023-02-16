@@ -8,6 +8,7 @@ layout:
   direction: row
   items:
     - type: map
+      flex: 2
       items:
         - type: object
           display: geojson
@@ -15,7 +16,8 @@ layout:
           prefilters: __f__`id_passage_faune = ${o.object(x, 'site').value}`
           popup_fields: __SITE_MAP_POPUP_FIELDS__
 
-    - items:
+    - flex: 3
+      items:
         - type: breadcrumbs
           flex: "0"
         - code: utils.object_details
