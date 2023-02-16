@@ -28,7 +28,7 @@ La structure du dossier de la configuration du module est la suivante :
     # fichiers de définition des objects (tables, modèles) associés à ce module
     definitions/
 
-    # données addionelles
+    # données additionnelles
     features/
 
     # fichiers images, médias, etc..
