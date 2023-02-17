@@ -147,7 +147,7 @@ export class ModulesLayoutObjectTableComponent
 
       const extendedParams = {
         ...params, // depuis tabulator
-        fields: this.fields(), // fields
+        fields: this.fields({ addDefault: true }), // fields
         flat_keys: true, // sortie à plat
       };
 
