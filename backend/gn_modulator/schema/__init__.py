@@ -88,7 +88,8 @@ class SchemaMethods(
         if self.autoschema():
             self.definition = self.get_autoschema()
 
-        self.process_backrefs()
+        if self.sql_table_exists():
+            self.process_backrefs()
 
         self.json_schema = self.get_json_schema()
 

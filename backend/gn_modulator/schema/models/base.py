@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from geonature.utils.env import db
 from ..errors import SchemaProcessedPropertyError
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
+from utils_flask_sqla.serializers import serializable
 
 # store the sqla Models
 
@@ -248,6 +249,8 @@ class SchemaModelBase:
                 key,
                 self.process_column_property_model(key, column_property_def, Model),
             )
+
+        set_global_cache(["schema", self.schema_code(), "model"], serializable(Model))
 
         return Model
 

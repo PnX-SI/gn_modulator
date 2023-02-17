@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 (17-02-2023)
+
+**🐛 Corrections**
+- Ajout des méthodes de serialisation `utils_flask_sqla.serializers.serializable` aux modèles autogénérés
+    - pour éviter un bug dans la gestion des permissions
 ## 1.0.1 (16-02-2023)
 
 **✨ Améliorations**
