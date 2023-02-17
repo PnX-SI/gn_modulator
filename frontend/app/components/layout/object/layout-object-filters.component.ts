@@ -63,15 +63,17 @@ export class ModulesLayoutObjectFiltersComponent
         const field = filterDefs[key]?.field || key;
         const type = filterDefs[key]?.type || '=';
         const value = filterDefs[key]?.key ? val[filterDefs[key].key] : utils.getAttr(data, key);
+        console.log(value)
         return {
           field,
           type,
           value,
         };
       })
-      .filter(({ field, type, value }) => value != null && value != '')
+      .filter(({ field, type, value }) => value != null && value !== '')
       .map(({ field, type, value }) => `${field} ${type} ${value}`)
       .join(', ');
+      console.log(data, this.filters)
   }
 
   applyFilters() {

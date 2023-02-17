@@ -2,7 +2,8 @@
 
 ## 1.0.3 (unreleased)
 
-
+**🐛 Corrections**
+- composant de filtre: prise en compte des filtre quand la valeur est `false`
 ## 1.0.2 (17-02-2023)
 
 **🐛 Corrections**
