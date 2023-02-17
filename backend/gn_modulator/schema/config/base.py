@@ -97,7 +97,7 @@ class SchemaConfigBase:
             },
             "pk_field_name": self.pk_field_name(),
             "label_field_name": self.label_field_name(),
-            "title_field_name": self.attr("meta.title_field_name"),
+            "title_field_name": self.title_field_name(),
             "value_field_name": self.value_field_name(),
             "geometry_field_name": self.geometry_field_name(),
             "model_name": self.model_name(),
@@ -126,6 +126,9 @@ class SchemaConfigBase:
 
     def label_field_name(self):
         return self.attr("meta.label_field_name")
+
+    def title_field_name(self):
+        return self.attr("meta.title_field_name")
 
     def geometry_field_name(self):
         return self.attr("meta.geometry_field_name")

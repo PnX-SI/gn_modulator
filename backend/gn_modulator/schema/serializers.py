@@ -370,6 +370,7 @@ class SchemaSerializers:
         self,
         m_list,
         fields=None,
+        only=None,
         as_geojson=False,
         geometry_field_name=False,
         flat_keys=False,

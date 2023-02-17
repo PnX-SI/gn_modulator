@@ -99,6 +99,7 @@ site_form_fields:
     module_code: m_monitoring
   - id_nomenclature_type_site
   - key: modules
+    object_code: modules
     type: list_form
     multiple: true
     return_object: true
@@ -168,6 +169,7 @@ visit_form_fields:
     default: __f__utils.today()
   - date_max
   - key: id_module
+    object_code: module
     type: list_form
     title: Protocole
     schema_code: commons.module
@@ -175,7 +177,8 @@ visit_form_fields:
   - key: id_dataset
     type: list_form
     title: "__f__data.id_module ? 'Jeu de données' : 'Jeu de données (Veuillez entrer un protocole)'"
-    schema_code: meta.jdd
+    object_code: meta.jdd
+    module_code: __REF_MODULE_CODE__
     page_size: 10
     reload_on_search: true
     filters: __f__data.id_module && `modules.id_module = ${data.id_module}`
@@ -183,7 +186,8 @@ visit_form_fields:
   - key: observers
     type: list_form
     title: Observateurs
-    schema_code: user.role
+    object_code: user.role
+    module_code: __REF_MODULE_CODE__
     multiple: true
     return_object: true
     filters: groupes.listes.code_liste = obsocctax

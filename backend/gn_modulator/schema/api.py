@@ -6,6 +6,7 @@ import json
 from flask.views import MethodView
 from flask import request, make_response
 from geonature.core.gn_permissions import decorators as permissions
+from gn_modulator.utils.cache import get_global_cache, set_global_cache
 
 # from geonature.utils.config import config
 from gn_modulator import MODULE_CODE
@@ -127,6 +128,49 @@ class SchemaApi:
             - prefilters
         """
 
+        def check_fields(fields, write=False):
+            authorized_fields = sorted(
+                get_global_cache(
+                    [
+                        "keys",
+                        module_code,
+                        object_definition["object_code"],
+                        "write" if write else "read",
+                    ]
+                )
+                or []
+            )
+
+            for elem in [
+                self.pk_field_name(),
+                self.label_field_name(),
+                self.title_field_name(),
+                "ownership",
+            ]:
+                if elem is not None and elem not in authorized_fields:
+                    authorized_fields.append(elem)
+
+            unvalid_fields = sorted(
+                list(filter(lambda f: not self.has_property(f) and f != "ownership", fields))
+            )
+            unauthorized_fields = sorted(
+                list(filter(lambda f: f not in authorized_fields, fields))
+            )
+
+            if unvalid_fields:
+                return f"Les champs suivants ne sont pas des clé valides: <br>{', '.join(unvalid_fields)}"
+
+            if unauthorized_fields:
+                return f"""
+                Les champs suivants ne sont pas authorisé pour cette requete: 
+                <br><br>
+                - {'<br>- '.join(unauthorized_fields) } 
+                <br><br>
+                Champs autorisés
+                <br><br>
+                - {'<br>- '.join(authorized_fields) } 
+                """
+
         def get_rest(self_mv, value=None):
             if value:
                 try:
@@ -139,7 +183,9 @@ class SchemaApi:
 
         def get_one_rest(value):
             params = self.parse_request_args(request, object_definition)
-
+            field_errors = check_fields(params["fields"])
+            if field_errors:
+                return field_errors, 403
             try:
                 m = self.get_row(
                     value,
@@ -161,6 +207,10 @@ class SchemaApi:
                 **self.parse_request_args(request, object_definition),
                 **additional_params,
             }
+
+            field_errors = check_fields(params["fields"])
+            if field_errors:
+                return field_errors, 403
 
             cruved_type = params.get("cruved_type") or "R"
             query_infos = self.get_query_infos(
@@ -197,8 +247,12 @@ class SchemaApi:
             return out
 
         def post_rest(self_mv):
-            data = request.get_json()
             params = self.parse_request_args(request, object_definition)
+            field_errors = check_fields(params["fields"])
+            if field_errors:
+                return field_errors, 403
+
+            data = request.get_json()
 
             try:
                 m = self.insert_row(data)
@@ -211,8 +265,14 @@ class SchemaApi:
             )
 
         def patch_rest(self_mv, value):
-            data = request.get_json()
             params = self.parse_request_args(request, object_definition)
+            field_errors = check_fields(params["fields"])
+            if field_errors:
+                return field_errors, 403
+
+            data = request.get_json()
+
+            # check data fields
 
             try:
                 m, _ = self.update_row(

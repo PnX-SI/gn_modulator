@@ -18,6 +18,8 @@ site_filters_fields:
     - label: Localisation
       items:
         - key: region
+          object_code: ref_geo.area
+          module_code: __REF_MODULE_CODE__
           title: Région
           type: list_form
           return_object: "true"
@@ -27,6 +29,8 @@ site_filters_fields:
           sort: area_name
 
         - key: departement
+          object_code: ref_geo.area
+          module_code: __REF_MODULE_CODE__
           title: Département
           type: list_form
           reload_on_search: true
@@ -42,6 +46,8 @@ site_filters_fields:
               : null
 
         - key: commune
+          object_code: ref_geo.area
+          module_code: __REF_MODULE_CODE__
           reload_on_search: true
           title: Commune
           type: list_form
@@ -279,6 +285,8 @@ site_form_fields:
                   multiple: true
                   return_object: true
                   additional_fields: ["cd_nomenclature"]
+                  module_code: __REF_MODULE_CODE__
+                  object_code: ref_nom.nomenclature
                 - key: ouvrage_type_autre
                   description: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
                   type: string

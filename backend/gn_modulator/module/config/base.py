@@ -76,6 +76,8 @@ class ModulesConfigBase:
 
         cls.process_tree(module_code)
 
+        cls.process_fields(module_code)
+
         if module_config.get("registred"):
             cls.process_module_params(module_code)
             cls.process_module_api(module_code)
