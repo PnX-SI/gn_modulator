@@ -316,7 +316,23 @@ export class ModulesObjectService {
     //   (ce qui a été testé précédemment) donc à true
     //   par exemple pour les actions d'export
 
-    const testUserCruved = ownership ? moduleCruvedAction >= ownership : true;
+    let testUserCruved;
+
+    // si les droit du module sont nul pour cet action => FALSE
+    if (moduleCruvedAction == 0) {
+      testUserCruved = false;
+      // si l'action est CREATE, EXPORT, IMPORT (ne concerne pas une ligne précise) => TRUE
+    } else if ('CEI'.includes(action)) {
+      testUserCruved = true;
+      // pour EDIT ET READ
+      // si on a pas d'info d'appartenance
+      // ownership null => False (par sécurité)
+    } else if (ownership == null) {
+      testUserCruved = false;
+      // on compare ownership, l'appartenance qui doit être supérieur aet les droits du module
+    } else {
+      testUserCruved = moduleCruvedAction >= ownership;
+    }
 
     if (!testUserCruved) {
       const msgDroitsInsuffisants = {

@@ -285,13 +285,14 @@ export class ModulesLayoutObjectTableComponent
         return;
       }
       this.tableHeight = `${elem.clientHeight}px`;
-      this.table.setHeight(this.tableHeight);
+      this.table.setHeight(elem.clientHeight);
       const pageSize = Math.floor((elem.clientHeight - 90) / 50);
-      if (!this.computedLayout.page_size && this.pageSize != pageSize) {
+
+      if (!this.computedLayout.page_size && this.pageSize != pageSize && pageSize > 1) {
         this.pageSize = pageSize;
         this.drawTable();
       }
-    }, 10);
+    }, 500);
   }
 
   getData(): Observable<any> {

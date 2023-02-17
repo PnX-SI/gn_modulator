@@ -4,6 +4,8 @@
 
 **🐛 Corrections**
 - composant de filtre: prise en compte des filtre quand la valeur est `false`
+- ajout des champs par défaut (dont `ownership`) && correction droits tableaux
+- amélioration affichage tableaux dans tabs
 ## 1.0.2 (17-02-2023)
 
 **🐛 Corrections**
