@@ -6,6 +6,7 @@ import json
 from flask.views import MethodView
 from flask import request, make_response
 from geonature.core.gn_permissions import decorators as permissions
+from geonature.utils.env import db
 
 # from geonature.utils.config import config
 from gn_modulator import MODULE_CODE
@@ -90,7 +91,7 @@ class SchemaApi:
             "value": self.load_param(request.args.get("value", "null")),
             "as_csv": self.load_param(request.args.get("as_csv", "false")),
             "cruved_type": self.load_param(request.args.get("cruved_type", "null")),
-            "sql": self.load_param(request.args.get("sql", "null")),
+            "sql": "sql" in request.args,
             "test": self.load_param(request.args.get("test", "null")),
         }
 
@@ -176,7 +177,11 @@ class SchemaApi:
 
             if params.get("sql"):
                 response = make_response(
-                    sqlparse.format(str(query_list), reindent=True, keywordcase="upper"),
+                    sqlparse.format(
+                        str(query_list.statement.compile(compile_kwargs={"literal_binds": True})),
+                        reindent=True,
+                        keywordcase="upper",
+                    ),
                     200,
                 )
                 response.mimetype = "text/plain"
