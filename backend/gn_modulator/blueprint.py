@@ -49,7 +49,7 @@ def api_modules_config(config_path):
         return f"Il y a {len(errors_init_module)} erreur(s) dans les définitions.", 500
 
     return process_dict_path(
-        ModuleMethods.modules_config_with_cruved(),
+        ModuleMethods.modules_config(),
         config_path,
         SchemaMethods.base_url() + "/config/",
     )

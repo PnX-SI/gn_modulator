@@ -69,6 +69,8 @@ export class PageComponent implements OnInit {
       .init()
       .pipe(
         mergeMap(() => {
+          // processRigths
+
           return this._route.data;
         }),
         // route data

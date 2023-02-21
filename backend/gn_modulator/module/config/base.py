@@ -83,30 +83,5 @@ class ModulesConfigBase:
         return module_config
 
     @classmethod
-    def modules_config_with_cruved(cls):
-        return {
-            module_code: cls.module_config_with_cruved(module_code)
-            for module_code in cls.module_codes()
-        }
-
-    @classmethod
-    def module_config_with_cruved(cls, module_code):
-        """
-        module config destiné à être utilisé dans l'api 'modules_config'
-        """
-
-        module_config_with_cruved = copy.deepcopy(cls.module_config(module_code))
-
-        # il n'y pas de cruved si le module n'est pas en base
-        if not module_config_with_cruved.get("registred"):
-            return module_config_with_cruved
-
-        module_config_with_cruved["cruved"] = {
-            k: int(v)
-            for k, v in cruved_scope_for_user_in_module(
-                g.current_user.id_role,
-                module_code=module_code,
-            )[0].items()
-        }
-
-        return module_config_with_cruved
+    def modules_config(cls):
+        return {module_code: cls.module_config(module_code) for module_code in cls.module_codes()}

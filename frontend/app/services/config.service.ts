@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { AppConfig } from '@geonature_config/app.config';
 import { ModuleConfig } from '../module.config';
+import { ModuleService } from '@geonature/services/module.service';
 
 import { of, forkJoin } from '@librairies/rxjs';
 import { mergeMap } from '@librairies/rxjs/operators';
@@ -15,7 +16,7 @@ export class ModulesConfigService {
     layouts: {},
   };
 
-  constructor(private _mRequest: ModulesRequestService) {}
+  constructor(private _moduleService: ModuleService, private _mRequest: ModulesRequestService) {}
 
   /** Configuration */
 
@@ -27,7 +28,13 @@ export class ModulesConfigService {
       config: this.getModulesConfig(),
       layout: this.getLayouts(),
       schema: this.getSchemas(),
-    });
+    }).pipe(
+      mergeMap(() => {
+        // on attibue les droits aux module (depuis le ModuleService de GN)
+        this.setModuleCruved(this._config.modules);
+        return of(true);
+      })
+    );
   }
 
   getModulesConfig() {
@@ -43,6 +50,16 @@ export class ModulesConfigService {
         return of(this._config.modules);
       })
     );
+  }
+
+  setModuleCruved(modules) {
+    for (const [moduleCode, moduleConfig] of Object.entries(modules)) {
+      const moduleGN = this._moduleService.getModule(moduleCode);
+      if (!moduleGN) {
+        continue;
+      }
+      (moduleConfig as any)['cruved'] = this._moduleService.getModule(moduleCode)['cruved'];
+    }
   }
 
   moduleConfig(moduleCode) {
