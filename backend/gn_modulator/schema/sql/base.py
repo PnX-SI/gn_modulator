@@ -4,20 +4,29 @@
     SQL text production methods for schema
 """
 
+import sqlparse
 from sqlalchemy import inspect
-from gn_modulator.utils.cache import get_global_cache, set_global_cache
-
 from geonature.utils.env import db
-
+from gn_modulator.utils.cache import get_global_cache, set_global_cache
+from gn_modulator.utils.commons import get_class_from_path
 from ..errors import (
     SchemaProcessedPropertyError,
 )
 
-from gn_modulator.utils.cache import get_global_cache, clear_global_cache
-from gn_modulator.utils.commons import get_class_from_path
-
 
 class SchemaSqlBase:
+    @classmethod
+    def sql_txt(cls, query):
+        return str(query.statement.compile(compile_kwargs={"literal_binds": True}))
+
+    @classmethod
+    def format_sql(cls, sql_txt):
+        return sqlparse.format(sql_txt, reindent=True, keywordcase="upper")
+
+    @classmethod
+    def pprint_sql(cls, sql_txt):
+        print(cls.format_sql(sql_txt))
+
     def get_sql_type(self, column_def, cor_table=False, required=False):
         field_type = column_def.get("type")
 

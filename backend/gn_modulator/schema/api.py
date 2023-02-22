@@ -11,7 +11,6 @@ from geonature.utils.env import db
 # from geonature.utils.config import config
 from gn_modulator import MODULE_CODE
 from gn_modulator.definition import DefinitionMethods
-import sqlparse
 
 
 class SchemaApi:
@@ -176,12 +175,9 @@ class SchemaApi:
             )
 
             if params.get("sql"):
+                sql_txt = self.cls.query_as_txt(query_list)
                 response = make_response(
-                    sqlparse.format(
-                        str(query_list.statement.compile(compile_kwargs={"literal_binds": True})),
-                        reindent=True,
-                        keywordcase="upper",
-                    ),
+                    self.cls.pprint_sql(sql_txt),
                     200,
                 )
                 response.mimetype = "text/plain"
