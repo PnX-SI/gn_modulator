@@ -70,7 +70,7 @@ class SchemaUtilsImports:
 
     @classmethod
     def txt_create_raw_import_view(
-        cls, schema_code, temporary_table, raw_import_view, keys=None, key_unnest=None
+        cls, schema_code, temporary_table, raw_import_view, keys=None, key_unnest=None, limit=None
     ):
         """
         - temporary_table : table ou sont stockées les données d'un csv
@@ -111,6 +111,7 @@ class SchemaUtilsImports:
 
         txt_columns = ",\n    ".join(v_txt_columns)
         txt_pre_process_columns = ",\n    ".join(v_txt_pre_process_columns)
+        txt_limit = f"LIMIT {limit}" if limit else ""
 
         return f"""DROP VIEW IF EXISTS {raw_import_view} CASCADE;
 CREATE VIEW {raw_import_view} AS
@@ -118,10 +119,11 @@ WITH pre_process AS (
 SELECT
     {txt_pre_process_columns}
 FROM {temporary_table}
+{txt_limit}
 )
 SELECT
     {txt_columns}
-FROM pre_process
+FROM pre_process;
 """
 
     def pre_process_raw_import_columns(self, key, key_unnest=None):
@@ -196,13 +198,15 @@ FROM pre_process
         v_columns = []
         v_joins = []
 
-        columns = filter(
-            lambda x: (
-                x.key in keys
-                if keys is not None
-                else sm.is_column(x.key) and not sm.property(x.key).get("primary_key")
-            ),
-            cls.get_table_columns(raw_import_view),
+        columns = list(
+            filter(
+                lambda x: (
+                    x.key in keys
+                    if keys is not None
+                    else sm.is_column(x.key) and not sm.property(x.key).get("primary_key")
+                ),
+                cls.get_table_columns(raw_import_view),
+            )
         )
 
         solved_keys = {}
@@ -236,7 +240,7 @@ CREATE VIEW {processed_import_view} AS
 SELECT
     {txt_columns}
 FROM {raw_import_view} t
-{txt_joins}
+{txt_joins};
 """
 
     def resolve_key(self, key, index=None, alias_main="t", alias_join_base="j", solved_keys={}):
@@ -251,14 +255,14 @@ FROM {raw_import_view} t
 
         txt_column = f"{alias_join}.{self.pk_field_name()}"
 
-        uniques = self.attr("meta.unique")
+        unique = self.attr("meta.unique")
         v_join = []
 
         # resolution des cles si besoins
 
         # couf pour permttre de faire les liens entre les join quand il y en a plusieurs
         link_joins = {}
-        for index_unique, k_unique in enumerate(uniques):
+        for index_unique, k_unique in enumerate(unique):
             var_key = self.var_key(key, k_unique, index_unique, link_joins, alias_main)
 
             if self.property(k_unique).get("foreign_key"):
@@ -279,7 +283,7 @@ FROM {raw_import_view} t
         # creation des joins avec les conditions
         v_join_on = []
 
-        for index_unique, k_unique in enumerate(uniques):
+        for index_unique, k_unique in enumerate(unique):
             var_key = self.var_key(key, k_unique, index_unique, link_joins, alias_main)
             # !!!(SELECT (NULL = NULL) => NULL)
             txt_join_on = (
@@ -367,9 +371,7 @@ INSERT INTO {table_name} (
 )
 SELECT
     {txt_columns_select_keys}
-FROM {processed_import_view}
-
-{txt_where};
+FROM {processed_import_view}{txt_where};
 """
 
     @classmethod

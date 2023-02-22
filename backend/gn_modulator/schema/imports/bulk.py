@@ -13,7 +13,8 @@ class SchemaBulkImports:
         les différents fichiers à importer
         """
 
-        # data = cls.load_yml_file(import_file_path)
+        cls.c_sql_exec_txt(f"DROP SCHEMA IF EXISTS {schema_import} CASCADE")
+
         import_definition = DefinitionMethods.get_definition("import", import_code)
         import_definition_file_path = DefinitionMethods.get_file_path("import", import_code)
         for d in import_definition["items"]:
@@ -45,8 +46,7 @@ class SchemaBulkImports:
 
         todo tout types de données
         """
-
-        cls.c_sql_exec_txt(f"CREATE SCHEMA IF NOT exists {schema_import}")
+        cls.c_sql_exec_txt(f"CREATE SCHEMA IF NOT EXISTS {schema_import}")
 
         sm = cls(schema_code)
         raw_import_table = f"{schema_import}.tmp_import_{Path(data_file_path).stem}"
@@ -63,10 +63,13 @@ class SchemaBulkImports:
 
         # 1) csv -> table temporaire
         if not keep_raw:
-            print(f"-- import csv_file {data_file_path.name} into {raw_import_table}")
+            print(f"\n-- import csv file {data_file_path.name} into table {raw_import_table}")
             cls.bulk_import_process_csv(schema_code, data_file_path, raw_import_table)
 
         nb_csv = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_table}").scalar()
+        if not keep_raw:
+            print(f"   #csv {nb_csv}")
+
         # 2) pre-process
         if pre_process_file_path is not None:
             with open(pre_process_file_path, "r") as f:
@@ -77,7 +80,7 @@ class SchemaBulkImports:
                     .replace("%", "%%")
                 )
 
-                verbose and print(txt_pre_process_raw_import_view.replace("%%", "%"))
+                verbose and cls.pprint_sql(txt_pre_process_raw_import_view.replace("%%", "%"))
                 cls.c_sql_exec_txt(txt_pre_process_raw_import_view)
                 raw_import_table = pre_processed_view
 
@@ -85,7 +88,7 @@ class SchemaBulkImports:
         txt_create_raw_import_view = cls.txt_create_raw_import_view(
             schema_code, raw_import_table, raw_import_view
         )
-        verbose and print(txt_create_raw_import_view)
+        verbose and cls.pprint_sql(txt_create_raw_import_view)
         cls.c_sql_exec_txt(txt_create_raw_import_view)
         cls.c_sql_exec_txt(f"SELECT * FROM {raw_import_table} LIMIT 1")
         db.session.commit()
@@ -94,48 +97,59 @@ class SchemaBulkImports:
         txt_create_processed_import_view = cls.txt_create_processed_import_view(
             schema_code, raw_import_view, processed_import_view
         )
-        verbose and print(txt_create_processed_import_view)
-        # print(txt_create_processed_import_view)
+        verbose and cls.pprint_sql(txt_create_processed_import_view)
         cls.c_sql_exec_txt(txt_create_processed_import_view)
         cls.c_sql_exec_txt(f"SELECT * FROM {processed_import_view} LIMIT 1")
 
-        nb_processed = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {processed_import_view}").scalar()
         nb_raw = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_view}").scalar()
+        if not nb_csv:
+            print("  - Le fichier csv ne possède pas de données")
+            return
+        if not nb_raw:
+            print("  - La vue brute ne possède pas de données")
+            return
+        nb_processed = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {processed_import_view}").scalar()
+        if not nb_processed:
+            print("  - La vue intermédiaire ne possède pas de données")
+            return
         nb_insert = cls.c_sql_exec_txt(
             f"SELECT COUNT(*) FROM {processed_import_view} WHERE {sm.pk_field_name()} IS NULL"
         ).scalar()
-        verbose and print(cls.txt_nb_update(schema_code, processed_import_view))
+        verbose and cls.pprint_sql(cls.txt_nb_update(schema_code, processed_import_view))
         nb_update = cls.c_sql_exec_txt(
             cls.txt_nb_update(schema_code, processed_import_view)
         ).scalar()
-        # nb_schema_avant = cls.c_sql_exec_txt(
-        #     f"SELECT COUNT(*) FROM {cls(schema_code).sql_schema_dot_table()}"
-        # ).scalar()
 
         # return
         # 4) INSERT / UPDATE
         # 4-1) INSERT
-        txt_import_view_to_insert = cls.txt_import_view_to_insert(
-            schema_code, processed_import_view
-        )
-        verbose and print(txt_import_view_to_insert)
-        cls.c_sql_exec_txt(txt_import_view_to_insert)
+        if nb_insert:
+            txt_import_view_to_insert = cls.txt_import_view_to_insert(
+                schema_code, processed_import_view
+            )
+            verbose and cls.pprint_sql(txt_import_view_to_insert)
+            cls.c_sql_exec_txt(txt_import_view_to_insert)
 
         # nb_schema_apres = cls.c_sql_exec_txt(
         #     f"SELECT COUNT(*) FROM {cls(schema_code).sql_schema_dot_table()}"
         # ).scalar()
-
-        print(
-            f"   - {schema_code} CSV {nb_csv} RAW {nb_raw} PROCESSED {nb_processed} INSERT {nb_insert} UPDATE {nb_update}"
-        )
 
         # 4-2) UPDATE
         if nb_update:
             txt_import_view_to_update = cls.txt_import_view_to_update(
                 schema_code, processed_import_view
             )
-            verbose and print(txt_import_view_to_update)
+            verbose and cls.pprint_sql(txt_import_view_to_update)
             cls.c_sql_exec_txt(txt_import_view_to_update)
+
+        nb_unchanged = nb_processed - nb_insert - nb_update
+
+        print(f"\n   - {schema_code}")
+        print(f"       raw       : {nb_raw:10d}")
+        nb_raw != nb_processed and print(f"       processed : {nb_processed:10d}")
+        nb_insert and print(f"       insert    : {nb_insert:10d}")
+        nb_update and print(f"       update    : {nb_update:10d}")
+        nb_unchanged and print(f"       unchanged : {nb_unchanged:10d}")
 
         # # 5) process relations ???
         #  ?? au moins n-n
@@ -155,6 +169,7 @@ class SchemaBulkImports:
 
             # on commence par les n-n
             if property.get("relation_type") in ("n-n"):
+                print(f"     process relation n-n {column.key}")
                 cls.bulk_import_process_relation_n_n(
                     schema_code, raw_import_table, column.key, verbose
                 )
@@ -187,13 +202,13 @@ class SchemaBulkImports:
         txt_raw_unnest_table = cls.txt_create_raw_import_view(
             schema_code, raw_import_table, raw_import_view, keys=[key], key_unnest=key
         )
-        verbose and print(txt_raw_unnest_table)
+        verbose and cls.pprint_sql(txt_raw_unnest_table)
         cls.c_sql_exec_txt(txt_raw_unnest_table)
 
         txt_process_table = cls.txt_create_processed_import_view(
             schema_code, raw_import_view, processed_import_view, keys=[key]
         )
-        verbose and print(txt_process_table)
+        verbose and cls.pprint_sql(txt_process_table)
         cls.c_sql_exec_txt(txt_process_table)
 
         # 3) insert / update / delete ??
@@ -203,20 +218,22 @@ class SchemaBulkImports:
         txt_raw_delete_table = cls.txt_create_raw_import_view(
             schema_code, raw_import_table, raw_delete_import_view, keys=[]
         )
-        verbose and print(txt_raw_delete_table)
+        verbose and cls.pprint_sql(txt_raw_delete_table)
         cls.c_sql_exec_txt(txt_raw_delete_table)
 
         txt_processed_delete_table = cls.txt_create_processed_import_view(
             schema_code, raw_delete_import_view, processed_delete_import_view, keys=[]
         )
-        verbose and print(txt_processed_delete_table)
+        verbose and cls.pprint_sql(txt_processed_delete_table)
         cls.c_sql_exec_txt(txt_processed_delete_table)
 
         txt_delete = f"""
 DELETE FROM {cor_table} t
     USING {processed_delete_import_view} j
-    WHERE t.{sm.pk_field_name()} = j.{sm.pk_field_name()}
+    WHERE t.{sm.pk_field_name()} = j.{sm.pk_field_name()};
     """
+
+        verbose and cls.pprint_sql(txt_delete)
         cls.c_sql_exec_txt(txt_delete)
 
         # - insert
@@ -226,7 +243,7 @@ DELETE FROM {cor_table} t
             keys=[sm.pk_field_name(), rel.pk_field_name()],
             dest_table=cor_table,
         )
-        verbose and print(txt_insert)
+        verbose and cls.pprint_sql(txt_insert)
         cls.c_sql_exec_txt(txt_insert)
 
     @classmethod

@@ -56,15 +56,13 @@ class SchemaAuto:
 
         properties_auto = self.autoproperties(Model)
 
-        required_auto = []
+        required = self.attr("required") or []
+
         for key, property in schema_definition.get("properties", {}).items():
             if key in properties_auto:
                 properties_auto[key].update(property)
             else:
                 properties_auto[key] = property
-
-            if property.get("required"):
-                required_auto.append(key)
 
         schema_definition["properties"] = properties_auto
 
@@ -73,8 +71,7 @@ class SchemaAuto:
             for key, property in schema_definition.get("properties", {}).items()
             if property.get("required")
         ]
-
-        schema_definition["required"] = required_auto
+        schema_definition["required"] = list(dict.fromkeys(required_auto + required))
 
         return schema_definition
 
@@ -208,12 +205,14 @@ class SchemaAuto:
         if column.comment:
             property["description"] = column.comment
 
-        if (
-            column.nullable is False
-            and column.primary_key is False
-            and column.default is None
-            and column.key != "meta_create_date"
-        ):
+        condition_required = (
+            (not column.nullable)
+            and (not column.primary_key)
+            and (column.default is None)
+            and (column.key != "meta_create_date")
+        )
+
+        if condition_required:
             property["required"] = True
 
         return property
