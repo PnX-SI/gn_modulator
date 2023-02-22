@@ -82,7 +82,7 @@ site_filters_defs:
     key: id_area
   commune:
     field: areas.id_area
-  infracode_passagestructure:
+  infrastructure:
     field: linears.groups.id_group
   nomenclatures_ouvrage_materiaux:
     field: nomenclatures_ouvrage_materiaux.id_nomenclature
