@@ -13,7 +13,7 @@ class SchemaBulkImports:
         les différents fichiers à importer
         """
 
-        cls.c_sql_exec_txt(f"DROP SCHEMA IF EXISTS {schema_import} CASCADE")
+        print(f"\nProcess import {import_code}")
 
         import_definition = DefinitionMethods.get_definition("import", import_code)
         import_definition_file_path = DefinitionMethods.get_file_path("import", import_code)
@@ -31,6 +31,8 @@ class SchemaBulkImports:
                 keep_raw=d.get("keep_raw"),
                 verbose=verbose,
             )
+
+        print(f"\nImport {import_code} terminé\n")
 
     @classmethod
     def process_csv_file(
@@ -67,8 +69,12 @@ class SchemaBulkImports:
             cls.bulk_import_process_csv(schema_code, data_file_path, raw_import_table)
 
         nb_csv = cls.c_sql_exec_txt(f"SELECT COUNT(*) FROM {raw_import_table}").scalar()
+        if not nb_csv:
+            print("  - Le fichier csv ne possède pas de données")
+            return
+
         if not keep_raw:
-            print(f"   #csv {nb_csv}")
+            print(f"   {nb_csv} lignes")
 
         # 2) pre-process
         if pre_process_file_path is not None:
@@ -169,7 +175,7 @@ class SchemaBulkImports:
 
             # on commence par les n-n
             if property.get("relation_type") in ("n-n"):
-                print(f"     process relation n-n {column.key}")
+                print(f"       process relation n-n {column.key}")
                 cls.bulk_import_process_relation_n_n(
                     schema_code, raw_import_table, column.key, verbose
                 )
