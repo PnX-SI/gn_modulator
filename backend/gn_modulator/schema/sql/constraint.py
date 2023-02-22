@@ -16,13 +16,13 @@ class SchemaSqlConstraint:
         if not (self.attr("meta.unique") and self.attr("meta.unique_in_db")):
             return ""
 
-        uniques = self.attr("meta.unique")
+        unique = self.attr("meta.unique")
 
         txt = "\nALTER TABLE {} ADD CONSTRAINT unique_{}_{} UNIQUE({});".format(
             self.sql_schema_dot_table(),
             self.sql_schema_dot_table().replace(".", "_"),
-            "_".join(uniques),
-            ", ".join(uniques),
+            "_".join(unique),
+            ", ".join(unique),
         )
 
         return txt
