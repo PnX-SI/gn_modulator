@@ -17,3 +17,6 @@ meta:
     unique:
         - id_type
         - linear_code
+required:
+    - linear_code
+    - linear_name
