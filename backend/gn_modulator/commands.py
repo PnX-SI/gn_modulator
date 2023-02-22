@@ -275,8 +275,17 @@ def cmd_check():
     print(errors_txt())
 
 
+@click.command("test")
+def cmd_test():
+    """
+    test random
+    """
+    print(SchemaMethods("ref_geo.linear").required())
+
+
 commands = [
     cmd_check,
+    cmd_test,
     cmd_test_grammar,
     cmd_init_module,
     # cmd_reinit_module,
