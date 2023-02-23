@@ -16,6 +16,64 @@ from ..errors import (
 
 class SchemaSqlBase:
     @classmethod
+    def auto_sql_schemas_dot_tables(cls):
+        auto_sql_schemas_dot_tables = []
+        for schema_code in cls.schema_codes():
+            schema_definition = get_global_cache(["schema", schema_code, "definition"])
+            if not schema_definition["meta"].get("autoschema"):
+                continue
+
+            Model = get_class_from_path(schema_definition["meta"]["model"])
+            table_name = Model.__tablename__
+            table_schema = Model.__table__.schema
+            auto_sql_schemas_dot_tables.append(f"{table_schema}.{table_name}")
+
+        return auto_sql_schemas_dot_tables
+
+    @classmethod
+    def get_columns_info(cls):
+        if get_global_cache(["columns"]):
+            return
+
+        # on récupère les info des colonnes depuis information_schema.columns
+        sql_txt_get_columns_info = f"""
+SELECT
+  c.table_schema,
+  c.table_name,
+  column_name,
+  column_default,
+  is_nullable
+FROM
+  information_schema.columns c
+  JOIN information_schema.tables t ON t.table_schema = c.table_schema
+  and c.table_name = t.table_name
+where
+    t.TABLE_TYPE = 'BASE TABLE'
+    and CONCAT(c.table_schema, '.', c.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
+  and t.TABLE_TYPE = 'BASE TABLE'
+"""
+        res = cls.c_sql_exec_txt(sql_txt_get_columns_info)
+
+        columns_info = {}
+
+        for r in res:
+            schema_name = r[0]
+            table_name = r[1]
+            column_name = r[2]
+            columns_info[schema_name] = columns_info.get(schema_name) or {}
+            columns_info[schema_name][table_name] = columns_info[schema_name].get(table_name) or {}
+
+            column_info = {"default": r[3], "nullable": r[4] == "YES"}
+            columns_info[schema_name][table_name][column_name] = column_info
+            # set_global_cache(["columns", schema_name, table_name, column_name], column_info)
+            set_global_cache(["columns"], columns_info)
+
+    @classmethod
+    def get_column_info(cls, schema_name, table_name, column_name):
+        cls.get_columns_info()
+        return get_global_cache(["columns", schema_name, table_name, column_name])
+
+    @classmethod
     def sql_txt(cls, query):
         return str(query.statement.compile(compile_kwargs={"literal_binds": True}))
 

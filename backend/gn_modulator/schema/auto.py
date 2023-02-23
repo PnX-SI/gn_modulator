@@ -56,8 +56,6 @@ class SchemaAuto:
 
         properties_auto = self.autoproperties(Model)
 
-        required = self.attr("required") or []
-
         for key, property in schema_definition.get("properties", {}).items():
             if key in properties_auto:
                 properties_auto[key].update(property)
@@ -71,7 +69,7 @@ class SchemaAuto:
             for key, property in schema_definition.get("properties", {}).items()
             if property.get("required")
         ]
-        schema_definition["required"] = list(dict.fromkeys(required_auto + required))
+        schema_definition["required"] = list(dict.fromkeys(required_auto))
 
         return schema_definition
 
@@ -202,13 +200,15 @@ class SchemaAuto:
                 # property.pop('foreign_key')
 
         # commentaires
-        if column.comment:
-            property["description"] = column.comment
+        # if column.comment:
+        # property["description"] = column.comment
+
+        column_info = self.cls.get_column_info(sql_schema_name, sql_table_name, column.key) or {}
 
         condition_required = (
-            (not column.nullable)
+            (not column_info.get("nullable", True))
             and (not column.primary_key)
-            and (column.default is None)
+            and (column_info.get("default") is None)
             and (column.key != "meta_create_date")
         )
 

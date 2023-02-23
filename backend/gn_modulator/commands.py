@@ -280,7 +280,7 @@ def cmd_test():
     """
     test random
     """
-    print(SchemaMethods("ref_geo.linear").required())
+    SchemaMethods.get_columns_info()
 
 
 commands = [
