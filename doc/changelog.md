@@ -3,9 +3,12 @@
 ## 1.0.3 (unreleased)
 
 **🐛 Corrections**
-- composant de filtre: prise en compte des filtre quand la valeur est `false`
-- ajout des champs par défaut (dont `ownership`) && correction droits tableaux
-- amélioration affichage tableaux dans tabs
+
+- Composant de filtre : prise en compte des filtres quand la valeur est `false`
+- SIPAF : Correction des filtres par infrastructure
+- Ajout des champs par défaut (dont `ownership`) et correction des droits dans les listes
+- Amélioration de l'affichage des tableaux dans le composant "tabs"
+
 ## 1.0.2 (17-02-2023)
 
 **🐛 Corrections**
