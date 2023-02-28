@@ -79,6 +79,9 @@ class SchemaSerializers:
         if field_type == "string":
             return fields.String(**kwargs)
 
+        if field_type == "datetime":
+            return fields.DateTime(**kwargs)
+
         if field_type == "date":
             # kwargs['format'] = column_def.get('format', "%Y-%m-%d")
             return fields.Date(**kwargs)

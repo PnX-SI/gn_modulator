@@ -64,13 +64,22 @@ class SchemaAuto:
 
         schema_definition["properties"] = properties_auto
 
+        required = self.attr("required", [])
+
         required_auto = [
             key
             for key, property in schema_definition.get("properties", {}).items()
             if property.get("required")
         ]
-        schema_definition["required"] = list(dict.fromkeys(required_auto))
+        schema_definition["required"] = list(dict.fromkeys(required_auto + required))
 
+        for elem in required_auto:
+            if elem in required:
+                print(
+                    "elem required en doublon",
+                    self,
+                    {"elem": elem, "required": required, "auto": required_auto},
+                )
         return schema_definition
 
     def autoproperties(self, Model):
@@ -102,8 +111,8 @@ class SchemaAuto:
 
         # relationships
         for relation_key, relation in inspect(Model).relationships.items():
-            if relation_key not in self.attr("meta.relations", []):
-                continue
+            # if relation_key not in self.attr("meta.relations", []):
+            # continue
             property = self.process_relation_auto(relation_key, relation)
             if property:
                 properties[relation_key] = property
@@ -118,6 +127,8 @@ class SchemaAuto:
 
         sql_schema_dot_table = "{}.{}".format(relation.target.schema, relation.target.name)
         schema_code = self.cls.c_get_schema_code_from_sql_schema_dot_table(sql_schema_dot_table)
+        if not schema_code:
+            return
         property = {
             "type": "relation",
             "relation_type": (
@@ -148,7 +159,6 @@ class SchemaAuto:
             type = "VARCHAR"
 
         schema_type = self.cls.c_get_type(type, "sql", "definition")
-
         if not schema_type:
             print(
                 f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"

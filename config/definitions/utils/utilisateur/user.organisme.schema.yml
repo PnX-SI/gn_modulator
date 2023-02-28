@@ -3,8 +3,6 @@ code: user.organisme
 title: Schema user.organisme
 description: Définition du schema pour les organimes
 
-required:
-    - nom_organisme
 meta:
     autoschema: true
     model: pypnusershub.db.models.Organisme

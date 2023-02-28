@@ -4,7 +4,6 @@ title: Schema user.role
 description: Définition du schema pour les utilisateurs
 
 required:
-    - identifiant
     - nom_role
     - prenom_role
 meta:

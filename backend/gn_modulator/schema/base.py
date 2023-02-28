@@ -16,7 +16,7 @@ column_types = [
     "string",
     "geometry",
     "date",
-    "date_time",
+    "datetime",
     "boolean",
     "uuid",
     "json",

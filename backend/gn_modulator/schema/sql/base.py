@@ -31,6 +31,27 @@ class SchemaSqlBase:
         return auto_sql_schemas_dot_tables
 
     @classmethod
+    def get_table_columns(cls, schema_dot_table):
+        table_schema = schema_dot_table.split(".")[0]
+        table_name = schema_dot_table.split(".")[1]
+        sql_txt_table_columns = f"""
+        SELECT
+            column_name
+        FROM
+            information_schema.columns c
+        WHERE 
+            c.table_schema = '{table_schema}'
+            AND c.table_name = '{table_name}'
+        """
+        res = cls.c_sql_exec_txt(sql_txt_table_columns)
+
+        columns = []
+        for r in res:
+            columns.append(r[0])
+
+        return columns
+
+    @classmethod
     def get_columns_info(cls):
         if get_global_cache(["columns"]):
             return
@@ -45,12 +66,8 @@ SELECT
   is_nullable
 FROM
   information_schema.columns c
-  JOIN information_schema.tables t ON t.table_schema = c.table_schema
-  and c.table_name = t.table_name
-where
-    t.TABLE_TYPE = 'BASE TABLE'
-    and CONCAT(c.table_schema, '.', c.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
-  and t.TABLE_TYPE = 'BASE TABLE'
+WHERE
+    CONCAT(c.table_schema, '.', c.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
 """
         res = cls.c_sql_exec_txt(sql_txt_get_columns_info)
 
@@ -73,13 +90,22 @@ where
         cls.get_columns_info()
         return get_global_cache(["columns", schema_name, table_name, column_name])
 
+    def is_nullable(self, column_name):
+        return (
+            self.cls.get_column_info(self.sql_schema_name(), self.sql_table_name(), column_name)[
+                "nullable"
+            ]
+            if self.autoschema()
+            else getattr(self.Model().__table__.columns, column_name).nullable
+        )
+
     @classmethod
     def sql_txt(cls, query):
         return str(query.statement.compile(compile_kwargs={"literal_binds": True}))
 
     @classmethod
     def format_sql(cls, sql_txt):
-        return sqlparse.format(sql_txt, reindent=True, keywordcase="upper")
+        return sqlparse.format(sql_txt.replace("%%", "%"), reindent=True, keywordcase="upper")
 
     @classmethod
     def pprint_sql(cls, sql_txt):
@@ -89,7 +115,6 @@ where
         field_type = column_def.get("type")
 
         sql_type = self.cls.c_get_type(field_type, "definition", "sql")["type"]
-
         if column_def.get("primary_key") and not cor_table:
             sql_type = "SERIAL NOT NULL"
 
@@ -220,16 +245,10 @@ where
           - db.engine.execute doesn't process sql text with comments
         """
 
-        # if not self.sql_processing():
-        #     raise SchemaUnautorizedSqlError(
-        #         "L'exécution de commandes sql n'est pas autorisé pour le schema {}"
-        #         .format(self.schema_code())
-        #     )
-
         txt_no_comment = "\n".join(
             filter(lambda l: (l and not l.strip().startswith("--")), txt.split("\n"))
         )
-        return db.engine.execute(txt_no_comment)
+        return db.session.execute(txt_no_comment)
 
     def sql_txt_drop_table(self):
         """

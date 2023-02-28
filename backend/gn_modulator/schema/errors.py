@@ -64,11 +64,19 @@ class SchemaSerializerModelIsNoneError(SchemaError):
     pass
 
 
-class SchemaImportPKError(SchemaError):
+class SchemaImportError(SchemaError):
+    pass
+
+
+class SchemaImportPKError(SchemaImportError):
     """
     Error when a property marked as processed has no processing instruction
     """
 
+    pass
+
+
+class SchemaImportRequiredInfoNotFoundError(SchemaImportError):
     pass
 
 

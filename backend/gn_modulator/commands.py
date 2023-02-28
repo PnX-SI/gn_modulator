@@ -11,6 +11,7 @@ from gn_modulator.schema import SchemaMethods
 from gn_modulator.module import ModuleMethods
 from gn_modulator.definition import DefinitionMethods
 from gn_modulator.utils.errors import errors_txt
+from geonature.utils.env import db
 
 
 @click.command("init")
@@ -142,15 +143,17 @@ def cmd_doc_schema(schema_code, force=False):
     "import_code",
     help="code de l'import de ficher",
 )
-@click.option("-v", "--verbose", is_flag=True, help="affiche les commandes sql")
 @click.option("-k", "--keep-raw", is_flag=True, help="garde le csv en base")
+@click.option(
+    "-v", "--verbose", type=int, default=1, help="1 : affiche les sortie, 2: les commandes sql  "
+)
 @with_appcontext
 def cmd_import_bulk_data(
     schema_code=None,
     import_code=None,
     data_path=None,
     pre_process_file_path=None,
-    verbose=False,
+    verbose=1,
     keep_raw=False,
 ):
     """
@@ -158,16 +161,19 @@ def cmd_import_bulk_data(
     """
 
     if schema_code and data_path:
-        SchemaMethods.process_csv_file(
-            schema_code=schema_code,
-            data_file_path=data_path,
+        import_number = SchemaMethods.process_import_schema(
+            schema_code,
+            data_path,
             pre_process_file_path=pre_process_file_path,
             verbose=verbose,
             keep_raw=keep_raw,
+            commit=True,
         )
 
     if import_code:
-        SchemaMethods.process_import_file(import_code, data_path, verbose)
+        import_number = SchemaMethods.process_import_code(
+            import_code, data_path, verbose=verbose, commit=True
+        )
 
     return True
 
@@ -280,7 +286,36 @@ def cmd_test():
     """
     test random
     """
-    SchemaMethods.get_columns_info()
+
+    from gn_modulator.utils.env import import_test_dir
+    from gn_modulator.tests.utils.imports import test_data_file
+    from geonature.utils.env import db
+
+    schema_code = "ref_geo.linear_group"
+    data_file_path = import_test_dir / "route/route2.csv"
+    pre_process_file_path = import_test_dir / "route/pp_linear_group.sql"
+
+    SchemaMethods.process_import_schema(
+        schema_code,
+        data_file_path,
+        pre_process_file_path=pre_process_file_path,
+        verbose=1,
+        commit=True,
+    )
+
+    schema_code = "ref_geo.linear"
+    data_file_path = import_test_dir / "route/route2.csv"
+    pre_process_file_path = import_test_dir / "route/pp_linear.sql"
+    SchemaMethods.process_import_schema(
+        schema_code,
+        data_file_path,
+        pre_process_file_path=pre_process_file_path,
+        verbose=1,
+        commit=True,
+    )
+    db.session.commit()
+
+    print("Error", SchemaMethods.import_get_infos(2, schema_code, "errors"))
 
 
 commands = [

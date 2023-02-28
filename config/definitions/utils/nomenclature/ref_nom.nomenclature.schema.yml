@@ -3,9 +3,6 @@ code: ref_nom.nomenclature
 title: Schema ref_nom.nomenclature
 description: Définition du schema des nomenclatures
 
-required:
-  - id_type
-  - cd_nomenclature
 meta:
   schema_code: ref_nom.nomenclature
   autoschema: true
