@@ -40,6 +40,11 @@ class TestImport:
         test import_route
         """
 
+        schema_code = "ref_geo.linear_type"
+        data_file_path = import_test_dir / "route/linear_type.csv"
+        expected_infos = {"nb_data": 1}
+        test_data_file(schema_code, data_file_path, expected_infos=expected_infos)
+
         schema_code = "ref_geo.linear_group"
         data_file_path = import_test_dir / "route/route.csv"
         pre_process_file_path = import_test_dir / "route/pp_linear_group.sql"
