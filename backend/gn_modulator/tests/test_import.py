@@ -20,6 +20,21 @@ class TestImport:
         }
         test_data_file(schema_code, data_file_path, expected_infos=expected_infos)
 
+    def test_synthese2(self):
+        """
+        pour être sur que le premier import n'est pas persistant
+        """
+
+        schema_code = "syn.synthese"
+        data_file_path = import_test_dir / "synthese_1.csv"
+        expected_infos = {
+            "nb_data": 2,
+            "nb_insert": 2,
+            "nb_update": 0,
+            "nb_unchanged": 0,
+        }
+        test_data_file(schema_code, data_file_path, expected_infos=expected_infos)
+
     def test_route(self):
         """
         test import_route
