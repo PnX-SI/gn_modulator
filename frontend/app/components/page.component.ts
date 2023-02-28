@@ -4,6 +4,7 @@ import { ModulesPageService } from '../services/page.service';
 import { ModulesDataService } from '../services/data.service';
 import { ModulesLayoutService } from '../services/layout.service';
 import { ModulesContextService } from '../services/context.service';
+import { ModuleService } from '@geonature/services/module.service';
 import { AuthService, User } from '@geonature/components/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { mergeMap } from '@librairies/rxjs/operators';
@@ -23,6 +24,7 @@ export class PageComponent implements OnInit {
   _mLayout: ModulesLayoutService;
   _mData: ModulesDataService;
   _mContext: ModulesContextService;
+  _gnModuleService: ModuleService;
 
   debug = false; // pour activer le mode debug (depuis les queryParams)
 
@@ -51,6 +53,7 @@ export class PageComponent implements OnInit {
     this._mPage = this._injector.get(ModulesPageService);
     this._mLayout = this._injector.get(ModulesLayoutService);
     this._mContext = this._injector.get(ModulesContextService);
+    this._gnModuleService = this._injector.get(ModuleService);
   }
 
   ngOnInit() {
@@ -95,6 +98,12 @@ export class PageComponent implements OnInit {
             ...this.routeParams,
             ...this.moduleParams,
           };
+
+          if (this.moduleCode) {
+            this._gnModuleService.currentModule$.next(
+              this._gnModuleService.getModule(this.moduleCode)
+            );
+          }
 
           this._mContext.initContext({
             module_code: this.moduleCode,

@@ -7,8 +7,12 @@
 - Composant de filtre : prise en compte des filtres quand la valeur est `false`
 - SIPAF : Correction des filtres par infrastructure
 - Ajout des champs par défaut (dont `ownership`) et correction des droits dans les listes
+
+**✨ Améliorations**
+
 - Amélioration de l'affichage des tableaux dans le composant "tabs"
 - Import : séparation des fonctionalité dans plusieurs fichiers, leilleure prise en compte des champs requis ou non-nulls
+- NavBar : affichage du nom du sous-module (à la place de 'MODULATOR')
 
 ## 1.0.2 (17-02-2023)
 
