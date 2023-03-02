@@ -1,15 +1,13 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ModulesConfigService } from '../services/config.service';
-import { ModulesPageService } from '../services/page.service';
 import { ModulesDataService } from '../services/data.service';
 import { ModulesLayoutService } from '../services/layout.service';
 import { ModulesContextService } from '../services/context.service';
+import { ModulesActionService } from '../services/action.service';
 import { ModuleService } from '@geonature/services/module.service';
-import { AuthService, User } from '@geonature/components/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { mergeMap } from '@librairies/rxjs/operators';
 import { of } from '@librairies/rxjs';
-import utils from '../utils';
 
 @Component({
   selector: 'modules-page',
@@ -20,9 +18,9 @@ export class PageComponent implements OnInit {
   // services
   _mConfig: ModulesConfigService;
   _route: ActivatedRoute;
-  _mPage: ModulesPageService;
   _mLayout: ModulesLayoutService;
   _mData: ModulesDataService;
+  _mAction: ModulesActionService;
   _mContext: ModulesContextService;
   _gnModuleService: ModuleService;
 
@@ -50,9 +48,9 @@ export class PageComponent implements OnInit {
     this._route = this._injector.get(ActivatedRoute);
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mData = this._injector.get(ModulesDataService);
-    this._mPage = this._injector.get(ModulesPageService);
     this._mLayout = this._injector.get(ModulesLayoutService);
     this._mContext = this._injector.get(ModulesContextService);
+    this._mAction = this._injector.get(ModulesActionService);
     this._gnModuleService = this._injector.get(ModuleService);
   }
 
@@ -148,8 +146,8 @@ export class PageComponent implements OnInit {
    * TODO clarifier les process actions un peu partout
    */
   processAction(event) {
-    if (['submit', 'cancel', 'edit', 'details', 'create'].includes(event.action)) {
-      this._mPage.processAction({
+    if (['cancel', 'edit', 'details', 'create'].includes(event.action)) {
+      this._mAction.processAction({
         action: event.action,
         context: event.context,
         data: event.data,

@@ -15,32 +15,22 @@ class SchemaRelationImports:
             # on commence par les n-n
             if property.get("relation_type") in ("n-n"):
                 print(f"       process relation n-n {key}")
-                cls.import_relation_n_n(
-                    import_number, schema_code, from_table, data_file_path, key, verbose
-                )
+                cls.import_relation_n_n(import_number, schema_code, from_table, key, verbose)
 
     @classmethod
-    def import_relation_n_n(
-        cls, import_number, schema_code, from_table, data_file_path, key, verbose=None
-    ):
+    def import_relation_n_n(cls, import_number, schema_code, from_table, key, verbose=None):
         sm = cls(schema_code)
 
         property = sm.property(key)
         cor_table = property["schema_dot_table"]
         rel = cls(property["schema_code"])
 
-        raw_delete_view = cls.import_table_name(
-            import_number, schema_code, data_file_path, "raw_delete", key
-        )
+        raw_delete_view = cls.import_table_name(import_number, schema_code, "raw_delete", key)
         process_delete_view = cls.import_table_name(
-            import_number, schema_code, data_file_path, "process_delete", key
+            import_number, schema_code, "process_delete", key
         )
-        raw_import_view = cls.import_table_name(
-            import_number, schema_code, data_file_path, "raw", key
-        )
-        process_import_view = cls.import_table_name(
-            import_number, schema_code, data_file_path, "process", key
-        )
+        raw_import_view = cls.import_table_name(import_number, schema_code, "raw", key)
+        process_import_view = cls.import_table_name(import_number, schema_code, "process", key)
 
         # 0) clean
 

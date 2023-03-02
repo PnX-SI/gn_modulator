@@ -49,7 +49,7 @@ class SchemaBulkImports:
 
             import_infos = cls.import_get_infos(import_number, d["schema_code"])
 
-            if errors := import_infos["errors"]:
+            if import_infos["errors"]:
                 print(f"Il y a des erreurs dans l'import {d['schema_code']}")
                 for error in errors:
                     print(f"- {error['code']} : {error['msg']}")
@@ -100,7 +100,7 @@ class SchemaBulkImports:
             print(f"\n-- import csv file {data_file_path.name}")
             print(f"   {cls.import_get_infos(import_number, schema_code, 'nb_data')} lignes")
 
-        if errors := cls.import_get_infos(import_number, schema_code, "errors"):
+        if cls.import_get_infos(import_number, schema_code, "errors"):
             return import_number
         # 2.1) pre-process
         #
@@ -111,7 +111,7 @@ class SchemaBulkImports:
             cls.import_get_infos(import_number, schema_code, "tables.preprocess"),
             pre_process_file_path,
         )
-        if errors := cls.import_get_infos(import_number, schema_code, "errors"):
+        if cls.import_get_infos(import_number, schema_code, "errors"):
             return import_number
 
         # 2.2) table import (ou preprocess) -> vue brute
@@ -121,7 +121,7 @@ class SchemaBulkImports:
             cls.import_get_infos(import_number, schema_code, "tables.preprocess"),
             cls.import_get_infos(import_number, schema_code, "tables.raw"),
         )
-        if errors := cls.import_get_infos(import_number, schema_code, "errors"):
+        if cls.import_get_infos(import_number, schema_code, "errors"):
             return import_number
 
         # 3) vue brute -> vue prête pour l'import avec les clés étrangéres et primaires résolues
@@ -131,7 +131,7 @@ class SchemaBulkImports:
             cls.import_get_infos(import_number, schema_code, "tables.raw"),
             cls.import_get_infos(import_number, schema_code, "tables.process"),
         )
-        if errors := cls.import_get_infos(import_number, schema_code, "errors"):
+        if cls.import_get_infos(import_number, schema_code, "errors"):
             return import_number
 
         # 4) INSERT / UPDATE
@@ -141,7 +141,7 @@ class SchemaBulkImports:
             schema_code,
             cls.import_get_infos(import_number, schema_code, "tables.process"),
         )
-        if errors := cls.import_get_infos(import_number, schema_code, "errors"):
+        if cls.import_get_infos(import_number, schema_code, "errors"):
             return import_number
 
         # 4-2) UPDATE
@@ -150,7 +150,7 @@ class SchemaBulkImports:
             schema_code,
             cls.import_get_infos(import_number, schema_code, "tables.process"),
         )
-        if errors := cls.import_get_infos(import_number, schema_code, "errors"):
+        if cls.import_get_infos(import_number, schema_code, "errors"):
             return import_number
         ## HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -176,7 +176,7 @@ class SchemaBulkImports:
             verbose,
         )
 
-        if errors := cls.import_get_infos(import_number, schema_code, "errors"):
+        if cls.import_get_infos(import_number, schema_code, "errors"):
             return import_number
 
         if commit:

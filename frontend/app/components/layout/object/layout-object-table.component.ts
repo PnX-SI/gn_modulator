@@ -2,6 +2,7 @@ import { Component, OnInit, Injector, ViewEncapsulation } from '@angular/core';
 import { ModulesLayoutObjectComponent } from './layout-object.component';
 import { Observable, of } from '@librairies/rxjs';
 import { ModulesTableService } from '../../../services/table.service';
+import { ModulesActionService } from '../../../services/action.service';
 import tabulatorLangs from '../../base/table/tabulator-langs';
 import Tabulator from 'tabulator-tables';
 import utils from '../../../utils';
@@ -28,6 +29,7 @@ export class ModulesLayoutObjectTableComponent
     code: 'utils.modal_delete',
   };
   _mTable: ModulesTableService;
+  _mAction: ModulesActionService;
 
   // données récupérées par un appel à getPage
   pageData: any;
@@ -36,6 +38,7 @@ export class ModulesLayoutObjectTableComponent
     super(_injector);
     this._name = 'layout-object-table';
     this._mTable = this._injector.get(ModulesTableService);
+    this._mAction = this._injector.get(ModulesActionService);
     this.tableId = `table_${this._id}`;
   }
 
@@ -89,7 +92,7 @@ export class ModulesLayoutObjectTableComponent
     const value = this.getRowValue(row);
 
     if (['details', 'edit'].includes(action)) {
-      this._mPage.processAction({
+      this._mAction.processAction({
         action,
         context: this.context,
         value,
@@ -288,7 +291,12 @@ export class ModulesLayoutObjectTableComponent
       this.table.setHeight(elem.clientHeight);
       const pageSize = Math.floor((elem.clientHeight - 90) / 50);
 
-      if (!this.computedLayout.page_size && this.pageSize != pageSize && pageSize > 1) {
+      if (
+        !this.computedLayout.page_size &&
+        this.pageSize != pageSize &&
+        pageSize > 1 &&
+        !this.context.debug
+      ) {
         this.pageSize = pageSize;
         this.drawTable();
       }

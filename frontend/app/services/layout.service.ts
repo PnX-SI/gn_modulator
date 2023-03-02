@@ -309,8 +309,25 @@ export class ModulesLayoutService {
     return formDef;
   }
 
+  getLayoutType = (layout) => {
+    const layoutType = !layout
+      ? null
+      : Array.isArray(layout)
+      ? 'items'
+      : ['array', 'dict', 'map', 'medias'].includes(layout.type)
+      ? layout.type
+      : typeof layout == 'string' || layout.key
+      ? 'key'
+      : !layout.type
+      ? layout.code
+        ? 'code'
+        : 'section'
+      : layout.type;
+    return layoutType;
+  };
+
   getLayoutFields(layout, context, data, baseKey = null) {
-    const layoutType = utils.getLayoutType(layout);
+    const layoutType = this.getLayoutType(layout);
     /** section */
     if (['section', 'form'].includes(layoutType)) {
       return utils.flatAndRemoveDoublons(

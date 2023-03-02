@@ -285,9 +285,8 @@ export class ModulesFormService {
     }
 
     if (utils.isObject(formValue)) {
-      data = data || {};
-      if (!utils.isObject(data)) {
-        data = formValue;
+      if (data == null) {
+        return formValue;
       }
       for (let [k, v] of Object.entries(formValue)) {
         data[k] = this.updateData(data[k], v);

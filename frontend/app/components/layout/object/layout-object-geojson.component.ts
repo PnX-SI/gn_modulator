@@ -199,7 +199,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     this._mapService.L.DomEvent.on(layer.getPopup().getElement(), 'click', (e) => {
       const action = e && e.target && e.target.attributes.getNamedItem('action')?.nodeValue;
       if (action) {
-        this._mPage.processAction({
+        this._mAction.processAction({
           action,
           context: this.context,
           value,

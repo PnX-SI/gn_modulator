@@ -11,6 +11,7 @@ import { ModulesConfigService } from '../../../services/config.service';
 import { ModulesLayoutService } from '../../../services/layout.service';
 import { ModulesContextService } from '../../../services/context.service';
 import { ModulesFormService } from '../../../services/form.service';
+import { ModulesActionService } from '../../../services/action.service';
 import { ModulesObjectService } from '../../../services/object.service';
 
 import { debounceTime } from '@librairies/rxjs/operators';
@@ -93,6 +94,7 @@ export class ModulesLayoutComponent implements OnInit {
 
   // services
   _mConfig: ModulesConfigService;
+  _mAction: ModulesActionService;
   _mLayout: ModulesLayoutService;
   _mContext: ModulesContextService;
   _mForm: ModulesFormService;
@@ -123,6 +125,7 @@ export class ModulesLayoutComponent implements OnInit {
     this._mForm = _injector.get(ModulesFormService);
     this._mConfig = _injector.get(ModulesConfigService);
     this._mObject = _injector.get(ModulesObjectService);
+    this._mAction = this._injector.get(ModulesActionService);
     this.utils = utils;
   }
 
@@ -308,7 +311,7 @@ export class ModulesLayoutComponent implements OnInit {
   // pour prendre en compte les paramètre qui sont des functions
   computeLayout() {
     // calcul du type de layout
-    this.layoutType = this.layoutType || utils.getLayoutType(this.layout);
+    this.layoutType = this.layoutType || this._mLayout.getLayoutType(this.layout);
 
     this.processContext();
 
@@ -565,9 +568,6 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   processAction(event) {
-    if (event.type == 'data-change') {
-      this.computeLayout();
-    }
     this.emitAction(event);
   }
 

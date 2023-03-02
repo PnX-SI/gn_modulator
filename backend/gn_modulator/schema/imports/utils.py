@@ -51,13 +51,13 @@ class SchemaUtilsImports:
         txt = ""
         txt += f"   - {schema_code}\n"
         txt += f"       raw       : {import_infos['nb_raw']:10d}\n"
-        if import_infos["nb_raw"] != import_infos["nb_process"]:
+        if import_infos.get("nb_raw") != import_infos["nb_process"]:
             txt += f"       processed : {import_infos['nb_process']:10d}\n"
-        if import_infos["nb_insert"]:
+        if import_infos.get("nb_insert"):
             txt += f"       insert    : {import_infos['nb_insert']:10d}\n"
-        if import_infos["nb_update"]:
+        if import_infos.get("nb_update"):
             txt += f"       update    : {import_infos['nb_update']:10d}\n"
-        if import_infos["nb_unchanged"]:
+        if import_infos.get("nb_unchanged"):
             txt += f"       unchanged : {import_infos['nb_unchanged']:10d}\n"
 
         return txt
@@ -77,16 +77,16 @@ class SchemaUtilsImports:
             cls.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw']} CASCADE")
 
     @classmethod
-    def import_table_name(cls, import_number, schema_code, data_file_path, type, key=None):
+    def import_table_name(cls, import_number, schema_code, type, key=None):
         """
         table dans laquelle on importe le fichier csv
         """
 
         if type == "import":
-            return f"{schema_import}.t_{type}_{Path(data_file_path).stem.lower()}_{import_number}"
+            return f"{schema_import}.t_{import_number}_{type}"
         else:
             rel = f"_{key}" if key is not None else ""
-            return f"{schema_import}.v_{type}_{Path(data_file_path).stem.lower()}_{import_number}_{schema_code.replace('.', '_')}{rel}"
+            return f"{schema_import}.v_{import_number}_{type}_{schema_code.replace('.', '_')}{rel}"
 
     @classmethod
     def import_init(cls, import_number, schema_code, data_file_path, pre_process_file_path):
@@ -110,7 +110,7 @@ class SchemaUtilsImports:
                 import_number,
                 schema_code,
                 f"tables.{table_type}",
-                cls.import_table_name(import_number, schema_code, data_file_path, table_type2),
+                cls.import_table_name(import_number, schema_code, table_type2),
             )
 
         cls.c_sql_exec_txt(f"CREATE SCHEMA IF NOT EXISTS {schema_import}")

@@ -1,12 +1,35 @@
 <ng-container *ngIf="!!formControl && !!data">
   <!-- input -->
+  <ng-container *ngIf="computedLayout.type == 'file'">
+    <button mat-raised-button (click)="openInputFile()">
+      {{ computedLayout.title || elementKey }}
+    </button>
+
+    <mat-icon
+      matPrefix
+      *ngIf="computedLayout.description"
+      [matTooltip]="computedLayout.description"
+      class="icon-description"
+    >
+      help
+    </mat-icon>
+
+    <input
+      [attr.id]="_id + '_inputfile'"
+      type="file"
+      hidden
+      (change)="fileChange($event.target.files)"
+    />
+    {{ formControl.value?.name}}
+  </ng-container>
+
   <ng-container
     *ngIf="
       ['date', 'string', 'number', 'textarea', 'uuid', 'integer'].includes(computedLayout.type)
     "
   >
     <mat-form-field
-      class="form-field {{computedLayout.class}}"
+      class="form-field {{ computedLayout.class }}"
       [appearance]="context.appearance || 'outline'"
     >
       <mat-label>{{ computedLayout.title || elementKey }}</mat-label>
@@ -118,11 +141,7 @@
 
   <!-- dynform-->
   <ng-container *ngIf="computedLayout.type == 'dyn_form' && !!formControl">
-    <pnx-dynamic-form
-      class="dynamic-form padding-sm"
-      [formDef]="formDef"
-      [form]="localFormGroup"
-    >
+    <pnx-dynamic-form class="dynamic-form padding-sm" [formDef]="formDef" [form]="localFormGroup">
     </pnx-dynamic-form>
   </ng-container>
 </ng-container>

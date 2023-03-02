@@ -1,14 +1,18 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, g
 from .commands import commands
 from .schema import SchemaMethods
 from .definition import DefinitionMethods
 from sqlalchemy.exc import NoForeignKeysError
 from gn_modulator.module import ModuleMethods
 from gn_modulator.layout import LayoutMethods
+from gn_modulator.imports import ImportMethods
 from gn_modulator import init_gn_modulator
 from gn_modulator.utils.api import process_dict_path
 from gn_modulator.utils.errors import get_errors, errors_txt
 from gn_modulator import MODULE_CODE
+from geonature.core.gn_permissions.decorators import check_cruved_scope
+from geonature.core.gn_commons.models.base import TModules
+
 
 blueprint = Blueprint(MODULE_CODE.lower(), __name__)
 
@@ -16,6 +20,15 @@ blueprint = Blueprint(MODULE_CODE.lower(), __name__)
 blueprint.cli.short_help = "Commandes pour l' administration du module MODULES"
 for cmd in commands:
     blueprint.cli.add_command(cmd)
+
+
+@blueprint.url_value_preprocessor
+def set_current_module(endpoint, values):
+    requested_module = values.get("module_code") or MODULE_CODE
+
+    g.current_module = TModules.query.filter_by(module_code=requested_module).first_or_404(
+        f"No module name {requested_module} {endpoint}"
+    )
 
 
 # initialisation du module
@@ -55,6 +68,7 @@ def api_modules_config(config_path):
     )
 
 
+@check_cruved_scope("R")
 @blueprint.route("breadcrumbs/<module_code>/<page_code>", methods=["GET"])
 def api_breadcrumbs(module_code, page_code):
     """
@@ -67,6 +81,12 @@ def api_breadcrumbs(module_code, page_code):
     """
 
     return ModuleMethods.breadcrumbs(module_code, page_code, request.args.to_dict())
+
+
+@check_cruved_scope("R")  # object import ??
+@blueprint.route("import/<module_code>", methods=["POST"])
+def api_import(module_code):
+    return ImportMethods.process_api_import(module_code)
 
 
 @blueprint.route("/layouts/<path:config_path>", methods=["GET"])

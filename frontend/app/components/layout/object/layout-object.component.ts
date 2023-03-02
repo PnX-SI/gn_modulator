@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { ModulesConfigService } from '../../../services/config.service';
 import { ModulesObjectService } from '../../../services/object.service';
 import { ModulesDataService } from '../../../services/data.service';
-import { ModulesPageService } from '../../../services/page.service';
+import { ModulesActionService } from '../../../services/action.service';
 import { ModulesRouteService } from '../../../services/route.service';
 import { ModulesLayoutComponent } from '../base/layout.component';
 import { Observable, of } from '@librairies/rxjs';
@@ -29,7 +29,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   _mObject: ModulesObjectService;
   _mData: ModulesDataService;
   _mRoute: ModulesRouteService;
-  _mPage: ModulesPageService;
+  _mAction: ModulesActionService;
 
   /** subscription pour les informations sur les objects */
 
@@ -39,7 +39,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     this._mData = this._injector.get(ModulesDataService);
     this._mObject = this._injector.get(ModulesObjectService);
     this._mRoute = this._injector.get(ModulesRouteService);
-    this._mPage = this._injector.get(ModulesPageService);
+    this._mAction = this._injector.get(ModulesActionService);
     this._name = 'layout-object';
     this.bPostComputeLayout = true;
   }
@@ -195,7 +195,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // TODO à clarifier avec page.element ??
   processAction(event) {
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
-      this._mPage.processAction({
+      this._mAction.processAction({
         action: event.action,
         context: this.context,
         value: event.data[this.pkFieldName()],

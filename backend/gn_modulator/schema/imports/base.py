@@ -115,19 +115,9 @@ class SchemaBaseImports:
             for k in keys:
                 d[k] = d.get(k, d[key])
 
-    def process_geoms(self, d):
-        return
-        for key in filter(lambda key: self.property(key)["type"] == "geometry", d):
-            pass
-            # d[key] = {
-            # "type": self.column(key)['geometry_type'],
-            # "coordinates": d[key]
-            # }
-
     def pre_process_data(self, d):
         self.get_foreign_keys(d)
         self.copy_keys(d)
-        self.process_geoms(d)
 
     def clean_data(self, d):
         for key in copy.copy(d):

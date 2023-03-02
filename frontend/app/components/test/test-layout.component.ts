@@ -110,7 +110,7 @@ export class TestLayoutComponent implements OnInit {
           key: 'layout_from_list',
           title: `Selection de layout`,
           type: 'list_form',
-          api: '/modules/layouts/',
+          api: `/${this._mConfig.MODULE_CODE.toLowerCase()}/layouts/`,
           value_field_name: 'code',
           label_field_name: 'title',
           title_field_name: 'description',
@@ -148,11 +148,5 @@ export class TestLayoutComponent implements OnInit {
       this.layout = layoutDefinitionJson.layout;
       this.data = layoutDefinitionJson.data || {};
     });
-  }
-
-  processAction(event) {
-    if (event.type == 'data-change') {
-      this.process();
-    }
   }
 }

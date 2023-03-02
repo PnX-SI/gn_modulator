@@ -6,11 +6,14 @@ import gn_modulator
 
 gn_modulator_DIR = Path(gn_modulator.__file__).parent
 
-assets_static_dir = BACKEND_DIR / "static/external_assets/modules/"
+assets_static_dir = BACKEND_DIR / "static" / "external_assets/modules/"
+IMPORT_DIR = BACKEND_DIR / "static" / "imports"
+
 config_directory = gn_modulator_DIR / "../../config/"
 migrations_directory = gn_modulator_DIR / "migrations"
 definitions_test_dir = Path(__file__).parent / "../tests/definitions_test"
 import_test_dir = Path(__file__).parent / "../tests/import_test"
+
 
 schema_import = "gn_modulator_import"
 

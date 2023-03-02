@@ -35,7 +35,7 @@ class TestImport:
         }
         test_data_file(schema_code, data_file_path, expected_infos=expected_infos)
 
-    def test_route(self):
+    def test_ref_geo_linear(self):
         """
         test import_route
         """

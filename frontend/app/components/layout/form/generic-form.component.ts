@@ -1,8 +1,7 @@
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
 import { ModulesFormService } from '../../../services/form.service';
-import { FormGroup } from '@angular/forms';
-import utils from '../../../utils';
 
+import { FormGroup } from '@angular/forms';
 import { ModulesLayoutComponent } from '../base/layout.component';
 
 @Component({
@@ -17,7 +16,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
 
   formGroup: FormGroup;
 
-  _formService;
+  _formService: ModulesFormService;
 
   constructor(_injector: Injector) {
     super(_injector);
@@ -58,11 +57,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
 
     // pour ne pas casser la référence à data
     this._formService.updateData(this.data, this.formGroup.value);
-
     this.updateForm();
-    this.emitAction({ type: 'data-change' });
-    this._mLayout.reComputeLayout('form');
-
     this.computedLayout.change && this.computedLayout.change(dataChanged);
   }
 
@@ -76,6 +71,10 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     if (this.formGroup) {
       return;
     }
+    if (!this.data) {
+      this.data = {};
+    }
+
     this.formGroup = this._mForm.initForm(this.layout, this._id, this.context);
 
     this.context.form_group_id = this._id;
@@ -86,5 +85,17 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     this.formGroup.valueChanges.subscribe((value) => {
       this.onFormGroupChange();
     });
+  }
+
+  processAction(event) {
+    const { action, context, value = null, data = null, layout = null } = event;
+    if (action == 'submit') {
+      this._mAction.processSubmit(context, data, layout);
+    }
+    if (action == 'import') {
+      return this._mAction.processImport(context, data);
+    }
+
+    this.emitAction(action);
   }
 }

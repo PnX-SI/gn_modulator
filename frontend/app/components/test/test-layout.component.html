@@ -5,7 +5,6 @@
         <modules-layout
           [layout]="testLayoutForm"
           [data]="rawLayout"
-          (onAction)="processAction($event)"
         ></modules-layout>
       </div>
       <div class="layout-rendu" *ngIf="!!(layout && data)">

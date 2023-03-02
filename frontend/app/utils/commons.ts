@@ -6,8 +6,14 @@ import YML from 'js-yaml';
 //   return fastDeepEqual_(obj1, obj2) || fastDeepEqual_(copy(obj1), copy(obj2))
 // }
 
+/** renvoie true si obj est un object */
 const isObject = (obj) => {
   return typeof obj === 'object' && !Array.isArray(obj) && obj !== null;
+};
+
+/** revoie true si obj est un fichier (File) */
+const isFile = (obj) => {
+  return isObject(obj) && obj.name && obj.type && obj.lastModified && obj.size;
 };
 
 const copy = (obj) => {
@@ -238,6 +244,7 @@ export default {
   getAttr,
   addKey,
   isObject,
+  isFile,
   removeDoublons,
   setAttr,
   unaccent,

@@ -51,4 +51,16 @@ export class ModulesFormElementComponent
 
     this.computedLayout.change && this.computedLayout.change();
   }
+
+  openInputFile() {
+    document.getElementById(`${this._id}_inputfile`)?.click();
+  }
+
+  fileChange(files: File[]) {
+    if (files.length) {
+      this.formControl.setValue(files[0]);
+    } else {
+      this.formControl.setValue(null);
+    }
+  }
 }

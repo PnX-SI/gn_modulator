@@ -89,6 +89,16 @@ export class ModulesDataService {
     });
   }
 
+  import(moduleCode, data, params = {}) {
+    return this._mRequest.postRequestWithFormData(
+      `${this._mConfig.backendModuleUrl()}/import/${moduleCode}`,
+      {
+        data,
+        params,
+      }
+    );
+  }
+
   getBreadcrumbs(context: any) {
     return this._mRequest.request(
       'get',

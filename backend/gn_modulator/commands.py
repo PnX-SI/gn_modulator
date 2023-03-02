@@ -288,34 +288,22 @@ def cmd_test():
     """
 
     from gn_modulator.utils.env import import_test_dir
-    from gn_modulator.tests.utils.imports import test_data_file
-    from geonature.utils.env import db
 
-    schema_code = "ref_geo.linear_group"
-    data_file_path = import_test_dir / "route/route2.csv"
-    pre_process_file_path = import_test_dir / "route/pp_linear_group.sql"
+    schema_code = "m_sipaf.pf"
+    data_file_path = import_test_dir / "route/pf.csv"
+
+    import_number = 1
 
     SchemaMethods.process_import_schema(
         schema_code,
         data_file_path,
-        pre_process_file_path=pre_process_file_path,
         verbose=1,
+        import_number=import_number,
         commit=True,
     )
 
-    schema_code = "ref_geo.linear"
-    data_file_path = import_test_dir / "route/route2.csv"
-    pre_process_file_path = import_test_dir / "route/pp_linear.sql"
-    SchemaMethods.process_import_schema(
-        schema_code,
-        data_file_path,
-        pre_process_file_path=pre_process_file_path,
-        verbose=1,
-        commit=True,
-    )
-    db.session.commit()
-
-    print("Error", SchemaMethods.import_get_infos(2, schema_code, "errors"))
+    print(SchemaMethods.import_get_infos(import_number, schema_code, "errors"))
+    print(SchemaMethods.import_pretty_infos(import_number, schema_code))
 
 
 commands = [
