@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.3 (unreleased)
+## 1.0.3 (03-03-2023)
 
 **🐛 Corrections**
 
@@ -11,7 +11,7 @@
 **✨ Améliorations**
 
 - Amélioration de l'affichage des tableaux dans le composant "tabs"
-- Import : séparation des fonctionalité dans plusieurs fichiers, leilleure prise en compte des champs requis ou non-nulls
+- Import : amélioration des fonctionalité d'import
 - NavBar : affichage du nom du sous-module (à la place de 'MODULATOR')
 
 ## 1.0.2 (17-02-2023)
