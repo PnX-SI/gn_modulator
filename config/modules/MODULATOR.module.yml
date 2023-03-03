@@ -28,3 +28,5 @@ objects:
         cruved: R
     tax.taxsearch:
         cruved: R
+    syn.synthese:
+        cruved: R
