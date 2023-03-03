@@ -58,6 +58,8 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     // pour ne pas casser la référence à data
     this._formService.updateData(this.data, this.formGroup.value);
     this.updateForm();
+    this.emitAction({ type: 'data-change' });
+    this._mLayout.reComputeLayout('form');
     this.computedLayout.change && this.computedLayout.change(dataChanged);
   }
 
@@ -95,7 +97,6 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     if (action == 'import') {
       return this._mAction.processImport(context, data);
     }
-
-    this.emitAction(action);
+    this.emitAction(event);
   }
 }

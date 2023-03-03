@@ -149,4 +149,10 @@ export class TestLayoutComponent implements OnInit {
       this.data = layoutDefinitionJson.data || {};
     });
   }
+
+  processAction(event) {
+    if (event.type == 'data-change') {
+      this.process();
+    }
+  }
 }

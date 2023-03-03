@@ -1,7 +1,10 @@
 # Changelog
 
+## 1.0.4 (03-03-2023)
 
-## 1.0.4 (unreleased)
+**🐛 Corrections**
+
+- Corrige un bug sur le composant de filtrage
 
 ## 1.0.3 (03-03-2023)
 

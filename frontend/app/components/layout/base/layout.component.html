@@ -114,7 +114,7 @@
         mat-raised-button
         [color]="computedLayout.color"
         [disabled]="computedLayout.disabled"
-        (click)="onButtonClick()"
+        (click)="onButtonClick($event)"
       >
         <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
         {{ computedLayout.title }}
