@@ -1,5 +1,8 @@
 # Changelog
 
+
+## 1.0.5 (unreleased)
+
 ## 1.0.4 (03-03-2023)
 
 **🐛 Corrections**
