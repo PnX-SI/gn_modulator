@@ -20,7 +20,7 @@
 **✨ Améliorations**
 
 - Amélioration de l'affichage des tableaux dans le composant "tabs"
-- Import : amélioration des fonctionalité d'import
+- Import : amélioration des fonctionnalités d'import
 - NavBar : affichage du nom du sous-module (à la place de 'MODULATOR')
 
 ## 1.0.2 (17-02-2023)
