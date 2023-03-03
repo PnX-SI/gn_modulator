@@ -26,11 +26,9 @@ Cette commande va intégrer (s'il y a correspondance des champs), pour chaque li
 geonature modules import -s m_sipaf.pf -d <chemin vers le fichier csv> -p <chemin vers le fichier pre_process.sql de mapping>
 ```
 
-où `pre_process` est une vue qui va transformer les colonnes du fichier csv en colonnes assimilables par la table destinataire. (il est très important de garder les noms `:pre_processed_import_view` et `:raw_import_table`)
+où `pre_process` est une vue qui va transformer les colonnes du fichier csv en colonnes assimilables par la table destinataire.
 
 ```
-DROP VIEW IF EXISTS :pre_processed_import_view;
-CREATE VIEW :pre_processed_import_view AS
 SELECT
 	uuid_pf AS id_passage_faune,
 	CASE
@@ -42,7 +40,6 @@ SELECT
 	END AS id_nomenclature_type_actor,
 	nom_organism AS id_organism,
     NULL AS id_role
-	FROM :raw_import_table t
 	WHERE nom_organism IS NOT NULL AND nom_organism != ''
 ;
 ```

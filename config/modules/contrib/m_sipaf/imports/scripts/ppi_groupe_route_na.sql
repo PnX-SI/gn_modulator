@@ -4,4 +4,3 @@ SELECT DISTINCT
     'RTE' AS id_type,
     numero AS code,
     cl_admin || ' ' || numero AS name
-    FROM :raw_import_table tis

@@ -1,5 +1,3 @@
-DROP VIEW IF EXISTS :pre_processed_import_view;
-CREATE VIEW :pre_processed_import_view AS
 SELECT
 	uuid_pf AS id_passage_faune,
 	CASE
@@ -11,7 +9,6 @@ SELECT
 	END AS id_nomenclature_type_actor,
 	nom_organism AS id_organism,
     NULL AS id_role
-	FROM :raw_import_table t
 	WHERE nom_organism IS NOT NULL AND nom_organism != ''
 ;
 

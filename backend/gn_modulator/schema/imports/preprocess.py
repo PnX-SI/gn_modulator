@@ -1,3 +1,6 @@
+import re
+
+
 class SchemaPreProcessImports:
     @classmethod
     def import_raw(cls, import_number, schema_code, from_table, dest_table):
@@ -33,19 +36,60 @@ class SchemaPreProcessImports:
                 msg=f"Le fichier de preprocess {pre_process_file_path} n'existe pas",
             )
             return
-        with open(pre_process_file_path, "r") as f:
-            txt_pre_process_raw_import_view = (
-                f.read()
-                .replace(":raw_import_table", from_table)
-                .replace(":pre_processed_import_view", dest_table)
-                .replace("%", "%%")
-            )
 
+        with open(pre_process_file_path, "r") as f:
+            preprocess_select = f.read().upper().replace(";", "").replace("%", "%%")
+
+            forbidden_words = []
+            for forbidden_word in [
+                "INSERT ",
+                "DROP ",
+                "DELETE ",
+                "UPDATE ",
+                "EXECUTE",
+                "TRUNCATE",
+            ]:
+                if forbidden_word in preprocess_select:
+                    forbidden_words.append(forbidden_word.strip())
+
+            if forbidden_words:
+                cls.import_add_error(
+                    import_number,
+                    schema_code,
+                    code="ERR_IMPORT_PRE_PROCESS_FORBIDEN_WORD",
+                    msg=f"Le fichier de preprocess {pre_process_file_path} contient le ou les mots interdits {', '.join(forbidden_word)}",
+                )
+                return
+
+            for word in ["WHERE", "ORDER BY", "LIMIT"]:
+                if word in preprocess_select:
+                    preprocess_select = preprocess_select.replace(
+                        f"{word}", "\nFROM {from_table}\n{word}"
+                    )
+                    break
+
+            if "FROM" not in preprocess_select:
+                preprocess_select += f"\nFROM {from_table}"
+
+            txt_pre_process_raw_import_view = f"""
+DROP VIEW IF EXISTS {dest_table};
+CREATE VIEW {dest_table} AS
+{preprocess_select}
+;
+            """
             cls.import_set_infos(
                 import_number, schema_code, "sql.preprocess", txt_pre_process_raw_import_view
             )
-            cls.c_sql_exec_txt(txt_pre_process_raw_import_view)
-
+            try:
+                cls.c_sql_exec_txt(txt_pre_process_raw_import_view)
+            except Exception as e:
+                cls.import_add_error(
+                    import_number,
+                    schema_code,
+                    code="ERR_IMPORT_PRE_PROCESS_CREATE_VIEW",
+                    msg=f"La vue de preprocess n'a pas être crée : {str(e)}",
+                )
+                return
             cls.count_and_check_table(import_number, schema_code, dest_table, "preprocess")
 
     @classmethod
