@@ -13,10 +13,12 @@ class TestImport:
         schema_code = "syn.synthese"
         data_file_path = import_test_dir / "synthese_1.csv"
         expected_infos = {
-            "nb_data": 2,
-            "nb_insert": 2,
-            "nb_update": 0,
-            "nb_unchanged": 0,
+            "res.nb_data": 2,
+            "res.nb_insert": 2,
+            "res.nb_update": 0,
+            "res.nb_unchanged": 0,
+            "data_type": "csv",
+            "csv_delimiter": ",",
         }
         test_data_file(schema_code, data_file_path, expected_infos=expected_infos)
 
@@ -28,10 +30,10 @@ class TestImport:
         schema_code = "syn.synthese"
         data_file_path = import_test_dir / "synthese_1.csv"
         expected_infos = {
-            "nb_data": 2,
-            "nb_insert": 2,
-            "nb_update": 0,
-            "nb_unchanged": 0,
+            "res.nb_data": 2,
+            "res.nb_insert": 2,
+            "res.nb_update": 0,
+            "res.nb_unchanged": 0,
         }
         test_data_file(schema_code, data_file_path, expected_infos=expected_infos)
 
@@ -42,17 +44,17 @@ class TestImport:
 
         schema_code = "ref_geo.linear_type"
         data_file_path = import_test_dir / "route/linear_type.csv"
-        expected_infos = {"nb_data": 1}
+        expected_infos = {"res.nb_data": 1}
         test_data_file(schema_code, data_file_path, expected_infos=expected_infos)
 
         schema_code = "ref_geo.linear_group"
         data_file_path = import_test_dir / "route/route.csv"
         pre_process_file_path = import_test_dir / "route/pp_linear_group.sql"
         expected_infos = {
-            "nb_data": 1,
-            "nb_insert": 1,
-            "nb_update": 0,
-            "nb_unchanged": 0,
+            "res.nb_data": 1,
+            "res.nb_insert": 1,
+            "res.nb_update": 0,
+            "res.nb_unchanged": 0,
         }
         test_data_file(
             schema_code, data_file_path, pre_process_file_path, expected_infos=expected_infos
@@ -62,10 +64,10 @@ class TestImport:
         data_file_path = import_test_dir / "route/route.csv"
         pre_process_file_path = import_test_dir / "route/pp_linear.sql"
         expected_infos = {
-            "nb_data": 1,
-            "nb_insert": 1,
-            "nb_update": 0,
-            "nb_unchanged": 0,
+            "res.nb_data": 1,
+            "res.nb_insert": 1,
+            "res.nb_update": 0,
+            "res.nb_unchanged": 0,
         }
         test_data_file(
             schema_code, data_file_path, pre_process_file_path, expected_infos=expected_infos

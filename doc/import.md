@@ -40,7 +40,7 @@ SELECT
 	END AS id_nomenclature_type_actor,
 	nom_organism AS id_organism,
     NULL AS id_role
-	WHERE nom_organism IS NOT NULL AND nom_organism != ''
+m	WHERE nom_organism IS NOT NULL AND nom_organism != ''
 ;
 ```
 

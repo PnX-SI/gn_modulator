@@ -2,11 +2,9 @@ import sys
 from flask import Blueprint, request, g, current_app
 from .commands import commands
 from .schema import SchemaMethods
-from .definition import DefinitionMethods
 from sqlalchemy.exc import NoForeignKeysError
 from gn_modulator.module import ModuleMethods
 from gn_modulator.layout import LayoutMethods
-from gn_modulator.imports import ImportMethods
 from gn_modulator import init_gn_modulator
 from gn_modulator.utils.api import process_dict_path
 from gn_modulator.utils.errors import get_errors, errors_txt
@@ -16,8 +14,12 @@ from geonature.core.gn_commons.models.base import TModules
 
 blueprint = Blueprint(MODULE_CODE.lower(), __name__)
 
+<<<<<<< HEAD
 from gn_modulator.routes.rest import *  # noqa
 from gn_modulator.routes.exports import *  # noqa
+=======
+from gn_modulator.imports.routes import *  # noqa
+>>>>>>> add model TImport and methods
 
 # Creation des commandes pour modules
 blueprint.cli.short_help = "Commandes pour l' administration du module MODULES"
@@ -87,12 +89,6 @@ def api_breadcrumbs(module_code, page_code):
     """
 
     return ModuleMethods.breadcrumbs(module_code, page_code, request.args.to_dict())
-
-
-@check_cruved_scope("R")  # object import ??
-@blueprint.route("import/<module_code>", methods=["POST"])
-def api_import(module_code):
-    return ImportMethods.process_api_import(module_code)
 
 
 @blueprint.route("/layouts/<path:config_path>", methods=["GET"])
