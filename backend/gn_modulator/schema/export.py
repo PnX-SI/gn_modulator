@@ -1,6 +1,7 @@
 from flask import request, jsonify, Response
 import sqlparse
 import csv
+import datetime
 
 
 class Line(object):
@@ -27,7 +28,7 @@ class SchemaExport:
     export
     """
 
-    def process_export_csv(self, query_list, params):
+    def process_export_csv(self, module_code, query_list, params):
         """
         génère la reponse csv à partir de la requête demandée
 
@@ -45,6 +46,12 @@ class SchemaExport:
         keys = params.get("fields")
         data_csv.append(self.process_csv_keys(keys))
         data_csv += [[self.process_csv_data(key, d) for key in keys] for d in res_list]
+
+        filename = f"export_{module_code}_{datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M')}"
+
         response = Response(iter_csv(data_csv), mimetype="text/csv")
-        response.headers["Content-Disposition"] = "attachment; filename=data.csv"
+        response.headers.add(
+            "Content-Disposition", "attachment", filename=filename
+        )
+
         return response

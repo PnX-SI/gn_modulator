@@ -301,7 +301,7 @@ class SchemaApi:
 
             # on assume qu'il n'y que des export csv
             # TODO ajouter query param export_type (csv, shape, geosjon, etc) et traiter les différents cas
-            return self.process_export_csv(query_list, params)
+            return self.process_export_csv(module_code, query_list, params)
 
         return {
             "rest": {
