@@ -22,12 +22,14 @@ class ImportMixinMapping(ImportMixinUtils):
             return
 
         self.sql["mapping_view"] = self.sql_mapping()
+        if self.errors:
+            return
 
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["mapping_view"])
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_PRE_PROCESS_CREATE_VIEW",
+                code="ERR_IMPORT_MAPPING_CREATE_VIEW",
                 msg=f"La vue de preprocess n'a pas être crée : {str(e)}",
             )
             return
@@ -55,7 +57,7 @@ class ImportMixinMapping(ImportMixinUtils):
 
             if forbidden_words:
                 self.add_error(
-                    code="ERR_IMPORT_PRE_PROCESS_FORBIDEN_WORD",
+                    code="ERR_IMPORT_MAPPING_FORBIDEN_WORD",
                     msg=f"Le fichier de preprocess {self.mapping_file_path} contient le ou les mots interdits {', '.join(forbidden_word)}",
                 )
                 return
@@ -63,12 +65,19 @@ class ImportMixinMapping(ImportMixinUtils):
             for word in ["WHERE", "ORDER BY", "LIMIT"]:
                 if word in mapping_select:
                     mapping_select = mapping_select.replace(
-                        f"{word}", "\nFROM {from_table}\n{word}"
+                        f"{word}", f"\nFROM {from_table}\n{word}"
                     )
                     break
 
             if "FROM" not in mapping_select:
                 mapping_select += f"\nFROM {from_table}"
+
+            if "ID_IMPORT" not in mapping_select:
+                self.add_error(
+                    code="ERR_IMPORT_MAPPING_MISSING_IMPORT",
+                    msg=f"La selection de mapping doit contenir le champs id_import dans {self.mapping_file_path}",
+                )
+                return
 
             sql_mapping = f"""
 DROP VIEW IF EXISTS {dest_table};

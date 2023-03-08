@@ -69,6 +69,7 @@ class ImportMixinProcess(ImportMixinUtils):
         return f"""DROP VIEW IF EXISTS {dest_table} CASCADE;
 CREATE VIEW {dest_table} AS
 SELECT
+    id_import,
     {txt_columns}
 FROM {from_table} t
 {txt_joins};

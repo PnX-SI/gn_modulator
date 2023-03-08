@@ -40,13 +40,15 @@ class ImportMixinInsert(ImportMixinUtils):
 
         table_name = dest_table or sm.sql_schema_dot_table()
 
-        columns_select = filter(
-            lambda x: (
-                x in keys
-                if keys is not None
-                else not (sm.is_column(x) and sm.property(x).get("primary_key"))
-            ),
-            SchemaMethods.get_table_columns(from_table),
+        columns_select = list(
+            filter(
+                lambda x: (
+                    x in keys
+                    if keys is not None
+                    else sm.is_column(x) and not (sm.property(x).get("primary_key"))
+                ),
+                SchemaMethods.get_table_columns(from_table),
+            )
         )
 
         v_column_select_keys = map(lambda x: x, columns_select)

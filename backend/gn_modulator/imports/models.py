@@ -31,9 +31,9 @@ class TImport(db.Model, ImportMixin):
     csv_delimiter = db.Column(db.Unicode)
     data_type = db.Column(db.Unicode)
 
-    res = db.column(JSONB)
-    tables = db.column(JSONB)
-    sql = db.column(JSONB)
+    res = db.Column(JSONB)
+    tables = db.Column(JSONB)
+    sql = db.Column(JSONB)
     errors = db.Column(JSONB)
 
     def as_dict(self):

@@ -5,6 +5,9 @@ from gn_modulator.utils.env import schema_import
 
 
 class ImportMixinUtils:
+    def init_import(self):
+        SchemaMethods.c_sql_exec_txt(f"CREATE SCHEMA IF NOT EXISTS {schema_import}")
+
     def pretty_infos(self):
         print(self.res)
         txt = ""
@@ -23,6 +26,9 @@ class ImportMixinUtils:
         return txt
 
     def count_and_check_table(self, table_type, table_name):
+        if self.errors:
+            return
+
         try:
             self.res[f"nb_{table_type}"] = SchemaMethods.c_sql_exec_txt(
                 f"SELECT COUNT(*) FROM {table_name}"
@@ -52,5 +58,7 @@ class ImportMixinUtils:
             rel = f"_{key}" if key is not None else ""
             return f"{schema_import}.v_{self.id_import}_{type}_{self.schema_code.replace('.', '_')}{rel}"
 
-    def add_error(self, code=None, msg=None):
-        self.errors.append({"code": code, "msg": msg})
+    def add_error(self, code=None, msg=None, key=None, lines=None, values=None):
+        self.errors.append(
+            {"code": code, "msg": msg, "key": key, "lines": lines, "values": values}
+        )

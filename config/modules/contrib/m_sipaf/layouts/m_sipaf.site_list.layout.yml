@@ -51,13 +51,23 @@ layout:
                 type: form
                 items:
                   - items:
+                    - type: message
+                      html: __f__data.importMsg?.html
+                      class: __f__data.importMsg?.class
+                      hidden: __f__!data.importMsg
+
+                    - key: importMsg
+                      hidden: true
                     - key: data_file
                       type: file
                       title: Fichier d'import
+                      required: true
                       description: Choisir un fichier à importer
                     - key: object_code
                       type: string
+                      hidden: true
                       default: __f__context.object_code
+                    
                   - direction: row
                     items:
                       - type: button

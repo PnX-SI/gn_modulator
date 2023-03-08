@@ -71,6 +71,12 @@ class ImportMixinRaw(ImportMixinUtils):
         txt_pre_process_columns = ",\n    ".join(v_txt_pre_process_columns)
         txt_limit = f"LIMIT {limit}" if limit else ""
 
+        if "id_import" not in txt_pre_process_columns:
+            txt_pre_process_columns = f"id_import, {txt_pre_process_columns}"
+
+        if "id_import" not in txt_columns:
+            txt_columns = f"id_import, {txt_columns}"
+
         return f"""DROP VIEW IF EXISTS {dest_table} CASCADE;
 CREATE VIEW {dest_table} AS
 WITH pre_process AS (

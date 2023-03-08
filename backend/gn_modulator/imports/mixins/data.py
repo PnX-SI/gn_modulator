@@ -75,7 +75,7 @@ class ImportMixinData(ImportMixinUtils):
         columns_fields = ", ".join(table_columns)
         self.sql[
             "data_copy_csv"
-        ] = f"""COPY {dest_table}({columns_fields}) FROM STDIN DELIMITER '{self.csv_delimiter}' QUOTE '"' CSV"""
+        ] = f"""COPY {dest_table}({columns_fields}) FROM STDIN DELIMITER '{self.csv_delimiter}' QUOTE '"' CSV """
         try:
             cursor = db.session.connection().connection.cursor()
             cursor.copy_expert(sql=self.sql["data_copy_csv"], file=f)

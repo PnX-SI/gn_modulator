@@ -132,6 +132,11 @@ export class ModulesActionService {
   }
 
   processImport(context, data) {
+    data.importMsg = {
+      html: 'Traitement en cours',
+      class: null,
+    };
+    this._mLayout.reComputeLayout();
     this._mData
       .import(context.module_code, data)
       .pipe()
@@ -145,25 +150,97 @@ export class ModulesActionService {
             const response = importEvent.body as any;
             if (response.errors?.length) {
               for (let error of response.errors) {
-                this._commonService.regularToaster('error', `${error.code} : ${error.msg}`);
                 console.error(`${error.code} : ${error.msg}`);
               }
+              data.importMsg = {
+                class: 'error',
+                html: this.importHTMLMsgError(response),
+              };
               return;
             }
-            const txtImport = `Import réussi
-            data: ${response['nb_data']}
-            raw: ${response['nb_raw']}
-            insert: ${response['nb_insert']}
-            update: ${response['nb_update']}
-            unchanged: ${response['nb_unchanged']}
-            `;
-            this._commonService.regularToaster('success', txtImport);
-            console.log(txtImport);
+
+            let txtImport = this.importHTMLMsgSuccess(response);
+
+            data.importMsg = {
+              class: 'success',
+              html: txtImport,
+            };
+
+            setTimeout(() => this._mLayout.reComputeLayout(), 100);
+            // this._commonService.regularToaster('success', txtImport);
           }
         },
         (error: HttpErrorResponse) => {
           this._commonService.regularToaster('error', `Import : ${error.error.msg}`);
         }
       );
+  }
+
+  importHTMLMsgSuccess(impt) {
+    let txtImport = `<h5>Import réussi</h5>`;
+    let res = impt.res;
+
+    if (res.nb_data) {
+      txtImport += `data: ${res.nb_data}<br>`;
+    }
+
+    if (res.nb_raw != res.nb_data) {
+      txtImport += `raw: ${res.nb_raw}<br>`;
+    }
+
+    if (res.nb_insert) {
+      txtImport += `insert: ${res.nb_insert}<br>`;
+    }
+
+    if (res.nb_update) {
+      txtImport += `update: ${res.nb_update}<br>`;
+    }
+
+    if (res.nb_unchanged) {
+      txtImport += `unchanged: ${res.nb_unchanged}<br>`;
+    }
+    return txtImport;
+  }
+
+  importHTMLMsgError(impt) {
+    let txtImport = `<h4>${impt.errors.length} erreurs</h4>`;
+
+    let txtErrorRequired;
+    for (let error of impt.errors.filter((e) => e.code == 'ERR_IMPORT_REQUIRED')) {
+      if (!txtErrorRequired) {
+        txtErrorRequired = `<h5>Champs requis manquants</h5>`;
+      }
+      txtErrorRequired += `<b>${error.key}</b> ${error.lines.length} ligne(s): [${error.lines}]<br>`;
+    }
+    if (txtErrorRequired) {
+      txtImport += '<hr>';
+      txtImport += txtErrorRequired;
+    }
+
+    let txtErrorUnresolved;
+    for (let error of impt.errors.filter((e) => e.code == 'ERR_IMPORT_UNRESOLVED')) {
+      if (!txtErrorUnresolved) {
+        txtErrorUnresolved = `<h5>Champs non résolus</h5>`;
+      }
+      txtErrorUnresolved += `<b>${error.key}</b> ${error.lines.length} ligne(s): [${error.lines}]<br>`;
+      if (error.values) {
+        txtErrorUnresolved += `Valeurs parmi : ${error.values
+          .map((v) => v.cd_nomenclature)
+          .join(', ')}<br>`;
+      }
+    }
+    if (txtErrorUnresolved) {
+      txtImport += '<hr>';
+      txtImport += txtErrorUnresolved;
+    }
+
+    for (let error of impt.errors.filter(
+      (e) => !['ERR_IMPORT_REQUIRED', 'ERR_IMPORT_UNRESOLVED'].includes(e.code)
+    )) {
+      txtImport += '<hr>';
+      txtImport += `${error.code}: ${error.msg}`;
+    }
+
+    return txtImport;
   }
 }

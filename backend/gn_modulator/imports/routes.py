@@ -33,6 +33,7 @@ def api_import(module_code):
 
     impt = TImport(schema_code=schema_code)
     db.session.add(impt)
+    db.session.flush()
 
     files_path = {}
     if request.files:
@@ -42,12 +43,16 @@ def api_import(module_code):
                 module_code, object_code, impt.id_import, file
             )
 
-    impt.data_file_path = str(files_path.get("data_file"))
-    db.session.flush()
+    impt.data_file_path = files_path.get("data_file") and str(files_path.get("data_file"))
 
     impt.process_import_schema()
-    print(impt.pretty_infos())
+
+    if impt.errors:
+        out = {"errors": impt.errors}
+        db.session.commit()
+        return out
+
+    out = impt.as_dict()
 
     db.session.commit()
-
-    return impt.as_dict()
+    return out

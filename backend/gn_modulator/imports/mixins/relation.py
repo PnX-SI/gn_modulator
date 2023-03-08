@@ -64,6 +64,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             self.add_error(
                 code="ERR_IMPORT_RELATION_CREATE_PROCESS_VIEW",
                 msg=f"Erreur dans la creation de la vue 'process' pour {key}: {str(e)}",
+                key=key,
             )
             return
 

@@ -280,8 +280,12 @@ export class ModulesFormService {
 
   /** pour mettre à jour les données sans casser les références */
   updateData(data, formValue) {
-    if (utils.fastDeepEqual(data, formValue)) {
+    if (this.isEqual(formValue, data)) {
       return data;
+    }
+
+    if (utils.isFile(formValue)) {
+      return formValue;
     }
 
     if (utils.isObject(formValue)) {
@@ -318,7 +322,11 @@ export class ModulesFormService {
   }
 
   isEqual(formValue, data) {
-    return utils.isObject(formValue)
+    return utils.isFile(formValue)
+      ? utils.isFile(data)
+        ? ['name', 'lastModified', 'size', 'type'].every((k) => data[k] == formValue[k])
+        : false
+      : utils.isObject(formValue)
       ? !utils.isObject(data)
         ? false
         : Object.entries(formValue)
