@@ -3,6 +3,10 @@
 
 ## 1.0.5 (unreleased)
 
+**✨ Améliorations**
+
+- historisation de la table `pr_sipaf.t_passages_faune` et ajout des champs `meta_create_date` et `meta_update_date`.
+
 ## 1.0.4 (03-03-2023)
 
 **🐛 Corrections**

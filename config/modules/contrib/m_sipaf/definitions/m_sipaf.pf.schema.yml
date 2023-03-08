@@ -224,6 +224,12 @@ properties:
       schema_code: ref_nom.nomenclature
       title: OH type de banquette
       local_key: id_nomenclature_ouvrage_hydrau_banq_type
+  meta_create_date:
+      type: datetime
+      title: Date de création (en base)
+  meta_update_date:
+      type: datetime
+      title: Date de modification (en base)
   areas:
       type: relation
       title: Areas
