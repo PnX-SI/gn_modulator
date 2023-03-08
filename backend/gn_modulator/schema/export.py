@@ -50,8 +50,6 @@ class SchemaExport:
         filename = f"export_{module_code}_{datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M')}"
 
         response = Response(iter_csv(data_csv), mimetype="text/csv")
-        response.headers.add(
-            "Content-Disposition", "attachment", filename=filename
-        )
+        response.headers.add("Content-Disposition", "attachment", filename=filename)
 
         return response
