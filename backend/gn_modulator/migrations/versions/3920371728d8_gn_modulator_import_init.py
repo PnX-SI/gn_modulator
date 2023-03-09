@@ -21,6 +21,7 @@ def upgrade():
         """
 CREATE TABLE gn_modulator.t_imports(
     id_import SERIAL NOT NULL,
+    id_digitiser INTEGER,
     schema_code VARCHAR,
     data_file_path VARCHAR,
     mapping_file_path VARCHAR,
@@ -34,6 +35,12 @@ CREATE TABLE gn_modulator.t_imports(
 
 ALTER TABLE gn_modulator.t_imports
     ADD CONSTRAINT pk_gn_modulator_t_imports_id_import PRIMARY KEY (id_import);
+
+ALTER TABLE pr_sipaf.t_passages_faune
+    ADD CONSTRAINT fk_modulator_t_impt_t_role_id_digitiser FOREIGN KEY (id_digitiser)
+    REFERENCES utilisateurs.t_roles(id_role)
+    ON UPDATE CASCADE ON DELETE SET NULL;
+
     """
     )
     pass

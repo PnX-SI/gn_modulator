@@ -1,5 +1,5 @@
-from .utils import ImportMixinUtils
 from gn_modulator import SchemaMethods
+from .utils import ImportMixinUtils
 
 
 class ImportMixinProcess(ImportMixinUtils):
@@ -66,10 +66,19 @@ class ImportMixinProcess(ImportMixinUtils):
         txt_columns = ",\n    ".join(v_columns)
         txt_joins = "\n".join(v_joins)
 
+        # TODO rendre id_digitiser parametrable ?
+        txt_id_digitiser = ""
+        if self.id_digitiser:
+            for key in ["id_digitiser", "id_digitizer"]:
+                if SchemaMethods(self.schema_code).has_property(key):
+                    txt_id_digitiser = f"{self.id_digitiser} AS {key},"
+                    break
+
         return f"""DROP VIEW IF EXISTS {dest_table} CASCADE;
 CREATE VIEW {dest_table} AS
 SELECT
     id_import,
+    {txt_id_digitiser}
     {txt_columns}
 FROM {from_table} t
 {txt_joins};

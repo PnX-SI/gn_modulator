@@ -26,6 +26,8 @@ class TestImportApi:
             assert r.json["res"]["nb_data"] == 2
             assert r.json["res"]["nb_insert"] == 2
 
+            assert r.json["id_digitiser"] == users["admin_user"].id_role
+
     def test_import_synthese2(self, users):
         set_logged_user_cookie(self.client, users["admin_user"])
         with open(import_test_dir / "synthese_1.csv", "rb") as f:
