@@ -30,7 +30,7 @@ class ImportMixinProcess(ImportMixinUtils):
         v_columns = []
         v_joins = []
 
-        from_table_columns = SchemaMethods.get_table_columns(from_table)
+        from_table_columns = self.get_table_columns(from_table)
 
         columns = list(
             filter(

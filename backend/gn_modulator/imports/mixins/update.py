@@ -35,7 +35,7 @@ class ImportMixinUpdate(ImportMixinUtils):
     def sql_update(self, from_table):
         sm = SchemaMethods(self.schema_code)
 
-        columns = SchemaMethods.get_table_columns(from_table)
+        columns = self.get_table_columns(from_table)
 
         v_column_keys = map(
             lambda x: x,
@@ -86,7 +86,7 @@ AND {txt_update_conditions}
     def sql_nb_update(self, from_table):
         sm = SchemaMethods(self.schema_code)
 
-        columns = SchemaMethods.get_table_columns(from_table)
+        columns = self.get_table_columns(from_table)
 
         v_update_conditions = list(
             map(

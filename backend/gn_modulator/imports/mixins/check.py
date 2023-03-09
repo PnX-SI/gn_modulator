@@ -17,7 +17,7 @@ class ImportMixinCheck(ImportMixinUtils):
         raw_table = self.tables["raw"]
         sm = SchemaMethods(self.schema_code)
 
-        for key in SchemaMethods.get_table_columns(raw_table):
+        for key in self.get_table_columns(raw_table):
             if not sm.is_required(key):
                 continue
 
@@ -48,7 +48,7 @@ SELECT
         process_table = self.tables["process"]
         sm = SchemaMethods(self.schema_code)
 
-        for key in SchemaMethods.get_table_columns(raw_table):
+        for key in self.get_table_columns(raw_table):
             if not (sm.has_property(key) and sm.property(key).get("foreign_key")):
                 continue
 

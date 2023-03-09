@@ -10,7 +10,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
         from_table = self.tables.get("mapping") or self.tables["data"]
         sm = SchemaMethods(self.schema_code)
 
-        columns = SchemaMethods.get_table_columns(from_table)
+        columns = self.get_table_columns(from_table)
 
         for index, key in enumerate(columns):
             if not sm.is_relationship(key):

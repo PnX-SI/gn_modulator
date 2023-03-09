@@ -26,6 +26,7 @@ class TImport(db.Model, ImportMixin):
         self.tables = {}
 
     _insert_data = False
+    _columns = {}
 
     id_import = db.Column(db.Integer, primary_key=True)
 

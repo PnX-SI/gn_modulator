@@ -47,7 +47,7 @@ class ImportMixinInsert(ImportMixinUtils):
                     if keys is not None
                     else sm.is_column(x) and not (sm.property(x).get("primary_key"))
                 ),
-                SchemaMethods.get_table_columns(from_table),
+                self.get_table_columns(from_table),
             )
         )
 

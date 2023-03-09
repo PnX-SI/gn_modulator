@@ -64,3 +64,8 @@ class ImportMixinUtils:
         self.errors.append(
             {"code": code, "msg": msg, "key": key, "lines": lines, "values": values}
         )
+
+    def get_table_columns(self, table_name):
+        if not self._columns.get(table_name):
+            self._columns[table_name] = SchemaMethods.get_table_columns(table_name)
+        return self._columns[table_name]
