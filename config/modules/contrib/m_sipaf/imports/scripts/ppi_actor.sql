@@ -1,4 +1,5 @@
 SELECT
+	id_import,
 	uuid_pf AS id_passage_faune,
 	CASE
 		WHEN type_role_org = 'Concessionaire' THEN 'CON'

@@ -25,7 +25,6 @@ class ImportMixin(
     ImportMixinUtils,
 ):
     def process_import_schema(self):
-
         self.init_import()
         if self.errors:
             return self
@@ -78,9 +77,8 @@ class ImportMixin(
         return self
 
     @classmethod
-    def process_import_code(cls, import_code, data_dir_path):
-
-        print(f"\nProcess scenaria d'import {import_code}")
+    def process_import_code(cls, import_code, data_dir_path, commit=True):
+        print(f"\nProcess scenario d'import {import_code}")
 
         # get import definition
         import_definitions = DefinitionMethods.get_definition("import", import_code)
@@ -88,36 +86,46 @@ class ImportMixin(
 
         # for all definition items
         imports = []
-        last_impt = None
         for import_definition in import_definitions["items"]:
             # récupération du fichier de données
-            data_file_path = Path(data_dir_path) / import_definition["data"] if d.get("data") else Path(data_dir_path)
+            data_file_path = (
+                Path(data_dir_path) / import_definition["data"]
+                if import_definition.get("data")
+                else Path(data_dir_path)
+            )
 
             # récupération du fichier pre-process, s'il est défini
-            pre_process_file_path = (
-                Path(import_definitions_file_path).parent / import_definition["pre_process"]
-                if import_definition.get("pre_process")
+            mapping_file_path = (
+                Path(import_definitions_file_path).parent / import_definition["mapping"]
+                if import_definition.get("mapping")
                 else None
             )
 
-            impt = cls(schema_code=import_definition["schema_code"], data_dir_path=data_file_path, pre_process_file_path=pre_process_file_path)
+            impt = cls(
+                schema_code=import_definition["schema_code"],
+                data_file_path=data_file_path,
+                mapping_file_path=mapping_file_path,
+            )
 
-            # pour éviter d'avoir à recharger
-            if import_definition['keep_raw'] and last_impt:
-                impt.tables['data'] = last_impt.tables['data']
+            # pour éviter d'avoir à recharger les données
+            if import_definition.get("keep_raw") and len(imports):
+                last_import = imports[-1]
+                impt.tables["data"] = imports[-1].tables["data"]
 
             db.session.add(impt)
             # flush ??
 
             impt.process_import_schema()
-            import_infos = impt.import_infos()
-            if errors := import_infos["errors"]:
+            imports.append(impt)
+
+            if impt.errors:
                 print(f"Il y a des erreurs dans l'import {import_definition['schema_code']}")
-                for error in errors:
+                for error in impt.errors:
                     print(f"- {error['code']} : {error['msg']}")
                 return imports
             print(impt.pretty_infos())
-            last_impt = impt
 
-        print(f"\nImport {import_code} terminé\n")
+        if commit:
+            db.session.commit()
+        print(f"Import {import_code} terminé")
         return imports

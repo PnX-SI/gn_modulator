@@ -8,17 +8,19 @@ class TImport(db.Model, ImportMixin):
     __tablename__ = "t_imports"
     __table_args__ = {"schema": "gn_modulator"}
 
-    def __init__(self, schema_code=None, data_file_path=None, mapping_file_path=None, _insert=False):
+    def __init__(
+        self, schema_code=None, data_file_path=None, mapping_file_path=None, _insert_data=False
+    ):
         self.schema_code = schema_code
         self.data_file_path = data_file_path and str(data_file_path)
         self.mapping_file_path = mapping_file_path and str(mapping_file_path)
-        self._insert = _insert
+        self._insert = _insert_data
         self.res = {}
         self.errors = []
         self.sql = {}
         self.tables = {}
 
-    _insert = False
+    _insert_data = False
 
     id_import = db.Column(db.Integer, primary_key=True)
 

@@ -9,13 +9,15 @@ class ImportMixinUtils:
         SchemaMethods.c_sql_exec_txt(f"CREATE SCHEMA IF NOT EXISTS {schema_import}")
 
     def pretty_infos(self):
-        print(self.res)
         txt = ""
-        txt += f"\n-- import csv file {Path(self.data_file_path).name}"
-        txt += f"   {self.res.get('nb_data')} lignes"
+        if self.res.get("nb_data") is not None:
+            txt += f"\n-- import csv file {Path(self.data_file_path).name}"
+            txt += f"   {self.res.get('nb_data')} lignes\n\n"
         txt += f"   - {self.schema_code}\n"
         if self.res.get("nb_raw") != self.res.get("nb_process"):
             txt += f"       raw       : {self.res.get('nb_raw'):10d}\n"
+        if self.res.get("nb_process"):
+            txt += f"       process   : {self.res.get('nb_process'):10d}\n"
         if self.res.get("nb_insert"):
             txt += f"       insert    : {self.res['nb_insert']:10d}\n"
         if self.res.get("nb_update"):

@@ -10,7 +10,14 @@ def test_data_file(
         return
 
     with db.session.begin_nested():
-        impt = TImport(schema_code=schema_code, data_file_path=data_file_path, mapping_file_path=mapping_file_path, _insert=True)
+        # ici _insert_data est à true pour intégrer les avec un insert
+        # et non un copy qui ne marche pas en test
+        impt = TImport(
+            schema_code=schema_code,
+            data_file_path=data_file_path,
+            mapping_file_path=mapping_file_path,
+            _insert_data=True,
+        )
         db.session.add(impt)
     assert impt.id_import is not None
 
@@ -32,3 +39,21 @@ def test_data_file(
         assert getAttr(import_infos, key) == expected_infos.get(key), txt_err
 
     return import_infos
+
+
+def test_import_code(import_code=None, data_dir_path=None, expected_infos=[]):
+    if not (import_code and data_dir_path):
+        return
+
+    imports = TImport.process_import_code(import_code, data_dir_path, commit=False)
+    assert len(imports) > 0
+
+    for impt in imports:
+        assert len(impt.errors) == 0
+
+    for index, expected_info in enumerate(expected_infos):
+        impt = imports[index]
+        import_infos = impt.as_dict()
+        for key in expected_info:
+            txt_err = f"schema_code: {impt.schema_code}, key: {key},  expected: {expected_info.get(key)}, import: {getAttr(import_infos, key)}"
+            assert getAttr(import_infos, key) == expected_info.get(key), txt_err

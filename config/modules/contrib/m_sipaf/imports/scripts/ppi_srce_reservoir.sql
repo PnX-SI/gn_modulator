@@ -1,4 +1,5 @@
 SELECT
+    id_import
     'RESV_SRCE' AS id_type,
     id_resv AS area_code,
     CASE
@@ -8,3 +9,4 @@ SELECT
     wkt AS geom,
     TRUE AS enable,
     'https://inpn.mnhn.fr/docs/TVB/N_SRCE_RESERVOIR_S_000.zip' AS source
+    FROM :table_data

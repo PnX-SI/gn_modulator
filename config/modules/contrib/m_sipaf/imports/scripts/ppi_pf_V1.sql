@@ -31,5 +31,6 @@ select
     replace(larg_disp, ',', '.') :: NUMERIC AS largeur_dispo_faune,
     replace(haut_disp, ',', '.') :: NUMERIC AS hauteur_dispo_faune,
     source
-ORDER BY
-    tis.uuid_pf;
+    FROM :table_data
+    ORDER BY
+        uuid_pf;

@@ -1,6 +1,8 @@
-SELECT DISTINCT ON (id_import)
+SELECT
+	MIN(id_import) AS id_import,
 	concess AS nom_organisme,
 	'SIPAF' AS adresse_organisme
-	WHERE concess IS NOT NULL AND concess != ''
 	FROM :table_data
-	ORDER BY id_import, concess
+	WHERE concess IS NOT NULL AND concess != ''
+	GROUP BY concess
+	ORDER BY concess
