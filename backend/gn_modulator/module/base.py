@@ -10,6 +10,19 @@ from gn_modulator import MODULE_CODE
 
 class ModuleBase:
     @classmethod
+    def is_python_module(cls, module_code):
+        """
+        Test si on a un fichier setup.py pour ce sous_module
+        """
+
+        setup_file_path = cls.module_path(module_code) / "setup.py"
+        return setup_file_path.exists()
+
+    @classmethod
+    def module_path(cls, module_code):
+        return DefinitionMethods.get_file_path("module", module_code).parent
+
+    @classmethod
     def module_codes(cls):
         """
         Renvoie la liste des code de module présents dans les fichiers de config
@@ -105,27 +118,6 @@ class ModuleBase:
         with open(sql_file_path, "w") as f:
             f.write(txt)
         print("- Création du fichier {}".format(sql_file_path.name))
-
-    @classmethod
-    def create_reset_sql(cls, module_code):
-        sql_file_path = cls.migrations_dir(module_code) / "data/reset.sql"
-        if sql_file_path.exists:
-            return
-        sql_file_path.parent.mkdir(parents=True, exist_ok=True)
-
-        module_config = cls.module_config(module_code)
-        schema_codes = module_config["schemas"]
-        txt = "--\n-- reset.sql ({})\n--\n\n".format(module_code)
-        for schema_code in schema_codes:
-            sm = SchemaMethods(schema_code)
-            txt_drop_schema = "-- DROP SCHEMA {} CASCADE;\n".format(sm.sql_schema_name())
-            if txt_drop_schema not in txt:
-                txt += txt_drop_schema
-
-        with open(sql_file_path, "w") as f:
-            f.write(txt)
-
-        print("- Création du fichier {} (!!! à compléter)".format(sql_file_path.name))
 
     @classmethod
     def process_module_features(cls, module_code):

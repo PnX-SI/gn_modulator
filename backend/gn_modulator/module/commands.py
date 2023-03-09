@@ -13,7 +13,24 @@ from . import errors
 
 class ModuleCommands:
     @classmethod
+    def update_modules(cls):
+        for module_code in cls.module_codes():
+            module_config = cls.module_config(module_code)
+            if not (module_config.get("registred") and cls.is_python_module(module_code)):
+                continue
+
+            cmd_pip_install = f"pip install -e '{cls.module_path(module_code)}'"
+            print(cmd_pip_install)
+            subprocess.run(cmd_pip_install, shell=True, check=True)
+            importlib.reload(site)
+            for entry in sys.path:
+                pkg_resources.working_set.add_entry(entry)
+
+    @classmethod
     def remove_module(cls, module_code, force=False):
+        """
+        Supprime un module et ses dépendances
+        """
         try:
             module_config = cls.module_config(module_code)
         except cls.errors.ModuleNotFoundError as e:
@@ -50,9 +67,7 @@ class ModuleCommands:
         for module_dep_code in module_deps_installed:
             cls.remove_module(module_dep_code, force)
 
-        module_path = DefinitionMethods.get_file_path("module", module_code).parent
-        setup_file_path = module_path / "setup.py"
-        if setup_file_path.exists():
+        if cls.is_python_module(module_code):
             # alembic
             db.session.commit()  # pour eviter les locks ???
 
@@ -69,7 +84,7 @@ class ModuleCommands:
         # unregister
         module_config["registred"] = False
 
-        if setup_file_path.exists():
+        if cls.is_python_module(module_code):
             subprocess.run(f"pip remove {module_code}", shell=True, check=True)
 
         return True
@@ -96,10 +111,10 @@ class ModuleCommands:
                 cls.install_module(module_dep_code, force)
 
         # si on a un setup.py on installe le module python
-        module_path = DefinitionMethods.get_file_path("module", module_code).parent
-        setup_file_path = module_path / "setup.py"
-        if setup_file_path.exists():
-            subprocess.run(f"pip install -e '{module_path}'", shell=True, check=True)
+        if cls.is_python_module(module_code):
+            subprocess.run(
+                f"pip install -e '{cls.module_path(module_code)}'", shell=True, check=True
+            )
             importlib.reload(site)
             for entry in sys.path:
                 pkg_resources.working_set.add_entry(entry)

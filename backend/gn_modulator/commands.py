@@ -61,6 +61,16 @@ def cmd_remove_module(module_code, force=False):
     return ModuleMethods.remove_module(module_code, force)
 
 
+@click.command("update")
+@with_appcontext
+def cmd_update_modules():
+    """
+    commande d'initialisation du module
+    """
+
+    return ModuleMethods.update_modules()
+
+
 @click.command("sql")
 @click.option("-m", "module_code")
 @click.option("-s", "schema_code")
@@ -289,6 +299,7 @@ commands = [
     cmd_test_grammar,
     cmd_install_module,
     cmd_remove_module,
+    cmd_update_modules,
     cmd_doc_schema,
     cmd_process_sql,
     cmd_import_features,
