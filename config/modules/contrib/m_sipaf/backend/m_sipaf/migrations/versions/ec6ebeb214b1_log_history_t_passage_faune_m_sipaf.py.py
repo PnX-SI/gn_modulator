@@ -6,6 +6,7 @@ Create Date: 2023-03-08 18:21:26.724733
 
 """
 from alembic import op
+
 import sqlalchemy as sa
 
 
@@ -19,7 +20,7 @@ depends_on = None
 def upgrade():
     op.execute(
         """
-    CREATE TRIGGER tri_log_changes_t_passages_faune
+    CREATE TRIGGER tri_log_ changes_t_passages_faune
     AFTER INSERT OR UPDATE OR DELETE
     ON pr_sipaf.t_passages_faune
     FOR EACH ROW
@@ -44,6 +45,10 @@ def downgrade():
         """
     DROP TRIGGER IF EXISTS tri_log_changes_t_passages_faune
         ON pr_sipaf.t_passages_faune;
+
+    ALTER TABLE pr_sipaf.t_passages_faune DROP COLUMN meta_create_date;
+    ALTER TABLE pr_sipaf.t_passages_faune DROP COLUMN meta_update_date;
+
     DROP TRIGGER IF EXISTS tri_meta_dates_change_t_passages_faune ON pr_sipaf.t_passages_faune;
     """
     )
