@@ -6,6 +6,7 @@
 **✨ Améliorations**
 
 - historisation de la table `pr_sipaf.t_passages_faune` et ajout des champs `meta_create_date` et `meta_update_date`.
+- changement pour une gestion plus classique des versions alembic des sous-modules (modules python avec setup.py et plus de copies/liens symboliques vers les fichiers de migration)
 
 ## 1.0.4 (03-03-2023)
 
