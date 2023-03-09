@@ -20,7 +20,7 @@ depends_on = None
 def upgrade():
     op.execute(
         """
-    CREATE TRIGGER tri_log_ changes_t_passages_faune
+    CREATE TRIGGER tri_log_changes_t_passages_faune
     AFTER INSERT OR UPDATE OR DELETE
     ON pr_sipaf.t_passages_faune
     FOR EACH ROW
