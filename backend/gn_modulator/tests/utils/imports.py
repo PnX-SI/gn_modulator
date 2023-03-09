@@ -10,7 +10,7 @@ def test_data_file(
         return
 
     with db.session.begin_nested():
-        impt = TImport(schema_code, data_file_path, mapping_file_path)
+        impt = TImport(schema_code=schema_code, data_file_path=data_file_path, mapping_file_path=mapping_file_path, _insert=True)
         db.session.add(impt)
     assert impt.id_import is not None
 

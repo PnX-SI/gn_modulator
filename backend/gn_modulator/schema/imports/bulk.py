@@ -1,8 +1,10 @@
 from pathlib import Path
+
+from geonature.utils.env import db
+
 from gn_modulator.definition import DefinitionMethods
 from gn_modulator.utils.env import schema_import
 from gn_modulator.utils.cache import set_global_cache, get_global_cache
-from geonature.utils.env import db
 
 
 class SchemaBulkImports:
