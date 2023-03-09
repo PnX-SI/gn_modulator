@@ -5,9 +5,9 @@ import sys
 import site
 
 from flask_migrate import upgrade as db_upgrade, downgrade as db_downgrade
-from geonature.utils.module import get_dist_from_code, module_db_upgrade
+from geonature.utils.module import get_dist_from_code
 from geonature.utils.env import db
-from gn_modulator import SchemaMethods, DefinitionMethods
+from gn_modulator import SchemaMethods
 from . import errors
 
 
@@ -25,6 +25,7 @@ class ModuleCommands:
             importlib.reload(site)
             for entry in sys.path:
                 pkg_resources.working_set.add_entry(entry)
+            get_dist_from_code(module_code)
 
     @classmethod
     def remove_module(cls, module_code, force=False):
