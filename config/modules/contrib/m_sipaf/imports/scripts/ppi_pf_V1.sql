@@ -1,6 +1,7 @@
 -- import V1
 -- (sans les données spécificité, matériaux, et ouvrage_type)
 select
+    id_import,
     uuid_pf as code_passage_faune,
     CASE
         WHEN pi_ou_ps = 'PI' THEN FALSE

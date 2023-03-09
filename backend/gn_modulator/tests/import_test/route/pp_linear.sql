@@ -7,3 +7,4 @@ SELECT
     true as enable,
     'https://geoservices.ign.fr/bdtopo#telechargementshpreg' AS source,
     numero as groups -- n-n ++
+    FROM :table_data

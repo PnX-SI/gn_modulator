@@ -1,5 +1,6 @@
-SELECT DISTINCT
+SELECT DISTINCT ON (id_import)
 	concess AS nom_organisme,
 	'SIPAF' AS adresse_organisme
 	WHERE concess IS NOT NULL AND concess != ''
-	ORDER BY concess
+	FROM :table_data
+	ORDER BY id_import, concess

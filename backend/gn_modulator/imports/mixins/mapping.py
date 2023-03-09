@@ -60,24 +60,20 @@ class ImportMixinMapping(ImportMixinUtils):
                     code="ERR_IMPORT_MAPPING_FORBIDEN_WORD",
                     msg=f"Le fichier de preprocess {self.mapping_file_path} contient le ou les mots interdits {', '.join(forbidden_word)}",
                 )
-                return
 
-            for word in ["WHERE", "ORDER BY", "LIMIT"]:
-                if word in mapping_select:
-                    mapping_select = mapping_select.replace(
-                        f"{word}", f"\nFROM {from_table}\n{word}"
-                    )
-                    break
+            if ":TABLE_DATA" not in mapping_select:
+                self.add_error(
+                    code="ERR_IMPORT_MAPPING_MISSING_TABLE",
+                    msg="La selection de mapping doit contenir 'FROM :table_data",
+                )
 
-            if "FROM" not in mapping_select:
-                mapping_select += f"\nFROM {from_table}"
+            mapping_select = mapping_select.replace(":TABLE_DATA", from_table)
 
             if "ID_IMPORT" not in mapping_select:
                 self.add_error(
                     code="ERR_IMPORT_MAPPING_MISSING_IMPORT",
                     msg=f"La selection de mapping doit contenir le champs id_import dans {self.mapping_file_path}",
                 )
-                return
 
             sql_mapping = f"""
 DROP VIEW IF EXISTS {dest_table};
