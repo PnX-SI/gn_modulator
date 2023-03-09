@@ -17,19 +17,14 @@ depends_on = "modulator"
 
 def upgrade():
     # Creation du schema assiocié au module m_monitoring
-    sql_files = ["m_monitoring/schema.sql"]
+    sql_files = ["schema.sql"]
     for sql_file in sql_files:
         operations = pkg_resources.resource_string(
-            "gn_modulator.migrations", f"data/{sql_file}"
+            "m_monitoring.migrations", f"data/{sql_file}"
         ).decode("utf-8")
         op.get_bind().execute(text(operations))
 
 
 def downgrade():
     # Suppression du schema associé au module m_monitoring
-    sql_files = ["m_monitoring/reset.sql"]
-    for sql_file in sql_files:
-        operations = pkg_resources.resource_string(
-            "gn_modulator.migrations", f"data/{sql_file}"
-        ).decode("utf-8")
-        op.get_bind().execute(text(operations))
+    op.execute("DROP SCHEMA pr_monitoring CASCADE;")

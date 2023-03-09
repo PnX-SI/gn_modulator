@@ -18,19 +18,14 @@ depends_on = "modulator"
 
 def upgrade():
     # Creation du schema assiocié au module m_sipaf
-    sql_files = ["m_sipaf/schema.sql"]
+    sql_files = ["schema.sql"]
     for sql_file in sql_files:
         operations = pkg_resources.resource_string(
-            "gn_modulator.migrations", f"data/{sql_file}"
+            "m_sipaf.migrations", f"data/{sql_file}"
         ).decode("utf-8")
         op.get_bind().execute(text(operations))
 
 
 def downgrade():
     # Suppression du schema associé au module m_sipaf
-    sql_files = ["m_sipaf/reset.sql"]
-    for sql_file in sql_files:
-        operations = pkg_resources.resource_string(
-            "gn_modulator.migrations", f"data/{sql_file}"
-        ).decode("utf-8")
-        op.get_bind().execute(text(operations))
+    op.execute("DROP SCHEMA pr_sipaf CASCADE;")
