@@ -14,19 +14,6 @@ from gn_modulator.utils.errors import errors_txt
 from geonature.utils.env import db
 
 
-@click.command("init")
-@click.argument("module_code")
-@click.option("-f", "--force", is_flag=True)
-@click.option("-r", "--reinstall", is_flag=True)
-@with_appcontext
-def cmd_init_module(module_code, force=False, reinstall=False):
-    """
-    commande d'initialisation du module
-    """
-
-    ModuleMethods.init_module(module_code, force)
-
-
 @click.command("install")
 @click.argument("module_code", required=False)
 @click.option("-f", "--force", is_flag=True)
@@ -72,16 +59,6 @@ def cmd_remove_module(module_code, force=False):
     """
 
     return ModuleMethods.remove_module(module_code, force)
-
-
-@click.command("process_all")
-@click.argument("module_code")
-@with_appcontext
-def cmd_process_all(module_code):
-    """ """
-
-    ModuleMethods.remove_migration_links(module_code)
-    ModuleMethods.make_migration_links(module_code)
 
 
 @click.command("sql")
@@ -310,12 +287,9 @@ commands = [
     cmd_check,
     cmd_test,
     cmd_test_grammar,
-    cmd_init_module,
-    # cmd_reinit_module,
     cmd_install_module,
     cmd_remove_module,
     cmd_doc_schema,
-    cmd_process_all,
     cmd_process_sql,
     cmd_import_features,
     cmd_import_bulk_data,

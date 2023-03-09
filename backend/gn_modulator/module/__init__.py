@@ -1,13 +1,12 @@
 from .base import ModuleBase
 from .commands import ModuleCommands
 from .config import ModulesConfig
-from .migrations import ModuleMigration
 from .breadcrumbs import ModuleBreadCrumbs
 from . import errors
 from gn_modulator.utils.errors import add_error
 
 
-class ModuleMethods(ModuleBase, ModuleBreadCrumbs, ModuleCommands, ModulesConfig, ModuleMigration):
+class ModuleMethods(ModuleBase, ModuleBreadCrumbs, ModuleCommands, ModulesConfig):
     """
     Classe contenant les methodes de gestion des modules
     - config

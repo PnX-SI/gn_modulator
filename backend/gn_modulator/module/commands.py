@@ -1,6 +1,13 @@
-from ..schema import SchemaMethods
+import subprocess
+import pkg_resources
+import importlib
+import sys
+import site
+
 from flask_migrate import upgrade as db_upgrade, downgrade as db_downgrade
+from geonature.utils.module import get_dist_from_code, module_db_upgrade
 from geonature.utils.env import db
+from gn_modulator import SchemaMethods, DefinitionMethods
 from . import errors
 
 
@@ -43,22 +50,27 @@ class ModuleCommands:
         for module_dep_code in module_deps_installed:
             cls.remove_module(module_dep_code, force)
 
-        # alembic
-        db.session.commit()  # pour eviter les locks ???
+        module_path = DefinitionMethods.get_file_path("module", module_code).parent
+        setup_file_path = module_path / "setup.py"
+        if setup_file_path.exists():
+            # alembic
+            db.session.commit()  # pour eviter les locks ???
 
-        if cls.migration_files(module_code):
-            db_downgrade(revision=f"{module_code.lower()}@base")
+            # TODO comment savoir s'il y a une migration
+            module_dist = get_dist_from_code(module_code)
+            if "migrations" in module_dist.get_entry_map("gn_module"):
+                db_downgrade(revision=f"{module_code.lower()}@base")
 
         # suppression du module en base
         print("- suppression du module {} en base".format(module_code))
 
         cls.delete_db_module(module_code)
 
-        # symlink
-        cls.remove_migration_links(module_code)
-
         # unregister
         module_config["registred"] = False
+
+        if setup_file_path.exists():
+            subprocess.run(f"pip remove {module_code}", shell=True, check=True)
 
         return True
 
@@ -83,14 +95,20 @@ class ModuleCommands:
                     return False
                 cls.install_module(module_dep_code, force)
 
-        # mise en place des liens symboliques
-        cls.make_migration_links(module_code)
+        # si on a un setup.py on installe le module python
+        module_path = DefinitionMethods.get_file_path("module", module_code).parent
+        setup_file_path = module_path / "setup.py"
+        if setup_file_path.exists():
+            subprocess.run(f"pip install -e '{module_path}'", shell=True, check=True)
+            importlib.reload(site)
+            for entry in sys.path:
+                pkg_resources.working_set.add_entry(entry)
 
-        # alembic
-        # - test if migration file(s) exist(s)
-        if cls.migration_files(module_code):
-            db.session.commit()  # pour eviter les locks ???
-            db_upgrade(revision=f"{module_code.lower()}@head")
+            # load python package
+            module_dist = get_dist_from_code(module_code)
+            if "migrations" in module_dist.get_entry_map("gn_module"):
+                db.session.commit()  # pour eviter les locks ???
+                db_upgrade(revision=f"{module_code.lower()}@head")
 
         # pour les update du module ? # test si module existe
         cls.register_db_module(module_code)
@@ -106,33 +124,6 @@ class ModuleCommands:
         module_config["registred"] = True
 
         return True
-
-    @classmethod
-    def init_module(cls, module_code, force):
-        try:
-            module_config = cls.module_config(module_code)
-
-        except errors.ModuleNotFoundError as e:
-            print(e)
-            return
-
-        if module_config["registred"]:
-            print("Le module {} est déjà enregistré".format(module_code))
-            print(
-                "Pour reinitialiser le module, vous devez le supprimmer au préalable avec la commande suivante"
-            )
-            print("geonature modulator remove {}".format(module_code))
-            return
-
-        print("Initialisation du module {}".format(module_code))
-
-        cls.create_schema_sql(module_code, force)
-        cls.create_reset_sql(module_code)
-
-        migration_init_file_path = cls.migration_init_file_path(module_code)
-
-        if not (migration_init_file_path and migration_init_file_path.exists()):
-            cls.create_migration_init_file(module_code)
 
     @classmethod
     def test_grammar(cls, module_code=None, object_code=None, schema_code=None, grammar_type=None):
