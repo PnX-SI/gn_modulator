@@ -17,7 +17,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/x-rst",
     maintainer="PNX",
-    url="https://github.com/joelclems/gn_modulator",
+    url="https://github.com/PNX-SI/gn_modulator",
     packages=setuptools.find_packages("backend"),
     package_dir={"": "backend"},
     package_data={"gn_modulator.migrations": ["data/*.sql", "data/**/*.sql"]},
