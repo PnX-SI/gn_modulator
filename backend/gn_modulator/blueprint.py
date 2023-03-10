@@ -1,4 +1,5 @@
-from flask import Blueprint, request, g
+import sys
+from flask import Blueprint, request, g, current_app
 from .commands import commands
 from .schema import SchemaMethods
 from .definition import DefinitionMethods
@@ -12,7 +13,6 @@ from gn_modulator.utils.errors import get_errors, errors_txt
 from gn_modulator import MODULE_CODE
 from geonature.core.gn_permissions.decorators import check_cruved_scope
 from geonature.core.gn_commons.models.base import TModules
-
 
 blueprint = Blueprint(MODULE_CODE.lower(), __name__)
 
@@ -31,19 +31,22 @@ def set_current_module(endpoint, values):
     )
 
 
-# initialisation du module
-try:
+# On teste sys.argv pour éviter de charger les définitions
+# si on est dans le cadre d'une commande
+# On initialise dans le cadre d'une application lancée avec
+# - gunicorn
+# - celery
+# - pytest
+# - flask run
+# - geonature run
+test_init = any(sys.argv[0].endswith(x) for x in ["gunicorn", "celery", "pytest"]) or (
+    len(sys.argv) >= 2 and sys.argv[1] == "run"
+)
+
+if test_init:
     init_gn_modulator()
     if get_errors():
         print(f"\n{errors_txt()}")
-
-except Exception as e:
-    # patch 1ère initialisation flask run
-    # sqlalchemy.exc.NoForeignKeysError:
-    #   Could not determine join condition between parent/child tables on relationship TM_SipafPf.areas - there are no foreign keys linking these tables via secondary table 'm_sipaf.cor_area_pf'.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify 'primaryjoin' and 'secondaryjoin' expressions.
-    if isinstance(e, NoForeignKeysError):
-        pass
-    raise e
 
 
 @blueprint.route("/config/<path:config_path>", methods=["GET"])

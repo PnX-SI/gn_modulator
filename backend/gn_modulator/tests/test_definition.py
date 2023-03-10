@@ -29,7 +29,6 @@ class TestDefinitions:
         - si on a bien des schemas, modules et layout à minima
         - si le traitement de ces définition n'entraîne par d'erreurs
         """
-
         # pas d'erreurs à l'initialisation de gn_modulator
         assert (
             len(get_errors()) == 0

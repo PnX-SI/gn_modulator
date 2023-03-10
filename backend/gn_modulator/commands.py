@@ -11,6 +11,7 @@ from gn_modulator.schema import SchemaMethods
 from gn_modulator.module import ModuleMethods
 from gn_modulator.definition import DefinitionMethods
 from gn_modulator.utils.errors import errors_txt
+from gn_modulator import init_gn_modulator
 from geonature.utils.env import db
 
 
@@ -22,6 +23,8 @@ def cmd_install_module(module_code, force=False):
     """
     commande d'initialisation du module
     """
+
+    init_gn_modulator()
 
     module_codes = ModuleMethods.module_codes()
 
@@ -58,6 +61,8 @@ def cmd_remove_module(module_code, force=False):
     commande d'initialisation du module
     """
 
+    init_gn_modulator()
+
     return ModuleMethods.remove_module(module_code, force)
 
 
@@ -67,6 +72,8 @@ def cmd_update_modules():
     """
     commande d'initialisation du module
     """
+
+    init_gn_modulator()
 
     return ModuleMethods.update_modules()
 
@@ -82,6 +89,8 @@ def cmd_process_sql(module_code=None, schema_code=None, force=False):
     - un module spécifié par l'option -s,module_code
         (ensemble de schema définis par le module)
     """
+
+    init_gn_modulator()
 
     if schema_code:
         sm = SchemaMethods(schema_code)
@@ -108,7 +117,7 @@ def cmd_doc_schema(schema_code, force=False):
     """
     affiche la doc d'un schema identifié par schema_code
     """
-
+    init_gn_modulator()
     txt = SchemaMethods(schema_code).doc_markdown()
     print(txt)
     return True
@@ -147,7 +156,10 @@ def cmd_import_bulk_data(
     importe des données pour un schema
     """
 
+    init_gn_modulator()
+
     if schema_code and data_path:
+        Timport()
         import_number = SchemaMethods.process_import_schema(
             schema_code,
             data_path,
@@ -172,6 +184,8 @@ def cmd_import_features(data_code=None, verbose=False):
     """
     importe des feature depuis un fichier (data) (.yml) referencé par la clé 'data_code'
     """
+
+    init_gn_modulator()
 
     data_codes = sorted(DefinitionMethods.definition_codes_for_type("data"))
 
@@ -220,6 +234,8 @@ def cmd_test_grammar(module_code=None, object_code=None, schema_code=None, gramm
         pour un element précis de grammaire
     """
 
+    init_gn_modulator()
+
     try:
         grammar_txt = ModuleMethods.test_grammar(
             module_code, object_code, schema_code, grammar_type
@@ -263,6 +279,8 @@ def cmd_check():
     - Collecte les erreurs rencontrées lors de l'initialisation
     - Affiche les erreurs rencontées
     """
+    init_gn_modulator()
+
     print()
     print("Vérification des définitions de gn_modulator.\n")
     print(errors_txt())
@@ -274,23 +292,14 @@ def cmd_test():
     test random
     """
 
-    from gn_modulator.utils.env import import_test_dir
+    init_gn_modulator()
 
-    schema_code = "m_sipaf.pf"
-    data_file_path = import_test_dir / "route/pf.csv"
+    from flask import current_app
 
-    import_number = 1
-
-    SchemaMethods.process_import_schema(
-        schema_code,
-        data_file_path,
-        verbose=1,
-        import_number=import_number,
-        commit=True,
-    )
-
-    print(SchemaMethods.import_get_infos(import_number, schema_code, "errors"))
-    print(SchemaMethods.import_pretty_infos(import_number, schema_code))
+    print("test", current_app)
+    print(current_app.cli)
+    # for key in dir(current_app):
+    # print(key)
 
 
 commands = [
