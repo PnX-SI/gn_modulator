@@ -6,15 +6,15 @@
 **✨ Améliorations**
 
 - Historisation de la table `pr_sipaf.t_passages_faune` et ajout des champs `meta_create_date` et `meta_update_date` (#27)
-- Amélioration des noms des fichiers xportés (#26)
+- Amélioration des noms des fichiers exportés (#26)
 - Gestion plus classique des versions Alembic des sous-modules (modules python avec `setup.py` et non plus avec des copies/liens symboliques vers les fichiers de migration)
 
 **⚠️ Notes de version**
 
 Si vous mettez à jour le module :
 
-- exécutez la commande `geonature modulator update`, pour installer les sous-modules en tant que module python lorsque cela est nécessaire
-- exécutez la commande `geonature db autoupgrade`, pour mettre à jour la BDD.
+- Exécutez la commande `geonature modulator update`, pour installer les sous-modules en tant que module python lorsque cela est nécessaire
+- Exécutez la commande `geonature db autoupgrade`, pour mettre à jour la BDD.
 
 ## 1.0.4 (03-03-2023)
 
