@@ -8,7 +8,7 @@ layout:
   items:
     - flex: "0"
       type: button
-      color: primary
+      color: success
       title: Valider
       icon: done
       description: Enregistrer le contenu du formulaire

@@ -29,6 +29,18 @@
   width: 50%;
 }
 
+// couleur custom des bouttons
+.layout-buttons .mat-success {
+  background-color: green;
+  color: #fff;
+}
+
+// couleur custom des bouttons
+.layout-buttons .mat-error {
+  background-color: red;
+  color: #fff;
+}
+
 .content-container {
   min-width: 50%;
 }
