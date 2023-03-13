@@ -242,30 +242,3 @@ class ModuleConfigUtils:
 
         #     # mise en cache pour pouvoir s'en reservir par ailleurs
         #     set_global_cache(["exports", export_code], export_definition)
-
-    @classmethod
-    def process_module_api(cls, module_code):
-        """
-        ouvre les routes pour un module
-        """
-
-        module_config = cls.module_config(module_code)
-
-        bp = Blueprint(module_code, __name__)
-
-        # pour tous les object d'un module
-        for object_code, object_definition in module_config["objects"].items():
-            # on récupère schema methodes
-            sm = SchemaMethods(object_definition["schema_code"])
-
-            # ouverture des routes pour ce schema
-            #   - avec les options:'object_definition'
-            #     en particulier le cruved
-            sm.register_api(bp, module_code, object_code, copy.deepcopy(object_definition))
-
-            # les prefiltres définis dans les objects ne servent que dans les ouverture de route ???
-            if "prefilters" in object_definition:
-                del object_definition["prefilters"]
-
-        # enregistrement du blueprint pour ce module
-        current_app.register_blueprint(bp, url_prefix=f"/{module_code.lower()}")

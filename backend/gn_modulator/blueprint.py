@@ -16,6 +16,9 @@ from geonature.core.gn_commons.models.base import TModules
 
 blueprint = Blueprint(MODULE_CODE.lower(), __name__)
 
+from gn_modulator.routes.rest import *  # noqa
+from gn_modulator.routes.exports import *  # noqa
+
 # Creation des commandes pour modules
 blueprint.cli.short_help = "Commandes pour l' administration du module MODULES"
 for cmd in commands:

@@ -8,6 +8,7 @@
 
 import copy
 import json
+from gn_modulator import MODULE_CODE
 from gn_modulator.utils.cache import get_global_cache
 
 column_types = [
@@ -338,3 +339,27 @@ class SchemaBase:
                 return labels[1] if len(labels) > 2 else None
 
         return data
+
+    @classmethod
+    def base_url(cls):
+        """
+        base url (may differ with apps (GN, UH, TH, ...))
+        TODO process apps ?
+        """
+        from geonature.utils.config import config
+
+        return "{}/{}".format(config["API_ENDPOINT"], MODULE_CODE.lower())
+
+    def url(self, post_url, full_url=False):
+        """
+        /{schema_code}{post_url}
+        - full/url renvoie l'url complet
+        TODO gérer par type d'url ?
+        """
+
+        url = self.attr("meta.url", "/{}{}".format(self.schema_code(), post_url))
+
+        if full_url:
+            url = "{}{}".format(self.cls.base_url(), url)
+
+        return url

@@ -4,7 +4,6 @@
     class gathering methods from mixins
 """
 
-from .api import SchemaApi
 from .auto import SchemaAuto
 from .base import SchemaBase
 from .commands import SchemaCommands
@@ -23,7 +22,6 @@ from gn_modulator.utils.cache import get_global_cache, set_global_cache
 
 
 class SchemaMethods(
-    SchemaApi,
     SchemaAuto,
     SchemaBase,
     SchemaCommands,
