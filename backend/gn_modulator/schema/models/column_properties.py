@@ -9,6 +9,7 @@ from sqlalchemy import (
     cast,
 )
 from geonature.utils.env import db
+from gn_modulator.utils.filters import parse_filters
 from .. import errors
 
 
@@ -98,7 +99,7 @@ class SchemaModelColumnProperties:
         if column_property_def.get("filters") is not None:
             condition_filters, conditions = rel.process_filter_array(
                 relation.mapper.entity,
-                self.parse_filters(column_property_def.get("filters")),
+                parse_filters(column_property_def.get("filters")),
                 query=conditions,
                 condition=True,
             )

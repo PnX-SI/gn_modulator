@@ -63,7 +63,7 @@ export class ModulesDataService {
     return this.dataRequest('get', moduleCode, objectCode, {
       value,
       params,
-      urlSuffix: 'page_number/',
+      urlSuffix: 'page_number_and_list',
     });
   }
 

@@ -141,7 +141,7 @@ export class ModulesConfigService {
 
   exportUrl(moduleCode, objectCode, exportCode, options: any = {}) {
     const url = this._mRequest.url(
-      `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectCode}/exports/${exportCode}`,
+      `${this.backendUrl()}/modulator/exports/${moduleCode.toLowerCase()}/${objectCode}/${exportCode}`,
       {
         prefilters: options.prefilters,
         filters: options.filters,
@@ -151,7 +151,7 @@ export class ModulesConfigService {
   }
 
   objectUrl(moduleCode, objectCode, value = '', urlSuffix = '') {
-    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectCode}/${urlSuffix}${
+    return `${this.backendUrl()}/modulator/${urlSuffix || 'rest'}/${moduleCode}/${objectCode}/${
       value || ''
     }`;
   }
