@@ -77,6 +77,3 @@ layout:
           display: table
           sort: code_passage_faune
           items: __SITE_TABLE_FIELDS__
-
-context:
-  module_code: m_monitoring
