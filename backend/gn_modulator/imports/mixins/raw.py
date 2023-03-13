@@ -110,15 +110,15 @@ FROM pre_process;
             return key
 
         if property["type"] == "number":
-            return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::FLOAT END AS {key}"
+            return f"NULLIF({key}, '')::FLOAT END AS {key}"
 
         if property["type"] == "date":
-            return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::DATE END AS {key}"
+            return f"NULLIF({key}, '')::DATE END AS {key}"
 
         if property["type"] == "datetime":
-            return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::TIMESTAMP END AS {key}"
+            return f"NULLIF({key}, '')::TIMESTAMP END AS {key}"
 
         if property["type"] == "integer" and "schema_code" not in property:
-            return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key}::INTEGER END AS {key}"
+            return f"NULLIF({key}, '')::INTEGER END AS {key}"
 
-        return f"CASE WHEN {key}::TEXT = '' THEN NULL ELSE {key} END AS {key}"
+        return f"NULLIF({key}, '') END AS {key}"
