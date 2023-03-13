@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 1.0.5 (unreleased)
+## 1.0.5 (13-03-2023)
 
 **✨ Améliorations**
 
