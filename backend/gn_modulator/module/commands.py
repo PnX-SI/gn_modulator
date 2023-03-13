@@ -86,7 +86,7 @@ class ModuleCommands:
         module_config["registred"] = False
 
         if cls.is_python_module(module_code):
-            subprocess.run(f"pip remove {module_code}", shell=True, check=True)
+            subprocess.run(f"pip uninstall -y {module_code}", shell=True, check=True)
 
         return True
 
