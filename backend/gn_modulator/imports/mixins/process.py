@@ -84,43 +84,6 @@ FROM {from_table} t
 {txt_joins};
 """
 
-    def process_raw_import_column(self, key):
-        """ """
-
-        sm = SchemaMethods(self.schema_code)
-
-        if not sm.has_property(key):
-            return f"{key}"
-
-        property = sm.property(key)
-
-        # pour les nomenclature (on rajoute le type)
-        if nomenclature_type := property.get("nomenclature_type"):
-            return f"""CASE
-        WHEN {key} IS NOT NULL AND {key} NOT LIKE '%%|%%' THEN CONCAT('{nomenclature_type}|', {key})
-        ELSE {key}
-    END AS {key}"""
-
-        if property["type"] == "boolean":
-            return f"""CASE
-        WHEN {key}::text IN ('t', 'true') THEN TRUE
-        WHEN {key}::text IN ('f', 'false') THEN FALSE
-        ELSE NULL
-    END AS {key}"""
-
-        if property["type"] == "geometry":
-            geometry_type = "ST_MULTI" if property["geometry_type"] == "multipolygon" else ""
-            return f"""{geometry_type}(
-        ST_SETSRID(
-            ST_FORCE2D(
-                ST_GEOMFROMEWKT({key})
-            ), {sm.property(key).get('srid')}
-        )
-    )
-    AS {key}"""
-
-        return f"{key}"
-
     def resolve_key(
         self, schema_code, key, index=None, alias_main="t", alias_join_base="j", solved_keys={}
     ):

@@ -153,7 +153,6 @@ class SchemaAuto:
 
     def process_column_auto(self, column, sql_schema_name, sql_table_name):
         type = str(column.type)
-
         if "VARCHAR(" in type:
             type = "VARCHAR"
 

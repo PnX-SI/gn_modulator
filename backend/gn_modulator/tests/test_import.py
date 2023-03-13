@@ -49,7 +49,7 @@ class TestImport:
 
         schema_code = "ref_geo.linear_group"
         data_file_path = import_test_dir / "route/route.csv"
-        pre_process_file_path = import_test_dir / "route/pp_linear_group.sql"
+        mapping_file_path = import_test_dir / "route/pp_linear_group.sql"
         expected_infos = {
             "res.nb_data": 1,
             "res.nb_insert": 1,
@@ -57,12 +57,12 @@ class TestImport:
             "res.nb_unchanged": 0,
         }
         test_data_file(
-            schema_code, data_file_path, pre_process_file_path, expected_infos=expected_infos
+            schema_code, data_file_path, mapping_file_path, expected_infos=expected_infos
         )
 
         schema_code = "ref_geo.linear"
         data_file_path = import_test_dir / "route/route.csv"
-        pre_process_file_path = import_test_dir / "route/pp_linear.sql"
+        mapping_file_path = import_test_dir / "route/pp_linear.sql"
         expected_infos = {
             "res.nb_data": 1,
             "res.nb_insert": 1,
@@ -70,5 +70,13 @@ class TestImport:
             "res.nb_unchanged": 0,
         }
         test_data_file(
-            schema_code, data_file_path, pre_process_file_path, expected_infos=expected_infos
+            schema_code, data_file_path, mapping_file_path, expected_infos=expected_infos
+        )
+
+    def test_error_ERR_IMPORT_INVALID_VALUE_FOR_TYPE(self):
+        schema_code = "syn.synthese"
+        data_file_path = import_test_dir / "synthese_ERR_IMPORT_INVALID_VALUE_FOR_TYPE.csv"
+        expected_infos = {"errors": [{"code": "ERR_IMPORT_INVALID_VALUE_FOR_TYPE"}]}
+        test_data_file(
+            schema_code, data_file_path, mapping_file_path=None, expected_infos=expected_infos
         )

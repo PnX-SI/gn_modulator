@@ -15,6 +15,6 @@ meta:
     unique:
         - id_source
         - entity_source_pk_value
-    properties:
-        entity_source_pk_value:
-            type: string
+properties:
+    entity_source_pk_value:
+        type: string

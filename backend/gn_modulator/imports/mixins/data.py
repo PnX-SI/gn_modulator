@@ -48,7 +48,6 @@ class ImportMixinData(ImportMixinUtils):
                 return
 
             import_table_columns = first_line.replace("\n", "").split(self.csv_delimiter)
-
             # creation de la table temporaire
             self.sql["data_table"] = self.sql_create_data_table(
                 self.tables["data"], import_table_columns
@@ -70,6 +69,14 @@ class ImportMixinData(ImportMixinUtils):
                 self.insert_csv_data(f, dest_table, import_table_columns)
             else:
                 self.copy_csv_data(f, dest_table, import_table_columns)
+
+            set_columns_txt = ", ".join("NULLIF({key}, '') AS {key}")
+
+            self.sql[
+                "post_data"
+            ] = f"""
+            UPDATE {dest_table} SET {set_columns_txt};
+            """
 
     def copy_csv_data(self, f, dest_table, table_columns):
         columns_fields = ", ".join(table_columns)

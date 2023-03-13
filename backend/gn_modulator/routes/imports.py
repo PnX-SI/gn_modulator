@@ -1,15 +1,13 @@
-from flask import request, jsonify
+from flask import request
 
 from geonature.core.gn_permissions.decorators import check_cruved_scope
 from geonature.utils.env import db
 
 from gn_modulator.blueprint import blueprint
-from gn_modulator.schema import SchemaMethods
 from gn_modulator.module import ModuleMethods
 
-
-from .utils.files import upload_import_file
-from .models import TImport
+from gn_modulator.imports.utils.files import upload_import_file
+from gn_modulator.imports.models import TImport
 
 
 @check_cruved_scope("R")  # object import ??

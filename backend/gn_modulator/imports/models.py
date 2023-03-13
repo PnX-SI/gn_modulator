@@ -18,7 +18,7 @@ class TImport(db.Model, ImportMixin):
         self.data_file_path = data_file_path and str(data_file_path)
         self.mapping_file_path = mapping_file_path and str(mapping_file_path)
 
-        self._insert = _insert_data
+        self._insert_data = _insert_data
 
         self.res = {}
         self.errors = []

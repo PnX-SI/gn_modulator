@@ -5,9 +5,13 @@
 
 ## Les étapes
 
-### 1) Données ()
+### 1) Données
 
 Chargement du fichier de données dans une table `gn_modulator_import.t_<id_import_data>`
+  - Toutes les colonnes sont de type `VARCHAR`
+  - On passe tous les champs de valeur `''` à `NULL`
+  - La première ligne donne le nom des colonnes
+  - seulement pour les fichiers csv, à voir si l'on prévoit d'autres formats
 
 ### 2) Mapping (optionnel)
 

@@ -12,7 +12,6 @@ class ImportMixinRaw(ImportMixinUtils):
         from_table = self.tables.get("mapping") or self.tables["data"]
         dest_table = self.tables["raw"] = self.table_name("raw")
         self.sql["raw_view"] = self.sql_raw_view(from_table, dest_table)
-
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["raw_view"])
         except Exception as e:
@@ -109,16 +108,49 @@ FROM pre_process;
         if property.get("foreign_key"):
             return key
 
+        if property["type"] == "geometry":
+            geometry_type = "ST_MULTI" if property["geometry_type"] == "multipolygon" else ""
+            return f"""{geometry_type}(
+        ST_SETSRID(
+            ST_FORCE2D(
+                ST_GEOMFROMEWKT({key})
+            ), {sm.property(key).get('srid')}
+        )
+    )
+    AS {key}"""
+
         if property["type"] == "number":
-            return f"NULLIF({key}, '')::FLOAT END AS {key}"
+            return f"({key})::FLOAT"
+
+        if property["type"] == "boolean":
+            f"({key})::BOOLEAN"
 
         if property["type"] == "date":
-            return f"NULLIF({key}, '')::DATE END AS {key}"
+            return f"({key})::DATE"
 
         if property["type"] == "datetime":
-            return f"NULLIF({key}, '')::TIMESTAMP END AS {key}"
+            return f"({key})::TIMESTAMP"
 
         if property["type"] == "integer" and "schema_code" not in property:
-            return f"NULLIF({key}, '')::INTEGER END AS {key}"
+            return f"({key})::INTEGER"
 
-        return f"NULLIF({key}, '') END AS {key}"
+        return f"{key}"
+
+    def process_raw_import_column(self, key):
+        """ """
+
+        sm = SchemaMethods(self.schema_code)
+
+        if not sm.has_property(key):
+            return f"{key}"
+
+        property = sm.property(key)
+
+        # pour les nomenclature (on rajoute le type)
+        if nomenclature_type := property.get("nomenclature_type"):
+            return f"""CASE
+        WHEN {key} IS NOT NULL AND {key} NOT LIKE '%%|%%' THEN CONCAT('{nomenclature_type}|', {key})
+        ELSE {key}
+    END AS {key}"""
+
+        return f"{key}"

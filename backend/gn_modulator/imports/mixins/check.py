@@ -5,11 +5,54 @@ from .utils import ImportMixinUtils
 
 
 class ImportMixinCheck(ImportMixinUtils):
-    def process_check(self):
-        self.check_required()
-        self.check_resolve_keys()
+    def process_check_types(self):
+        # avant raw
+        # verifie si les champs des colonnes correspondent bien aux types
+        # avec la fonction
+        # gn_modulator.check_type(TYPE_IN, val)
 
-    def check_required(self):
+        table_test = self.tables.get("mapping") or self.tables["data"]
+        sm = SchemaMethods(self.schema_code)
+        for key in filter(
+            lambda x: sm.is_column(x) and not sm.property(x).get("foreign_key"),
+            self.get_table_columns(table_test),
+        ):
+            sql_type = sm.sql_type(key)["type"]
+            if sql_type == "DATETIME":
+                sql_type = "TIMESTAMP"
+            sql_check_type_for_column = f"""
+            SELECT
+              COUNT(*),
+              ARRAY_AGG(id_import),
+              ARRAY_AGG({key})
+            FROM {table_test}
+            WHERE NOT (
+                {key} is NULL
+                OR 
+                gn_modulator.check_value_for_type('{sql_type}', {key})
+            )
+            GROUP BY id_import
+            ORDER BY id_import
+        """
+            res = SchemaMethods.c_sql_exec_txt(sql_check_type_for_column).fetchone()
+            if res is None:
+                continue
+            nb_lines = res[0]
+            lines = res[1]
+            values = res[2]
+            str_lines = lines and ", ".join(map(lambda x: str(x), lines)) or ""
+            if nb_lines == 0:
+                continue
+            self.add_error(
+                code="ERR_IMPORT_INVALID_VALUE_FOR_TYPE",
+                key=key,
+                lines=lines,
+                values=values,
+                msg=f"Il y a des valeurs invalides pour la colonne {key} de type {sql_type}. {nb_lines} ligne(s) concernée(s) : [{str_lines}]",
+            )
+
+    def process_check_required(self):
+        # apres raw
         # pour toutes les colonnes de raw
         # si une colonne est requise
         # et que la valeur dans raw est nulle
@@ -43,7 +86,7 @@ SELECT
 
         return
 
-    def check_resolve_keys(self):
+    def process_check_resolve_keys(self):
         raw_table = self.tables["raw"]
         process_table = self.tables["process"]
         sm = SchemaMethods(self.schema_code)

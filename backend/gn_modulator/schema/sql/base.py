@@ -15,6 +15,11 @@ from ..errors import (
 
 
 class SchemaSqlBase:
+    def sql_type(self, key):
+        if not self.is_column(key):
+            return None
+        return self.cls.c_get_type(self.property(key)["type"], "definition", "sql")
+
     @classmethod
     def auto_sql_schemas_dot_tables(cls):
         auto_sql_schemas_dot_tables = []

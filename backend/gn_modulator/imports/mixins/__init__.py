@@ -40,6 +40,11 @@ class ImportMixin(
             return self
         db.session.flush()
 
+        self.process_check_types()
+        if self.errors:
+            return self
+        db.session.flush()
+
         self.process_raw_view()
         if self.errors:
             return self
@@ -50,7 +55,9 @@ class ImportMixin(
             return self
         db.session.flush()
 
-        self.process_check()
+        self.process_check_required()
+        self.process_check_resolve_keys()
+
         if self.errors:
             return self
         db.session.flush()
@@ -77,7 +84,7 @@ class ImportMixin(
         return self
 
     @classmethod
-    def process_import_code(cls, import_code, data_dir_path, commit=True):
+    def process_import_code(cls, import_code, data_dir_path, insert_data=True, commit=True):
         print(f"\nProcess scenario d'import {import_code}")
 
         # get import definition
@@ -105,11 +112,11 @@ class ImportMixin(
                 schema_code=import_definition["schema_code"],
                 data_file_path=data_file_path,
                 mapping_file_path=mapping_file_path,
+                _insert_data=False,
             )
 
             # pour éviter d'avoir à recharger les données
             if import_definition.get("keep_raw") and len(imports):
-                last_import = imports[-1]
                 impt.tables["data"] = imports[-1].tables["data"]
 
             db.session.add(impt)
