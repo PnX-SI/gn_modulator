@@ -96,3 +96,11 @@ class TestImport:
         test_data_file(
             schema_code, data_file_path, mapping_file_path=None, expected_infos=expected_infos
         )
+
+    def test_error_ERR_IMPORT_MISSING_UNIQUE(self):
+        schema_code = "ref_geo.area"
+        data_file_path = import_test_dir / "ref_geo.area_ERR_IMPORT_MISSING_UNIQUE.csv"
+        expected_infos = {"errors": [{"code": "ERR_IMPORT_MISSING_UNIQUE"}]}
+        test_data_file(
+            schema_code, data_file_path, mapping_file_path=None, expected_infos=expected_infos
+        )

@@ -44,9 +44,17 @@ On rajoute un champs `id_import` (clé primaire, `SERIAL`) afin de pouvoir numé
 Creation du vue de mapping pour réorganiser les colonnes de la table de données à partir d'une instruction select `SELECT`
 
 
-### 3) Vérification du typage des données
+### 3) Vérification 
+
+#### Verification du typage des données
 
 On verifie pour chaque colonnes (sauf clé étrangères) que les données des colonnes  vont bien pouvoir être convertie dans le type de la colonne destinataire.
+
+#### Verification de la présence des champs pour l'unicité
+
+Les champs d'unicité permette de résoudre la clé primaire et de voir si la ligne est présente en base.
+On vérifie que ces clé sont bien présente dans les données à ce stade (pour la vue de mapping si elle existe ou table de données sinon).
+
 
 ### 4) Vue brute (`raw`)
 

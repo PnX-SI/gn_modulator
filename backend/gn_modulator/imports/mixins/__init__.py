@@ -40,7 +40,8 @@ class ImportMixin(
             return self
         db.session.flush()
 
-        self.process_check_types()
+        self.check_uniques()
+        self.check_types()
         if self.errors:
             return self
         db.session.flush()
@@ -55,8 +56,8 @@ class ImportMixin(
             return self
         db.session.flush()
 
-        self.process_check_required()
-        self.process_check_resolve_keys()
+        self.check_required()
+        self.check_resolve_keys()
 
         if self.errors:
             return self

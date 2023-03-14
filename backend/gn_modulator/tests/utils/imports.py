@@ -31,6 +31,8 @@ def test_data_file(
         assert len(import_infos["errors"]) == 0, import_infos["errors"]
     else:
         # on teste si on rencontre bien les erreurs attendues parmi les erreurs rencontrées
+        print(expected_errors)
+        print(import_infos["errors"])
         assert len(expected_errors) == len(import_infos["errors"])
         for expected_error in expected_errors:
             assert (

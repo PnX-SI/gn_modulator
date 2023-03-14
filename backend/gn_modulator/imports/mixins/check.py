@@ -5,7 +5,23 @@ from .utils import ImportMixinUtils
 
 
 class ImportMixinCheck(ImportMixinUtils):
-    def process_check_types(self):
+    def check_uniques(self):
+        # avant raw
+        # on verifie la présence des colonne d'unicité
+
+        table_test = self.tables.get("mapping") or self.tables["data"]
+        columns = self.get_table_columns(table_test)
+        sm = SchemaMethods(self.schema_code)
+        unique = sm.attr("meta.unique")
+
+        missing_unique = [key for key in unique if key not in columns]
+        if missing_unique:
+            self.add_error(
+                code="ERR_IMPORT_MISSING_UNIQUE",
+                msg=f"Il manque des champs d'unicité : {', '.join(missing_unique) }",
+            )
+
+    def check_types(self):
         # avant raw
         # verifie si les champs des colonnes correspondent bien aux types
         # avec la fonction
@@ -51,7 +67,7 @@ class ImportMixinCheck(ImportMixinUtils):
                 msg=f"Il y a des valeurs invalides pour la colonne {key} de type {sql_type}. {nb_lines} ligne(s) concernée(s) : [{str_lines}]",
             )
 
-    def process_check_required(self):
+    def check_required(self):
         # apres raw
         # pour toutes les colonnes de raw
         # si une colonne est requise
@@ -86,7 +102,7 @@ SELECT
 
         return
 
-    def process_check_resolve_keys(self):
+    def check_resolve_keys(self):
         raw_table = self.tables["raw"]
         process_table = self.tables["process"]
         sm = SchemaMethods(self.schema_code)
