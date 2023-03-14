@@ -33,9 +33,8 @@ class ImportMixinCheck(ImportMixinUtils):
             lambda x: sm.is_column(x) and not sm.property(x).get("foreign_key"),
             self.get_table_columns(table_test),
         ):
-            sql_type = sm.sql_type(key)["type"]
-            if sql_type == "DATETIME":
-                sql_type = "TIMESTAMP"
+            sql_type = self.sql_type_dict[sm.property(key)["type"]]
+
             sql_check_type_for_column = f"""
             SELECT
               COUNT(*),

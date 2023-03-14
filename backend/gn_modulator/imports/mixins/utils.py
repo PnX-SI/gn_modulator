@@ -5,6 +5,18 @@ from gn_modulator.utils.env import schema_import
 
 
 class ImportMixinUtils:
+    sql_type_dict = {
+        "integer": "INTEGER",
+        "boolean": "BOOLEAN",
+        "number": "FLOAT",
+        "string": "VARCHAR",
+        "date": "DATE",
+        "datetime": "TIMESTAMP",
+        "uuid": "UUID",
+        "geometry": "GEOMETRY",
+        "json": "JSONB",
+    }
+
     def init_import(self):
         SchemaMethods.c_sql_exec_txt(f"CREATE SCHEMA IF NOT EXISTS {schema_import}")
 

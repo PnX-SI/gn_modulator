@@ -51,16 +51,16 @@ CREATE TRIGGER tri_meta_dates_change_gnm_t_import
     EXECUTE PROCEDURE public.fct_trg_meta_dates_change();
 
 CREATE OR REPLACE FUNCTION gn_modulator.check_value_for_type(type_in VARCHAR, value_in ANYELEMENT)
-RETURNS BOOLEAN AS
-$$
-BEGIN
-    EXECUTE FORMAT('SELECT (''%s'')::%s', value_in, type_in);
-    RETURN TRUE;
-EXCEPTION WHEN OTHERS THEN
-    RETURN FALSE;
-END;
-$$
-LANGUAGE 'plpgsql' COST 100
+    RETURNS BOOLEAN AS
+    $$
+    BEGIN
+        EXECUTE FORMAT('SELECT (''%s'')::%s', value_in, type_in);
+        RETURN TRUE;
+    EXCEPTION WHEN OTHERS THEN
+        RETURN FALSE;
+    END;
+    $$
+    LANGUAGE 'plpgsql' COST 100
 ;
 
     """
