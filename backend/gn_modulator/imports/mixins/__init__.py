@@ -113,7 +113,7 @@ class ImportMixin(
                 schema_code=import_definition["schema_code"],
                 data_file_path=data_file_path,
                 mapping_file_path=mapping_file_path,
-                _insert_data=False,
+                options={"insert_data": False},
             )
 
             # pour éviter d'avoir à recharger les données

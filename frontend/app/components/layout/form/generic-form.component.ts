@@ -94,9 +94,6 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     if (action == 'submit') {
       this._mAction.processSubmit(context, data, layout);
     }
-    if (action == 'import') {
-      return this._mAction.processImport(context, data);
-    }
     this.emitAction(event);
   }
 }

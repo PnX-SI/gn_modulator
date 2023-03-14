@@ -9,23 +9,20 @@ class TImport(db.Model, ImportMixin):
     __tablename__ = "t_imports"
     __table_args__ = {"schema": "gn_modulator"}
 
-    def __init__(
-        self, schema_code=None, data_file_path=None, mapping_file_path=None, _insert_data=False
-    ):
+    def __init__(self, schema_code=None, data_file_path=None, mapping_file_path=None, options={}):
         self.id_digitiser = g.current_user.id_role if hasattr(g, "current_user") else None
 
         self.schema_code = schema_code
         self.data_file_path = data_file_path and str(data_file_path)
         self.mapping_file_path = mapping_file_path and str(mapping_file_path)
 
-        self._insert_data = _insert_data
+        self.options = options
 
         self.res = {}
         self.errors = []
         self.sql = {}
         self.tables = {}
 
-    _insert_data = False
     _columns = {}
 
     id_import = db.Column(db.Integer, primary_key=True)
@@ -43,6 +40,8 @@ class TImport(db.Model, ImportMixin):
     tables = db.Column(JSONB)
     sql = db.Column(JSONB)
     errors = db.Column(JSONB)
+
+    options = db.Column(JSONB)
 
     def as_dict(self):
         return {

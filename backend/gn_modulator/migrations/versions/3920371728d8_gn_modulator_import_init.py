@@ -32,6 +32,7 @@ CREATE TABLE gn_modulator.t_imports(
     tables JSONB,
     errors JSONB,
     sql JSONB,
+    options JSONB,
     meta_create_date timestamp without time zone DEFAULT now(),
     meta_update_date timestamp without time zone DEFAULT now()
 );

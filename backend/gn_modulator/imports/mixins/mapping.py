@@ -53,6 +53,7 @@ class ImportMixinMapping(ImportMixinUtils):
                 "ALTER ",
                 "CREATE ",
                 "GRANT ",
+                "COPY ",
             ]:
                 if forbidden_word in mapping_select:
                     forbidden_words.append(forbidden_word.strip())

@@ -42,8 +42,9 @@ export class ModulesObjectService {
     }
 
     const objectModuleConfig = this._mConfig.moduleConfig(moduleCode).objects[objectCode];
+
     if (!objectModuleConfig) {
-      // console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
+      console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
       return;
     }
 
@@ -76,6 +77,7 @@ export class ModulesObjectService {
     }
 
     this._cacheObjectConfig[cacheKey] = utils.copy(objectConfig);
+
     return objectConfig;
   }
 
@@ -163,6 +165,10 @@ export class ModulesObjectService {
 
   duLabel({ context }) {
     return this.objectConfigContext(context)?.display.du_label;
+  }
+
+  desLabels({ context }) {
+    return this.objectConfigContext(context)?.display.des_labels;
   }
 
   display({ context }) {
@@ -375,6 +381,7 @@ export class ModulesObjectService {
       schema_code: this.schemaCode.bind(this),
       label: this.label.bind(this),
       du_label: this.duLabel.bind(this),
+      des_labels: this.desLabels.bind(this),
       data_label: this.dataLabel.bind(this),
       labels: this.labels.bind(this),
       tab_label: this.tabLabel.bind(this),

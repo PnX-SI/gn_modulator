@@ -13,6 +13,7 @@ import { ModulesLayoutObjectComponent } from './object/layout-object.component';
 import { ModulesLayoutObjectTableComponent } from './object/layout-object-table.component';
 import { ModulesLayoutObjectGeoJSONComponent } from './object/layout-object-geojson.component';
 import { ModulesLayoutObjectFiltersComponent } from './object/layout-object-filters.component';
+import { ModulesLayoutImportComponent } from './base/layout-import.component';
 import { ModulesGenericFormComponent } from './form/generic-form.component';
 import { ModulesFormElementComponent } from './form/form-element.component';
 import { ModulesListFormComponent } from './form/list-form.component';
@@ -27,7 +28,7 @@ export default [
   ModulesLayoutElementComponent,
   ModulesLayoutArrayComponent,
   ModulesLayoutItemsComponent,
-  // ModulesLayoutDictComponent,
+  ModulesLayoutImportComponent,
   ModulesLayoutMediasComponent,
   ModulesLayoutMapComponent,
   ModulesLayoutObjectComponent,

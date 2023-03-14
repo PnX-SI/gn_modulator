@@ -79,6 +79,17 @@
     ></modules-layout-card>
   </ng-container>
 
+    <!-- import -->
+    <ng-container *ngIf="layoutType == 'import'">
+      <modules-layout-import
+        [data]="data"
+        [layout]="layout"
+        [parentContext]="context"
+        (onAction)="processAction($event)"
+      ></modules-layout-import>
+    </ng-container>
+
+  <!-- key -->
   <ng-container *ngIf="layoutType == 'key'">
     <modules-layout-element
       [data]="data"

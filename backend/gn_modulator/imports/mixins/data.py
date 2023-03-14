@@ -66,7 +66,7 @@ class ImportMixinData(ImportMixinUtils):
             # pour faire marcher les tests pytest on passe par un insert
             # TODO faire marche copy_expert avec pytest
             #       manière de récupérer cursor ?
-            if self._insert_data:
+            if self.options.get("insert_data"):
                 self.insert_csv_data(f, dest_table, import_table_columns)
             else:
                 self.copy_csv_data(f, dest_table, import_table_columns)
