@@ -14,6 +14,7 @@ class ImportMixinRaw(ImportMixinUtils):
         self.sql["raw_view"] = self.sql_raw_view(from_table, dest_table)
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["raw_view"])
+
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_CREATE_RAW_VIEW",
@@ -60,14 +61,15 @@ class ImportMixinRaw(ImportMixinUtils):
 
         v_txt_columns = list(map(lambda x: self.process_raw_import_column(x), columns))
 
-        txt_primary_column = (
-            f"""CONCAT({", '|', ".join(sm.attr('meta.unique'))}) AS {sm.pk_field_name()}"""
-        )
+        txt_primary_column = f"""CONCAT({", '|', ".join(
+                map(
+                    lambda x: f"pp.{x}",
+                    sm.attr('meta.unique')))}) AS {sm.pk_field_name()}"""
         v_txt_columns.insert(0, txt_primary_column)
 
         txt_columns = ",\n    ".join(v_txt_columns)
         txt_pre_process_columns = ",\n    ".join(v_txt_pre_process_columns)
-        txt_limit = f"LIMIT {limit}" if limit else ""
+        txt_limit = f"\nLIMIT {limit}" if limit else ""
 
         if "id_import" not in txt_pre_process_columns:
             txt_pre_process_columns = f"id_import, {txt_pre_process_columns}"
@@ -80,12 +82,11 @@ CREATE VIEW {dest_table} AS
 WITH pre_process AS (
 SELECT
     {txt_pre_process_columns}
-FROM {from_table}
-{txt_limit}
+FROM {from_table}{txt_limit}
 )
 SELECT
     {txt_columns}
-FROM pre_process;
+FROM pre_process pp;
 """
 
     def pre_process_raw_import_columns(self, key, key_unnest=None):
@@ -113,7 +114,7 @@ FROM pre_process;
             return f"""{geometry_type}(
         ST_SETSRID(
             ST_FORCE2D(
-                ST_GEOMFROMEWKT({key})
+                {key}::GEOMETRY
             ), {sm.property(key).get('srid')}
         )
     )
@@ -142,15 +143,15 @@ FROM pre_process;
         sm = SchemaMethods(self.schema_code)
 
         if not sm.has_property(key):
-            return f"{key}"
+            return f"pp.{key}"
 
         property = sm.property(key)
 
         # pour les nomenclature (on rajoute le type)
         if nomenclature_type := property.get("nomenclature_type"):
             return f"""CASE
-        WHEN {key} IS NOT NULL AND {key} NOT LIKE '%%|%%' THEN CONCAT('{nomenclature_type}|', {key})
-        ELSE {key}
+        WHEN pp.{key} IS NOT NULL AND pp.{key} NOT LIKE '%%|%%' THEN CONCAT('{nomenclature_type}|', {key})
+        ELSE pp.{key}
     END AS {key}"""
 
-        return f"{key}"
+        return f"pp.{key}"

@@ -50,6 +50,9 @@ class ImportMixinMapping(ImportMixinUtils):
                 "UPDATE ",
                 "EXECUTE ",
                 "TRUNCATE ",
+                "ALTER ",
+                "CREATE ",
+                "GRANT ",
             ]:
                 if forbidden_word in mapping_select:
                     forbidden_words.append(forbidden_word.strip())
@@ -66,12 +69,18 @@ class ImportMixinMapping(ImportMixinUtils):
                     msg=f"La selection de mapping doit contenir 'FROM :table_data {mapping_select}",
                 )
 
+            if "SELECT" not in mapping_select:
+                self.add_error(
+                    code="ERR_IMPORT_MAPPING_MISSING_SELECT",
+                    msg=f"La selection de mapping doit contenir 'SELECT {mapping_select}",
+                )
+
             mapping_select = mapping_select.replace(":TABLE_DATA", from_table)
 
             if "ID_IMPORT" not in mapping_select:
                 self.add_error(
                     code="ERR_IMPORT_MAPPING_MISSING_IMPORT",
-                    msg=f"La selection de mapping doit contenir le champs id_import dans {self.mapping_file_path}",
+                    msg=f"La selection de mapping doit contenir le champs 'id_import' dans {self.mapping_file_path}",
                 )
 
             sql_mapping = f"""

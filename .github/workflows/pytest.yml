@@ -156,6 +156,12 @@ jobs:
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
+        - name: install m_sipaf
+          run: geonature modulator install -f m_sipaf
+          env:
+            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
+
         - name: Pytest gn_modulator
           run: pytest -v --cov --cov-report xml
           env:

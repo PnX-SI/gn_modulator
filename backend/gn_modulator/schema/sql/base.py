@@ -83,13 +83,19 @@ class SchemaSqlBase:
         # on récupère les info des colonnes depuis information_schema.columns
         sql_txt_get_columns_info = f"""
 SELECT
-  c.table_schema,
-  c.table_name,
-  column_name,
-  column_default,
-  is_nullable
+    c.table_schema,
+    c.table_name,
+    column_name,
+    column_default,
+    is_nullable,
+    DATA_TYPE AS TYPE,
+    gc.TYPE AS geometry_type
 FROM
-  information_schema.columns c
+    information_schema.columns c
+LEFT JOIN GEOMETRY_COLUMNS GC ON
+    c.TABLE_SCHEMA = GC.F_TABLE_SCHEMA
+    AND c.TABLE_NAME= GC.F_TABLE_NAME
+    AND c.COLUMN_NAME = gc.F_GEOMETRY_COLUMN 
 WHERE
     CONCAT(c.table_schema, '.', c.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
 """
@@ -104,7 +110,12 @@ WHERE
             columns_info[schema_name] = columns_info.get(schema_name) or {}
             columns_info[schema_name][table_name] = columns_info[schema_name].get(table_name) or {}
 
-            column_info = {"default": r[3], "nullable": r[4] == "YES"}
+            column_info = {
+                "default": r[3],
+                "nullable": r[4] == "YES",
+                "type": r[5],
+                "geometry_type": r[6],
+            }
             columns_info[schema_name][table_name][column_name] = column_info
             # set_global_cache(["columns", schema_name, table_name, column_name], column_info)
             set_global_cache(["columns"], columns_info)

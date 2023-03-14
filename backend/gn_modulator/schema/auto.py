@@ -220,6 +220,9 @@ class SchemaAuto:
             and (column.key != "meta_create_date")
         )
 
+        if column_info.get("geometry_type"):
+            property["geometry_type"] = column_info["geometry_type"].lower()
+
         if condition_required:
             property["required"] = True
 

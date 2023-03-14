@@ -73,6 +73,22 @@ class TestImport:
             schema_code, data_file_path, mapping_file_path, expected_infos=expected_infos
         )
 
+    def test_ref_geo_area(self):
+        schema_code = "ref_geo.area"
+        data_file_path = import_test_dir / "ref_geo.area.csv"
+        expected_infos = {
+            "res.nb_data": 2,
+            "res.nb_insert": 2,
+            "res.nb_update": 0,
+            "res.nb_unchanged": 0,
+        }
+        impt = test_data_file(schema_code, data_file_path, expected_infos=expected_infos)
+
+    #        print(impt.sql["process_view"])
+    # assert 1 == 0
+
+    # Test remontées d'erreurs
+
     def test_error_ERR_IMPORT_INVALID_VALUE_FOR_TYPE(self):
         schema_code = "syn.synthese"
         data_file_path = import_test_dir / "synthese_ERR_IMPORT_INVALID_VALUE_FOR_TYPE.csv"

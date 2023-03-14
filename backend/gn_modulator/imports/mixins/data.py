@@ -2,6 +2,7 @@ from pathlib import Path
 from .utils import ImportMixinUtils
 from gn_modulator.schema import SchemaMethods
 from geonature.utils.env import db
+import csv
 
 
 class ImportMixinData(ImportMixinUtils):
@@ -96,17 +97,18 @@ class ImportMixinData(ImportMixinUtils):
     def insert_csv_data(self, f, dest_table, table_columns):
         sql_columns_fields = ", ".join(table_columns)
 
-        values = ""
-        for line in f:
-            data = "', '".join((line.replace('"', "").replace("\n", "").split(self.csv_delimiter)))
-            values += f"('{data}'),"
+        values = []
+        csvreader = csv.reader(f, delimiter=self.csv_delimiter, quotechar='"')
+        for row in csvreader:
+            data = ",".join(map(lambda x: f"'{x}'", row))
+            values.append(f"({data})")
         if not values:
             return
 
-        values = values[:-1]
+        values_txt = ",\n".join(values)
         self.sql[
             "data_insert"
-        ] = f"INSERT INTO {dest_table} ({sql_columns_fields}) VALUES {values}"
+        ] = f"INSERT INTO {dest_table} ({sql_columns_fields}) VALUES {values_txt}"
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["data_insert"])
         except Exception as e:

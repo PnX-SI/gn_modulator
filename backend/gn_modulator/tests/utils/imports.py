@@ -41,7 +41,7 @@ def test_data_file(
         txt_err = f"schema_code: {schema_code}, key: {key},  expected: {expected_infos.get(key)}, import: {getAttr(import_infos, key)}"
         assert getAttr(import_infos, key) == expected_infos.get(key), txt_err
 
-    return import_infos
+    return impt
 
 
 @pytest.mark.skip()
