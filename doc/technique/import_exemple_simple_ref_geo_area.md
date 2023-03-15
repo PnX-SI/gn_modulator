@@ -2,7 +2,7 @@
 
 Nous allons voir un exemple d'import d'un fichier csv dans la table `ref_geo.l_areas` a fin d'illustration. Ici les champs correspondent exactement à ceux de la table destinataire.
 
-### 1) Données
+#### 1.1) Données
 
 Ici les champs d'unicité sont
 - `id_type` : pour ce champs on fourni la valeur de `type_code` du type d'aire qui permettra de retrouver `id_type`
@@ -31,11 +31,11 @@ CREATE TABLE IF NOT EXISTS gn_modulator_import.t_xxx_data (
 );
 ```
 
-### 2) Mapping
+#### 1.2) Mapping
 
 Pas de mapping pour cet exemple, les champs du fichiers csv correspondent aux champs de la table destinataire.
 
-### 4) Vue brute (`raw`)
+#### 1.4) Vue brute (`raw`)
 
 Ici, seul le champs de `geom` doit être converti en géométrie.
 
@@ -67,7 +67,7 @@ SELECT
 FROM pre_process pp;
 ```
 
-### 5) Vue process
+#### 1.5) Vue process
 
 Cette vue permet de résoudre les clé étrangère et la clé primaire.
 
@@ -91,6 +91,5 @@ LEFT JOIN ref_geo.bib_areas_types j_0 ON
 LEFT JOIN ref_geo.l_areas j_pk ON
       j_pk.id_type::TEXT = j_0.id_type::TEXT
         AND (j_pk.area_code::TEXT = SPLIT_PART(t.id_area, '|', 2)::TEXT OR (j_pk.area_code IS NULL AND SPLIT_PART(t.id_area, '|', 2) IS NULL));
-
 
 ```

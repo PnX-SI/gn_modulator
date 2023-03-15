@@ -38,7 +38,7 @@ class ImportMixinRaw(ImportMixinUtils):
         on passe les champs valant '' à NULL
         """
 
-        sm = SchemaMethods(self.schema_code)
+        sm = SchemaMethods(self.schema_code())
 
         from_table_columns = self.get_table_columns(from_table)
 
@@ -94,7 +94,7 @@ FROM pre_process pp;
         TODO gérer les null dans l'import csv (ou dans l'insert)
         """
 
-        sm = SchemaMethods(self.schema_code)
+        sm = SchemaMethods(self.schema_code())
 
         if key == "id_import":
             return key
@@ -140,7 +140,7 @@ FROM pre_process pp;
     def process_raw_import_column(self, key):
         """ """
 
-        sm = SchemaMethods(self.schema_code)
+        sm = SchemaMethods(self.schema_code())
 
         if not sm.has_property(key):
             return f"pp.{key}"

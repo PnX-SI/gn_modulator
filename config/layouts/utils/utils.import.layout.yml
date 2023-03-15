@@ -4,7 +4,6 @@ title: layout du composant d'import
 description: layout du composant d'import
 layout:
   title: __f__`Importer ${o.des_labels(x, 'C')}`
-  # hidden: __f__!(o.is_action_allowed(x))
   type: form
   items:
     - items:
@@ -35,6 +34,14 @@ layout:
               title: "Autoriser les mises à jour"
               type: boolean
               default: __f__false
+            - key: options.check_only
+              title: Verifier
+              description: |
+                L'import se fait en deux temps.
+                Une premiere étape de validation des données.
+                Et une deuxième étape d'insertion et de mise à jour des données.
+              type: boolean
+              default: __f__true
 
     - direction: row
       items:

@@ -1,5 +1,7 @@
-from flask import request
+import json
+from flask import request, jsonify
 
+from sqlalchemy import orm
 from geonature.core.gn_permissions.decorators import check_cruved_scope
 from geonature.utils.env import db
 
@@ -10,12 +12,13 @@ from gn_modulator.imports.utils.files import upload_import_file
 from gn_modulator.imports.models import TImport
 
 
-@check_cruved_scope("R")  # object import ??
-@blueprint.route("import/<module_code>", methods=["POST"])
-def api_import(module_code):
-    object_code = None
-    if request.form:
-        object_code = request.form.get("object_code")
+@check_cruved_scope("C")  # object import ??
+@blueprint.route("import/<module_code>/<object_code>/<id_import>", methods=["POST"])
+@blueprint.route(
+    "import/<module_code>/<object_code>/", methods=["POST"], defaults={"id_import": None}
+)
+def api_import(module_code, object_code, id_import):
+    options = json.loads(request.form.get("options")) if request.form.get("options") else {}
 
     schema_code = ModuleMethods.schema_code(module_code, object_code)
 
@@ -29,9 +32,15 @@ def api_import(module_code):
             ]
         }
 
-    impt = TImport(schema_code=schema_code)
-    db.session.add(impt)
-    db.session.flush()
+    if id_import:
+        try:
+            impt = TImport.query().filter_by(id_import=id_import).one()
+        except orm.exc.NoResultFound:
+            return f"Pas d'import trouvé pour id_import={id_import}", 404
+    else:
+        impt = TImport(module_code, object_code, options=options)
+        db.session.add(impt)
+        db.session.flush()
 
     files_path = {}
     if request.files:

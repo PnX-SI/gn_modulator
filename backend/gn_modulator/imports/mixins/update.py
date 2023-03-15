@@ -29,11 +29,11 @@ class ImportMixinUpdate(ImportMixinUtils):
                 raise e
             self.add_error(
                 code="ERR_IMPORT_UPDATE",
-                msg=f"Erreur durant l'update de {from_table} vers {self.schema_code} : {str(e)}",
+                msg=f"Erreur durant l'update de {from_table} vers {self.schema_code()} : {str(e)}",
             )
 
     def sql_update(self, from_table):
-        sm = SchemaMethods(self.schema_code)
+        sm = SchemaMethods(self.schema_code())
 
         columns = self.get_table_columns(from_table)
 
@@ -80,34 +80,5 @@ FROM (
 )a
 WHERE a.{sm.pk_field_name()} = t.{sm.pk_field_name()}
 AND {txt_update_conditions}
-;
-"""
-
-    def sql_nb_update(self, from_table):
-        sm = SchemaMethods(self.schema_code)
-
-        columns = self.get_table_columns(from_table)
-
-        v_update_conditions = list(
-            map(
-                lambda x: f"(t.{x}::TEXT IS DISTINCT FROM a.{x}::TEXT)",
-                filter(
-                    lambda x: sm.has_property(x)
-                    and sm.is_column(x)
-                    and not sm.property(x).get("primary_key"),
-                    columns,
-                ),
-            )
-        )
-
-        txt_update_conditions = "" + "\n    OR ".join(v_update_conditions) + ""
-
-        return f"""
-    SELECT
-        COUNT(*)
-    FROM {sm.sql_schema_dot_table()} t
-    JOIN {from_table} a
-        ON a.{sm.pk_field_name()} = t.{sm.pk_field_name()}
-    WHERE {txt_update_conditions}
 ;
 """

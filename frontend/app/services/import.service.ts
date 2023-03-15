@@ -4,6 +4,7 @@ import { ModulesLayoutService } from './layout.service';
 import { ModulesObjectService } from './object.service';
 import { ModulesConfigService } from './config.service';
 import { ModulesRouteService } from './route.service';
+import { ModulesRequestService } from './request.service';
 import { CommonService } from '@geonature_common/service/common.service';
 import { HttpEventType, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, filter, switchMap } from 'rxjs/operators';
@@ -17,6 +18,7 @@ export class ModulesImportService {
   _commonService: CommonService;
   _mConfig: ModulesConfigService;
   _mRoute: ModulesRouteService;
+  _mRequest: ModulesRequestService;
 
   constructor(private _injector: Injector) {
     this._mData = this._injector.get(ModulesDataService);
@@ -25,6 +27,19 @@ export class ModulesImportService {
     this._commonService = this._injector.get(CommonService);
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mRoute = this._injector.get(ModulesRouteService);
+    this._mRequest = this._injector.get(ModulesRequestService);
+  }
+
+  importRequest(moduleCode, object_code, data, params = {}) {
+    return this._mRequest.postRequestWithFormData(
+      `${this._mConfig.backendModuleUrl()}/import/${moduleCode}/${object_code}/${
+        data.id_import || ''
+      }`,
+      {
+        data,
+        params,
+      }
+    );
   }
 
   processImport(context, data) {
@@ -33,8 +48,7 @@ export class ModulesImportService {
       class: null,
     };
     this._mLayout.reComputeLayout();
-    this._mData
-      .import(context.module_code, data)
+    this.importRequest(context.module_code, context.object_code, data)
       .pipe()
       .subscribe(
         (importEvent) => {

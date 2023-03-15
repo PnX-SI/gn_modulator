@@ -25,7 +25,7 @@ class ImportMixinUtils:
         if self.res.get("nb_data") is not None:
             txt += f"\n-- import csv file {Path(self.data_file_path).name}"
             txt += f"   {self.res.get('nb_data')} lignes\n\n"
-        txt += f"   - {self.schema_code}\n"
+        txt += f"   - {self.schema_code()}\n"
         if self.res.get("nb_raw") != self.res.get("nb_process"):
             txt += f"       raw       : {self.res.get('nb_raw'):10d}\n"
         if self.res.get("nb_process"):
@@ -70,7 +70,7 @@ class ImportMixinUtils:
             return f"{schema_import}.t_{self.id_import}_{type}"
         else:
             rel = f"_{key}" if key is not None else ""
-            return f"{schema_import}.v_{self.id_import}_{type}_{self.schema_code.replace('.', '_')}{rel}"
+            return f"{schema_import}.v_{self.id_import}_{type}_{self.schema_code().replace('.', '_')}{rel}"
 
     def add_error(self, code=None, msg=None, key=None, lines=None, values=None):
         self.errors.append(

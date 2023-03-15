@@ -29,7 +29,8 @@ export class ModulesRequestService {
     for (const [key, value] of Object.entries(data).filter(
       ([key, value]) => !utils.isFile(value)
     )) {
-      formData.append(key, value as any);
+      const processedValue = utils.isObject(value) ? JSON.stringify(value) : value;
+      formData.append(key, processedValue as any);
     }
     for (const [key, value] of Object.entries(data).filter(([key, value]) => utils.isFile(value))) {
       formData.append(key, value as any);

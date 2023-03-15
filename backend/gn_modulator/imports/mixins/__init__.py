@@ -3,6 +3,7 @@ from geonature.utils.env import db
 from gn_modulator.definition import DefinitionMethods
 
 from .check import ImportMixinCheck
+from .count import ImportMixinCount
 from .data import ImportMixinData
 from .insert import ImportMixinInsert
 from .mapping import ImportMixinMapping
@@ -16,6 +17,7 @@ from .utils import ImportMixinUtils
 class ImportMixin(
     ImportMixinRelation,
     ImportMixinCheck,
+    ImportMixinCount,
     ImportMixinData,
     ImportMixinInsert,
     ImportMixinMapping,
@@ -63,6 +65,14 @@ class ImportMixin(
             return self
         db.session.flush()
 
+        self.process_count()
+        if self.errors:
+            return self
+        db.session.flush()
+
+        if self.options.get("check_only"):
+            return self
+
         self.process_insert()
         if self.errors:
             return self
@@ -77,10 +87,6 @@ class ImportMixin(
         if self.errors:
             return self
         db.session.flush()
-
-        self.res["nb_unchanged"] = (
-            self.res["nb_process"] - self.res["nb_insert"] - self.res["nb_update"]
-        )
 
         return self
 
@@ -110,7 +116,8 @@ class ImportMixin(
             )
 
             impt = cls(
-                schema_code=import_definition["schema_code"],
+                module_code=import_definition["module_code"],
+                object_code=import_definition["object_code"],
                 data_file_path=data_file_path,
                 mapping_file_path=mapping_file_path,
                 options={"insert_data": False},

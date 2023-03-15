@@ -329,7 +329,8 @@ export class ModulesFormService {
       : utils.isObject(formValue)
       ? !utils.isObject(data)
         ? false
-        : Object.entries(formValue)
+        : // Object.keys(formValue).length == Object.keys(data).length &&
+          Object.entries(formValue)
             .filter(([k, v]) => k != 'pendingRequest')
             .every(([k, v]) => this.isEqual(v, data[k]))
       : Array.isArray(formValue)

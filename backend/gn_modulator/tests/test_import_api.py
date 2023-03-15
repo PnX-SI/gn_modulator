@@ -12,9 +12,11 @@ class TestImportApi:
     def test_import_synthese(self, users):
         set_logged_user_cookie(self.client, users["admin_user"])
         with open(import_test_dir / "synthese_1.csv", "rb") as f:
-            data = {"data_file": (f, "synthese.csv"), "object_code": "syn.synthese"}
+            data = {"data_file": (f, "synthese.csv")}
             r = self.client.post(
-                url_for("modulator.api_import", module_code="MODULATOR"),
+                url_for(
+                    "modulator.api_import", module_code="MODULATOR", object_code="syn.synthese"
+                ),
                 data=data,
                 headers=Headers({"Content-Type": "multipart/form-data"}),
             )
@@ -31,9 +33,11 @@ class TestImportApi:
     def test_import_synthese2(self, users):
         set_logged_user_cookie(self.client, users["admin_user"])
         with open(import_test_dir / "synthese_1.csv", "rb") as f:
-            data = {"data_file": (f, "synthese.csv"), "object_code": "syn.synthese"}
+            data = {"data_file": (f, "synthese.csv")}
             r = self.client.post(
-                url_for("modulator.api_import", module_code="MODULATOR"),
+                url_for(
+                    "modulator.api_import", module_code="MODULATOR", object_code="syn.synthese"
+                ),
                 data=data,
                 headers=Headers({"Content-Type": "multipart/form-data"}),
             )

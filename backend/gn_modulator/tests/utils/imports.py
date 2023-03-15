@@ -6,14 +6,15 @@ from geonature.utils.env import db
 
 @pytest.mark.skip()
 def test_data_file(
-    schema_code=None, data_file_path=None, mapping_file_path=None, expected_infos={}
+    module_code, object_code, data_file_path=None, mapping_file_path=None, expected_infos={}
 ):
     with db.session.begin_nested():
         # ici options={"insert_data": True} est à true pour intégrer les avec un insert
 
         # et non un copy qui ne marche pas en test
         impt = TImport(
-            schema_code=schema_code,
+            module_code,
+            object_code,
             data_file_path=data_file_path,
             mapping_file_path=mapping_file_path,
             options={"insert_data": True},
@@ -41,7 +42,7 @@ def test_data_file(
             ), f"L'erreur de code {expected_error['code']} n'a pas été trouvée"
 
     for key in expected_infos:
-        txt_err = f"schema_code: {schema_code}, key: {key},  expected: {expected_infos.get(key)}, import: {getAttr(import_infos, key)}"
+        txt_err = f"module_code: {module_code}, object_code: {object_code}, key: {key},  expected: {expected_infos.get(key)}, import: {getAttr(import_infos, key)}"
         assert getAttr(import_infos, key) == expected_infos.get(key), txt_err
 
     return impt

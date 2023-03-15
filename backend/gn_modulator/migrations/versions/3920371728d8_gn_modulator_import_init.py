@@ -22,12 +22,14 @@ def upgrade():
 
 CREATE TABLE gn_modulator.t_imports(
     id_import SERIAL NOT NULL,
-    id_digitiser INTEGER,
-    schema_code VARCHAR,
-    data_file_path VARCHAR,
-    mapping_file_path VARCHAR,
-    csv_delimiter VARCHAR,
+    id_digitiser INTEGER, -- qui a fait l'import
+    module_code VARCHAR NOT NULL, -- 
+    object_code VARCHAR NOT NULL, -- 
+    data_file_path VARCHAR, -- stocker dans un blob ??
+    mapping_file_path VARCHAR, -- varchar ou table mapping
+    csv_delimiter VARCHAR, --
     data_type VARCHAR,
+    status VARCHAR,
     res JSONB,
     tables JSONB,
     errors JSONB,

@@ -6,7 +6,7 @@ class ImportMixinInsert(ImportMixinUtils):
     def process_insert(self):
         from_table = self.tables["process"]
 
-        sm = SchemaMethods(self.schema_code)
+        sm = SchemaMethods(self.schema_code())
         self.sql[
             "nb_insert"
         ] = f"SELECT COUNT(*) FROM {from_table} WHERE {sm.pk_field_name()} IS NULL"
@@ -32,11 +32,11 @@ class ImportMixinInsert(ImportMixinUtils):
                 raise e
             self.add_error(
                 code="ERR_IMPORT_INSERT",
-                msg=f"Erreur durant l'insert de {from_table} vers {self.schema_code} : {str(e)}",
+                msg=f"Erreur durant l'insert de {from_table} vers {self.schema_code()} : {str(e)}",
             )
 
     def sql_insert(self, from_table, dest_table=None, keys=None):
-        sm = SchemaMethods(self.schema_code)
+        sm = SchemaMethods(self.schema_code())
 
         table_name = dest_table or sm.sql_schema_dot_table()
 
