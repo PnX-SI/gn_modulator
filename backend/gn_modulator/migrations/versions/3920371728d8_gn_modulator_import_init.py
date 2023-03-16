@@ -54,18 +54,28 @@ CREATE TRIGGER tri_meta_dates_change_gnm_t_import
     FOR EACH ROW
     EXECUTE PROCEDURE public.fct_trg_meta_dates_change();
 
-CREATE OR REPLACE FUNCTION gn_modulator.check_value_for_type(type_in VARCHAR, value_in ANYELEMENT)
+
+DROP FUNCTION IF EXISTS gn_modulator.check_value_for_type(VARCHAR, varchar);
+DROP FUNCTION IF EXISTS gn_modulator.check_value_for_type(VARCHAR, anyelement);
+CREATE OR REPLACE FUNCTION gn_modulator.check_value_for_type(type_in VARCHAR, value_in varchar)
     RETURNS BOOLEAN AS
     $$
     BEGIN
-        EXECUTE FORMAT('SELECT (''%s'')::%s', value_in, type_in);
-        RETURN TRUE;
-    EXCEPTION WHEN OTHERS THEN
+        IF type_in = 'VARCHAR' THEN PERFORM value_in::VARCHAR; RETURN TRUE; END IF;
+        IF type_in = 'INTEGER' THEN PERFORM value_in::INTEGER; RETURN TRUE; END IF;
+        IF type_in = 'BOOLEAN' THEN PERFORM value_in::BOOLEAN; RETURN TRUE; END IF;
+        IF type_in = 'FLOAT' THEN PERFORM value_in::FLOAT; RETURN TRUE; END IF;
+        IF type_in = 'DATE' THEN PERFORM value_in::DATE; RETURN TRUE; END IF;
+        IF type_in = 'TIMESTAMP' THEN PERFORM value_in::TIMESTAMP; RETURN TRUE; END IF;
+        IF type_in = 'UUID' THEN PERFORM value_in::UUID; RETURN TRUE; END IF;
+        IF type_in = 'GEOMETRY' THEN PERFORM value_in::GEOMETRY; RETURN TRUE; END IF;
+        IF type_in = 'JSONB' THEN PERFORM value_in::JSONB; RETURN TRUE; END IF;
         RETURN FALSE;
+        EXCEPTION WHEN OTHERS THEN
+            RETURN FALSE;
     END;
     $$
     LANGUAGE 'plpgsql' COST 100
-;
 
     """
     )
@@ -76,6 +86,10 @@ def downgrade():
     op.execute(
         """
     DROP TABLE gn_modulator.t_imports;
+    
+    DROP FUNCTION IF EXISTS gn_modulator.check_value_for_type(VARCHAR, varchar);
+    DROP FUNCTION IF EXISTS gn_modulator.check_value_for_type(VARCHAR, anyelement);
+
     """
     )
     pass

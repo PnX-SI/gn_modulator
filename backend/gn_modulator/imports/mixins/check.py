@@ -52,7 +52,7 @@ class ImportMixinCheck(ImportMixinUtils):
             WHERE NOT (
                 {key} is NULL
                 OR 
-                gn_modulator.check_value_for_type('{sql_type}', {key})
+                gn_modulator.check_value_for_type('{sql_type}', {key}::VARCHAR)
             )
             GROUP BY id_import
             ORDER BY id_import

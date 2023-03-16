@@ -120,14 +120,15 @@ class ImportMixin(
             impt.process_import_schema()
             imports.append(impt)
 
+            if commit:
+                db.session.commit()
+
             if impt.errors:
-                print(f"Il y a des erreurs dans l'import {import_definition['schema_code']}")
+                print(f"Il y a des erreurs dans l'import {import_definition['object_code']}")
                 for error in impt.errors:
                     print(f"- {error['code']} : {error['msg']}")
                 return imports
             print(impt.pretty_infos())
 
-        if commit:
-            db.session.commit()
         print(f"Import {import_code} terminé")
         return imports
