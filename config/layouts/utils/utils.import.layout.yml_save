@@ -3,11 +3,19 @@ code: utils.import
 title: layout du composant d'import
 description: layout du composant d'import
 layout:
-  flex: '0'
+  title: __f__`Importer ${o.des_labels(x, 'C')}`
   type: form
   items:
-    - flex: '0'
-      items:
+    - items:
+        - type: message
+          html: __f__data.importMsg?.html
+          class: __f__data.importMsg?.class
+          hidden: __f__!data.importMsg
+        - hidden: true
+          items:
+            - key: importMsg
+              type: string
+
         - title: import
           display: fieldset
           items:
@@ -35,7 +43,6 @@ layout:
               default: __f__true
 
     - direction: row
-      flex: '0'
       items:
         - type: button
           color: success
@@ -43,15 +50,6 @@ layout:
           description: Valider
           action: import
           disabled: __f__!(formGroup.valid )
-          hidden: __f__data.status == 'DONE'
-        - type: button
-          color: info
-          icon: refresh
-          title: nouvel import
-          description: Faire un nouvel import
-          action: reset
-          hidden: __f__!data.status
-
         - type: button
           color: primary
           title: Annuler

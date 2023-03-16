@@ -24,6 +24,43 @@ export class ModulesImportService {
     );
   }
 
+  processMessage(data) {
+    if (!data.id_import) {
+      return {
+        html: `
+          <h5> Etape 1/3</h5> 
+          <h6>Chargement et validation des données</h6>
+          Veuillez choisir un fichier et appuyer sur Valider`,
+        class: 'info',
+      };
+    }
+
+    if (data.status == 'READY') {
+      return {
+        html: `
+          <h5> Etape 1/3</h5> 
+          <h6>Insertion des données</h6>
+          <p>- Nombre de lignes ${data.res.nb_raw}</p>
+          <p>- Nombre d'insertion ${data.res.nb_insert}</p>
+          <p>- Nombre de mise à jour ${data.res.nb_update} ${
+          data.options.enable_update ? '' : '(MAJ Non autorisée)'
+        }</p>
+          Veuillez appuyer sur valider pour insérer les données`,
+        class: 'info',
+      };
+    }
+
+    if (data.status == 'DONE') {
+      return {
+        html: `
+          <h5> Etape 3/3</h5> 
+          <h6>Import Terminé</h6>
+          `,
+        class: 'info',
+      };
+    }
+  }
+
   importHTMLMsgSuccess(impt) {
     let txtImport = `<h5>Import réussi</h5>`;
     let res = impt.res;
