@@ -11,7 +11,7 @@ class ImportMixinCount(ImportMixinUtils):
         )
 
     def sql_nb_update(self, from_table):
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
 
         columns = self.get_table_columns(from_table)
 
@@ -55,7 +55,7 @@ class ImportMixinCount(ImportMixinUtils):
 
     def count_insert(self):
         from_table = self.tables["process"]
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
         self.sql[
             "nb_insert"
         ] = f"SELECT COUNT(*) FROM {from_table} WHERE {sm.pk_field_name()} IS NULL"

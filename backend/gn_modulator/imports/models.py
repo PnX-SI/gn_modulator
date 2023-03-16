@@ -11,10 +11,17 @@ class TImport(db.Model, ImportMixin):
     __table_args__ = {"schema": "gn_modulator"}
 
     def __init__(
-        self, module_code, object_code, data_file_path=None, mapping_file_path=None, options={}
+        self,
+        module_code=None,
+        object_code=None,
+        schema_code=None,
+        data_file_path=None,
+        mapping_file_path=None,
+        options={},
     ):
         self.id_digitiser = g.current_user.id_role if hasattr(g, "current_user") else None
 
+        self.schema_code = schema_code
         self.module_code = module_code
         self.object_code = object_code
         self.data_file_path = data_file_path and str(data_file_path)
@@ -25,7 +32,8 @@ class TImport(db.Model, ImportMixin):
         self.res = {}
         self.errors = []
         self.sql = {}
-        self.tables = {}
+        self.tables = {"prout": "oug"}
+        print("init import ", self.id_import)
 
     _columns = {}
 
@@ -34,9 +42,7 @@ class TImport(db.Model, ImportMixin):
     id_digitiser = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
     module_code = db.Column(db.Unicode)
     object_code = db.Column(db.Unicode)
-
-    def schema_code(self):
-        return ModuleMethods.schema_code(self.module_code, self.object_code)
+    schema_code = db.Column(db.Unicode)
 
     status = db.Column(db.Unicode)
 
@@ -56,6 +62,9 @@ class TImport(db.Model, ImportMixin):
     def as_dict(self):
         return {
             "id_import": self.id_import,
+            "schema_code": self.schema_code,
+            "module_code": self.module_code,
+            "object_code": self.object_code,
             "id_digitiser": self.id_digitiser,
             "data_type": self.data_type,
             "csv_delimiter": self.csv_delimiter,

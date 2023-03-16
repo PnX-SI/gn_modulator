@@ -11,13 +11,16 @@ layout:
           html: __f__data.importMsg?.html
           class: __f__data.importMsg?.class
           hidden: __f__!data.importMsg
+        - type: message
+          json: __f__data
         - hidden: true
           items:
             - key: importMsg
-            - key: object_code
               type: string
-              hidden: true
-              default: __f__context.object_code
+        - title: '__f__`Statut: ${data.status}`'
+        - key: status
+          type: string
+
         - title: import
           display: fieldset
           items:
@@ -46,8 +49,11 @@ layout:
     - direction: row
       items:
         - type: button
-          color: primary
-          title: Valider
+          color: success
+          title: |
+            __f__data.status == 'READY'
+                ? 'Importer les données'
+                : 'Charger et valider les données'
           description: Valider
           action: import
           disabled: __f__!(formGroup.valid )

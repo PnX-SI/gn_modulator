@@ -29,11 +29,11 @@ class ImportMixinUpdate(ImportMixinUtils):
                 raise e
             self.add_error(
                 code="ERR_IMPORT_UPDATE",
-                msg=f"Erreur durant l'update de {from_table} vers {self.schema_code()} : {str(e)}",
+                msg=f"Erreur durant l'update de {from_table} vers {self.schema_code} : {str(e)}",
             )
 
     def sql_update(self, from_table):
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
 
         columns = self.get_table_columns(from_table)
 

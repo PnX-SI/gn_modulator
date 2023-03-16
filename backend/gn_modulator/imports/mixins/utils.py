@@ -2,6 +2,7 @@ from pathlib import Path
 
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.env import schema_import
+from gn_modulator import ModuleMethods
 
 
 class ImportMixinUtils:
@@ -18,6 +19,16 @@ class ImportMixinUtils:
     }
 
     def init_import(self):
+        self.schema_code = self.schema_code or ModuleMethods.schema_code(
+            self.module_code, self.object_code
+        )
+        if not self.schema_code:
+            self.add_error(
+                {
+                    "code": "ERR_IMPORT_SCHEMA_CODE_NOT_FOND",
+                    "msg": f"Il n'y a pas de schema pour module_code={self.module_code}, object_code={self.object_code}",
+                }
+            )
         SchemaMethods.c_sql_exec_txt(f"CREATE SCHEMA IF NOT EXISTS {schema_import}")
 
     def pretty_infos(self):
@@ -25,7 +36,7 @@ class ImportMixinUtils:
         if self.res.get("nb_data") is not None:
             txt += f"\n-- import csv file {Path(self.data_file_path).name}"
             txt += f"   {self.res.get('nb_data')} lignes\n\n"
-        txt += f"   - {self.schema_code()}\n"
+        txt += f"   - {self.schema_code}\n"
         if self.res.get("nb_raw") != self.res.get("nb_process"):
             txt += f"       raw       : {self.res.get('nb_raw'):10d}\n"
         if self.res.get("nb_process"):
@@ -70,12 +81,13 @@ class ImportMixinUtils:
             return f"{schema_import}.t_{self.id_import}_{type}"
         else:
             rel = f"_{key}" if key is not None else ""
-            return f"{schema_import}.v_{self.id_import}_{type}_{self.schema_code().replace('.', '_')}{rel}"
+            return f"{schema_import}.v_{self.id_import}_{type}_{self.schema_code.replace('.', '_')}{rel}"
 
     def add_error(self, code=None, msg=None, key=None, lines=None, values=None):
         self.errors.append(
             {"code": code, "msg": msg, "key": key, "lines": lines, "values": values}
         )
+        self.status = "ERROR"
 
     def get_table_columns(self, table_name):
         if not self._columns.get(table_name):

@@ -143,7 +143,12 @@ def cmd_doc_schema(schema_code, force=False):
 )
 @with_appcontext
 def cmd_import_bulk_data(
-    schema_code=None, import_code=None, data_path=None, mapping_file_path=None, verbose=None
+    module_code=None,
+    object_code=None,
+    import_code=None,
+    data_path=None,
+    mapping_file_path=None,
+    verbose=None,
 ):
     """
     importe des données pour un schema
@@ -151,9 +156,9 @@ def cmd_import_bulk_data(
 
     init_gn_modulator()
 
-    if schema_code and data_path:
+    if module_code and object_code and data_path:
         impt = TImport(
-            schema_code=schema_code, data_file_path=data_path, mapping_file_path=mapping_file_path
+            module_code, object_code, data_file_path=data_path, mapping_file_path=mapping_file_path
         )
         impt.process_import_schema()
         print(impt.pretty_infos())

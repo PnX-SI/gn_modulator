@@ -5,13 +5,21 @@ from .utils import ImportMixinUtils
 
 
 class ImportMixinCheck(ImportMixinUtils):
+    def process_pre_check(self):
+        self.check_types()
+        self.check_uniques()
+
+    def process_post_check(self):
+        self.check_required()
+        self.check_resolve_keys()
+
     def check_uniques(self):
         # avant raw
         # on verifie la présence des colonne d'unicité
 
         table_test = self.tables.get("mapping") or self.tables["data"]
         columns = self.get_table_columns(table_test)
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
         unique = sm.attr("meta.unique")
 
         missing_unique = [key for key in unique if key not in columns]
@@ -28,7 +36,7 @@ class ImportMixinCheck(ImportMixinUtils):
         # gn_modulator.check_type(TYPE_IN, val)
 
         table_test = self.tables.get("mapping") or self.tables["data"]
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
         for key in filter(
             lambda x: sm.is_column(x) and not sm.property(x).get("foreign_key"),
             self.get_table_columns(table_test),
@@ -73,7 +81,7 @@ class ImportMixinCheck(ImportMixinUtils):
         # et que la valeur dans raw est nulle
         # erreur
         raw_table = self.tables["raw"]
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
 
         for key in self.get_table_columns(raw_table):
             if not sm.is_required(key):
@@ -104,7 +112,7 @@ SELECT
     def check_resolve_keys(self):
         raw_table = self.tables["raw"]
         process_table = self.tables["process"]
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
 
         for key in self.get_table_columns(raw_table):
             if not (sm.has_property(key) and sm.property(key).get("foreign_key")):

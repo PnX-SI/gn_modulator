@@ -20,21 +20,9 @@ from gn_modulator.imports.models import TImport
 def api_import(module_code, object_code, id_import):
     options = json.loads(request.form.get("options")) if request.form.get("options") else {}
 
-    schema_code = ModuleMethods.schema_code(module_code, object_code)
-
-    if not schema_code:
-        return {
-            "errors": [
-                {
-                    "msg": f"Il n'y pas de schema pour module_code={module_code} et object_code={object_code}",
-                    "code": "ERR_IMPORT_SCHEMA_CODE",
-                }
-            ]
-        }
-
     if id_import:
         try:
-            impt = TImport.query().filter_by(id_import=id_import).one()
+            impt = TImport.query.filter_by(id_import=id_import).one()
         except orm.exc.NoResultFound:
             return f"Pas d'import trouvé pour id_import={id_import}", 404
     else:
@@ -42,24 +30,19 @@ def api_import(module_code, object_code, id_import):
         db.session.add(impt)
         db.session.flush()
 
-    files_path = {}
-    if request.files:
-        for file_key in request.files:
-            file = request.files.get(file_key)
-            files_path[file_key] = upload_import_file(
-                module_code, object_code, impt.id_import, file
-            )
+    if not impt.status:
+        files_path = {}
+        if request.files:
+            for file_key in request.files:
+                file = request.files.get(file_key)
+                files_path[file_key] = upload_import_file(
+                    module_code, object_code, impt.id_import, file
+                )
 
-    impt.data_file_path = files_path.get("data_file") and str(files_path.get("data_file"))
+        impt.data_file_path = files_path.get("data_file") and str(files_path.get("data_file"))
 
     impt.process_import_schema()
 
-    if impt.errors:
-        out = {"errors": impt.errors}
-        db.session.commit()
-        return out
-
     out = impt.as_dict()
-
     db.session.commit()
     return out

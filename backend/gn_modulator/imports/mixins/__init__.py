@@ -27,68 +27,53 @@ class ImportMixin(
     ImportMixinUtils,
 ):
     def process_import_schema(self):
-        self.init_import()
-        if self.errors:
-            return self
-        db.session.flush()
+        if self.status in ["DONE", "PROCESSING"]:
+            return
 
-        self.process_data_table()
-        if self.errors:
-            return self
-        db.session.flush()
+        if self.status is None:
+            self.process_load_data_and_check()
 
-        self.process_mapping_view()
-        if self.errors:
-            return self
-        db.session.flush()
+        if self.status == "ERROR":
+            return
 
-        self.check_uniques()
-        self.check_types()
-        if self.errors:
-            return self
-        db.session.flush()
-
-        self.process_raw_view()
-        if self.errors:
-            return self
-        db.session.flush()
-
-        self.process_view()
-        if self.errors:
-            return self
-        db.session.flush()
-
-        self.check_required()
-        self.check_resolve_keys()
-
-        if self.errors:
-            return self
-        db.session.flush()
-
-        self.process_count()
-        if self.errors:
-            return self
-        db.session.flush()
-
-        if self.options.get("check_only"):
+        if self.options.get("check_only") and not self.status == "READY":
+            self.status = "READY"
             return self
 
-        self.process_insert()
-        if self.errors:
-            return self
-        db.session.flush()
+        print(self.as_dict())
 
-        self.process_update()
-        if self.errors:
-            return self
-        db.session.flush()
+        self.process_insert_and_update()
 
-        self.process_relations()
-        if self.errors:
-            return self
-        db.session.flush()
+    def process_load_data_and_check(self):
+        for action in [
+            "init_import",
+            "process_data_table",
+            "process_mapping_view",
+            "process_pre_check",
+            "process_raw_view",
+            "process_view",
+            "process_post_check",
+            "process_count",
+        ]:
+            getattr(self, action)()
+            if self.status == "ERROR":
+                return self
+            db.session.flush()
 
-        return self
+    def process_insert_and_update(self):
+        self.status = "PROCESSING"
+
+        for action in [
+            "process_insert",
+            "process_update",
+            "process_relations",
+        ]:
+            getattr(self, action)()
+            if self.status == "ERROR":
+                return self
+            db.session.flush()
+
+        self.status = "DONE"
 
     @classmethod
     def process_import_code(cls, import_code, data_dir_path, insert_data=True, commit=True):

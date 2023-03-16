@@ -41,6 +41,12 @@
   color: #fff;
 }
 
+.layout-buttons .mat-button-disabled {
+  color: rgba(0,0,0,.26);
+  background-color: rgba(0,0,0,.12);
+}
+
+
 .content-container {
   min-width: 50%;
 }

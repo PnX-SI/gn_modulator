@@ -13,8 +13,8 @@ def test_data_file(
 
         # et non un copy qui ne marche pas en test
         impt = TImport(
-            module_code,
-            object_code,
+            module_code=module_code,
+            object_code=object_code,
             data_file_path=data_file_path,
             mapping_file_path=mapping_file_path,
             options={"insert_data": True},

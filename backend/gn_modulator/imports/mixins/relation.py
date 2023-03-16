@@ -8,7 +8,7 @@ from gn_modulator import SchemaMethods
 class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw, ImportMixinUtils):
     def process_relations(self):
         from_table = self.tables.get("mapping") or self.tables["data"]
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
 
         columns = self.get_table_columns(from_table)
 
@@ -22,7 +22,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
                 self.import_relation_n_n(from_table, key)
 
     def import_relation_n_n(self, from_table, key):
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
 
         self.sql[key] = {}
 

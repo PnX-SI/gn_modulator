@@ -25,7 +25,7 @@ class ImportMixinProcess(ImportMixinUtils):
         requete pour créer une vue qui résoud les clé
         """
 
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
 
         v_columns = []
         v_joins = []
@@ -58,7 +58,7 @@ class ImportMixinProcess(ImportMixinUtils):
             v_joins += v_join
 
         txt_pk_column, v_join = self.resolve_key(
-            self.schema_code(), sm.pk_field_name(), alias_join_base="j_pk", solved_keys=solved_keys
+            self.schema_code, sm.pk_field_name(), alias_join_base="j_pk", solved_keys=solved_keys
         )
         v_columns.append(txt_pk_column)
         v_joins += v_join
@@ -70,7 +70,7 @@ class ImportMixinProcess(ImportMixinUtils):
         txt_id_digitiser = ""
         if self.id_digitiser:
             for key in ["id_digitiser", "id_digitizer"]:
-                if SchemaMethods(self.schema_code()).has_property(key):
+                if SchemaMethods(self.schema_code).has_property(key):
                     txt_id_digitiser = f"{self.id_digitiser} AS {key},"
                     break
 
@@ -93,7 +93,6 @@ FROM {from_table} t
             le champs de la colonne qui doit contenir la clé
             la ou les jointures nécessaire pour résoudre la clé
         """
-
         sm = SchemaMethods(schema_code)
 
         alias_join = alias_join_base if index is None else f"{alias_join_base}_{index}"
@@ -175,7 +174,7 @@ FROM {from_table} t
         """
         process column for processed view
         """
-        sm = SchemaMethods(self.schema_code())
+        sm = SchemaMethods(self.schema_code)
         if not sm.has_property(key):
             return key, []
 
