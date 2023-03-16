@@ -165,7 +165,15 @@ def cmd_import_bulk_data(
         print(impt.pretty_infos())
 
     if import_code:
-        TImport.process_import_code(import_code, data_path)
+        res = TImport.process_import_code(import_code, data_path)
+        if res is None:
+            print(f"L'import de code {import_code} n'existe pas\n")
+            import_codes = sorted(DefinitionMethods.definition_codes_for_type("import"))
+            print(f"Veuillez choisir parmi codes suivants\n")
+            for import_code in import_codes:
+                print(
+                    f"- {import_code:>15} : {DefinitionMethods.get_definition('import', import_code)['title']}"
+                )
 
     return True
 

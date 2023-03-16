@@ -75,10 +75,14 @@ class ImportMixin(
 
     @classmethod
     def process_import_code(cls, import_code, data_dir_path, insert_data=True, commit=True):
-        print(f"\nProcess scenario d'import {import_code}")
-
         # get import definition
         import_definitions = DefinitionMethods.get_definition("import", import_code)
+
+        if not import_definitions:
+            return None
+
+        print(f"\nProcess scenario d'import {import_code}")
+
         import_definitions_file_path = DefinitionMethods.get_file_path("import", import_code)
 
         # for all definition items
