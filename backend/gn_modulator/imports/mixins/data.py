@@ -11,6 +11,7 @@ class ImportMixinData(ImportMixinUtils):
             return
 
         self.tables["data"] = self.table_name("data")
+        self.tables = self.tables
 
         if Path(self.data_file_path).suffix == ".csv":
             self.data_type = "csv"

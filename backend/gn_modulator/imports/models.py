@@ -3,7 +3,7 @@ from flask import g
 from sqlalchemy.dialects.postgresql import JSONB
 from geonature.utils.env import db
 from .mixins import ImportMixin
-from gn_modulator import ModuleMethods
+from sqlalchemy.ext.mutable import MutableDict, MutableList
 
 
 class TImport(db.Model, ImportMixin):
@@ -32,7 +32,7 @@ class TImport(db.Model, ImportMixin):
         self.res = {}
         self.errors = []
         self.sql = {}
-        self.tables = {"prout": "oug"}
+        self.tables = {}
         print("init import ", self.id_import)
 
     _columns = {}
@@ -52,12 +52,12 @@ class TImport(db.Model, ImportMixin):
     csv_delimiter = db.Column(db.Unicode)
     data_type = db.Column(db.Unicode)
 
-    res = db.Column(JSONB)
-    tables = db.Column(JSONB)
-    sql = db.Column(JSONB)
-    errors = db.Column(JSONB)
+    res = db.Column(MutableDict.as_mutable(JSONB))
+    tables = db.Column(MutableDict.as_mutable(JSONB))
+    sql = db.Column(MutableDict.as_mutable(JSONB))
+    errors = db.Column(MutableList.as_mutable(JSONB))
 
-    options = db.Column(JSONB)
+    options = db.Column(MutableDict.as_mutable(JSONB))
 
     def as_dict(self):
         return {

@@ -12,6 +12,7 @@ class ImportMixinMapping(ImportMixinUtils):
             return
 
         self.tables["mapping"] = self.table_name("mapping")
+        self.tables = self.tables
 
         if not Path(self.mapping_file_path).exists():
             self.add_error(

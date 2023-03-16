@@ -11,6 +11,7 @@ class ImportMixinRaw(ImportMixinUtils):
 
         from_table = self.tables.get("mapping") or self.tables["data"]
         dest_table = self.tables["raw"] = self.table_name("raw")
+        self.tables = self.tables
         self.sql["raw_view"] = self.sql_raw_view(from_table, dest_table)
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["raw_view"])

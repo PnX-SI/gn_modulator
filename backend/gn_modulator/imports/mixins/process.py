@@ -6,6 +6,7 @@ class ImportMixinProcess(ImportMixinUtils):
     def process_view(self, keys=None):
         from_table = self.tables["raw"]
         dest_table = self.tables["process"] = self.table_name("process")
+        self.tables = self.tables
 
         self.sql["process_view"] = self.sql_process_view(from_table, dest_table, keys)
 
