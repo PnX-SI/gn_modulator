@@ -142,7 +142,9 @@ const filterAttr = (obj, paths, value) => {
 
 const setAttr = (obj, paths, value) => {
   var inter = obj;
-  const v_path = Object.entries(paths.split('.')) as any;
+  const v_path = Array.isArray(paths)
+    ? Object.entries(paths)
+    : (Object.entries(paths.split('.')) as any);
   for (const [index, path] of v_path) {
     if (index < v_path.length - 1) {
       inter[path] = inter[path] || {};

@@ -242,7 +242,7 @@ export class ModulesFormService {
     if (computedLayout.default && [null, undefined].includes(control.value)) {
       control.setValue(computedLayout.default);
       if (data) {
-        data[computedLayout.key] = computedLayout.default;
+        utils.setAttr(data, [...context.data_keys, computedLayout.key], computedLayout.default);
       }
     }
 
