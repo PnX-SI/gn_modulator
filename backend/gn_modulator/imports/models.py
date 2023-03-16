@@ -33,7 +33,6 @@ class TImport(db.Model, ImportMixin):
         self.errors = []
         self.sql = {}
         self.tables = {}
-        print("init import ", self.id_import)
 
     _columns = {}
 

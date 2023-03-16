@@ -123,7 +123,8 @@ def cmd_doc_schema(schema_code, force=False):
 
 
 @click.command("import")
-@click.option("-s", "schema_code")
+@click.option("-o", "object_code")
+@click.option("-m", "module_code")
 @click.option("-d", "data_path", type=click.Path(exists=True))
 @click.option(
     "-m",

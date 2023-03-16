@@ -40,8 +40,6 @@ class ImportMixin(
             self.status = "READY"
             return self
 
-        print(self.as_dict())
-
         self.process_insert_and_update()
 
     def process_load_data_and_check(self):
