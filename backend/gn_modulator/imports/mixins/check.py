@@ -97,14 +97,14 @@ SELECT
             res = SchemaMethods.c_sql_exec_txt(txt_check_required).fetchone()
             nb_lines = res[0]
             lines = res[1]
-            str_lines = lines and ", ".join(map(lambda x: str(x), lines)) or ""
+            # str_lines = lines and ", ".join(map(lambda x: str(x), lines)) or ""
             if nb_lines == 0:
                 continue
             self.add_error(
                 code="ERR_IMPORT_REQUIRED",
                 key=key,
                 lines=lines,
-                msg=f"La colonne {key} est obligatoire. {nb_lines} ligne(s) concernée(s) : [{str_lines}]",
+                msg="Champs obligatoire à null",
             )
 
         return
@@ -149,6 +149,6 @@ WHERE
                 code="ERR_IMPORT_UNRESOLVED",
                 key=key,
                 lines=lines,
-                msg=f"La colonne {key} est non nulle et n'a pas de correspondance. {nb_lines} ligne(s) concernée(s) : [{str_lines}]",
+                msg=f"Clé étrangère non résolue",
                 values=values,
             )

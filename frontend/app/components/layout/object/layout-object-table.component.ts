@@ -42,8 +42,6 @@ export class ModulesLayoutObjectTableComponent
     this.tableId = `table_${this._id}`;
   }
 
-  postInit() {}
-
   onRedrawElem(): void {
     this.onHeightChange(true);
     this.setCount();

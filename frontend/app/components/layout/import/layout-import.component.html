@@ -1,7 +1,9 @@
+<div class='import'>
+  
 <h1>Importer des données</h1>
 
 <!-- Etapes -->
-<mat-stepper #stepper>
+<mat-stepper linear #stepper>
   <mat-step
     ngClass="{'step-selected': step==0}"
     [editable]="editableStep"
@@ -23,12 +25,12 @@
 </mat-stepper>
 
 <!-- message -->
-<div class="import-msg">
+<!-- <div class="import-msg">
   <ng-container *ngIf="!importData.status">
     <p>Veuillez choisir un fichier et appuyer sur Valider</p>
-  </ng-container>
+  </ng-container> -->
 
-  <ng-container *ngIf="importData.status == 'READY'">
+  <!-- <ng-container *ngIf="importData.status == 'READY'">
     <h5>Chargement du fichier et verification des données terminé</h5>
     <p>- Nombre de lignes {{ importData.res.nb_raw }}</p>
     <p>- Nombre d'insertion {{ importData.res.nb_insert }}</p>
@@ -58,12 +60,15 @@
       }}
     </p></ng-container
   >
-</div>
+</div> -->
 
 <!-- Formulaire bouttons -->
+<div>
 <modules-layout
   [data]="importData"
   [layout]="importLayout"
   [parentContext]="context"
   (onAction)="processAction($event)"
 ></modules-layout>
+</div>
+</div>

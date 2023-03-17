@@ -46,41 +46,10 @@ layout:
               hidden: __f__!o.is_action_allowed(x, 'C')
             - type: modal
               modal_name: import
+              # style:
+                # width: 1200px
               items:
-                title: Importer des passage à faune
-                type: form
-                items:
-                  - items:
-                    - type: message
-                      html: __f__data.importMsg?.html
-                      class: __f__data.importMsg?.class
-                      hidden: __f__!data.importMsg
-
-                    - key: importMsg
-                      hidden: true
-                    - key: data_file
-                      type: file
-                      title: Fichier d'import
-                      required: true
-                      description: Choisir un fichier à importer
-                    - key: object_code
-                      type: string
-                      hidden: true
-                      default: __f__context.object_code
-                    
-                  - direction: row
-                    items:
-                      - type: button
-                        color: primary
-                        title: Valider
-                        description: Valider
-                        action: import
-                        disabled: __f__!(formGroup.valid )
-                      - type: button
-                        color: primary
-                        title: Annuler
-                        description: Annuler
-                        action: close
+                type: import
 
           flex: "0"
         - type: object

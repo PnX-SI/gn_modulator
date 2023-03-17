@@ -2,6 +2,8 @@ import { Injectable, Injector } from '@angular/core';
 import { ModulesDataService } from './data.service';
 import { ModulesConfigService } from './config.service';
 import { ModulesSchemaService } from './schema.service';
+import { Subject } from '@librairies/rxjs';
+
 import utils from '../utils';
 @Injectable()
 export class ModulesObjectService {
@@ -10,10 +12,16 @@ export class ModulesObjectService {
   _mSchema: ModulesSchemaService;
   _cacheObjectConfig = {};
 
+  $reProcessObject = new Subject();
+
   constructor(private _injector: Injector) {
     this._mData = this._injector.get(ModulesDataService);
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mSchema = this._injector.get(ModulesSchemaService);
+  }
+
+  reProcessObject(moduleCode, objectCode) {
+    this.$reProcessObject.next({ moduleCode, objectCode });
   }
 
   /** renvoie la configuration d'un object en fonction de

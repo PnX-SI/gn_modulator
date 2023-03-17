@@ -12,8 +12,11 @@
 }
 
 .modal-container > div {
-    width: 500px;
+    width: fit-content;
     padding: 10px;
     opacity: 1;
+}
 
+.modal-container > div > div{
+    background-color: red;
 }

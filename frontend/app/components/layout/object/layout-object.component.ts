@@ -44,6 +44,16 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     this.bPostComputeLayout = true;
   }
 
+  postInit() {
+    this._subs['reProcess'] = this._mObject.$reProcessObject.subscribe(
+      ({ moduleCode, objectCode }) => {
+        if (this.moduleCode() == moduleCode && this.objectCode() == objectCode) {
+          this.processObject();
+        }
+      }
+    );
+  }
+
   postComputeLayout(dataChanged: any, layoutChanged: any, contextChanged: any): void {
     if (!utils.fastDeepEqual(this.context.value, this.contextSave?.value)) {
       this.processValue(this.context.value);

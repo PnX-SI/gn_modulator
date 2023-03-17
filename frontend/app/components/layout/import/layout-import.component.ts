@@ -33,7 +33,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
     this._mImport = this._injector.get(ModulesImportService);
   }
 
-  postComputeLayout() {
+  postProcessLayout() {
     this.initImport();
   }
 
@@ -45,7 +45,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
     this.importLayout = {
       code: 'utils.import',
     };
-    this.importMsg = this._mImport.processMessage(this.importData);
+    // this._mLayout.getFormControl('form_import')?.reset()
     this.importData = {};
     this.setStep();
   }
@@ -69,7 +69,9 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
         this.editableStep = false;
       });
     }
-    this._mImport.processMessage(this.importData);
+    this.importData.importMsg = this._mImport.processMessage(this.importData);
+    this.importData.errorMsgType = this._mImport.processErrorsType(this.importData);
+    this.importData.errorMsgLine = this._mImport.processErrorsLine(this.importData);
   }
 
   processImport(context, data) {
@@ -83,8 +85,13 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
         if (importEvent instanceof HttpResponse) {
           this._mLayout.stopActionProcessing('');
           const response = importEvent.body as any;
-          this.importData = response;
+          this.importData = { ...this.importData, ...response };
           this.setStep();
+          if (response.status == 'DONE') {
+            if (response.res.nb_unchanged != response.res.nb_process) {
+              this._mObject.reProcessObject(this.context.module_code, this.context.object_code);
+            }
+          }
         }
       });
   }
@@ -95,6 +102,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
       return this.processImport(context, data);
     }
     if (action == 'reset') {
+      this._mLayout.getFormControl('form_import')?.reset();
       this.initImport();
       this._mLayout.stopActionProcessing('');
     }

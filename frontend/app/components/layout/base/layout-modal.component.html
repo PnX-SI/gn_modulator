@@ -1,8 +1,13 @@
 <ng-container *ngIf="isOpen">
   <div class="modal-container">
-    <div class="modal-content" tabindex="0">
-      <modules-layout [layout]="processedLayout" [parentContext]="context" [data]="data" (onAction)="processAction($event)">
-      </modules-layout>
+    <div class="modal-content" tabindex="0" [ngStyle]="computedLayout.style">
+        <modules-layout
+          [layout]="processedLayout"
+          [parentContext]="context"
+          [data]="data"
+          (onAction)="processAction($event)"
+        >
+        </modules-layout>
     </div>
   </div>
 </ng-container>

@@ -28,9 +28,6 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     this.bPostComputeLayout = true;
   }
 
-  /** initialisaiton de la carte */
-  postInit(): void {}
-
   /**
    * action quand un modal (gps, gpx etc... est validé)
    */
