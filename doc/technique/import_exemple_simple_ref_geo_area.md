@@ -77,7 +77,7 @@ Cette vue permet de résoudre les clé étrangère et la clé primaire.
   - on fait une jointure sur la table `ref_geo.l_areas` avec des condition sur `id_type` et `area_code`
 ```
 
-CREATE VIEW gn_modulator_import.v_260_process_ref_geo_area AS
+CREATE VIEW gn_modulator_import.v_xxx_process_ref_geo_area AS
 SELECT
     id_import,
     j_0.id_type AS id_type,
@@ -85,11 +85,51 @@ SELECT
     t.area_code AS area_code,
     t.geom AS geom,
     j_pk.id_area
-FROM gn_modulator_import.v_260_raw_ref_geo_area t
+FROM gn_modulator_import.v_xxx_raw_ref_geo_area t
 LEFT JOIN ref_geo.bib_areas_types j_0 ON
       j_0.type_code::TEXT = t.id_type::TEXT
 LEFT JOIN ref_geo.l_areas j_pk ON
       j_pk.id_type::TEXT = j_0.id_type::TEXT
         AND (j_pk.area_code::TEXT = SPLIT_PART(t.id_area, '|', 2)::TEXT OR (j_pk.area_code IS NULL AND SPLIT_PART(t.id_area, '|', 2) IS NULL));
 
+```
+
+#### 2.1) Insert
+```
+INSERT INTO ref_geo.l_areas (
+    id_type,
+    area_name,
+    area_code,
+    geom
+)
+SELECT
+    id_type,
+    area_name,
+    area_code,
+    geom
+FROM gn_modulator_import.v_xxx_process_ref_geo_area WHERE id_area IS NULL;
+```
+
+#### 2.2) Update
+
+```
+UPDATE ref_geo.l_areas t SET
+    id_type=a.id_type,
+    area_name=a.area_name,
+    area_code=a.area_code,
+    geom=a.geom
+FROM (
+    SELECT
+        id_type,
+        area_name,
+        area_code,
+        geom,
+        id_area
+    FROM gn_modulator_import.v_xxx_process_ref_geo_area
+)a
+WHERE a.id_area = t.id_area
+AND NOT ((t.id_type::TEXT IS DISTINCT FROM a.id_type::TEXT)
+    AND (t.area_name::TEXT IS DISTINCT FROM a.area_name::TEXT)
+    AND (t.area_code::TEXT IS DISTINCT FROM a.area_code::TEXT)
+    AND (t.geom::TEXT IS DISTINCT FROM a.geom::TEXT))
 ```

@@ -350,12 +350,13 @@ export class ModulesObjectService {
 
     if (!testUserCruved) {
       const msgDroitsInsuffisants = {
-        C: `Droits inssuffisants pour créer ${objectConfig.display.un_nouveau_label}`,
-        R: `Droits inssuffisants pour voir ${objectConfig.display.le_label}`,
-        U: `Droits inssuffisants pour éditer ${objectConfig.display.le_label}`,
-        V: `Droits inssuffisants pour valider ${objectConfig.display.le_label}`,
-        E: `Droits inssuffisants pour exporter ${objectConfig.display.des_label}`,
-        D: `Droits inssuffisants pour supprimer ${objectConfig.display.le_label}`,
+        C: `Droits insuffisants pour créer ${objectConfig.display.un_nouveau_label}`,
+        R: `Droits insuffisants pour voir ${objectConfig.display.le_label}`,
+        U: `Droits insuffisants pour éditer ${objectConfig.display.le_label}`,
+        V: `Droits insuffisants pour valider ${objectConfig.display.le_label}`,
+        E: `Droits insuffisants pour exporter ${objectConfig.display.des_label}`,
+        D: `Droits insuffisants pour supprimer ${objectConfig.display.le_label}`,
+        I: `Droits insuffisants pour importer ${objectConfig.display.des_label}`,
       };
       return {
         actionAllowed: false,
@@ -372,6 +373,7 @@ export class ModulesObjectService {
       V: `Valider ${objectConfig.display.le_label}`,
       E: `Exporter ${objectConfig.display.des_label}`,
       D: `Supprimer ${objectConfig.display.le_label}`,
+      I: `Importer ${objectConfig.display.des_label}`,
     };
 
     return {

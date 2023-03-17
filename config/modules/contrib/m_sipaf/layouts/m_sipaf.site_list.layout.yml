@@ -43,7 +43,7 @@ layout:
               action:
                 type: modal
                 modal_name: import
-              hidden: __f__!o.is_action_allowed(x, 'C')
+              hidden: __f__!o.is_action_allowed(x, 'I')
             - type: modal
               modal_name: import
               # style:

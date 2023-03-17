@@ -17,10 +17,10 @@ class ImportMixinUpdate(ImportMixinUtils):
             )
             return
 
+        self.sql["update"] = self.sql_update(from_table)
+
         if self.res["nb_update"] == 0:
             return
-
-        self.sql["update"] = self.sql_update(from_table)
 
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["update"])
@@ -48,7 +48,8 @@ class ImportMixinUpdate(ImportMixinUtils):
                 filter(
                     lambda x: sm.has_property(x)
                     and sm.is_column(x)
-                    and not sm.property(x).get("primary_key"),
+                    and not sm.property(x).get("primary_key")
+                    and x != self.id_digitiser_key(),
                     columns,
                 ),
             )
@@ -60,7 +61,8 @@ class ImportMixinUpdate(ImportMixinUtils):
                 filter(
                     lambda x: sm.has_property(x)
                     and sm.is_column(x)
-                    and not sm.property(x).get("primary_key"),
+                    and not sm.property(x).get("primary_key")
+                    and x != self.id_digitiser_key(),
                     columns,
                 ),
             )

@@ -18,7 +18,7 @@ features:
 objects:
   site:
     schema_code: m_sipaf.pf
-    cruved: CRUDE
+    cruved: CRUIDE
   actor:
     schema_code: m_sipaf.actor
     cruved: R

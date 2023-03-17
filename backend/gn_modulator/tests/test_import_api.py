@@ -4,12 +4,15 @@ from werkzeug.datastructures import Headers
 
 from geonature.tests.utils import set_logged_user_cookie
 
+from gn_modulator import ModuleMethods
 from gn_modulator.utils.env import import_test_dir
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction", scope="session")
 class TestImportApi:
     def test_import_synthese(self, users):
+        ModuleMethods.add_actions("MODULATOR", "syn.synthese", "I")
+
         set_logged_user_cookie(self.client, users["admin_user"])
         with open(import_test_dir / "synthese_1.csv", "rb") as f:
             data = {"data_file": (f, "synthese.csv")}
@@ -31,6 +34,8 @@ class TestImportApi:
             assert r.json["id_digitiser"] == users["admin_user"].id_role
 
     def test_import_synthese2(self, users):
+        ModuleMethods.add_actions("MODULATOR", "syn.synthese", "I")
+
         set_logged_user_cookie(self.client, users["admin_user"])
         with open(import_test_dir / "synthese_1.csv", "rb") as f:
             data = {"data_file": (f, "synthese.csv")}

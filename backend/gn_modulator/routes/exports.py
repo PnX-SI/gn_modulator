@@ -1,11 +1,11 @@
 from gn_modulator import DefinitionMethods, ModuleMethods, SchemaMethods
 from gn_modulator.blueprint import blueprint
-from .utils.decorators import check_rest_route
+from .utils.decorators import check_module_object_route
 from .utils.params import parse_request_args
 
 
 @blueprint.route("/exports/<module_code>/<object_code>/<export_code>", methods=["GET"])
-@check_rest_route("E")
+@check_module_object_route("E")
 def api_export(module_code, object_code, export_code):
     """
     Route pour les exports

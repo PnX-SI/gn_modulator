@@ -100,8 +100,10 @@ class TestImport:
             module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
-    #        print(impt.sql["process_view"])
-    # assert 1 == 0
+        print(impt.sql["insert"])
+        print(impt.sql["update"])
+        print(impt.sql["nb_insert"])
+        print(impt.sql["nb_update"])
 
     # Test remontées d'erreurs
 

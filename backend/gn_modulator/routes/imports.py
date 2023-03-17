@@ -2,7 +2,7 @@ import json
 from flask import request, jsonify
 
 from sqlalchemy import orm
-from geonature.core.gn_permissions.decorators import check_cruved_scope
+from gn_modulator.routes.utils.decorators import check_module_object_route
 from geonature.utils.env import db
 
 from gn_modulator.blueprint import blueprint
@@ -12,7 +12,7 @@ from gn_modulator.imports.utils.files import upload_import_file
 from gn_modulator.imports.models import TImport
 
 
-@check_cruved_scope("C")  # object import ??
+@check_module_object_route("I")  # object import ??
 @blueprint.route("import/<module_code>/<object_code>/<id_import>", methods=["POST"])
 @blueprint.route(
     "import/<module_code>/<object_code>/", methods=["POST"], defaults={"id_import": None}

@@ -69,11 +69,8 @@ class ImportMixinProcess(ImportMixinUtils):
 
         # TODO rendre id_digitiser parametrable ?
         txt_id_digitiser = ""
-        if self.id_digitiser:
-            for key in ["id_digitiser", "id_digitizer"]:
-                if SchemaMethods(self.schema_code).has_property(key):
-                    txt_id_digitiser = f"{self.id_digitiser} AS {key},"
-                    break
+        if self.id_digitiser and self.id_digitiser_key():
+            txt_id_digitiser = f"{self.id_digitiser} AS {self.id_digitiser_key()},"
 
         return f"""DROP VIEW IF EXISTS {dest_table} CASCADE;
 CREATE VIEW {dest_table} AS

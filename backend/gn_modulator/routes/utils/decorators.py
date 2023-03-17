@@ -4,8 +4,8 @@ from geonature.core.gn_permissions.decorators import check_cruved_scope
 from werkzeug.exceptions import Forbidden
 
 
-def check_rest_route(action):
-    def _check_rest_route(fn):
+def check_module_object_route(action):
+    def _check_module_object_route(fn):
         """
         decorateur qui va vérifier si la route est bien définie
         pour un module un object et un action (CRUVED) donnés
@@ -13,7 +13,7 @@ def check_rest_route(action):
         """
 
         @wraps(fn)
-        def __check_rest_route(*args, **kwargs):
+        def __check_module_object_route(*args, **kwargs):
             module_code = kwargs["module_code"]
             object_code = kwargs["object_code"]
 
@@ -39,8 +39,11 @@ def check_rest_route(action):
                     description=f"action {action} is not defined for object {object_code} of module {module_code}"
                 )
 
-            return check_cruved_scope(action, module_code=module_code)(fn)(*args, **kwargs)
+            # pour les actions d'import on regarde les droit de creation C
+            action_cruved = "C" if action == "I" else action
 
-        return __check_rest_route
+            return check_cruved_scope(action_cruved, module_code=module_code)(fn)(*args, **kwargs)
 
-    return _check_rest_route
+        return __check_module_object_route
+
+    return _check_module_object_route

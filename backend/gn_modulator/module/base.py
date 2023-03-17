@@ -10,6 +10,13 @@ from gn_modulator import MODULE_CODE
 
 class ModuleBase:
     @classmethod
+    def add_actions(cls, module_code, object_code, actions):
+        object_config = cls.object_config(module_code, object_code)
+        for action in actions:
+            if action not in object_config["cruved"]:
+                object_config["cruved"] = (object_config["cruved"] or "") + action
+
+    @classmethod
     def is_python_module(cls, module_code):
         """
         Test si on a un fichier setup.py pour ce sous_module

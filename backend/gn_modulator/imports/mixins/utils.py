@@ -94,3 +94,8 @@ class ImportMixinUtils:
         if not self._columns.get(table_name):
             self._columns[table_name] = SchemaMethods.get_table_columns(table_name)
         return self._columns[table_name]
+
+    def id_digitiser_key(self):
+        for key in ["id_digitiser", "id_digitizer"]:
+            if SchemaMethods(self.schema_code).has_property(key):
+                return key
