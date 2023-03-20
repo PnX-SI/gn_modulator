@@ -424,18 +424,22 @@ export class ModulesLayoutComponent implements OnInit {
 
     // si on a reduit la fenetre
     // -> on remet à 0
+    const overflowStyle = {};
+    if (this.computedLayout.display != 'tabs') {
+      overflowStyle['overflow-y'] = 'scroll';
+    }
 
     if (this.docHeightSave > docHeight || !this.docHeightSave) {
       this.computedLayout.style = {
         ...(this.computedLayout.style || {}),
         height: '200px',
-        'overflow-y': 'scroll',
+        ...overflowStyle,
       };
 
       this.layout.style = {
         ...(this.layout.style || {}),
         height: `200px`,
-        'overflow-y': 'scroll',
+        ...overflowStyle,
       };
     }
 
@@ -447,13 +451,13 @@ export class ModulesLayoutComponent implements OnInit {
       this.layout.style = {
         ...(this.layout.style || {}),
         height: `${height}px`,
-        'overflow-y': 'scroll',
+        ...overflowStyle,
       };
 
       this.computedLayout.style = {
         ...(this.computedLayout.style || {}),
         height: `${height}px`,
-        'overflow-y': 'scroll',
+        ...overflowStyle,
       };
     }, 200);
   }
@@ -508,7 +512,7 @@ export class ModulesLayoutComponent implements OnInit {
     }
 
     const elementHeight = elem && `${elem.clientHeight}px`;
-    const bodyHeight = `${document.body.clientHeight - elem.offsetTop}px`;
+    const bodyHeight = `${document.body.clientHeight - elem.offsetTop - 4}px`;
 
     // si la taille de l'élément correspond à la taille de la page
     // -> on ne fait rien

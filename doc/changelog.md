@@ -5,6 +5,7 @@
 **✨ Améliorations**
 
 - Clarification dans la gestion des routes REST
+- Meilleure gestion des `tabs` et des `scrolls`
 ## 1.0.5 (13-03-2023)
 
 **✨ Améliorations**

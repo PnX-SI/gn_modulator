@@ -7,7 +7,7 @@
 
 <ng-container *ngIf="isInitialized">
   <div
-    [ngStyle]="computedLayout.style"
+    [ngStyle]="computedLayout.display == 'tabs' ? null :  computedLayout.style"
     [attr.id]="_id"
     class="layout-section"
     [ngClass]="computedLayout.class"
@@ -32,7 +32,11 @@
 
       <!-- Tabs -->
       <ng-container *ngSwitchCase="'tabs'">
-        <mat-tab-group class="layout-section" (selectedTabChange)="onTabChanged($event)">
+        <mat-tab-group
+          class="layout-section"
+          (selectedTabChange)="onTabChanged($event)"
+          [ngStyle]="computedLayout.style"
+        >
           <ng-container *ngFor="let item of layout.items; let index = index">
             <mat-tab
               [label]="computedItems[index].label || computedItems[index].title || index"

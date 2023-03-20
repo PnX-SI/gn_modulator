@@ -38,7 +38,6 @@ export class ModulesLayoutObjectFiltersComponent
         },
         {
           items: this.layout.items,
-          overflow: true,
         },
         {
           flex: '0',

@@ -28,7 +28,6 @@ layout:
           flex: "0"
         - title: __f__o.title_create_edit(x)
           flex : "0"
-        - overflow: true
-          items: __LAYOUT__
+        - items: __LAYOUT__
         - code: utils.buttons_form
           flex: '0'

@@ -1,5 +1,6 @@
 site_filters_fields:
   display: tabs
+  overflow: true
   items:
     - label: Infos
       items:
@@ -102,6 +103,7 @@ site_map_popup_fields:
 
 site_details_fields:
   display: tabs
+  overflow: true
   items:
     - label: Propriétés
       items:
@@ -165,7 +167,7 @@ site_details_fields:
                 - key: nomenclatures_ouvrage_type.cd_nomenclature
                   hidden: true
                 - key: ouvrage_type_autre
-                  hidden: __f__!data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+                  hidden: __f__!data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
             - direction: row
               items:
                 - pi_ou_ps
@@ -185,7 +187,7 @@ site_details_fields:
                 - diametre
         - title: Banquette (Ouvrages hydrauliques)
           display: fieldset
-          hidden: "__f__!data.ouvrage_hydrau"
+          hidden: "__f__!data?.ouvrage_hydrau"
           items:
             - direction: row
               items:
@@ -202,6 +204,7 @@ site_details_fields:
 
 site_form_fields:
   display: tabs
+  overflow: true
   items:
     - label: Propriétés
       items:
@@ -280,10 +283,10 @@ site_form_fields:
                   return_object: true
                   additional_fields: ["cd_nomenclature"]
                 - key: ouvrage_type_autre
-                  description: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+                  description: __f__data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
                   type: string
-                  hidden: __f__!data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
-                  required: __f__data.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+                  hidden: __f__!data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+                  required: __f__data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
 
         - title: Dimensions
           display: fieldset
@@ -299,7 +302,7 @@ site_form_fields:
                 - hauteur_dispo_faune
                 - diametre
         - title: Banquette
-          hidden: "__f__!data.ouvrage_hydrau"
+          hidden: "__f__!data?.ouvrage_hydrau"
           display: fieldset
           items:
             - direction: row
