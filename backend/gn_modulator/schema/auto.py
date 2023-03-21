@@ -48,7 +48,6 @@ class SchemaAuto:
             return schema_definition
 
         Model = get_class_from_path(self.attr("meta.model"))
-
         if Model is None:
             raise SchemaAutoError(
                 "Pas de modèles trouvé pour la table {}".format(schema_dot_table)

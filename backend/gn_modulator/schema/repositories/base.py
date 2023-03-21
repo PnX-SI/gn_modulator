@@ -255,6 +255,10 @@ class SchemaRepositoriesBase:
         """
 
         Model = self.Model()
+
+        if Model is None:
+            raise Exception(f"Model not found for {self.schema_code()}")
+
         model_pk_fields = [
             getattr(Model, pk_field_name) for pk_field_name in self.pk_field_names()
         ]

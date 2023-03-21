@@ -31,6 +31,25 @@ class SchemaSqlBase:
         return auto_sql_schemas_dot_tables
 
     @classmethod
+    def get_tables(cls):
+        if tables := get_global_cache(["schema_dot_tables"]):
+            return tables
+
+        sql_txt_tables = f"""
+        SELECT
+        concat(t.table_schema, '.', t.table_name)
+        FROM
+            information_schema.tables t
+        WHERE
+            CONCAT(t.table_schema, '.', t.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
+
+        """
+        res = cls.c_sql_exec_txt(sql_txt_tables)
+        tables = [r[0] for r in res]
+        set_global_cache(["schema_dot_tables"], tables)
+        return tables
+
+    @classmethod
     def get_table_columns(cls, schema_dot_table):
         table_schema = schema_dot_table.split(".")[0]
         table_name = schema_dot_table.split(".")[1]
@@ -182,19 +201,8 @@ WHERE
         return cls.c_sql_table_exists(sql_schema_name, sql_table_name)
 
     @classmethod
-    def table_names(cls, sql_schema_name):
-        table_names = get_global_cache(["table_names", sql_schema_name])
-        if table_names is None:
-            inspector = inspect(db.engine)
-            table_names = inspector.get_table_names(sql_schema_name) + inspector.get_view_names(
-                sql_schema_name
-            )
-            set_global_cache(["table_names", sql_schema_name], table_names)
-        return table_names
-
-    @classmethod
     def c_sql_table_exists(cls, sql_schema_name, sql_table_name):
-        return sql_table_name.lower() in cls.table_names(sql_schema_name)
+        return f"{sql_schema_name}.{sql_table_name}".lower() in cls.get_tables()
 
     @classmethod
     def c_sql_schema_exists(cls, sql_schema_name):
