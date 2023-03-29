@@ -6,17 +6,6 @@ class ImportMixinUpdate(ImportMixinUtils):
     def process_update(self):
         from_table = self.tables["process"]
 
-        self.sql["nb_update"] = self.sql_nb_update(from_table)
-
-        try:
-            self.res["nb_update"] = SchemaMethods.c_sql_exec_txt(self.sql["nb_update"]).scalar()
-        except Exception as e:
-            self.add_error(
-                code="ERR_IMPORT_UPDATE_COUNT",
-                msg=f"Erreur lors du comptage du nombre d'update: {str(e)}",
-            )
-            return
-
         self.sql["update"] = self.sql_update(from_table)
 
         if self.res["nb_update"] == 0:

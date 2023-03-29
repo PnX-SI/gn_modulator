@@ -43,13 +43,15 @@ class ImportMixinRaw(ImportMixinUtils):
 
         from_table_columns = self.get_table_columns(from_table)
 
-        columns = filter(
-            lambda x: (
-                x in keys
-                if keys is not None
-                else not (sm.is_column(x) and sm.property(x).get("primary_key"))
-            ),
-            from_table_columns,
+        columns = list(
+            filter(
+                lambda x: (
+                    x in keys
+                    if keys is not None
+                    else not (sm.is_column(x) and sm.property(x).get("primary_key"))
+                ),
+                from_table_columns,
+            )
         )
 
         # on preprocess ttes les colonnes
@@ -59,6 +61,21 @@ class ImportMixinRaw(ImportMixinUtils):
                 from_table_columns,
             )
         )
+
+        # traitement de la geometrie en x y
+        # si des champs x et y sont présents
+        # s'il n'y a pas de champs geom
+        if (
+            sm.geometry_field_name()
+            and sm.geometry_field_name() not in columns
+            and "x" in from_table_columns
+            and "y" in from_table_columns
+        ):
+            txt_geom_xy = f"""ST_SETSRID(
+                ST_MAKEPOINT(x::FLOAT, y::FLOAT),
+                {sm.property(sm.geometry_field_name()).get('srid')}
+            ) as {sm.geometry_field_name()}"""
+            v_txt_pre_process_columns.append(txt_geom_xy)
 
         v_txt_columns = list(map(lambda x: self.process_raw_import_column(x), columns))
 

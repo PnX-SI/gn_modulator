@@ -29,6 +29,8 @@ class ImportMixinCount(ImportMixinUtils):
 
         txt_update_conditions = "" + "\n    OR ".join(v_update_conditions) + ""
 
+        print(txt_update_conditions)
+
         return f"""
     SELECT
         COUNT(*)
@@ -47,6 +49,7 @@ class ImportMixinCount(ImportMixinUtils):
         try:
             self.res["nb_update"] = SchemaMethods.c_sql_exec_txt(self.sql["nb_update"]).scalar()
         except Exception as e:
+            print(self.sql["nb_update"])
             self.add_error(
                 code="ERR_IMPORT_UPDATE_COUNT",
                 msg=f"Erreur lors du comptage du nombre d'update: {str(e)}",
