@@ -253,8 +253,13 @@ export class ModulesLayoutComponent implements OnInit {
     this.context.current_user = computedContext.current_user;
 
     const objectConfig = this.objectConfig() || {};
-    for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
-      this.context[key] = layout[key] || this.parentContext[key] || objectConfig[key];
+    if (
+      this.parentContext.object_code &&
+      this.context.object_code == this.parentContext.object_code
+    ) {
+      for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
+        this.context[key] = layout[key] || this.parentContext[key] || objectConfig[key];
+      }
     }
 
     // ici pour filter value, etc....

@@ -30,15 +30,19 @@ layout:
                   required: __f__!data.tables?.data
                   description: Choisir un fichier à importer
                   disabled: __f__data.id_import
+                - key: display_options
+                  title: Afficher les options avancées.
+                  type: boolean
             - display: fieldset
               title: Options
+              hidden: __f__!data.display_options
               items:
                 - key: options.enable_update
                   title: "Autoriser les mises à jour"
                   type: boolean
                   default: __f__false
                 - key: options.check_only
-                  title: Verifier
+                  title: Verifier avant insertion
                   description: |
                     L'import se fait en deux temps.
                     Une premiere étape de validation des données.

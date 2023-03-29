@@ -22,10 +22,15 @@ objects:
   actor:
     schema_code: m_sipaf.actor
     cruved: R
+  diagnostic:
+    schema_code: m_sipaf.diag
+    cruved: CRUD
+
 
 
 tree:
   pf:
+    diagnostic:
 
 pages_definition:
   site:
@@ -36,3 +41,9 @@ pages_definition:
         code: m_sipaf.site_edit
     edit:
     details:
+  diagnostic:
+    details:
+    edit:
+    create:
+      layout:
+        code: m_sipaf.diagnostic_edit

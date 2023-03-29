@@ -202,6 +202,21 @@ site_details_fields:
           - type: medias
             key: medias
 
+    - label: __f__o.tab_label(x)
+      object_code: diagnostic
+      items:
+        - code: utils.button_create
+          flex: "0"
+        - type: object
+          display: table
+          items:
+            - date_diagnostic
+            - organisme.nom_organisme
+            - role.nom_complet
+          prefilters: __f__`id_passage_faune = ${o.object(x, 'site').value}`
+          sort: date_diagnostic-
+
+
 site_form_fields:
   display: tabs
   overflow: true
