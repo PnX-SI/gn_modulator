@@ -119,6 +119,31 @@ class TestImport:
         }
         test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
 
+    def test_synthese_update_obs(self):
+        module_code = "MODULATOR"
+        object_code = "syn.synthese"
+        data_file_path = import_test_dir / "synthese_obs.csv"
+        expected_infos = {
+            "res.nb_data": 2,
+            "res.nb_insert": 2,
+            "res.nb_update": 0,
+            "res.nb_unchanged": 0,
+            "data_type": "csv",
+            "csv_delimiter": ",",
+        }
+        test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+
+        data_file_path = import_test_dir / "synthese_obs_update.csv"
+        expected_infos = {
+            "res.nb_data": 2,
+            "res.nb_insert": 0,
+            "res.nb_update": 1,
+            "res.nb_unchanged": 1,
+            "data_type": "csv",
+            "csv_delimiter": ",",
+        }
+        test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+
     # Test remontées d'erreurs
 
     def test_error_ERR_IMPORT_INVALID_VALUE_FOR_TYPE(self):

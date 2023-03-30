@@ -50,6 +50,7 @@ class ImportMixin(
             "process_pre_check",
             "process_raw_view",
             "process_view",
+            "process_relations_view",
             "process_post_check",
             "process_count",
         ]:
@@ -64,7 +65,7 @@ class ImportMixin(
         for action in [
             "process_insert",
             "process_update",
-            "process_relations",
+            "process_relations_data",
         ]:
             getattr(self, action)()
             if self.status == "ERROR":

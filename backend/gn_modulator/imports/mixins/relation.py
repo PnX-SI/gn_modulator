@@ -6,48 +6,51 @@ from gn_modulator import SchemaMethods
 
 
 class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw, ImportMixinUtils):
-    def process_relations(self):
+    def get_n_n_relations(self, from_table):
+        sm = SchemaMethods(self.schema_code)
+        return list(
+            filter(
+                lambda x: sm.is_relationship(x) and sm.property(x).get("relation_type") == "n-n",
+                self.get_table_columns(from_table),
+            )
+        )
+
+    def process_relations_view(self):
         from_table = self.tables.get("mapping") or self.tables["data"]
-        sm = SchemaMethods(self.schema_code)
 
-        columns = self.get_table_columns(from_table)
+        for key in self.get_n_n_relations(from_table):
+            self.process_relation_views(key, from_table)
 
-        for index, key in enumerate(columns):
-            if not sm.is_relationship(key):
-                continue
-            property = sm.property(key)
+    def process_relations_data(self):
+        from_table = self.tables.get("mapping") or self.tables["data"]
 
-            # on commence par les n-n
-            if property.get("relation_type") in ("n-n"):
-                self.import_relation_n_n(from_table, key)
+        for key in self.get_n_n_relations(from_table):
+            self.process_relation_data(key)
 
-    def import_relation_n_n(self, from_table, key):
-        sm = SchemaMethods(self.schema_code)
+    def process_relation_views(self, key, from_table):
+        self.sql["relations"] = self.sql.get("relations") or {}
+        self.tables["relations"] = self.tables.get("relations") or {}
+        sql = self.sql["relations"][key] = {}
+        tables = self.tables["relations"][key] = {}
 
-        self.sql[key] = {}
-
-        property = sm.property(key)
-        cor_table = property["schema_dot_table"]
-        rel = SchemaMethods(property["schema_code"])
-
-        raw_delete_view = self.table_name("raw_delete", key)
-        process_delete_view = self.table_name("process_delete", key)
-        raw_import_view = self.table_name("raw", key)
-        process_import_view = self.table_name("process", key)
+        tables["raw_delete_view"] = self.table_name("raw_delete", key)
+        tables["process_delete_view"] = self.table_name("process_delete", key)
+        tables["raw_view"] = self.table_name("raw", key)
+        tables["process_view"] = self.table_name("process", key)
 
         # 0) clean
+        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['process_delete_view']}")
+        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw_delete_view']}")
+        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['process_view']}")
+        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw_view']}")
 
-        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {process_delete_view}")
-        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {raw_delete_view}")
-        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {process_import_view}")
-        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {raw_import_view}")
+        sql["raw_view"] = self.sql_raw_view(
+            from_table, tables["raw_view"], keys=[key], key_unnest=key
+        )
 
         # 1) create raw_temp_table for n-n
-        self.sql[key]["raw_view"] = self.sql_raw_view(
-            from_table, raw_import_view, keys=[key], key_unnest=key
-        )
         try:
-            SchemaMethods.c_sql_exec_txt(self.sql[key]["raw_view"])
+            SchemaMethods.c_sql_exec_txt(sql["raw_view"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_CREATE_RAW_VIEW",
@@ -55,11 +58,12 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             )
             return
 
-        self.sql[key]["process_view"] = self.sql_process_view(
-            raw_import_view, process_import_view, keys=[key]
+        sql["process_view"] = self.sql_process_view(
+            tables["raw_view"], tables["process_view"], keys=[key]
         )
+
         try:
-            SchemaMethods.c_sql_exec_txt(self.sql[key]["process_view"])
+            SchemaMethods.c_sql_exec_txt(sql["process_view"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_CREATE_PROCESS_VIEW",
@@ -68,15 +72,11 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             )
             return
 
-        # 3) insert / update / delete ??
-
-        # - delete : tout depuis import_table
-        # create_view for delete
-        self.sql[key]["raw_delete_view"] = self.sql_raw_view(
-            from_table, raw_delete_view, keys=[key], key_unnest=key
+        sql["raw_delete_view"] = self.sql_raw_view(
+            from_table, tables["raw_delete_view"], keys=[key], key_unnest=key
         )
         try:
-            SchemaMethods.c_sql_exec_txt(self.sql[key]["raw_delete_view"])
+            SchemaMethods.c_sql_exec_txt(sql["raw_delete_view"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_CREATE_RAW_VIEW",
@@ -84,11 +84,11 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             )
             return
 
-        self.sql[key]["process_delete_view"] = self.sql_process_view(
-            raw_delete_view, process_delete_view, keys=[key]
+        sql["process_delete_view"] = self.sql_process_view(
+            tables["raw_delete_view"], tables["process_delete_view"], keys=[key]
         )
         try:
-            SchemaMethods.c_sql_exec_txt(self.sql[key]["process_delete_view"])
+            SchemaMethods.c_sql_exec_txt(sql["process_delete_view"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_CREATE_PROCESS_DELETE_VIEW",
@@ -96,15 +96,25 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             )
             return
 
-        self.sql[key][
+    def process_relation_data(self, key):
+        sm = SchemaMethods(self.schema_code)
+
+        tables = self.tables["relations"][key]
+        sql = self.tables["relations"][key]
+
+        property = sm.property(key)
+        cor_table = property["schema_dot_table"]
+        rel = SchemaMethods(property["schema_code"])
+
+        sql[
             "delete"
         ] = f"""
 DELETE FROM {cor_table} t
-    USING {process_delete_view} j
+    USING {tables['process_delete_view']} j
     WHERE t.{sm.pk_field_name()} = j.{sm.pk_field_name()};
 """
         try:
-            SchemaMethods.c_sql_exec_txt(self.sql[key]["delete"])
+            SchemaMethods.c_sql_exec_txt(sql["delete"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_DELETE",
@@ -113,13 +123,13 @@ DELETE FROM {cor_table} t
             return
 
         # - insert
-        self.sql[key]["insert"] = self.sql_insert(
-            process_import_view,
+        sql["insert"] = self.sql_insert(
+            tables["process_view"],
             keys=[sm.pk_field_name(), rel.pk_field_name()],
             dest_table=cor_table,
         )
         try:
-            SchemaMethods.c_sql_exec_txt(self.sql[key]["insert"])
+            SchemaMethods.c_sql_exec_txt(sql["insert"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_INSERT",

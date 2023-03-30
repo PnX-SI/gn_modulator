@@ -48,7 +48,13 @@ class ImportMixinRaw(ImportMixinUtils):
                 lambda x: (
                     x in keys
                     if keys is not None
-                    else not (sm.is_column(x) and sm.property(x).get("primary_key"))
+                    else (
+                        sm.has_property(x)
+                        and (
+                            (not sm.property(x).get("primary_key"))
+                            or sm.property(x).get("relation_type") == "n-n"
+                        )
+                    )
                 ),
                 from_table_columns,
             )
