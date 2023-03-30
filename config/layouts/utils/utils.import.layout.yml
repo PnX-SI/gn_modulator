@@ -30,6 +30,7 @@ layout:
                   required: __f__!data.tables?.data
                   description: Choisir un fichier à importer
                   disabled: __f__data.id_import
+                  color: info
                 - key: display_options
                   title: Afficher les options avancées.
                   type: boolean
@@ -49,8 +50,8 @@ layout:
                     Et une deuxième étape d'insertion et de mise à jour des données.
                   type: boolean
                   default: __f__true
-        - label: __f__`Erreurs (${data.errors?.length})`
-          hidden: __f__!data.errors?.length
+        - label: __f__`Erreurs (${data.errors?.length || 0})`
+          disabled: __f__!data.errors?.length
           items:
             - key: error_display_line
               title: Afficher les erreurs en ligne
@@ -78,9 +79,9 @@ layout:
           disabled: __f__!(formGroup.valid )
           hidden: __f__data.status == 'DONE'
         - type: button
-          color: info
           icon: refresh
           title: nouvel import
+          color: reset
           description: Faire un nouvel import
           action: reset
           hidden: __f__!data.id_import

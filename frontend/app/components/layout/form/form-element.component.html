@@ -1,7 +1,12 @@
 <ng-container *ngIf="!!formControl && !!data">
   <!-- input -->
   <ng-container *ngIf="computedLayout.type == 'file'">
-    <button mat-raised-button (click)="openInputFile()" [disabled]="computedLayout.disabled">
+    <button
+      [color]="computedLayout.color"
+      mat-raised-button
+      (click)="openInputFile()"
+      [disabled]="computedLayout.disabled"
+    >
       {{ computedLayout.title || elementKey }}
     </button>
 
@@ -124,21 +129,19 @@
   </ng-container>
 
   <!-- checkbox -->
-<ng-container *ngIf="['checkbox', 'boolean'].includes(computedLayout.type)"
->
-  <mat-checkbox
-    [formControl]="formControl"
-    >{{ computedLayout.title || elementKey }}
-  </mat-checkbox>
-  <mat-icon
-  matPrefix
-  *ngIf="computedLayout.description"
-  [matTooltip]="computedLayout.description"
-  class="icon-description"
->
-  help
-</mat-icon>
-</ng-container>
+  <ng-container *ngIf="['checkbox', 'boolean'].includes(computedLayout.type)">
+    <mat-checkbox [formControl]="formControl"
+      >{{ computedLayout.title || elementKey }}
+    </mat-checkbox>
+    <mat-icon
+      matPrefix
+      *ngIf="computedLayout.description"
+      [matTooltip]="computedLayout.description"
+      class="icon-description"
+    >
+      help
+    </mat-icon>
+  </ng-container>
 
   <!-- list-form -->
   <ng-container *ngIf="computedLayout.type == 'list_form'">

@@ -28,29 +28,40 @@ export class ModulesImportService {
     if (!data.id_import) {
       return {
         html: `
-          Veuillez choisir un fichier et appuyer sur Valider`,
+          <b>Veuillez choisir un fichier et appuyer sur Valider</b>`,
         class: 'info',
       };
     }
 
     if (data.status == 'READY') {
+      let html = `
+      <h4>Données prêtes pour l'import</h4>
+      <p>- Nombre de lignes <b>${data.res.nb_raw}</b></p>
+      <p>- Nombre d'insertion <b>${data.res.nb_insert}</b></p>`;
+      if (data.options.enable_update && data.res.nb_update) {
+        html += `<p>- Nombre de mise à jour <b>${data.res.nb_update}</b></p>`;
+      }
+      if (!data.options.enable_update && data.res.nb_update) {
+        html += `<p>- <span style="text-decoration:line-through"> Nombre de mise à jour ${data.res.nb_update} </span>(MAJ Non autorisée)</p>`;
+      }
+      html += `<p><b>Veuillez appuyer sur valider pour insérer les données</b></p>`;
       return {
-        html: `
-          <p>- Nombre de lignes ${data.res.nb_raw}</p>
-          <p>- Nombre d'insertion ${data.res.nb_insert}</p>
-          <p>- Nombre de mise à jour ${data.res.nb_update} ${
-          data.options.enable_update ? '' : '(MAJ Non autorisée)'
-        }</p>
-          Veuillez appuyer sur valider pour insérer les données`,
+        html,
         class: 'info',
       };
     }
 
     if (data.status == 'DONE') {
+      let html = `
+      <h4>Import Terminé</h4>
+      <p>- Nombre de lignes ${data.res.nb_raw}</p>
+      <p>- Nombre d'insertion ${data.res.nb_insert}</p>
+      `;
+      if (data.options.enable_update) {
+        html += `<p>- Nombre de mise à jour ${data.res.nb_update}</p>`;
+      }
       return {
-        html: `
-          Import Terminé
-          `,
+        html,
         class: 'success',
       };
     }
@@ -124,42 +135,4 @@ export class ModulesImportService {
     }
     return errorHTML;
   }
-
-  // for (let error of impt.errors.filter((e) => e.code == 'ERR_IMPORT_REQUIRED')) {
-  //   if (!txtErrorRequired) {
-  //     txtErrorRequired = `<h5></h5>`;
-  //   }
-  //   txtErrorRequired += `<b>${error.key}</b> ${error.lines.length} ligne(s): [${error.lines}]<br>`;
-  // }
-  // if (txtErrorRequired) {
-  //   txtImport += '<hr>';
-  //   txtImport += txtErrorRequired;
-  // }
-
-  // let txtErrorUnresolved;
-  // for (let error of impt.errors.filter((e) => e.code == 'ERR_IMPORT_UNRESOLVED')) {
-  //   if (!txtErrorUnresolved) {
-  //     txtErrorUnresolved = `<h5>Champs non résolus</h5>`;
-  //   }
-  //   txtErrorUnresolved += `<b>${error.key}</b> ${error.lines.length} ligne(s): [${error.lines}]<br>`;
-  //   if (error.values) {
-  //     txtErrorUnresolved += `Valeurs parmi : ${error.values
-  //       .map((v) => v.cd_nomenclature)
-  //       .join(', ')}<br>`;
-  //   }
-  // }
-  // if (txtErrorUnresolved) {
-  //   txtImport += '<hr>';
-  //   txtImport += txtErrorUnresolved;
-  // }
-
-  // for (let error of impt.errors.filter(
-  //   (e) => !['ERR_IMPORT_REQUIRED', 'ERR_IMPORT_UNRESOLVED'].includes(e.code)
-  // )) {
-  //   txtImport += '<hr>';
-  //   txtImport += `${error.code}: ${error.msg}`;
-  // }
-
-  // return txtImport;
-  // }
 }

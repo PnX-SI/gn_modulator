@@ -30,18 +30,32 @@
 }
 
 // couleur custom des bouttons
-.layout-buttons .mat-success {
+.mat-button-base.mat-success {
   background-color: green;
   color: #fff;
 }
 
 // couleur custom des bouttons
-.layout-buttons .mat-error {
+.mat-button-base.mat-info {
+  background-color: #4b8ed5;
+  color: #fff;
+}
+
+
+// couleur custom des bouttons
+.mat-button-base.mat-error {
   background-color: red;
   color: #fff;
 }
 
-.layout-buttons .mat-button-disabled {
+// couleur custom des bouttons
+.mat-button-base.mat-reset {
+  background-color: #d5cc4b;
+  color: #fff;
+}
+
+
+.mat-button-base.mat-button-disabled {
   color: rgba(0,0,0,.26);
   background-color: rgba(0,0,0,.12);
 }
