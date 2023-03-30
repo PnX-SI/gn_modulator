@@ -6,7 +6,12 @@ from geonature.utils.env import db
 
 @pytest.mark.skip()
 def test_data_file(
-    module_code, object_code, data_file_path=None, mapping_file_path=None, expected_infos={}, options={}
+    module_code,
+    object_code,
+    data_file_path=None,
+    mapping_file_path=None,
+    expected_infos={},
+    options={},
 ):
     with db.session.begin_nested():
         # ici options={"insert_data": True} est à true pour intégrer les avec un insert
@@ -27,8 +32,6 @@ def test_data_file(
     import_infos = impt.as_dict()
 
     expected_errors = expected_infos.pop("errors", [])
-
-    print(import_infos["res"])
 
     if len(expected_errors) == 0:
         # on teste si le nombre d'erreur est bien nul

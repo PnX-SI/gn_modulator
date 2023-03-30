@@ -365,4 +365,4 @@ class SchemaBase:
         return url
 
     def unique(self):
-        return self.attr('meta.unique') or []
+        return self.attr("meta.unique") or []

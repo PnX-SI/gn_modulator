@@ -27,36 +27,35 @@ class SchemaDoc:
         return txt
 
     def doc_import_key(self, key):
-
         txt = ""
 
         property_def = self.property(key)
         txt += f"- `{key}`\n"
-        type = property_def['type']
-        if property_def.get('schema_code'):
-            type = 'clé simple'
+        type = property_def["type"]
+        if property_def.get("schema_code"):
+            type = "clé simple"
 
-        if type == 'relation':
-            type = 'liste de clé séparée par une virgule `,`'
+        if type == "relation":
+            type = "liste de clé séparée par une virgule `,`"
 
         txt += f"  - *type*: `{type}`\n"
 
-        if type == 'geometry':
+        if type == "geometry":
             txt += f"  - *geometry_type*: `{self.property(key)['geometry_type']}`\n"
             txt += "  - format:\n"
             txt += "    - WKT\n"
             txt += f"    - XY (remplacer {key} par les colonnes x et y)"
 
-        if property_def.get('schema_code'):
-
-            rel = self.cls(property_def['schema_code'])
+        if property_def.get("schema_code"):
+            rel = self.cls(property_def["schema_code"])
             txt += f"  - *référence*: `{rel.labels()}`\n"
 
             champs = (
-                ['cd_nomenclature'] if property_def['schema_code'] == 'ref_nom.nomenclature'
+                ["cd_nomenclature"]
+                if property_def["schema_code"] == "ref_nom.nomenclature"
                 else rel.unique()
             )
-            champs_txt = ', '.join(map(lambda x: f'`{x}`', champs))
+            champs_txt = ", ".join(map(lambda x: f"`{x}`", champs))
             txt += f"  - *champ(s)*: {champs_txt}\n"
 
         if property_def.get("description"):
@@ -104,7 +103,7 @@ class SchemaDoc:
             )
         )
 
-        import_keys.sort(key=lambda x: (self.property(x).get('schema_code') or '', x))
+        import_keys.sort(key=lambda x: (self.property(x).get("schema_code") or "", x))
 
         required_import_keys = list(
             filter(

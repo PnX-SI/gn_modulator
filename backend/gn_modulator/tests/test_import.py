@@ -158,7 +158,7 @@ class TestImport:
             "data_type": "csv",
             "csv_delimiter": ",",
         }
-        impt = test_data_file(
+        test_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -169,9 +169,34 @@ class TestImport:
         res = sm.get_row_as_dict(
             "test_213", "entity_source_pk_value", fields=["id_synthese", "the_geom_4326"]
         )
-        print(impt.sql["raw_view"])
-        print(res)
         assert res["the_geom_4326"] is not None
+
+    def test_sipaf_xy(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_xy.csv"
+        options = {}
+        expected_infos = {
+            "res.nb_data": 1,
+            "res.nb_insert": 1,
+            "res.nb_update": 0,
+            "res.nb_unchanged": 0,
+            "data_type": "csv",
+            "csv_delimiter": ",",
+        }
+        test_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+            options=options,
+        )
+
+        sm = SchemaMethods("m_sipaf.pf")
+        res = sm.get_row_as_dict(
+            "TEST_XY", "code_passage_faune", fields=["id_passage_faune", "geom"]
+        )
+        assert res["geom"] is not None
 
     # Test remontées d'erreurs
 

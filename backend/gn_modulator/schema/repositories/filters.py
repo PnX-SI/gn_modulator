@@ -8,6 +8,7 @@ from ..errors import SchemaRepositoryFilterError, SchemaRepositoryFilterTypeErro
 from sqlalchemy.sql.functions import ReturnTypeFromArgs
 from gn_modulator.utils.filters import parse_filters
 
+
 class unaccent(ReturnTypeFromArgs):
     pass
 
@@ -87,7 +88,9 @@ class SchemaRepositoriesFilters:
                     cur_ops.append(elem)
 
             elif isinstance(elem, str):
-                loop_filter, query = self.process_filter_array(Model, parse_filters(elem), query, condition)
+                loop_filter, query = self.process_filter_array(
+                    Model, parse_filters(elem), query, condition
+                )
 
             else:
                 raise SchemaRepositoryFilterError(

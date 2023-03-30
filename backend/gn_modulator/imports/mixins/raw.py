@@ -43,7 +43,6 @@ class ImportMixinRaw(ImportMixinUtils):
         sm = SchemaMethods(self.schema_code)
 
         from_table_columns = self.get_table_columns(from_table)
-
         columns = list(
             filter(
                 lambda x: (
@@ -69,6 +68,8 @@ class ImportMixinRaw(ImportMixinUtils):
             )
         )
 
+        v_txt_columns = list(map(lambda x: self.process_raw_import_column(x), columns))
+
         # traitement de la geometrie en x y
         # si des champs x et y sont présents
         # s'il n'y a pas de champs geom
@@ -78,10 +79,8 @@ class ImportMixinRaw(ImportMixinUtils):
             and "x" in from_table_columns
             and "y" in from_table_columns
         ):
-
             v_txt_pre_process_columns.append(self.txt_geom_xy())
-
-        v_txt_columns = list(map(lambda x: self.process_raw_import_column(x), columns))
+            v_txt_columns.append(sm.geometry_field_name())
 
         txt_primary_column = f"""CONCAT({", '|', ".join(
                 map(
@@ -112,9 +111,8 @@ FROM pre_process pp;
 """
 
     def txt_geom_xy(self):
-
         sm = SchemaMethods(self.schema_code)
-        srid_column = sm.geometry_field_name().get("srid")
+        srid_column = sm.property(sm.geometry_field_name()).get("srid")
 
         if self.options.get("srid") and srid_column != self.options.get("srid"):
             return f"""ST_TRANSFORM(
@@ -127,7 +125,7 @@ FROM pre_process pp;
 
         return f"""ST_SETSRID(
     ST_MAKEPOINT(x::FLOAT, y::FLOAT),
-    {sm.property(srid_column)}
+    {srid_column}
     ) as {sm.geometry_field_name()}"""
 
     def pre_process_raw_import_columns(self, key, key_unnest=None):
