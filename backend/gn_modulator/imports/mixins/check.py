@@ -20,7 +20,7 @@ class ImportMixinCheck(ImportMixinUtils):
         table_test = self.tables.get("mapping") or self.tables["data"]
         columns = self.get_table_columns(table_test)
         sm = SchemaMethods(self.schema_code)
-        unique = sm.attr("meta.unique")
+        unique = sm.unique()
 
         missing_unique = [key for key in unique if key not in columns]
         if missing_unique:

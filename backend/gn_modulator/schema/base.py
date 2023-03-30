@@ -363,3 +363,6 @@ class SchemaBase:
             url = "{}{}".format(self.cls.base_url(), url)
 
         return url
+
+    def unique(self):
+        return self.attr('meta.unique') or []

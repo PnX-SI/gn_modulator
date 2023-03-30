@@ -13,10 +13,10 @@ class SchemaSqlConstraint:
     def slq_txt_unique_key_constraint(self):
         """ """
 
-        if not (self.attr("meta.unique") and self.attr("meta.unique_in_db")):
+        if not (self.unique() and self.attr("meta.unique_in_db")):
             return ""
 
-        unique = self.attr("meta.unique")
+        unique = self.unique()
 
         txt = "\nALTER TABLE {} ADD CONSTRAINT unique_{}_{} UNIQUE({});".format(
             self.sql_schema_dot_table(),

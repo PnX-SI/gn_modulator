@@ -1,6 +1,7 @@
 import pytest  # noqa
 from gn_modulator.utils.env import import_test_dir
 from .utils.imports import test_data_file
+from gn_modulator import SchemaMethods
 
 
 @pytest.mark.usefixtures("temporary_transaction", scope="session")
@@ -143,6 +144,34 @@ class TestImport:
             "csv_delimiter": ",",
         }
         test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+
+    def test_synthese_srid(self):
+        module_code = "MODULATOR"
+        object_code = "syn.synthese"
+        options = {"srid": 2154}
+        data_file_path = import_test_dir / "synthese_srid.csv"
+        expected_infos = {
+            "res.nb_data": 1,
+            "res.nb_insert": 1,
+            "res.nb_update": 0,
+            "res.nb_unchanged": 0,
+            "data_type": "csv",
+            "csv_delimiter": ",",
+        }
+        impt = test_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+            options=options,
+        )
+        sm = SchemaMethods(object_code)
+        res = sm.get_row_as_dict(
+            "test_213", "entity_source_pk_value", fields=["id_synthese", "the_geom_4326"]
+        )
+        print(impt.sql["raw_view"])
+        print(res)
+        assert res["the_geom_4326"] is not None
 
     # Test remontées d'erreurs
 

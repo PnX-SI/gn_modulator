@@ -97,7 +97,7 @@ FROM {from_table} t
 
         txt_column = f"{alias_join}.{sm.pk_field_name()}"
 
-        unique = sm.attr("meta.unique")
+        unique = sm.unique()
         v_join = []
 
         # resolution des cles si besoins
@@ -163,7 +163,7 @@ FROM {from_table} t
         if "." in key:
             return key
 
-        if len(sm.attr("meta.unique", [])) <= 1:
+        if len(sm.unique()) <= 1:
             return f"{alias_main}.{key}"
 
         return f"SPLIT_PART({alias_main}.{key}, '|', { index_unique + 1})"

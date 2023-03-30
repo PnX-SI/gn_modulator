@@ -110,14 +110,16 @@ def cmd_process_sql(module_code=None, schema_code=None, force=False):
 
 @click.command("doc")
 @click.argument("schema_code")
-@click.option("-f", "--force", is_flag=True)
+@click.argument("doc_type")
+@click.option("-e", "exclude")
 @with_appcontext
-def cmd_doc_schema(schema_code, force=False):
+def cmd_doc_schema(schema_code, doc_type, exclude=""):
     """
     affiche la doc d'un schema identifié par schema_code
     """
     init_gn_modulator()
-    txt = SchemaMethods(schema_code).doc_markdown()
+    exclude_keys = exclude.split(",")
+    txt = SchemaMethods(schema_code).doc_markdown(doc_type, exclude_keys)
     print(txt)
     return True
 

@@ -25,7 +25,7 @@ def test_schema_rest(client, user, module_code, object_code, data_post, data_upd
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     assert schema_code is not None
     sm = SchemaMethods(schema_code)
-    field_name = sm.attr("meta.unique")
+    field_name = sm.unique()
     data_unique = ",".join(list(map(lambda x: data_post[x], field_name)))
 
     # GET VIDE

@@ -104,6 +104,7 @@ class SchemaAuto:
                 continue
             properties[k] = {
                 "type": "string",
+                "is_column_property": True
                 # "column_property": "label",
                 # "title": k,
             }

@@ -13,21 +13,22 @@ def init_gn_modulator():
     Fonction d'initialisation de gn_module
     """
 
+    verbose = False
     # - definitions
     start_time = time.time()
     DefinitionMethods.init_definitions()
-    print(f"definitions : {round((time.time() - start_time)*1e3)} ms")
+    verbose and print(f"definitions : {round((time.time() - start_time)*1e3)} ms")
     if get_errors():
         return
 
     # - schemas
     start_time = time.time()
     SchemaMethods.init_schemas()
-    print(f"schemas     : {round((time.time() - start_time)*1e3)} ms")
+    verbose and print(f"schemas     : {round((time.time() - start_time)*1e3)} ms")
     if get_errors():
         return
 
     # - modules
     start_time = time.time()
     ModuleMethods.init_modules()
-    print(f"modules     : {round((time.time() - start_time)*1e3)} ms")
+    verbose and print(f"modules     : {round((time.time() - start_time)*1e3)} ms")

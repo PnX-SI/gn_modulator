@@ -17,6 +17,7 @@ class ImportMixinRaw(ImportMixinUtils):
             SchemaMethods.c_sql_exec_txt(self.sql["raw_view"])
 
         except Exception as e:
+            print(self.sql["raw_view"])
             self.add_error(
                 code="ERR_IMPORT_CREATE_RAW_VIEW",
                 msg=f"Erreur dans la creation de la vue 'raw': {str(e)}",
@@ -77,11 +78,8 @@ class ImportMixinRaw(ImportMixinUtils):
             and "x" in from_table_columns
             and "y" in from_table_columns
         ):
-            txt_geom_xy = f"""ST_SETSRID(
-                ST_MAKEPOINT(x::FLOAT, y::FLOAT),
-                {sm.property(sm.geometry_field_name()).get('srid')}
-            ) as {sm.geometry_field_name()}"""
-            v_txt_pre_process_columns.append(txt_geom_xy)
+
+            v_txt_pre_process_columns.append(self.txt_geom_xy())
 
         v_txt_columns = list(map(lambda x: self.process_raw_import_column(x), columns))
 
@@ -113,6 +111,25 @@ SELECT
 FROM pre_process pp;
 """
 
+    def txt_geom_xy(self):
+
+        sm = SchemaMethods(self.schema_code)
+        srid_column = sm.geometry_field_name().get("srid")
+
+        if self.options.get("srid") and srid_column != self.options.get("srid"):
+            return f"""ST_TRANSFORM(
+    ST_SETSRID(
+        ST_MAKEPOINT(x::FLOAT, y::FLOAT),
+        {self.options.get('srid')}
+    ),
+    {srid_column}
+) as {sm.geometry_field_name()}"""
+
+        return f"""ST_SETSRID(
+    ST_MAKEPOINT(x::FLOAT, y::FLOAT),
+    {sm.property(srid_column)}
+    ) as {sm.geometry_field_name()}"""
+
     def pre_process_raw_import_columns(self, key, key_unnest=None):
         """
         TODO gérer les null dans l'import csv (ou dans l'insert)
@@ -134,15 +151,25 @@ FROM pre_process pp;
             return key
 
         if property["type"] == "geometry":
-            geometry_type = "ST_MULTI" if property["geometry_type"] == "multipolygon" else ""
-            return f"""{geometry_type}(
+            geometry_type = "ST_MULTI(" if property["geometry_type"] == "multipolygon" else ""
+            last_par = ")" if geometry_type else ""
+            if self.options.get("srid") and self.options.get("srid") != sm.property(key).get(
+                "srid"
+            ):
+                return f"""ST_TRANSFORM({geometry_type}
         ST_SETSRID(
             ST_FORCE2D(
                 {key}::GEOMETRY
-            ), {sm.property(key).get('srid')}
-        )
-    )
-    AS {key}"""
+            ), {self.options.get('srid')}
+        ),
+        {sm.property(key).get('srid')}
+    ){last_par} AS {key}"""
+
+            return f"""{geometry_type}ST_SETSRID(
+        ST_FORCE2D(
+            {key}::GEOMETRY
+        ), {sm.property(key).get('srid')}
+    ){last_par} AS {key}"""
 
         if property["type"] == "number":
             return f"({key})::FLOAT"

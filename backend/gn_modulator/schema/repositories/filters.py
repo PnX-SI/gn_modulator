@@ -6,7 +6,7 @@ from sqlalchemy import cast, and_, or_, not_
 from geonature.utils.env import db
 from ..errors import SchemaRepositoryFilterError, SchemaRepositoryFilterTypeError
 from sqlalchemy.sql.functions import ReturnTypeFromArgs
-
+from gn_modulator.utils.filters import parse_filters
 
 class unaccent(ReturnTypeFromArgs):
     pass
@@ -85,6 +85,9 @@ class SchemaRepositoriesFilters:
                     cur_ops = cur_ops[:-1]
                 else:
                     cur_ops.append(elem)
+
+            elif isinstance(elem, str):
+                loop_filter, query = self.process_filter_array(Model, parse_filters(elem), query, condition)
 
             else:
                 raise SchemaRepositoryFilterError(
