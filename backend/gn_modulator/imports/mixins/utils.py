@@ -32,6 +32,18 @@ class ImportMixinUtils:
             )
         SchemaMethods.c_sql_exec_txt(f"CREATE SCHEMA IF NOT EXISTS {schema_import}")
 
+        # check srid (avoid sql injection)
+        if self.options.get('srid'):
+            try:
+                int(self.options.get('srid'))
+            except ValueError:
+                self.add_error(
+                    {
+                        "code": "ERR_IMPORT_OPTIONS",
+                        "msg": f"Le srid n'est pas valide {self.options.get('srid')}",
+                    }
+                )
+
     def pretty_infos(self):
         txt = ""
         if self.res.get("nb_data") is not None:

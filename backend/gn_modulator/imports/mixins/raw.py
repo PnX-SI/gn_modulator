@@ -77,17 +77,23 @@ class ImportMixinRaw(ImportMixinUtils):
         txt_columns = ",\n    ".join(v_txt_columns)
         txt_limit = f"\nLIMIT {limit}" if limit else ""
 
+        columns_nn_nomenclature = list(
+            filter(
+                lambda x: sm.is_relation_n_n(x) and sm.property(x).get("nomenclature_type"),
+                columns,
+            )
+        )
+
         v_with_n_n_nomenclature = list(
             map(
                 lambda x: self.process_raw_import_with_n_n_nomenclature(x, from_table),
-                filter(lambda x: sm.is_relation_n_n(x), columns),
+                columns_nn_nomenclature,
             )
         )
 
         v_join_n_n_nomenclature = list(
             map(
-                lambda x: self.process_raw_import_join_n_n_nomenclature(x),
-                filter(lambda x: sm.is_relation_n_n(x), columns),
+                lambda x: self.process_raw_import_join_n_n_nomenclature(x), columns_nn_nomenclature
             )
         )
 
