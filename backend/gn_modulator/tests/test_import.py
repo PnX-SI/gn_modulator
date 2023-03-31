@@ -198,6 +198,65 @@ class TestImport:
         )
         assert res["geom"] is not None
 
+    def test_sipaf_exemple_simple(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_simple.csv"
+        expected_infos = {
+            "res.nb_data": 1,
+            "res.nb_insert": 1,
+        }
+        test_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+        )
+
+    def test_sipaf_exemple_complet(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_complet.csv"
+        expected_infos = {
+            "res.nb_data": 1,
+            "res.nb_insert": 1,
+        }
+        test_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+        )
+
+    def test_sipaf_update(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_update_1.csv"
+        expected_infos = {
+            "res.nb_data": 1,
+            "res.nb_insert": 1,
+            "res.nb_update": 0,
+        }
+        test_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+        )
+
+        data_file_path = import_test_dir / "pf_update_2.csv"
+        expected_infos = {
+            "res.nb_data": 1,
+            "res.nb_insert": 0,
+            "res.nb_update": 1,
+        }
+        test_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+        )
+
     # Test remontées d'erreurs
 
     def test_error_ERR_IMPORT_INVALID_VALUE_FOR_TYPE(self):

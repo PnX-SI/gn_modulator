@@ -307,6 +307,8 @@ class DefinitionBase:
         # chargement du fichier yml
         try:
             definition = cls.load_definition_from_file(file_path)
+            if not definition:
+                return
             cls.save_in_cache_definition(definition, file_path)
 
             return definition

@@ -366,3 +366,6 @@ class SchemaBase:
 
     def unique(self):
         return self.attr("meta.unique") or []
+
+    def is_relation_n_n(self, key):
+        return self.has_property(key) and self.property(key).get("relation_type") == "n-n"

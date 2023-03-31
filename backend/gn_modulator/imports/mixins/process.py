@@ -3,12 +3,11 @@ from .utils import ImportMixinUtils
 
 
 class ImportMixinProcess(ImportMixinUtils):
-    def process_view(self, keys=None):
+    def process_view(self):
         from_table = self.tables["raw"]
         dest_table = self.tables["process"] = self.table_name("process")
         self.tables = self.tables
-
-        self.sql["process_view"] = self.sql_process_view(from_table, dest_table, keys)
+        self.sql["process_view"] = self.sql_process_view(from_table, dest_table)
 
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["process_view"])
@@ -21,7 +20,7 @@ class ImportMixinProcess(ImportMixinUtils):
 
         self.count_and_check_table("process", dest_table)
 
-    def sql_process_view(self, from_table, dest_table, keys=None):
+    def sql_process_view(self, from_table, dest_table, key_nn=None):
         """
         requete pour créer une vue qui résoud les clé
         """
@@ -33,14 +32,14 @@ class ImportMixinProcess(ImportMixinUtils):
 
         from_table_columns = self.get_table_columns(from_table)
 
-        columns = list(
-            filter(
-                lambda x: (
-                    x in keys
-                    if keys is not None
-                    else sm.is_column(x) and not sm.property(x).get("primary_key")
-                ),
-                from_table_columns,
+        columns = (
+            [key_nn]
+            if key_nn
+            else list(
+                filter(
+                    lambda x: (sm.is_column(x) and not sm.property(x).get("primary_key")),
+                    from_table_columns,
+                )
             )
         )
 
@@ -70,13 +69,29 @@ class ImportMixinProcess(ImportMixinUtils):
         # TODO rendre id_digitiser parametrable ?
         txt_id_digitiser = ""
         if self.id_digitiser and self.id_digitiser_key():
-            txt_id_digitiser = f"{self.id_digitiser} AS {self.id_digitiser_key()},"
+            txt_id_digitiser = f"\n{self.id_digitiser} AS {self.id_digitiser_key()},"
+
+        if key_nn:
+            return f"""DROP VIEW IF EXISTS {dest_table} CASCADE;
+CREATE VIEW {dest_table} AS
+WITH unnest_{key} AS (
+    SELECT
+        id_import,
+        {sm.pk_field_name()},
+        UNNEST(STRING_TO_ARRAY({key}, ','   )) AS {key}
+        FROM {from_table}
+)
+SELECT
+    id_import,{txt_id_digitiser}
+    {txt_columns}
+FROM unnest_{key} AS t
+{txt_joins};
+"""
 
         return f"""DROP VIEW IF EXISTS {dest_table} CASCADE;
 CREATE VIEW {dest_table} AS
 SELECT
-    id_import,
-    {txt_id_digitiser}
+    id_import,{txt_id_digitiser}
     {txt_columns}
 FROM {from_table} t
 {txt_joins};

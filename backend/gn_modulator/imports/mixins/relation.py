@@ -30,40 +30,40 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
     def process_relation_views(self, key, from_table):
         self.sql["relations"] = self.sql.get("relations") or {}
         self.tables["relations"] = self.tables.get("relations") or {}
-        sql = self.sql["relations"][key] = {}
-        tables = self.tables["relations"][key] = {}
+        sql_rel = self.sql["relations"][key] = {}
+        tables_rel = self.tables["relations"][key] = {}
 
-        tables["raw_delete_view"] = self.table_name("raw_delete", key)
-        tables["process_delete_view"] = self.table_name("process_delete", key)
-        tables["raw_view"] = self.table_name("raw", key)
-        tables["process_view"] = self.table_name("process", key)
+        # tables["raw_delete_view"] = self.table_name("raw_delete", key)
+        tables_rel["delete"] = self.table_name("delete", key)
+        # tables["raw_view"] = self.table_name("raw", key)
+        tables_rel["process"] = self.table_name("process", key)
 
         # 0) clean
-        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['process_delete_view']}")
-        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw_delete_view']}")
-        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['process_view']}")
-        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw_view']}")
+        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables_rel['delete']}")
+        # SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw_delete_view']}")
+        SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables_rel['process']}")
+        # SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw_view']}")
 
-        sql["raw_view"] = self.sql_raw_view(
-            from_table, tables["raw_view"], keys=[key], key_unnest=key
+        # sql["raw_view"] = self.sql_raw_view(
+        #     from_table, tables["raw_view"], keys=[key], key_unnest=key
+        # )
+
+        # # 1) create raw_temp_table for n-n
+        # try:
+        #     SchemaMethods.c_sql_exec_txt(sql["raw_view"])
+        # except Exception as e:
+        #     self.add_error(
+        #         code="ERR_IMPORT_RELATION_CREATE_RAW_VIEW",
+        #         msg=f"Erreur dans la creation de la vue 'raw' pour {key}: {str(e)}",
+        #     )
+        #     return
+
+        sql_rel["process_view"] = self.sql_process_view(
+            self.tables["raw"], tables_rel["process"], key_nn=key
         )
 
-        # 1) create raw_temp_table for n-n
         try:
-            SchemaMethods.c_sql_exec_txt(sql["raw_view"])
-        except Exception as e:
-            self.add_error(
-                code="ERR_IMPORT_RELATION_CREATE_RAW_VIEW",
-                msg=f"Erreur dans la creation de la vue 'raw' pour {key}: {str(e)}",
-            )
-            return
-
-        sql["process_view"] = self.sql_process_view(
-            tables["raw_view"], tables["process_view"], keys=[key]
-        )
-
-        try:
-            SchemaMethods.c_sql_exec_txt(sql["process_view"])
+            SchemaMethods.c_sql_exec_txt(sql_rel["process_view"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_CREATE_PROCESS_VIEW",
@@ -72,23 +72,23 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             )
             return
 
-        sql["raw_delete_view"] = self.sql_raw_view(
-            from_table, tables["raw_delete_view"], keys=[key], key_unnest=key
-        )
-        try:
-            SchemaMethods.c_sql_exec_txt(sql["raw_delete_view"])
-        except Exception as e:
-            self.add_error(
-                code="ERR_IMPORT_RELATION_CREATE_RAW_VIEW",
-                msg=f"Erreur dans la creation de la vue 'delete_raw' pour {key}: {str(e)}",
-            )
-            return
+        # sql["raw_delete_view"] = self.sql_raw_view(
+        #     from_table, tables["raw_delete_view"], keys=[key], key_unnest=key
+        # )
+        # try:
+        #     SchemaMethods.c_sql_exec_txt(sql["raw_delete_view"])
+        # except Exception as e:
+        #     self.add_error(
+        #         code="ERR_IMPORT_RELATION_CREATE_RAW_VIEW",
+        #         msg=f"Erreur dans la creation de la vue 'delete_raw' pour {key}: {str(e)}",
+        #     )
+        #     return
 
-        sql["process_delete_view"] = self.sql_process_view(
-            tables["raw_delete_view"], tables["process_delete_view"], keys=[key]
+        sql_rel["delete_view"] = self.sql_process_view(
+            self.tables["raw"], tables_rel["delete"], key_nn=key
         )
         try:
-            SchemaMethods.c_sql_exec_txt(sql["process_delete_view"])
+            SchemaMethods.c_sql_exec_txt(sql_rel["delete_view"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_CREATE_PROCESS_DELETE_VIEW",
@@ -99,22 +99,22 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
     def process_relation_data(self, key):
         sm = SchemaMethods(self.schema_code)
 
-        tables = self.tables["relations"][key]
-        sql = self.tables["relations"][key]
+        tables_rel = self.tables["relations"][key]
+        sql_rel = self.tables["relations"][key]
 
         property = sm.property(key)
         cor_table = property["schema_dot_table"]
         rel = SchemaMethods(property["schema_code"])
 
-        sql[
+        sql_rel[
             "delete"
         ] = f"""
 DELETE FROM {cor_table} t
-    USING {tables['process_delete_view']} j
+    USING {tables_rel['delete']} j
     WHERE t.{sm.pk_field_name()} = j.{sm.pk_field_name()};
 """
         try:
-            SchemaMethods.c_sql_exec_txt(sql["delete"])
+            SchemaMethods.c_sql_exec_txt(sql_rel["delete"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_DELETE",
@@ -123,13 +123,13 @@ DELETE FROM {cor_table} t
             return
 
         # - insert
-        sql["insert"] = self.sql_insert(
-            tables["process_view"],
+        sql_rel["insert"] = self.sql_insert(
+            tables_rel["process"],
             keys=[sm.pk_field_name(), rel.pk_field_name()],
             dest_table=cor_table,
         )
         try:
-            SchemaMethods.c_sql_exec_txt(sql["insert"])
+            SchemaMethods.c_sql_exec_txt(sql_rel["insert"])
         except Exception as e:
             self.add_error(
                 code="ERR_IMPORT_RELATION_INSERT",

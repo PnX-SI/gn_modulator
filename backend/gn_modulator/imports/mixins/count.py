@@ -34,7 +34,7 @@ class ImportMixinCount(ImportMixinUtils):
         SELECT
             {pk},
             ARRAY_AGG({rel_pk}) AS a
-            FROM {self.tables['relations'][key]['process_view']}
+            FROM {self.tables['relations'][key]['process']}
             GROUP BY {pk}
     ), cor_{key} AS (
         SELECT
@@ -103,7 +103,6 @@ class ImportMixinCount(ImportMixinUtils):
         try:
             self.res["nb_update"] = SchemaMethods.c_sql_exec_txt(self.sql["nb_update"]).scalar()
         except Exception as e:
-            print(self.sql["nb_update"])
             self.add_error(
                 code="ERR_IMPORT_UPDATE_COUNT",
                 msg=f"Erreur lors du comptage du nombre d'update: {str(e)}",

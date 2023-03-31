@@ -1,3 +1,7 @@
+import yaml
+from gn_modulator.utils.yaml import YmlLoader
+
+
 class SchemaDoc:
     """
     methodes pour faire de la doc
@@ -5,7 +9,7 @@ class SchemaDoc:
 
     pass
 
-    def doc_markdown(self, doc_type, exclude=[]):
+    def doc_markdown(self, doc_type, exclude=[], file_path=None):
         """
         retourne la doc d'un schema en markdown
         """
@@ -13,6 +17,24 @@ class SchemaDoc:
         if doc_type == "import":
             return self.doc_import(exclude)
 
+        if doc_type == "import_fields":
+            return self.doc_import_fields(exclude)
+
+        if doc_type == "table":
+            return self.doc_table(exclude)
+
+        if doc_type == "csv":
+            return self.doc_csv(file_path)
+
+    def doc_csv(self, file_path):
+        with open(file_path) as f:
+            data = yaml.load(f, YmlLoader)
+            txt = ";".join(data[0].keys()) + "\n"
+            for d in data:
+                txt += ";".join(map(lambda x: str(x), d.values()))
+            return txt
+
+    def doc_table(self, exclude=[]):
         txt = ""
 
         txt += f"### Table `{self.sql_schema_dot_table()}`\n"
@@ -32,10 +54,11 @@ class SchemaDoc:
         property_def = self.property(key)
         txt += f"- `{key}`\n"
         type = property_def["type"]
+
         if property_def.get("schema_code"):
             type = "clé simple"
 
-        if type == "relation":
+        if property_def.get("relation_type") == "n-n":
             type = "liste de clé séparée par une virgule `,`"
 
         txt += f"  - *type*: `{type}`\n"
@@ -43,8 +66,14 @@ class SchemaDoc:
         if type == "geometry":
             txt += f"  - *geometry_type*: `{self.property(key)['geometry_type']}`\n"
             txt += "  - format:\n"
-            txt += "    - WKT\n"
-            txt += f"    - XY (remplacer {key} par les colonnes x et y)"
+            txt += "    - WKT (par ex. `POINT(0.1 45.2)` (adapter au SRID)')\n"
+            txt += f"    - XY (remplacer {key} par les colonnes x et y)\n"
+
+        if type == "date":
+            txt += "  - format: `YYYY-MM-DD` (par ex. `2023-03-31`)\n"
+
+        if type == "boolean":
+            txt += "  - format: `true`,`t`,`false`,`f`\n"
 
         if property_def.get("schema_code"):
             rel = self.cls(property_def["schema_code"])
@@ -85,9 +114,7 @@ class SchemaDoc:
 
         return txt
 
-    def doc_import(self, exclude=[]):
-        txt = ""
-
+    def import_keys(self, exclude=[]):
         import_keys = list(
             filter(
                 lambda x: (
@@ -97,7 +124,7 @@ class SchemaDoc:
                     )
                     and (not self.property(x).get("primary_key"))
                     and (not self.property(x).get("is_column_property"))
-                    and (not x in exclude)
+                    and (x not in exclude)
                 ),
                 self.properties(),
             )
@@ -114,6 +141,17 @@ class SchemaDoc:
         non_required_import_keys = list(
             filter(lambda x: x not in required_import_keys, import_keys)
         )
+
+        return required_import_keys, non_required_import_keys
+
+    def doc_import_fields(self, exclude=[]):
+        required_import_keys, non_required_import_keys = self.import_keys(exclude)
+
+        return ",".join(required_import_keys + non_required_import_keys)
+
+    def doc_import(self, exclude=[]):
+        txt = ""
+        required_import_keys, non_required_import_keys = self.import_keys(exclude)
 
         txt += "\n\n#### Champs obligatoires\n\n"
 

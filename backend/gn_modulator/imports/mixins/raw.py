@@ -17,7 +17,6 @@ class ImportMixinRaw(ImportMixinUtils):
             SchemaMethods.c_sql_exec_txt(self.sql["raw_view"])
 
         except Exception as e:
-            print(self.sql["raw_view"])
             self.add_error(
                 code="ERR_IMPORT_CREATE_RAW_VIEW",
                 msg=f"Erreur dans la creation de la vue 'raw': {str(e)}",
@@ -48,25 +47,13 @@ class ImportMixinRaw(ImportMixinUtils):
                 lambda x: (
                     x in keys
                     if keys is not None
-                    else (
-                        sm.has_property(x)
-                        and (
-                            (not sm.property(x).get("primary_key"))
-                            or sm.property(x).get("relation_type") == "n-n"
-                        )
-                    )
+                    else (sm.has_property(x) or x in ["id_import", "x", "y"])
                 ),
                 from_table_columns,
             )
         )
 
-        # on preprocess ttes les colonnes
-        v_txt_pre_process_columns = list(
-            map(
-                lambda x: self.pre_process_raw_import_columns(x, key_unnest=key_unnest),
-                from_table_columns,
-            )
-        )
+        columns.append(sm.pk_field_name())
 
         v_txt_columns = list(map(lambda x: self.process_raw_import_column(x), columns))
 
@@ -79,128 +66,161 @@ class ImportMixinRaw(ImportMixinUtils):
             and "x" in from_table_columns
             and "y" in from_table_columns
         ):
-            v_txt_pre_process_columns.append(self.txt_geom_xy())
-            v_txt_columns.append(sm.geometry_field_name())
+            v_txt_columns.append(self.txt_geom_xy())
 
-        txt_primary_column = f"""CONCAT({", '|', ".join(
-                map(
-                    lambda x: f"pp.{x}",
-                    sm.attr('meta.unique')))}) AS {sm.pk_field_name()}"""
-        v_txt_columns.insert(0, txt_primary_column)
+        # txt_primary_column = f"""CONCAT({", '|', ".join(
+        #         map(
+        #             lambda x: f"pp.{x}",
+        #             sm.attr('meta.unique')))}) AS {sm.pk_field_name()}"""
+        # v_txt_columns.insert(0, txt_primary_column)
 
         txt_columns = ",\n    ".join(v_txt_columns)
-        txt_pre_process_columns = ",\n    ".join(v_txt_pre_process_columns)
         txt_limit = f"\nLIMIT {limit}" if limit else ""
 
-        if "id_import" not in txt_pre_process_columns:
-            txt_pre_process_columns = f"id_import, {txt_pre_process_columns}"
+        v_with_n_n_nomenclature = list(
+            map(
+                lambda x: self.process_raw_import_with_n_n_nomenclature(x, from_table),
+                filter(lambda x: sm.is_relation_n_n(x), columns),
+            )
+        )
 
-        if "id_import" not in txt_columns:
-            txt_columns = f"id_import, {txt_columns}"
+        v_join_n_n_nomenclature = list(
+            map(
+                lambda x: self.process_raw_import_join_n_n_nomenclature(x),
+                filter(lambda x: sm.is_relation_n_n(x), columns),
+            )
+        )
+
+        txt_with_n_n_nomenclature = (
+            "WITH " + ", ".join(v_with_n_n_nomenclature) if v_with_n_n_nomenclature else ""
+        )
+        txt_join_n_n_nomenclature = (
+            "\n".join(v_join_n_n_nomenclature) + "\n" if v_join_n_n_nomenclature else ""
+        )
 
         return f"""DROP VIEW IF EXISTS {dest_table} CASCADE;
 CREATE VIEW {dest_table} AS
-WITH pre_process AS (
-SELECT
-    {txt_pre_process_columns}
-FROM {from_table}{txt_limit}
-)
+{txt_with_n_n_nomenclature}
 SELECT
     {txt_columns}
-FROM pre_process pp;
+FROM {from_table} t
+{txt_join_n_n_nomenclature}{txt_limit};
 """
 
     def txt_geom_xy(self):
         sm = SchemaMethods(self.schema_code)
-        srid_column = sm.property(sm.geometry_field_name()).get("srid")
+        geom_key = sm.geometry_field_name()
+        srid_column = sm.property(geom_key).get("srid")
+        srid_input = self.options.get("srid") or srid_column
+        txt_geom = f"""ST_SETSRID(ST_MAKEPOINT(x::FLOAT, y::FLOAT),{srid_input})"""
 
-        if self.options.get("srid") and srid_column != self.options.get("srid"):
-            return f"""ST_TRANSFORM(
-    ST_SETSRID(
-        ST_MAKEPOINT(x::FLOAT, y::FLOAT),
-        {self.options.get('srid')}
-    ),
-    {srid_column}
-) as {sm.geometry_field_name()}"""
+        if srid_input != srid_column:
+            txt_geom = f"""ST_TRANSFORM({txt_geom}, {srid_column})"""
 
-        return f"""ST_SETSRID(
-    ST_MAKEPOINT(x::FLOAT, y::FLOAT),
-    {srid_column}
-    ) as {sm.geometry_field_name()}"""
+        txt_geom += f" AS {geom_key}"
+        return txt_geom
 
-    def pre_process_raw_import_columns(self, key, key_unnest=None):
+    def process_raw_import_with_n_n_nomenclature(self, key, from_table):
+        return f"""rel_nnu_{key} AS (
+    SELECT
+        t.id_import,
+        UNNEST(STRING_TO_ARRAY(t.{key}, ',')) AS {key}
+        FROM {from_table} t
+), rel_nn_{key} AS (SELECT
+    t.id_import,
+    STRING_AGG({self.process_raw_import_column_foreign_key_nomenclature(key)}, ',') AS {key}
+    FROM rel_nnu_{key} t
+    GROUP BY id_import
+)"""
+
+    def process_raw_import_join_n_n_nomenclature(self, key):
+        return f"""LEFT JOIN rel_nn_{key} ON rel_nn_{key}.id_import = t.id_import"""
+
+    def process_raw_import_relation_n_n(self, key):
+        sm = SchemaMethods(self.schema_code)
+        property = sm.property(key)
+        if property.get("nomenclature_type"):
+            return f"rel_nn_{key}.{key}"
+        return f"t.{key}"
+
+    def process_raw_import_column_foreign_key_nomenclature(self, key):
+        sm = SchemaMethods(self.schema_code)
+        property = sm.property(key)
+        nomenclature_type = property.get("nomenclature_type")
+        return f"""CASE
+        WHEN t.{key} IS NOT NULL AND t.{key} NOT LIKE '%%|%%' THEN CONCAT('{nomenclature_type}|', t.{key})
+        ELSE t.{key}
+    END"""
+
+    def process_raw_import_column_foreing_key(self, key):
+        sm = SchemaMethods(self.schema_code)
+        property = sm.property(key)
+        if property.get("nomenclature_type"):
+            return f"{self.process_raw_import_column_foreign_key_nomenclature(key)} AS {key}"
+        return f"t.{key}"
+
+    def process_raw_import_column_geom(self, key):
+        sm = SchemaMethods(self.schema_code)
+        property = sm.property(key)
+        srid_column = sm.property(key)["srid"]
+        srid_input = self.options.get("srid") or srid_column
+
+        txt_geom = f"""ST_SETSRID(ST_FORCE2D({key}::GEOMETRY), {srid_input})"""
+        if property["geometry_type"] == "multipolygon":
+            txt_geom = f"ST_MULTI({txt_geom})"
+
+        if srid_input != srid_column:
+            txt_geom = f"ST_TRANSFORM({txt_geom}, {srid_column})"
+
+        txt_geom += f" AS {key}"
+
+        return txt_geom
+
+    def process_raw_import_column(self, key):
         """
         TODO gérer les null dans l'import csv (ou dans l'insert)
         """
-
         sm = SchemaMethods(self.schema_code)
 
-        if key == "id_import":
-            return key
-
-        if key_unnest == key:
-            return f"UNNEST(STRING_TO_ARRAY({key}, ',')) AS {key}"
-
-        if not sm.has_property(key):
-            return f"{key}"
+        if key in ["id_import", "x", "y"] and not sm.has_property(key):
+            return f"t.{key}"
 
         property = sm.property(key)
-        if property.get("foreign_key"):
-            return key
+
+        if property.get("primary_key"):
+            return f"""CONCAT({", '|', ".join(
+                map(
+                    lambda x: f"t.{x}",
+                    sm.attr('meta.unique')))}) AS {sm.pk_field_name()}"""
+
+        if property["type"] == "integer" and property.get("foreign_key"):
+            return self.process_raw_import_column_foreing_key(key)
+
+        if property["type"] == "relation" and property["relation_type"] == "n-n":
+            return self.process_raw_import_relation_n_n(key)
 
         if property["type"] == "geometry":
-            geometry_type = "ST_MULTI(" if property["geometry_type"] == "multipolygon" else ""
-            last_par = ")" if geometry_type else ""
-            if self.options.get("srid") and self.options.get("srid") != sm.property(key).get(
-                "srid"
-            ):
-                return f"""ST_TRANSFORM({geometry_type}
-        ST_SETSRID(
-            ST_FORCE2D(
-                {key}::GEOMETRY
-            ), {self.options.get('srid')}
-        ),
-        {sm.property(key).get('srid')}
-    ){last_par} AS {key}"""
-
-            return f"""{geometry_type}ST_SETSRID(
-        ST_FORCE2D(
-            {key}::GEOMETRY
-        ), {sm.property(key).get('srid')}
-    ){last_par} AS {key}"""
+            return self.process_raw_import_column_geom(key)
 
         if property["type"] == "number":
-            return f"({key})::FLOAT"
+            return f"{key}::FLOAT"
 
         if property["type"] == "boolean":
-            f"({key})::BOOLEAN"
+            return f"{key}::BOOLEAN"
+
+        if property["type"] == "uuid":
+            return f"{key}::UUID"
 
         if property["type"] == "date":
-            return f"({key})::DATE"
+            return f"{key}::DATE"
 
         if property["type"] == "datetime":
-            return f"({key})::TIMESTAMP"
+            return f"{key}::TIMESTAMP"
 
-        if property["type"] == "integer" and "schema_code" not in property:
-            return f"({key})::INTEGER"
+        if property["type"] == "integer":
+            return f"{key}::INTEGER"
+
+        if property["type"] == "integer":
+            return f"{key}::INTEGER"
 
         return f"{key}"
-
-    def process_raw_import_column(self, key):
-        """ """
-
-        sm = SchemaMethods(self.schema_code)
-
-        if not sm.has_property(key):
-            return f"pp.{key}"
-
-        property = sm.property(key)
-
-        # pour les nomenclature (on rajoute le type)
-        if nomenclature_type := property.get("nomenclature_type"):
-            return f"""CASE
-        WHEN pp.{key} IS NOT NULL AND pp.{key} NOT LIKE '%%|%%' THEN CONCAT('{nomenclature_type}|', {key})
-        ELSE pp.{key}
-    END AS {key}"""
-
-        return f"pp.{key}"

@@ -1,0 +1,3 @@
+#!nodef
+- code_passage_faune: TEST_EX_SIMPLE
+  geom: POINT(0 45)

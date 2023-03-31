@@ -32,7 +32,6 @@ def test_data_file(
     import_infos = impt.as_dict()
 
     expected_errors = expected_infos.pop("errors", [])
-
     if len(expected_errors) == 0:
         # on teste si le nombre d'erreur est bien nul
         assert len(import_infos["errors"]) == 0, import_infos["errors"]
