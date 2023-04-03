@@ -47,7 +47,7 @@ class SchemaExport:
         data_csv.append(self.process_csv_keys(keys))
         data_csv += [[self.process_csv_data(key, d) for key in keys] for d in res_list]
 
-        filename = f"export_{module_code}_{datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M')}"
+        filename = f"export_{module_code}_{datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M')}.csv"
 
         response = Response(iter_csv(data_csv), mimetype="text/csv")
         response.headers.add("Content-Disposition", "attachment", filename=filename)

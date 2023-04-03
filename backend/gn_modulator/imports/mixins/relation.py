@@ -56,18 +56,6 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             )
             return
 
-        # sql["raw_delete_view"] = self.sql_raw_view(
-        #     from_table, tables["raw_delete_view"], keys=[key], key_unnest=key
-        # )
-        # try:
-        #     SchemaMethods.c_sql_exec_txt(sql["raw_delete_view"])
-        # except Exception as e:
-        #     self.add_error(
-        #         code="ERR_IMPORT_RELATION_CREATE_RAW_VIEW",
-        #         msg=f"Erreur dans la creation de la vue 'delete_raw' pour {key}: {str(e)}",
-        #     )
-        #     return
-
         sql_rel["delete_view"] = self.sql_process_view(
             self.tables["raw"], tables_rel["delete"], key_nn=key
         )
