@@ -10,7 +10,7 @@ from flask.cli import with_appcontext
 from gn_modulator import SchemaMethods, ModuleMethods, DefinitionMethods
 from gn_modulator.imports.models import TImport
 from gn_modulator.utils.errors import errors_txt
-from gn_modulator import init_gn_modulator
+from gn_modulator import init_gn_modulator, get_errors
 from geonature.utils.env import db
 
 
@@ -288,6 +288,7 @@ def cmd_check():
     print()
     print("Vérification des définitions de gn_modulator.\n")
     print(errors_txt())
+    return not get_errors()
 
 
 @click.command("test")
