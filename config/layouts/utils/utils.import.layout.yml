@@ -76,22 +76,24 @@ layout:
     - direction: row
       items:
         - type: button
-          color: success
-          title: Valider
-          description: Valider
-          action: import
-          disabled: __f__!(formGroup.valid )
-          hidden: __f__data.status == 'DONE'
+          color: primary
+          title: Annuler
+          description: Annuler
+          action: close
+          flex: '0'
         - type: button
+          flex: '0'
           icon: refresh
           title: nouvel import
           color: reset
           description: Faire un nouvel import
           action: reset
           hidden: __f__!data.id_import
-
         - type: button
-          color: primary
-          title: Annuler
-          description: Annuler
-          action: close
+          flex: '0'
+          color: success
+          title: Valider
+          description: Valider
+          action: import
+          disabled: __f__!(formGroup.valid )
+          hidden: __f__data.status == 'DONE'
