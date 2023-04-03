@@ -1,11 +1,15 @@
 import pytest  # noqa
 from gn_modulator.utils.env import import_test_dir
 from .utils.imports import test_import_code
+from gn_modulator import ModuleMethods
 
 
 @pytest.mark.usefixtures("temporary_transaction", scope="session")
 class TestImportCode:
     def test_import_code_pfV1(self):
+        if not ModuleMethods.module_config("m_sipaf")["registred"]:
+            return
+
         expected = [
             {"res.nb_process": 1, "res.nb_insert": 1},
             {"res.nb_process": 11, "res.nb_insert": 11},

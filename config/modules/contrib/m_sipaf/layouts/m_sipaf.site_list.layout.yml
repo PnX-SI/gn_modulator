@@ -57,7 +57,7 @@ layout:
               flex: "0"
               icon: upload
               color: primary
-              description: Importer des passage à faune
+              description: Importer des passages à faune
               action:
                 type: modal
                 modal_name: import

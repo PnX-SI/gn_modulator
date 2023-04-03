@@ -37,26 +37,30 @@ class ModuleConfigUtils:
         return f"{object_code}_{action}"
 
     @classmethod
-    def page_url(cls, module_code, object_code, action):
+    def page_url(cls, module_code, object_code, action, pk_field_name):
         if action in ["details", "edit"]:
-            sm = SchemaMethods(cls.schema_code(module_code, object_code))
-            return f"{object_code}_{action}/:{sm.pk_field_name()}"
+            return f"{object_code}_{action}/:{pk_field_name}"
         else:
             return f"{object_code}_{action}"
 
     @classmethod
     def default_page_config(cls, module_code, object_code, action):
-        sm = SchemaMethods(cls.schema_code(module_code, object_code))
+        try:
+            sm = SchemaMethods(cls.schema_code(module_code, object_code))
+            pk_field_name = sm.pk_field_name()
+        except Exception:
+            pk_field_name = "id_xxx"
+
         default_page_config = {
             "action": action,
             "code": cls.page_code(object_code, action),
-            "url": cls.page_url(module_code, object_code, action),
+            "url": cls.page_url(module_code, object_code, action, pk_field_name),
             "layout": {"code": cls.layout_code(module_code, object_code, action)},
             "object_code": object_code,
         }
 
         if action in ["details", "edit"]:
-            default_page_config["objects"] = {object_code: {"value": f":{sm.pk_field_name()}"}}
+            default_page_config["objects"] = {object_code: {"value": f":{pk_field_name}"}}
 
         return default_page_config
 
@@ -202,9 +206,12 @@ class ModuleConfigUtils:
 
             # on récupère la configuration du schéma avec la possibilité de changer certains paramètre
             # comme par exemple 'label', 'labels', 'genre'
-            object_schema_config = SchemaMethods(object_module_config["schema_code"]).config(
-                object_module_config
-            )
+            try:
+                object_schema_config = SchemaMethods(object_module_config["schema_code"]).config(
+                    object_module_config
+                )
+            except Exception:
+                object_schema_config = {}
 
             # insertion de la config schema dans la config module
             for key, _object_schema_config_item in object_schema_config.items():

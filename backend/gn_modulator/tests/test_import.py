@@ -1,7 +1,7 @@
 import pytest  # noqa
 from gn_modulator.utils.env import import_test_dir
 from .utils.imports import test_data_file
-from gn_modulator import SchemaMethods
+from gn_modulator import SchemaMethods, ModuleMethods
 
 
 @pytest.mark.usefixtures("temporary_transaction", scope="session")
@@ -172,6 +172,10 @@ class TestImport:
         assert res["the_geom_4326"] is not None
 
     def test_sipaf_xy(self):
+        # on s'assure que le module est bien installé
+        if not ModuleMethods.module_config("m_sipaf")["registred"]:
+            return
+
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_xy.csv"
@@ -199,6 +203,9 @@ class TestImport:
         assert res["geom"] is not None
 
     def test_sipaf_exemple_simple(self):
+        if not ModuleMethods.module_config("m_sipaf")["registred"]:
+            return
+
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_simple.csv"
@@ -214,6 +221,9 @@ class TestImport:
         )
 
     def test_sipaf_exemple_complet(self):
+        if not ModuleMethods.module_config("m_sipaf")["registred"]:
+            return
+
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_complet.csv"
@@ -229,6 +239,9 @@ class TestImport:
         )
 
     def test_sipaf_update(self):
+        if not ModuleMethods.module_config("m_sipaf")["registred"]:
+            return
+
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_update_1.csv"

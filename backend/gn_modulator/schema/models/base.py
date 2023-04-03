@@ -258,6 +258,7 @@ class SchemaModelBase:
         """
         ajout des definition des relation avec backref dans le schema correspondant
         """
+        print(self)
         for relation_key, relation_def in self.relationships().items():
             if not relation_def.get("backref"):
                 continue

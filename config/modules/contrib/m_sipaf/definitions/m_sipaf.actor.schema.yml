@@ -9,6 +9,7 @@ meta:
     # sql_processing: true
     # sql_schema_dot_table: pr_sipaf.cor_actor_pf
     model: m_sipaf.models.Actor
+    module_code: m_sipaf
     genre: M
     label: Acteur
     label_field_name: id_nomenclature_type_actor

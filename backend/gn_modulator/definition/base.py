@@ -3,6 +3,9 @@ from pathlib import Path
 import yaml
 import json
 import jsonschema
+
+from geonature.core.gn_commons.models import TModules
+
 from gn_modulator.utils.env import config_directory
 from gn_modulator.utils.cache import set_global_cache, get_global_cache
 from gn_modulator.utils.errors import add_error, get_errors
@@ -21,6 +24,13 @@ class DefinitionBase:
         - feature à ajouter à l'installation du module
         - peut être optionnel (données d'exemple)
     """
+
+    @classmethod
+    def module_in_db(cls, module_code):
+        try:
+            TModules.query().filter_by(module_code=module_code).one()
+        except Exception:
+            return False
 
     @classmethod
     def definition_types(cls):
@@ -128,12 +138,18 @@ class DefinitionBase:
             try:
                 get_class_from_path(model_path)
             except Exception:
-                add_error(
-                    msg=f"Le modèle {model_path} n'existe pas",
-                    definition_type=definition_type,
-                    definition_code=definition_code,
-                    code="ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND",
-                )
+                if (not definition["meta"].get("module_code")) or cls.module_in_db(
+                    definition["meta"].get("module_code")
+                ):
+                    add_error(
+                        msg=f"Le modèle {model_path} n'existe pas",
+                        definition_type=definition_type,
+                        definition_code=definition_code,
+                        code="ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND",
+                    )
+                else:
+                    get_global_cache(["uninstalled_schema"]).append(definition["code"])
+                    print(get_global_cache(["uninstalled_schema"]))
                 cls.remove_from_cache(definition_type, definition_code)
 
     @classmethod
@@ -381,7 +397,7 @@ class DefinitionBase:
 
         schema_codes = cls.definition_codes_for_type("schema")
         missing_schema_codes = cls.check_definition_element_in_list(
-            definition, "schema_code", schema_codes
+            definition, "schema_code", schema_codes + get_global_cache(["uninstalled_schema"])
         )
 
         if missing_schema_codes:
@@ -431,6 +447,8 @@ class DefinitionBase:
         lorsque des erreurs sont remontée, on ne passe pas à l'étape suivante
         l'initialisation est considérée comme valide lorsque la liste d'erreur est vide
         """
+
+        set_global_cache(["uninstalled_schema"], [])
 
         # chargement des définitions
         cls.load_definitions()
