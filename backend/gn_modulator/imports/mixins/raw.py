@@ -68,49 +68,14 @@ class ImportMixinRaw(ImportMixinUtils):
         ):
             v_txt_columns.append(self.txt_geom_xy())
 
-        # txt_primary_column = f"""CONCAT({", '|', ".join(
-        #         map(
-        #             lambda x: f"pp.{x}",
-        #             sm.attr('meta.unique')))}) AS {sm.pk_field_name()}"""
-        # v_txt_columns.insert(0, txt_primary_column)
-
         txt_columns = ",\n    ".join(v_txt_columns)
         txt_limit = f"\nLIMIT {limit}" if limit else ""
 
-        columns_nn_nomenclature = list(
-            filter(
-                lambda x: sm.is_relation_n_n(x) and sm.property(x).get("nomenclature_type"),
-                columns,
-            )
-        )
-
-        v_with_n_n_nomenclature = list(
-            map(
-                lambda x: self.process_raw_import_with_n_n_nomenclature(x, from_table),
-                columns_nn_nomenclature,
-            )
-        )
-
-        v_join_n_n_nomenclature = list(
-            map(
-                lambda x: self.process_raw_import_join_n_n_nomenclature(x), columns_nn_nomenclature
-            )
-        )
-
-        txt_with_n_n_nomenclature = (
-            "WITH " + ", ".join(v_with_n_n_nomenclature) if v_with_n_n_nomenclature else ""
-        )
-        txt_join_n_n_nomenclature = (
-            "\n".join(v_join_n_n_nomenclature) + "\n" if v_join_n_n_nomenclature else ""
-        )
-
         return f"""DROP VIEW IF EXISTS {dest_table} CASCADE;
 CREATE VIEW {dest_table} AS
-{txt_with_n_n_nomenclature}
 SELECT
     {txt_columns}
-FROM {from_table} t
-{txt_join_n_n_nomenclature}{txt_limit};
+FROM {from_table} t{txt_limit};
 """
 
     def txt_geom_xy(self):
@@ -126,43 +91,9 @@ FROM {from_table} t
         txt_geom += f" AS {geom_key}"
         return txt_geom
 
-    def process_raw_import_with_n_n_nomenclature(self, key, from_table):
-        return f"""rel_nnu_{key} AS (
-    SELECT
-        t.id_import,
-        UNNEST(STRING_TO_ARRAY(t.{key}, ',')) AS {key}
-        FROM {from_table} t
-), rel_nn_{key} AS (SELECT
-    t.id_import,
-    STRING_AGG({self.process_raw_import_column_foreign_key_nomenclature(key)}, ',') AS {key}
-    FROM rel_nnu_{key} t
-    GROUP BY id_import
-)"""
-
-    def process_raw_import_join_n_n_nomenclature(self, key):
-        return f"""LEFT JOIN rel_nn_{key} ON rel_nn_{key}.id_import = t.id_import"""
-
-    def process_raw_import_relation_n_n(self, key):
-        sm = SchemaMethods(self.schema_code)
-        property = sm.property(key)
-        if property.get("nomenclature_type"):
-            return f"rel_nn_{key}.{key}"
-        return f"t.{key}"
-
-    def process_raw_import_column_foreign_key_nomenclature(self, key):
-        sm = SchemaMethods(self.schema_code)
-        property = sm.property(key)
-        nomenclature_type = property.get("nomenclature_type")
-        return f"""CASE
-        WHEN t.{key} IS NOT NULL AND t.{key} NOT LIKE '%%|%%' THEN CONCAT('{nomenclature_type}|', t.{key})
-        ELSE t.{key}
-    END"""
-
     def process_raw_import_column_foreing_key(self, key):
         sm = SchemaMethods(self.schema_code)
         property = sm.property(key)
-        if property.get("nomenclature_type"):
-            return f"{self.process_raw_import_column_foreign_key_nomenclature(key)} AS {key}"
         return f"t.{key}"
 
     def process_raw_import_column_geom(self, key):
@@ -202,8 +133,8 @@ FROM {from_table} t
         if property["type"] == "integer" and property.get("foreign_key"):
             return self.process_raw_import_column_foreing_key(key)
 
-        if property["type"] == "relation" and property["relation_type"] == "n-n":
-            return self.process_raw_import_relation_n_n(key)
+        if sm.is_relation_n_n(key):
+            return f"t.{key}"
 
         if property["type"] == "geometry":
             return self.process_raw_import_column_geom(key)

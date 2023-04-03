@@ -40,23 +40,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
 
         # 0) clean
         SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables_rel['delete']}")
-        # SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw_delete_view']}")
         SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables_rel['process']}")
-        # SchemaMethods.c_sql_exec_txt(f"DROP VIEW IF EXISTS {tables['raw_view']}")
-
-        # sql["raw_view"] = self.sql_raw_view(
-        #     from_table, tables["raw_view"], keys=[key], key_unnest=key
-        # )
-
-        # # 1) create raw_temp_table for n-n
-        # try:
-        #     SchemaMethods.c_sql_exec_txt(sql["raw_view"])
-        # except Exception as e:
-        #     self.add_error(
-        #         code="ERR_IMPORT_RELATION_CREATE_RAW_VIEW",
-        #         msg=f"Erreur dans la creation de la vue 'raw' pour {key}: {str(e)}",
-        #     )
-        #     return
 
         sql_rel["process_view"] = self.sql_process_view(
             self.tables["raw"], tables_rel["process"], key_nn=key

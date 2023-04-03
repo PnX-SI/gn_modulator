@@ -78,7 +78,7 @@ WITH unnest_{key} AS (
     SELECT
         id_import,
         {sm.pk_field_name()},
-        UNNEST(STRING_TO_ARRAY({key}, ','   )) AS {key}
+        UNNEST(STRING_TO_ARRAY({key}, ',')) AS {key}
         FROM {from_table}
 )
 SELECT
@@ -107,7 +107,6 @@ FROM {from_table} t
             la ou les jointures nécessaire pour résoudre la clé
         """
         sm = SchemaMethods(schema_code)
-
         alias_join = alias_join_base if index is None else f"{alias_join_base}_{index}"
 
         txt_column = f"{alias_join}.{sm.pk_field_name()}"
@@ -119,6 +118,7 @@ FROM {from_table} t
 
         # couf pour permttre de faire les liens entre les join quand il y en a plusieurs
         link_joins = {}
+
         for index_unique, k_unique in enumerate(unique):
             var_key = self.var_key(
                 schema_code, key, k_unique, index_unique, link_joins, alias_main
@@ -193,13 +193,22 @@ FROM {from_table} t
 
         property = sm.property(key)
 
-        if property.get("foreign_key"):
+        if property.get("foreign_key") or sm.is_relation_n_n(key):
+            if property.get("nomenclature_type"):
+                return self.resolve_key_nomenclature(key, index, property["nomenclature_type"])
             return self.resolve_key(property["schema_code"], key, index)
-
-        if property.get("relation_type") == "n-n":
-            return self.resolve_key(property["schema_code"], key, index)
-
-            # txt_column, v_join = rel.resolve_key(key, index)
-            # return f"{txt_column.split('.')[0]}.{rel.pk_field_name()}", v_join
 
         return f"t.{key}", []
+
+    def resolve_key_nomenclature(self, key, index, nomenclature_type):
+        alias_join = f"j_{index}"
+        table = SchemaMethods("ref_nom.nomenclature").sql_schema_dot_table()
+        joins_on = [
+            f"j_{index}.cd_nomenclature = t.{key}",
+            f"j_{index}.id_type = ref_nomenclatures.get_id_nomenclature_type('{nomenclature_type}')",
+        ]
+        txt_join_on = "\n        AND ".join(joins_on)
+        txt_join = f"LEFT JOIN {table} {alias_join} ON\n      {txt_join_on}"
+        v_join = [txt_join]
+        txt_column = f"{alias_join}.id_nomenclature"
+        return txt_column, v_join
