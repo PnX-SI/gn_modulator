@@ -47,7 +47,10 @@ class ImportMixinRaw(ImportMixinUtils):
                 lambda x: (
                     x in keys
                     if keys is not None
-                    else (sm.has_property(x) or x in ["id_import", "x", "y"])
+                    else (
+                        (sm.has_property(x) and not sm.is_primary_key(x))
+                        or x in ["id_import", "x", "y"]
+                    )
                 ),
                 from_table_columns,
             )
@@ -91,11 +94,6 @@ FROM {from_table} t{txt_limit};
         txt_geom += f" AS {geom_key}"
         return txt_geom
 
-    def process_raw_import_column_foreing_key(self, key):
-        sm = SchemaMethods(self.schema_code)
-        property = sm.property(key)
-        return f"t.{key}"
-
     def process_raw_import_column_geom(self, key):
         sm = SchemaMethods(self.schema_code)
         property = sm.property(key)
@@ -131,7 +129,7 @@ FROM {from_table} t{txt_limit};
                     sm.attr('meta.unique')))}) AS {sm.pk_field_name()}"""
 
         if property["type"] == "integer" and property.get("foreign_key"):
-            return self.process_raw_import_column_foreing_key(key)
+            return f"t.{key}"
 
         if sm.is_relation_n_n(key):
             return f"t.{key}"

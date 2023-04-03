@@ -7,7 +7,6 @@ class ImportMixinUpdate(ImportMixinUtils):
         from_table = self.tables["process"]
 
         self.sql["update"] = self.sql_update(from_table)
-
         if self.res["nb_update"] == 0:
             return
 

@@ -38,6 +38,7 @@
   - *définition*: Hauteur de l'ouvrage en mètre
 - `issu_requalification`
   - *type*: `boolean`
+  - format: `true`,`t`,`false`,`f`
   - *définition*: L'ouvrage est issu d'une opération de requalification ?
 - `largeur_dispo_faune`
   - *type*: `number`
@@ -56,11 +57,13 @@
   - *définition*:  Tirant d'air existant entre la banquette et le plafond de l'ouvrage, en mètre
 - `ouvrage_hydrau`
   - *type*: `boolean`
+  - format: `true`,`t`,`false`,`f`
   - *définition*: Ouvrage hydraulique ou non
 - `ouvrage_type_autre`
   - *type*: `string`
 - `pi_ou_ps`
   - *type*: `boolean`
+  - format: `true`,`t`,`false`,`f`
   - *définition*: Positionnement du passage vis-à vis de l’infrastructure (inférieur (False) ou supérieur (True))
 - `pk`
   - *type*: `number`

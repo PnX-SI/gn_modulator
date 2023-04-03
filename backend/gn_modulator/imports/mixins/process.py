@@ -78,7 +78,7 @@ WITH unnest_{key} AS (
     SELECT
         id_import,
         {sm.pk_field_name()},
-        UNNEST(STRING_TO_ARRAY({key}, ',')) AS {key}
+        TRIM(UNNEST(STRING_TO_ARRAY({key}, ','))) AS {key}
         FROM {from_table}
 )
 SELECT

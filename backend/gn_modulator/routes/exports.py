@@ -31,6 +31,9 @@ def api_export(module_code, object_code, export_code):
     params["fields"] = export_definition["fields"]
     #   - TODO autres paramètres ????
 
+    params["process_field_name"] = export_definition.get("process_field_name")
+    params["process_label"] = export_definition.get("process_label")
+
     cruved_type = params.get("cruved_type") or "R"
 
     # recupération de la liste

@@ -75,7 +75,7 @@ class ImportMixinData(ImportMixinUtils):
             set_columns_txt = ", ".join("NULLIF({key}, '') AS {key}")
 
             self.sql[
-                "post_data"
+                "process_data"
             ] = f"""
             UPDATE {dest_table} SET {set_columns_txt};
             """

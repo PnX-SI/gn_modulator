@@ -6,6 +6,7 @@ description: export sipaf
 export_label: Test
 object_code: site
 module_code: m_sipaf
+process_field_name: true
 fields:
   - id_passage_faune
   - code_passage_faune

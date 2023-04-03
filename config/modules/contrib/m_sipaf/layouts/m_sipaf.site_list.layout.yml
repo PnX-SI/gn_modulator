@@ -30,11 +30,29 @@ layout:
             - code: utils.button_create
               flex: "0"
             - type: button
+              description: Exporter les passages à faune
+              color: primary
               flex: "0"
               icon: download
-              description: Télécharger les passages à faune (les filtres sont appliqués)
-              href: __f__o.url_export(x, 'm_sipaf.pf')
               hidden: __f__!o.is_action_allowed(x, 'E')
+              action:
+                type: modal
+                modal_name: exports
+            - type: modal
+              flex: "0"
+              modal_name: exports
+              items:
+                - title: Exports pour les passages à faune
+                - type: button
+                  flex: "0"
+                  title: "Export complet"
+                  description: Télécharger les passages à faune (les filtres sont appliqués)
+                  href: __f__o.url_export(x, 'm_sipaf.pf')
+                - type: button
+                  flex: "0"
+                  title: "Export import"
+                  description: Export destiné à l'import (les filtres sont appliqués)
+                  href: __f__o.url_export(x, 'm_sipaf.pf_import')
             - type: button
               flex: "0"
               icon: upload
