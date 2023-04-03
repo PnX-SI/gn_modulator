@@ -149,7 +149,6 @@ class DefinitionBase:
                     )
                 else:
                     get_global_cache(["uninstalled_schema"]).append(definition["code"])
-                    print(get_global_cache(["uninstalled_schema"]))
                 cls.remove_from_cache(definition_type, definition_code)
 
     @classmethod
