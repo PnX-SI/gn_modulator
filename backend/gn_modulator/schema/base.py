@@ -381,3 +381,6 @@ class SchemaBase:
 
     def is_primary_key(self, key):
         return self.has_property(key) and self.property(key).get("primary_key")
+
+    def is_foreign_key(self, key):
+        return self.has_property(key) and self.property(key).get("foreign_key")

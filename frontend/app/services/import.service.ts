@@ -38,7 +38,7 @@ export class ModulesImportService {
       <h4>Données prêtes pour l'import</h4>
       <p> Ensemble des modifications à venir</p>
       ${this.txtNbLignes(data)}
-      `
+      `;
       html += `<p><b>Veuillez appuyer sur valider pour insérer les données</b></p>`;
       return {
         html,
@@ -69,12 +69,13 @@ export class ModulesImportService {
   }
 
   txtNbLignes(data) {
-    let html = ""
-    let htmlUpdate="", htmlUnchanged = "";
+    let html = '';
+    let htmlUpdate = '',
+      htmlUnchanged = '';
     let nbChar = Math.max(
-        ...Object.values(data.res).map(v => Math.ceil(v ? Math.log10(Number(v)) : 0))
-      )
-    let charSpace = "_"
+      ...Object.values(data.res).map((v) => Math.ceil(v ? Math.log10(Number(v)) : 0))
+    );
+    let charSpace = '_';
     let nbRaw = data.res.nb_raw.toString().padStart(nbChar, charSpace);
     let nbInsert = data.res.nb_insert.toString().padStart(nbChar, charSpace);
     let nbUpdate = data.res.nb_update.toString().padStart(nbChar, charSpace);
@@ -86,17 +87,14 @@ export class ModulesImportService {
 
     if (data.res.nb_unchanged) {
       htmlUnchanged += `<li>${nbUnchanged} lignes non modifiées</li>`;
-
     }
-
 
     return `<ul>
     <li>${nbRaw} lignes dans le fichier</li>
     <li>${nbInsert} lignes ajoutées</li>
     ${htmlUpdate}
     ${htmlUnchanged}
-    </ul>`
-    .replace(/_/g, '&nbsp;')
+    </ul>`.replace(/_/g, '&nbsp;');
   }
 
   processErrorsLine(data) {

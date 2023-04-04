@@ -36,7 +36,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
       nb_update: 0,
     },
     id_import: 1,
-    options: {}
+    options: {},
   };
 
   @ViewChild('stepper') stepper: MatStepper;
@@ -61,7 +61,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
       code: 'utils.import',
     };
     // this._mLayout.getFormControl('form_import')?.reset()
-    this.importData = this.computedLayout.test_import ? this.importDataTest : {}
+    this.importData = this.computedLayout.test_import ? this.importDataTest : {};
     this.setStep();
   }
 

@@ -59,7 +59,7 @@ class ImportMixinCheck(ImportMixinUtils):
         if missing_unique:
             self.add_error(
                 code="ERR_IMPORT_MISSING_UNIQUE",
-                msg=f"Il manque des champs d'unicité : {', '.join(missing_unique) }",
+                msg=f"Import {self.schema_code}, il manque des champs d'unicité : {', '.join(missing_unique) }",
             )
 
     def check_types(self):

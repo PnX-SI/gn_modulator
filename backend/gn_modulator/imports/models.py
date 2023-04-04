@@ -17,6 +17,7 @@ class TImport(db.Model, ImportMixin):
         schema_code=None,
         data_file_path=None,
         mapping_file_path=None,
+        mapping=None,
         options={},
     ):
         self.id_digitiser = g.current_user.id_role if hasattr(g, "current_user") else None
@@ -27,6 +28,7 @@ class TImport(db.Model, ImportMixin):
         self.data_file_path = data_file_path and str(data_file_path)
         self.mapping_file_path = mapping_file_path and str(mapping_file_path)
 
+        self.mapping = mapping
         self.options = options
 
         self.res = {}
@@ -47,6 +49,7 @@ class TImport(db.Model, ImportMixin):
 
     data_file_path = db.Column(db.Unicode)
     mapping_file_path = db.Column(db.Unicode)
+    mapping = db.Column(db.Unicode)
 
     csv_delimiter = db.Column(db.Unicode)
     data_type = db.Column(db.Unicode)

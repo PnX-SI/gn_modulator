@@ -608,7 +608,7 @@ export class ModulesLayoutComponent implements OnInit {
       prefilters: this.context.prefilters,
       form_group_id: this.context.form_group_id,
       debug: this.context.debug,
-      hidden_options: this.context.hidden_options
+      hidden_options: this.context.hidden_options,
     };
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.layout);
