@@ -24,6 +24,21 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
 
   importMsg: any = {};
 
+  importDataTest = {
+    // status: 'READY',
+    status: 'DONE',
+    res: {
+      nb_data: 367,
+      nb_insert: 0,
+      nb_process: 367,
+      nb_raw: 367,
+      nb_unchanged: 367,
+      nb_update: 0,
+    },
+    id_import: 1,
+    options: {}
+  };
+
   @ViewChild('stepper') stepper: MatStepper;
 
   constructor(_injector: Injector) {
@@ -46,7 +61,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
       code: 'utils.import',
     };
     // this._mLayout.getFormControl('form_import')?.reset()
-    this.importData = {};
+    this.importData = this.computedLayout.test_import ? this.importDataTest : {}
     this.setStep();
   }
 
@@ -86,6 +101,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
           this._mLayout.stopActionProcessing('');
           const response = importEvent.body as any;
           this.importData = { ...this.importData, ...response };
+          console.log(this.importData);
           this.setStep();
           if (response.status == 'DONE') {
             if (response.res.nb_unchanged != response.res.nb_process) {

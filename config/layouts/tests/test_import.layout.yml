@@ -7,4 +7,7 @@ layout:
   type: import
   object_code: site
   module_code: m_sipaf
+  hidden_options:
+    - enable_update
+  test_import: true
 data:

@@ -5,7 +5,6 @@ title: schema acteur site
 description: Définition du schema pour les acteurs liés aux sites
 meta:
     autoschema: true
-    schema_code: m_sipaf.actor
     # sql_processing: true
     # sql_schema_dot_table: pr_sipaf.cor_actor_pf
     model: m_sipaf.models.Actor

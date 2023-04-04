@@ -6,7 +6,6 @@ description: >
     aux site de catégorie 'Grotte'
 
 meta:
-    schema_code: m_monitoring.sc_grotte
     sql_processing: true
     sql_schema_dot_table: pr_monitoring.sc_grotte
     genre: M

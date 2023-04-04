@@ -4,7 +4,6 @@ title: Schema user.groupe
 description: Définition du schema pour les groupes d'utilisateurs
 
 meta:
-    schema_code: user.groupe
     autoschema: true
     model: geonature.core.users.models.CorRole
     label: groupe

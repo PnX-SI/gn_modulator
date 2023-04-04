@@ -56,12 +56,11 @@ Il faudra revoir et corriger les données pour pouvoir reprocéder à l'import.
 
 ### Options additionelles
 
-- Appuyer sur la case `Afficher les options avancées`
 - `Verifier avant insertion`
   - décocher pour passer à l'étape de vérification des données et ne plus avoir à valider une fois le fichier chargé
-- `Autoriser les mises à jour`
+<!-- - `Autoriser les mises à jour`
   - par défaut les mises à jour ne sont pas autorisées
-  - appuyer sur cette case pour pouvoir mettre à jour des données
+  - appuyer sur cette case pour pouvoir mettre à jour des données -->
 - `SRID`
   - par défaut le SRID est `4326`
     - vous pouvez préciser un SRID différent pour le fichier

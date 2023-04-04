@@ -31,16 +31,17 @@ layout:
                   description: Choisir un fichier à importer
                   disabled: __f__data.id_import
                   color: info
-                - key: display_options
-                  title: Afficher les options avancées.
-                  type: boolean
+                # - key: display_options
+                #   title: Afficher les options avancées.
+                #   type: boolean
             - display: fieldset
               title: Options
-              hidden: __f__!data.display_options
+              # hidden: __f__!data.display_options
               items:
                 - key: options.enable_update
                   title: "Autoriser les mises à jour"
                   type: boolean
+                  hidden: __f__(context.hidden_options || []).includes('enable_update')
                   default: __f__false
                 - key: options.check_only
                   title: Verifier avant insertion

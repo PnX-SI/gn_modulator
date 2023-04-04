@@ -36,14 +36,9 @@ export class ModulesImportService {
     if (data.status == 'READY') {
       let html = `
       <h4>Données prêtes pour l'import</h4>
-      <p>- Nombre de lignes <b>${data.res.nb_raw}</b></p>
-      <p>- Nombre d'insertion <b>${data.res.nb_insert}</b></p>`;
-      if (data.options.enable_update && data.res.nb_update) {
-        html += `<p>- Nombre de mise à jour <b>${data.res.nb_update}</b></p>`;
-      }
-      if (!data.options.enable_update && data.res.nb_update) {
-        html += `<p>- <span style="text-decoration:line-through"> Nombre de mise à jour ${data.res.nb_update} </span>(MAJ Non autorisée)</p>`;
-      }
+      <p> Ensemble des modifications à venir</p>
+      ${this.txtNbLignes(data)}
+      `
       html += `<p><b>Veuillez appuyer sur valider pour insérer les données</b></p>`;
       return {
         html,
@@ -54,12 +49,8 @@ export class ModulesImportService {
     if (data.status == 'DONE') {
       let html = `
       <h4>Import Terminé</h4>
-      <p>- Nombre de lignes ${data.res.nb_raw}</p>
-      <p>- Nombre d'insertion ${data.res.nb_insert}</p>
+      ${this.txtNbLignes(data)}
       `;
-      if (data.options.enable_update) {
-        html += `<p>- Nombre de mise à jour ${data.res.nb_update}</p>`;
-      }
       return {
         html,
         class: 'success',
@@ -75,6 +66,37 @@ export class ModulesImportService {
         class: 'error',
       };
     }
+  }
+
+  txtNbLignes(data) {
+    let html = ""
+    let htmlUpdate="", htmlUnchanged = "";
+    let nbChar = Math.max(
+        ...Object.values(data.res).map(v => Math.ceil(v ? Math.log10(Number(v)) : 0))
+      )
+    let charSpace = "_"
+    let nbRaw = data.res.nb_raw.toString().padStart(nbChar, charSpace);
+    let nbInsert = data.res.nb_insert.toString().padStart(nbChar, charSpace);
+    let nbUpdate = data.res.nb_update.toString().padStart(nbChar, charSpace);
+    let nbUnchanged = data.res.nb_unchanged.toString().padStart(nbChar, charSpace);
+
+    if (data.options.enable_update) {
+      htmlUpdate += `<li>${nbUpdate} lignes mises à jour</li>`;
+    }
+
+    if (data.res.nb_unchanged) {
+      htmlUnchanged += `<li>${nbUnchanged} lignes non modifiées</li>`;
+
+    }
+
+
+    return `<ul>
+    <li>${nbRaw} lignes dans le fichier</li>
+    <li>${nbInsert} lignes ajoutées</li>
+    ${htmlUpdate}
+    ${htmlUnchanged}
+    </ul>`
+    .replace(/_/g, '&nbsp;')
   }
 
   processErrorsLine(data) {

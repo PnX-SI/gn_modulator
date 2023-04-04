@@ -4,7 +4,6 @@ title: Schema commons.cor_module_jdd
 description: Définition du schema du lien module jdd
 
 meta:
-    schema_code: commons.cor_module_jdd
     autoschema: true
     model: geonature.core.gn_commons.models.base.CorModuleDataset
     label: module

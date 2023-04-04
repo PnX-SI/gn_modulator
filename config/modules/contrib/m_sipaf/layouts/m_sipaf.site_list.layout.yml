@@ -68,6 +68,8 @@ layout:
                 # width: 1200px
               items:
                 type: import
+                hidden_options:
+                  - enable_update
 
           flex: "0"
         - type: object
