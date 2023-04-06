@@ -6,7 +6,7 @@ from gn_modulator import SchemaMethods, ModuleMethods
 
 @pytest.mark.usefixtures("temporary_transaction", scope="session")
 class TestImport:
-    def test_synthese(self):
+    def test_synthese1(self):
         """
         premier test ajout d'une ligne dans la synthese
         """
@@ -101,10 +101,7 @@ class TestImport:
             module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
-        print(impt.sql["insert"])
-        print(impt.sql["update"])
-        print(impt.sql["nb_insert"])
-        print(impt.sql["nb_update"])
+        impt.log_sql(import_test_dir / "ref_geo.area.csv.log.sql", "xxx")
 
     def test_synthese_x_y(self):
         module_code = "MODULATOR"
@@ -132,7 +129,10 @@ class TestImport:
             "data_type": "csv",
             "csv_delimiter": ",",
         }
-        test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+        impt = test_data_file(
+            module_code, object_code, data_file_path, expected_infos=expected_infos
+        )
+        impt.log_sql(import_test_dir / "synthese_obs.log.sql", "xxx")
 
         data_file_path = import_test_dir / "synthese_obs_update.csv"
         expected_infos = {

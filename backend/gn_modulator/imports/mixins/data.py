@@ -151,12 +151,15 @@ class ImportMixinData(ImportMixinUtils):
             return
 
         # VALUES au format texte
-        values_txt = ",\n".join(values)
+        values_txt = ",\n        ".join(values)
 
         # requete d'insertion
         self.sql[
             "data_insert"
-        ] = f"INSERT INTO {dest_table} ({sql_columns_fields}) VALUES {values_txt}"
+        ] = f"""INSERT INTO {dest_table} ({sql_columns_fields})
+    VALUES
+         {values_txt}
+;"""
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["data_insert"])
         except Exception as e:

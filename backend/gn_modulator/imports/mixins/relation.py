@@ -82,7 +82,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
 
         # tables et code sql associé à n-n key
         tables_rel = self.tables["relations"][key]
-        sql_rel = self.tables["relations"][key]
+        sql_rel = self.sql["relations"][key]
 
         property = sm.property(key)
 
@@ -96,8 +96,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
         #   on supprime toutes les données associé aux lignes d'import
         sql_rel[
             "delete"
-        ] = f"""
-DELETE FROM {cor_table} t
+        ] = f"""DELETE FROM {cor_table} t
     USING {tables_rel['process']} j
     WHERE t.{sm.pk_field_name()} = j.{sm.pk_field_name()};
 """

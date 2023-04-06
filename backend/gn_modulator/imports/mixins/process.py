@@ -309,7 +309,7 @@ FROM {view_params['from_table']} t
         #   contenant plusieurs valeurs séparées par des '|'
         #   'val1|val2'
         # -> on va récupérer la valeur correspondant à l'index_unique
-        if len(sm.unique()) >= 1:
+        if len(sm.unique()) > 1:
             return f"SPLIT_PART({alias_main}.{key}, '|', { index_unique + 1})"
 
         # s'il n'y a qu'une seule clé d'unicité,

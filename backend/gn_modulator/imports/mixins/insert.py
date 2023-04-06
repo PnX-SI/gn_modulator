@@ -77,8 +77,7 @@ class ImportMixinInsert(ImportMixinUtils):
         txt_where = f" WHERE {sm.pk_field_name()} IS NULL" if keys is None else ""
 
         # requete d'insertion des données
-        return f"""
-INSERT INTO {table_name} (
+        return f"""INSERT INTO {table_name} (
     {txt_columns_select_keys}
 )
 SELECT

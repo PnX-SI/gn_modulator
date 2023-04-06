@@ -1,14 +1,14 @@
 # Import
 
 
-## Introduction et principes 
+## Introduction et principes
 
 Dans le cadre de ce module, nous avons implémenter des fonctionalité d'import à destination (théoriquement) de n'importe quelle table de la base.
 
 Les étapes de la procédure d'import sont illustrés par des exemple, où l'on détaille le code sql produit pour chaque étape.
 
-- [Exemle simple (ref_geo.l_areas)](./import_exemple_simple_ref_geo_area.md)
-- [Exemle avancé (gn_synthese.synthese)](./import_exemple_avance)
+- [Exemle simple (ref_geo.l_areas)](/gn_modulator/backend/gn_modulator/tests/import_test/ref_geo.area.csv.log.sql)
+- [Exemle avancé (gn_synthese.synthese)](/gn_modulator/backend/gn_modulator/tests/import_test/synthese_obs.csv.log.sql)
 
 ### L'unicité
 
@@ -99,3 +99,18 @@ On met à jour les ligne sde la table destinataire qui correspondent aux lignes 
 
 - Effacement de toutes les lignes concernées
 - Insert des lignes selon les données
+
+### 3) Log des commandes d'importd
+
+Le modèle d'import contient deux objects pour stocker les commandes sql
+
+- `tables`: pour retrouver les différente tables et vues créées pour l'import.
+- `sql`: pour les requêtes utilisée pour l'import
+
+### 3.1) tables
+
+- `data`: table contenant les données
+
+### 3.2)  requêtes sql
+
+- `data_table`: creation de la table contenant les données

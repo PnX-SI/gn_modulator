@@ -82,8 +82,7 @@ class ImportMixinUpdate(ImportMixinUtils):
         # condition pour voir si une ligne est modifiée
         txt_update_conditions = "NOT (\n    " + "\n    AND ".join(v_update_condition) + "\n)"
 
-        return f"""
-UPDATE {sm.sql_schema_dot_table()} t SET
+        return f"""UPDATE {sm.sql_schema_dot_table()} t SET
     {txt_set_keys}
 FROM (
     SELECT
