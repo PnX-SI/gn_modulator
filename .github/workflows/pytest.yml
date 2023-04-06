@@ -10,6 +10,9 @@ on:
       - develop
       - main
 
+env:
+  GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -76,8 +79,7 @@ jobs:
         - name: Show database branches and dependencies
           run: |
             geonature db status --dependencies
-          env:
-            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
         - name: Install database
           run: |
             geonature db upgrade geonature@head -x local-srid=2154
@@ -137,14 +139,25 @@ jobs:
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
-        - name: Install GN Modules
+        - name: Install GN Modulator
           run: |
             pip install -e .
-        - name: Install GN Modules db
+        - name: Install GN Modulator db
           run: |
             geonature upgrade-modules-db
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
+        - name: check gn_modulator
+          run: geonature modulator check
+          env:
+            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
+        - name: list modules
+          run: geonature modulator install
+          env:
+            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
 
         - name: install m_monitoring test 1
           run: geonature modulator install -f m_monitoring_test_1
@@ -155,6 +168,12 @@ jobs:
           run: geonature modulator install -f m_monitoring_test_2
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
+        - name: install m_sipaf
+          run: geonature modulator install -f m_sipaf
+          env:
+            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
 
         - name: Pytest gn_modulator
           run: pytest -v --cov --cov-report xml

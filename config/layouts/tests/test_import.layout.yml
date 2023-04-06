@@ -1,0 +1,13 @@
+type: layout
+code: test_import
+title: test import
+description: test pour le composant d'import
+
+layout:
+  type: import
+  object_code: site
+  module_code: m_sipaf
+  hidden_options:
+    - enable_update
+  test_import: true
+data:

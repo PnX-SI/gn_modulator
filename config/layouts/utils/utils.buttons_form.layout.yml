@@ -8,19 +8,19 @@ layout:
   items:
     - flex: "0"
       type: button
+      color: primary
+      title: Annuler
+      icon: refresh
+      description: "Annuler l'édition"
+      action: cancel
+    - flex: "0"
+      type: button
       color: success
       title: Valider
       icon: done
       description: Enregistrer le contenu du formulaire
       action: submit
       disabled: __f__!formGroup.valid
-    - flex: "0"
-      type: button
-      color: primary
-      title: Annuler
-      icon: refresh
-      description: "Annuler l'édition"
-      action: cancel
     - flex: "0"
       type: button
       color: warn

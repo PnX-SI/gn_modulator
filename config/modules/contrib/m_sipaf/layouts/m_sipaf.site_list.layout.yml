@@ -30,47 +30,46 @@ layout:
             - code: utils.button_create
               flex: "0"
             - type: button
+              description: Exporter les passages à faune
+              color: primary
               flex: "0"
               icon: download
-              description: Télécharger les passages à faune (les filtres sont appliqués)
-              href: __f__o.url_export(x, 'm_sipaf.pf')
               hidden: __f__!o.is_action_allowed(x, 'E')
-            # - type: button
-            #   flex: "0"
-            #   icon: upload
-            #   color: primary
-            #   description: Importer des passage à faune
-            #   action:
-            #     type: modal
-            #     modal_name: import
-            #   hidden: __f__!o.is_action_allowed(x, 'C')
-            # - type: modal
-            #   modal_name: import
-            #   items:
-            #     title: Importer des passage à faune
-            #     type: form
-            #     items:
-            #       - items:
-            #         - key: data_file
-            #           type: file
-            #           title: Fichier d'import
-            #           description: Choisir un fichier à importer
-            #         - key: object_code
-            #           type: string
-            #           default: __f__context.object_code
-            #       - direction: row
-            #         items:
-            #           - type: button
-            #             color: primary
-            #             title: Valider
-            #             description: Valider
-            #             action: import
-            #             disabled: __f__!(formGroup.valid )
-            #           - type: button
-            #             color: primary
-            #             title: Annuler
-            #             description: Annuler
-            #             action: close
+              action:
+                type: modal
+                modal_name: exports
+            - type: modal
+              flex: "0"
+              modal_name: exports
+              items:
+                - title: Exports pour les passages à faune
+                - type: button
+                  flex: "0"
+                  title: "Export complet"
+                  description: Télécharger les passages à faune (les filtres sont appliqués)
+                  href: __f__o.url_export(x, 'm_sipaf.pf')
+                - type: button
+                  flex: "0"
+                  title: "Export import"
+                  description: Export destiné à l'import (les filtres sont appliqués)
+                  href: __f__o.url_export(x, 'm_sipaf.pf_import')
+            - type: button
+              flex: "0"
+              icon: upload
+              color: primary
+              description: Importer des passages à faune
+              action:
+                type: modal
+                modal_name: import
+              hidden: __f__!o.is_action_allowed(x, 'I')
+            - type: modal
+              modal_name: import
+              # style:
+                # width: 1200px
+              items:
+                type: import
+                hidden_options:
+                  - enable_update
 
           flex: "0"
         - type: object

@@ -12,6 +12,10 @@ objects:
         cruved: R
     ref_geo.linear_group:
         cruved: R
+    ref_geo.linear_type:
+        cruved: R
+    ref_geo.linear:
+        cruved: R
     user.role:
         cruved: R
     user.organisme:
@@ -27,4 +31,6 @@ objects:
     tax.taxref:
         cruved: R
     tax.taxsearch:
+        cruved: R
+    syn.synthese:
         cruved: R

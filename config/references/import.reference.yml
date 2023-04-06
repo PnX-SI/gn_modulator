@@ -23,11 +23,14 @@ properties:
     type: array
     items:
       required:
-        - schema_code
+        - module_code
+        - object_code
         - data
       type: object
       properties:
-        schema_code:
+        module_code:
+          type: string
+        object_code:
           type: string
         data:
           type: string

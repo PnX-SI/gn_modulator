@@ -1,0 +1,25 @@
+type: schema
+code: m_sipaf.diag
+title: schema diagnostic passage faune
+description: schema pour les diagnostics des passages à faune
+
+meta:
+    autoschema: true
+    model: m_sipaf.models.Diagnostic
+    module_code: m_sipaf
+    genre: M
+    label: diagnostic
+    label_field_name: date_diagnostic
+    unique:
+        - id_passage_faune
+        - date_diagnostic
+        - id_organism
+    unique_in_db: true
+properties:
+    date_diagnostic:
+        title: Date
+    role:
+        title: Agent
+    organisme:
+        title: Organisme
+

@@ -71,6 +71,7 @@ class DefinitionDynamic:
         label: () => {},
         labels: () => {},
         du_label: () => {},
+        des_labels: () => {},
         data_label: () => {},
         tab_label: () => {},
         title_details: () => {},

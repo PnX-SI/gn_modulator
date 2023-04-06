@@ -2,6 +2,8 @@ import { Injectable, Injector } from '@angular/core';
 import { ModulesDataService } from './data.service';
 import { ModulesConfigService } from './config.service';
 import { ModulesSchemaService } from './schema.service';
+import { Subject } from '@librairies/rxjs';
+
 import utils from '../utils';
 @Injectable()
 export class ModulesObjectService {
@@ -10,10 +12,16 @@ export class ModulesObjectService {
   _mSchema: ModulesSchemaService;
   _cacheObjectConfig = {};
 
+  $reProcessObject = new Subject();
+
   constructor(private _injector: Injector) {
     this._mData = this._injector.get(ModulesDataService);
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mSchema = this._injector.get(ModulesSchemaService);
+  }
+
+  reProcessObject(moduleCode, objectCode) {
+    this.$reProcessObject.next({ moduleCode, objectCode });
   }
 
   /** renvoie la configuration d'un object en fonction de
@@ -42,8 +50,9 @@ export class ModulesObjectService {
     }
 
     const objectModuleConfig = this._mConfig.moduleConfig(moduleCode).objects[objectCode];
+
     if (!objectModuleConfig) {
-      // console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
+      console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
       return;
     }
 
@@ -76,6 +85,7 @@ export class ModulesObjectService {
     }
 
     this._cacheObjectConfig[cacheKey] = utils.copy(objectConfig);
+
     return objectConfig;
   }
 
@@ -163,6 +173,10 @@ export class ModulesObjectService {
 
   duLabel({ context }) {
     return this.objectConfigContext(context)?.display.du_label;
+  }
+
+  desLabels({ context }) {
+    return this.objectConfigContext(context)?.display.des_labels;
   }
 
   display({ context }) {
@@ -336,12 +350,13 @@ export class ModulesObjectService {
 
     if (!testUserCruved) {
       const msgDroitsInsuffisants = {
-        C: `Droits inssuffisants pour créer ${objectConfig.display.un_nouveau_label}`,
-        R: `Droits inssuffisants pour voir ${objectConfig.display.le_label}`,
-        U: `Droits inssuffisants pour éditer ${objectConfig.display.le_label}`,
-        V: `Droits inssuffisants pour valider ${objectConfig.display.le_label}`,
-        E: `Droits inssuffisants pour exporter ${objectConfig.display.des_label}`,
-        D: `Droits inssuffisants pour supprimer ${objectConfig.display.le_label}`,
+        C: `Droits insuffisants pour créer ${objectConfig.display.un_nouveau_label}`,
+        R: `Droits insuffisants pour voir ${objectConfig.display.le_label}`,
+        U: `Droits insuffisants pour éditer ${objectConfig.display.le_label}`,
+        V: `Droits insuffisants pour valider ${objectConfig.display.le_label}`,
+        E: `Droits insuffisants pour exporter ${objectConfig.display.des_label}`,
+        D: `Droits insuffisants pour supprimer ${objectConfig.display.le_label}`,
+        I: `Droits insuffisants pour importer ${objectConfig.display.des_label}`,
       };
       return {
         actionAllowed: false,
@@ -358,6 +373,7 @@ export class ModulesObjectService {
       V: `Valider ${objectConfig.display.le_label}`,
       E: `Exporter ${objectConfig.display.des_label}`,
       D: `Supprimer ${objectConfig.display.le_label}`,
+      I: `Importer ${objectConfig.display.des_label}`,
     };
 
     return {
@@ -375,6 +391,7 @@ export class ModulesObjectService {
       schema_code: this.schemaCode.bind(this),
       label: this.label.bind(this),
       du_label: this.duLabel.bind(this),
+      des_labels: this.desLabels.bind(this),
       data_label: this.dataLabel.bind(this),
       labels: this.labels.bind(this),
       tab_label: this.tabLabel.bind(this),

@@ -1,7 +1,7 @@
-DROP VIEW IF EXISTS :pre_processed_import_view CASCADE;
-CREATE VIEW :pre_processed_import_view AS
-SELECT DISTINCT
+SELECT
+    MIN(id_import) AS id_import,
     'RTE' AS id_type,
     numero AS code,
     cl_admin || ' ' || numero AS name
-    FROM :raw_import_table tis
+    FROM :table_data
+    GROUP BY cl_admin, numero

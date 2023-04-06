@@ -40,6 +40,7 @@
           <ng-container *ngFor="let item of layout.items; let index = index">
             <mat-tab
               [label]="computedItems[index].label || computedItems[index].title || index"
+              [disabled]="computedItems[index].disabled"
               *ngIf="!computedItems[index].hidden"
               class="layout-section"
             >

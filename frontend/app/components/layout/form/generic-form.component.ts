@@ -77,9 +77,10 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
       this.data = {};
     }
 
-    this.formGroup = this._mForm.initForm(this.layout, this._id, this.context);
+    this.context.form_group_id =
+      this.context.form_group_id || this.computedLayout.form_group_id || this._id;
+    this.formGroup = this._mForm.initForm(this.layout, this.context.form_group_id, this.context);
 
-    this.context.form_group_id = this._id;
     this.context.direction = this.direction;
     this.context.appearance = this.layout.appearance;
     this.context.skip_required = this.layout.skip_required;
@@ -93,9 +94,6 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     const { action, context, value = null, data = null, layout = null } = event;
     if (action == 'submit') {
       this._mAction.processSubmit(context, data, layout);
-    }
-    if (action == 'import') {
-      return this._mAction.processImport(context, data);
     }
     this.emitAction(event);
   }

@@ -18,17 +18,14 @@ def test_schema_rest(client, user, module_code, object_code, data_post, data_upd
     """
 
     # patch cruved for tests
-    object_config = ModuleMethods.object_config(module_code, object_code)
-    assert object_config is not None
-
-    object_config["cruved"] = "CRUVED"
+    ModuleMethods.add_actions(module_code, object_code, "CUD")
 
     # INIT
     set_logged_user_cookie(client, user)
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     assert schema_code is not None
     sm = SchemaMethods(schema_code)
-    field_name = sm.attr("meta.unique")
+    field_name = sm.unique()
     data_unique = ",".join(list(map(lambda x: data_post[x], field_name)))
 
     # GET VIDE

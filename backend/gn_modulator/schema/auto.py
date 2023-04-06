@@ -104,6 +104,7 @@ class SchemaAuto:
                 continue
             properties[k] = {
                 "type": "string",
+                "is_column_property": True
                 # "column_property": "label",
                 # "title": k,
             }
@@ -153,7 +154,6 @@ class SchemaAuto:
 
     def process_column_auto(self, column, sql_schema_name, sql_table_name):
         type = str(column.type)
-
         if "VARCHAR(" in type:
             type = "VARCHAR"
 
@@ -220,6 +220,9 @@ class SchemaAuto:
             and (column_info.get("default") is None)
             and (column.key != "meta_create_date")
         )
+
+        if column_info.get("geometry_type"):
+            property["geometry_type"] = column_info["geometry_type"].lower()
 
         if condition_required:
             property["required"] = True

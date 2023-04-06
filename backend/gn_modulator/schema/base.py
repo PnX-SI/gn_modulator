@@ -309,28 +309,37 @@ class SchemaBase:
             for key in keys
         ]
 
-    def process_csv_data(self, key, data, options={}):
+    def process_csv_data(self, key, data, options={}, process_label=True):
         """
         pour rendre les sorties des relations jolies pour l'export ??
         """
 
         if isinstance(data, list):
-            return ", ".join([self.process_csv_data(key, d) for d in data])
+            return ", ".join(
+                [self.process_csv_data(key, d, process_label=process_label) for d in data]
+            )
 
         if isinstance(data, dict):
             if not key:
-                return "_".join([self.process_csv_data(None, data[k]) for k in data.keys()])
+                return "_".join(
+                    [
+                        self.process_csv_data(None, data[k], process_label=process_label)
+                        for k in data.keys()
+                    ]
+                )
 
             if "." in key:
                 key1 = key.split(".")[0]
                 key2 = ".".join(key.split(".")[1:])
 
-                return self.process_csv_data(key2, data[key1])
+                return self.process_csv_data(key2, data[key1], process_label=process_label)
 
             options = self.has_property(key) and self.property(key) or {}
-            return self.process_csv_data(None, data[key], options)
+            return self.process_csv_data(
+                None, data[key], options=options, process_label=process_label
+            )
 
-        if labels := options.get("labels"):
+        if labels := options.get("labels") and process_label:
             if data is True:
                 return labels[0] if len(labels) > 0 else True
             elif data is False:
@@ -363,3 +372,15 @@ class SchemaBase:
             url = "{}{}".format(self.cls.base_url(), url)
 
         return url
+
+    def unique(self):
+        return self.attr("meta.unique") or []
+
+    def is_relation_n_n(self, key):
+        return self.has_property(key) and self.property(key).get("relation_type") == "n-n"
+
+    def is_primary_key(self, key):
+        return self.has_property(key) and self.property(key).get("primary_key")
+
+    def is_foreign_key(self, key):
+        return self.has_property(key) and self.property(key).get("foreign_key")

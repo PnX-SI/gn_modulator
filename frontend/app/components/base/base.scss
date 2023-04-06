@@ -30,16 +30,36 @@
 }
 
 // couleur custom des bouttons
-.layout-buttons .mat-success {
+.mat-button-base.mat-success {
   background-color: green;
   color: #fff;
 }
 
 // couleur custom des bouttons
-.layout-buttons .mat-error {
+.mat-button-base.mat-info {
+  background-color: #4b8ed5;
+  color: #fff;
+}
+
+
+// couleur custom des bouttons
+.mat-button-base.mat-error {
   background-color: red;
   color: #fff;
 }
+
+// couleur custom des bouttons
+.mat-button-base.mat-reset {
+  background-color: #d5cc4b;
+  color: #fff;
+}
+
+
+.mat-button-base.mat-button-disabled {
+  color: rgba(0,0,0,.26);
+  background-color: rgba(0,0,0,.12);
+}
+
 
 .content-container {
   min-width: 50%;
@@ -164,7 +184,7 @@ div.layout-items > div {
   background-color: lightgrey;
   color: grey;
   border-radius: 15px;
-  border: solid 1px;
+  // border: solid 1px;
   display: inline-block;
 }
 
@@ -177,6 +197,12 @@ div.layout-items > div {
   color: darkgreen;
   background-color: lightgreen;
 }
+
+.layout-message.success {
+  color: darkgreen;
+  background-color: lightgreen;
+}
+
 
 .layout-message.error {
   color: darkred;

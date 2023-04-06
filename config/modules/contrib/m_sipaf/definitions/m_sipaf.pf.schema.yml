@@ -9,6 +9,7 @@ meta:
     # unique_in_db: true
     autoschema: true
     model: m_sipaf.models.PassageFaune
+    module_code: m_sipaf
     genre: M
     label: passage à faune
     labels: passages à faune

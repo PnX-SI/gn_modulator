@@ -14,7 +14,6 @@ def table_exists(table):
         )
         .scalar()
     )
-    print(txt_table_exists)
     return txt_table_exists
 
 

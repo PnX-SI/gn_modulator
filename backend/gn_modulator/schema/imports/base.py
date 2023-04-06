@@ -67,7 +67,7 @@ class SchemaBaseImports:
         if not isinstance(rel_test_values, list):
             rel_test_values = [rel_test_values]
 
-        rel_test_keys = sm_rel.attr("meta.unique")
+        rel_test_keys = sm_rel.unique()
 
         # on récupère le type de nomenclature au besoin
         if sm_rel.schema_code() == "ref_nom.nomenclature" and len(rel_test_values) == 1:
@@ -152,7 +152,7 @@ class SchemaBaseImports:
         v_inserts = []
         v_errors = []
 
-        test_keys = sm.attr("meta.unique")
+        test_keys = sm.unique()
 
         items = cls.get_data_item(data_item, file_path)
 

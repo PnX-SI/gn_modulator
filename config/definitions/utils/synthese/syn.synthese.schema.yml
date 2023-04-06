@@ -4,7 +4,6 @@ title: Schema syn.synthese
 description: Définition du schema de la synthese
 
 meta:
-    schema_code: syn.synthese
     autoschema: true
     model: geonature.core.gn_synthese.models.Synthese
     genre: M
@@ -15,6 +14,6 @@ meta:
     unique:
         - id_source
         - entity_source_pk_value
-    properties:
-        entity_source_pk_value:
-            type: string
+properties:
+    entity_source_pk_value:
+        type: string

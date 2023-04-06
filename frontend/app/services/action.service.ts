@@ -130,40 +130,4 @@ export class ModulesActionService {
       }
     );
   }
-
-  processImport(context, data) {
-    this._mData
-      .import(context.module_code, data)
-      .pipe()
-      .subscribe(
-        (importEvent) => {
-          if (importEvent.type === HttpEventType.UploadProgress) {
-            const uploadPerCentDone = Math.round((100 * importEvent.loaded) / importEvent.total);
-          }
-          if (importEvent instanceof HttpResponse) {
-            this._mLayout.stopActionProcessing('');
-            const response = importEvent.body as any;
-            if (response.errors?.length) {
-              for (let error of response.errors) {
-                this._commonService.regularToaster('error', `${error.code} : ${error.msg}`);
-                console.error(`${error.code} : ${error.msg}`);
-              }
-              return;
-            }
-            const txtImport = `Import réussi
-            data: ${response['nb_data']}
-            raw: ${response['nb_raw']}
-            insert: ${response['nb_insert']}
-            update: ${response['nb_update']}
-            unchanged: ${response['nb_unchanged']}
-            `;
-            this._commonService.regularToaster('success', txtImport);
-            console.log(txtImport);
-          }
-        },
-        (error: HttpErrorResponse) => {
-          this._commonService.regularToaster('error', `Import : ${error.error.msg}`);
-        }
-      );
-  }
 }

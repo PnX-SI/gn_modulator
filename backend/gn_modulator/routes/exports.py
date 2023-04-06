@@ -1,11 +1,11 @@
 from gn_modulator import DefinitionMethods, ModuleMethods, SchemaMethods
 from gn_modulator.blueprint import blueprint
-from .utils.decorators import check_rest_route
+from .utils.decorators import check_module_object_route
 from .utils.params import parse_request_args
 
 
 @blueprint.route("/exports/<module_code>/<object_code>/<export_code>", methods=["GET"])
-@check_rest_route("E")
+@check_module_object_route("E")
 def api_export(module_code, object_code, export_code):
     """
     Route pour les exports
@@ -30,6 +30,9 @@ def api_export(module_code, object_code, export_code):
     #   - TODO faire l'intersection de params['fields'] et export_definition['fields'] (si params['fields'] est défini)
     params["fields"] = export_definition["fields"]
     #   - TODO autres paramètres ????
+
+    params["process_field_name"] = export_definition.get("process_field_name")
+    params["process_label"] = export_definition.get("process_label")
 
     cruved_type = params.get("cruved_type") or "R"
 

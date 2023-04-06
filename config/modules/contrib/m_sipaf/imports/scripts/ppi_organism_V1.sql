@@ -1,8 +1,8 @@
-DROP VIEW IF EXISTS :pre_processed_import_view;
-CREATE VIEW :pre_processed_import_view AS
-SELECT DISTINCT
+SELECT
+	MIN(id_import) AS id_import,
 	concess AS nom_organisme,
 	'SIPAF' AS adresse_organisme
-	FROM :raw_import_table t
+	FROM :table_data
 	WHERE concess IS NOT NULL AND concess != ''
+	GROUP BY concess
 	ORDER BY concess

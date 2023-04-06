@@ -79,6 +79,17 @@
     ></modules-layout-card>
   </ng-container>
 
+    <!-- import -->
+    <ng-container *ngIf="layoutType == 'import'">
+      <modules-layout-import
+        [data]="data"
+        [layout]="layout"
+        [parentContext]="context"
+        (onAction)="processAction($event)"
+      ></modules-layout-import>
+    </ng-container>
+
+  <!-- key -->
   <ng-container *ngIf="layoutType == 'key'">
     <modules-layout-element
       [data]="data"
@@ -142,9 +153,10 @@
       <div
         [ngClass]="{
           'layout-message': true,
-          error: layout.class == 'error',
-          info: layout.class == 'info',
-          warning: layout.class == 'warning'
+          error: computedLayout.class == 'error',
+          info: computedLayout.class == 'info',
+          warning: computedLayout.class == 'warning',
+          success: computedLayout.class == 'success'
         }"
       >
         <div

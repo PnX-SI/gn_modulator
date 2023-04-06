@@ -15,6 +15,11 @@ from ..errors import (
 
 
 class SchemaSqlBase:
+    def sql_type(self, key):
+        if not self.is_column(key):
+            return None
+        return self.cls.c_get_type(self.property(key)["type"], "definition", "sql")
+
     @classmethod
     def auto_sql_schemas_dot_tables(cls):
         auto_sql_schemas_dot_tables = []
@@ -31,6 +36,18 @@ class SchemaSqlBase:
         return auto_sql_schemas_dot_tables
 
     @classmethod
+    def non_auto_sql_schemas_dot_tables(cls):
+        auto_sql_schemas_dot_tables = []
+        for schema_code in cls.schema_codes():
+            schema_definition = get_global_cache(["schema", schema_code, "definition"])
+            if schema_definition["meta"].get("autoschema"):
+                continue
+
+            auto_sql_schemas_dot_tables.append(schema_definition["meta"]["sql_schema_dot_table"])
+
+        return auto_sql_schemas_dot_tables
+
+    @classmethod
     def get_tables(cls):
         if tables := get_global_cache(["schema_dot_tables"]):
             return tables
@@ -41,7 +58,7 @@ class SchemaSqlBase:
         FROM
             information_schema.tables t
         WHERE
-            CONCAT(t.table_schema, '.', t.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
+            CONCAT(t.table_schema, '.', t.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables() + cls.non_auto_sql_schemas_dot_tables())}')
 
         """
         res = cls.c_sql_exec_txt(sql_txt_tables)
@@ -58,7 +75,7 @@ class SchemaSqlBase:
             column_name
         FROM
             information_schema.columns c
-        WHERE 
+        WHERE
             c.table_schema = '{table_schema}'
             AND c.table_name = '{table_name}'
         """
@@ -78,13 +95,19 @@ class SchemaSqlBase:
         # on récupère les info des colonnes depuis information_schema.columns
         sql_txt_get_columns_info = f"""
 SELECT
-  c.table_schema,
-  c.table_name,
-  column_name,
-  column_default,
-  is_nullable
+    c.table_schema,
+    c.table_name,
+    column_name,
+    column_default,
+    is_nullable,
+    DATA_TYPE AS TYPE,
+    gc.TYPE AS geometry_type
 FROM
-  information_schema.columns c
+    information_schema.columns c
+LEFT JOIN GEOMETRY_COLUMNS GC ON
+    c.TABLE_SCHEMA = GC.F_TABLE_SCHEMA
+    AND c.TABLE_NAME= GC.F_TABLE_NAME
+    AND c.COLUMN_NAME = gc.F_GEOMETRY_COLUMN 
 WHERE
     CONCAT(c.table_schema, '.', c.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
 """
@@ -99,7 +122,12 @@ WHERE
             columns_info[schema_name] = columns_info.get(schema_name) or {}
             columns_info[schema_name][table_name] = columns_info[schema_name].get(table_name) or {}
 
-            column_info = {"default": r[3], "nullable": r[4] == "YES"}
+            column_info = {
+                "default": r[3],
+                "nullable": r[4] == "YES",
+                "type": r[5],
+                "geometry_type": r[6],
+            }
             columns_info[schema_name][table_name][column_name] = column_info
             # set_global_cache(["columns", schema_name, table_name, column_name], column_info)
             set_global_cache(["columns"], columns_info)

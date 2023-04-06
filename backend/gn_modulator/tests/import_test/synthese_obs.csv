@@ -1,0 +1,3 @@
+cd_nom,id_source,entity_source_pk_value,nom_cite,date_min,date_max,cor_observers
+67111,Occtax,21,Ablette,"2017-01-08 20:00:00.000","2017-01-08 23:00:00.000","admin,agent"
+67111,Occtax,22,Ablette,"2017-01-08 20:00:00.000","2017-01-08 23:00:00.000","admin,agent"

@@ -5,6 +5,7 @@ title: schema acteur ca
 description: Définition du schema pour les acteurs liés aux cadres d'acquisition
 meta:
   schema_code: m_sipaf.actor
+  module_code: m_sipaf
   genre: M
   label: Acteur
   label_field_name: id_nomenclature_type_actor

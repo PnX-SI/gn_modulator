@@ -17,7 +17,7 @@
 
 //  :host ::ng-deep
   .table-icon.disabled {
-    color: grey;
+    color: rgb(200, 200, 200);
     padding: 3px;
     border-radius: 5px;
     // margin-left: 5px;
@@ -25,7 +25,7 @@
 
 
 //  :host ::ng-deep
-  .table-icon:hover{
+.table-icon:hover{
     background-color: lightgrey;
  }
 

@@ -7,11 +7,10 @@
 import click
 from flask.cli import with_appcontext
 
-from gn_modulator.schema import SchemaMethods
-from gn_modulator.module import ModuleMethods
-from gn_modulator.definition import DefinitionMethods
+from gn_modulator import SchemaMethods, ModuleMethods, DefinitionMethods
+from gn_modulator.imports.models import TImport
 from gn_modulator.utils.errors import errors_txt
-from gn_modulator import init_gn_modulator
+from gn_modulator import init_gn_modulator, get_errors
 from geonature.utils.env import db
 
 
@@ -111,25 +110,29 @@ def cmd_process_sql(module_code=None, schema_code=None, force=False):
 
 @click.command("doc")
 @click.argument("schema_code")
-@click.option("-f", "--force", is_flag=True)
+@click.argument("doc_type")
+@click.option("-e", "exclude")
+@click.option("-f", "file_path", type=click.Path(exists=True))
 @with_appcontext
-def cmd_doc_schema(schema_code, force=False):
+def cmd_doc_schema(schema_code, doc_type, file_path=None, exclude=""):
     """
     affiche la doc d'un schema identifié par schema_code
     """
     init_gn_modulator()
-    txt = SchemaMethods(schema_code).doc_markdown()
+    exclude_keys = exclude and exclude.split(",") or []
+    txt = SchemaMethods(schema_code).doc_markdown(doc_type, exclude_keys, file_path)
     print(txt)
     return True
 
 
 @click.command("import")
-@click.option("-s", "schema_code")
+@click.option("-o", "object_code")
+@click.option("-m", "module_code")
 @click.option("-d", "data_path", type=click.Path(exists=True))
 @click.option(
-    "-p",
-    "--pre-process",
-    "pre_process_file_path",
+    "-m",
+    "--mapping",
+    "mapping_file_path",
     type=click.Path(exists=True),
     help="chemin vers le script sql de pre-process",
 )
@@ -139,18 +142,17 @@ def cmd_doc_schema(schema_code, force=False):
     "import_code",
     help="code de l'import de ficher",
 )
-@click.option("-k", "--keep-raw", is_flag=True, help="garde le csv en base")
 @click.option(
     "-v", "--verbose", type=int, default=1, help="1 : affiche les sortie, 2: les commandes sql  "
 )
 @with_appcontext
 def cmd_import_bulk_data(
-    schema_code=None,
+    module_code=None,
+    object_code=None,
     import_code=None,
     data_path=None,
-    pre_process_file_path=None,
-    verbose=1,
-    keep_raw=False,
+    mapping_file_path=None,
+    verbose=None,
 ):
     """
     importe des données pour un schema
@@ -158,21 +160,23 @@ def cmd_import_bulk_data(
 
     init_gn_modulator()
 
-    if schema_code and data_path:
-        Timport()
-        import_number = SchemaMethods.process_import_schema(
-            schema_code,
-            data_path,
-            pre_process_file_path=pre_process_file_path,
-            verbose=verbose,
-            keep_raw=keep_raw,
-            commit=True,
+    if module_code and object_code and data_path:
+        impt = TImport(
+            module_code, object_code, data_file_path=data_path, mapping_file_path=mapping_file_path
         )
+        impt.process_import_schema()
+        print(impt.pretty_infos())
 
     if import_code:
-        import_number = SchemaMethods.process_import_code(
-            import_code, data_path, verbose=verbose, commit=True
-        )
+        res = TImport.process_import_code(import_code, data_path)
+        if res is None:
+            print(f"L'import de code {import_code} n'existe pas\n")
+            import_codes = sorted(DefinitionMethods.definition_codes_for_type("import"))
+            print(f"Veuillez choisir parmi codes suivants\n")
+            for import_code in import_codes:
+                print(
+                    f"- {import_code:>15} : {DefinitionMethods.get_definition('import', import_code)['title']}"
+                )
 
     return True
 
@@ -284,6 +288,7 @@ def cmd_check():
     print()
     print("Vérification des définitions de gn_modulator.\n")
     print(errors_txt())
+    return not get_errors()
 
 
 @click.command("test")

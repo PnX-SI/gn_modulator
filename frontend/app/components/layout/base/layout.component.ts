@@ -216,9 +216,16 @@ export class ModulesLayoutComponent implements OnInit {
 
     if (!layout) return;
 
-    for (const key of ['debug', 'appearance', 'index', 'map_id', 'skip_required']) {
-      if (this.parentContext[key] != null) {
-        this.context[key] = this.parentContext[key];
+    for (const key of [
+      'debug',
+      'appearance',
+      'index',
+      'map_id',
+      'skip_required',
+      'hidden_options',
+    ]) {
+      if (this.parentContext[key] != null || layout[key] != null) {
+        this.context[key] = this.parentContext[key] || layout[key];
       }
     }
 
@@ -253,8 +260,13 @@ export class ModulesLayoutComponent implements OnInit {
     this.context.current_user = computedContext.current_user;
 
     const objectConfig = this.objectConfig() || {};
-    for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
-      this.context[key] = layout[key] || this.parentContext[key] || objectConfig[key];
+    if (
+      this.parentContext.object_code &&
+      this.context.object_code == this.parentContext.object_code
+    ) {
+      for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
+        this.context[key] = layout[key] || this.parentContext[key] || objectConfig[key];
+      }
     }
 
     // ici pour filter value, etc....
@@ -596,6 +608,7 @@ export class ModulesLayoutComponent implements OnInit {
       prefilters: this.context.prefilters,
       form_group_id: this.context.form_group_id,
       debug: this.context.debug,
+      hidden_options: this.context.hidden_options,
     };
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.layout);

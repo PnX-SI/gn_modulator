@@ -59,6 +59,7 @@ export class ModulesFormElementComponent
   fileChange(files: File[]) {
     if (files.length) {
       this.formControl.setValue(files[0]);
+      this.formControl.updateValueAndValidity();
     } else {
       this.formControl.setValue(null);
     }

@@ -1,6 +1,5 @@
-DROP VIEW IF EXISTS :pre_processed_import_view;
-CREATE VIEW :pre_processed_import_view AS
 SELECT
+	id_import,
 	uuid_pf AS id_passage_faune,
 	CASE
 		WHEN type_role_org = 'Concessionaire' THEN 'CON'
@@ -11,7 +10,7 @@ SELECT
 	END AS id_nomenclature_type_actor,
 	nom_organism AS id_organism,
     NULL AS id_role
-	FROM :raw_import_table t
+    FROM :table_data
 	WHERE nom_organism IS NOT NULL AND nom_organism != ''
 ;
 
