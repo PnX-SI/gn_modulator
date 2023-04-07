@@ -283,9 +283,65 @@ class ModuleConfigUtils:
         On regarde dans toutes les pages pour déterminer les champs
         """
 
-        keys = get_global_cache(["keys"], {})
+        cls.process_base_fields(module_code)
+        cls.process_layout_fields(module_code)
 
+    @classmethod
+    def process_base_fields(cls, module_code):
         module_config = cls.module_config(module_code)
+        for object_code in module_config["objects"]:
+            object_config = cls.object_config(module_code, object_code)
+            if "R" in object_config["cruved"]:
+                cls.add_basic_fields(module_code, object_code)
+
+    @classmethod
+    def add_basic_fields(cls, module_code, object_code):
+        sm = SchemaMethods(cls.schema_code(module_code, object_code))
+
+        authorized_read_fields = []
+        authorized_write_fields = []
+
+        set_global_cache(
+            [
+                "keys",
+                module_code,
+                object_code,
+                "read",
+            ],
+            authorized_read_fields,
+        )
+
+        set_global_cache(
+            [
+                "keys",
+                module_code,
+                object_code,
+                "write",
+            ],
+            authorized_write_fields,
+        )
+
+        # pour la lecture, on ajoute par défaut les champs
+        # - pk_field_name
+        # - label_field_name
+        # - title_field_name
+        # - champs d'unicité
+        # - ownership
+        for elem in [
+            sm.pk_field_name(),
+            sm.label_field_name(),
+            sm.title_field_name(),
+            *sm.unique(),
+            "ownership",
+        ]:
+            if elem is not None and elem not in authorized_read_fields:
+                authorized_read_fields.append(elem)
+
+    @classmethod
+    def process_layout_fields(cls, module_code):
+        keys = get_global_cache(["keys"], {})
+        module_config = cls.module_config(module_code)
+
         pages = module_config.get("pages", {})
         config_params = module_config.get("config_params", {})
         config_defaults = module_config.get("config_defaults", {})
@@ -382,46 +438,11 @@ class ModuleConfigUtils:
 
     @classmethod
     def get_autorized_fields(cls, module_code, object_code, write=False):
-        sm = SchemaMethods(cls.schema_code(module_code, object_code))
-
-        authorized_fields = (
-            get_global_cache(
-                [
-                    "keys",
-                    module_code,
-                    object_code,
-                    "write" if write else "read",
-                ]
-            )
-            or []
+        return get_global_cache(
+            [
+                "keys",
+                module_code,
+                object_code,
+                "write" if write else "read",
+            ]
         )
-
-        if not authorized_fields:
-            set_global_cache(
-                [
-                    "keys",
-                    module_code,
-                    object_code,
-                    "write" if write else "read",
-                ],
-                authorized_fields,
-            )
-
-            # pour la lecture, on ajoute par défaut les champs
-            # - pk_field_name
-            # - label_field_name
-            # - title_field_name
-            # - champs d'unicité
-            # - ownership
-            if not write:
-                for elem in [
-                    sm.pk_field_name(),
-                    sm.label_field_name(),
-                    sm.title_field_name(),
-                    *sm.unique(),
-                    "ownership",
-                ]:
-                    if elem is not None and elem not in authorized_fields:
-                        authorized_fields.append(elem)
-
-        return authorized_fields
