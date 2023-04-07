@@ -1,6 +1,6 @@
 from pathlib import Path
 from sqlalchemy.orm.exc import NoResultFound
-from gn_modulator.utils.env import assets_static_dir, migrations_directory
+from gn_modulator.utils.env import assets_dir, migrations_directory
 from gn_modulator.utils.files import symlink
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.cache import get_global_cache
@@ -145,15 +145,14 @@ class ModuleBase:
     @classmethod
     def process_module_assets(cls, module_code):
         """
-        copie le dossier assets d'un module dans le repertoire static de geonature
-        dans le dossier 'static/external_assets/modules/{module_code.lower()}'
+        copie le dossier assets d'un module dans le repertoire media de geonature
+        dans le dossier 'media/modulator/assets/{module_code.lower()}'
         """
 
         if module_code == MODULE_CODE:
             return []
 
         module_assets_dir = Path(cls.module_dir_path(module_code)) / "assets"
-        assets_static_dir().mkdir(exist_ok=True, parents=True)
         module_img_path = Path(module_assets_dir / "module.jpg")
 
         # on teste si le fichier assets/module.jpg est bien présent
@@ -167,9 +166,10 @@ class ModuleBase:
 
         # s'il y a bien une image du module,
         #   - on crée le lien des assets vers le dossize static de geonature
+        assets_dir().mkdir(exist_ok=True, parents=True)
         symlink(
             module_assets_dir,
-            assets_static_dir() / module_code.lower(),
+            assets_dir() / module_code.lower(),
         )
 
         return []

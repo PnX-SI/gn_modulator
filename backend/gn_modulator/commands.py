@@ -17,8 +17,9 @@ from geonature.utils.env import db
 @click.command("install")
 @click.argument("module_code", required=False)
 @click.option("-f", "--force", is_flag=True)
+@click.option("-p", "module_path", type=click.Path(exists=True))
 @with_appcontext
-def cmd_install_module(module_code, force=False):
+def cmd_install_module(module_code=None, module_path=None, force=False):
     """
     commande d'initialisation du module
     """
@@ -27,28 +28,30 @@ def cmd_install_module(module_code, force=False):
 
     module_codes = ModuleMethods.module_codes()
 
-    if module_code is None or module_code not in module_codes:
-        print("registred", ModuleMethods.registred_modules())
-        print("unregistred", ModuleMethods.unregistred_modules())
-        print()
+    if module_path or module_code in module_codes:
+        return ModuleMethods.install_module(module_code, module_path, force)
 
-        if module_code:
-            print(f"Le module demandé {module_code} n'existe pas.")
-            print("Veuillez choisir un code parmi la liste suivante\n")
+    print("registred", ModuleMethods.registred_modules())
+    print("unregistred", ModuleMethods.unregistred_modules())
+    print()
 
-        for module_code in ModuleMethods.unregistred_modules():
-            print(f"- {module_code}")
+    if module_code:
+        print(f"Le module demandé {module_code} n'existe pas.")
+        print("Veuillez choisir un code parmi la liste suivante\n")
 
-        print()
-        print("Modules installés\n")
-        for module_code in ModuleMethods.registred_modules():
-            print(f"- {module_code}")
+    for module_code in ModuleMethods.unregistred_modules():
+        print(f"- {module_code}")
 
-        print()
+    print()
+    print("Modules installés\n")
+    for module_code in ModuleMethods.registred_modules():
+        print(f"- {module_code}")
 
-        return
+    print()
 
-    return ModuleMethods.install_module(module_code, force)
+    return
+
+    return ModuleMethods.install_module(module_code, module_path, force)
 
 
 @click.command("remove")

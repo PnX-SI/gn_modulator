@@ -6,7 +6,7 @@ site_filters_fields:
       items:
         - code_passage_faune
         - nom_usuel_passage_faune
-        - key: nomenclatures_ouvrage_materiaux
+        - nomenclatures_ouvrage_materiaux
         - key: pi_ou_ps
           title: Passage inférieur / supérieur
           type: list_form

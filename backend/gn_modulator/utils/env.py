@@ -6,26 +6,26 @@ from pathlib import Path
 import gn_modulator
 
 gn_modulator_DIR = Path(gn_modulator.__file__).parent
-
-# assets_static_dir = BACKEND_DIR / current_app.config['MEDIA_DIR'] / "external_assets/modules/"
-# IMPORT_DIR = BACKEND_DIR / current_app.config['MEDIA_DIR'] / "imports"
-
-# TODO redo
-config_directory = gn_modulator_DIR / "../../config/"
 migrations_directory = gn_modulator_DIR / "migrations"
+
+
+config_modulator_dir = Path(__file__).parent / "../../../config"
 definitions_test_dir = Path(__file__).parent / "../tests/definitions_test"
 import_test_dir = Path(__file__).parent / "../tests/import_test"
-
 
 schema_import = "gn_modulator_import"
 
 
-def assets_static_dir():
-    return BACKEND_DIR / current_app.config["MEDIA_FOLDER"] / "external_assets/modules/"
+def config_dir():
+    return BACKEND_DIR / current_app.config["MEDIA_FOLDER"] / "modulator" / "config"
+
+
+def assets_dir():
+    return BACKEND_DIR / current_app.config["MEDIA_FOLDER"] / "modulator" / "assets"
 
 
 def import_dir():
-    return BACKEND_DIR / current_app.config["MEDIA_FOLDER"] / "imports"
+    return BACKEND_DIR / current_app.config["MEDIA_FOLDER"] / "modulator" / "imports"
 
 
 def local_srid():

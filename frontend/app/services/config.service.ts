@@ -121,7 +121,6 @@ export class ModulesConfigService {
         );
   }
 
-  /** Backend Url et static dir ??*/
   backendUrl() {
     return `${this.AppConfig.API_ENDPOINT}`;
   }
@@ -140,7 +139,7 @@ export class ModulesConfigService {
   }
 
   assetsDirectory() {
-    return this.backendUrl() + '/static/external_assets/modules';
+    return `${this.backendUrl()}/${this.AppConfig.MEDIA_FOLDER}/modulator/assets`;
   }
 
   exportUrl(moduleCode, objectCode, exportCode, options: any = {}) {

@@ -3,11 +3,14 @@ import pkg_resources
 import importlib
 import sys
 import site
+from pathlib import Path
 
 from flask_migrate import upgrade as db_upgrade, downgrade as db_downgrade
-from geonature.utils.module import get_dist_from_code
+from geonature.utils.module import get_dist_from_code, iter_modules_dist
 from geonature.utils.env import db
-from gn_modulator import SchemaMethods
+from gn_modulator.utils.files import symlink
+from gn_modulator.utils.env import config_dir
+from gn_modulator import SchemaMethods, DefinitionMethods
 from . import errors
 
 
@@ -57,7 +60,8 @@ class ModuleCommands:
             print(
                 f"Il y a des modules installés qui dependent du module à supprimer {module_code}"
             )
-            print("- " + ", ".join(module_deps_installed))
+
+            ("- " + ", ".join(module_deps_installed))
             print(f"Afin de pouvoir supprimer le module {module_code} vous pouvez")
             print("  - soit supprimer au préalable des modules ci dessus")
             print(
@@ -91,8 +95,42 @@ class ModuleCommands:
         return True
 
     @classmethod
-    def install_module(cls, module_code, force=False):
+    def install_module(cls, module_code=None, module_path=None, force=False):
+        module_path = module_path and Path(module_path)
+        if module_path:
+            subprocess.run(f"pip install -e '{module_path}'", shell=True, check=True)
+            importlib.reload(site)
+            for entry in sys.path:
+                pkg_resources.working_set.add_entry(entry)
+
+            # load python package
+            for module_dist in iter_modules_dist():
+                path = Path(sys.modules[module_dist.entry_points["code"].module].__file__)
+                if module_path.resolve() in path.parents:
+                    module_code = module_dist.entry_points["code"].load()
+                    break
+
+            module_dist = get_dist_from_code(module_code)
+            print(module_code, module_dist)
+            if "migrations" in module_dist.entry_points["migrations"]:
+                db.session.commit()  # pour eviter les locks ???
+                db_upgrade(revision=f"{module_code.lower()}@head")
+
+            symlink((module_path / "config").resolve(), (config_dir() / module_code))
+
+            DefinitionMethods.load_definitions()
+            SchemaMethods.init_schemas()
+            cls.init_module_config(module_code)
+            # ModuleMethods.init_modules()
+
         print("Installation du module {}".format(module_code))
+
+        # si module_path
+
+        # install module
+        # symlink config
+
+        # reload definitions
 
         # test si les dépendances sont installées
         module_config = cls.module_config(module_code)
@@ -110,21 +148,6 @@ class ModuleCommands:
                     )
                     return False
                 cls.install_module(module_dep_code, force)
-
-        # si on a un setup.py on installe le module python
-        if cls.is_python_module(module_code):
-            subprocess.run(
-                f"pip install -e '{cls.module_path(module_code)}'", shell=True, check=True
-            )
-            importlib.reload(site)
-            for entry in sys.path:
-                pkg_resources.working_set.add_entry(entry)
-
-            # load python package
-            module_dist = get_dist_from_code(module_code)
-            if "migrations" in module_dist.get_entry_map("gn_module"):
-                db.session.commit()  # pour eviter les locks ???
-                db_upgrade(revision=f"{module_code.lower()}@head")
 
         # pour les update du module ? # test si module existe
         cls.register_db_module(module_code)

@@ -39,7 +39,6 @@ class ModulesConfigBase:
 
         # config depuis les definitions
         module_definition = get_global_cache(["module", module_code, "definition"])
-
         # config depuis la base (gn_commons.t_module)
         module_db = SchemaMethods("commons.module").get_row_as_dict(
             module_code,

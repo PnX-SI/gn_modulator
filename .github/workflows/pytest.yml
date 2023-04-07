@@ -158,19 +158,24 @@ jobs:
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
+        - name: install m_monitoring
+          run: geonature modulator install contrib/m_monitring
+          env:
+            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+
 
         - name: install m_monitoring test 1
-          run: geonature modulator install -f m_monitoring_test_1
+          run: geonature modulator install m_monitoring_test_1
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
         - name: install m_monitoring test 2
-          run: geonature modulator install -f m_monitoring_test_2
+          run: geonature modulator install m_monitoring_test_2
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
         - name: install m_sipaf
-          run: geonature modulator install -f m_sipaf
+          run: geonature modulator install contrib/m_sipaf
           env:
             GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 

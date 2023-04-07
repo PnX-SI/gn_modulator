@@ -6,7 +6,7 @@ import jsonschema
 
 from geonature.core.gn_commons.models import TModules
 
-from gn_modulator.utils.env import config_directory
+from gn_modulator.utils.env import config_dir
 from gn_modulator.utils.cache import set_global_cache, get_global_cache
 from gn_modulator.utils.errors import add_error, get_errors
 from gn_modulator.utils.commons import get_class_from_path
@@ -46,7 +46,7 @@ class DefinitionBase:
         return list(get_global_cache([definition_type], {}).keys())
 
     @classmethod
-    def load_definitions(cls):
+    def load_definitions(cls, check_existing_definition=True):
         """
         Cette méthode permet
         - de parcourir l'ens
@@ -63,7 +63,7 @@ class DefinitionBase:
 
         # boucle sur les fichiers yml contenus dans le dossier de gn_modulator
         # on charge les definitions et on les mets en cache
-        for root, dirs, files in os.walk(config_directory, followlinks=True):
+        for root, dirs, files in os.walk(config_dir(), followlinks=True):
             # on filtre sur
             # - les fichiers yml
             # - qui ne contiennent pas '-' dans le nom du fichier
@@ -75,7 +75,9 @@ class DefinitionBase:
                 files,
             ):
                 file_path = Path(root) / file
-                cls.load_definition_file(file_path)
+                cls.load_definition_file(
+                    file_path, check_existing_definition=check_existing_definition
+                )
 
     @classmethod
     def check_references(cls):
@@ -318,13 +320,15 @@ class DefinitionBase:
             cls.set_cache(definition_type, definition_code, definition, file_path.resolve())
 
     @classmethod
-    def load_definition_file(cls, file_path):
+    def load_definition_file(cls, file_path, check_existing_definition=True):
         # chargement du fichier yml
         try:
             definition = cls.load_definition_from_file(file_path)
             if not definition:
                 return
-            cls.save_in_cache_definition(definition, file_path)
+            cls.save_in_cache_definition(
+                definition, file_path, check_existing_definition=check_existing_definition
+            )
 
             return definition
         # gestion des exceptions et récupération des erreur
@@ -450,7 +454,7 @@ class DefinitionBase:
         set_global_cache(["uninstalled_schema"], [])
 
         # chargement des définitions
-        cls.load_definitions()
+        cls.load_definitions(check_existing_definition=True)
         if get_errors():
             return
 
