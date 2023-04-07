@@ -1,0 +1,7 @@
+type: layout
+code: m_sipaf.diagnostic_edit
+title: page edit diagnostic
+description: page edit diagnostic
+
+layout:
+  tilte: diagnostic edit

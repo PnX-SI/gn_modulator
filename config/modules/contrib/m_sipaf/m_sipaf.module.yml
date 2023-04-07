@@ -26,8 +26,6 @@ objects:
     schema_code: m_sipaf.diag
     cruved: CRUD
 
-
-
 tree:
   pf:
     diagnostic:

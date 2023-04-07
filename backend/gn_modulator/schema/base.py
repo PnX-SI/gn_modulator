@@ -309,6 +309,22 @@ class SchemaBase:
             for key in keys
         ]
 
+    def flat_keys(self, data, key=None):
+        keys = []
+        for k in data:
+            keys.append(k)
+
+            # if isinstance(data[k], list):
+            #     keys.append(map("k."self.flat_keys(data[k], k)))
+
+            # if isinstance(data[k], dict):
+            # k_all =
+            # if k not in keys:
+            #     if
+            #     keys.append(".".join([*keysParent, k])
+
+        return keys
+
     def process_csv_data(self, key, data, options={}, process_label=True):
         """
         pour rendre les sorties des relations jolies pour l'export ??

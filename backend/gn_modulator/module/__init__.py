@@ -5,6 +5,8 @@ from .breadcrumbs import ModuleBreadCrumbs
 from . import errors
 from gn_modulator.utils.errors import add_error
 
+from gn_modulator.utils.cache import get_global_cache, set_global_cache
+
 
 class ModuleMethods(ModuleBase, ModuleBreadCrumbs, ModuleCommands, ModulesConfig):
     """

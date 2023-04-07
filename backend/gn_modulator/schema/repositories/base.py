@@ -79,7 +79,7 @@ class SchemaRepositoriesBase:
 
         return query
 
-    def insert_row(self, data):
+    def insert_row(self, data, authorized_write_fields=None):
         """
         insert new row with data
         """
@@ -89,7 +89,7 @@ class SchemaRepositoriesBase:
 
         self.validate_data(data)
         m = self.Model()()
-        self.unserialize(m, data)
+        self.unserialize(m, data, authorized_write_fields)
         db.session.add(m)
         db.session.commit()
 
@@ -106,6 +106,8 @@ class SchemaRepositoriesBase:
 
         if isinstance(data, dict) and not isinstance(model, dict):
             for key, data_value in data.items():
+                if not hasattr(model, key):
+                    return True
                 m = self.serialize(model, fields=[key])[key]
                 if self.is_new_data(m, data_value):
                     return True
@@ -144,7 +146,15 @@ class SchemaRepositoriesBase:
 
         return False
 
-    def update_row(self, value, data, field_name=None, module_code=MODULE_CODE, params={}):
+    def update_row(
+        self,
+        value,
+        data,
+        field_name=None,
+        module_code=MODULE_CODE,
+        params={},
+        authorized_write_fields=None,
+    ):
         """
         update row (Model.<field_name> == value) with data
 
@@ -167,7 +177,7 @@ class SchemaRepositoriesBase:
 
         db.session.flush()
 
-        self.unserialize(m, data)
+        self.unserialize(m, data, authorized_write_fields)
 
         db.session.commit()
 

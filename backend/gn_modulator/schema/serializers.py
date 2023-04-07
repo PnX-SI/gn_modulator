@@ -6,7 +6,7 @@
 
 from geoalchemy2.shape import to_shape, from_shape
 from geojson import Feature
-from marshmallow import pre_load, fields, ValidationError
+from marshmallow import pre_load, fields, ValidationError, EXCLUDE
 from shapely.geometry import shape
 from utils_flask_sqla_geo.utilsgeometry import remove_third_dimension
 from geonature.utils.env import ma
@@ -421,12 +421,16 @@ class SchemaSerializers:
         geometry = data.pop(geometry_field_name)
         return {"type": "Feature", "geometry": geometry, "properties": data}
 
-    def unserialize(self, m, data):
+    def unserialize(self, m, data, autorized_write_fields=None):
         """
         unserialize using marshmallow
         """
+        kwargs = {}
+        if autorized_write_fields:
+            kwargs = {"only": autorized_write_fields, "unknown": EXCLUDE}
         MS = self.MarshmallowSchema()
-        ms = MS()
+
+        ms = MS(**kwargs)
         ms.load(data, instance=m)
 
     @classmethod

@@ -1,0 +1,7 @@
+type: layout
+code: m_sipaf.diagnostic_details
+title: page details diagnostic
+description: page details diagnostic
+
+layout:
+  tilte: diagnostic details

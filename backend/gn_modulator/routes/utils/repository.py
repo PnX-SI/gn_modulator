@@ -82,6 +82,7 @@ def post_rest(module_code, object_code):
     sm = SchemaMethods(schema_code)
 
     data = request.get_json()
+    # on verifie les champs
     params = parse_request_args(object_definition)
 
     try:
@@ -101,6 +102,10 @@ def patch_rest(module_code, object_code, value):
     data = request.get_json()
     params = parse_request_args(object_definition)
 
+    authorized_write_fields = ModuleMethods.get_autorized_fields(
+        module_code, object_code, write=True
+    )
+
     try:
         m, _ = sm.update_row(
             value,
@@ -108,6 +113,7 @@ def patch_rest(module_code, object_code, value):
             field_name=params.get("field_name"),
             module_code=module_code,
             params=params,
+            authorized_write_fields=authorized_write_fields,
         )
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:

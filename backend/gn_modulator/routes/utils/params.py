@@ -38,7 +38,7 @@ def load_array_param(param):
     if not param:
         return []
 
-    return param.split(",")
+    return list(map(lambda x: x.strip(), param.split(",")))
 
 
 def load_param(param):
