@@ -133,16 +133,17 @@ jobs:
             pip install -e ./dependencies/GeoNature/contrib/gn_module_occhab
             pip install -e ./dependencies/GeoNature/contrib/gn_module_validation
 
-        - name: Install core modules database
-          run: |
-            geonature upgrade-modules-db
-          env:
-            GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
+        # - name: Install core modules database
+        #   run: |
+        #     geonature upgrade-modules-db
+        #   env:
+        #     GEONATURE_CONFIG_FILE: ./dependencies/GeoNature/config/test_config.toml
 
         - name: Install GN Modulator
           run: |
             pip install -e .
-        - name: Install GN Modulator db
+
+        - name: Install modules db
           run: |
             geonature upgrade-modules-db
           env:
