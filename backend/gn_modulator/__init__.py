@@ -38,4 +38,3 @@ def init_gn_modulator():
     start_time = time.time()
     ModuleMethods.init_modules()
     verbose and print(f"modules     : {round((time.time() - start_time)*1e3)} ms")
-    print(ModuleMethods.module_codes())
