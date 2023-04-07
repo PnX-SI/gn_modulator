@@ -98,9 +98,11 @@ export class PageComponent implements OnInit {
           };
 
           if (this.moduleCode) {
-            this._gnModuleService.currentModule$.next(
-              this._gnModuleService.getModule(this.moduleCode)
-            );
+            setTimeout(() => {
+              this._gnModuleService.currentModule$.next(
+                this._gnModuleService.getModule(this.moduleCode)
+              );
+            });
           }
 
           this._mContext.initContext({

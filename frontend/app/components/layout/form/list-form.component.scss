@@ -1,7 +1,13 @@
 .reset-list-form-button {
     font-size: 1.2em;
-    color: grey;
+    color: gray;
 }
+
+:host ::ng-deep .mdc-text-field--disabled .reset-list-form-button {
+    font-size: 1.2em;
+    color: lightgrey;
+}
+
 
 :host ::ng-deep body .mat-select-panel {
     max-height: 500px !important;

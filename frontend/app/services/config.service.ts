@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import { AppConfig } from '@geonature_config/app.config';
 import { ModuleConfig } from '../module.config';
 import { ModuleService } from '@geonature/services/module.service';
 
 import { of, forkJoin } from '@librairies/rxjs';
 import { mergeMap } from '@librairies/rxjs/operators';
 import { ModulesRequestService } from './request.service';
+import { ConfigService as GNConfigService } from '@geonature/services/config.service';
 import utils from '../utils';
 @Injectable()
 export class ModulesConfigService {
@@ -16,7 +16,11 @@ export class ModulesConfigService {
     layouts: {},
   };
 
-  constructor(private _moduleService: ModuleService, private _mRequest: ModulesRequestService) {}
+  constructor(
+    private _moduleService: ModuleService,
+    private _mRequest: ModulesRequestService,
+    private AppConfig: GNConfigService
+  ) {}
 
   /** Configuration */
 
@@ -119,20 +123,20 @@ export class ModulesConfigService {
 
   /** Backend Url et static dir ??*/
   backendUrl() {
-    return `${AppConfig.API_ENDPOINT}`;
+    return `${this.AppConfig.API_ENDPOINT}`;
   }
 
   urlApplication() {
-    return `${AppConfig.URL_APPLICATION}`;
+    return `${this.AppConfig.URL_APPLICATION}`;
   }
 
   appConfig() {
-    return AppConfig;
+    return this.AppConfig;
   }
 
   /** Backend Module Url */
   backendModuleUrl() {
-    return `${AppConfig.API_ENDPOINT}${ModuleConfig.MODULE_URL}`;
+    return `${this.AppConfig.API_ENDPOINT}${ModuleConfig.MODULE_URL}`;
   }
 
   assetsDirectory() {

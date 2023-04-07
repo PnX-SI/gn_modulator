@@ -2,12 +2,18 @@
 
 ## 1.0.6 (unreleased)
 
+
+- Version de GN  requise 2.12
+
+**✨ Nouveauté**
+- Première version de la fonctionalité d'import (commande + interface frontend)
+
 **✨ Améliorations**
 
 - Clarification dans la gestion des routes REST
 - Meilleure gestion des `tabs` et des `scrolls`
-- Première version de la fonctionalité d'import (commande + interface frontend)
 - sécurisation des api (controle des `fields` en lecture et écriture)
+
 ## 1.0.5 (13-03-2023)
 
 **✨ Améliorations**

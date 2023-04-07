@@ -11,9 +11,9 @@
       [placeholder]="listFormOptions.placeholder"
       [required]="listFormOptions.required"
       [compareWith]="compareFn"
-      [disabled]="computedLayout.disabled"
       (selectionChange)="inputChange($event)"
-    >
+      >
+      <!-- [disabled]="computedLayout.disabled" -->
       <mat-option>
         <ngx-mat-select-search
           placeholderLabel="Filtre"
@@ -54,7 +54,9 @@
     <div matSuffix>
       <div>
         <button
+          [disabled]="computedLayout.disabled"
           mat-icon-button
+          class="erase_button"
           matTooltip="Effacer la selection"
           (click)="clearSelection($event)"
         >

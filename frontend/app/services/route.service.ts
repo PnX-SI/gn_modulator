@@ -102,7 +102,7 @@ export class ModulesRouteService {
     const pathTest = this._mConfig.MODULE_URL.replace('/', '');
     return this._router.config
       .find((config) => !!config.children)
-      .children.find((config) => config.path == pathTest)['_loadedConfig'].routes;
+      .children.find((config) => config.path == pathTest)['_loadedRoutes'];
   }
 
   reloadPage() {

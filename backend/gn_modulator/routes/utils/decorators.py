@@ -101,7 +101,6 @@ def check_module_object_route(action):
             # verification des champs
             field_errors = check_fields(module_code, object_code)
             if field_errors:
-                print("yakou")
                 return field_errors, 403
 
             return check_cruved_scope(action_cruved, module_code=module_code)(fn)(*args, **kwargs)

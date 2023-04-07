@@ -442,17 +442,19 @@ export class ModulesLayoutComponent implements OnInit {
     }
 
     if (this.docHeightSave > docHeight || !this.docHeightSave) {
-      this.computedLayout.style = {
-        ...(this.computedLayout.style || {}),
-        height: '200px',
-        ...overflowStyle,
-      };
+      setTimeout(() => {
+        this.computedLayout.style = {
+          ...(this.computedLayout.style || {}),
+          height: '200px',
+          ...overflowStyle,
+        };
 
-      this.layout.style = {
-        ...(this.layout.style || {}),
-        height: `200px`,
-        ...overflowStyle,
-      };
+        this.layout.style = {
+          ...(this.layout.style || {}),
+          height: `200px`,
+          ...overflowStyle,
+        };
+      }, 10);
     }
 
     this.docHeightSave = docHeight;

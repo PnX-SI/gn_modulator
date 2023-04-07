@@ -26,7 +26,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
   nbItems;
 
   /** fonction de comparaison pour mat-select */
-  compareFn;
+  compareFn = (a, b) => a > b;
 
   search = '';
   searchSubject: Subject<string>;

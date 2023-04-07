@@ -208,9 +208,11 @@ export class ModulesFormService {
       context,
     });
     control.setValidators(this.formValidators(computedLayout, context));
-    // if (computedLayout.disabled) {
-    // control.disable();
-    // }
+    if (computedLayout.disabled) {
+      control.disable();
+    } else {
+      control.enable();
+    }
 
     // control pour object
     if (layout.type == 'dict') {

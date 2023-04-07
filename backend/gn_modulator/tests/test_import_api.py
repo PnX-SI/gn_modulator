@@ -2,8 +2,7 @@ import pytest  # noqa
 from flask import url_for
 from werkzeug.datastructures import Headers
 
-from geonature.tests.utils import set_logged_user_cookie
-
+from geonature.tests.utils import set_logged_user_cookie, unset_logged_user_cookie
 from gn_modulator import ModuleMethods
 from gn_modulator.utils.env import import_test_dir
 
@@ -33,6 +32,8 @@ class TestImportApi:
 
             assert r.json["id_digitiser"] == users["admin_user"].id_role
 
+            unset_logged_user_cookie(self.client)
+
     def test_import_synthese2(self, users):
         ModuleMethods.add_actions("MODULATOR", "syn.synthese", "I")
 
@@ -53,3 +54,5 @@ class TestImportApi:
 
             assert r.json["res"]["nb_data"] == 2
             assert r.json["res"]["nb_insert"] == 2
+
+            unset_logged_user_cookie(self.client)

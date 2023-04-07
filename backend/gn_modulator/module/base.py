@@ -153,7 +153,7 @@ class ModuleBase:
             return []
 
         module_assets_dir = Path(cls.module_dir_path(module_code)) / "assets"
-        assets_static_dir.mkdir(exist_ok=True, parents=True)
+        assets_static_dir().mkdir(exist_ok=True, parents=True)
         module_img_path = Path(module_assets_dir / "module.jpg")
 
         # on teste si le fichier assets/module.jpg est bien présent
@@ -169,7 +169,7 @@ class ModuleBase:
         #   - on crée le lien des assets vers le dossize static de geonature
         symlink(
             module_assets_dir,
-            assets_static_dir / module_code.lower(),
+            assets_static_dir() / module_code.lower(),
         )
 
         return []

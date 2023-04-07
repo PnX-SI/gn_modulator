@@ -1,4 +1,5 @@
 from geonature.utils.env import db, BACKEND_DIR
+from flask import current_app
 from ref_geo.utils import get_local_srid
 from .cache import get_global_cache, set_global_cache
 from pathlib import Path
@@ -6,9 +7,10 @@ import gn_modulator
 
 gn_modulator_DIR = Path(gn_modulator.__file__).parent
 
-assets_static_dir = BACKEND_DIR / "static" / "external_assets/modules/"
-IMPORT_DIR = BACKEND_DIR / "static" / "imports"
+# assets_static_dir = BACKEND_DIR / current_app.config['MEDIA_DIR'] / "external_assets/modules/"
+# IMPORT_DIR = BACKEND_DIR / current_app.config['MEDIA_DIR'] / "imports"
 
+# TODO redo
 config_directory = gn_modulator_DIR / "../../config/"
 migrations_directory = gn_modulator_DIR / "migrations"
 definitions_test_dir = Path(__file__).parent / "../tests/definitions_test"
@@ -16,6 +18,14 @@ import_test_dir = Path(__file__).parent / "../tests/import_test"
 
 
 schema_import = "gn_modulator_import"
+
+
+def assets_static_dir():
+    return BACKEND_DIR / current_app.config["MEDIA_FOLDER"] / "external_assets/modules/"
+
+
+def import_dir():
+    return BACKEND_DIR / current_app.config["MEDIA_FOLDER"] / "imports"
 
 
 def local_srid():

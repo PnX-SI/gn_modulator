@@ -6,7 +6,7 @@ site_filters_fields:
       items:
         - code_passage_faune
         - nom_usuel_passage_faune
-        - nomenclatures_ouvrage_materiaux
+        - key: nomenclatures_ouvrage_materiaux
         - key: pi_ou_ps
           title: Passage inférieur / supérieur
           type: list_form
@@ -222,7 +222,6 @@ site_details_fields:
           prefilters: __f__`id_passage_faune = ${o.object(x, 'site').value}`
           sort: date_diagnostic-
 
-
 site_form_fields:
   display: tabs
   overflow: true
@@ -341,13 +340,13 @@ site_form_fields:
                 - ouvrag_hydrau_tirant_air
     - label: __f__ `Médias (${data?.medias?.length || 0})`
       items:
-          items:
-            - hidden: __f__!data?.medias?.some(m => !m.title_fr)
-              type: message
-              class: warning
-              html: Le champs 'Titre' du média est obligatoire
-            - type: dyn_form
-              key: medias
-              type_widget: medias
-              schema_dot_table: pr_sipaf.t_passages_faune
-              details: []
+        items:
+          - hidden: __f__!data?.medias?.some(m => !m.title_fr)
+            type: message
+            class: warning
+            html: Le champs 'Titre' du média est obligatoire
+          - type: dyn_form
+            key: medias
+            type_widget: medias
+            schema_dot_table: pr_sipaf.t_passages_faune
+            details: []

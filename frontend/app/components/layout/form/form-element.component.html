@@ -25,7 +25,7 @@
       hidden
       [disabled]="computedLayout.disabled"
       (change)="fileChange($event.target.files)"
-    />
+      />
   </ng-container>
 
   <ng-container
@@ -45,43 +45,42 @@
         [type]="computedLayout.type"
         [formControl]="formControl"
         [required]="computedLayout.required && !context.skip_required"
-        [disabled]="computedLayout.disabled"
         [min]="computedLayout.min"
         [max]="computedLayout.max"
         (change)="onInputChange()"
         [errorStateMatcher]="_mForm.matcher"
-      />
+        />
+        <!-- [disabled]="computedLayout.disabled" -->
 
       <input
         *ngIf="'uuid' == computedLayout.type"
         matInput
         type="text"
-        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [formControl]="formControl"
         [required]="computedLayout.required"
         (change)="onInputChange()"
-      />
+        />
+        <!-- [disabled]="computedLayout.disabled" -->
 
       <input
         *ngIf="'integer' == computedLayout.type"
         matInput
         type="number"
         step="1"
-        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [formControl]="formControl"
         [required]="computedLayout.required"
         [min]="computedLayout.min"
         [max]="computedLayout.max"
         (change)="onInputChange()"
-      />
+        />
+        <!-- [disabled]="computedLayout.disabled" -->
 
       <textarea
         *ngIf="['textarea', 'json'].includes(computedLayout.type)"
         matInput
         cdkTextareaAutosize
-        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [cdkAutosizeMinRows]="computedLayout.min_rows"
         [cdkAutosizeMaxRows]="computedLayout.max_rows"
@@ -89,7 +88,8 @@
         [required]="computedLayout.required"
         (change)="onInputChange()"
         style="white-space: pre"
-      ></textarea>
+        ></textarea>
+        <!-- [disabled]="computedLayout.disabled" -->
 
       <mat-hint>{{ computedLayout.hint }}</mat-hint>
 
