@@ -119,8 +119,24 @@
   <!-- buttons -->
   <ng-container *ngIf="layoutType == 'button'">
     <div class="layout-buttons" [ngStyle]="computedLayout.style">
+      <!-- mat-raised-button -->
       <button
-        *ngIf="!computedLayout.href"
+        *ngIf="(!computedLayout.href) && !!computedLayout.icon && !computedLayout.title"
+        [matTooltip]="computedLayout.description || ''"
+        mat-mini-fab
+        [color]="computedLayout.color"
+        [disabled]="computedLayout.disabled"
+        (click)="onButtonClick($event)"
+      >
+        <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
+        <mat-icon *ngIf="actionProcessing"
+          ><mat-spinner color="accent" diameter="20"> </mat-spinner
+        ></mat-icon>
+      </button>
+
+
+      <button
+        *ngIf="(!computedLayout.href)  && !!computedLayout.title"
         [matTooltip]="computedLayout.description || ''"
         mat-raised-button
         [color]="computedLayout.color"

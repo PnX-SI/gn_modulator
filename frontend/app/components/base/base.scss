@@ -49,7 +49,7 @@
 }
 
 // couleur custom des bouttons
-.mat-button-base.mat-reset {
+.mat-mdc-button-base.mat-reset {
   background-color: #d5cc4b;
   color: #fff;
 }
@@ -60,6 +60,9 @@
   background-color: rgba(0,0,0,.12);
 }
 
+// :host ::ng-deep  .button-just-icon {
+//   font-size: 1.5rem !important;
+// }
 
 .content-container {
   min-width: 50%;

@@ -85,7 +85,6 @@ layout:
         - type: button
           flex: '0'
           icon: refresh
-          title: nouvel import
           color: reset
           description: Faire un nouvel import
           action: reset
