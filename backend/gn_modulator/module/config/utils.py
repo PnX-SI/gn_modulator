@@ -282,7 +282,6 @@ class ModuleConfigUtils:
         """
         On regarde dans toutes les pages pour déterminer les champs
         """
-
         cls.process_base_fields(module_code)
         cls.process_layout_fields(module_code)
 
@@ -298,8 +297,29 @@ class ModuleConfigUtils:
     def add_basic_fields(cls, module_code, object_code):
         sm = SchemaMethods(cls.schema_code(module_code, object_code))
 
-        authorized_read_fields = []
-        authorized_write_fields = []
+        authorized_read_fields = (
+            get_global_cache(
+                [
+                    "keys",
+                    module_code,
+                    object_code,
+                    "read",
+                ]
+            )
+            or []
+        )
+
+        authorized_write_fields = (
+            get_global_cache(
+                [
+                    "keys",
+                    module_code,
+                    object_code,
+                    "read",
+                ]
+            )
+            or []
+        )
 
         set_global_cache(
             [
