@@ -106,9 +106,14 @@ class ModuleCommands:
         module_path = module_path and Path(module_path)
         if module_path:
             subprocess.run(f"pip install -e '{module_path}'", shell=True, check=True)
+
             importlib.reload(site)
             for module_dist in iter_modules_dist():
-                path = Path(sys.modules[module_dist.entry_points["code"].module].__file__)
+                module = module_dist.entry_points["code"].module
+                if module not in sys.modules:
+                    path = Path(importlib.import_module(module).__file__)
+                else:
+                    path = Path(sys.modules[module].__file__)
                 if module_path.resolve() in path.parents:
                     module_code = module_dist.entry_points["code"].load()
                     break

@@ -47,7 +47,7 @@ def cmd_install_module(module_code=None, module_path=None, force=False):
     for module_code in ModuleMethods.registred_modules():
         print(f"- {module_code}")
 
-    raise
+    raise Exception
 
     return ModuleMethods.install_module(module_code, module_path, force)
 
