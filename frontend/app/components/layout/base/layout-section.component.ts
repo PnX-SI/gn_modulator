@@ -51,12 +51,11 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
     // - si computedLayout.tab
     //    alors on choisi cet onglet par defaut
     setTimeout(() => {
-      if (
-        this.computedLayout.display == 'tabs' &&
-        this.computedLayout.selected_tab
-      ) {
-        this.selectedIndex = this.computedItems.findIndex((i) => i.label == this.computedLayout.selected_tab);
-        console.log(this.selectedIndex)
+      if (this.computedLayout.display == 'tabs' && this.computedLayout.selected_tab) {
+        this.selectedIndex = this.computedItems.findIndex(
+          (i) => i.label == this.computedLayout.selected_tab
+        );
+        console.log(this.selectedIndex);
       }
     }, 100);
   }

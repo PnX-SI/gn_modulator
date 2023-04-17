@@ -139,7 +139,7 @@ export class ModulesConfigService {
   }
 
   assetsDirectory() {
-    console.log(this.AppConfig.MEDIA_FOLDER)
+    console.log(this.AppConfig.MEDIA_FOLDER);
     return `${this.backendUrl()}/${this.AppConfig.MEDIA_FOLDER}/modulator/assets`;
   }
 

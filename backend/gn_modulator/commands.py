@@ -315,10 +315,9 @@ def cmd_test(module_path):
             module_code = module_dist.entry_points["code"].load()
             break
     print(module_path, module_code)
-    return 
+    return
 
     init_gn_modulator()
-
 
     a = importlib.reload(site)
 
