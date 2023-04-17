@@ -39,11 +39,7 @@ export class ModulesIndexComponent implements OnInit {
                   title: moduleConfig.module.module_label,
                   description: moduleConfig.module.module_desc,
                   href: '/' + moduleConfig.module.module_path,
-                  img:
-                    this._mConfig.assetsDirectory() +
-                    '/' +
-                    moduleConfig.code.toLowerCase() +
-                    '/module.jpg',
+                  img: this._mConfig.moduleImg(moduleConfig.code),
                   type: 'card',
                   class: 'module-card',
                 })),

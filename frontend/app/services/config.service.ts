@@ -138,9 +138,13 @@ export class ModulesConfigService {
     return `${this.AppConfig.API_ENDPOINT}${ModuleConfig.MODULE_URL}`;
   }
 
-  assetsDirectory() {
-    console.log(this.AppConfig.MEDIA_FOLDER);
-    return `${this.backendUrl()}/${this.AppConfig.MEDIA_FOLDER}/modulator/assets`;
+  moduleImg(moduleCode) {
+    console.log(this.AppConfig);
+    const moduleImg = `${this.backendUrl()}/${
+      this.AppConfig.MEDIA_URL
+    }/modulator/assets/${moduleCode.toLowerCase()}/module.jpg`;
+    console.log(moduleImg);
+    return moduleImg;
   }
 
   exportUrl(moduleCode, objectCode, exportCode, options: any = {}) {
