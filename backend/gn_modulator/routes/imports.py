@@ -8,7 +8,7 @@ from geonature.utils.env import db
 from gn_modulator.blueprint import blueprint
 from gn_modulator.module import ModuleMethods
 
-from gn_modulator.imports.utils.files import upload_import_file
+from gn_modulator.imports.files import upload_import_file
 from gn_modulator.imports.models import TImport
 
 

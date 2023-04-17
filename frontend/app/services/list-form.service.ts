@@ -21,7 +21,10 @@ export class ListFormService {
     private _mObject: ModulesObjectService
   ) {}
 
-  init() {}
+  // fonction de comparaison de deux éléments
+  compareFn = (return_object, value_field_name) => (a, b) => {
+    return a && b && return_object ? a[value_field_name] == b[value_field_name] : a == b;
+  };
 
   /** Initialisation du composant de liste */
   initListForm(options, control) {
@@ -39,8 +42,10 @@ export class ListFormService {
         return this.processDefault(options, control, liste);
       }),
       mergeMap((liste) => {
-        this.processListeLengthisOne(options, control, liste);
-        return of(liste);
+        // si la liste n'a qu'un seul élément
+        // - si required == True
+        //     on donne automatiquent la valeur de l'element au formulaire
+        return this.processListeLengthisOne(options, control, liste);
       }),
       // mergeMap((liste) => {
       //   let values = options.multiple ? control.value : [ control.value ]
@@ -65,19 +70,13 @@ export class ListFormService {
     // - la valeur est requise
     // - la taille de la liste est 1
     // - il n'y a pas de valeur
-    if (
-      !(options.required && liste.items.length == 1 && [null, undefined].includes(control.value))
-    ) {
-      return;
-    }
-
-    // cas ou la liste n'a qu'une seule valeur -> par default on la choise
-    // seuelement si une valeur est requise (options.required = true)
-    if (options.required && liste.items.length == 1) {
+    if (options.required && liste.items.length == 1 && [null, undefined].includes(control.value)) {
       const value = liste.items[0];
       const controlValue = options.return_object ? value : value[options.value_field_name];
       control.patchValue(controlValue);
     }
+
+    return of(liste);
   }
 
   /**
@@ -86,6 +85,7 @@ export class ListFormService {
    *
    */
   processDefault(options, control, liste) {
+    // TODO serveur side ?
     // si pas de defaut, on ne fait rien
 
     // si on a déjà une valeur => retour
@@ -93,12 +93,14 @@ export class ListFormService {
       return of(liste);
     }
 
+    // s'il n'y a pas de valeur par defaut => retour
     if (!options.default_item) {
       return of(liste);
     }
+
     // recherche de la valeur dans la liste
     // recherce de la valeur par api et ajout dans la liste
-
+    // TODO à revoir
     const defaultItems = options.multiple ? options.default_item : [options.default_item];
     const values = defaultItems.map((defaultItem) =>
       liste.items.find((item) =>
@@ -108,12 +110,14 @@ export class ListFormService {
       )
     );
 
+    // erreur si pas de valeur trouvée
     if (values.includes(null)) {
-      // message, erreur ?
       console.error(`Pas de valeur trouvée pour ${JSON.stringify(options.default_item)}`);
       return of(liste);
     }
 
+    // cas multiple
+    // TODO cas ou defaut est une liste ?
     const value = options.multiple ? values : values[0];
     const controlValue = options.return_object ? value : value[options.value_field_name];
     control.patchValue(controlValue);
@@ -140,6 +144,8 @@ export class ListFormService {
   }
 
   /**
+   * TODO reprendre la gestion de la config pour les objects
+   * dans un autre composant ?
    * ajoute les éléments par défaut pour un schéma donné
    * api, value_field_name, label_field_name, title_field_name, etc....
    */
@@ -197,48 +203,70 @@ export class ListFormService {
   /**
    *  getSelectList(options, value)
    *
-   * recupère une liste depuis options
+   * recupère une liste en fonction des options
+   * champs possibles pour les options
    *
-   *
-   * TODO process all cases
+   * - items : la liste est fournie
+   * - api : la liste est récupérée depuis une api
+   * -
    *
    */
   getSelectList(options, value) {
+    // cas ou la liste est fournie dans les options
     if (options.items) {
-      /**  Si item est une liste on */
       return of({
         items: this.processItems(options, options.items),
         nbItems: options.items.length,
       });
     }
+
+    // cas ou la liste est récupérée depuis une api
     if (options.api) {
       return this.getItemsFromApi(options, value);
     }
     return of([]);
   }
 
-  url(api) {
-    return this.regexpUrlAbsolute.test(api) ? api : `${this._mConfig.backendUrl()}/${api}`;
+  // l'url est elle absolue ou relative à geonature ?
+  processUrl(api) {
+    // on teste si l'api fourni est une url absolue
+    if (this.regexpUrlAbsolute.test(api)) {
+      return api;
+    }
+    // sinon on renvoie l'api liée à geonature
+    return `${this._mConfig.backendUrl()}/${api}`;
   }
 
-  /**
-   * getItemsFromApi
-   */
+  // récupération de la liste depuis l'api
   getItemsFromApi(options, value): Observable<any> {
-    // TODO test si cela ne vient pas d'être fait ?
+    // TODO gestion des paramètres objects etc ...???
+
+    // paramètre queryParams pour l'api
     const params = options.params || {};
+
+    // ajout des filtres ?
+    // TODO à gérer différemment
     params.filters = options.filters || '';
+
+    // objects gestion des filtres et des tris ?
     if (options.object_code) {
       params.filters = [params.filters, options.schema_filters || []].flat().filter((f) => !!f);
       params.sort = params.sort || options.sort;
 
+      // ajout d'un filtre pour la recherche
       if (options.reload_on_search && options.search) {
         params.filters.push(`${options.label_field_name} ~ ${options.search}`);
       }
     }
 
+    // filtres
     params.filters = utils.processFilterArray(params.filters);
 
+    // les champs demandés
+    // - value
+    // - label
+    // - titre
+    // - champs additionels
     params.fields = utils
       .removeDoublons(
         [
@@ -250,9 +278,12 @@ export class ListFormService {
       )
       .join(',');
 
+    // page size
     params.page_size = options.reload_on_search ? options.page_size || 10 : 0;
+
+    // appel à l'api
     return this._requestService
-      .request('get', this.url(options.api), { params, cache: options.cache })
+      .request('get', this.processUrl(options.api), { params, cache: options.cache })
       .pipe(
         mergeMap((res) => {
           const items = this.processItems(
@@ -263,6 +294,7 @@ export class ListFormService {
         })
       );
   }
+
   /** si on a une liste de valeur simple, on renvoie une liste de dictionnaires
    * {
    *    <options.value_field_name>: item,
@@ -273,10 +305,11 @@ export class ListFormService {
     return items.map((item) => {
       if (utils.isObject(item)) {
         return item;
+      } else {
+        let d = {};
+        d[options.label_field_name] = d[options.value_field_name] = item;
+        return d;
       }
-      let d = {};
-      d[options.label_field_name] = d[options.value_field_name] = item;
-      return d;
     });
   }
 }

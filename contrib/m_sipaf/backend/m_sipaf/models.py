@@ -283,5 +283,5 @@ class Diagnostic(db.Model):
     id_role = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
     role = db.relationship(User)
 
-    id_organism = db.Column(db.Integer, db.ForeignKey("utilisateurs.bib_organismes.id_organisme"))
+    id_organisme = db.Column(db.Integer, db.ForeignKey("utilisateurs.bib_organismes.id_organisme"))
     organisme = db.relationship(Organisme)

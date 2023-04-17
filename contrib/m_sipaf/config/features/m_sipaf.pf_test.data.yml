@@ -1,0 +1,14 @@
+type: data
+code: m_sipaf.pf_test
+title: Data utils m_sipaf
+description: feature de testpour sipaf
+items:
+  - schema_code: m_sipaf.pf
+    items:
+      - code_passage_faune: TEST_SIPAF
+        geom:
+          type : 'Point'
+          coordinates: [ 0, 45 ]
+        actors:
+          - id_role: admin
+            id_nomenclature_type_actor: PRO

@@ -18,7 +18,7 @@ from gn_modulator.utils.cache import (
 
 class SchemaBaseImports:
     @classmethod
-    def process_features(cls, data_code):
+    def process_features(cls, data_code, commit=True):
         """ """
 
         data = get_global_cache(["data", data_code, "definition"])
@@ -36,7 +36,7 @@ class SchemaBaseImports:
         infos = []
 
         for data_item in data["items"]:
-            info = cls.process_data_item(data_item, data_file_path)
+            info = cls.process_data_item(data_item, data_file_path, commit=commit)
 
             infos.append(
                 {
@@ -144,7 +144,7 @@ class SchemaBaseImports:
         )
 
     @classmethod
-    def process_data_item(cls, data_item, file_path):
+    def process_data_item(cls, data_item, file_path, commit=True):
         clear_global_cache(["import_pk_keys"])
         schema_code = data_item["schema_code"]
         sm = cls(schema_code)
@@ -178,13 +178,13 @@ class SchemaBaseImports:
 
                 # on tente un update
                 try:
-                    m, b_update = sm.update_row(values, d, test_keys, params={})
+                    m, b_update = sm.update_row(values, d, test_keys, params={}, commit=commit)
                     if b_update:
                         v_updates.append(value)
 
                 # si erreur NoResultFound -> on tente un insert
                 except NoResultFound:
-                    sm.insert_row(d)
+                    sm.insert_row(d, commit=commit)
                     v_inserts.append(value)
 
             # erreur de validation des données

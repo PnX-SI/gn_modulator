@@ -22,7 +22,7 @@ class ModuleBase:
         Test si on a un fichier setup.py pour ce sous_module
         """
 
-        setup_file_path = cls.module_path(module_code) / "setup.py"
+        setup_file_path = cls.module_path(module_code).parent / "setup.py"
         return setup_file_path.exists()
 
     @classmethod

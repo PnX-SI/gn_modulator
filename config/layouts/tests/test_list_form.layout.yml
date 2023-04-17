@@ -1,0 +1,56 @@
+type: layout
+code: test_list_form
+title: test_list_form
+description: test pour le composant list_form
+
+layout:
+  title: test list form
+  type: form
+  direction: row
+  items:
+    - type: message
+      json: __f__data
+    - display: tabs
+      selected_tab: advance
+      items:
+        - label: basique
+          items:
+            - key: items_simple
+              type: list_form
+              items: [a, b, c]
+            - key: items_multiple
+              type: list_form
+              items: [a, b, c]
+              multiple: true
+            - key: items_simple_default
+              type: list_form
+              items: [a, b, c]
+              default: "a"
+            - key: items_multiple_default
+              type: list_form
+              items: [a, b, c]
+              default: [a, b]
+              multiple: true
+        - label: objects
+          items:
+            - key: nomenclature
+              type: list_form
+              module_code: MODULATOR
+              object_code: ref_nom.nomenclature
+              nomenclature_type: STADE_VIE
+        - label: advance
+          items:
+            - key: area_com_simple
+              type: list_form
+              module_code: MODULATOR
+              object_code: ref_geo.area
+              area_type: COM
+              reload_on_search: true
+            - key: area_com_default
+              type: list_form
+              module_code: MODULATOR
+              object_code: ref_geo.area
+              area_type: COM
+              reload_on_search: true
+              default: 1801
+data:

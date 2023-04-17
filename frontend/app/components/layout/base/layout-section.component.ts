@@ -1,5 +1,7 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { ModulesLayoutComponent } from './layout.component';
+import { MatTabGroup } from '@angular/material/tabs';
+
 import utils from '../../../utils';
 
 @Component({
@@ -8,6 +10,8 @@ import utils from '../../../utils';
   styleUrls: ['../../base/base.scss', 'layout-section.component.scss'],
 })
 export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implements OnInit {
+  selectedIndex;
+
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'layout-section';
@@ -42,5 +46,18 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
           return computedItem;
         })
       : [];
+
+    // pour les tabs
+    // - si computedLayout.tab
+    //    alors on choisi cet onglet par defaut
+    setTimeout(() => {
+      if (
+        this.computedLayout.display == 'tabs' &&
+        this.computedLayout.selected_tab
+      ) {
+        this.selectedIndex = this.computedItems.findIndex((i) => i.label == this.computedLayout.selected_tab);
+        console.log(this.selectedIndex)
+      }
+    }, 100);
   }
 }

@@ -13,6 +13,19 @@
 - Clarification dans la gestion des routes REST
 - Meilleure gestion des `tabs` et des `scrolls`
 - sécurisation des api (controle des `fields` en lecture et écriture)
+  - champs listés à partir de la config 
+  - écriture : si un champs demandé n'est pas dans la config -> erreur 403
+  - lecture : ce champs n'est pas pris en compte (utilisation de `only` dans l'initialisation des champs mashmallow)
+- requetes sql (fonction `query_list`)
+    - chargement des relations et des champs pour les requetes
+    - pour éviter les chargement n+1 (1 requête supplémentaire par relation)
+    - utilisation de `raise_load`
+    - on charge le minimum de champs possibles
+- déplacement des config dans le dossier `media/modulator/config`
+- [ ] separation des tests par modules (m_sipaf, m_monitoring)
+- [ ] amélioration du composant list_form
+- [ ] ajout diagnostic sipaf
+
 
 ## 1.0.5 (13-03-2023)
 
@@ -67,7 +80,7 @@ Si vous mettez à jour le module :
 
 ## 1.0.0 (16-02-2023)
 
-Première version fonctionnelle du module MODULATOR.  
+Première version fonctionnelle du module MODULATOR.
 Elle inclut une documentation pour créer ses propres sous-modules, mais aussi 2 sous-modules d'exemple (SIPAF pour l'inventaire national des passages à faune et MONITORING pour le gestionnaire de sites).
 
 Compatible avec la version 2.11 de GeoNature.

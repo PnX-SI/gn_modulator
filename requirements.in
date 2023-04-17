@@ -5,3 +5,4 @@ py7zr
 pyyaml
 sqlparse
 py-mini-racer
+geonature>=2.12.0

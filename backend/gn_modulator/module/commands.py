@@ -78,14 +78,21 @@ class ModuleCommands:
 
             # TODO comment savoir s'il y a une migration
             module_dist = get_dist_from_code(module_code)
-            if "migrations" in module_dist.get_entry_map("gn_module"):
+            if module_dist.entry_points.select(name="migrations"):
                 db_downgrade(revision=f"{module_code.lower()}@base")
 
         # suppression du module en base
         print("- suppression du module {} en base".format(module_code))
 
-        cls.delete_db_module(module_code)
+        try:
+            cls.delete_db_module(module_code)
+        except Exception:
+            print("Le module n'est pas présent en base")
 
+        # suppression de la config
+
+        if (config_dir() / module_code).is_dir():
+            (config_dir() / module_code).unlink()
         # unregister
         module_config["registred"] = False
 
@@ -100,10 +107,6 @@ class ModuleCommands:
         if module_path:
             subprocess.run(f"pip install -e '{module_path}'", shell=True, check=True)
             importlib.reload(site)
-            for entry in sys.path:
-                pkg_resources.working_set.add_entry(entry)
-
-            # load python package
             for module_dist in iter_modules_dist():
                 path = Path(sys.modules[module_dist.entry_points["code"].module].__file__)
                 if module_path.resolve() in path.parents:
@@ -111,8 +114,7 @@ class ModuleCommands:
                     break
 
             module_dist = get_dist_from_code(module_code)
-            print(module_code, module_dist)
-            if "migrations" in module_dist.entry_points["migrations"]:
+            if module_dist.entry_points.select(name="migrations"):
                 db.session.commit()  # pour eviter les locks ???
                 db_upgrade(revision=f"{module_code.lower()}@head")
 

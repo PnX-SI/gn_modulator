@@ -35,6 +35,7 @@
         <mat-tab-group
           class="layout-section"
           (selectedTabChange)="onTabChanged($event)"
+          [selectedIndex]="selectedIndex"
           [ngStyle]="computedLayout.style"
         >
           <ng-container *ngFor="let item of layout.items; let index = index">
@@ -43,6 +44,7 @@
               [disabled]="computedItems[index].disabled"
               *ngIf="!computedItems[index].hidden"
               class="layout-section"
+              #tabGroup
             >
               <div class="layout-tab">
                 <modules-layout

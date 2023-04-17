@@ -191,7 +191,7 @@ class SchemaBase:
             rel_key = key.split(".")[0]
             rel_prop = self.property(rel_key)
             rel = self.cls(rel_prop["schema_code"])
-            return rel.property(key.split(".")[1])
+            return rel.property(".".join(key.split(".")[1:]))
         return self.properties().get(key)
 
     def has_property(self, key):
@@ -202,7 +202,7 @@ class SchemaBase:
                 return False
             rel_prop = self.property(rel_key)
             rel = self.cls(rel_prop["schema_code"])
-            return rel.has_property(key.split(".")[1])
+            return rel.has_property(".".join(key.split(".")[1:]))
         return self.properties().get(key) is not None
 
     def columns(self, sort=False):
@@ -400,3 +400,15 @@ class SchemaBase:
 
     def is_foreign_key(self, key):
         return self.has_property(key) and self.property(key).get("foreign_key")
+
+    def default_fields(self):
+        return self.attr("meta.default_fields") or list(
+            filter(
+                lambda x: x is not None,
+                [
+                    self.pk_field_name(),
+                    self.label_field_name(),
+                    self.title_field_name(),
+                ],
+            )
+        )

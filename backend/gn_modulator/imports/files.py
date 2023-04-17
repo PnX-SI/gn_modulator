@@ -1,6 +1,5 @@
 import pathlib
 
-# from geonature.core.gn_commons.file_manager import upload_file
 from gn_modulator.utils.env import import_dir
 
 

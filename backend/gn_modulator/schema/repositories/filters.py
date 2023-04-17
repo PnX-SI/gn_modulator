@@ -68,6 +68,9 @@ class SchemaRepositoriesFilters:
         cur_filter = None
         cur_ops = []
 
+        if isinstance(filter_array, str):
+            filter_array = [filter_array]
+
         for elem in filter_array:
             loop_filter = None
 
@@ -134,7 +137,9 @@ class SchemaRepositoriesFilters:
         filter_type = filter["type"]
         filter_value = filter.get("value", None)
 
-        model_attribute, query = self.custom_getattr(Model, filter_field, query, condition)
+        model_attribute, query = self.custom_getattr(
+            Model, filter_field, query=query, condition=condition
+        )
 
         if filter_type in ["like", "ilike"]:
             if "%" not in filter_value:

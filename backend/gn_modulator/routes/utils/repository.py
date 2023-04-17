@@ -25,9 +25,9 @@ def get_list_rest(module_code, object_code, additional_params={}):
     query_list = sm.query_list(module_code=module_code, cruved_type=cruved_type, params=params)
 
     if params.get("sql"):
-        sql_txt = sm.cls.query_as_txt(query_list)
+        sql_txt = sm.cls.sql_txt(query_list)
         response = make_response(
-            sm.cls.pprint_sql(sql_txt),
+            sm.cls.format_sql(sql_txt),
             200,
         )
         response.mimetype = "text/plain"

@@ -47,9 +47,7 @@ def cmd_install_module(module_code=None, module_path=None, force=False):
     for module_code in ModuleMethods.registred_modules():
         print(f"- {module_code}")
 
-    print()
-
-    return
+    raise
 
     return ModuleMethods.install_module(module_code, module_path, force)
 
@@ -295,19 +293,56 @@ def cmd_check():
 
 
 @click.command("test")
-def cmd_test():
+@click.option("-p", "module_path", type=click.Path(exists=True))
+def cmd_test(module_path):
     """
     test random
     """
 
+    import subprocess, importlib, site, sys, pkg_resources
+    from geonature.utils.module import get_dist_from_code, iter_modules_dist
+    from pathlib import Path
+
+    subprocess.run(f"pip install -e '{module_path}'", shell=True, check=True)
+    importlib.reload(site)
+    for entry in sys.path:
+        print(entry)
+        pkg_resources.working_set.add_entry(entry)
+    # load python package
+    for module_dist in iter_modules_dist():
+        path = Path(sys.modules[module_dist.entry_points["code"].module].__file__)
+        if Path(module_path).resolve() in path.parents:
+            module_code = module_dist.entry_points["code"].load()
+            break
+    print(module_path, module_code)
+    return 
+
     init_gn_modulator()
 
-    from flask import current_app
 
-    print("test", current_app)
-    print(current_app.cli)
-    # for key in dir(current_app):
-    # print(key)
+    a = importlib.reload(site)
+
+    sm = SchemaMethods("m_sipaf.pf")
+    sm.process_features("m_sipaf.pf_test", commit=False)
+    params = {
+        "fields": [
+            "code_passage_faune",
+            "actors.id_organism",
+            "actors.id_role",
+            "actors.role.nom_role",
+            "actors.role.nom_complet",
+        ],
+        "filters": "code_passage_faune = TEST_SIPAF",
+    }
+    query = sm.query_list("m_sipaf", "R", params)
+    print("\n\n", sm.format_sql(sm.sql_txt(query)))
+    print("\n\nrequete\n\n")
+    res = query.all()
+    print("\n\nserial\n\n", params["fields"], "\n\n")
+    res = sm.serialize_list(res, params["fields"])
+    print(res)
+
+    from flask import current_app
 
 
 commands = [
