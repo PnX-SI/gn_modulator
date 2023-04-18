@@ -630,6 +630,7 @@ export class ModulesLayoutComponent implements OnInit {
     const prettyContext = this.prettyTitleObjForDebug('context', contextDebug);
 
     this.debugData = {
+      code: this.computedLayout.code,
       layout: prettyLayout,
       computedLayout: prettyComputedLayout,
       data: prettyData,

@@ -58,8 +58,8 @@ class ImportMixinCheck(ImportMixinUtils):
         # ajout d'une erreur si un champs d'unicité est manquant
         if missing_unique:
             self.add_error(
-                code="ERR_IMPORT_MISSING_UNIQUE",
-                msg=f"Import {self.schema_code}, il manque des champs d'unicité : {', '.join(missing_unique) }",
+                error_code="ERR_IMPORT_MISSING_UNIQUE",
+                error_msg=f"Import {self.schema_code}, il manque des champs d'unicité : {', '.join(missing_unique) }",
             )
 
     def check_types(self):
@@ -117,11 +117,11 @@ class ImportMixinCheck(ImportMixinUtils):
             if nb_lines == 0:
                 continue
             self.add_error(
-                code="ERR_IMPORT_INVALID_VALUE_FOR_TYPE",
+                error_code="ERR_IMPORT_INVALID_VALUE_FOR_TYPE",
                 key=key,
                 lines=lines,
                 values=values,
-                msg=f"Il y a des valeurs invalides pour la colonne {key} de type {sql_type}. {nb_lines} ligne(s) concernée(s) : [{str_lines}]",
+                error_msg=f"Il y a des valeurs invalides pour la colonne {key} de type {sql_type}. {nb_lines} ligne(s) concernée(s) : [{str_lines}]",
             )
 
     def check_required(self):
@@ -160,10 +160,10 @@ SELECT
 
             # sinon on ajoute une erreur qui référence les lignes concernées
             self.add_error(
-                code="ERR_IMPORT_REQUIRED",
+                error_code="ERR_IMPORT_REQUIRED",
                 key=key,
                 lines=lines,
-                msg="Champs obligatoire à null",
+                error_msg="Champs obligatoire à null",
             )
 
         return
@@ -224,9 +224,9 @@ WHERE
                     )
                 )
             self.add_error(
-                code="ERR_IMPORT_UNRESOLVED",
+                error_code="ERR_IMPORT_UNRESOLVED",
                 key=key,
                 lines=lines,
-                msg="Clé étrangère non résolue",
+                error_msg="Clé étrangère non résolue",
                 values=values,
             )

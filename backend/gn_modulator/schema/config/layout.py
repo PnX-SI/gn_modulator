@@ -79,10 +79,10 @@ class SchemaConfigLayout:
         layout_from_code = copy.deepcopy(DefinitionMethods.get_definition("layout", layout_code))
         if layout_from_code is None:
             add_error(
-                msg=f"Le layout de code {layout_code} n'existe pas",
+                error_msg=f"Le layout de code {layout_code} n'existe pas",
                 definition_type="layout",
                 definition_code=layout_code,
-                code="ERR_TEMPLATE_NOT_FOUND",
+                error_code="ERR_TEMPLATE_NOT_FOUND",
             )
         layout_from_code = layout_from_code["layout"]
         for param_key, param_item in params.items():
@@ -96,10 +96,10 @@ class SchemaConfigLayout:
         if unresolved_template_params:
             remindings__str = ", ".join(map(lambda x: f"__{x}__", unresolved_template_params))
             add_error(
-                msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
+                error_msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
                 definition_type="layout",
                 definition_code=layout_code,
-                code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
+                error_code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
                 template_file_path=str(DefinitionMethods.get_file_path("layout", layout_code)),
             )
 

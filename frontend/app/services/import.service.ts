@@ -106,8 +106,11 @@ export class ModulesImportService {
     for (const error of data.errors) {
       for (const line of error.lines) {
         lines[line] = lines[line] || {};
-        lines[line][error.code] = lines[line][error.code] || { msg: error.msg, keys: [] };
-        lines[line][error.code].keys.push(error.key);
+        lines[line][error.error_code] = lines[line][error.error_code] || {
+          error_msg: error.error_msg,
+          keys: [],
+        };
+        lines[line][error.error_code].keys.push(error.key);
       }
     }
     let errorHTML = `<h4>${Object.keys(lines).length} ligne${
@@ -119,7 +122,7 @@ export class ModulesImportService {
       .sort()) {
       errorHTML += `- <b>${line}</b><br>`;
       for (const errorCode of Object.keys(lines[line]).sort()) {
-        errorHTML += `&nbsp;&nbsp;&nbsp;&nbsp;${lines[line][errorCode].msg}:<br>`;
+        errorHTML += `&nbsp;&nbsp;&nbsp;&nbsp;${lines[line][errorCode].error_msg}:<br>`;
         errorHTML += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>${lines[line][errorCode].keys.join(
           ', '
         )}</i><br>`;
@@ -137,12 +140,12 @@ export class ModulesImportService {
 
     const errors = {};
     for (const error of data.errors) {
-      errors[error.code] = errors[error.code] || { msg: error.msg };
+      errors[error.error_code] = errors[error.error_code] || { error_msg: error.error_msg };
     }
 
     for (const errorType of Object.keys(errors)) {
-      const errorsOfType = data.errors.filter((e) => e.code == errorType);
-      errorHTML += `<h5>${errorsOfType[0].msg}</h5>`;
+      const errorsOfType = data.errors.filter((e) => e.error_code == errorType);
+      errorHTML += `<h5>${errorsOfType[0].error_msg}</h5>`;
       errors[errorType].keys = {};
       for (let error of errorsOfType) {
         if (error.key) {

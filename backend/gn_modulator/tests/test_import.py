@@ -276,7 +276,7 @@ class TestImport:
         module_code = "MODULATOR"
         object_code = "syn.synthese"
         data_file_path = import_test_dir / "synthese_ERR_IMPORT_INVALID_VALUE_FOR_TYPE.csv"
-        expected_infos = {"errors": [{"code": "ERR_IMPORT_INVALID_VALUE_FOR_TYPE"}]}
+        expected_infos = {"errors": [{"error_code": "ERR_IMPORT_INVALID_VALUE_FOR_TYPE"}]}
         test_data_file(
             module_code,
             object_code,
@@ -289,7 +289,7 @@ class TestImport:
         module_code = "MODULATOR"
         object_code = "ref_geo.area"
         data_file_path = import_test_dir / "ref_geo.area_ERR_IMPORT_MISSING_UNIQUE.csv"
-        expected_infos = {"errors": [{"code": "ERR_IMPORT_MISSING_UNIQUE"}]}
+        expected_infos = {"errors": [{"error_code": "ERR_IMPORT_MISSING_UNIQUE"}]}
         test_data_file(
             module_code,
             object_code,

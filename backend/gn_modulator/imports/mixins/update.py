@@ -32,8 +32,8 @@ class ImportMixinUpdate(ImportMixinUtils):
             if isinstance(e, AttributeError):
                 raise e
             self.add_error(
-                code="ERR_IMPORT_UPDATE",
-                msg=f"Erreur durant l'update de {from_table} vers {self.schema_code} : {str(e)}",
+                error_code="ERR_IMPORT_UPDATE",
+                error_msg=f"Erreur durant l'update de {from_table} vers {self.schema_code} : {str(e)}",
             )
 
     def sql_update(self, from_table):

@@ -40,8 +40,8 @@ class ImportMixinInsert(ImportMixinUtils):
             if isinstance(e, AttributeError):
                 raise e
             self.add_error(
-                code="ERR_IMPORT_INSERT",
-                msg=f"Erreur durant l'insert de {from_table} vers {self.schema_code} : {str(e)}",
+                error_code="ERR_IMPORT_INSERT",
+                error_msg=f"Erreur durant l'insert de {from_table} vers {self.schema_code} : {str(e)}",
             )
 
     def sql_insert(self, from_table, dest_table=None, keys=None):

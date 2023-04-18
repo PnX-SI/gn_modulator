@@ -7,8 +7,10 @@ from sqlalchemy.engine import reflection
 from geonature.utils.env import db
 from .errors import SchemaAutoError
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
+from gn_modulator.utils.errors import add_error
 from gn_modulator.utils.commons import get_class_from_path
 from gn_modulator.utils.env import local_srid
+from gn_modulator import DefinitionMethods
 
 cor_type_db_schema = {
     "INTEGER": "integer",
@@ -58,8 +60,16 @@ class SchemaAuto:
         for key, property in schema_definition.get("properties", {}).items():
             if key in properties_auto:
                 properties_auto[key].update(property)
-            else:
+            elif "type" in property:
                 properties_auto[key] = property
+            else:
+                add_error(
+                    error_msg=f"Propriété non conforme {self.schema_code()}.{key}: {property}",
+                    definition_type="schema",
+                    definition_code=self.schema_code(),
+                    error_code="ERR_SCHEMA_AUTO",
+                    file_path=DefinitionMethods.get_file_path("schema", self.schema_code()),
+                )
 
         schema_definition["properties"] = properties_auto
 
@@ -113,13 +123,13 @@ class SchemaAuto:
         for relation_key, relation in inspect(Model).relationships.items():
             # if relation_key not in self.attr("meta.relations", []):
             # continue
-            property = self.process_relation_auto(relation_key, relation)
+            property = self.process_relation_auto(relation_key, relation, Model)
             if property:
                 properties[relation_key] = property
 
         return properties
 
-    def process_relation_auto(self, relation_key, relation):
+    def process_relation_auto(self, relation_key, relation, Model):
         # return
 
         if not relation.target.schema:
@@ -149,6 +159,39 @@ class SchemaAuto:
 
         if self.definition.get("properties", {}).get(relation_key):
             property.update(self.property(relation_key))
+
+        if schema_code == "ref_nom.nomenclature":
+            if not property.get("nomenclature_type"):
+                if property["relation_type"] == "n-1":
+                    x = getattr(Model, relation_key)
+                    y = x.property.local_remote_pairs[0][0]
+                    property["nomenclature_type"] = self.reflect_nomenclature_type(
+                        y.table.schema, y.table.name, y.key
+                    )
+
+                if property["relation_type"] == "n-n":
+                    x = getattr(Model, relation_key).property
+
+                    for p in x.local_remote_pairs:
+                        for pp in p:
+                            for ppp in pp.foreign_keys:
+                                if (
+                                    ppp.column.table.schema == "ref_nomenclatures"
+                                    and ppp.column.table.name == "t_nomenclatures"
+                                ):
+                                    property["nomenclature_type"] = self.reflect_nomenclature_type(
+                                        pp.table.schema, pp.table.name, pp.key
+                                    )
+
+            # check si on a bien un type de nomenclature
+            if not property.get("nomenclature_type") and property["relation_type"] != "1-n":
+                add_error(
+                    error_msg=f"nomenclature_type manquante {self.schema_code()} {relation_key}",
+                    error_code="ERR_SCHEMA_AUTO_MISSING_NOMENCLATURE_TYPE",
+                    definition_type="schema",
+                    definition_code=self.schema_code(),
+                    file_path=DefinitionMethods.get_file_path("schema", self.schema_code()),
+                )
 
         return property
 

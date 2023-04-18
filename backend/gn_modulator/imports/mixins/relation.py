@@ -67,8 +67,8 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             SchemaMethods.c_sql_exec_txt(sql_rel["process_view"])
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_RELATION_CREATE_PROCESS_VIEW",
-                msg=f"Erreur dans la creation de la vue 'process' pour {key}: {str(e)}",
+                error_code="ERR_IMPORT_RELATION_CREATE_PROCESS_VIEW",
+                error_msg=f"Erreur dans la creation de la vue 'process' pour {key}: {str(e)}",
                 key=key,
             )
             return
@@ -104,8 +104,8 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             SchemaMethods.c_sql_exec_txt(sql_rel["delete"])
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_RELATION_DELETE",
-                msg=f"Erreur dans la suppression pour la relation {key}: {str(e)}",
+                error_code="ERR_IMPORT_RELATION_DELETE",
+                error_msg=f"Erreur dans la suppression pour la relation {key}: {str(e)}",
             )
             return
 
@@ -121,7 +121,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             SchemaMethods.c_sql_exec_txt(sql_rel["insert"])
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_RELATION_INSERT",
-                msg=f"Erreur dans l'insertion pour la relation {key}: {str(e)}",
+                error_code="ERR_IMPORT_RELATION_INSERT",
+                error_msg=f"Erreur dans l'insertion pour la relation {key}: {str(e)}",
             )
             return

@@ -57,10 +57,10 @@ class DefinitionTemplates:
 
         if template is None:
             add_error(
-                msg=f"Le template {template_code} n'a pas été trouvé",
+                error_msg=f"Le template {template_code} n'a pas été trouvé",
                 definition_type=definition_type,
                 definition_code=defininition_code,
-                code="ERR_TEMPLATE_NOT_FOUND",
+                error_code="ERR_TEMPLATE_NOT_FOUND",
             )
 
             cls.remove_from_cache(definition_type, defininition_code)
@@ -88,10 +88,10 @@ class DefinitionTemplates:
         if unresolved_template_params:
             remindings__str = ", ".join(map(lambda x: f"__{x}__", unresolved_template_params))
             add_error(
-                msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
+                error_msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
                 definition_type=processed_definition["type"],
                 definition_code=processed_definition["code"],
-                code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
+                error_code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
                 template_file_path=str(cls.get_file_path("template", template_code)),
             )
 

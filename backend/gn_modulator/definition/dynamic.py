@@ -149,16 +149,13 @@ f(x);"""
 
                 elif "Uncaught TypeError: formGroup" in str(e):
                     pass
-                # elif "Uncaught TypeError: utils." in str(e) and "is not a function" in str(e):
-                # pass
                 else:
                     str_error = str(e).split("\n")[0]
                     add_error(
                         definition_type=definition_type,
                         definition_code=definition_code,
-                        code="ERR_LOCAL_CHECK_DYNAMIC",
-                        msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}",
-                        # msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}\n\n {str_eval}",
+                        error_code="ERR_LOCAL_CHECK_DYNAMIC",
+                        error_msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}",
                     )
 
             return

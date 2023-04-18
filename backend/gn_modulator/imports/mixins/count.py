@@ -48,8 +48,8 @@ class ImportMixinCount(ImportMixinUtils):
             self.res["nb_insert"] = SchemaMethods.c_sql_exec_txt(self.sql["nb_insert"]).scalar()
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_INSERT_COUNT",
-                msg=f"Erreur lors du comptage du nombre d'insert: {str(e)}",
+                error_code="ERR_IMPORT_INSERT_COUNT",
+                error_msg=f"Erreur lors du comptage du nombre d'insert: {str(e)}",
             )
             return
 
@@ -69,8 +69,8 @@ class ImportMixinCount(ImportMixinUtils):
             self.res["nb_update"] = SchemaMethods.c_sql_exec_txt(self.sql["nb_update"]).scalar()
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_UPDATE_COUNT",
-                msg=f"Erreur lors du comptage du nombre d'update: {str(e)}",
+                error_code="ERR_IMPORT_UPDATE_COUNT",
+                error_msg=f"Erreur lors du comptage du nombre d'update: {str(e)}",
             )
         return
 

@@ -17,3 +17,9 @@ meta:
 properties:
     entity_source_pk_value:
         type: string
+    nomenclature_info_geo_type:
+        nomenclature_type: TYP_INF_GEO
+    nomenclature_behaviour:
+        nomenclature_type: OCC_COMPORTEMENT
+    nomenclature_determination_method:
+        nomenclature_type: METH_DETERMIN

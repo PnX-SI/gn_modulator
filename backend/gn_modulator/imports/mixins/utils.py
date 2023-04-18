@@ -40,10 +40,8 @@ class ImportMixinUtils:
         )
         if not self.schema_code:
             self.add_error(
-                {
-                    "code": "ERR_IMPORT_SCHEMA_CODE_NOT_FOND",
-                    "msg": f"Il n'y a pas de schema pour module_code={self.module_code}, object_code={self.object_code}",
-                }
+                error_code="ERR_IMPORT_SCHEMA_CODE_NOT_FOND",
+                error_msg=f"Il n'y a pas de schema pour module_code={self.module_code}, object_code={self.object_code}",
             )
 
         # Creation du schema d'import s'il n'existe pas
@@ -57,10 +55,8 @@ class ImportMixinUtils:
                 int(self.options.get("srid"))
             except ValueError:
                 self.add_error(
-                    {
-                        "code": "ERR_IMPORT_OPTIONS",
-                        "msg": f"Le srid n'est pas valide {self.options.get('srid')}",
-                    }
+                    error_code="ERR_IMPORT_OPTIONS",
+                    error_msg=f"Le srid n'est pas valide {self.options.get('srid')}",
                 )
 
     def pretty_infos(self):
@@ -103,15 +99,15 @@ class ImportMixinUtils:
 
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_COUNT_VIEW",
-                msg=f"Erreur avec la table/vue '{table_type}' {table_name}: {str(e)}",
+                error_code="ERR_IMPORT_COUNT_VIEW",
+                error_msg=f"Erreur avec la table/vue '{table_type}' {table_name}: {str(e)}",
             )
             return
 
         if self.res[f"nb_{table_type}"] == 0:
             self.add_error(
-                code="ERR_IMPORT_COUNT_VIEW",
-                msg=f"Erreur avec la table/vue '{table_type}' {table_name}: il n'y a n'a pas de données",
+                error_code="ERR_IMPORT_COUNT_VIEW",
+                error_msg=f"Erreur avec la table/vue '{table_type}' {table_name}: il n'y a n'a pas de données",
             )
 
     def table_name(self, type, key=None):
@@ -125,12 +121,18 @@ class ImportMixinUtils:
             rel = f"_{key}" if key is not None else ""
             return f"{schema_import}.v_{self.id_import}_{type}_{self.schema_code.replace('.', '_')}{rel}"
 
-    def add_error(self, code=None, msg=None, key=None, lines=None, values=None):
+    def add_error(self, error_code=None, error_msg=None, key=None, lines=None, values=None):
         """
         ajout d'une erreur lorsque qu'elle est rencontrée
         """
         self.errors.append(
-            {"code": code, "msg": msg, "key": key, "lines": lines, "values": values}
+            {
+                "error_code": error_code,
+                "msg": error_msg,
+                "key": key,
+                "lines": lines,
+                "values": values,
+            }
         )
         self.status = "ERROR"
 

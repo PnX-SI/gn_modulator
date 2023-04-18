@@ -93,9 +93,9 @@ class DefinitionBase:
             except Exception as e:
                 add_error(
                     definition_type="reference",
-                    code="ERR_VALID_REF",
+                    error_code="ERR_VALID_REF",
                     definition_code=reference_code,
-                    msg=f"{str(e)}",
+                    error_msg=f"{str(e)}",
                 )
                 cls.remove_from_cache("reference", reference_code)
                 continue
@@ -144,10 +144,10 @@ class DefinitionBase:
                     definition["meta"].get("module_code")
                 ):
                     add_error(
-                        msg=f"Le modèle {model_path} n'existe pas",
+                        error_msg=f"Le modèle {model_path} n'existe pas",
                         definition_type=definition_type,
                         definition_code=definition_code,
-                        code="ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND",
+                        error_code="ERR_LOCAL_CHECK_AUTO_MODEL_NOT_FOUND",
                     )
                 else:
                     get_global_cache(["uninstalled_schema"]).append(definition["code"])
@@ -175,8 +175,8 @@ class DefinitionBase:
             add_error(
                 definition_type=definition_type,
                 definition_code=definition_code,
-                code="ERR_LOCAL_CHECK_NO_REF_FOR_TYPE",
-                msg=f"Une référence est requise pour valider pour le type {definition_type}",
+                error_code="ERR_LOCAL_CHECK_NO_REF_FOR_TYPE",
+                error_msg=f"Une référence est requise pour valider pour le type {definition_type}",
             )
             return
 
@@ -192,8 +192,8 @@ class DefinitionBase:
             add_error(
                 definition_type=definition_type,
                 definition_code=definition_code,
-                code="ERR_LOCAL_CHECK_REF",
-                msg=f"{msg}",
+                error_code="ERR_LOCAL_CHECK_REF",
+                error_msg=f"{msg}",
             )
 
     @classmethod
@@ -261,8 +261,8 @@ class DefinitionBase:
             add_error(
                 definition_type="definition",
                 file_path=str(file_path),
-                msg="La définition ne doit pas être une liste",
-                code="ERR_LOAD_LIST",
+                error_msg="La définition ne doit pas être une liste",
+                error_code="ERR_LOAD_LIST",
             )
             return
 
@@ -270,8 +270,8 @@ class DefinitionBase:
             add_error(
                 definition_type="definition",
                 file_path=str(file_path),
-                msg="Le fichier est vide",
-                code="ERR_DEF_EMPTY_FILE",
+                error_msg="Le fichier est vide",
+                error_code="ERR_DEF_EMPTY_FILE",
             )
             return
 
@@ -287,8 +287,8 @@ class DefinitionBase:
             add_error(
                 definition_type="definition",
                 file_path=str(file_path),
-                msg="Ne correspond à aucun format de definition attendu",
-                code="ERR_LOAD_UNKNOWN",
+                error_msg="Ne correspond à aucun format de definition attendu",
+                error_code="ERR_LOAD_UNKNOWN",
             )
 
         # test si la données n'existe pas dansun autre fichier
@@ -299,8 +299,8 @@ class DefinitionBase:
                 definition_type=definition_type,
                 definition_code=definition_code,
                 file_path=str(file_path),
-                msg=f"{definition_type} '{definition_code}' déjà défini(e) dans le fichier {cls.get_file_path(definition_type, definition_code)}",
-                code="ERR_LOAD_EXISTING",
+                error_msg=f"{definition_type} '{definition_code}' déjà défini(e) dans le fichier {cls.get_file_path(definition_type, definition_code)}",
+                error_code="ERR_LOAD_EXISTING",
             )
 
         # check file_name
@@ -311,9 +311,9 @@ class DefinitionBase:
                 definition_type=definition_type,
                 definition_code=definition_code,
                 file_path=str(file_path),
-                # msg=f"Le nom du fichier '{file_path.stem}{file_path.suffix}' doit se terminer en '.{definition_type}{file_path.suffix}'",
-                msg=f"Le nom du fichier devrait être '{cls.file_name(definition)}{file_path.suffix}'",
-                code="ERR_LOAD_FILE_NAME",
+                # error_msg=f"Le nom du fichier '{file_path.stem}{file_path.suffix}' doit se terminer en '.{definition_type}{file_path.suffix}'",
+                error_msg=f"Le nom du fichier devrait être '{cls.file_name(definition)}{file_path.suffix}'",
+                error_code="ERR_LOAD_FILE_NAME",
             )
 
         else:
@@ -338,8 +338,8 @@ class DefinitionBase:
             add_error(
                 definition_type="definition",
                 file_path=str(file_path),
-                msg=f"Erreur dans le fichier yaml: {str(e)}",
-                code="ERR_LOAD_YML",
+                error_msg=f"Erreur dans le fichier yaml: {str(e)}",
+                error_code="ERR_LOAD_YML",
             )
 
         # - erreurs de format JSON
@@ -347,8 +347,8 @@ class DefinitionBase:
             add_error(
                 definition_type="definition",
                 file_path=str(file_path),
-                msg=f"Erreur dans le fichier json: {str(e)}",
-                code="ERR_LOAD_JSON",
+                error_msg=f"Erreur dans le fichier json: {str(e)}",
+                error_code="ERR_LOAD_JSON",
             )
 
     @classmethod
@@ -408,8 +408,8 @@ class DefinitionBase:
             add_error(
                 definition_code=definition_code,
                 definition_type=definition_type,
-                code="ERR_GLOBAL_CHECK_MISSING_SCHEMA",
-                msg=f"Le ou les schémas suivants ne sont pas présents dans les définitions : {missings_schema_code_txt}",
+                error_code="ERR_GLOBAL_CHECK_MISSING_SCHEMA",
+                error_msg=f"Le ou les schémas suivants ne sont pas présents dans les définitions : {missings_schema_code_txt}",
             )
 
         # dépendancies
@@ -425,9 +425,9 @@ class DefinitionBase:
             if missing_dependencies:
                 add_error(
                     definition_type=definition_type,
-                    code="ERR_GLOBAL_CHECK_MISSING_DEPENDENCIES",
+                    error_code="ERR_GLOBAL_CHECK_MISSING_DEPENDENCIES",
                     definition_code=definition_code,
-                    msg=f"La ou les dépendances suivante de type {definition_type} ne sont pas présentent dans les définitions : {missing_dependencies_txt}",
+                    error_msg=f"La ou les dépendances suivante de type {definition_type} ne sont pas présentent dans les définitions : {missing_dependencies_txt}",
                 )
 
         # suppression en cache de la definition si erreur globale

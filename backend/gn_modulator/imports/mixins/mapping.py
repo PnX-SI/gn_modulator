@@ -31,8 +31,8 @@ class ImportMixinMapping(ImportMixinUtils):
 
         if not Path(self.mapping_file_path).exists():
             self.add_error(
-                code="ERR_IMPORT_MAPPING_FILE_MISSING",
-                msg=f"Le fichier de preprocess {self.mapping_file_path} n'existe pas",
+                error_code="ERR_IMPORT_MAPPING_FILE_MISSING",
+                error_msg=f"Le fichier de preprocess {self.mapping_file_path} n'existe pas",
             )
             return
 
@@ -73,8 +73,8 @@ class ImportMixinMapping(ImportMixinUtils):
             SchemaMethods.c_sql_exec_txt(self.sql["mapping_view"])
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_MAPPING_CREATE_VIEW",
-                msg=f"La vue de mapping n'a pas pu être créée : {str(e)}",
+                error_code="ERR_IMPORT_MAPPING_CREATE_VIEW",
+                error_msg=f"La vue de mapping n'a pas pu être créée : {str(e)}",
             )
             return
 
@@ -126,15 +126,15 @@ class ImportMixinMapping(ImportMixinUtils):
         # si présence de mot interdit -> erreur
         if forbidden_words:
             self.add_error(
-                code="ERR_IMPORT_MAPPING_FORBIDEN_WORD",
-                msg=f"Le fichier de preprocess {self.mapping_file_path} contient le ou les mots interdits {', '.join(forbidden_words)}:\n {mapping_select}",
+                error_code="ERR_IMPORT_MAPPING_FORBIDEN_WORD",
+                error_msg=f"Le fichier de preprocess {self.mapping_file_path} contient le ou les mots interdits {', '.join(forbidden_words)}:\n {mapping_select}",
             )
 
         # si l'on a pas FROM :TABLE_DATA -> erreur
         if "FROM :TABLE_DATA" not in mapping_select:
             self.add_error(
-                code="ERR_IMPORT_MAPPING_MISSING_TABLE",
-                msg=f"La selection de mapping doit contenir 'FROM :table_data {mapping_select}",
+                error_code="ERR_IMPORT_MAPPING_MISSING_TABLE",
+                error_msg=f"La selection de mapping doit contenir 'FROM :table_data {mapping_select}",
             )
 
         # remplacement de ":TABLE_DATA" par la table source
@@ -143,15 +143,15 @@ class ImportMixinMapping(ImportMixinUtils):
         # si l'on a pas l'instruction SELECT -> erreur
         if "SELECT" not in mapping_select:
             self.add_error(
-                code="ERR_IMPORT_MAPPING_MISSING_SELECT",
-                msg=f"La selection de mapping doit contenir 'SELECT {mapping_select}",
+                error_code="ERR_IMPORT_MAPPING_MISSING_SELECT",
+                error_msg=f"La selection de mapping doit contenir 'SELECT {mapping_select}",
             )
 
         # si la commande select ne contient pas ID_IMPORT -> erreur
         if "ID_IMPORT" not in mapping_select:
             self.add_error(
-                code="ERR_IMPORT_MAPPING_MISSING_IMPORT",
-                msg=f"La selection de mapping doit contenir le champs 'id_import' dans {self.mapping_file_path}",
+                error_code="ERR_IMPORT_MAPPING_MISSING_IMPORT",
+                error_msg=f"La selection de mapping doit contenir le champs 'id_import' dans {self.mapping_file_path}",
             )
 
         # requete de création de la vue de mapping

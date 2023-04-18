@@ -42,8 +42,15 @@ def test_data_file(
         assert len(expected_errors) == len(import_infos["errors"])
         for expected_error in expected_errors:
             assert (
-                len([e for e in import_infos["errors"] if expected_error["code"] == e["code"]]) > 0
-            ), f"L'erreur de code {expected_error['code']} n'a pas été trouvée"
+                len(
+                    [
+                        e
+                        for e in import_infos["errors"]
+                        if expected_error["error_code"] == e["error_code"]
+                    ]
+                )
+                > 0
+            ), f"L'erreur de code {expected_error['error_code']} n'a pas été trouvée"
 
     for key in expected_infos:
         txt_err = f"module_code: {module_code}, object_code: {object_code}, key: {key},  expected: {expected_infos.get(key)}, import: {getAttr(import_infos, key)}"

@@ -34,8 +34,8 @@ class ImportMixinData(ImportMixinUtils):
 
         else:
             self.add_error(
-                code="ERR_IMPORT_DATA_FILE_TYPE_NOT_FOUND",
-                msg=f"Le type du fichier d'import {self.data_file_path} n'est pas traité",
+                error_code="ERR_IMPORT_DATA_FILE_TYPE_NOT_FOUND",
+                error_msg=f"Le type du fichier d'import {self.data_file_path} n'est pas traité",
             )
             return
 
@@ -51,8 +51,8 @@ class ImportMixinData(ImportMixinUtils):
         # test si le fichier existe
         if not Path(self.data_file_path).exists():
             self.add_error(
-                code="ERR_IMPORT_DATA_FILE_NOT_FOUND",
-                msg=f"Le fichier d'import {self.data_file_path} n'existe pas",
+                error_code="ERR_IMPORT_DATA_FILE_NOT_FOUND",
+                error_msg=f"Le fichier d'import {self.data_file_path} n'existe pas",
             )
             return
 
@@ -65,8 +65,8 @@ class ImportMixinData(ImportMixinUtils):
 
             if self.csv_delimiter is None:
                 self.add_error(
-                    code="ERR_IMPORT_CSV_FILE_DELIMITER_NOT_FOUND",
-                    msg=f"Pas de séparateur trouvé pour le fichier csv {self.data_file_path}",
+                    error_code="ERR_IMPORT_CSV_FILE_DELIMITER_NOT_FOUND",
+                    error_msg=f"Pas de séparateur trouvé pour le fichier csv {self.data_file_path}",
                 )
                 return
 
@@ -81,8 +81,8 @@ class ImportMixinData(ImportMixinUtils):
                 SchemaMethods.c_sql_exec_txt(self.sql["data_table"])
             except Exception as e:
                 self.add_error(
-                    code="ERR_IMPORT_DATA_CREATE_TABLE",
-                    msg=f"Erreur durant la création de la table des données: {str(e)}",
+                    error_code="ERR_IMPORT_DATA_CREATE_TABLE",
+                    error_msg=f"Erreur durant la création de la table des données: {str(e)}",
                 )
                 return
 
@@ -125,8 +125,8 @@ class ImportMixinData(ImportMixinUtils):
             cursor.copy_expert(sql=self.sql["data_copy_csv"], file=f)
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_DATA_COPY",
-                msg=f"Erreur lors de la copie des données csv : {str(e)}",
+                error_code="ERR_IMPORT_DATA_COPY",
+                error_msg=f"Erreur lors de la copie des données csv : {str(e)}",
             )
             return
 
@@ -164,8 +164,8 @@ class ImportMixinData(ImportMixinUtils):
             SchemaMethods.c_sql_exec_txt(self.sql["data_insert"])
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_DATA_INSERT",
-                msg=f"Erreur lors de l'insertion des données csv : {str(e)}",
+                error_code="ERR_IMPORT_DATA_INSERT",
+                error_msg=f"Erreur lors de l'insertion des données csv : {str(e)}",
             )
             return
 

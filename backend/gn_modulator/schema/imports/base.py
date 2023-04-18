@@ -135,13 +135,19 @@ class SchemaBaseImports:
 
     @classmethod
     def get_data_item(cls, data_item, file_path):
-        return (
+        items = (
             data_item["items"]
             if "items" in data_item
             else cls.get_data_items_from_file(Path(file_path).parent / data_item["file"])
             if "file" in data_item
             else []
         )
+        # traitement des valeurs par defaut
+        for key in data_item.get("defaults") or {}:
+            for d in items:
+                if key not in d:
+                    d[key] = data_item["defaults"][key]
+        return items
 
     @classmethod
     def process_data_item(cls, data_item, file_path, commit=True):

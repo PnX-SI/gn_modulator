@@ -205,12 +205,15 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // TODO à clarifier avec page.element ??
   processAction(event) {
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
+      let isSameObject = ['object_code', 'module_code'].every(
+        (k) => this.context[k] == event.context[k]
+      );
       this._mAction.processAction({
         action: event.action,
-        context: this.context,
-        value: event.data[this.pkFieldName()],
+        context: event.context,
+        value: isSameObject && event.data[this.pkFieldName()],
         data: event.data,
-        layout: this.layout,
+        layout: event.layout,
       });
     }
   }

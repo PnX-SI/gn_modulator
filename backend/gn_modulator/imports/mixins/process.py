@@ -43,8 +43,8 @@ class ImportMixinProcess(ImportMixinUtils):
             SchemaMethods.c_sql_exec_txt(self.sql["process_view"])
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_PROCESS_CREATE_VIEW",
-                msg=f"La vue de process n'a pas pu être créée : {str(e)}",
+                error_code="ERR_IMPORT_PROCESS_CREATE_VIEW",
+                error_msg=f"La vue de process n'a pas pu être créée : {str(e)}",
             )
             return
 

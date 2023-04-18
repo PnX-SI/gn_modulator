@@ -68,7 +68,7 @@ class TestDefinitions:
         assert (
             len(get_errors()) == 1
         ), f"check references, on s'attend à voir remonter une erreur (et non {len(get_errors())})"
-        get_errors()[0]["code"] == "ERR_VALID_REF"
+        get_errors()[0]["error_code"] == "ERR_VALID_REF"
 
     def test_load_definition_json_ok(self):
         # load json ok

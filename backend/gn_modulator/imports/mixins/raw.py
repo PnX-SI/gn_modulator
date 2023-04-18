@@ -41,8 +41,8 @@ class ImportMixinRaw(ImportMixinUtils):
 
         except Exception as e:
             self.add_error(
-                code="ERR_IMPORT_CREATE_RAW_VIEW",
-                msg=f"Erreur dans la creation de la vue 'raw': {str(e)}",
+                error_code="ERR_IMPORT_CREATE_RAW_VIEW",
+                error_msg=f"Erreur dans la creation de la vue 'raw': {str(e)}",
             )
 
         # comptage et vérification de l'intégrité de la table
