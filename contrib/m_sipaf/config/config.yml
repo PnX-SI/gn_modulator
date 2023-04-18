@@ -219,6 +219,7 @@ site_details_fields:
             - date_diagnostic
             - organisme.nom_organisme
             - role.nom_complet
+            - comment
           prefilters: __f__`id_passage_faune = ${o.object(x, 'site').value}`
           sort: date_diagnostic-
 
@@ -350,3 +351,39 @@ site_form_fields:
             type_widget: medias
             schema_dot_table: pr_sipaf.t_passages_faune
             details: []
+diagnostic_form_fields:
+  overflow: true
+  items:
+    - hidden: true
+      items:
+        - id_diagnostic
+        - id_passage_faunes
+        - key: id_passage_faune
+          default: __f__context.params.id_passage_faune
+    - id_organisme
+    - id_role
+    - date_diagnostic
+    - direction: row
+      items:
+        - key: nomenclatures_diagnostic_obstacle
+          additional_fields:
+            - cd_nomenclature
+          type: list_form
+          multiple: true
+          return_object: true
+        - key: obstacle_autre
+          hidden: __f__!data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
+          required: __f__data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
+
+diagnostic_details_fields:
+  overflow: true
+  items:
+    - hidden: true
+      items:
+        - nomenclatures_diagnostic_obstacle.cd_nomenclature
+    - passage_faune.code_passage_faune
+    - organisme.nom_organisme
+    - role.nom_complet
+    - nomenclatures_diagnostic_obstacle.label_fr
+    - key: obstacle_autre
+      hidden: __f__!data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')

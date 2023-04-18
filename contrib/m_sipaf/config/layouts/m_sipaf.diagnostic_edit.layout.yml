@@ -4,4 +4,9 @@ title: page edit diagnostic
 description: page edit diagnostic
 
 layout:
-  tilte: diagnostic edit
+  height_auto: true
+  items:
+    code: utils.object_form
+    template_params:
+      object_code: diagnostic
+      layout: __DIAGNOSTIC_FORM_FIELDS__

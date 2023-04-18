@@ -4,4 +4,9 @@ title: page details diagnostic
 description: page details diagnostic
 
 layout:
-  tilte: diagnostic details
+  height_auto: true
+  items:
+    - code: utils.object_details
+      template_params:
+        object_code: diagnostic
+        layout: __DIAGNOSTIC_DETAILS_FIELDS__

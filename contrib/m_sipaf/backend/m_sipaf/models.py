@@ -260,6 +260,20 @@ class Actor(db.Model):
     nomenclature_type_actor = db.relationship(TNomenclatures)
 
 
+class CorDiagObstacle(db.Model):
+    __tablename__ = "cor_diag_nomenclature_obstacle"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_diagnostic = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_diagnostics.id_diagnostic"), primary_key=True
+    )
+    id_nomenclature = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+    )
+
+
 class Diagnostic(db.Model):
     __tablename__ = "t_diagnostics"
     __table_args__ = {"schema": "pr_sipaf"}
@@ -278,10 +292,17 @@ class Diagnostic(db.Model):
 
     passage_faune = db.relationship(PassageFaune, backref="diagnostics")
 
-    date_diagnostic = db.Column(db.Date)
+    date_diagnostic = db.Column(db.Date, nullable=False)
 
     id_role = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
     role = db.relationship(User)
 
     id_organisme = db.Column(db.Integer, db.ForeignKey("utilisateurs.bib_organismes.id_organisme"))
     organisme = db.relationship(Organisme)
+
+    comment = db.Column(db.Unicode)
+
+    nomenclatures_diagnostic_obstacle = db.relationship(
+        TNomenclatures, secondary=CorDiagObstacle.__table__
+    )
+    obstacle_autre = db.Column(db.Unicode)

@@ -18,8 +18,13 @@ meta:
 properties:
     date_diagnostic:
         title: Date
-    role:
+    id_role:
         title: Agent
-    organisme:
+    id_organisme:
         title: Organisme
-
+    comment:
+        title: Commentaire
+    nomenclatures_diagnostic_obstacle:
+        title: Obstacle(s)
+    obstacle_autre:
+        title: Obstacle autre

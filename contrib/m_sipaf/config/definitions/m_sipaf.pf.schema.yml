@@ -103,18 +103,18 @@ properties:
   id_nomenclature_ouvrage_specificite:
       title: Spécificité du passage faune
       description: Exclusivité pour le passage faune (specificite)
-      nomenclature_type: PF_OUVRAGE_SPECIFICITE
+    #   nomenclature_type: PF_OUVRAGE_SPECIFICITE
   nomenclatures_ouvrage_type:
       title: "Type d'ouvrage"
       description: "Type d'ouvrage d'art (lb_type_ouvrage)"
-      nomenclature_type: PF_OUVRAGE_TYPE
+    #   nomenclature_type: PF_OUVRAGE_TYPE
   ouvrage_type_autre:
       type: string
       title: Autre type d'ouvrage
   nomenclatures_ouvrage_materiaux:
       title: Matériaux
       description: "Matériaux composants l'ouvrage d'art (lb_materiaux)"
-      nomenclature_type: PF_OUVRAGE_MATERIAUX
+    #   nomenclature_type: PF_OUVRAGE_MATERIAUX
   ouvrage_hydrau:
       title: Ouvrage hydraulique
       description: Ouvrage hydraulique ou non
@@ -124,16 +124,16 @@ properties:
   id_nomenclature_ouvrage_hydrau_position:
       title: Ouvrage hydraulique Position
       description: Ouvrage hydraulique Position (ouvrage_hydrau_position)
-      nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
+    #   nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
   id_nomenclature_ouvrage_hydrau_banq_caract:
       title: Caractérisation banquette
       description: "Caractérisation de la banquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)"
-      nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
+    #   nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
       schema_code: ref_nom.nomenclature
   id_nomenclature_ouvrage_hydrau_banq_type:
       title: Type de banquette
       description: "Type de la banquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_type_banquette)"
-      nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+    #   nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
   ouvrag_hydrau_tirant_air:
       title: "Tirant d'air banquette (m)"
       description: " Tirant d'air existant entre la banquette et le plafond de l'ouvrage, en mètre"
