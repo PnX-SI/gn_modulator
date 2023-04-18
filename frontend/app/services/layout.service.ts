@@ -202,7 +202,6 @@ export class ModulesLayoutService {
       }
 
       let property = utils.copy(this._mObject.property(context, layout));
-
       // patch title si parent && label_field_name
       if (property.parent) {
         property.title = property.title || property.parent.title;
@@ -212,6 +211,10 @@ export class ModulesLayoutService {
       // ?? traiter ça dans list form ???
       if (property.schema_code) {
         property.type = 'list_form';
+        if (property.relation_type == 'n-n') {
+          property.multiple = true;
+          property.return_object = true;
+        }
       }
 
       this._properties[this.propertyKey(context, layout)] = property;

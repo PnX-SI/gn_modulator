@@ -130,7 +130,7 @@ def api_schemas(config_path):
 
     schemas = {
         schema_code: {
-            "properties": SchemaMethods(schema_code).properties(),
+            "properties": SchemaMethods(schema_code).properties_config(),
             "required": SchemaMethods(schema_code).attr("required"),
         }
         for schema_code in SchemaMethods.schema_codes()

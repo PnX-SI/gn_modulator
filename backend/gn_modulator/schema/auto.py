@@ -157,6 +157,11 @@ class SchemaAuto:
                 relation.secondary.schema, relation.secondary.name
             )
 
+        if property["relation_type"] == "n-1":
+            # on cherche local key
+            x = getattr(Model, relation_key).property.local_remote_pairs[0][0]
+            property["local_key"] = x.key
+
         if self.definition.get("properties", {}).get(relation_key):
             property.update(self.property(relation_key))
 

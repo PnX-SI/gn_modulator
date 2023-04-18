@@ -395,6 +395,12 @@ class SchemaBase:
     def is_relation_n_n(self, key):
         return self.has_property(key) and self.property(key).get("relation_type") == "n-n"
 
+    def is_relation_n_1(self, key):
+        return self.has_property(key) and self.property(key).get("relation_type") == "n-1"
+
+    def is_relation_1_n(self, key):
+        return self.has_property(key) and self.property(key).get("relation_type") == "1-n"
+
     def is_primary_key(self, key):
         return self.has_property(key) and self.property(key).get("primary_key")
 
