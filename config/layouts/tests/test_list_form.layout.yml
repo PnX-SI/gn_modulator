@@ -3,6 +3,70 @@ code: test_list_form
 title: test_list_form
 description: test pour le composant list_form
 
+aliases:
+
+  - &set_basique
+    - key: items_simple
+      type: list_form
+      items: [a, b, c]
+    - key: items_multiple
+      type: list_form
+      items: [a, b, c]
+      multiple: true
+    - key: items_simple_default
+      type: list_form
+      items: [a, b, c]
+      default: "a"
+    - key: items_multiple_default
+      type: list_form
+      items: [a, b, c]
+      default: [a, b]
+      multiple: true
+      
+  - &set_objects
+    - key: nomenclature
+      type: list_form
+      module_code: MODULATOR
+      object_code: ref_nom.nomenclature
+      nomenclature_type: STADE_VIE
+      
+  - &set_advance_com
+    - key: area_com_simple
+      type: list_form
+      module_code: MODULATOR
+      object_code: ref_geo.area
+      area_type: COM
+      reload_on_search: true
+    - key: area_com_default
+      type: list_form
+      module_code: MODULATOR
+      object_code: ref_geo.area
+      area_type: COM
+      reload_on_search: true
+      default: 1801
+    - key: area_com_multiple
+      type: list_form
+      multiple: true
+      module_code: MODULATOR
+      object_code: ref_geo.area
+      area_type: COM
+      reload_on_search: true
+    - key: area_com_multiple_default
+      multiple: true
+      type: list_form
+      module_code: MODULATOR
+      object_code: ref_geo.area
+      area_type: COM
+      reload_on_search: true
+      default: [1801, 1802]
+
+  - &set_advance_tax
+    - key: tax_simple
+      # type: list_form
+      # module_code: MODULATOR
+      # object_code: tax.taxref
+      # reload_on_search: true
+
 layout:
   title: test list form
   type: form
@@ -10,47 +74,20 @@ layout:
   items:
     - type: message
       json: __f__data
+      flex: 1
     - display: tabs
+      flex: 2
       selected_tab: advance
       items:
         - label: basique
-          items:
-            - key: items_simple
-              type: list_form
-              items: [a, b, c]
-            - key: items_multiple
-              type: list_form
-              items: [a, b, c]
-              multiple: true
-            - key: items_simple_default
-              type: list_form
-              items: [a, b, c]
-              default: "a"
-            - key: items_multiple_default
-              type: list_form
-              items: [a, b, c]
-              default: [a, b]
-              multiple: true
+          items: *set_basique
         - label: objects
-          items:
-            - key: nomenclature
-              type: list_form
-              module_code: MODULATOR
-              object_code: ref_nom.nomenclature
-              nomenclature_type: STADE_VIE
+          items: *set_objects
         - label: advance
           items:
-            - key: area_com_simple
-              type: list_form
-              module_code: MODULATOR
-              object_code: ref_geo.area
-              area_type: COM
-              reload_on_search: true
-            - key: area_com_default
-              type: list_form
-              module_code: MODULATOR
-              object_code: ref_geo.area
-              area_type: COM
-              reload_on_search: true
-              default: 1801
+            display: row
+            items:
+              - items: *set_advance_com
+              - items: *set_advance_tax
+
 data:

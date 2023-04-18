@@ -3,8 +3,8 @@ import { ListFormService } from '../../../services/list-form.service';
 import { ModulesLayoutComponent } from '../base/layout.component';
 import { AbstractControl } from '@angular/forms';
 
-import { debounceTime, distinctUntilChanged } from '@librairies/rxjs/operators';
-import { Subject } from '@librairies/rxjs';
+import { debounceTime, distinctUntilChanged, mergeMap } from '@librairies/rxjs/operators';
+import { Subject, of, Observable } from '@librairies/rxjs';
 
 import utils from '../../../utils';
 
@@ -22,6 +22,10 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
 
   // la liste
   items: any[] = [];
+
+  // liste de valeurs
+  // pour pouvoir les garder en mémoire avec les autocomplete
+  valueSave: any[] = [];
 
   // pour pouvoir filter en local
   itemsSave: any[] = [];
@@ -68,25 +72,109 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
     // initialisation
     this._listFormService
       .initListForm(this.listFormOptions, this.formControl)
-      .subscribe((infos) => {
-        // fonction de comparaison
-        this.compareFn = this._listFormService.compareFn(
-          this.listFormOptions.return_object,
-          this.listFormOptions.value_field_name
-        );
+      .pipe(
+        mergeMap((infos) => {
+          // fonction de comparaison
+          this.compareFn = this._listFormService.compareFn(
+            this.listFormOptions.return_object,
+            this.listFormOptions.value_field_name
+          );
 
-        // la liste
-        this.items = infos.items;
+          // la liste
+          this.items = infos.items;
 
-        // le nombre d'items
-        this.nbItems = infos.nbItems;
+          // le nombre d'items
+          this.nbItems = infos.nbItems;
 
-        // pour la recherche en local
-        this.itemsSave = utils.copy(infos.items);
-
+          // pour la recherche en local
+          this.itemsSave = utils.copy(infos.items);
+          return of(true);
+        }),
+        mergeMap(() => this.processItemsValue(this.listFormOptions, this.formControl.value))
+      )
+      .subscribe(() => {
         // fin du chargement
         this.isLoading = false;
       });
+  }
+
+  processItemsValue(options, value) {
+    // values :  liste d'id pour les tests
+    let values = value;
+
+    // multiple ?
+    if (values == null) {
+      values = [];
+    }
+
+    if (!Array.isArray(values)) {
+      values = [values];
+    }
+
+    // renvoie un objet ??
+    if (options.return_object) {
+      values = values.map((v) => v[options.value_field_name]);
+    }
+
+    // si values == []
+    if (values.length == 0) {
+      this.valueSave = [];
+      return of(true);
+    }
+
+    // recherche de values dans la liste (items)
+    const missingValuesInItems = values.filter((v) =>
+      this.items.every((i) => i[options.value_field_name] != v)
+    );
+
+    // les valeur sont trouvées dans la liste
+    // ok retour
+    if (missingValuesInItems.length == 0) {
+      this.valueSave = this.items.filter((i) =>
+        values.some((v) => i[options.value_field_name] == v)
+      );
+      return of(true);
+    }
+
+    // sinon
+    // - si non autocomplete => pb
+    if (missingValuesInItems.length > 0 && !options.reload_on_search) {
+      console.error(
+        `La ou les valeurs ${missingValuesInItems
+          .map((m) => m[options.value_field_name])
+          .join(', ')} ne sont pas présentes dans la liste`
+      );
+      return of(false);
+    }
+
+    // on a des valeurs manquantes (missingValuesInItems) est ce qu'elles sont dans valueSave ?
+    let missingValuesInValueSave: any[] = [];
+    for (const v of missingValuesInItems) {
+      const item = this.valueSave.find((i) => i[options.value_field_name] == v);
+      if (!item) {
+        missingValuesInValueSave.push(v);
+      } else {
+        this.items.push(item);
+      }
+    }
+
+    if (missingValuesInValueSave.length == 0) {
+      this.valueSave = this.items.filter((i) =>
+        values.some((v) => i[options.value_field_name] == v)
+      );
+      return of(true);
+    }
+
+    // s'il y des valeurs manquante, alors ou va les cherche avec l'api
+    return this._listFormService.getMissingValues(missingValuesInValueSave, options).pipe(
+      mergeMap((items) => {
+        for (let item of items) {
+          this.items.push(item);
+          this.valueSave.push(item);
+        }
+        return of(true);
+      })
+    );
   }
 
   // pour la recherche
@@ -137,10 +225,14 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
     // on prend en compte les valeurs courrantes
     this._listFormService
       .getSelectList(this.listFormOptions, this.formControl.value)
-      .subscribe((infos) => {
-        // traitement des résultats
-        this.items = infos.items;
-        this.nbItems = infos.nbItems;
+      .pipe(
+        mergeMap((infos) => {
+          this.items = infos.items;
+          this.nbItems = infos.nbItems;
+          return this.processItemsValue(this.listFormOptions, this.formControl.value);
+        })
+      )
+      .subscribe(() => {
         this.isLoading = false;
       });
   }

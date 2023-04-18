@@ -55,7 +55,6 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
         this.selectedIndex = this.computedItems.findIndex(
           (i) => i.label == this.computedLayout.selected_tab
         );
-        console.log(this.selectedIndex);
       }
     }, 100);
   }

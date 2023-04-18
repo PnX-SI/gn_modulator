@@ -47,11 +47,6 @@ export class ListFormService {
         //     on donne automatiquent la valeur de l'element au formulaire
         return this.processListeLengthisOne(options, control, liste);
       }),
-      // mergeMap((liste) => {
-      //   let values = options.multiple ? control.value : [ control.value ]
-      //   values = options.return_object ? values.map(v => v[options.valueFieldName]) : values;
-      //   return of(liste)
-      // }),
       mergeMap((liste) => {
         // on va tester si l'element est bien dans la liste et est bien celui de la liste
         if (options.return_object && control.value && control.value[options.valueFieldName]) {
@@ -291,6 +286,36 @@ export class ListFormService {
             options.items_path ? res[options.items_path] : res
           );
           return of({ items, nbItems: items.length });
+        })
+      );
+  }
+
+  /** pour récupérer les missing values
+   * normalement un seul appel initial
+   */
+  getMissingValues(missingValues, options) {
+    const params = options.params || {};
+    params.filters = `${options.value_field_name} in ${missingValues.join(';')}`;
+    params.fields = utils
+      .removeDoublons(
+        [
+          options.value_field_name,
+          options.title_field_name,
+          options.label_field_name,
+          ...(options.additional_fields || []),
+        ].filter((e) => !!e)
+      )
+      .join(',');
+
+    return this._requestService
+      .request('get', this.processUrl(options.api), { params, cache: options.cache })
+      .pipe(
+        mergeMap((res) => {
+          const items = this.processItems(
+            options,
+            options.items_path ? res[options.items_path] : res
+          );
+          return of(items);
         })
       );
   }
