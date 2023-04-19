@@ -80,7 +80,8 @@ class SchemaBaseFeatures:
 
         cache_key = "__".join([self.schema_code()] + list(map(lambda x: str(x), rel_test_values)))
 
-        if cache_value := get_global_cache(["import_pk_keys", self.schema_code(), cache_key]):
+        cache_value = get_global_cache(["import_pk_keys", self.schema_code(), cache_key])
+        if cache_value:
             return cache_value
 
         if None in rel_test_values:

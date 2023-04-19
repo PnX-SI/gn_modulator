@@ -413,10 +413,11 @@ class DefinitionBase:
             )
 
         # dépendancies
-        if dependencies := definition_type not in [
+        dependencies = definition_type not in [
             "template",
             "use_template",
-        ] and definition.get("dependencies"):
+        ] and definition.get("dependencies")
+        if dependencies:
             definition_codes = cls.definition_codes_for_type(definition_type)
             missing_dependencies = [
                 dependency for dependency in dependencies if dependency not in definition_codes

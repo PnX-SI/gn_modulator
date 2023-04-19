@@ -355,7 +355,8 @@ class SchemaBase:
                 None, data[key], options=options, process_label=process_label
             )
 
-        if labels := options.get("labels") and process_label:
+        labels = options.get("labels") and process_label
+        if labels:
             if data is True:
                 return labels[0] if len(labels) > 0 else True
             elif data is False:

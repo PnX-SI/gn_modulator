@@ -98,7 +98,8 @@ def errors_txt():
     # on affiche les erreurs par fichier pour simplifier la lecture
     for definition_error_file_path in sorted(definition_error_file_paths):
         txt_errors += f"\n- {definition_error_file_path}\n"
-        if template_file_path := template_file_paths.get(definition_error_file_path):
+        template_file_path = template_file_paths.get(definition_error_file_path)
+        if template_file_path:
             txt_errors += f"  {template_file_path}\n"
 
         txt_errors += "\n"

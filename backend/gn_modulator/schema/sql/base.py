@@ -49,7 +49,8 @@ class SchemaSqlBase:
 
     @classmethod
     def get_tables(cls):
-        if tables := get_global_cache(["schema_dot_tables"]):
+        tables = get_global_cache(["schema_dot_tables"])
+        if tables:
             return tables
 
         sql_txt_tables = f"""

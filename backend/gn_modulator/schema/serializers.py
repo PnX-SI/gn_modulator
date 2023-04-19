@@ -299,7 +299,8 @@ class SchemaSerializers:
             sm_rel = self.cls(property["schema_code"])
 
             fields_to_remove.append(field)
-            if default_fields := sm_rel.attr("meta.default_fields"):
+            default_fields = sm_rel.attr("meta.default_fields")
+            if default_fields:
                 for rel_field in default_fields:
                     fields_to_add.append(f"{field}.{rel_field}")
             else:

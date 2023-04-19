@@ -108,7 +108,8 @@ class SchemaRepositoriesUtil:
         is_last_field = index == len(fields) - 1
 
         # récupération depuis le cache associé à la query
-        if res := self.get_query_cache(query, cache_key):
+        res = self.get_query_cache(query, cache_key)
+        if res:
             return self.process_custom_getattr_res(res, query, only_fields)
 
         # si non en cache

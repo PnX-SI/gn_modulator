@@ -213,7 +213,9 @@ WHERE
             values = None
 
             # Dans le cas des nomenclatures on peut faire remonter les valeurs possible ??
-            if code_type := sm.property(key).get("nomenclature_type"):
+
+            code_type = sm.property(key).get("nomenclature_type")
+            if code_type:
                 values = list(
                     map(
                         lambda x: {
