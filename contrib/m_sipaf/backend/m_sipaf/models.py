@@ -274,11 +274,70 @@ class CorDiagObstacle(db.Model):
     )
 
 
+class CorDiagPerturbation(db.Model):
+    __tablename__ = "cor_diag_nomenclature_perturbation"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_diagnostic = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_diagnostics.id_diagnostic"), primary_key=True
+    )
+    id_nomenclature = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+    )
+
+
+class CorDiagOuvrageHydrauEtatBerge(db.Model):
+    __tablename__ = "cor_diag_nomenclature_ouvrage_hydrau_etat_berge"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_diagnostic = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_diagnostics.id_diagnostic"), primary_key=True
+    )
+    id_nomenclature = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+    )
+
+
+class CorDiagOuvrageHydrauDim(db.Model):
+    __tablename__ = "cor_diag_nomenclature_ouvrage_hydrau_dim"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_diagnostic = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_diagnostics.id_diagnostic"), primary_key=True
+    )
+    id_nomenclature = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+    )
+
+
+class CorDiagAmenagementBiodiv(db.Model):
+    __tablename__ = "cor_diag_nomenclature_amenagement_biodiv"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_diagnostic = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_diagnostics.id_diagnostic"), primary_key=True
+    )
+    id_nomenclature = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+    )
+
+
 class Diagnostic(db.Model):
     __tablename__ = "t_diagnostics"
     __table_args__ = {"schema": "pr_sipaf"}
 
+    # communs
     id_diagnostic = db.Column(db.Integer, primary_key=True)
+    date_diagnostic = db.Column(db.Date, nullable=False)
+    commentaire_diagnostic = db.Column(db.Unicode)
 
     id_passage_faune = db.Column(
         db.Integer,
@@ -289,10 +348,7 @@ class Diagnostic(db.Model):
         ),
         nullable=False,
     )
-
     passage_faune = db.relationship(PassageFaune, backref="diagnostics")
-
-    date_diagnostic = db.Column(db.Date, nullable=False)
 
     id_role = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
     role = db.relationship(User)
@@ -300,9 +356,72 @@ class Diagnostic(db.Model):
     id_organisme = db.Column(db.Integer, db.ForeignKey("utilisateurs.bib_organismes.id_organisme"))
     organisme = db.relationship(Organisme)
 
-    comment = db.Column(db.Unicode)
+    # perturbation / obstacle
+
+    commentaire_perturbation_obstacle = db.Column(db.Unicode)
+    obstacle_autre = db.Column(db.Unicode)
+    perturbation_autre = db.Column(db.Unicode)
+
+    id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq = db.Column(
+        db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
+    )
+    nomenclature_diagnostic_ouvrage_hydrau_raccordement_banquette = db.relationship(
+        TNomenclatures,
+        foreign_keys=[id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq],
+    )
 
     nomenclatures_diagnostic_obstacle = db.relationship(
         TNomenclatures, secondary=CorDiagObstacle.__table__
     )
-    obstacle_autre = db.Column(db.Unicode)
+
+    nomenclatures_diagnostic_perturbation = db.relationship(
+        TNomenclatures, secondary=CorDiagPerturbation.__table__
+    )
+
+    nomenclatures_diagnostic_ouvrage_hydrau_etat_berge = db.relationship(
+        TNomenclatures, secondary=CorDiagOuvrageHydrauEtatBerge.__table__
+    )
+
+    nomenclatures_diagnostic_ouvrage_hydrau_dim = db.relationship(
+        TNomenclatures, secondary=CorDiagOuvrageHydrauDim.__table__
+    )
+
+    # Amenagements
+    amenagement_biodiv_autre = db.Column(db.Unicode)
+
+    nomenclatures_diagnostic_amenagement_biodiv = db.relationship(
+        TNomenclatures, secondary=CorDiagAmenagementBiodiv.__table__
+    )
+
+
+class DiagnosticCloture(db.Model):
+    __tablename__ = "t_diagnostic_clotures"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_diagnostic = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_diagnostics.id_diagnostic"), primary_key=True
+    )
+    id_nomenclature_clotures_guidage_type = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+        nullable=False,
+    )
+    id_nomenclature_clotures_guidage_etat = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+        nullable=False,
+    )
+
+    clotures_guidage_type_autre = db.Column(db.Unicode)
+    clotures_guidage_etat_autre = db.Column(db.Unicode)
+
+    diagnostic = db.relationship(Diagnostic, backref="clotures")
+
+    nomenclature_clotures_guidage_etat = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_clotures_guidage_etat]
+    )
+    nomenclature_clotures_guidage_type = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_clotures_guidage_type]
+    )

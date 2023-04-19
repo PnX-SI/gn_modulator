@@ -33,7 +33,9 @@ properties:
         items:
           type: array
           items:
-            type: object
+            OneOf:
+              - type: object,
+              - type: array
       required:
         - items
         - schema_code

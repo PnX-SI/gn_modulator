@@ -18,331 +18,135 @@ items:
         pk_field: id_passage_faune
         uuid_field_name: uuid_passage_faune
   - schema_code: ref_nom.type
+    keys: [mnemonique, label_default, definition_default]
+    defaults:
+      source: SIPAF
     items:
-      - mnemonique: PF_OUVRAGE_MATERIAUX
-        label_default: Matériaux
-        definition_default: "Matériaux composant l'ouvrage"
-        source: SIPAF
-      - mnemonique: PF_OUVRAGE_HYDRAULIQUE_POSITION
-        label_default: OH Position
-        definition_default: "Position de l'ouvrage hydrolique"
-        source: SIPAF
-      - mnemonique: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
-        label_default: OH Caractérisation banquette
-        definition_default: Caractérisation de la banquette pour un ouvrage hydraulique
-        source: SIPAF
-      - mnemonique: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-        label_default: OH Type de banquette
-        definition_default: Type de banquette pour un ouvrage hydrolique
-        source: SIPAF
-      - mnemonique: PF_INFRASTRUCTURE_TYPE
-        label_default: "Type d'infrastructure"
-        definition_default: "Type d'infrastructure pour les passages à faune"
-        source: SIPAF
-      - mnemonique: PF_OUVRAGE_SPECIFICITE
-        label_default: Spécificité
-        definition_default: Exclusivité du passage pour le passage de la faune
-        source: SIPAF
-      - mnemonique: PF_OUVRAGE_TYPE
-        label_default: "Type d'ouvrage"
-        definition_default: "Type d'ouvrage d'art pour le passage faune"
-        source: SIPAF
-      - mnemonique: PF_TYPE_ACTOR
-        label_default: "Type d'acteur"
-        definition_default: "Type d'acteur pour les passages faune"
-        source: SIPAF
-      - mnemonique: PF_DIAG_OBSTACLE
-        label_default: "Diagnostic obstacle"
-        definition_default: "Diagnostic obstacle"
-        source: SIPAF
+      - [PF_OUVRAGE_MATERIAUX, Matériaux, "Matériaux composant l'ouvrage"]
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, OH Position, "Position de l'ouvrage hydrolique"]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT, OH Caractérisation banquette, Caractérisation de la banquette pour un ouvrage hydraulique]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, OH Type de banquette, Type de banquette pour un ouvrage hydrolique]
+      - [PF_INFRASTRUCTURE_TYPE, "Type d'infrastructure", "Type d'infrastructure pour les passages à faune"]
+      - [PF_OUVRAGE_SPECIFICITE, Spécificité, Exclusivité du passage pour le passage de la faune]
+      - [PF_OUVRAGE_TYPE, "Type d'ouvrage", "Type d'ouvrage d'art pour le passage faune"]
+      - [PF_TYPE_ACTOR, "Type d'acteur", "Type d'acteur pour les passages faune"]
+      - [PF_DIAG_OBSTACLE, Diagnostic obstacle, Diagnostic obstacle]
+      - [PF_DIAG_PERTURBATION, Diagnostic perturbation, Diagnostic perturbation]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, Diagnostic état berge, État des berges à l'entrée de l'ouvrage (ouvrage hydraulique)]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE, Diagnostic Raccordement banquette-berge, État du raccordement entre la banquette et la berge aux sorties d'un ouvrage mixte hydraulique]
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, Défaut de dimensionnement, Défaut de dimensionnement]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, Types d'aménagements, Types d'aménagement complémentaires en faveur de la faune]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, Nature des clôtures, Nature des clôtures pouvant guider les animaux vers le passage]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, État des clôtures, État des clôtures pouvant guider les animaux vers le passage]
+      # PF_DIAG_VEGETATION_PRESENTE_TABLIER_TYPE
+      # PF_DIAG_VEGETATION_PRESENTE_DEBOUCH_TYPE
   - schema_code: ref_nom.nomenclature
     defaults:
       source: SIPAF
       active: true
+    keys:
+      [id_type, cd_nomenclature, mnemonique, label_default, definition_default]
     items:
-      - id_type: PF_OUVRAGE_MATERIAUX
-        cd_nomenclature: BET
-        mnemonique: Béta.
-        label_default: Béton
-        definition_default: Béton
-      - id_type: PF_OUVRAGE_MATERIAUX
-        cd_nomenclature: MET
-        mnemonique: Mét.
-        label_default: Métal
-        definition_default: Métal
-      - id_type: PF_OUVRAGE_MATERIAUX
-        cd_nomenclature: PLT
-        mnemonique: Pla.
-        label_default: Plastique
-        definition_default: Plastique
-      - id_type: PF_OUVRAGE_MATERIAUX
-        cd_nomenclature: BOI
-        mnemonique: Boi.
-        label_default: Bois
-        definition_default: Bois
-      - id_type: PF_OUVRAGE_MATERIAUX
-        cd_nomenclature: MAC
-        mnemonique: Maç.
-        label_default: Maçonnerie
-        definition_default: Maçonnerie
-      - id_type: PF_OUVRAGE_MATERIAUX
-        cd_nomenclature: AUT
-        mnemonique: Aut.
-        label_default: Autre
-        definition_default: Autre
-      - id_type: PF_OUVRAGE_MATERIAUX
-        cd_nomenclature: IND
-        mnemonique: Ind.
-        label_default: Indéterminé
-        definition_default: Indéterminé
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
-        cd_nomenclature: RD
-        mnemonique: R. d.
-        label_default: Rive droite
-        definition_default: Rive droite
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
-        cd_nomenclature: RG
-        mnemonique: R. g.
-        label_default: Rive Gauche
-        definition_default: Rive Gauche
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
-        cd_nomenclature: RGD
-        mnemonique: "R. g. & d."
-        label_default: Rive gauche et rive droite
-        definition_default: Rive gauche et rive droite (la rive se détermine dans le sens amont/aval)
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
-        cd_nomenclature: SIM
-        mnemonique: Spl.
-        label_default: Simple
-        definition_default: Banquette simple
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
-        cd_nomenclature: DOU
-        mnemonique: Dbl.
-        label_default: Double
-        definition_default: Banquette double
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-        cd_nomenclature: NAT
-        mnemonique: Nat.
-        label_default: Banquette naturelle
-        definition_default: Banquette naturelle / bande enherbée
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-        cd_nomenclature: BET
-        mnemonique: Bet.
-        label_default: Banquette béton
-        definition_default: Banquette béton
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-        cd_nomenclature: ECB
-        mnemonique: Ecb.
-        label_default: Encorbellement
-        definition_default: Encorbellement
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-        cd_nomenclature: POF
-        mnemonique: Po. F.
-        label_default: Ponton flottant
-        definition_default: Ponton flottant
-      - id_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
-        cd_nomenclature: AUT
-        mnemonique: Aut.
-        label_default: Autre
-        definition_default: Autre
-      - id_type: PF_INFRASTRUCTURE_TYPE
-        cd_nomenclature: AU
-        mnemonique: Auto.
-        label_default: Autoroute
-        definition_default: Autoroute
-      - id_type: PF_INFRASTRUCTURE_TYPE
-        cd_nomenclature: RN
-        mnemonique: R. N.
-        label_default: Route Nationale
-        definition_default: Route Nationale
-      - id_type: PF_INFRASTRUCTURE_TYPE
-        cd_nomenclature: RD
-        mnemonique: R. D.
-        label_default: Route Départementale
-        definition_default: Route Départementale
-      - id_type: PF_INFRASTRUCTURE_TYPE
-        cd_nomenclature: VF
-        mnemonique: V. F.
-        label_default: Voie ferrée
-        definition_default: Voie ferrée
-      - id_type: PF_INFRASTRUCTURE_TYPE
-        cd_nomenclature: CA
-        mnemonique: Ca.
-        label_default: Canal / Rivère navigable
-        definition_default: Canal / Rivère navigable
-      - id_type: PF_OUVRAGE_SPECIFICITE
-        cd_nomenclature: SPE
-        mnemonique: Spé.
-        label_default: Spécifique
-        definition_default: Ouvrage construit que pour le passage des animaux
-      - id_type: PF_OUVRAGE_SPECIFICITE
-        cd_nomenclature: MIX
-        mnemonique: Mixt.
-        label_default: Mixte
-        definition_default: Ouvrage mixte construit pour le passage des animaux concomitamment à un ou plusieurs autres usages
-      - id_type: PF_OUVRAGE_SPECIFICITE
-        cd_nomenclature: ND
-        mnemonique: Non déd.
-        label_default: Non dédié
-        definition_default: Ouvrage non dédié au passage de la faune mais pouvant servir à cet usage
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: BUS
-        mnemonique: Bus.
-        label_default: Buse
-        definition_default: Buse
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: CAD
-        mnemonique: Cad.
-        label_default: Cadre
-        definition_default: Cadre
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: VOU+R
-        mnemonique: Voût. Rad.
-        label_default: Voûte avec radier
-        definition_default: Voûte maçonnée avec radier
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: AUT
-        mnemonique: Aut.
-        label_default: Autre (préciser)
-        definition_default: Autre (préciser)
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: POR
-        mnemonique: Por.
-        label_default: Portique
-        definition_default: Portique en béton
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: VOU
-        mnemonique: Voû.
-        label_default: Voûte sans radier
-        definition_default: Voûte maçonnée sans radier
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: DAL+P
-        mnemonique: Dal. pal.
-        label_default: Dalle et palpaplanche
-        definition_default: Dalle et palpaplanche
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: DAL
-        mnemonique: Dal.
-        label_default: Dalle
-        definition_default: Dalle
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: ARC
-        mnemonique: Arc.
-        label_default: Arc
-        definition_default: Arc
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: VIA
-        mnemonique: via.
-        label_default: Viaduc
-        definition_default: Viaduc
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: PON
-        mnemonique: pon.
-        label_default: Pont
-        definition_default: Pont
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: CAN
-        mnemonique: can.
-        label_default: Canalisation
-        definition_default: Canalisation
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: DALO
-        mnemonique: dalo.
-        label_default: Dalot
-        definition_default: Dalot
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: DIAB
-        mnemonique: diab.
-        label_default: Diabolo
-        definition_default: Diabolo
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: TRA
-        mnemonique: Tra.
-        label_default: Tranchée
-        definition_default: Tranchée
-      - id_type: PF_OUVRAGE_TYPE
-        cd_nomenclature: TUN
-        mnemonique: Tun.
-        label_default: Tunnel
-        definition_default: Tunnel
-      - id_type: PF_TYPE_ACTOR
-        cd_nomenclature: PRO
-        mnemonique: Prop.
-        label_default: Propriétaire
-        definition_default: Propriétaire du passage faune
-      - id_type: PF_TYPE_ACTOR
-        cd_nomenclature: CON
-        mnemonique: Conc.
-        label_default: Concessionaire
-        definition_default: Concessionnaire
-      - id_type: PF_TYPE_ACTOR
-        cd_nomenclature: INT
-        mnemonique: Int.
-        label_default: Intervenant
-        definition_default: Intervenant sur ce passage faune
-      - id_type: PF_TYPE_ACTOR
-        cd_nomenclature: GES
-        mnemonique: Ges.
-        label_default: Gestionnaire
-        definition_default: Gestionnaire du passage faune
-      - id_type: PF_TYPE_ACTOR
-        cd_nomenclature: ETA
-        mnemonique: État
-        label_default: État
-        definition_default: État
-      - id_type: PF_TYPE_ACTOR
-        cd_nomenclature: DEP
-        mnemonique: Dépt.
-        label_default: Département
-        definition_default: Département
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: NEA
-        mnemonique: Néa.
-        label_default: Néant
-        definition_default: Pas de présence d'obstacle
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: CLOT
-        mnemonique: Clôt.
-        label_default: Clôtures
-        definition_default: Clôture fermant l'ouvrage
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: TROT
-        mnemonique: Trot.
-        label_default: Trottoirs
-        definition_default: Trottoirs
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: TROT
-        mnemonique: Trot.
-        label_default: Trottoirs
-        definition_default: Trottoirs
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: GLIS
-        mnemonique: Glis.
-        label_default: Glissières
-        definition_default: Glissières
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: DENIV
-        mnemonique: Déniv.
-        label_default: Dénivelé
-        definition_default: Dénivelé
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: DEP
-        mnemonique: Dép.
-        label_default: Dépôts
-        definition_default: Dépôts
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: STAG
-        mnemonique: Stag.
-        label_default: Stagnation d'eau
-        definition_default: Stagnation d'eau
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: INFR
-        mnemonique: Infr.
-        label_default: Infrastructure
-        definition_default: Infrastructure au débouché
-      - id_type: PF_DIAG_OBSTACLE
-        cd_nomenclature: AUT
-        mnemonique: Aut.
-        label_default: Autre (Préciser)
-        definition_default: Autre (Préciser)
+      - [PF_OUVRAGE_MATERIAUX, BET, Béta., Béton, Béton]
+      - [PF_OUVRAGE_MATERIAUX, MET, Mét., Métal, Métal]
+      - [PF_OUVRAGE_MATERIAUX, PLT, Pla., Plastique, Plastique]
+      - [PF_OUVRAGE_MATERIAUX, BOI, Boi., Bois, Bois]
+      - [PF_OUVRAGE_MATERIAUX, MAC, Maç., Maçonnerie, Maçonnerie]
+      - [PF_OUVRAGE_MATERIAUX, AUT, Aut., Autre, Autre]
+      - [PF_OUVRAGE_MATERIAUX, IND, Ind., Indéterminé, Indéterminé]
+
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, RG, R. g., Rive Gauche, Rive Gauche]
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, RGD, R. g. & d.", Rive gauche et rive droite, Rive gauche et rive droite (la rive se détermine dans le sens amont/aval)]
+
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT, DOU, Dbl., Double, Banquette double]
+
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, BET, Bet., Banquette béton, Banquette béton]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, ECB, Ecb., Encorbellement, Encorbellement]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, POF, Po. F., Ponton flottant, Ponton flottant]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, AUT, Aut., Autre, Autre]
+
+      - [PF_INFRASTRUCTURE_TYPE, RN, R. N., Route Nationale, Route Nationale]
+      - [PF_INFRASTRUCTURE_TYPE, RD, R. D., Route Départementale, Route Départementale]
+      - [PF_INFRASTRUCTURE_TYPE, VF, V. F., Voie ferrée, Voie ferrée]
+      - [PF_INFRASTRUCTURE_TYPE, CA, Ca., Canal / Rivère navigable, Canal / Rivère navigable]
+
+      - [PF_OUVRAGE_SPECIFICITE, MIX, Mixt., Mixte, Ouvrage mixte construit pour le passage des animaux concomitamment à un ou plusieurs autres usages]
+      - [PF_OUVRAGE_SPECIFICITE, ND, Non déd., Non dédié, Ouvrage non dédié au passage de la faune mais pouvant servir à cet usage]
+
+      - [PF_OUVRAGE_TYPE, CAD, Cad., Cadre, Cadre]
+      - [PF_OUVRAGE_TYPE, VOU+R, Voût. Rad., Voûte avec radier, Voûte maçonnée avec radier]
+      - [PF_OUVRAGE_TYPE, AUT, Aut., Autre (préciser), Autre (préciser)]
+      - [PF_OUVRAGE_TYPE, POR, Por., Portique, Portique en béton]
+      - [PF_OUVRAGE_TYPE, VOU, Voû., Voûte sans radier, Voûte maçonnée sans radier]
+      - [PF_OUVRAGE_TYPE, DAL+P, Dal. pal., Dalle et palpaplanche, Dalle et palpaplanche]
+      - [PF_OUVRAGE_TYPE, DAL, Dal., Dalle, Dalle]
+      - [PF_OUVRAGE_TYPE, ARC, Arc., Arc, Arc]
+      - [PF_OUVRAGE_TYPE, VIA, via., Viaduc, Viaduc]
+      - [PF_OUVRAGE_TYPE, PON, pon., Pont, Pont]
+      - [PF_OUVRAGE_TYPE, CAN, can., Canalisation, Canalisation]
+      - [PF_OUVRAGE_TYPE, DALO, dalo., Dalot, Dalot]
+      - [PF_OUVRAGE_TYPE, DIAB, diab., Diabolo, Diabolo]
+      - [PF_OUVRAGE_TYPE, TRA, Tra., Tranchée, Tranchée]
+      - [PF_OUVRAGE_TYPE, TUN, Tun., Tunnel, Tunnel]
+
+      - [PF_TYPE_ACTOR, CON, Conc., Concessionaire, Concessionnaire]
+      - [PF_TYPE_ACTOR, INT, Int., Intervenant, Intervenant sur ce passage faune]
+      - [PF_TYPE_ACTOR, GES, Ges., Gestionnaire, Gestionnaire du passage faune]
+      - [PF_TYPE_ACTOR, ETA, État, État, État]
+      - [PF_TYPE_ACTOR, DEP, Dépt., Département, Département]
+
+      - [PF_DIAG_OBSTACLE, CLOT, Clôt., Clôtures, Clôture fermant l'ouvrage]
+      - [PF_DIAG_OBSTACLE, TROT, Trot., Trottoirs, Trottoirs]
+      - [PF_DIAG_OBSTACLE, TROT, Trot., Trottoirs, Trottoirs]
+      - [PF_DIAG_OBSTACLE, GLIS, Glis., Glissières, Glissières]
+      - [PF_DIAG_OBSTACLE, DENIV, Déniv., Dénivelé, Dénivelé]
+      - [PF_DIAG_OBSTACLE, DEP, Dép., Dépôts, Dépôts]
+      - [PF_DIAG_OBSTACLE, STAG, Stag., Stagnation d'eau, Stagnation d'eau]
+      - [PF_DIAG_OBSTACLE, INFR, Infr., Infrastructure, Infrastructure au débouché]
+      - [PF_DIAG_OBSTACLE, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_PERTURBATION, C_P, Circ. Piet., Circulation Piéton, Circulation Piéton]
+      - [PF_DIAG_PERTURBATION, CV, Circ. Voit., Circulation Voiture, Circulation Voiture]
+      - [PF_DIAG_PERTURBATION, C2RQ, Circ. 2R. Qu., Circulation 2-roues & quad, Circulation 2-roues & quad]
+      - [PF_DIAG_PERTURBATION, CTR, Circ. tr., Circulation tracteur, Circulation tracteur]
+      - [PF_DIAG_PERTURBATION, CHA, Cha., Chasse, Chasse]
+      - [PF_DIAG_PERTURBATION, SONO, Sono., Sonore, "Perturbations sonores (vibration, bruit de circulation, etc.)"]
+      - [PF_DIAG_PERTURBATION, VISU, Visu., Visuelle, "Perturbations visuelles (lumières, éclairage, etc.)"]
+      - [PF_DIAG_PERTURBATION, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, STA, Sta., Stable, Stable]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, ERO, Éro., Érodé, Érodé]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, RIPC, Rip. Cont., Ripisylve continue, Ripisylve continue]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, RIPD, Rip. Dis., Ripisylve discontinue, Ripisylve discontinue]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, ENRO, Enroch., Enrochement, Enrochement]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, TECHV, Tech. Vég., Technique végétale, Technique végétale]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, ENHB, Herb., Enherbées, Enherbées]
+
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE, BON, Bon, Bon, "Bon : raccordement amont et aval"]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE, INS, Insuff., Insuffisant, "Insuffisant : raccordement d'un seul côté"]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE, ABS, Abs., Absent, "Absent : pas de raccordement ni en amont ni en aval"]
+
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, LARG_INF, Larg. Faib., Largeur trop faible,  "Largeur trop faible: augmentation de la vitesse d'écoulement empêchant le franchissement piscicole"]
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, LARG_SUP, Larg. Élev., Largeur trop élevée,  "Largeur trop élevée: diminution de la lame d'eau"]
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, HAUT_INF, Larg. Élev., Hauteur insuffisante,  "Hauteur insuffisante: en période de crue, submersion des aménagements"]
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, DEF_PENTE, Déf. Pente, Ne respecte pas la pente,  "Ouvrage ne respectant pas la pente du cours d'eau : érosion à l'entrée / sortie de l'ouvrage"]
+
+      - [PF_DIAG_AMENAGEMENT_BIODIV, PAR, Para., Parapet d'accultation, Parapet d'accultation]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, PLA, Planta., Plantations, Plantations]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, MUR, Mur., Andains / muret, Andains / muret]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, MAR, Mar., Mares, Mares]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, 'GFS', Gd. Faun. Simp., Grande faune simple, Grande faune simple]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, 'PFS', Pt. Faun. Simp., Petite faune simple, Petite faune simple]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, 'MAIP', Mail. Prog., Mailles progressives, Mailles progressives]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, 'MUR', Mur., Muret, Muret]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, BON, Bon, Bon, Bon]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, MOY, Moy., Moyen, Moyen]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, DEG, Dég., Dégradée, Dégradée]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, NOJ, Non Jo., Non jointive, Non jointive]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, AUT, Aut., Autre (préciser), Autre (préciser)]
+
 

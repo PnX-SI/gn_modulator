@@ -28,10 +28,17 @@ def upgrade():
 
 
 def downgrade():
+    if_exists = ""
+    # if_exists = "IF EXISTS"
     op.execute(
-        """
-    DROP TABLE IF EXISTS pr_sipaf.cor_diag_nomenclature_obstacle;
-    DROP TABLE  IF EXISTS pr_sipaf.t_diagnostics;
+        f"""
+    DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_obstacle;
+    DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_perturbation;
+    DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_ouvrage_hydrau_etat_berge;
+    DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_ouvrage_hydrau_dim;
+    DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_amenagement_biodiv;
+    DROP TABLE {if_exists} pr_sipaf.t_diagnostic_clotures;
+    DROP TABLE {if_exists} pr_sipaf.t_diagnostics;
     """
     )
     pass

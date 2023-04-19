@@ -41,7 +41,7 @@ site_filters_fields:
           sort: code_name
           filters: |
             __f__data?.region
-              ? `area_code in ${utils.departementsForRegion(data.region.area_code).join(';')}`
+              ? `area_code in ${u.departementsForRegion(data.region.area_code).join(';')}`
               : null
 
         - key: commune
@@ -54,7 +54,7 @@ site_filters_fields:
             __f__data?.departement
               ? `area_code like ${data.departement.area_code}%`
               : data?.region
-                ? utils.departementsForRegion(data.region.area_code)
+                ? u.departementsForRegion(data.region.area_code)
                     .map(departementCode => `area_code like ${departementCode}%`)
                     .join(',|,')
                 : null
@@ -166,7 +166,7 @@ visit_form_fields:
         default: __f__context.current_user?.id_role
         hidden: true
   - key: date_min
-    default: __f__utils.today()
+    default: u.today()
   - date_max
   - key: id_module
     object_code: module

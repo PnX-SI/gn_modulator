@@ -4,27 +4,62 @@ title: schema diagnostic passage faune
 description: schema pour les diagnostics des passages à faune
 
 meta:
-    autoschema: true
-    model: m_sipaf.models.Diagnostic
-    module_code: m_sipaf
-    genre: M
-    label: diagnostic
-    label_field_name: date_diagnostic
-    unique:
-        - id_passage_faune
-        - date_diagnostic
-        - id_organism
-    unique_in_db: true
+  autoschema: true
+  model: m_sipaf.models.Diagnostic
+  module_code: m_sipaf
+  genre: M
+  label: diagnostic
+  label_field_name: date_diagnostic
+  unique:
+    - id_passage_faune
+    - date_diagnostic
+    - id_organism
+  unique_in_db: true
 properties:
-    date_diagnostic:
-        title: Date
-    id_role:
-        title: Agent
-    id_organisme:
-        title: Organisme
-    comment:
-        title: Commentaire
-    nomenclatures_diagnostic_obstacle:
-        title: Obstacle(s)
-    obstacle_autre:
-        title: Obstacle autre
+  # commons
+  date_diagnostic:
+    title: Date
+    description: Date d'établissemnt du diagnostic de fonctionalité
+  id_role:
+    title: Responsable du suivi
+    description: Personne en charge du suivi
+  id_organisme:
+    title: Organisme
+    description: Organisme en charge du suivi
+  commentaire_diagnostic:
+    title: Commentaire (diagnostic)
+    description: champs libre pour information complémentaire indicatives
+
+  # obstacles
+  commentaire_perturbation_obstacle:
+    title: Commentaire (perturbation / obstacle)
+    description: champs libre pour information complémentaire indicatives
+  nomenclatures_diagnostic_obstacle:
+    title: Obstacle(s)
+    description: Obstacles aux déplacement pouvant affecter la fonctionalité d'n ouvrage
+  obstacle_autre:
+    title: Obstacle autre
+  nomenclatures_diagnostic_perturbation:
+    title: Perturbation(s)
+    description: Éléments pouvant perturber la fonctionalité d'un ouvrage
+  perturbation_autre:
+    title: Perturbation autre
+  nomenclatures_diagnostic_ouvrage_hydrau_etat_berge:
+    title: État des berges
+    description: État des berges à l'entrée de l'ouvrage (ouvrage hydraulique)
+  id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq:
+    title: Raccordement banquette-berge
+    description: État du raccordement entre la banquette et la berge aux sorties d'un ouvrage mixte hydraulique
+  nomenclatures_diagnostic_ouvrage_hydrau_dim:
+    title: Défaut de dimensionnement
+    description: Dimensions de l'ouvrage hydraulique inadaptées
+
+  # amenagements
+  nomenclatures_diagnostic_amenagement_biodiv:
+    title: Types d'aménagements
+    description: Types d'aménagement complémentaires en faveur de la faune
+  amenagement_biodiv_autre:
+    title: Aménagement autre
+  clotures:
+    title: Clôtures
+    description: Présence de clôtures pouvant guider les animaux vers le passage
