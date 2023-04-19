@@ -69,7 +69,7 @@ export class TestLayoutComponent implements OnInit {
                layout_definition: ''
              });
             formGroup.patchValue({
-               layout_definition: x.utils.YML.dump(event.layout_from_list)
+               layout_definition: x.u.YML.dump(event.layout_from_list)
              });
            }
           }

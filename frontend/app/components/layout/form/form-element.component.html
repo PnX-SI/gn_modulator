@@ -44,13 +44,12 @@
         [placeholder]="computedLayout.placeholder"
         [type]="computedLayout.type"
         [formControl]="formControl"
-        [required]="computedLayout.required && !context.skip_required"
         [min]="computedLayout.min"
         [max]="computedLayout.max"
         (change)="onInputChange()"
         [errorStateMatcher]="_mForm.matcher"
         />
-        <!-- [disabled]="computedLayout.disabled" -->
+        <!-- [required]="computedLayout.required && !context.skip_required" -->
 
       <input
         *ngIf="'uuid' == computedLayout.type"
@@ -61,7 +60,6 @@
         [required]="computedLayout.required"
         (change)="onInputChange()"
         />
-        <!-- [disabled]="computedLayout.disabled" -->
 
       <input
         *ngIf="'integer' == computedLayout.type"
@@ -75,7 +73,6 @@
         [max]="computedLayout.max"
         (change)="onInputChange()"
         />
-        <!-- [disabled]="computedLayout.disabled" -->
 
       <textarea
         *ngIf="['textarea', 'json'].includes(computedLayout.type)"
@@ -89,7 +86,6 @@
         (change)="onInputChange()"
         style="white-space: pre"
         ></textarea>
-        <!-- [disabled]="computedLayout.disabled" -->
 
       <mat-hint>{{ computedLayout.hint }}</mat-hint>
 

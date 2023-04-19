@@ -10,7 +10,7 @@ from .commands import SchemaCommands
 from .config import SchemaConfig
 from .doc import SchemaDoc
 from .export import SchemaExport
-from .imports import SchemaImports
+from .features import SchemaFeatures
 from .models import SchemaModel
 from .repositories import SchemaRepositories
 from .serializers import SchemaSerializers
@@ -29,7 +29,7 @@ class SchemaMethods(
     SchemaConfig,
     SchemaDoc,
     SchemaExport,
-    SchemaImports,
+    SchemaFeatures,
     SchemaModel,
     SchemaRepositories,
     SchemaSerializers,

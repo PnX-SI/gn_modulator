@@ -85,6 +85,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     this.context.appearance = this.layout.appearance;
     this.context.skip_required = this.layout.skip_required;
     this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
+    this._formService.updateData(this.data, this.formGroup.value);
     this.formGroup.valueChanges.subscribe((value) => {
       this.onFormGroupChange();
     });

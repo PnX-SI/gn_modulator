@@ -225,13 +225,14 @@ export class ModulesFormService {
     // control pour array
     if (layout.type == 'array') {
       let controlData = utils.getAttr(data || {}, [...context.data_keys, computedLayout.key]) || [];
-      if (controlData.length == control.value.length) {
-        return;
+      if (controlData.length != control.value.length) {
+        control.clear();
+        for (let [index, elem] of Object.entries(controlData)) {
+          let elemControl = this.createFormGroup(layout.items, context);
+          control.push(elemControl);
+        }
       }
-      control.clear();
       for (let [index, elem] of Object.entries(controlData)) {
-        let elemControl = this.createFormGroup(layout.items, context);
-        control.push(elemControl);
         const arrayItemContext = {
           ...context,
           data_keys: utils.addKey(utils.copy(context.data_keys), `${layout.key}.${index}`),

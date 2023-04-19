@@ -50,7 +50,7 @@ def check_fields(module_code, object_code):
 
     # retour en cas de champs non autorisé
     if unauthorized_fields:
-        msg = f"Les champs suivants ne sont pas authorisé pour cette requete {','.join(unauthorized_fields) }"
+        msg = f"Les champs suivants ne sont pas autorisés pour cette requete {','.join(unauthorized_fields) }"
 
         return {
             "code": "ERR_REST_API_UNAUTHORIZED_FIELD",

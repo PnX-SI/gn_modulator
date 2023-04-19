@@ -225,7 +225,7 @@ export class ModulesLayoutComponent implements OnInit {
       'hidden_options',
     ]) {
       if (this.parentContext[key] != null || layout[key] != null) {
-        this.context[key] = this.parentContext[key] || layout[key];
+        this.context[key] = layout[key] == null ? this.parentContext[key] : layout[key];
       }
     }
 

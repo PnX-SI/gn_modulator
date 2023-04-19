@@ -37,6 +37,10 @@ const addKey = (keys, key) => {
 };
 
 const getAttr = (obj, paths, index = 0) => {
+  if (paths == null && index == 0) {
+    console.log('?????');
+    console.trace();
+  }
   if (paths == null) {
     return obj;
   }

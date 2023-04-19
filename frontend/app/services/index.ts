@@ -12,6 +12,7 @@ import { ModulesTableService } from './table.service';
 import { ModulesObjectService } from './object.service';
 import { ModulesSchemaService } from './schema.service';
 import { ListFormService } from './list-form.service';
+import { ModulesNomenclatureService } from './nomenclature.service';
 
 export default [
   ModulesActionService,
@@ -28,4 +29,5 @@ export default [
   ModulesTableService,
   ModulesObjectService,
   ModulesSchemaService,
+  ModulesNomenclatureService,
 ];

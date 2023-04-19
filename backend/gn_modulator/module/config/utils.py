@@ -427,7 +427,10 @@ class ModuleConfigUtils:
             schema_code = object_config["schema_code"]
 
             sm = SchemaMethods(schema_code)
+
             if not sm.has_property(key):
+                # raise error ?
+                print(f"pb ? {sm} has no {key}")
                 return keys
             if key not in object_keys["read"]:
                 object_keys["read"].append(key)

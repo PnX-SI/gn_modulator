@@ -222,9 +222,6 @@ class SchemaAuto:
         if schema_type["type"] == "geometry":
             if schema_type["srid"] == -1:
                 schema_type["srid"] = local_srid()
-                # schema_type["srid"] = db.engine.execute(
-                #     f"SELECT FIND_SRID('{sql_schema_name}', '{sql_table_name}', '{column.key}')"
-                # ).scalar()
             property["srid"] = schema_type["srid"]
             property["geometry_type"] = schema_type["geometry_type"]
             property["geometry_type"] = (
@@ -262,9 +259,14 @@ class SchemaAuto:
 
         column_info = self.cls.get_column_info(sql_schema_name, sql_table_name, column.key) or {}
 
+        # pour être requis
+        # etre nullable
+        # ne pas être que pk (fkpk non nullable ok)
+        # pas de default
+        # meta_date ??
         condition_required = (
             (not column_info.get("nullable", True))
-            and (not column.primary_key)
+            and (not (column.primary_key and not property.get("foreign_key")))
             and (column_info.get("default") is None)
             and (column.key != "meta_create_date")
         )

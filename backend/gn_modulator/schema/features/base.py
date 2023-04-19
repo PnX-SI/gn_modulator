@@ -16,7 +16,7 @@ from gn_modulator.utils.cache import (
 )
 
 
-class SchemaBaseImports:
+class SchemaBaseFeatures:
     @classmethod
     def process_features(cls, data_code, commit=True):
         """ """
@@ -142,6 +142,21 @@ class SchemaBaseImports:
             if "file" in data_item
             else []
         )
+
+        if data_item.get("keys"):
+            items_dict = []
+            for d in items:
+                if len(d) != len(data_item["keys"]):
+                    raise Exception(
+                        f'Erreur features ligne {d} ne correspond pas à keys { data_item["keys"]}'
+                    )
+                item = {}
+                for index, k in enumerate(data_item["keys"]):
+                    item[k] = d[index]
+                items_dict.append(item)
+
+            items = items_dict
+
         # traitement des valeurs par defaut
         for key in data_item.get("defaults") or {}:
             for d in items:

@@ -86,7 +86,7 @@ def post_rest(module_code, object_code):
     params = parse_request_args(object_definition)
 
     try:
-        m = sm.insert_row(data)
+        m = sm.insert_row(data, commit=True)
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
         return "Erreur Cruved : {}".format(str(e)), 403
@@ -114,6 +114,7 @@ def patch_rest(module_code, object_code, value):
             module_code=module_code,
             params=params,
             authorized_write_fields=authorized_write_fields,
+            commit=True,
         )
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
@@ -139,7 +140,7 @@ def delete_rest(module_code, object_code, value):
     dict_out = sm.serialize(m, fields=params.get("fields"), as_geojson=params.get("as_geojson"))
 
     try:
-        sm.delete_row(value, field_name=params.get("field_name"))
+        sm.delete_row(value, field_name=params.get("field_name"), commit=True)
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
         return "Erreur Cruved : {}".format(str(e)), 403
