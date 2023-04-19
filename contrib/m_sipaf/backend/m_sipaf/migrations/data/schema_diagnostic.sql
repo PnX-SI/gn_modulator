@@ -152,12 +152,17 @@ ADD
 
 -- clôture guidage
 CREATE TABLE IF NOT EXISTS pr_sipaf.t_diagnostic_clotures (
-    id_diagnostic INTEGER NOT NULL NOT NULL,
+    id_diagnostic SERIAL NOT NULL NOT NULL,
     id_nomenclature_clotures_guidage_type INTEGER NOT NULL NOT NULL,
     id_nomenclature_clotures_guidage_etat INTEGER NOT NULL NOT NULL,
     clotures_guidage_type_autre VARCHAR,
     clotures_guidage_etat_autre VARCHAR
 );
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_clotures
+ADD
+    CONSTRAINT pk_sipaf_t_diagnostic_clotures PRIMARY KEY (id_diagnostic, id_nomenclature_clotures_guidage_type);
 
 ALTER TABLE
     pr_sipaf.t_diagnostic_clotures
@@ -173,6 +178,7 @@ ALTER TABLE
     pr_sipaf.t_diagnostic_clotures
 ADD
     CONSTRAINT fk_pr_sipaf_t_d_c_g_id_nomenclature_clotures_guidage_etat FOREIGN KEY (id_nomenclature_clotures_guidage_etat) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
 
 -- check constraint nomenclature type
 ALTER TABLE

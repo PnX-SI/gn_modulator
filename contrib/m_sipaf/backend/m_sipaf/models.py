@@ -410,7 +410,6 @@ class DiagnosticCloture(db.Model):
     id_nomenclature_clotures_guidage_etat = db.Column(
         db.Integer,
         db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
-        primary_key=True,
         nullable=False,
     )
 
