@@ -47,7 +47,7 @@ properties:
   nomenclatures_diagnostic_ouvrage_hydrau_etat_berge:
     title: État des berges
     description: État des berges à l'entrée de l'ouvrage (ouvrage hydraulique)
-  id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq:
+  id_nomenclature_ouvrage_hydrau_racc_banq:
     title: Raccordement banquette-berge
     description: État du raccordement entre la banquette et la berge aux sorties d'un ouvrage mixte hydraulique
   nomenclatures_diagnostic_ouvrage_hydrau_dim:
@@ -63,3 +63,20 @@ properties:
   clotures:
     title: Clôtures
     description: Présence de clôtures pouvant guider les animaux vers le passage
+  vegetation_tablier:
+    title: Vegetation (tablier)
+    description: Végétation présente sur le tablier
+  vegetation_debouche:
+    title: Vegetation (débouchés)
+    description: Végétation présente sur aux débouchés de l'ouvrage
+
+  # synthese
+  id_nomenclature_franchissabilite:
+    title: Franchissibilité
+    description: Estimation de la franchissabilité de l'ouvrage pour les animaux
+  id_nomenclature_interet_faune:
+    title: Intérêt
+    description: Intérêt pour les espèces cibles
+  amenagement_faire:
+    title: Aménagements à faire
+    description: Détails aménagements ou autres mesures à réaliser pour rendre l'ouvrage plus fonctionel

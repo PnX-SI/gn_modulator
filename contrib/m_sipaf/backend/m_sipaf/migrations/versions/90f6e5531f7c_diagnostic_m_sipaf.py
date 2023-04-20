@@ -37,6 +37,8 @@ def downgrade():
     DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_ouvrage_hydrau_etat_berge;
     DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_ouvrage_hydrau_dim;
     DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_amenagement_biodiv;
+    DROP TABLE {if_exists} pr_sipaf.t_diagnostic_vegetation_presente_tablier;
+    DROP TABLE {if_exists} pr_sipaf.t_diagnostic_vegetation_presente_debouche;
     DROP TABLE {if_exists} pr_sipaf.t_diagnostic_clotures;
     DROP TABLE {if_exists} pr_sipaf.t_diagnostics;
     """

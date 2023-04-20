@@ -15,38 +15,50 @@ aliases:
         - date_diagnostic
         - id_organisme
         - id_role
-        - commentaire_diagnostic
+        - key: commentaire_diagnostic
+          type: textarea
 
   - &diag_perturbation_obstacle
-    - direction: row
-      items:
-        - key: nomenclatures_diagnostic_obstacle
-          additional_fields:
-            - cd_nomenclature
-          type: list_form
-          multiple: true
-          return_object: true
-        - key: obstacle_autre
-          hidden: __f__!data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
-          required: __f__data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
-    - direction: row
-      items:
-        - key: nomenclatures_diagnostic_perturbation
-          additional_fields:
-            - cd_nomenclature
-          type: list_form
-          multiple: true
-          return_object: true
-        - key: perturbation_autre
-          hidden: __f__!data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
-          required: __f__data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
-    - nomenclatures_diagnostic_ouvrage_hydrau_etat_berge
-    - id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq
-    - nomenclatures_diagnostic_ouvrage_hydrau_dim
-    - commentaire_perturbation_obstacle
+    items:
+      - display: fieldset
+        title: Obstacles
+        direction: row
+        items:
+          - key: nomenclatures_diagnostic_obstacle
+            additional_fields:
+              - cd_nomenclature
+            type: list_form
+            multiple: true
+            return_object: true
+          - key: obstacle_autre
+            disabled: __f__!data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
+            required: __f__data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
+      - display: fieldset
+        title: perturbation
+        direction: row
+        items:
+          - key: nomenclatures_diagnostic_perturbation
+            additional_fields:
+              - cd_nomenclature
+            type: list_form
+            multiple: true
+            return_object: true
+          - key: perturbation_autre
+            disabled: __f__!data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
+            required: __f__data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
+      - display: fieldset
+        title: Ouvrage hydrau
+        items:
+          - nomenclatures_diagnostic_ouvrage_hydrau_etat_berge
+          - id_nomenclature_ouvrage_hydrau_racc_banq
+          - nomenclatures_diagnostic_ouvrage_hydrau_dim
+      - type: textarea
+        key: commentaire_perturbation_obstacle
 
   - &diag_amenagement
-    - direction: row
+    - title: Aménagements
+      display: fieldset
+      direction: row
       items:
         - key: nomenclatures_diagnostic_amenagement_biodiv
           additional_fields:
@@ -57,26 +69,47 @@ aliases:
         - key: amenagement_biodiv_autre
           disabled: __f__!data.nomenclatures_diagnostic_amenagement_biodiv?.some(n => n.cd_nomenclature == 'AUT')
           required: __f__data.nomenclatures_diagnostic_amenagement_biodiv?.some(n => n.cd_nomenclature == 'AUT')
-    - items:
-        - key: clotures
+    - key: clotures
+      type: array
+      display: fieldset
+      items:
+        direction: row
+        items:
+          - id_nomenclature_clotures_guidage_type
+          - key: clotures_guidage_type_autre
+            disabled: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_type) == 'AUT')"
+            required: "__f__u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_type) == 'AUT'"
+          - id_nomenclature_clotures_guidage_etat
+          - key: clotures_guidage_etat_autre
+            disabled: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT')"
+            required: "__f__u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT'"
+    - title: Végétation
+      display: fieldset
+      items:
+        - key: vegetation_tablier
           type: array
           display: fieldset
           items:
             direction: row
             items:
-              - id_nomenclature_clotures_guidage_type
-              - key: clotures_guidage_type_autre
-                disabled: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_type) == 'AUT')"
-                required: "__f__u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_type) == 'AUT'"
-              - id_nomenclature_clotures_guidage_etat
-              - key: clotures_guidage_etat_autre
-                disabled: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT')"
-                required: "__f__u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT'"
-
+              - id_nomenclature_vegetation_type
+              - id_nomenclature_vegetation_couvert
+        - key: vegetation_debouche
+          type: array
+          display: fieldset
+          items:
+            direction: row
+            items:
+              - id_nomenclature_vegetation_type
+              - id_nomenclature_vegetation_couvert
+        - key: commentaire_amenagement
+          type: textarea
 
   - &diag_synthese
-    items:
-
+    - id_nomenclature_franchissabilite
+    - id_nomenclature_interet_faune
+    - key: amenagement_faire
+      type: textarea
 
 layout:
   height_auto: true
@@ -85,18 +118,16 @@ layout:
     template_params:
       object_code: diagnostic
       layout:
-        overflow: true
-        items:
-          # - title: Diagnostic
-          #   display: fieldset
-          #   items: *diag_commons
-          # - title: Pertubations / Obstacles
-          #   display: fieldset
-          #   items: *diag_perturbation_obstacle
-          - title: Aménagements
-            display: fieldset
-            items: *diag_amenagement
-          # - title: Synthese
-          #   display: fieldset
-            # items: *diag_synthese
-            
+        - type: breadcrumbs
+          flex: "0"
+        - overflow: true
+          display: tabs
+          items:
+            - label: Champs communs
+              items: *diag_commons
+            - label: Perturbations / Obstacles
+              items: *diag_perturbation_obstacle
+            - label: Aménagement
+              items: *diag_amenagement
+            - label: Synthese
+              items: *diag_synthese

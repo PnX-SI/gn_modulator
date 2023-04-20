@@ -38,8 +38,11 @@ items:
       - [PF_DIAG_AMENAGEMENT_BIODIV, Types d'aménagements, Types d'aménagement complémentaires en faveur de la faune]
       - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, Nature des clôtures, Nature des clôtures pouvant guider les animaux vers le passage]
       - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, État des clôtures, État des clôtures pouvant guider les animaux vers le passage]
-      # PF_DIAG_VEGETATION_PRESENTE_TABLIER_TYPE
-      # PF_DIAG_VEGETATION_PRESENTE_DEBOUCH_TYPE
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, Type de végétation, Type de végétation présente]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, Couverture végétale (%), Couverture végétale (%)]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, Entretient dispositif et végétation, Entretient dispositif et végétation]
+      - [PF_DIAG_FRANCHISSABILITE, Franchissabilité, Estimation de la franchissabilité de l'ouvrage pour les animaux]
+      - [PF_DIAG_INTERET_FAUNE, Intérêt pour les espèces cibles, Intérêt pour les espèces cibles]
   - schema_code: ref_nom.nomenclature
     defaults:
       source: SIPAF
@@ -149,4 +152,26 @@ items:
       - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, NOJ, Non Jo., Non jointive, Non jointive]
       - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, AUT, Aut., Autre (préciser), Autre (préciser)]
 
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, NU, Nu, Sol nu, Sol nu]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, HER, Herb.,Herbacé (<1m), Herbacé (<1m)]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, BUI, Buis., Buissonant arbustif (1-3m), Buissonant arbustif (1-3m)]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, ARB, Arb., Arboré (>3m), Arboré (>3m)]
 
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "1", 0-25 , 0-25 %, 0-25 %]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "2", 25-50, 25-50 %, 25-50 %]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "3", 50-75, 50-75 %, 50-75 %]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "4", 75-100, 75-100 %, 75-100 %]
+
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, BON, Bon., Bonne, Bonne]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, MOY, Moy., Moyenne, Moyenne]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, OCC, Occ., Occasionelle, Occasionelle]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, NUL, Nul., Nulle, Nulle]
+
+      - [PF_DIAG_FRANCHISSABILITE, BON, Bon., Bonne, Bonne]
+      - [PF_DIAG_FRANCHISSABILITE, MOY, Moy., Moyenne, Moyenne]
+      - [PF_DIAG_FRANCHISSABILITE, OCC, Occ., Occasionelle, Occasionelle]
+      - [PF_DIAG_FRANCHISSABILITE, NUL, Nul., Nulle, Nulle]
+
+      - [PF_DIAG_INTERET_FAUNE, FAI, Fai., Faible, Faible]
+      - [PF_DIAG_INTERET_FAUNE, MOY, Moy., Moyen, Moyen]
+      - [PF_DIAG_INTERET_FAUNE, FOR, For., Fort, Fort]

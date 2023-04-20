@@ -10,8 +10,13 @@ CREATE TABLE pr_sipaf.t_diagnostics (
     commentaire_perturbation_obstacle VARCHAR,
     obstacle_autre VARCHAR,
     perturbation_autre VARCHAR,
-    id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq INTEGER,
-    amenagement_biodiv_autre VARCHAR
+    id_nomenclature_ouvrage_hydrau_racc_banq INTEGER,
+    amenagement_biodiv_autre VARCHAR,
+    commentaire_amenagement VARCHAR,
+    id_nomenclature_amenagement_entretient INTEGER,
+    id_nomenclature_franchissabilite INTEGER,
+    id_nomenclature_interet_faune INTEGER,
+    amenagement_faire VARCHAR
 );
 
 ALTER TABLE
@@ -83,9 +88,31 @@ ADD
 ALTER TABLE
     pr_sipaf.t_diagnostics
 ADD
-    CONSTRAINT fk_pr_sipaf_t_d_id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq FOREIGN KEY (
-        id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq
+    CONSTRAINT fk_pr_sipaf_t_d_id_nomenclature_ouvrage_hydrau_racc_banq FOREIGN KEY (
+        id_nomenclature_ouvrage_hydrau_racc_banq
     ) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostics
+ADD
+    CONSTRAINT fk_pr_sipaf_t_d_id_nomenclature_amenagement_entretient FOREIGN KEY (
+        id_nomenclature_amenagement_entretient
+    ) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostics
+ADD
+    CONSTRAINT fk_pr_sipaf_t_d_id_nomenclature_franchissablite FOREIGN KEY (
+        id_nomenclature_franchissabilite
+    ) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostics
+ADD
+    CONSTRAINT fk_pr_sipaf_t_d_id_nomenclature_interet_faune FOREIGN KEY (
+        id_nomenclature_interet_faune
+    ) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
 
 -- cor diag nomenclature ouvrage_hydrau_etat_berge
 CREATE TABLE IF NOT EXISTS pr_sipaf.cor_diag_nomenclature_ouvrage_hydrau_etat_berge (
@@ -179,6 +206,62 @@ ALTER TABLE
 ADD
     CONSTRAINT fk_pr_sipaf_t_d_c_g_id_nomenclature_clotures_guidage_etat FOREIGN KEY (id_nomenclature_clotures_guidage_etat) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
 
+-- vegetation tablier
+CREATE TABLE IF NOT EXISTS pr_sipaf.t_diagnostic_vegetation_presente_tablier (
+    id_diagnostic INTEGER NOT NULL NOT NULL,
+    id_nomenclature_vegetation_type INTEGER NOT NULL NOT NULL,
+    id_nomenclature_vegetation_couvert INTEGER NOT NULL NOT NULL
+);
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_tablier
+ADD
+    CONSTRAINT pk_sipaf_t_diagnostic_vegetation_presente_tablier PRIMARY KEY (id_diagnostic, id_nomenclature_vegetation_type);
+
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_tablier
+ADD
+    CONSTRAINT fk_pr_sipaf_t_diagnostic_v_p_t_id_diagnostic FOREIGN KEY (id_diagnostic) REFERENCES pr_sipaf.t_diagnostics (id_diagnostic) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_tablier
+ADD
+    CONSTRAINT fk_pr_sipaf_t_diagnostic_v_p_t_id_nom_type FOREIGN KEY (id_nomenclature_vegetation_type) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_tablier
+ADD
+    CONSTRAINT fk_pr_sipaf_t_diagnostic_v_p_t_id_nom_couvert FOREIGN KEY (id_nomenclature_vegetation_couvert) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
+-- vegetation debouche
+CREATE TABLE IF NOT EXISTS pr_sipaf.t_diagnostic_vegetation_presente_debouche (
+    id_diagnostic INTEGER NOT NULL NOT NULL,
+    id_nomenclature_vegetation_type INTEGER NOT NULL NOT NULL,
+    id_nomenclature_vegetation_couvert INTEGER NOT NULL NOT NULL
+);
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_debouche
+ADD
+    CONSTRAINT pk_sipaf_t_diagnostic_vegetation_presente_debouche PRIMARY KEY (id_diagnostic, id_nomenclature_vegetation_type);
+
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_debouche
+ADD
+    CONSTRAINT fk_pr_sipaf_t_diagnostic_v_p_t_id_diagnostic FOREIGN KEY (id_diagnostic) REFERENCES pr_sipaf.t_diagnostics (id_diagnostic) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_debouche
+ADD
+    CONSTRAINT fk_pr_sipaf_t_diagnostic_v_p_t_id_nom_type FOREIGN KEY (id_nomenclature_vegetation_type) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_debouche
+ADD
+    CONSTRAINT fk_pr_sipaf_t_diagnostic_v_p_t_id_nom_couvert FOREIGN KEY (id_nomenclature_vegetation_couvert) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
 
 -- check constraint nomenclature type
 ALTER TABLE
@@ -186,10 +269,42 @@ ALTER TABLE
 ADD
     CONSTRAINT check_nom_type_diag_ouvr_hydrau_racc_banq_id_ure_pf_ype CHECK (
         ref_nomenclatures.check_nomenclature_type_by_mnemonique(
-            id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq,
+            id_nomenclature_ouvrage_hydrau_racc_banq,
             'PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE'
         )
     ) NOT VALID;
+
+
+ALTER TABLE
+    pr_sipaf.t_diagnostics
+ADD
+    CONSTRAINT check_nom_type_diag_amenagement_entretient CHECK (
+        ref_nomenclatures.check_nomenclature_type_by_mnemonique(
+            id_nomenclature_amenagement_entretient,
+            'PF_DIAG_AMENAGEMENT_ENTRETIENT'
+        )
+    ) NOT VALID;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostics
+ADD
+    CONSTRAINT check_nom_type_diag_franchissabilite CHECK (
+        ref_nomenclatures.check_nomenclature_type_by_mnemonique(
+            id_nomenclature_franchissabilite,
+            'PF_DIAG_FRANCHISSABILITE'
+        )
+    ) NOT VALID;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostics
+ADD
+    CONSTRAINT check_nom_type_diag_interet_faune CHECK (
+        ref_nomenclatures.check_nomenclature_type_by_mnemonique(
+            id_nomenclature_interet_faune,
+            'PF_DIAG_INTERET_FAUNE'
+        )
+    ) NOT VALID;
+
 
 ALTER TABLE
     pr_sipaf.cor_diag_nomenclature_obstacle
@@ -250,4 +365,32 @@ ALTER TABLE
 ADD
     CONSTRAINT check_nom_type_pr_sipaf_cor_diag_nomenclature_perturbation_id_ure_pf_ype CHECK (
         ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature, 'PF_DIAG_PERTURBATION')
+    ) NOT VALID;
+    
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_tablier
+ADD
+    CONSTRAINT check_nom_type_sipaf_diag_vege_pre_tab_type_nom_type CHECK (
+        ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_vegetation_type, 'PF_DIAG_AMENAGEMENT_VEGETATION_TYPE')
+    ) NOT VALID;
+    
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_tablier
+ADD
+    CONSTRAINT check_nom_type_sipaf_diag_vege_pre_tab_couvert_nom_type CHECK (
+        ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_vegetation_couvert, 'PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT')
+    ) NOT VALID;
+    
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_debouche
+ADD
+    CONSTRAINT check_nom_type_sipaf_diag_vege_pre_tab_type_nom_type CHECK (
+        ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_vegetation_type, 'PF_DIAG_AMENAGEMENT_VEGETATION_TYPE')
+    ) NOT VALID;
+    
+ALTER TABLE
+    pr_sipaf.t_diagnostic_vegetation_presente_debouche
+ADD
+    CONSTRAINT check_nom_type_sipaf_diag_vege_pre_tab_couvert_nom_type CHECK (
+        ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_vegetation_couvert, 'PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT')
     ) NOT VALID;

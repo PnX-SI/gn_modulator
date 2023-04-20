@@ -362,12 +362,12 @@ class Diagnostic(db.Model):
     obstacle_autre = db.Column(db.Unicode)
     perturbation_autre = db.Column(db.Unicode)
 
-    id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq = db.Column(
+    id_nomenclature_ouvrage_hydrau_racc_banq = db.Column(
         db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
     )
     nomenclature_diagnostic_ouvrage_hydrau_raccordement_banquette = db.relationship(
         TNomenclatures,
-        foreign_keys=[id_nomenclature_diagnostic_ouvrage_hydrau_racc_banq],
+        foreign_keys=[id_nomenclature_ouvrage_hydrau_racc_banq],
     )
 
     nomenclatures_diagnostic_obstacle = db.relationship(
@@ -392,6 +392,32 @@ class Diagnostic(db.Model):
     nomenclatures_diagnostic_amenagement_biodiv = db.relationship(
         TNomenclatures, secondary=CorDiagAmenagementBiodiv.__table__
     )
+
+    id_nomenclature_amenagement_entretient = db.Column(
+        db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
+    )
+    nomenclature_amenagement_entretient = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_amenagement_entretient]
+    )
+
+    commentaire_amenagement = db.Column(db.Unicode)
+
+    # synthese
+    id_nomenclature_interet_faune = db.Column(
+        db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
+    )
+    nomenclature_interet_faune = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_interet_faune]
+    )
+
+    id_nomenclature_franchissabilite = db.Column(
+        db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
+    )
+    nomenclature_franchissabilite = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_franchissabilite]
+    )
+
+    amenagement_faire = db.Column(db.Unicode)
 
 
 class DiagnosticCloture(db.Model):
@@ -423,4 +449,64 @@ class DiagnosticCloture(db.Model):
     )
     nomenclature_clotures_guidage_type = db.relationship(
         TNomenclatures, foreign_keys=[id_nomenclature_clotures_guidage_type]
+    )
+
+
+class DiagnosticVegetationTablier(db.Model):
+    __tablename__ = "t_diagnostic_vegetation_presente_tablier"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_diagnostic = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_diagnostics.id_diagnostic"), primary_key=True
+    )
+    id_nomenclature_vegetation_type = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+        nullable=False,
+    )
+    id_nomenclature_vegetation_couvert = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        nullable=False,
+    )
+
+    diagnostic = db.relationship(Diagnostic, backref="vegetation_tablier")
+
+    nomenclature_vegetation_type = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_vegetation_type]
+    )
+
+    nomenclature_vegetation_couvert = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_vegetation_couvert]
+    )
+
+
+class DiagnosticVegetationDebouche(db.Model):
+    __tablename__ = "t_diagnostic_vegetation_presente_debouche"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_diagnostic = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_diagnostics.id_diagnostic"), primary_key=True
+    )
+    id_nomenclature_vegetation_type = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+        nullable=False,
+    )
+    id_nomenclature_vegetation_couvert = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        nullable=False,
+    )
+
+    diagnostic = db.relationship(Diagnostic, backref="vegetation_debouche")
+
+    nomenclature_vegetation_type = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_vegetation_type]
+    )
+
+    nomenclature_vegetation_couvert = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_vegetation_couvert]
     )

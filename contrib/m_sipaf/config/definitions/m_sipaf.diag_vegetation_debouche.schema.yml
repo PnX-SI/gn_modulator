@@ -1,0 +1,25 @@
+type: schema
+code: m_sipaf.diag_vegetation_debouche
+title: schema diagnostic passage faune (vegetation_debouche)
+description: schema pour les diagnostics des passages à faune (vegetation_debouche)
+
+meta:
+  autoschema: true
+  model: m_sipaf.models.DiagnosticVegetationDebouche
+  module_code: m_sipaf
+  genre: M
+  label: Diagnostic de vegetation débouchés
+  labels: Diagnostics de vegetation débouchés
+  label_field_name: id_diagnostic
+  unique:
+    - id_diagnostic
+    - id_nomenclature_vegetation_type
+    - id_nomenclature_vegetation_couvert
+  unique_in_db: true
+properties:
+  id_nomenclature_vegetation_type:
+    title: Type de vegation
+    description: Type de vegation présente sur aux débouchés de l'ouvrage
+  id_nomenclature_vegetation_couvert:
+    title: Couverture végétale
+    description: Couverture végétale pour ce type de végétation
