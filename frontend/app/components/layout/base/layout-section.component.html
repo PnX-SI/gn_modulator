@@ -7,7 +7,7 @@
 
 <ng-container *ngIf="isInitialized">
   <div
-    [ngStyle]="computedLayout.display == 'tabs' ? null :  computedLayout.style"
+    [ngStyle]="computedLayout.display == 'tabs' ? null : computedLayout.style"
     [attr.id]="_id"
     class="layout-section"
     [ngClass]="computedLayout.class"
@@ -46,15 +46,19 @@
               class="layout-section"
               #tabGroup
             >
-              <div class="layout-tab">
-                <modules-layout
-                  class="layout-tab"
-                  [data]="data"
-                  [layout]="item"
-                  [parentContext]="context"
-                  (onAction)="processAction($event)"
-                >
-                </modules-layout>
+              <div class="layout-tab-out"
+              [ngStyle]="computedLayout.style_tab"
+              >
+                <div class="layout-tab-in">
+                  <modules-layout
+                    class="layout-tab"
+                    [data]="data"
+                    [layout]="item"
+                    [parentContext]="context"
+                    (onAction)="processAction($event)"
+                  >
+                  </modules-layout>
+                </div>
               </div>
             </mat-tab>
           </ng-container>

@@ -436,24 +436,10 @@ export class ModulesLayoutComponent implements OnInit {
 
     // si on a reduit la fenetre
     // -> on remet à 0
-    const overflowStyle = {};
-    if (this.computedLayout.display != 'tabs') {
-      overflowStyle['overflow-y'] = 'scroll';
-    }
 
     if (this.docHeightSave > docHeight || !this.docHeightSave) {
       setTimeout(() => {
-        this.computedLayout.style = {
-          ...(this.computedLayout.style || {}),
-          height: '200px',
-          ...overflowStyle,
-        };
-
-        this.layout.style = {
-          ...(this.layout.style || {}),
-          height: `200px`,
-          ...overflowStyle,
-        };
+        this.setStyleHeight(200);
       }, 10);
     }
 
@@ -462,18 +448,36 @@ export class ModulesLayoutComponent implements OnInit {
     setTimeout(() => {
       const parent = elem.closest('div.layout-item');
       const height = parent?.clientHeight;
-      this.layout.style = {
-        ...(this.layout.style || {}),
-        height: `${height}px`,
-        ...overflowStyle,
-      };
 
-      this.computedLayout.style = {
-        ...(this.computedLayout.style || {}),
-        height: `${height}px`,
-        ...overflowStyle,
-      };
+      this.setStyleHeight(height);
     }, 200);
+  }
+
+  setStyleHeight(height) {
+    let overflowStyle = {};
+    if (this.computedLayout.display != 'tabs') {
+      overflowStyle['overflow-y'] = 'scroll';
+    }
+    let style = {
+      height: `${height}px`,
+      ...overflowStyle,
+    };
+    this.layout.style = {
+      ...(this.layout.style || {}),
+      ...style,
+    };
+    this.computedLayout.style = {
+      ...(this.computedLayout.style || {}),
+      ...style,
+    };
+
+    if (this.computedLayout.display == 'tabs') {
+      let heightTab = height - 50;
+      let styleTab = {
+        height: `${heightTab}px`
+      }
+      this.computedLayout.style_tab = this.layout.style_tab = styleTab;
+    }
   }
 
   /**
