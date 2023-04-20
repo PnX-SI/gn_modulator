@@ -26,6 +26,20 @@
 - [ ] amélioration du composant list_form
 - [ ] ajout diagnostic sipaf
 
+**⚠️ Notes de version**
+
+- Mettre à jour la base
+
+```
+geonature db autoupgrade
+```
+
+- Mettre à jour les `features` de `m_sipaf`
+
+```
+geonature modulator features m_sipaf.pf
+```
+
 
 ## 1.0.5 (13-03-2023)
 

@@ -29,7 +29,7 @@ def upgrade():
 
 def downgrade():
     if_exists = ""
-    # if_exists = "IF EXISTS"
+    if_exists = "IF EXISTS"
     op.execute(
         f"""
     DROP TABLE {if_exists} pr_sipaf.cor_diag_nomenclature_obstacle;

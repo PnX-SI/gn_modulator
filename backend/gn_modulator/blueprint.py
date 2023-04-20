@@ -8,6 +8,7 @@ from gn_modulator.layout import LayoutMethods
 from gn_modulator import init_gn_modulator
 from gn_modulator.utils.api import process_dict_path
 from gn_modulator.utils.errors import get_errors, errors_txt
+from gn_modulator.utils.commons import test_is_app_running
 from gn_modulator import MODULE_CODE
 from geonature.core.gn_permissions.decorators import check_cruved_scope
 from geonature.core.gn_commons.models.base import TModules
@@ -33,19 +34,8 @@ def set_current_module(endpoint, values):
     )
 
 
-# On teste sys.argv pour éviter de charger les définitions
-# si on est dans le cadre d'une commande
-# On initialise dans le cadre d'une application lancée avec
-# - gunicorn
-# - celery
-# - pytest
-# - flask run
-# - geonature run
-test_init = any(sys.argv[0].endswith(x) for x in ["gunicorn", "celery", "pytest"]) or (
-    len(sys.argv) >= 2 and sys.argv[1] == "run"
-)
 
-if test_init:
+if test_is_app_running():
     init_gn_modulator()
     if get_errors():
         print(f"\n{errors_txt()}")

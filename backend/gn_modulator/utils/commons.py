@@ -4,6 +4,7 @@
 
 
 import unicodedata
+import sys
 from importlib import import_module
 
 
@@ -79,3 +80,20 @@ def getAttr(obj, path, index=0):
         path_cur = path[index]
         cur = obj[path_cur]
         return getAttr(cur, path, index + 1)
+
+def test_is_app_running():
+    """
+    On teste sys.argv pour éviter de charger les définitions
+        si on est dans le cadre d'une commande
+    On initialise dans le cadre d'une application lancée avec
+        - gunicorn
+        - celery
+        - pytest
+        - flask run
+        - geonature run
+    """
+
+
+    return any(sys.argv[0].endswith(x) for x in ["gunicorn", "celery", "pytest"]) or (
+            len(sys.argv) >= 2 and sys.argv[1] == "run"
+    )
