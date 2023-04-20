@@ -31,18 +31,4 @@ layout:
       action:
         type: modal
         modal_name: delete
-    - type: modal
-      modal_name: delete
-      title: Confirmer la suppression de l'élément
-      direction: row
-      items:
-        - type: button
-          title: Suppression
-          action: delete
-          icon: delete
-          color: warn
-        - type: button
-          title: Annuler
-          action: close
-          icon: refresh
-          color: primary
+    - code: utils.modal_delete

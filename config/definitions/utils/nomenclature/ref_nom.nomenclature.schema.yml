@@ -26,5 +26,6 @@ meta:
       - nomenclature_type.mnemonique
       - nomenclature_type.label_fr
   label_field_name: label_fr
+  title_field_name: definition_fr
   relations:
     - nomenclature_type

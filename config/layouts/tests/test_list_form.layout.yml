@@ -77,7 +77,6 @@ layout:
       flex: 1
     - display: tabs
       flex: 2
-      selected_tab: advance
       items:
         - label: basique
           items: *set_basique
