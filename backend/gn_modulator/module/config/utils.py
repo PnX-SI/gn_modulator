@@ -369,17 +369,34 @@ class ModuleConfigUtils:
         context = {"module_code": module_code}
         for page_code, page_definition in pages.items():
             keys = cls.get_layout_keys(page_definition["layout"], config_params, context, keys)
+            # if page_code == 'diagnostic_create':
+                # keyss = keys.get('m_sipaf', {}).get('diagnostic', {}).get('read')
+                # print('get keys from page', module_code, page_code)
+                # for k in sorted(keyss):
+                    # print(f'- {k}')
 
         set_global_cache(["keys"], keys)
 
     @classmethod
     def get_layout_keys(cls, layout, params, context, keys):
+
         if isinstance(layout, list):
             for item in layout:
                 cls.get_layout_keys(item, params, context, keys)
             return keys
 
+        if isinstance(layout, dict):
+            if layout.get("object_code"):
+                context = {**context, "object_code": layout["object_code"]}
+
+            if layout.get("type") == "form":
+                context = {**context, "form": True}
+
+            if layout.get("module_code"):
+                context = {**context, "module_code": layout["module_code"]}
+
         if isinstance(layout, dict) and layout.get("type") in ["dict", "array"]:
+            
             data_keys = context.get("data_keys", [])
             data_keys.append(layout["key"])
             context = {**context, "data_keys": data_keys}
@@ -388,7 +405,6 @@ class ModuleConfigUtils:
         if (
             isinstance(layout, dict)
             and layout.get("type") == "list_form"
-            and layout.get("object_code")
         ):
             key_add = []
             if layout.get("label_field_name"):
@@ -398,14 +414,11 @@ class ModuleConfigUtils:
             if layout.get("additional_fields"):
                 key_add += layout["additional_fields"]
             if key_add:
+                print(context.get('module_code'), context.get('object_code'), layout.get("key"))
                 cls.get_layout_keys(
                     key_add,
                     params,
-                    {
-                        **context,
-                        "module_code": layout.get("module_code") or context["module_code"],
-                        "object_code": layout["object_code"],
-                    },
+                    context,
                     keys,
                 )
             if layout.get("return_object") and layout.get("additional_fields"):
@@ -430,7 +443,7 @@ class ModuleConfigUtils:
 
             if not sm.has_property(key):
                 # raise error ?
-                print(f"pb ? {sm} has no {key}")
+                # print(f"pb ? {sm} has no {key}")
                 return keys
             if key not in object_keys["read"]:
                 object_keys["read"].append(key)
@@ -438,14 +451,6 @@ class ModuleConfigUtils:
                 object_keys["write"].append(key)
             return keys
 
-        if layout.get("object_code"):
-            context = {**context, "object_code": layout["object_code"]}
-
-        if layout.get("type") == "form":
-            context = {**context, "form": True}
-
-        if layout.get("module_code"):
-            context = {**context, "module_code": layout["module_code"]}
 
         if layout.get("code"):
             template_params = {**params, **layout.get("template_params", {})}
