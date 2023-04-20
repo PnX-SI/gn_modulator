@@ -34,7 +34,6 @@ def set_current_module(endpoint, values):
     )
 
 
-
 if test_is_app_running():
     init_gn_modulator()
     if get_errors():

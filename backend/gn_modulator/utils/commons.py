@@ -81,6 +81,7 @@ def getAttr(obj, path, index=0):
         cur = obj[path_cur]
         return getAttr(cur, path, index + 1)
 
+
 def test_is_app_running():
     """
     On teste sys.argv pour éviter de charger les définitions
@@ -93,7 +94,6 @@ def test_is_app_running():
         - geonature run
     """
 
-
     return any(sys.argv[0].endswith(x) for x in ["gunicorn", "celery", "pytest"]) or (
-            len(sys.argv) >= 2 and sys.argv[1] == "run"
+        len(sys.argv) >= 2 and sys.argv[1] == "run"
     )
