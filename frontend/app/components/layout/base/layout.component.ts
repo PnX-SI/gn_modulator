@@ -474,8 +474,8 @@ export class ModulesLayoutComponent implements OnInit {
     if (this.computedLayout.display == 'tabs') {
       let heightTab = height - 50;
       let styleTab = {
-        height: `${heightTab}px`
-      }
+        height: `${heightTab}px`,
+      };
       this.computedLayout.style_tab = this.layout.style_tab = styleTab;
     }
   }
