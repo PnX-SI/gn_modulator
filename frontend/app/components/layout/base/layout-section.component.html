@@ -46,20 +46,20 @@
               class="layout-section"
               #tabGroup
             >
-              <div class="layout-tab-out"
-              [ngStyle]="computedLayout.style_tab"
-              >
-                <div class="layout-tab-in">
-                  <modules-layout
-                    class="layout-tab"
-                    [data]="data"
-                    [layout]="item"
-                    [parentContext]="context"
-                    (onAction)="processAction($event)"
-                  >
-                  </modules-layout>
+              <ng-template matTabContent>
+                <div class="layout-tab-out" [ngStyle]="computedLayout.style_tab">
+                  <div class="layout-tab-in">
+                    <modules-layout
+                      class="layout-tab"
+                      [data]="data"
+                      [layout]="item"
+                      [parentContext]="context"
+                      (onAction)="processAction($event)"
+                    >
+                    </modules-layout>
+                  </div>
                 </div>
-              </div>
+              </ng-template>
             </mat-tab>
           </ng-container>
         </mat-tab-group>
