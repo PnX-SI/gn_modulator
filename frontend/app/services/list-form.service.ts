@@ -154,6 +154,7 @@ export class ListFormService {
       options.object_code = 'ref_nom.nomenclature';
       schemaFilters.push(`nomenclature_type.mnemonique = ${options.nomenclature_type}`);
       options.module_code = this._mConfig.MODULE_CODE;
+      options.additional_fields = options.additional_fields || [];
       options.cache = true;
     }
     if (options.area_type) {

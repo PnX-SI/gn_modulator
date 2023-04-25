@@ -286,6 +286,7 @@ export class ModulesLayoutObjectTableComponent
         return;
       }
       this.tableHeight = `${elem.clientHeight}px`;
+      this.tableHeight = `${elem.clientHeight}px`;
       this.table.setHeight(elem.clientHeight);
       const pageSize = Math.floor((elem.clientHeight - 90) / 50);
 

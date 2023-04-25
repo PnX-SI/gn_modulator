@@ -229,9 +229,10 @@ export class ModulesObjectService {
     const nbTotal = objectConfig.nb_total;
     const nbFiltered = objectConfig.nb_filtered;
     const labels = this.labels({ context });
-    const objectTabLabel = nbTotal
-      ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
-      : `${utils.capitalize(labels)} (0)`;
+    const objectTabLabel =
+      nbFiltered == nbTotal
+        ? `${utils.capitalize(labels)} (${nbTotal || 0})`
+        : `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`;
     return objectTabLabel;
   }
 
