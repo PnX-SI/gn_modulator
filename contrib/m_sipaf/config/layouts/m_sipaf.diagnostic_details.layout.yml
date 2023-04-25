@@ -4,7 +4,7 @@ title: page details diagnostic
 description: page details diagnostic
 
 aliases:
-- &diag_commons
+  - &diag_commons
     - hidden: true
       items:
         - id_diagnostic
@@ -19,10 +19,71 @@ aliases:
         - role.nom_complet
         - commentaire_diagnostic
 
-- &diag_perturbation_obstacle
-- &diag_amenagement
-- &diag_synthese
+  - &diag_perturbation_obstacle
+    - title: Obstacles
+      items:
+        - nomenclatures_diagnostic_obstacle.label_fr
+        - key: nomenclatures_diagnostic_obstacle.cd_nomenclature
+          hidden: true
+        - key: obstacle_autre
+          hidden: __f__!data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
+    - title: Perturbation
+      items:
+        - nomenclatures_diagnostic_perturbation.label_fr
+        - key: nomenclatures_diagnostic_perturbation.cd_nomenclature
+          hidden: true
+        - key: perturbation_autre
+          hidden: __f__!data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
 
+    - title: Ouvrage hydrau
+      items:
+        - nomenclatures_diagnostic_ouvrage_hydrau_etat_berge.label_fr
+        - nomenclature_ouvrage_hydrau_racc_banq.label_fr
+        - nomenclatures_diagnostic_ouvrage_hydrau_dim.label_fr
+        - commentaire_perturbation_obstacle
+
+  - &diag_amenagement
+    - title: Aménagements
+      direction: row
+      items:
+        - nomenclatures_diagnostic_amenagement_biodiv.label_fr
+        - key: nomenclatures_diagnostic_amenagement_biodiv.cd_nomenclature
+          hidden: true
+        - key: amenagement_biodiv_autre
+          hidden: __f__!data.nomenclatures_diagnostic_amenagement_biodiv?.some(n => n.cd_nomenclature == 'AUT')
+    - key: clotures
+      type: array
+      items:
+        direction: row
+        items:
+          - nomenclature_clotures_guidage_type.label_fr
+          - key: clotures_guidage_type_autre
+            hidden: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_type) == 'AUT')"
+          - nomenclature_clotures_guidage_etat.label_fr
+          - key: clotures_guidage_etat_autre
+            hidden: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT')"
+    - key: vegetation_tablier
+      type: array
+      items:
+        direction: row
+        items:
+          - nomenclature_vegetation_type.label_fr
+          - nomenclature_vegetation_couvert.label_fr
+    - key: vegetation_debouche
+      type: array
+      items:
+        direction: row
+        items:
+          - nomenclature_vegetation_type.label_fr
+          - nomenclature_vegetation_couvert.label_fr
+    - commentaire_amenagement
+
+  - &diag_synthese
+    - nomenclature_franchissabilite.label_fr
+    - nomenclature_interet_petite_faune.label_fr
+    - nomenclature_interet_grande_faune.label_fr
+    - amenagement_faire
+    - commentaire_synthese
 
 layout:
   height_auto: true
@@ -35,6 +96,7 @@ layout:
         layout:
           display: tabs
           overflow: true
+          selected_tab: Aménagement
           items:
             - label: Champs communs
               items: *diag_commons

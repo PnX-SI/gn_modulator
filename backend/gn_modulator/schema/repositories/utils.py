@@ -87,7 +87,10 @@ class SchemaRepositoriesUtil:
             if not only_columns_i:
                 rel_schema_code = self.property(key_cache_eager)["schema_code"]
                 rel = self.cls(rel_schema_code)
-                only_columns_i = [getattr(cache["relation_alias"], rel.pk_field_name())]
+                only_columns_i = [
+                    getattr(cache["relation_alias"], pk_field_name)
+                    for pk_field_name in rel.pk_field_names()
+                ]
 
             # chargement de relation en eager et choix des champs
             query = query.options(orm.contains_eager(*eagers).load_only(*only_columns_i))

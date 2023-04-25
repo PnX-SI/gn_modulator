@@ -363,7 +363,7 @@ class Diagnostic(db.Model):
     id_nomenclature_ouvrage_hydrau_racc_banq = db.Column(
         db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
     )
-    nomenclature_diagnostic_ouvrage_hydrau_raccordement_banquette = db.relationship(
+    nomenclature_ouvrage_hydrau_racc_banq = db.relationship(
         TNomenclatures,
         foreign_keys=[id_nomenclature_ouvrage_hydrau_racc_banq],
     )
