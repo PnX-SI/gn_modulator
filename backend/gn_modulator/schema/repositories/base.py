@@ -108,11 +108,22 @@ class SchemaRepositoriesBase:
         if model is None and data is not None:
             return True
 
+        # data_fields = self.get_data_fields(data)
+        # data_db = m = self.serialize(model, fields=fields)[key]
+
         if isinstance(data, dict) and not isinstance(model, dict):
             for key, data_value in data.items():
                 if not hasattr(model, key):
-                    return True
-                m = self.serialize(model, fields=[key])[key]
+                    continue
+                fields = [key]
+                if self.is_relation_1_n(key) or self.is_relation_n_n(key):
+                    fields = []
+                    for item in data_value:
+                        for k in item:
+                            kk = f"{key}.{k}"
+                            if kk not in fields:
+                                fields.append(kk)
+                m = self.serialize(model, fields=fields)[key]
                 if self.is_new_data(m, data_value):
                     return True
             return False
@@ -165,7 +176,6 @@ class SchemaRepositoriesBase:
 
         # TODO deserialiser
         """
-
         self.validate_data(data, check_required=False)
 
         m = self.get_row(
@@ -178,10 +188,10 @@ class SchemaRepositoriesBase:
         ).one()
 
         if not self.is_new_data(m, data):
+            print("not new")
             return m, False
 
         db.session.flush()
-
         self.unserialize(m, data, authorized_write_fields)
 
         if commit:

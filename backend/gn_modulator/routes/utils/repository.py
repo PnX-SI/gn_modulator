@@ -119,6 +119,9 @@ def patch_rest(module_code, object_code, value):
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
         return "Erreur Cruved : {}".format(str(e)), 403
+    except Exception as e:
+        print(e)
+        raise (e)
 
     return sm.serialize(m, fields=params.get("fields"), as_geojson=params.get("as_geojson"))
 

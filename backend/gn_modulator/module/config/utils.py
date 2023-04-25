@@ -359,7 +359,6 @@ class ModuleConfigUtils:
 
     @classmethod
     def process_layout_fields(cls, module_code):
-        keys = get_global_cache(["keys"], {})
         module_config = cls.module_config(module_code)
 
         pages = module_config.get("pages", {})
@@ -367,35 +366,42 @@ class ModuleConfigUtils:
         config_defaults = module_config.get("config_defaults", {})
         config_params = {**config_defaults, **config_params}
         context = {"module_code": module_code}
-        for page_code, page_definition in pages.items():
-            keys = cls.get_layout_keys(page_definition["layout"], config_params, context, keys)
-
-        set_global_cache(["keys"], keys)
+        for page_code in pages:
+            cls.get_layout_keys(pages[page_code]["layout"], config_params, context)
 
     @classmethod
-    def get_layout_keys(cls, layout, params, context, keys):
+    def get_layout_keys(cls, layout, params, context):
+        #
         if isinstance(layout, list):
             for item in layout:
-                cls.get_layout_keys(item, params, context, keys)
-            return keys
+                cls.get_layout_keys(item, params, context)
+            return
 
-        if isinstance(layout, dict):
-            if layout.get("object_code"):
-                context = {**context, "object_code": layout["object_code"]}
+        # ajout d'une clé
+        if isinstance(layout, str):
+            return cls.add_key(context, layout)
 
-            if layout.get("type") == "form":
-                context = {**context, "form": True}
+        if layout.get("key") and layout.get("type") not in ["dict", "array"]:
+            cls.add_key(context, layout["key"])
 
-            if layout.get("module_code"):
-                context = {**context, "module_code": layout["module_code"]}
+        if layout.get("object_code"):
+            context = {**context, "object_code": layout["object_code"]}
 
+        if layout.get("type") == "form":
+            context = {**context, "form": True}
+
+        if layout.get("module_code"):
+            context = {**context, "module_code": layout["module_code"]}
+
+        # traitement dict array
         if isinstance(layout, dict) and layout.get("type") in ["dict", "array"]:
             data_keys = context.get("data_keys", [])
             data_keys.append(layout["key"])
             context = {**context, "data_keys": data_keys}
-            return cls.get_layout_keys(layout["items"], params, context, keys)
+            return cls.get_layout_keys(layout["items"], params, context)
 
-        if isinstance(layout, dict) and layout.get("type") == "list_form":
+        # traitement list_form
+        if layout.get("type") == "list_form":
             key_add = []
             if layout.get("label_field_name"):
                 key_add.append(layout["label_field_name"])
@@ -407,49 +413,62 @@ class ModuleConfigUtils:
                 cls.get_layout_keys(
                     key_add,
                     params,
-                    context,
-                    keys,
+                    {**context, "data_keys": [*context.get("data_keys", []), layout["key"]]},
                 )
-            if layout.get("return_object") and layout.get("additional_fields"):
+            if (
+                layout.get("return_object")
+                and layout.get("additional_fields")
+                and not context.get("form")
+            ):
                 additional_keys = list(
                     map(lambda x: f"{layout['key']}.{x}", layout["additional_fields"])
                 )
-                cls.get_layout_keys(additional_keys, params, context, keys)
-
-        if isinstance(layout, str) or layout.get("key"):
-            key = layout if isinstance(layout, str) else layout["key"]
-            if context.get("data_keys"):
-                key = f"{''.join(context['data_keys'])}.{key}"
-            module_keys = keys[context["module_code"]] = keys.get(context["module_code"], {})
-            object_keys = module_keys[context["object_code"]] = module_keys.get(
-                context["object_code"], {"read": [], "write": []}
-            )
-
-            object_config = cls.object_config(context["module_code"], context["object_code"])
-            schema_code = object_config["schema_code"]
-
-            sm = SchemaMethods(schema_code)
-
-            if not sm.has_property(key):
-                # raise error ?
-                # print(f"pb ? {sm} has no {key}")
-                return keys
-            if key not in object_keys["read"]:
-                object_keys["read"].append(key)
-            if context.get("form"):
-                object_keys["write"].append(key)
-            return keys
+                cls.get_layout_keys(additional_keys, params, context)
 
         if layout.get("code"):
             template_params = {**params, **layout.get("template_params", {})}
             layout_from_code = SchemaMethods.get_layout_from_code(
                 layout.get("code"), template_params
             )
-            return cls.get_layout_keys(layout_from_code, params, context, keys)
+            return cls.get_layout_keys(layout_from_code, params, context)
 
         if layout.get("items"):
-            return cls.get_layout_keys(layout.get("items"), params, context, keys)
+            return cls.get_layout_keys(layout.get("items"), params, context)
 
+    @classmethod
+    def add_key(cls, context, key):
+        keys = get_global_cache(["keys"])
+        if context.get("data_keys"):
+            key = f"{''.join(context['data_keys'])}.{key}"
+
+        module_keys = keys[context["module_code"]] = keys.get(context["module_code"], {})
+        object_keys = module_keys[context["object_code"]] = module_keys.get(
+            context["object_code"], {"read": [], "write": []}
+        )
+
+        object_config = cls.object_config(context["module_code"], context["object_code"])
+        schema_code = object_config["schema_code"]
+
+        sm = SchemaMethods(schema_code)
+
+        if not sm.has_property(key):
+            # raise error ?
+            print(f"pb ? {sm} has no {key}")
+            return keys
+
+        # ajout en lecture
+        if key not in object_keys["read"]:
+            object_keys["read"].append(key)
+
+        # ajout en ecriture
+        if context.get("form"):
+            # key si relationship
+            write_key = key
+            if sm.is_relationship(key):
+                rel = SchemaMethods(sm.property(key)["schema_code"])
+                write_key = f"{key}.{rel.pk_field_name()}"
+            if write_key not in object_keys["write"]:
+                object_keys["write"].append(write_key)
         return keys
 
     @classmethod

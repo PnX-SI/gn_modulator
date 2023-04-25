@@ -195,10 +195,17 @@ class SchemaSerializers:
         def pre_load_make_object(self_marshmallow, data, **kwargs):
             for key in self.pk_field_names():
                 if key in data and data[key] is None:
-                    print("\nmarsh remove pk null\n", key)
                     data.pop(key, None)
 
-            # # pour les champs null avec default defini dans les proprietés
+            # enleve les clés si non dans only
+            for k in list(data.keys()):
+                if self_marshmallow.only and k not in self_marshmallow.only:
+                    print(self, "pop not in only", k)
+                    data.pop(k)
+
+            # # pour les champs null avec default d
+            #
+            # efini dans les proprietés
             # for key, column_def in self.columns().items():
             #     if key in data and data[key] is None and column_def.get('default'):
             #         data.pop(key, None)
@@ -422,16 +429,17 @@ class SchemaSerializers:
         geometry = data.pop(geometry_field_name)
         return {"type": "Feature", "geometry": geometry, "properties": data}
 
-    def unserialize(self, m, data, autorized_write_fields=None):
+    def unserialize(self, m, data, authorized_write_fields=None):
         """
         unserialize using marshmallow
         """
         kwargs = {}
-        if autorized_write_fields:
-            kwargs = {"only": autorized_write_fields, "unknown": EXCLUDE}
+        if authorized_write_fields:
+            kwargs = {"only": authorized_write_fields, "unknown": EXCLUDE}
         MS = self.MarshmallowSchema()
 
         ms = MS(**kwargs)
+
         ms.load(data, instance=m)
 
     @classmethod
