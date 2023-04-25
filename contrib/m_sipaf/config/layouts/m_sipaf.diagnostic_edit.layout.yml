@@ -20,8 +20,7 @@ aliases:
 
   - &diag_perturbation_obstacle
     items:
-      - display: fieldset
-        title: Obstacles
+      - title: Obstacles
         direction: row
         items:
           - key: nomenclatures_diagnostic_obstacle
@@ -33,8 +32,7 @@ aliases:
           - key: obstacle_autre
             disabled: __f__!data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
             required: __f__data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
-      - display: fieldset
-        title: perturbation
+      - title: Perturbation
         direction: row
         items:
           - key: nomenclatures_diagnostic_perturbation
@@ -46,8 +44,7 @@ aliases:
           - key: perturbation_autre
             disabled: __f__!data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
             required: __f__data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
-      - display: fieldset
-        title: Ouvrage hydrau
+      - title: Ouvrage hydrau
         items:
           - nomenclatures_diagnostic_ouvrage_hydrau_etat_berge
           - id_nomenclature_ouvrage_hydrau_racc_banq
@@ -57,7 +54,6 @@ aliases:
 
   - &diag_amenagement
     - title: Aménagements
-      display: fieldset
       direction: row
       items:
         - key: nomenclatures_diagnostic_amenagement_biodiv
@@ -71,7 +67,6 @@ aliases:
           required: __f__data.nomenclatures_diagnostic_amenagement_biodiv?.some(n => n.cd_nomenclature == 'AUT')
     - key: clotures
       type: array
-      display: fieldset
       items:
         direction: row
         items:
@@ -83,34 +78,31 @@ aliases:
           - key: clotures_guidage_etat_autre
             disabled: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT')"
             required: "__f__u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT'"
-    - title: Végétation
-      display: fieldset
+    - key: vegetation_tablier
+      type: array
       items:
-        - key: vegetation_tablier
-          type: array
-          display: fieldset
-          items:
-            direction: row
-            items:
-              - id_nomenclature_vegetation_type
-              - id_nomenclature_vegetation_couvert
-        - key: vegetation_debouche
-          type: array
-          display: fieldset
-          items:
-            direction: row
-            items:
-              - id_nomenclature_vegetation_type
-              - id_nomenclature_vegetation_couvert
-        - key: commentaire_amenagement
-          type: textarea
+        direction: row
+        items:
+          - id_nomenclature_vegetation_type
+          - id_nomenclature_vegetation_couvert
+    - key: vegetation_debouche
+      type: array
+      items:
+        direction: row
+        items:
+          - id_nomenclature_vegetation_type
+          - id_nomenclature_vegetation_couvert
+    - key: commentaire_amenagement
+      type: textarea
 
   - &diag_synthese
     - id_nomenclature_franchissabilite
-    - id_nomenclature_interet_faune
+    - id_nomenclature_interet_petite_faune
+    - id_nomenclature_interet_grande_faune
     - key: amenagement_faire
       type: textarea
-
+    - key: commentaire_synthese
+      type: textarea
 layout:
   height_auto: true
   items:

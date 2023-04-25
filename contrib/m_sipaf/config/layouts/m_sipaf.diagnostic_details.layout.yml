@@ -3,10 +3,44 @@ code: m_sipaf.diagnostic_details
 title: page details diagnostic
 description: page details diagnostic
 
+aliases:
+- &diag_commons
+    - hidden: true
+      items:
+        - id_diagnostic
+        - key: id_passage_faune
+          default: __f__context.params.id_passage_faune
+    - display: row
+      items:
+        - passage_faune.code_passage_faune
+        - passage_faune.nom_usuel_passage_faune
+        - date_diagnostic
+        - organisme.nom_organisme
+        - role.nom_complet
+        - commentaire_diagnostic
+
+- &diag_perturbation_obstacle
+- &diag_amenagement
+- &diag_synthese
+
+
 layout:
   height_auto: true
   items:
+    - type: breadcrumbs
+      flex: "0"
     - code: utils.object_details
       template_params:
         object_code: diagnostic
-        layout: __DIAGNOSTIC_DETAILS_FIELDS__
+        layout:
+          display: tabs
+          overflow: true
+          items:
+            - label: Champs communs
+              items: *diag_commons
+            - label: Perturbations / Obstacles
+              items: *diag_perturbation_obstacle
+            - label: Aménagement
+              items: *diag_amenagement
+            - label: Synthese
+              items: *diag_synthese

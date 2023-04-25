@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.orm import column_property
+from sqlalchemy.orm import column_property, backref
 from sqlalchemy import (
     func,
     literal,
@@ -20,10 +20,6 @@ from geonature.core.gn_commons.models import TMedias
 from pypnusershub.db.models import User, Organisme
 from pypnnomenclature.models import TNomenclatures
 from ref_geo.models import LAreas, LLinears, BibAreasTypes, BibLinearsTypes
-
-# class TActors(db.Model):
-#     __tablename__ = "t_actors"
-#     __table_args__ = {"schema": "pr_sipaf"}
 
 
 class CorPfNomenclatureOuvrageType(db.Model):
@@ -348,7 +344,9 @@ class Diagnostic(db.Model):
         ),
         nullable=False,
     )
-    passage_faune = db.relationship(PassageFaune, backref="diagnostics")
+    passage_faune = db.relationship(
+        PassageFaune, backref=backref("diagnostics", cascade="all,delete,delete-orphan")
+    )
 
     id_role = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
     role = db.relationship(User)
@@ -403,11 +401,18 @@ class Diagnostic(db.Model):
     commentaire_amenagement = db.Column(db.Unicode)
 
     # synthese
-    id_nomenclature_interet_faune = db.Column(
+    id_nomenclature_interet_petite_faune = db.Column(
         db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
     )
-    nomenclature_interet_faune = db.relationship(
-        TNomenclatures, foreign_keys=[id_nomenclature_interet_faune]
+    nomenclature_interet_petite_faune = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_interet_petite_faune]
+    )
+
+    id_nomenclature_interet_grande_faune = db.Column(
+        db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
+    )
+    nomenclature_interet_grande_faune = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_interet_grande_faune]
     )
 
     id_nomenclature_franchissabilite = db.Column(
@@ -418,6 +423,7 @@ class Diagnostic(db.Model):
     )
 
     amenagement_faire = db.Column(db.Unicode)
+    commentaire_synthese = db.Column(db.Unicode)
 
 
 class DiagnosticCloture(db.Model):
@@ -442,7 +448,9 @@ class DiagnosticCloture(db.Model):
     clotures_guidage_type_autre = db.Column(db.Unicode)
     clotures_guidage_etat_autre = db.Column(db.Unicode)
 
-    diagnostic = db.relationship(Diagnostic, backref="clotures")
+    diagnostic = db.relationship(
+        Diagnostic, backref=backref("clotures", cascade="all,delete,delete-orphan")
+    )
 
     nomenclature_clotures_guidage_etat = db.relationship(
         TNomenclatures, foreign_keys=[id_nomenclature_clotures_guidage_etat]
@@ -471,7 +479,9 @@ class DiagnosticVegetationTablier(db.Model):
         nullable=False,
     )
 
-    diagnostic = db.relationship(Diagnostic, backref="vegetation_tablier")
+    diagnostic = db.relationship(
+        Diagnostic, backref=backref("vegetation_tablier", cascade="all,delete,delete-orphan")
+    )
 
     nomenclature_vegetation_type = db.relationship(
         TNomenclatures, foreign_keys=[id_nomenclature_vegetation_type]
@@ -501,7 +511,9 @@ class DiagnosticVegetationDebouche(db.Model):
         nullable=False,
     )
 
-    diagnostic = db.relationship(Diagnostic, backref="vegetation_debouche")
+    diagnostic = db.relationship(
+        Diagnostic, backref=backref("vegetation_debouche", cascade="all,delete,delete-orphan")
+    )
 
     nomenclature_vegetation_type = db.relationship(
         TNomenclatures, foreign_keys=[id_nomenclature_vegetation_type]

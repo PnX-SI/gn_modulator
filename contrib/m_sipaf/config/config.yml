@@ -353,23 +353,8 @@ site_form_fields:
 
 
 
-diagnostic_details_fields:
-  overflow: true
-  items:
-    - passage_faune.code_passage_faune
-    - date_diagnostic
-    - organisme.nom_organisme
-    - role.nom_complet
-    - direction: row
-      items:
-        - nomenclatures_diagnostic_obstacle.label_fr
-        - key: obstacle_autre
-          hidden: __f__!data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
-    - direction: row
-      items:
-        - nomenclatures_diagnostic_perturbation.label_fr
-        - key: perturbation_autre
-          hidden: __f__!data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
-    - nomenclatures_diagnostic_ouvrage_hydrau_etat_berge.label_fr
-    - nomenclature_diagnostic_ouvrage_hydrau_raccordement_banquette.label_fr
-    - nomenclatures_diagnostic_ouvrage_hydrau_dim.label_fr
+diagnostic_table_fields:
+  - date_diagnostic
+  - passage_faune.code_passage_faune
+  - organisme.nom_organisme
+  - role.nom_complet

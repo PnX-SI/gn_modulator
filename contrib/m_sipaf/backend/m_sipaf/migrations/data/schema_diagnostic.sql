@@ -15,8 +15,10 @@ CREATE TABLE pr_sipaf.t_diagnostics (
     commentaire_amenagement VARCHAR,
     id_nomenclature_amenagement_entretient INTEGER,
     id_nomenclature_franchissabilite INTEGER,
-    id_nomenclature_interet_faune INTEGER,
-    amenagement_faire VARCHAR
+    id_nomenclature_interet_petite_faune INTEGER,
+    id_nomenclature_interet_grande_faune INTEGER,
+    amenagement_faire VARCHAR,
+    commentaire_synthese VARCHAR
 );
 
 ALTER TABLE
@@ -109,8 +111,15 @@ ADD
 ALTER TABLE
     pr_sipaf.t_diagnostics
 ADD
-    CONSTRAINT fk_pr_sipaf_t_d_id_nomenclature_interet_faune FOREIGN KEY (
-        id_nomenclature_interet_faune
+    CONSTRAINT fk_pr_sipaf_t_d_id_nomenclature_interet_petite_faune FOREIGN KEY (
+        id_nomenclature_interet_petite_faune
+    ) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostics
+ADD
+    CONSTRAINT fk_pr_sipaf_t_d_id_nomenclature_interet_grande_faune FOREIGN KEY (
+        id_nomenclature_interet_grande_faune
     ) REFERENCES ref_nomenclatures.t_nomenclatures (id_nomenclature) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
@@ -298,9 +307,19 @@ ADD
 ALTER TABLE
     pr_sipaf.t_diagnostics
 ADD
-    CONSTRAINT check_nom_type_diag_interet_faune CHECK (
+    CONSTRAINT check_nom_type_diag_interet_petite_faune CHECK (
         ref_nomenclatures.check_nomenclature_type_by_mnemonique(
-            id_nomenclature_interet_faune,
+            id_nomenclature_interet_petite_faune,
+            'PF_DIAG_INTERET_FAUNE'
+        )
+    ) NOT VALID;
+
+ALTER TABLE
+    pr_sipaf.t_diagnostics
+ADD
+    CONSTRAINT check_nom_type_diag_interet_grande_faune CHECK (
+        ref_nomenclatures.check_nomenclature_type_by_mnemonique(
+            id_nomenclature_interet_grande_faune,
             'PF_DIAG_INTERET_FAUNE'
         )
     ) NOT VALID;
