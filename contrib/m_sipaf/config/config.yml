@@ -58,7 +58,7 @@ site_filters_fields:
             __f__data?.departement
               ? `area_code like ${data.departement.area_code}%`
               : data?.region
-                ? utils.departementsForRegion(data.region.area_code)
+                ? u.departementsForRegion(data.region.area_code)
                     .map(departementCode => `area_code like ${departementCode}%`)
                     .join(',|,')
                 : null
