@@ -413,7 +413,7 @@ class ModuleConfigUtils:
                 cls.get_layout_keys(
                     key_add,
                     params,
-                    {**context, "data_keys": [*context.get("data_keys", []), layout["key"]]},
+                    {**context, "data_keys": []},
                 )
             if (
                 layout.get("return_object")
