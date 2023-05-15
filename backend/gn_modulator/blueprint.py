@@ -55,7 +55,7 @@ def api_modules_config(config_path):
     if len(errors_init_module) > 0:
         txt = f"Il y a {len(errors_init_module)} erreur(s) dans les définitions.<br>"
         for error in errors_init_module:
-            txt += f"- {error.error_code} : {error.error_msg}<br>{error.file_path}"
+            txt += f"- {error['error_code']} : {error['error_msg']}<br>{error['file_path']}<br><br>"
         return txt, 500
 
     return process_dict_path(
