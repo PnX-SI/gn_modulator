@@ -32,7 +32,7 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
             return item;
           }
           const computedItem = {};
-          for (const key of ['label', 'hidden', 'disabled']) {
+          for (const key of ['label', 'hidden', 'disabled', 'lazy_loading']) {
             computedItem[key] = this._mLayout.evalLayoutElement({
               element: item[key],
               layout: item,

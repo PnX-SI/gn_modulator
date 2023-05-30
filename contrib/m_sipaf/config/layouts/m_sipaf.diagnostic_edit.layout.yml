@@ -114,6 +114,7 @@ layout:
           flex: "0"
         - overflow: true
           display: tabs
+          lazy_loading: true
           items:
             - label: Champs communs
               items: *diag_commons
