@@ -121,7 +121,15 @@ class ImportMixinUtils:
             rel = f"_{key}" if key is not None else ""
             return f"{schema_import}.v_{self.id_import}_{type}_{self.schema_code.replace('.', '_')}{rel}"
 
-    def add_error(self, error_code=None, error_msg=None, key=None, lines=None, values=None):
+    def add_error(
+        self,
+        error_code=None,
+        error_msg=None,
+        key=None,
+        lines=None,
+        valid_values=None,
+        error_values=None,
+    ):
         """
         ajout d'une erreur lorsque qu'elle est rencontrée
         """
@@ -131,7 +139,8 @@ class ImportMixinUtils:
                 "msg": error_msg,
                 "key": key,
                 "lines": lines,
-                "values": values,
+                "valid_values": valid_values,
+                "error_values": error_values,
             }
         )
         self.status = "ERROR"

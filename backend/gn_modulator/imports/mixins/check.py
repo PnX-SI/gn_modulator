@@ -112,7 +112,7 @@ class ImportMixinCheck(ImportMixinUtils):
             # Ajout d'une erreur qui référence les lignes concernées
             nb_lines = res[0]
             lines = res[1]
-            values = res[2]
+            error_values = res[2]
             str_lines = lines and ", ".join(map(lambda x: str(x), lines)) or ""
             if nb_lines == 0:
                 continue
@@ -120,7 +120,7 @@ class ImportMixinCheck(ImportMixinUtils):
                 error_code="ERR_IMPORT_INVALID_VALUE_FOR_TYPE",
                 key=key,
                 lines=lines,
-                values=values,
+                error_values=error_values,
                 error_msg=f"Il y a des valeurs invalides pour la colonne {key} de type {sql_type}. {nb_lines} ligne(s) concernée(s) : [{str_lines}]",
             )
 
@@ -192,7 +192,7 @@ SELECT
             # - non nulles dans 'raw'
             # - et nulles dans 'process
             txt_check_resolve_keys = f"""
-SELECT COUNT(*), ARRAY_AGG(r.id_import)
+SELECT COUNT(*), ARRAY_AGG(r.id_import), ARRAY_AGG(r.{key})
 FROM {raw_table} r
 JOIN {process_table} p
     ON r.id_import = p.id_import
@@ -203,6 +203,7 @@ WHERE
             res = SchemaMethods.c_sql_exec_txt(txt_check_resolve_keys).fetchone()
             nb_lines = res[0]
             lines = res[1]
+            error_values = res[2]
 
             # s'il n'y a pas de résultat, on passe à la colonne suivante
             if nb_lines == 0:
@@ -210,13 +211,13 @@ WHERE
 
             # sinon on ajoute une erreur référençant les lignes concernée
 
-            values = None
+            valid_values = None
 
             # Dans le cas des nomenclatures on peut faire remonter les valeurs possible ??
 
             code_type = sm.property(key).get("nomenclature_type")
             if code_type:
-                values = list(
+                valid_values = list(
                     map(
                         lambda x: {
                             "cd_nomenclature": x["cd_nomenclature"],
@@ -230,5 +231,6 @@ WHERE
                 key=key,
                 lines=lines,
                 error_msg="Clé étrangère non résolue",
-                values=values,
+                valid_values=valid_values,
+                error_values=error_values,
             )
