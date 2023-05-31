@@ -346,13 +346,13 @@ class ModuleConfigUtils:
         # - label_field_name
         # - title_field_name
         # - champs d'unicité
-        # - ownership
+        # - scope
         for elem in [
             sm.pk_field_name(),
             sm.label_field_name(),
             sm.title_field_name(),
             *sm.unique(),
-            "ownership",
+            "scope",
         ]:
             if elem is not None and elem not in authorized_read_fields:
                 authorized_read_fields.append(elem)

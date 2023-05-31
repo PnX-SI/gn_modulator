@@ -32,7 +32,7 @@ def check_fields(module_code, object_code):
     # liste des champs invalides
     # - cad ne correspondent pas à un champs du schema
     unvalid_fields = sorted(
-        list(filter(lambda f: not sm.has_property(f) and f != "ownership", fields))
+        list(filter(lambda f: not sm.has_property(f) and f != "scope", fields))
     )
 
     # liste des champs non autorisés

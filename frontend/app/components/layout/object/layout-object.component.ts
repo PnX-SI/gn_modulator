@@ -176,7 +176,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   /** champs par defaut si non définis dans items  */
   defaultFields({ geometry = false } = {}) {
-    const defaultFields = [this.pkFieldName(), this.labelFieldName(), 'ownership'];
+    const defaultFields = [this.pkFieldName(), this.labelFieldName(), 'scope'];
     if (this.computedLayout.display == 'geojson' && geometry) {
       defaultFields.push(this.geometryFieldName());
     }

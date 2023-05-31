@@ -240,7 +240,7 @@ export class ModulesObjectService {
     if (!(context.module_code, context.object_code)) {
       return false;
     }
-    const checkAction = this.checkAction(context, action, data?.ownership);
+    const checkAction = this.checkAction(context, action, data?.scope);
     return checkAction.actionAllowed;
   }
 
@@ -284,7 +284,7 @@ export class ModulesObjectService {
    *    - tableaux
    *    - boutton (detail / edit / etc...)
    */
-  checkAction(context, action, ownership = null) {
+  checkAction(context, action, scope = null) {
     // 1) cruved defini pour cet objet ?
 
     const objectConfig = this.objectConfigContext(context);
@@ -327,7 +327,7 @@ export class ModulesObjectService {
     //    si les droit du module sont de 2 pour l'édition
     //    et que l'appartenance de la données est 3 (données autres (ni l'utilisateur ni son organisme))
     //    alors le test echoue
-    // - si ownership est à null => on teste seulement si l'action est bien définie sur cet object
+    // - si scope est à null => on teste seulement si l'action est bien définie sur cet object
     //   (ce qui a été testé précédemment) donc à true
     //   par exemple pour les actions d'export
 
@@ -341,12 +341,12 @@ export class ModulesObjectService {
       testUserCruved = true;
       // pour EDIT ET READ
       // si on a pas d'info d'appartenance
-      // ownership null => False (par sécurité)
-    } else if (ownership == null) {
+      // scope null => False (par sécurité)
+    } else if (scope == null) {
       testUserCruved = false;
-      // on compare ownership, l'appartenance qui doit être supérieur aet les droits du module
+      // on compare scope, l'appartenance qui doit être supérieur aet les droits du module
     } else {
-      testUserCruved = moduleCruvedAction >= ownership;
+      testUserCruved = moduleCruvedAction >= scope;
     }
 
     if (!testUserCruved) {

@@ -88,7 +88,7 @@ site_form_fields:
   - hidden: true
     items:
       - id_site
-      - ownership
+      - scope
   - code
   - name
   - description
@@ -128,7 +128,7 @@ site_details_fields:
   - hidden: true
     items:
       - id_site
-      - ownership
+      - scope
   - code
   - name
   - description

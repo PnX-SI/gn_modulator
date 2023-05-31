@@ -188,7 +188,6 @@ class SchemaRepositoriesBase:
         ).one()
 
         if not self.is_new_data(m, data):
-            print("not new")
             return m, False
 
         db.session.flush()
@@ -224,15 +223,15 @@ class SchemaRepositoriesBase:
     def process_query_columns(self, params, query, order_by):
         """
         permet d'ajouter de colonnes selon les besoin
-        - ownership pour cruved (toujours?)
+        - scope pour cruved (toujours?)
         - row_number (si dans fields)
         """
 
         fields = params.get("fields") or []
 
         # cruved
-        if "ownership" in fields:
-            query = self.add_column_ownership(query)
+        if "scope" in fields:
+            query = self.add_column_scope(query)
 
         # row_number
         if "row_number" in fields:
@@ -275,7 +274,7 @@ class SchemaRepositoriesBase:
         #         ).load_only(self.cls('ref_nom.nomenclature').Model().label_fr, self.cls('ref_nom.nomenclature').Model().cd_nomenclature)
         #     )
 
-        # ajout colonnes row_number, ownership (cruved)
+        # ajout colonnes row_number, scope (cruved)
         query = self.process_query_columns(params, query, order_bys)
 
         # prefiltrage

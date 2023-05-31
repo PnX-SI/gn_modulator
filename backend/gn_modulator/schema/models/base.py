@@ -235,7 +235,7 @@ class SchemaModelBase:
         Model = type(self.model_name(), (ModelBaseClass,), dict_model)
 
         # patch cruved
-        Model.ownership = 0
+        Model.scope = 0
 
         # store in cache before relations (avoid circular dependencies)
         set_global_cache(["schema", self.schema_code(), "model"], Model)

@@ -253,10 +253,10 @@ class SchemaSerializers:
             )
 
         # if self.attr('meta.check_cruved'):
-        marshmallow_schema_dict["ownership"] = fields.Integer(metadata={"dumps_only": True})
+        marshmallow_schema_dict["scope"] = fields.Integer(metadata={"dumps_only": True})
         marshmallow_schema_dict["row_number"] = fields.Integer(metadata={"dumps_only": True})
         # else:
-        # marshmallow_schema_dict['ownership'] = 0
+        # marshmallow_schema_dict['scope'] = 0
 
         # store in cache before relation (avoid circular dependencies)
 
@@ -328,7 +328,7 @@ class SchemaSerializers:
 
         data = self.MarshmallowSchema()(**kwargs).dump(m[0] if isinstance(m, tuple) else m)
 
-        # pour gérer les champs supplémentaire (ownership, row_number, etc....)
+        # pour gérer les champs supplémentaire (scope, row_number, etc....)
         if isinstance(m, tuple):
             keys = list(m.keys())
             if len(keys) > 1:
@@ -403,7 +403,7 @@ class SchemaSerializers:
             map(lambda x: x[0] if isinstance(x, tuple) else x, m_list), many=True
         )
 
-        # pour gérer les champs supplémentaire (ownership, row_number, etc....)
+        # pour gérer les champs supplémentaire (scope, row_number, etc....)
         if len(data_list) and isinstance(m_list[0], tuple):
             keys = list(m_list[0].keys())
             if len(keys) > 1:

@@ -22,6 +22,7 @@
     - utilisation de `raise_load`
     - on charge le minimum de champs possibles
 - déplacement des config dans le dossier `media/modulator/config`
+- changement de nom `ownership` -> `scope`
 - [ ] separation des tests par modules (m_sipaf, m_monitoring)
 - [ ] amélioration du composant list_form
 - [ ] ajout diagnostic sipaf

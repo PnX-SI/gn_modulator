@@ -146,7 +146,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     var propertiesHTML = '';
     propertiesHTML += '<ul>\n';
     propertiesHTML += fields
-      .filter((fieldKey) => fieldKey != 'ownership')
+      .filter((fieldKey) => fieldKey != 'scope')
       .map((fieldKey) => {
         // gerer les '.'
         const fieldKeyLabel = fieldKey.split('.')[0];
@@ -157,16 +157,16 @@ export class ModulesLayoutObjectGeoJSONComponent
       .join('\n');
     propertiesHTML += '</ul>\n';
 
-    const htmlDetails = this._mObject.checkAction(this.context, 'R', properties.ownership)
+    const htmlDetails = this._mObject.checkAction(this.context, 'R', properties.scope)
       .actionAllowed
       ? '<button action="details">Details</button>'
       : '';
-    const htmlEdit = this._mObject.checkAction(this.context, 'U', properties.ownership)
+    const htmlEdit = this._mObject.checkAction(this.context, 'U', properties.scope)
       .actionAllowed
       ? '<button action="edit">Éditer</button>'
       : '';
 
-    const htmlDelete = this._mObject.checkAction(this.context, 'D', properties.ownership)
+    const htmlDelete = this._mObject.checkAction(this.context, 'D', properties.scope)
       .actionAllowed
       ? '<button action="delete">Supprimer</button>'
       : '';
@@ -190,7 +190,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
     const fields = this.popupFields(); // ?? computedItems
-    fields.push('ownership');
+    fields.push('scope');
     this._mData
       .getOne(this.moduleCode(), this.objectCode(), value, { fields })
       .subscribe((data) => {

@@ -53,7 +53,7 @@ export class ModulesTableService {
    *   - Renvoie la définition de la colonne pour les actions:
    *    voir, éditer, supprimer
    *  - On utilise mPage.chekcLink pour voir si et comment on affiche l'action en question
-   *  - L'appartenance (ownership) sera fournie par les données du rang de la cellule dans les fonction formatter et tooltip)
+   *  - L'appartenance (scope) sera fournie par les données du rang de la cellule dans les fonction formatter et tooltip)
    * */
   columnAction(context, action) {
     // test si l'action est possible (ou avant)
@@ -78,8 +78,8 @@ export class ModulesTableService {
     return {
       headerSort: false,
       formatter: (cell, formatterParams, onRendered) => {
-        const ownership = cell._cell.row.data['ownership'];
-        const { actionAllowed, actionMsg } = this._mObject.checkAction(context, action, ownership);
+        const scope = cell._cell.row.data['scope'];
+        const { actionAllowed, actionMsg } = this._mObject.checkAction(context, action, scope);
         return `<span class="table-icon ${actionAllowed ? '' : 'disabled'}"><i class='fa ${
           iconAction[action]
         } action' ${actionAllowed ? 'action="' + actionTxt[action] + '"' : ''}></i></span>`;
@@ -87,8 +87,8 @@ export class ModulesTableService {
       width: 22,
       hozAlign: 'center',
       tooltip: (cell) => {
-        const ownership = cell._cell.row.data['ownership'];
-        const { actionAllowed, actionMsg } = this._mObject.checkAction(context, action, ownership);
+        const scope = cell._cell.row.data['scope'];
+        const { actionAllowed, actionMsg } = this._mObject.checkAction(context, action, scope);
         return actionMsg;
       },
     };
