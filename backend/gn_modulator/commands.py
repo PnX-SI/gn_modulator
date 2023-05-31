@@ -39,13 +39,16 @@ def cmd_install_module(module_code=None, module_path=None, force=False):
         print(f"Le module demandé {module_code} n'existe pas.")
         print("Veuillez choisir un code parmi la liste suivante\n")
 
-    for module_code in ModuleMethods.unregistred_modules():
-        print(f"- {module_code}")
+    for unregistred_module_code in ModuleMethods.unregistred_modules():
+        print(f"- {unregistred_module_code}")
 
     print()
     print("Modules installés\n")
-    for module_code in ModuleMethods.registred_modules():
-        print(f"- {module_code}")
+    for registred_module_code in ModuleMethods.registred_modules():
+        print(f"- {registred_module_code}")
+
+    if module_code:
+        raise Exception("Le module demandé {module_code} n'existe pas.")
 
     # return ModuleMethods.install_module(module_code, module_path, force)
 
