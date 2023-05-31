@@ -157,17 +157,14 @@ export class ModulesLayoutObjectGeoJSONComponent
       .join('\n');
     propertiesHTML += '</ul>\n';
 
-    const htmlDetails = this._mObject.checkAction(this.context, 'R', properties.scope)
-      .actionAllowed
+    const htmlDetails = this._mObject.checkAction(this.context, 'R', properties.scope).actionAllowed
       ? '<button action="details">Details</button>'
       : '';
-    const htmlEdit = this._mObject.checkAction(this.context, 'U', properties.scope)
-      .actionAllowed
+    const htmlEdit = this._mObject.checkAction(this.context, 'U', properties.scope).actionAllowed
       ? '<button action="edit">Éditer</button>'
       : '';
 
-    const htmlDelete = this._mObject.checkAction(this.context, 'D', properties.scope)
-      .actionAllowed
+    const htmlDelete = this._mObject.checkAction(this.context, 'D', properties.scope).actionAllowed
       ? '<button action="delete">Supprimer</button>'
       : '';
 
