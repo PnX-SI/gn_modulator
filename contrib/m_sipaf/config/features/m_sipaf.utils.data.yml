@@ -59,15 +59,20 @@ items:
       - [PF_OUVRAGE_MATERIAUX, IND, Ind., Indéterminé, Indéterminé]
 
       - [PF_OUVRAGE_HYDRAULIQUE_POSITION, RG, R. g., Rive Gauche, Rive Gauche]
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, RD, R. d., Rive Droite, Rive Droite]
       - [PF_OUVRAGE_HYDRAULIQUE_POSITION, RGD, R. g. & d.", Rive gauche et rive droite, Rive gauche et rive droite (la rive se détermine dans le sens amont/aval)]
 
       - [PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT, DOU, Dbl., Double, Banquette double]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT, SIM, Simp., Simple, Banquette simple]
 
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, NAT, Nat., Banquette naturelle, Banquette naturelle]
       - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, BET, Bet., Banquette béton, Banquette béton]
       - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, ECB, Ecb., Encorbellement, Encorbellement]
       - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, POF, Po. F., Ponton flottant, Ponton flottant]
       - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, AUT, Aut., Autre, Autre]
 
+
+      - [PF_INFRASTRUCTURE_TYPE, AU, Auto., Autoroute, Autoroute]
       - [PF_INFRASTRUCTURE_TYPE, RN, R. N., Route Nationale, Route Nationale]
       - [PF_INFRASTRUCTURE_TYPE, RD, R. D., Route Départementale, Route Départementale]
       - [PF_INFRASTRUCTURE_TYPE, VF, V. F., Voie ferrée, Voie ferrée]
@@ -75,7 +80,9 @@ items:
 
       - [PF_OUVRAGE_SPECIFICITE, MIX, Mixt., Mixte, Ouvrage mixte construit pour le passage des animaux concomitamment à un ou plusieurs autres usages]
       - [PF_OUVRAGE_SPECIFICITE, ND, Non déd., Non dédié, Ouvrage non dédié au passage de la faune mais pouvant servir à cet usage]
+      - [PF_OUVRAGE_SPECIFICITE, SPE, Spé., Spécifique, Ouvrage construit que pour le passage des animaux]
 
+      - [PF_OUVRAGE_TYPE, BUS, Bus., Buse, Buse]
       - [PF_OUVRAGE_TYPE, CAD, Cad., Cadre, Cadre]
       - [PF_OUVRAGE_TYPE, VOU+R, Voût. Rad., Voûte avec radier, Voûte maçonnée avec radier]
       - [PF_OUVRAGE_TYPE, AUT, Aut., Autre (préciser), Autre (préciser)]
@@ -92,6 +99,7 @@ items:
       - [PF_OUVRAGE_TYPE, TRA, Tra., Tranchée, Tranchée]
       - [PF_OUVRAGE_TYPE, TUN, Tun., Tunnel, Tunnel]
 
+      - [PF_TYPE_ACTOR, PRO, Prop., Propriétaire, Propriétaire]
       - [PF_TYPE_ACTOR, CON, Conc., Concessionaire, Concessionnaire]
       - [PF_TYPE_ACTOR, INT, Int., Intervenant, Intervenant sur ce passage faune]
       - [PF_TYPE_ACTOR, GES, Ges., Gestionnaire, Gestionnaire du passage faune]
