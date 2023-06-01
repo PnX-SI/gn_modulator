@@ -6,7 +6,6 @@ import copy
 from flask import g
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
-from geonature.core.gn_permissions.tools import cruved_scope_for_user_in_module
 
 
 class ModulesConfigBase:
