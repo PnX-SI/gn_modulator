@@ -231,7 +231,7 @@ export class ModulesObjectService {
     const labels = this.labels({ context });
     const objectTabLabel =
       nbFiltered == nbTotal
-        ? `${utils.capitalize(labels)} (${nbTotal || 0})`
+        ? `${utils.capitalize(labels)} (${nbTotal != null ? nbTotal : '...'})`
         : `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`;
     return objectTabLabel;
   }
