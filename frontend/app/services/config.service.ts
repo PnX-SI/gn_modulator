@@ -139,11 +139,9 @@ export class ModulesConfigService {
   }
 
   moduleImg(moduleCode) {
-    console.log(this.AppConfig);
     const moduleImg = `${this.backendUrl()}/${
       this.AppConfig.MEDIA_URL
     }/modulator/assets/${moduleCode.toLowerCase()}/module.jpg`;
-    console.log(moduleImg);
     return moduleImg;
   }
 

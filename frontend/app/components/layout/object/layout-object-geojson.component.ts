@@ -191,10 +191,10 @@ export class ModulesLayoutObjectGeoJSONComponent
     this._mData
       .getOne(this.moduleCode(), this.objectCode(), value, { fields })
       .subscribe((data) => {
-          layer.setPopupContent(this.popupHTML(data));
-        });
-      this._mapService.L.DomEvent.on(layer.getPopup().getElement(), 'click', (e) => {
-        const action = e && e.target && e.target.attributes.getNamedItem('action')?.nodeValue;
+        layer.setPopupContent(this.popupHTML(data));
+      });
+    this._mapService.L.DomEvent.on(layer.getPopup().getElement(), 'click', (e) => {
+      const action = e && e.target && e.target.attributes.getNamedItem('action')?.nodeValue;
       if (action) {
         this._mAction.processAction({
           action,

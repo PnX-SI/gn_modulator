@@ -117,13 +117,13 @@ class SchemaRepositoriesBase:
                     continue
                 fields = [key]
                 if self.is_relation_1_n(key) or self.is_relation_n_n(key):
-                    fields = []
                     for item in data_value:
                         for k in item:
                             kk = f"{key}.{k}"
-                            if kk not in fields:
+                            if kk not in fields and self.has_property(kk):
                                 fields.append(kk)
-                m = self.serialize(model, fields=fields)[key]
+                m_ = self.serialize(model, fields=fields)
+                m = m_[key]
                 if self.is_new_data(m, data_value):
                     return True
             return False
