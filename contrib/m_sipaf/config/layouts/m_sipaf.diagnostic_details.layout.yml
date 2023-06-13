@@ -96,7 +96,6 @@ layout:
         layout:
           display: tabs
           overflow: true
-          selected_tab: Aménagement
           items:
             - label: Champs communs
               items: *diag_commons
