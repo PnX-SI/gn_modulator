@@ -4,7 +4,7 @@ import utils from '../../utils';
 const defautDrawOptions = {
   position: 'topleft',
   customMarker: true,
-  drawMarker: false,
+  drawMarker: true,
   editMode: true,
   drawCircle: false,
   drawCircleMarker: false,
