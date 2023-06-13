@@ -50,7 +50,6 @@
   color: #fff;
 }
 
-
 // couleur custom des bouttons
 .mat-mdc-button-base.mat-error {
   background-color: red;
@@ -63,12 +62,15 @@
   color: #fff;
 }
 
-
-.mat-button-base.mat-button-disabled {
-  color: rgba(0,0,0,.26);
-  background-color: rgba(0,0,0,.12);
+.mat-mdc-raised-button[disabled][disabled] {
+  color: rgba(0, 0, 0, 0.26);
+  background-color: rgba(0, 0, 0, 0.12);
 }
 
+.mat-stroked-button.mat-button-disabled.mat-button-disabled {
+  color: #ffffff;
+  background-color: #008cba;
+}
 // :host ::ng-deep  .button-just-icon {
 //   font-size: 1.5rem !important;
 // }
@@ -215,7 +217,6 @@ div.layout-items > div {
   background-color: lightgreen;
 }
 
-
 .layout-message.error {
   color: darkred;
   background-color: lightcoral;
@@ -308,7 +309,8 @@ div.layout-items > div {
   cursor: pointer;
 }
 
-.geojsons {}
+.geojsons {
+}
 
 .test-layout {
   border: solid 1px lightgray;
@@ -347,4 +349,3 @@ div.layout-items > div {
   background-color: lightgray;
   border-radius: 10px;
 }
-

@@ -118,11 +118,10 @@
 
   <!-- buttons -->
   <ng-container *ngIf="layoutType == 'button'">
-    <div class="layout-buttons" [ngStyle]="computedLayout.style">
+    <div class="layout-buttons" [ngStyle]="computedLayout.style" [matTooltip]="computedLayout.description || ''">
       <!-- mat-raised-button -->
       <button
         *ngIf="(!computedLayout.href) && !!computedLayout.icon && !computedLayout.title"
-        [matTooltip]="computedLayout.description || ''"
         mat-mini-fab
         [color]="computedLayout.color"
         [disabled]="computedLayout.disabled"
@@ -137,7 +136,6 @@
 
       <button
         *ngIf="(!computedLayout.href)  && !!computedLayout.title"
-        [matTooltip]="computedLayout.description || ''"
         mat-raised-button
         [color]="computedLayout.color"
         [disabled]="computedLayout.disabled"

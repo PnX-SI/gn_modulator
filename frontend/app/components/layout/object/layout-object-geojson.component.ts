@@ -158,7 +158,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     propertiesHTML += '</ul>\n';
 
     const htmlDetails = this._mObject.checkAction(this.context, 'R', properties.scope).actionAllowed
-      ? '<button action="details">Details</button>'
+      ? '<button action="details">Détails</button>'
       : '';
     const htmlEdit = this._mObject.checkAction(this.context, 'U', properties.scope).actionAllowed
       ? '<button action="edit">Éditer</button>'
@@ -191,10 +191,10 @@ export class ModulesLayoutObjectGeoJSONComponent
     this._mData
       .getOne(this.moduleCode(), this.objectCode(), value, { fields })
       .subscribe((data) => {
-        layer.setPopupContent(this.popupHTML(data));
-      });
-    this._mapService.L.DomEvent.on(layer.getPopup().getElement(), 'click', (e) => {
-      const action = e && e.target && e.target.attributes.getNamedItem('action')?.nodeValue;
+          layer.setPopupContent(this.popupHTML(data));
+        });
+      this._mapService.L.DomEvent.on(layer.getPopup().getElement(), 'click', (e) => {
+        const action = e && e.target && e.target.attributes.getNamedItem('action')?.nodeValue;
       if (action) {
         this._mAction.processAction({
           action,

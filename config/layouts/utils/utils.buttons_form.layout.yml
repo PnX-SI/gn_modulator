@@ -18,7 +18,7 @@ layout:
       color: success
       title: Valider
       icon: done
-      description: Enregistrer le contenu du formulaire
+      description: "__f__formGroup.valid ? `Enregistrer le contenu du formulaire` : `Le formulaire comporte des erreurs`"
       action: submit
       disabled: __f__!formGroup.valid
     - flex: "0"

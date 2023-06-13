@@ -34,7 +34,6 @@
       <ng-container *ngSwitchCase="'tabs'">
         <!-- Lazy Loading-->
         <ng-container *ngIf="computedLayout.lazy_loading">
-          lazy
           <mat-tab-group
             class="layout-section"
             (selectedTabChange)="onTabChanged($event)"
