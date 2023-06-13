@@ -60,8 +60,11 @@ export class ModulesLayoutObjectFiltersComponent
       .filter(([key, val]: any) => val != null)
       .map(([key, val]: any) => {
         const field = filterDefs[key]?.field || key;
-        const type = filterDefs[key]?.type || '=';
-        const value = filterDefs[key]?.key ? val[filterDefs[key].key] : utils.getAttr(data, key);
+        let value = filterDefs[key].key ? utils.getAttr(val, filterDefs[key].key) : val;
+        let type = filterDefs[key]?.type || Array.isArray(value) ? 'in' : '=';
+        if (Array.isArray(value)) {
+          value = value.join(';');
+        }
         return {
           field,
           type,
