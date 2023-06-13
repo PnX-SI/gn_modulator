@@ -93,6 +93,7 @@ site_filters_defs:
     field: linears.groups.id_group
   nomenclatures_ouvrage_materiaux:
     field: nomenclatures_ouvrage_materiaux.id_nomenclature
+    key: id_nomenclature
 
 site_table_fields:
   - code_passage_faune
@@ -236,7 +237,6 @@ site_form_fields:
           items:
             - key: id_digitiser
               default: __f__context.current_user?.id_role
-              hidden: true
             - geom
             - key: id_passage_faune
               required: false
