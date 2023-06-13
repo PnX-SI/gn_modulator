@@ -9,8 +9,10 @@ layout:
   items:
     - type: map
       flex: 2
+      zoom: 12
       items:
         - type: object
+          zoom: true
           display: geojson
           object_code: site
           prefilters: __f__`id_passage_faune = ${o.object(x, 'site').value}`
