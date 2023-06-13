@@ -290,9 +290,12 @@ export class ModulesLayoutObjectTableComponent
       this.table.setHeight(elem.clientHeight);
       const pageSize = Math.floor((elem.clientHeight - 90) / 50);
 
+      const nbTotal = this._mObject.objectConfigContext(this.context).nb_total;
+
       if (
         !this.computedLayout.page_size &&
         this.pageSize != pageSize &&
+        nbTotal > pageSize &&
         pageSize > 1 &&
         !this.context.debug
       ) {
