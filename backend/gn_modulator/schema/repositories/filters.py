@@ -182,13 +182,7 @@ class SchemaRepositoriesFilters:
             filter_out = cast(model_attribute, db.String) != (str(filter_value))
 
         elif filter_type == "in":
-            filter_out = cast(model_attribute, db.String).in_(
-                [str(x) for x in filter_value]
-                # map(
-                #     lambda x: str(x),
-                #     filter_value
-                # )
-            )
+            filter_out = cast(model_attribute, db.String).in_([str(x) for x in filter_value])
 
         else:
             raise SchemaRepositoryFilterTypeError(

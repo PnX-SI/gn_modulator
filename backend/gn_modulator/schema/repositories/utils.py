@@ -17,6 +17,10 @@ class SchemaRepositoriesUtil:
         query._cache[key] = value
         return query
 
+    def clear_query_cache(self, query):
+        if hasattr(query, "_cache"):
+            delattr(query, "_cache")
+
     def get_query_cache(self, query, key):
         if not query:
             return
@@ -142,14 +146,16 @@ class SchemaRepositoriesUtil:
             res["val_of_type"] = res["val"].of_type(res["relation_alias"])
             query = query.join(res["val_of_type"], isouter=True)
 
-        # mise en cache
-        query = self.set_query_cache(query, cache_key, res)
+        if only_fields:
+            query = self.set_query_cache(query, cache_key, res)
 
         # chargement des champs si is last field
         if self.is_val_relationship(res["val"]) and is_last_field and only_fields:
+            # mise en cache seulement dans ce cas
+            # query = self.set_query_cache(query, cache_key, res)
             query = self.eager_load_only(field_name, query, only_fields, index)
 
-        # mise en cache et retour
+        # retour
         return self.process_custom_getattr_res(res, query, field_name, index, only_fields)
 
     def get_sorters(self, Model, sort, query):

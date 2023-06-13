@@ -332,7 +332,7 @@ class SchemaBase:
 
         if isinstance(data, list):
             return ", ".join(
-                [self.process_csv_data(key, d, process_label=process_label) for d in data]
+                [str(self.process_csv_data(key, d, process_label=process_label)) for d in data]
             )
 
         if isinstance(data, dict):

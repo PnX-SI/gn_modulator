@@ -264,6 +264,9 @@ class SchemaRepositoriesBase:
 
         query = self.process_fields(query, params.get("fields") or [])
 
+        # clear_query_cache
+        self.clear_query_cache(query)
+
         order_bys, query = self.get_sorters(Model, params.get("sort", []), query)
 
         # if params.get('test'):
