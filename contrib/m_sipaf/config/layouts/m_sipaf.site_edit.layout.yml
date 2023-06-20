@@ -10,4 +10,4 @@ layout:
     template_params:
       object_code: site
       layout: __SITE_FORM_FIELDS__
-      zoom: 12
+      zoom: 13

@@ -24,6 +24,15 @@ objects:
   diagnostic:
     schema_code: m_sipaf.diag
     cruved: CRUD
+  synthese:
+    schema_code: syn.synthese
+    label: observation
+    labels: observations
+    cruved: R
+    map:
+      style:
+        color: red
+
 
 tree:
   site:

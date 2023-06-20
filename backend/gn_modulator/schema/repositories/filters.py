@@ -2,7 +2,7 @@
     repositories - filters
 """
 import unidecode
-from sqlalchemy import cast, and_, or_, not_
+from sqlalchemy import cast, and_, or_, not_, func
 from geonature.utils.env import db
 from ..errors import SchemaRepositoryFilterError, SchemaRepositoryFilterTypeError
 from sqlalchemy.sql.functions import ReturnTypeFromArgs
@@ -183,6 +183,15 @@ class SchemaRepositoriesFilters:
 
         elif filter_type == "in":
             filter_out = cast(model_attribute, db.String).in_([str(x) for x in filter_value])
+
+        elif filter_type == "dwithin":
+            x, y, radius = filter_value.split(";")
+            geo_filter = func.ST_DWithin(
+                func.ST_GeogFromWKB(model_attribute),
+                func.ST_GeogFromWKB(func.ST_MakePoint(x, y)),
+                radius,
+            )
+            filter_out = geo_filter
 
         else:
             raise SchemaRepositoryFilterTypeError(

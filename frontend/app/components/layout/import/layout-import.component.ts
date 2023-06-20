@@ -101,7 +101,6 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
           this._mLayout.stopActionProcessing('');
           const response = importEvent.body as any;
           this.importData = { ...this.importData, ...response };
-          console.log(this.importData);
           this.setStep();
           if (response.status == 'DONE') {
             if (response.res.nb_unchanged != response.res.nb_process) {

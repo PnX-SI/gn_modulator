@@ -22,15 +22,15 @@
   </modules-layout>
 </div>
 
-<div class="map-container" [ngStyle]="{ height: '100%', position: 'relative' }">
+<div class="map-container">
   <div *ngIf="_map?.isProcessing" class="processing">
     <div>
       <mat-spinner></mat-spinner>
     </div>
   </div>
 
-  <div [ngStyle]="{ height: '100%' }" class="map">
-    <div [attr.id]="mapId" [ngStyle]="{ height: '100%' }"></div>
+  <div class="map">
+    <div [attr.id]="mapId"></div>
   </div>
 
   <div class="coordinates" *ngIf="_map?.coordinatesTxt">{{ _map?.coordinatesTxt }}</div>

@@ -223,6 +223,31 @@ site_details_fields:
           prefilters: __f__`id_passage_faune = ${o.object(x, 'site').value}`
           sort: date_diagnostic-
 
+    - label: __f__o.tab_label(x)
+      object_code: synthese
+      hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
+      items:
+        - type: object
+          display: table
+          prefilters: |
+            __f__{
+            const xy = o.config({...context, object_code: 'site'})?.value_xy;
+            return xy
+                ? `the_geom_4326 dwithin ${xy.x};${xy.y};1000`
+                : `id_synthese = -1`
+            }
+          actions:
+            R:
+              url: "#/synthese/occurrence/<id>"
+              title: Liens vers le module de synthese
+          items:
+            - date_min
+            - dataset.dataset_name
+            - taxref.nom_vern
+            - nomenclature_bio_condition.label_fr
+            - cor_observers.nom_complet
+          sort: date_min-
+
 site_form_fields:
   display: tabs
   overflow: true
@@ -350,8 +375,6 @@ site_form_fields:
             type_widget: medias
             schema_dot_table: pr_sipaf.t_passages_faune
             details: []
-
-
 
 diagnostic_table_fields:
   - date_diagnostic

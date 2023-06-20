@@ -28,7 +28,7 @@ class SchemaRepositoriesUtil:
             return None
         return query._cache.get(key)
 
-    def process_custom_getattr_res(self, res, query, field_name, index, only_fields=[]):
+    def process_custom_getattr_res(self, res, query, condition, field_name, index, only_fields=[]):
         # si c'est une propriété
         fields = field_name.split(".")
         is_relationship = self.is_val_relationship(res["val"])
@@ -38,19 +38,23 @@ class SchemaRepositoriesUtil:
             # on ne peut pas avoir de field apres une propriété
             if not is_last_field:
                 raise Exception(f"pb fields {field_name}, il ne devrait plus rester de champs")
-
-            return res["val"], query
+            return res["val"], query or condition
 
         if not is_last_field:
+            if not query:
+                condition = (
+                    and_(condition, res["val"].expression) if condition else res["val"].expression
+                )
             return self.custom_getattr(
                 res["relation_alias"],
                 field_name,
                 index=index + 1,
                 query=query,
+                condition=condition,
                 only_fields=only_fields,
             )
 
-        return res["relation_alias"], query
+        return res["relation_alias"], query or condition
 
     def eager_load_only(self, field_name, query, only_fields, index):
         """
@@ -79,6 +83,7 @@ class SchemaRepositoriesUtil:
                     ),
                     filter(
                         lambda x: key_cache_eager in x
+                        and x.startswith(f"{key_cache_eager}.")
                         and "." not in x.replace(f"{key_cache_eager}.", "")
                         and hasattr(
                             getattr(cache["relation_alias"], x.replace(f"{key_cache_eager}.", "")),
@@ -105,7 +110,7 @@ class SchemaRepositoriesUtil:
         return hasattr(val, "mapper") and hasattr(val.mapper, "entity")
 
     def custom_getattr(
-        self, Model, field_name, query=None, only_fields="", index=0, condition=None
+        self, Model, field_name, query=None, condition=None, only_fields="", index=0
     ):
         # liste des champs 'rel1.rel2.pro1' -> 'rel1', 'rel2', 'prop1'
         fields = field_name.split(".")
@@ -115,14 +120,15 @@ class SchemaRepositoriesUtil:
 
         # clé pour le cache
         cache_key = ".".join(fields[: index + 1])
-
         # test si c'est le dernier champs
         is_last_field = index == len(fields) - 1
 
         # récupération depuis le cache associé à la query
         res = self.get_query_cache(query, cache_key)
         if res:
-            return self.process_custom_getattr_res(res, query, field_name, index, only_fields)
+            return self.process_custom_getattr_res(
+                res, query, condition, field_name, index, only_fields
+            )
 
         # si non en cache
         # on le calcule
@@ -142,21 +148,25 @@ class SchemaRepositoriesUtil:
         # si c'est une propriété
         if self.is_val_relationship(res["val"]):
             res["relation_model"] = res["val"].mapper.entity
-            res["relation_alias"] = orm.aliased(res["relation_model"])
+            res["relation_alias"] = (
+                orm.aliased(res["relation_model"]) if query else res["relation_model"]
+            )
+            # res["relation_alias"] = orm.aliased(res["relation_model"])
             res["val_of_type"] = res["val"].of_type(res["relation_alias"])
-            query = query.join(res["val_of_type"], isouter=True)
+            if query:
+                query = query.join(res["val_of_type"], isouter=True)
 
         if only_fields:
             query = self.set_query_cache(query, cache_key, res)
 
         # chargement des champs si is last field
         if self.is_val_relationship(res["val"]) and is_last_field and only_fields:
-            # mise en cache seulement dans ce cas
-            # query = self.set_query_cache(query, cache_key, res)
             query = self.eager_load_only(field_name, query, only_fields, index)
 
         # retour
-        return self.process_custom_getattr_res(res, query, field_name, index, only_fields)
+        return self.process_custom_getattr_res(
+            res, query, condition, field_name, index, only_fields
+        )
 
     def get_sorters(self, Model, sort, query):
         order_bys = []

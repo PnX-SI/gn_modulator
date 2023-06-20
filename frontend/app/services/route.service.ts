@@ -113,6 +113,9 @@ export class ModulesRouteService {
    * patch pour pouvoir rediriger sur la meme url
    */
   redirect(url) {
+    if (url[0] == '#') {
+      url = url.substring(1);
+    }
     this._router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this._router.navigateByUrl(url);
     });

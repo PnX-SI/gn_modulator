@@ -351,6 +351,7 @@ class ModuleConfigUtils:
             sm.pk_field_name(),
             sm.label_field_name(),
             sm.title_field_name(),
+            sm.geometry_field_name(),
             *sm.unique(),
             "scope",
         ]:

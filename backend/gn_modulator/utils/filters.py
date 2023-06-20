@@ -58,7 +58,7 @@ def parse_filter(str_filter):
 
     index_min = None
     filter_type_min = None
-    for filter_type in ["=", "<", ">", ">=", "<=", "like", "ilike", "in", "~"]:
+    for filter_type in ["=", "<", ">", ">=", "<=", "like", "ilike", "in", "~", "dwithin"]:
         try:
             index = str_filter.index(f" {filter_type} ")
         except ValueError:

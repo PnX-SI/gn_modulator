@@ -9,7 +9,7 @@ layout:
   items:
     - type: map
       flex: 2
-      zoom: 12
+      zoom: 14
       items:
         - type: object
           zoom: true
@@ -17,6 +17,24 @@ layout:
           object_code: site
           prefilters: __f__`id_passage_faune = ${o.object(x, 'site').value}`
           popup_fields: __SITE_MAP_POPUP_FIELDS__
+          bring_to_front: true
+          tooltip_permanent: true
+        - type: object
+          display: geojson
+          object_code: synthese
+          prefilters: |
+            __f__{
+            const xy = o.config({...context, object_code: 'site'})?.value_xy;
+            return xy
+                ? `the_geom_4326 dwithin ${xy.x};${xy.y};1000`
+                : `id_synthese = -1`
+            }
+          popup_fields:
+            - date_min
+            - dataset.dataset_name
+            - taxref.nom_vern
+            - nomenclature_bio_condition.label_fr
+            - cor_observers.nom_complet
 
     - flex: 3
       items:

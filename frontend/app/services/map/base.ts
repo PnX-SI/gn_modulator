@@ -167,7 +167,6 @@ export default {
           map.on('contextmenu', (event: any) => {
             map.coordinatesTxt = `${event.latlng.lng}, ${event.latlng.lat}`;
             navigator.clipboard.writeText(`${event.latlng.lng}, ${event.latlng.lat}`);
-            console.log(`${event.latlng.lng} ${event.latlng.lat}`);
           });
 
           // init panes

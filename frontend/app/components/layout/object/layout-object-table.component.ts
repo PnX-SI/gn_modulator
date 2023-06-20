@@ -82,28 +82,8 @@ export class ModulesLayoutObjectTableComponent
   }
 
   onRowClick = (e, row) => {
-    let action = utils.getAttr(e, 'target.attributes.action.nodeValue')
-      ? utils.getAttr(e, 'target.attributes.action.nodeValue')
-      : e.target.getElementsByClassName('action').length
-      ? utils.getAttr(e.target.getElementsByClassName('action')[0], 'attributes.action.nodeValue')
-      : 'selected';
     const value = this.getRowValue(row);
-
-    if (['details', 'edit'].includes(action)) {
-      this._mAction.processAction({
-        action,
-        context: this.context,
-        value,
-      });
-    }
-
-    if (action == 'delete') {
-      this._mLayout.openModal('delete', this.getRowData(row));
-    }
-
-    if (action == 'selected') {
-      this.setObject({ value });
-    }
+    this.setObject({ value });
   };
 
   getRowValue(row) {
