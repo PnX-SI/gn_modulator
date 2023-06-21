@@ -37,10 +37,11 @@ INSERT INTO
         FROM
             (
                 VALUES
-                    ('MODULATOR', 'ALL', 'C', False, 'Droit sur le module MODULATOR en création'),
-                    ('MODULATOR', 'ALL', 'R', False, 'Droit sur le module MODULATOR en lecture'),
-                    ('MODULATOR', 'ALL', 'U', False, 'Droit sur le module MODULATOR en édition'),
-                    ('MODULATOR', 'ALL', 'D', False, 'Droit sur le module MODULATOR en suppression')
+                    ('MODULATOR', 'ALL', 'C', False, 'Accès création'),
+                    ('MODULATOR', 'ALL', 'R', False, 'Accès lecture'),
+                    ('MODULATOR', 'ALL', 'U', False, 'Accès édition'),
+                    ('MODULATOR', 'ALL', 'D', False, 'Accès suppression')
+                    ('MODULATOR', 'ALL', 'E', False, 'Accès export')
             ) AS v (module_code, object_code, action_code, scope_filter, label)
         JOIN
             gn_commons.t_modules m ON m.module_code = v.module_code

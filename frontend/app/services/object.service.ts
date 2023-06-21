@@ -292,6 +292,7 @@ export class ModulesObjectService {
     const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
     const testObjectCruved = (objectConfig.cruved || '').includes(action);
+
     if ('CRU'.includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
@@ -319,7 +320,10 @@ export class ModulesObjectService {
     // 2) l'utilisateur à t'il le droit
 
     // - les droit de l'utilisateur pour ce module et pour un action (CRUVED)
-    const moduleCruvedAction = moduleConfig.cruved[action];
+
+    // patch pour import on teste les droits en 'C' (creation)
+    const cruvedAction = action == 'I' ? 'C' : action;
+    const moduleCruvedAction = moduleConfig.cruved[cruvedAction];
 
     // - on compare ce droit avec l'appartenance de la données
     // la possibilité d'action doit être supérieure à l'appartenance
@@ -334,7 +338,7 @@ export class ModulesObjectService {
     let testUserCruved;
 
     // si les droit du module sont nul pour cet action => FALSE
-    if (moduleCruvedAction == 0) {
+    if (!moduleCruvedAction) {
       testUserCruved = false;
       // si l'action est CREATE, EXPORT, IMPORT (ne concerne pas une ligne précise) => TRUE
     } else if ('CEI'.includes(action)) {
