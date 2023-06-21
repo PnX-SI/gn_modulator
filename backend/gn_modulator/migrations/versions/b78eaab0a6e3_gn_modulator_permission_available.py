@@ -40,7 +40,7 @@ INSERT INTO
                     ('MODULATOR', 'ALL', 'C', False, 'Accès création'),
                     ('MODULATOR', 'ALL', 'R', False, 'Accès lecture'),
                     ('MODULATOR', 'ALL', 'U', False, 'Accès édition'),
-                    ('MODULATOR', 'ALL', 'D', False, 'Accès suppression')
+                    ('MODULATOR', 'ALL', 'D', False, 'Accès suppression'),
                     ('MODULATOR', 'ALL', 'E', False, 'Accès export')
             ) AS v (module_code, object_code, action_code, scope_filter, label)
         JOIN
