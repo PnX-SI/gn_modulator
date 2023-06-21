@@ -13,6 +13,7 @@ module:
 
 features:
   - m_sipaf.utils
+  - m_sipaf.permissions
 
 objects:
   site:

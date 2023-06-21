@@ -5,10 +5,14 @@
 
 <div *ngIf="pageInitialized" class="page">
   <modules-layout
-    *ngIf="layout"
+    *ngIf="layout && pageAuthorized"
     [layout]="layout"
     [data]="data"
     [debug]="debug"
     (onAction)="processAction($event)"
   ></modules-layout>
+  <div *ngIf="!pageAuthorized" class="layout-message error">
+    Vous n'avez pas les accès requis pour le module {{ moduleCode}}
+  </div>
 </div>
+

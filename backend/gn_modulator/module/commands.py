@@ -84,10 +84,7 @@ class ModuleCommands:
         # suppression du module en base
         print("- suppression du module {} en base".format(module_code))
 
-        try:
-            cls.delete_db_module(module_code)
-        except Exception:
-            print("Le module n'est pas présent en base")
+        cls.delete_db_module(module_code)
 
         # suppression de la config
 

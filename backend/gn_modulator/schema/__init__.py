@@ -71,8 +71,9 @@ class SchemaMethods(
         """
         Initialise le schema et le place dans le cache
         """
-
         definition = self.definition
+        if definition is None:
+            return None
         schema_code = definition["code"]
 
         if not definition:

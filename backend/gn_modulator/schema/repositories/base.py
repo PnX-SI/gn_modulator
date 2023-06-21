@@ -198,7 +198,15 @@ class SchemaRepositoriesBase:
 
         return m, True
 
-    def delete_row(self, value, field_name=None, module_code=MODULE_CODE, params={}, commit=True):
+    def delete_row(
+        self,
+        value,
+        field_name=None,
+        module_code=MODULE_CODE,
+        params={},
+        commit=True,
+        multiple=False,
+    ):
         """
         delete row (Model.<field_name> == value)
         """
@@ -211,7 +219,8 @@ class SchemaRepositoriesBase:
             query_type="delete",
         )
         # pour être sûr qu'il n'y a qu'une seule ligne de supprimée
-        m.one()
+        if not multiple:
+            m.one()
         # https://stackoverflow.com/questions/49794899/flask-sqlalchemy-delete-query-failing-with-could-not-evaluate-current-criteria?noredirect=1&lq=1
         m.delete(synchronize_session=False)
         db.session.flush()

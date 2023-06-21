@@ -5,7 +5,7 @@ description: Définition du schema des permissions
 
 meta:
   autoschema: true
-  model: geonature.core.gn_permissions.models.CorRoleActionFilterModuleObject
+  model: geonature.core.gn_permissions.models.Permission
   label: permission
   label_field_name: id_permssion
   genre: F

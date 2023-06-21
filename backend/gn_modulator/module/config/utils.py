@@ -288,6 +288,8 @@ class ModuleConfigUtils:
     @classmethod
     def process_base_fields(cls, module_code):
         module_config = cls.module_config(module_code)
+        if not module_config["registred"]:
+            return
         for object_code in module_config["objects"]:
             object_config = cls.object_config(module_code, object_code)
             if "R" in object_config["cruved"]:
@@ -296,7 +298,8 @@ class ModuleConfigUtils:
     @classmethod
     def add_basic_fields(cls, module_code, object_code):
         sm = SchemaMethods(cls.schema_code(module_code, object_code))
-
+        if sm.definition is None:
+            return
         authorized_read_fields = (
             get_global_cache(
                 [
@@ -451,6 +454,8 @@ class ModuleConfigUtils:
         schema_code = object_config["schema_code"]
 
         sm = SchemaMethods(schema_code)
+        if sm.definition is None:
+            return
 
         if not sm.has_property(key):
             # raise error ?

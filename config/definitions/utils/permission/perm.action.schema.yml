@@ -5,9 +5,9 @@ description: Définition du schema des actions
 
 meta:
   autoschema: true
-  model: geonature.core.gn_permissions.models.TActions
+  model: geonature.core.gn_permissions.models.PermAction
   label: action
-  label_field_name: label_action
-  genre: M
+  label_field_name: code_action
+  genre: F
   unique:
     - code_action

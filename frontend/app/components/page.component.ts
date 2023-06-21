@@ -39,7 +39,7 @@ export class PageComponent implements OnInit {
   data; // data pour le layout
 
   pageInitialized: boolean; // test si la page est initialisée (pour affichage)
-
+  pageAuthorized: boolean; // test si on a au moins les accès en lecture sur le module
   moduleCode;
   pageCode;
   params;
@@ -125,7 +125,11 @@ export class PageComponent implements OnInit {
         })
       )
       .subscribe(() => {
+        const cruved = this._gnModuleService.modules.find(
+          (m) => m.module_code == this.moduleCode
+        ).cruved;
         this.pageInitialized = true;
+        this.pageAuthorized = !!cruved.R;
       });
   }
 

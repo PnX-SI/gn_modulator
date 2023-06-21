@@ -1,0 +1,14 @@
+type: data
+code: m_sipaf.permissions
+title: Data utils m_sipaf
+description: feature pour sipaf (nomenclature, groupe de module)
+items:
+  - schema_code: perm.perm_dispo
+    defaults:
+      id_module: m_sipaf
+    keys: [id_object, id_action, scope_filter, label]
+    items:
+      - [ALL, C, true, "Accès au module m_sipaf en création"]
+      - [ALL, R, true, "Accès au module m_sipaf en lecture"]
+      - [ALL, U, true, "Accès au module m_sipaf en édition"]
+      - [ALL, D, true, "Accès au module m_sipaf en suppression"]
