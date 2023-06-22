@@ -8,8 +8,8 @@ items:
       id_module: m_sipaf
     keys: [id_object, id_action, scope_filter, label]
     items:
-      - [ALL, C, true, "Créer des passage à faune"]
-      - [ALL, R, true, "Accéder aux passage à faune"]
-      - [ALL, U, true, "Éditer les passages à faune"]
-      - [ALL, D, true, "Supprimer les passages à faune"]
+      - [ALL, C, true, "Créer des passages à faune"]
+      - [ALL, R, true, "Voir les passages à faune"]
+      - [ALL, U, true, "Modifier les passages à faune"]
+      - [ALL, D, true, "Supprimer des passages à faune"]
       - [ALL, E, true, "Exporter les passages à faune"]
