@@ -9,7 +9,7 @@
   "author": "PNX",
   "license": "ISC",
   "dependencies": {
-    "@geoman-io/leaflet-geoman-free": "^2.14.1",
+    "@geoman-io/leaflet-geoman-free": "^2.14.2",
     "js-yaml": "^4.1.0",
     "tabulator": "^0.2.40",
     "tabulator-tables": "^4.9.3"
