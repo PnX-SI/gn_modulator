@@ -160,9 +160,6 @@ class ModuleCommands:
         SchemaMethods.reinit_marshmallow_schemas()
         cls.process_module_features(module_code)
 
-        # assets
-        cls.process_module_assets(module_code)
-
         # register
         module_config["registred"] = True
 

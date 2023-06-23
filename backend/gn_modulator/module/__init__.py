@@ -27,7 +27,6 @@ class ModuleMethods(ModuleBase, ModuleBreadCrumbs, ModuleCommands, ModulesConfig
 
         for module_code in cls.module_codes():
             cls.init_module_config(module_code)
-            cls.process_module_assets(module_code)
 
         for module_code in cls.module_codes():
             cls.process_fields(module_code)
