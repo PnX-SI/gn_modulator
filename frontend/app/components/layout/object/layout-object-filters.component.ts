@@ -59,12 +59,19 @@ export class ModulesLayoutObjectFiltersComponent
     this.filters = Object.entries(data)
       .filter(([key, val]: any) => val != null)
       .map(([key, val]: any) => {
-        const field = filterDefs[key]?.field || key;
-        let value = filterDefs[key].key ? utils.getAttr(val, filterDefs[key].key) : val;
-        let type = filterDefs[key]?.type || Array.isArray(value) ? 'in' : '=';
+        const filterDef = filterDefs[key] || {};
+        const field = filterDef?.field || key;
+        let value = filterDef.key ? utils.getAttr(val, filterDef.key) : val;
+        let type = filterDef?.type;
+
         if (Array.isArray(value)) {
           value = value.join(';');
+          type = type || 'in';
         }
+
+        type = type || '=';
+
+        value != null && console.log(field, type, value, key);
         return {
           field,
           type,

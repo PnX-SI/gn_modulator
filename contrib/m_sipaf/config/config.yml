@@ -76,11 +76,11 @@ site_filters_fields:
 
 site_filters_defs:
   code_passage_faune:
-    type: ilike
+    type: '~'
   nom_usuel_passage_faune:
-    type: ilike
+    type: '~'
   code_ouvrage_gestionnaire:
-    type: ilike
+    type: '~'
   region:
     field: areas.id_area
     key: id_area

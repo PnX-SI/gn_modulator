@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ModuleConfig } from '../module.config';
-import { ModuleService } from '@geonature/services/module.service';
+import { ModuleService as GnModuleService } from '@geonature/services/module.service';
 
 import { of, forkJoin } from '@librairies/rxjs';
 import { mergeMap } from '@librairies/rxjs/operators';
@@ -17,15 +16,15 @@ export class ModulesConfigService {
   };
 
   constructor(
-    private _moduleService: ModuleService,
+    private _gnModuleService: GnModuleService,
     private _mRequest: ModulesRequestService,
     private AppConfig: GNConfigService
   ) {}
 
   /** Configuration */
 
-  MODULE_CODE = ModuleConfig.MODULE_CODE;
-  MODULE_URL = ModuleConfig.MODULE_URL;
+  MODULE_CODE = 'MODULATOR';
+  MODULE_URL = 'modulator';
 
   init() {
     return forkJoin({
@@ -58,11 +57,11 @@ export class ModulesConfigService {
 
   setModuleCruved(modules) {
     for (const [moduleCode, moduleConfig] of Object.entries(modules)) {
-      const moduleGN = this._moduleService.getModule(moduleCode);
+      const moduleGN = this._gnModuleService.getModule(moduleCode);
       if (!moduleGN) {
         continue;
       }
-      (moduleConfig as any)['cruved'] = this._moduleService.getModule(moduleCode)['cruved'];
+      (moduleConfig as any)['cruved'] = this._gnModuleService.getModule(moduleCode)['cruved'];
     }
   }
 
@@ -133,9 +132,13 @@ export class ModulesConfigService {
     return this.AppConfig;
   }
 
+  moduleURL() {
+    return this.AppConfig[this.MODULE_CODE].MODULE_URL;
+  }
+
   /** Backend Module Url */
   backendModuleUrl() {
-    return `${this.AppConfig.API_ENDPOINT}${ModuleConfig.MODULE_URL}`;
+    return `${this.AppConfig.API_ENDPOINT}${this.moduleURL()}`;
   }
 
   moduleImg(moduleCode) {
