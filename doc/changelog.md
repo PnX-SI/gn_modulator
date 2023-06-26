@@ -1,46 +1,54 @@
 # Changelog
 
-## 1.0.6 (unreleased)
+## 1.1.0 (unreleased)
 
+Nécessite la version 2.13.0 (ou plus) de GeoNature.
 
-- Version de GN  requise 2.12
+**🚀 Nouveautés**
 
-**✨ Nouveauté**
-- Première version de la fonctionalité d'import (commande + interface frontend)
+- Ajout de fonctionalités d'import depuis des fichiers CSV (commande + interface frontend) (#25)
+- Compatibilité avec GeoNature 2.13.0 et la refonte des permissions, en définissant les permissions disponibles du module (#232)
+- Possibilité pour chaque sous-module de déclarer ses permissions disponibles
+- [SIPAF] Ajout d'un onglet et du formulaire des diagnostics fonctionnels (#37)
+- [SIPAF] Ajout d'un onglet listant les observations à proximité d'un passage à faune (#42)
 
 **✨ Améliorations**
 
 - Clarification dans la gestion des routes REST
-- Meilleure gestion des `tabs` et des `scrolls`
-- sécurisation des api (controle des `fields` en lecture et écriture)
+- Meilleure gestion des `tabs` et des `scrolls` (#32)
+- Sécurisation des API (controle des `fields` en lecture et écriture) (#29)
   - champs listés à partir de la config 
   - écriture : si un champs demandé n'est pas dans la config -> erreur 403
-  - lecture : ce champs n'est pas pris en compte (utilisation de `only` dans l'initialisation des champs mashmallow)
-- requetes sql (fonction `query_list`)
-    - chargement des relations et des champs pour les requetes
-    - pour éviter les chargement n+1 (1 requête supplémentaire par relation)
+  - lecture : ce champs n'est pas pris en compte (utilisation de `only` dans l'initialisation des champs marshmallow)
+- Requêtes SQL (fonction `query_list`)
+    - chargement des relations et des champs pour les requêtes
+    - pour éviter les chargements n+1 (1 requête supplémentaire par relation)
     - utilisation de `raise_load`
     - on charge le minimum de champs possibles
-- déplacement des config dans le dossier `media/modulator/config`
-- changement de nom `ownership` -> `scope`
+- Déplacement des configurations dans le dossier `media/modulator/config` (de GeoNature ???)
+- Changement de nom `ownership` -> `scope`
 - [ ] separation des tests par modules (m_sipaf, m_monitoring)
 - [ ] amélioration du composant list_form
 - [ ] ajout diagnostic sipaf
 
+**🐛 Corrections**
+
+- Correction des formulaires dans les onglets (#38)
+
 **⚠️ Notes de version**
 
-- Mettre à jour la base
+Si vous mettez à jour le module :
 
-```
-geonature db autoupgrade
-```
-
+- Mettre à jour la base de données (pas besoin de le dire car fait automatiquement lors de la MAJ par GN)
+  ```
+  geonature db autoupgrade
+  ```
 - Mettre à jour les `features` de `m_sipaf`
-
-```
-geonature modulator features m_sipaf.pf
-```
-
+  ```
+  geonature modulator features m_sipaf.pf
+  ```
+- Déplacer configuration dans dossier de GeoNature ??
+- Commande à lancer pour ajouter les permissions disponibles de SIPAF ??
 
 ## 1.0.5 (13-03-2023)
 
