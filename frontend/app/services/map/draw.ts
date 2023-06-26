@@ -72,6 +72,21 @@ export default {
     if (!utils.fastDeepEqual(drawOptions, map.drawOptions)) {
       map.drawOptions = drawOptions;
       map.pm.addControls(drawOptions);
+      if (drawOptions.drawMarker) {
+        const iconRetinaUrl = './marker-icon-2x.png';
+        const iconUrl = './marker-icon.png';
+        const shadowUrl = './marker-shadow.png';
+        map.pm.enableDraw('Marker', {
+          iconRetinaUrl: iconRetinaUrl,
+          iconUrl: iconUrl,
+          shadowUrl: shadowUrl,
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          tooltipAnchor: [16, -28],
+          shadowSize: [41, 41],
+        });
+      }
     }
 
     // init $editedLayer
