@@ -225,7 +225,9 @@ site_details_fields:
 
     - label: __f__o.tab_label(x)
       object_code: synthese
-      hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
+      # M_SIPAF_OBS à reprendre après la release
+      hidden: true
+      # hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
       items:
         - type: object
           display: table

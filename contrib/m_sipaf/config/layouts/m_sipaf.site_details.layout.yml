@@ -20,6 +20,8 @@ layout:
           bring_to_front: true
           tooltip_permanent: true
         - type: object
+          # M_SIPAF_OBS à reprendre après la release
+          hidden: true
           display: geojson
           object_code: synthese
           prefilters: |
