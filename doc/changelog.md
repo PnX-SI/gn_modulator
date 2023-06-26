@@ -10,13 +10,12 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
 - Compatibilité avec GeoNature 2.13.0 et la refonte des permissions, en définissant les permissions disponibles du module (#232)
 - Possibilité pour chaque sous-module de déclarer ses permissions disponibles
 - [SIPAF] Ajout d'un onglet et du formulaire des diagnostics fonctionnels (#37)
-- [SIPAF] Ajout d'un onglet listant les observations à proximité d'un passage à faune (#42)
 
 **✨ Améliorations**
 
 - Clarification dans la gestion des routes REST
 - Meilleure gestion des `tabs` et des `scrolls` (#32)
-- Sécurisation des API (controle des `fields` en lecture et écriture) (#29)
+- Sécurisation des API (contrôle des `fields` en lecture et écriture) (#29)
   - champs listés à partir de la config
   - écriture : si un champs demandé n'est pas dans la config -> erreur 403
   - lecture : ce champs n'est pas pris en compte (utilisation de `only` dans l'initialisation des champs marshmallow)
@@ -27,7 +26,7 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
     - on charge le minimum de champs possibles
 - Déplacement des configurations dans le dossier `media/modulator/config` de GeoNature
 - Changement de nom `ownership` -> `scope`
-- amélioration du composant list_form
+- Amélioration du composant list_form
 
 **🐛 Corrections**
 
@@ -37,20 +36,14 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
 
 Si vous mettez à jour le module :
 
-- Déplacer configuration dans dossier de GeoNature ??
-- Mettre à jour la base de données (pas besoin de le dire car fait automatiquement lors de la MAJ par GN)
-  ```
-  geonature db autoupgrade
-  ```
-- Mettre à jour le module sipaf
+- Mettre à jour le module SIPAF
   ```
   geonature modulator install m_sipaf
   ```
-
-  - cette commande va effectuer les actions suivantes:
+  - Cette commande va effectuer les actions suivantes :
     - créer le dossier `<GN>/backend/media/modulator`
     - déplacer la config du sous-module dans le dossier `<GN>/backend/media/modulator/config`
-    - mettre à jour les `features` du module et notamment:
+    - mettre à jour les `features` du module et notamment :
       - ajouter des nomenclatures pour les permissions
       - corriger de nomenclatures pour les passages à faune
       - ajouter des permissions disponibles pour le module
