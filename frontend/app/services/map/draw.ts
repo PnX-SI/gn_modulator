@@ -1,10 +1,12 @@
 import { BehaviorSubject } from '@librairies/rxjs';
 import utils from '../../utils';
+import { CustomMarkerIcon } from '@geonature_common/map/marker/marker.component';
 
 const defautDrawOptions = {
   position: 'topleft',
   customMarker: true,
-  drawMarker: true,
+  drawMarker: false,
+  drawMarker2: true,
   editMode: true,
   drawCircle: false,
   drawCircleMarker: false,
@@ -69,24 +71,15 @@ export default {
         options.geometry_type == 'geometry' || options.geometry_type.includes('linestring');
     }
 
+    if(!map.initDrawMarker2) {
+      map.initDrawMarker2 = true;
+      map.pm.Toolbar.copyDrawControl('drawMarker',{name: "drawMarker2"})
+      .drawInstance.setOptions({markerStyle: {icon : new CustomMarkerIcon()}})
+    }
+
     if (!utils.fastDeepEqual(drawOptions, map.drawOptions)) {
       map.drawOptions = drawOptions;
       map.pm.addControls(drawOptions);
-      if (drawOptions.drawMarker) {
-        const iconRetinaUrl = './marker-icon-2x.png';
-        const iconUrl = './marker-icon.png';
-        const shadowUrl = './marker-shadow.png';
-        map.pm.enableDraw('Marker', {
-          iconRetinaUrl: iconRetinaUrl,
-          iconUrl: iconUrl,
-          shadowUrl: shadowUrl,
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
-          tooltipAnchor: [16, -28],
-          shadowSize: [41, 41],
-        });
-      }
     }
 
     // init $editedLayer
