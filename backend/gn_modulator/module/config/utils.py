@@ -436,12 +436,14 @@ class ModuleConfigUtils:
             )
             return cls.get_layout_keys(layout_from_code, params, context)
 
-        if layout.get("items"):
-            return cls.get_layout_keys(layout.get("items"), params, context)
+        for field_list_type in ["items", "popup_fields"]:
+            if layout.get(field_list_type):
+                return cls.get_layout_keys(layout.get(field_list_type), params, context)
 
     @classmethod
     def add_key(cls, context, key):
         keys = get_global_cache(["keys"])
+
         if context.get("data_keys"):
             key = f"{''.join(context['data_keys'])}.{key}"
 
@@ -459,7 +461,7 @@ class ModuleConfigUtils:
 
         if not sm.has_property(key):
             # raise error ?
-            print(f"pb ? {sm} has no {key}")
+            # print(f"pb ? {sm} has no {key}")
             return keys
 
         # ajout en lecture
