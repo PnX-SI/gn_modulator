@@ -7,7 +7,7 @@ meta:
   autoschema: true
   model: geonature.core.gn_permissions.models.Permission
   label: permission
-  label_field_name: id_permssion
+  label_field_name: id_permission
   genre: F
   unique:
     - id_role
