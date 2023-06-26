@@ -17,7 +17,7 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
 - Clarification dans la gestion des routes REST
 - Meilleure gestion des `tabs` et des `scrolls` (#32)
 - Sécurisation des API (controle des `fields` en lecture et écriture) (#29)
-  - champs listés à partir de la config 
+  - champs listés à partir de la config
   - écriture : si un champs demandé n'est pas dans la config -> erreur 403
   - lecture : ce champs n'est pas pris en compte (utilisation de `only` dans l'initialisation des champs marshmallow)
 - Requêtes SQL (fonction `query_list`)
@@ -25,11 +25,9 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
     - pour éviter les chargements n+1 (1 requête supplémentaire par relation)
     - utilisation de `raise_load`
     - on charge le minimum de champs possibles
-- Déplacement des configurations dans le dossier `media/modulator/config` (de GeoNature ???)
+- Déplacement des configurations dans le dossier `media/modulator/config` de GeoNature
 - Changement de nom `ownership` -> `scope`
-- [ ] separation des tests par modules (m_sipaf, m_monitoring)
-- [ ] amélioration du composant list_form
-- [ ] ajout diagnostic sipaf
+- amélioration du composant list_form
 
 **🐛 Corrections**
 
@@ -39,16 +37,23 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
 
 Si vous mettez à jour le module :
 
+- Déplacer configuration dans dossier de GeoNature ??
 - Mettre à jour la base de données (pas besoin de le dire car fait automatiquement lors de la MAJ par GN)
   ```
   geonature db autoupgrade
   ```
-- Mettre à jour les `features` de `m_sipaf`
+- Mettre à jour le module sipaf
   ```
-  geonature modulator features m_sipaf.pf
+  geonature modulator install m_sipaf
   ```
-- Déplacer configuration dans dossier de GeoNature ??
-- Commande à lancer pour ajouter les permissions disponibles de SIPAF ??
+
+  - cette commande va effectuer les actions suivantes:
+    - créer le dossier `<GN>/backend/media/modulator`
+    - déplacer la config du sous-module dans le dossier `<GN>/backend/media/modulator/config`
+    - mettre à jour les `features` du module et notamment:
+      - ajouter des nomenclatures pour les permissions
+      - corriger de nomenclatures pour les passages à faune
+      - ajouter des permissions disponibles pour le module
 
 ## 1.0.5 (13-03-2023)
 
