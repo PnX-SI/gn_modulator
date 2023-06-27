@@ -26,6 +26,7 @@ const hiddenDrawOptions = {
   drawRectangle: false,
   customMarker: false,
   drawMarker: false,
+  drawMarker2: false,
   drawPolygon: false,
   drawPolyline: false,
   drawText: false,
