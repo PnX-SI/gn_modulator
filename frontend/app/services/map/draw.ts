@@ -71,10 +71,11 @@ export default {
         options.geometry_type == 'geometry' || options.geometry_type.includes('linestring');
     }
 
-    if(!map.initDrawMarker2) {
+    if (!map.initDrawMarker2) {
       map.initDrawMarker2 = true;
-      map.pm.Toolbar.copyDrawControl('drawMarker',{name: "drawMarker2"})
-      .drawInstance.setOptions({markerStyle: {icon : new CustomMarkerIcon()}})
+      map.pm.Toolbar.copyDrawControl('drawMarker', { name: 'drawMarker2' }).drawInstance.setOptions(
+        { markerStyle: { icon: new CustomMarkerIcon() } }
+      );
     }
 
     if (!utils.fastDeepEqual(drawOptions, map.drawOptions)) {
