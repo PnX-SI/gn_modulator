@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 (unreleased)
+## 1.1.0 (2023-06-27)
 
 Nécessite la version 2.13.0 (ou plus) de GeoNature.
 
