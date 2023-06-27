@@ -1,0 +1,29 @@
+#!nodef
+- code_passage_faune: TEST_EX_COMPLET
+  geom: POINT(0 45)
+  code_ouvrage_gestionnaire: AU4KXB
+  date_creation_ouvrage: "2020-03-01"
+  date_requalification_ouvrage: "2023-03-01"
+  diametre: 2.3
+  hauteur_dispo_faune: 3.5
+  hauteur_ouvrage: 4.6
+  issu_requalification: true
+  largeur_dispo_faune: 1.5
+  largeur_ouvrage: 2.5
+  longueur_franchissement: 10.5
+  nom_usuel_passage_faune: Passage faune de test
+  ouvrag_hydrau_tirant_air: 5
+  ouvrage_hydrau: true
+  ouvrage_type_autre: Autre type spécifique
+  pi_ou_ps: true
+  pk: 18.5
+  pr: 18
+  pr_abs: 500
+  source: Test pour exemple
+  uuid_passage_faune: 123e4567-e89b-12d3-a456-426614174000
+  id_nomenclature_ouvrage_hydrau_banq_caract: SIM
+  id_nomenclature_ouvrage_hydrau_banq_type: NAT
+  id_nomenclature_ouvrage_hydrau_position: RD
+  id_nomenclature_ouvrage_specificite: SPE
+  nomenclatures_ouvrage_materiaux: BET|MET
+  nomenclatures_ouvrage_type: BUS|CAD|AUT

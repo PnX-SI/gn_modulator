@@ -4,12 +4,14 @@ import { Subject } from '@librairies/rxjs';
 import { ModulesConfigService } from '../services/config.service';
 import { ModulesRequestService } from '../services/request.service';
 import { ModulesObjectService } from './object.service';
+import { ModulesNomenclatureService } from './nomenclature.service';
 
 @Injectable()
 export class ModulesLayoutService {
   _mConfig: ModulesConfigService;
   _mRequest: ModulesRequestService;
   _mObject: ModulesObjectService;
+  _mNomenclature: ModulesNomenclatureService;
 
   _utils: any;
   _utilsObject: any;
@@ -20,6 +22,7 @@ export class ModulesLayoutService {
   constructor(private _injector: Injector) {
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mObject = this._injector.get(ModulesObjectService);
+    this._mNomenclature = this._injector.get(ModulesNomenclatureService);
   }
 
   $reComputeLayout = new Subject();
@@ -57,6 +60,7 @@ export class ModulesLayoutService {
       today: utils.today, // renvoie la date du jour (defaut)
       departementsForRegion: utils.departementsForRegion, // liste des dept pour une region
       YML: utils.YML,
+      get_cd_nomenclature: this._mNomenclature.get_cd_nomenclature.bind(this._mNomenclature),
     };
 
     this._utilsObject = this._mObject.utilsObject();
@@ -202,7 +206,6 @@ export class ModulesLayoutService {
       }
 
       let property = utils.copy(this._mObject.property(context, layout));
-
       // patch title si parent && label_field_name
       if (property.parent) {
         property.title = property.title || property.parent.title;
@@ -212,6 +215,10 @@ export class ModulesLayoutService {
       // ?? traiter ça dans list form ???
       if (property.schema_code) {
         property.type = 'list_form';
+        if (property.relation_type == 'n-n') {
+          property.multiple = true;
+          property.return_object = true;
+        }
       }
 
       this._properties[this.propertyKey(context, layout)] = property;
@@ -252,7 +259,7 @@ export class ModulesLayoutService {
     }
 
     strFunction = `{
-    const {layout, data, globalData, utils, context, formGroup, o} = x;
+    const {layout, data, globalData, u, context, formGroup, o} = x;
     ${strFunction.substr(1)}
     `;
 
@@ -267,17 +274,18 @@ export class ModulesLayoutService {
 
     if (typeof element == 'function') {
       const globalData = data;
-      const localData = utils.getAttr(globalData, context.keys);
+      const localData = utils.getAttr(globalData, context.data_keys);
       const formGroup = context.form_group_id && this._formControls[context.form_group_id];
       const val = element({
         layout,
         data: localData,
         globalData,
-        utils: this._utils,
+        u: this._utils,
         o: this._utilsObject,
         context,
         formGroup,
       });
+
       return val !== undefined ? val : null; // on veut eviter le undefined
     }
 

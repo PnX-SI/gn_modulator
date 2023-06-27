@@ -1,6 +1,6 @@
 <ng-container *ngIf="!!formControl">
   <mat-form-field
-    class="form-field list-form "
+    class="form-field list-form"
     [ngClass]="computedLayout.class"
     [appearance]="context.appearance || 'outline'"
   >
@@ -11,9 +11,9 @@
       [placeholder]="listFormOptions.placeholder"
       [required]="listFormOptions.required"
       [compareWith]="compareFn"
-      [disabled]="computedLayout.disabled"
       (selectionChange)="inputChange($event)"
     >
+      <!-- [disabled]="computedLayout.disabled" -->
       <mat-option>
         <ngx-mat-select-search
           placeholderLabel="Filtre"
@@ -27,13 +27,10 @@
       <ng-template ngFor let-item [ngForOf]="items">
         <mat-option
           [ngClass]="{ 'mat-option-hidden': item.hidden }"
-          [value]="
-            listFormOptions.return_object
-              ? item
-              : item[listFormOptions.value_field_name]
-          "
+          [value]="listFormOptions.return_object ? item : item[listFormOptions.value_field_name]"
           [title]="
             (listFormOptions.title_field_name &&
+              item[listFormOptions.title_field_name] != item[listFormOptions.label_field_name] &&
               item[listFormOptions.title_field_name]) ||
             ''
           "
@@ -54,7 +51,9 @@
     <div matSuffix>
       <div>
         <button
+          [disabled]="computedLayout.disabled"
           mat-icon-button
+          class="erase_button"
           matTooltip="Effacer la selection"
           (click)="clearSelection($event)"
         >

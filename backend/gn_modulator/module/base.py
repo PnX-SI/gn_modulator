@@ -1,6 +1,6 @@
 from pathlib import Path
 from sqlalchemy.orm.exc import NoResultFound
-from gn_modulator.utils.env import assets_static_dir, migrations_directory
+from gn_modulator.utils.env import assets_dir, migrations_directory
 from gn_modulator.utils.files import symlink
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.cache import get_global_cache
@@ -10,12 +10,19 @@ from gn_modulator import MODULE_CODE
 
 class ModuleBase:
     @classmethod
+    def add_actions(cls, module_code, object_code, actions):
+        object_config = cls.object_config(module_code, object_code)
+        for action in actions:
+            if action not in object_config["cruved"]:
+                object_config["cruved"] = (object_config["cruved"] or "") + action
+
+    @classmethod
     def is_python_module(cls, module_code):
         """
         Test si on a un fichier setup.py pour ce sous_module
         """
 
-        setup_file_path = cls.module_path(module_code) / "setup.py"
+        setup_file_path = cls.module_path(module_code).parent / "setup.py"
         return setup_file_path.exists()
 
     @classmethod
@@ -94,6 +101,9 @@ class ModuleBase:
     @classmethod
     def delete_db_module(cls, module_code):
         schema_module = SchemaMethods("commons.module")
+        id_module = schema_module.get_row(module_code, "module_code").one().id_module
+        SchemaMethods("perm.perm_dispo").delete_row(id_module, "id_module", multiple=True)
+
         schema_module.delete_row(module_code, field_name="module_code", params={})
 
     @classmethod
@@ -129,43 +139,11 @@ class ModuleBase:
 
         print("- Ajout de données depuis les features")
 
+        infos = {}
         for data_code in data_codes:
-            infos = {}
             infos[data_code] = SchemaMethods.process_features(data_code)
 
         SchemaMethods.log(SchemaMethods.txt_data_infos(infos))
-
-    @classmethod
-    def process_module_assets(cls, module_code):
-        """
-        copie le dossier assets d'un module dans le repertoire static de geonature
-        dans le dossier 'static/external_assets/modules/{module_code.lower()}'
-        """
-
-        if module_code == MODULE_CODE:
-            return []
-
-        module_assets_dir = Path(cls.module_dir_path(module_code)) / "assets"
-        assets_static_dir.mkdir(exist_ok=True, parents=True)
-        module_img_path = Path(module_assets_dir / "module.jpg")
-
-        # on teste si le fichier assets/module.jpg est bien présent
-        if not module_img_path.exists():
-            return [
-                {
-                    "file_path": module_img_path.resolve(),
-                    "msg": f"Le fichier de l'image du module {module_code} n'existe pas",
-                }
-            ]
-
-        # s'il y a bien une image du module,
-        #   - on crée le lien des assets vers le dossize static de geonature
-        symlink(
-            module_assets_dir,
-            assets_static_dir / module_code.lower(),
-        )
-
-        return []
 
     @classmethod
     def test_module_dependencies(cls, module_code):

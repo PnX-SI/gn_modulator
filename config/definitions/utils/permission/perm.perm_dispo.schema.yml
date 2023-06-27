@@ -1,0 +1,15 @@
+type: schema
+code: perm.perm_dispo
+title: Schema perm.perm_dispo
+description: Définition du schema des permissions disponibles
+
+meta:
+  autoschema: true
+  model: geonature.core.gn_permissions.models.PermissionAvailable
+  label: permission
+  label_field_name: label
+  genre: F
+  unique:
+    - id_module
+    - id_action
+    - id_object

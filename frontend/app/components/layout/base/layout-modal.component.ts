@@ -29,9 +29,6 @@ export class ModulesLayoutModalComponent extends ModulesLayoutComponent implemen
     this.bPostComputeLayout = true;
   }
 
-  // postInit(): void {
-  // }
-
   // processLayout(): void {
   //   this.initModal();
   // }

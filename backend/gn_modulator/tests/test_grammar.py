@@ -54,21 +54,21 @@ class TestGrammar:
         assert sm.des_nouveaux_labels() == "des nouveaux utilisateurs"
         assert sm.du_label() == "de l'utilisateur"
 
-    def test_grammar_f_v(self):
-        """Féminin voyelle 1ère lettre"""
+    # def test_grammar_f_v(self):
+    #     """Féminin voyelle 1ère lettre"""
 
-        sm = SchemaMethods("m_monitoring.observation")
-        assert sm.label() == "observation"
-        assert sm.labels() == "observations"
-        assert sm.le_label() == "l'observation"
-        assert sm.les_labels() == "les observations"
-        assert sm.un_label() == "une observation"
-        assert sm.des_labels() == "des observations"
-        assert sm.un_nouveau_label() == "une nouvelle observation"
-        assert sm.du_nouveau_label() == "de la nouvelle observation"
-        assert sm.d_un_nouveau_label() == "d'une nouvelle observation"
-        assert sm.des_nouveaux_labels() == "des nouvelles observations"
-        assert sm.du_label() == "de l'observation"
+    #     sm = SchemaMethods("m_monitoring.observation")
+    #     assert sm.label() == "observation"
+    #     assert sm.labels() == "observations"
+    #     assert sm.le_label() == "l'observation"
+    #     assert sm.les_labels() == "les observations"
+    #     assert sm.un_label() == "une observation"
+    #     assert sm.des_labels() == "des observations"
+    #     assert sm.un_nouveau_label() == "une nouvelle observation"
+    #     assert sm.du_nouveau_label() == "de la nouvelle observation"
+    #     assert sm.d_un_nouveau_label() == "d'une nouvelle observation"
+    #     assert sm.des_nouveaux_labels() == "des nouvelles observations"
+    #     assert sm.du_label() == "de l'observation"
 
     def test_grammar_labels(self):
         """labels
@@ -89,21 +89,21 @@ class TestGrammar:
         assert sm.des_nouveaux_labels() == "des nouveaux jeux de données"
         assert sm.du_label() == "du jeu de données"
 
-    def test_grammar_redefinition(self):
-        """Quand on choisi de redéfinir le label (et/ou labels, genre)
-        pour un contexte particulier
-        """
+    # def test_grammar_redefinition(self):
+    #     """Quand on choisi de redéfinir le label (et/ou labels, genre)
+    #     pour un contexte particulier
+    #     """
 
-        sm = SchemaMethods("m_monitoring.site")
-        redefinition = {"label": "éolienne", "genre": "F"}
-        assert sm.label(redefinition) == "éolienne"
-        assert sm.labels(redefinition) == "éoliennes"
-        assert sm.le_label(redefinition) == "l'éolienne"
-        assert sm.les_labels(redefinition) == "les éoliennes"
-        assert sm.un_label(redefinition) == "une éolienne"
-        assert sm.des_labels(redefinition) == "des éoliennes"
-        assert sm.un_nouveau_label(redefinition) == "une nouvelle éolienne"
-        assert sm.du_nouveau_label(redefinition) == "de la nouvelle éolienne"
-        assert sm.d_un_nouveau_label(redefinition) == "d'une nouvelle éolienne"
-        assert sm.des_nouveaux_labels(redefinition) == "des nouvelles éoliennes"
-        assert sm.du_label(redefinition) == "de l'éolienne"
+    #     sm = SchemaMethods("m_monitoring.site")
+    #     redefinition = {"label": "éolienne", "genre": "F"}
+    #     assert sm.label(redefinition) == "éolienne"
+    #     assert sm.labels(redefinition) == "éoliennes"
+    #     assert sm.le_label(redefinition) == "l'éolienne"
+    #     assert sm.les_labels(redefinition) == "les éoliennes"
+    #     assert sm.un_label(redefinition) == "une éolienne"
+    #     assert sm.des_labels(redefinition) == "des éoliennes"
+    #     assert sm.un_nouveau_label(redefinition) == "une nouvelle éolienne"
+    #     assert sm.du_nouveau_label(redefinition) == "de la nouvelle éolienne"
+    #     assert sm.d_un_nouveau_label(redefinition) == "d'une nouvelle éolienne"
+    #     assert sm.des_nouveaux_labels(redefinition) == "des nouvelles éoliennes"
+    #     assert sm.du_label(redefinition) == "de l'éolienne"

@@ -14,7 +14,7 @@ def test_schema_repository(schema_code=None, data=None, data_update=None):
     pk_field_name = sm.pk_field_name()
     label_field_name = sm.label_field_name()
 
-    unique = sm.attr("meta.unique")
+    unique = sm.unique()
 
     data_search_row = [data[unique_key] for unique_key in unique]
 

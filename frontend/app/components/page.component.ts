@@ -4,6 +4,7 @@ import { ModulesDataService } from '../services/data.service';
 import { ModulesLayoutService } from '../services/layout.service';
 import { ModulesContextService } from '../services/context.service';
 import { ModulesActionService } from '../services/action.service';
+import { ModulesNomenclatureService } from '../services/nomenclature.service';
 import { ModuleService } from '@geonature/services/module.service';
 import { ActivatedRoute } from '@angular/router';
 import { mergeMap } from '@librairies/rxjs/operators';
@@ -23,7 +24,7 @@ export class PageComponent implements OnInit {
   _mAction: ModulesActionService;
   _mContext: ModulesContextService;
   _gnModuleService: ModuleService;
-
+  _mNomenclature: ModulesNomenclatureService;
   debug = false; // pour activer le mode debug (depuis les queryParams)
 
   routeParams; // paramètre d'url
@@ -38,7 +39,7 @@ export class PageComponent implements OnInit {
   data; // data pour le layout
 
   pageInitialized: boolean; // test si la page est initialisée (pour affichage)
-
+  pageAuthorized: boolean; // test si on a au moins les accès en lecture sur le module
   moduleCode;
   pageCode;
   params;
@@ -51,6 +52,7 @@ export class PageComponent implements OnInit {
     this._mLayout = this._injector.get(ModulesLayoutService);
     this._mContext = this._injector.get(ModulesContextService);
     this._mAction = this._injector.get(ModulesActionService);
+    this._mNomenclature = this._injector.get(ModulesNomenclatureService);
     this._gnModuleService = this._injector.get(ModuleService);
   }
 
@@ -69,6 +71,11 @@ export class PageComponent implements OnInit {
     this._sub = this._mConfig
       .init()
       .pipe(
+        mergeMap(() => {
+          // processRigths
+
+          return this._mNomenclature.init();
+        }),
         mergeMap(() => {
           // processRigths
 
@@ -98,9 +105,11 @@ export class PageComponent implements OnInit {
           };
 
           if (this.moduleCode) {
-            this._gnModuleService.currentModule$.next(
-              this._gnModuleService.getModule(this.moduleCode)
-            );
+            setTimeout(() => {
+              this._gnModuleService.currentModule$.next(
+                this._gnModuleService.getModule(this.moduleCode)
+              );
+            });
           }
 
           this._mContext.initContext({
@@ -116,7 +125,11 @@ export class PageComponent implements OnInit {
         })
       )
       .subscribe(() => {
+        const cruved = this._gnModuleService.modules.find(
+          (m) => m.module_code == this.moduleCode
+        ).cruved;
         this.pageInitialized = true;
+        this.pageAuthorized = !!cruved.R;
       });
   }
 

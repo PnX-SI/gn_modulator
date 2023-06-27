@@ -39,8 +39,8 @@ def check_errors(definition=None, error_code=None, context=None):
 
         # on teste si le code de l'erreur est celui attendu
         assert (
-            get_errors()[0]["code"] == error_code
-        ), f"({context}, {error_code}) : le code d'erreur attendu n' pas {get_errors()[0]['code']}"
+            get_errors()[0]["error_code"] == error_code
+        ), f"({context}, {error_code}) : le code d'erreur attendu n' pas {get_errors()[0]['error_code']}"
 
         # on teste si la definition a bien été supprimé
         if (definition is not None) and (error_code not in ["ERR_LOAD_EXISTING"]):

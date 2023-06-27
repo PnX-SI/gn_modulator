@@ -208,9 +208,11 @@ export class ModulesFormService {
       context,
     });
     control.setValidators(this.formValidators(computedLayout, context));
-    // if (computedLayout.disabled) {
-    // control.disable();
-    // }
+    if (computedLayout.disabled) {
+      control.disable();
+    } else {
+      control.enable();
+    }
 
     // control pour object
     if (layout.type == 'dict') {
@@ -223,13 +225,14 @@ export class ModulesFormService {
     // control pour array
     if (layout.type == 'array') {
       let controlData = utils.getAttr(data || {}, [...context.data_keys, computedLayout.key]) || [];
-      if (controlData.length == control.value.length) {
-        return;
+      if (controlData.length != control.value.length) {
+        control.clear();
+        for (let [index, elem] of Object.entries(controlData)) {
+          let elemControl = this.createFormGroup(layout.items, context);
+          control.push(elemControl);
+        }
       }
-      control.clear();
       for (let [index, elem] of Object.entries(controlData)) {
-        let elemControl = this.createFormGroup(layout.items, context);
-        control.push(elemControl);
         const arrayItemContext = {
           ...context,
           data_keys: utils.addKey(utils.copy(context.data_keys), `${layout.key}.${index}`),
@@ -242,7 +245,7 @@ export class ModulesFormService {
     if (computedLayout.default && [null, undefined].includes(control.value)) {
       control.setValue(computedLayout.default);
       if (data) {
-        data[computedLayout.key] = computedLayout.default;
+        utils.setAttr(data, [...context.data_keys, computedLayout.key], computedLayout.default);
       }
     }
 
@@ -280,8 +283,12 @@ export class ModulesFormService {
 
   /** pour mettre à jour les données sans casser les références */
   updateData(data, formValue) {
-    if (utils.fastDeepEqual(data, formValue)) {
+    if (this.isEqual(formValue, data)) {
       return data;
+    }
+
+    if (utils.isFile(formValue)) {
+      return formValue;
     }
 
     if (utils.isObject(formValue)) {
@@ -318,10 +325,15 @@ export class ModulesFormService {
   }
 
   isEqual(formValue, data) {
-    return utils.isObject(formValue)
+    return utils.isFile(formValue)
+      ? utils.isFile(data)
+        ? ['name', 'lastModified', 'size', 'type'].every((k) => data[k] == formValue[k])
+        : false
+      : utils.isObject(formValue)
       ? !utils.isObject(data)
         ? false
-        : Object.entries(formValue)
+        : // Object.keys(formValue).length == Object.keys(data).length &&
+          Object.entries(formValue)
             .filter(([k, v]) => k != 'pendingRequest')
             .every(([k, v]) => this.isEqual(v, data[k]))
       : Array.isArray(formValue)

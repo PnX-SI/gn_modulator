@@ -1,0 +1,15 @@
+type: data
+code: m_sipaf.permissions
+title: Data permissions m_sipaf
+description: Permissions disponibles pour le module m_sipaf
+items:
+  - schema_code: perm.perm_dispo
+    defaults:
+      id_module: m_sipaf
+    keys: [id_object, id_action, scope_filter, label]
+    items:
+      - [ALL, C, true, "Créer et importer des passages à faune"]
+      - [ALL, R, true, "Voir les passages à faune"]
+      - [ALL, U, true, "Modifier les passages à faune"]
+      - [ALL, D, true, "Supprimer des passages à faune"]
+      - [ALL, E, true, "Exporter les passages à faune"]

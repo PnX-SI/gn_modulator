@@ -51,6 +51,10 @@ export class ModulesLayoutObjectGeoJSONComponent
       console.error(`le layer (${this.pkFieldName()}==${value}) n'est pas présent`);
       return;
     }
+    if (layer._latlng) {
+      this.setObject({ value_xy: { x: layer._latlng.lng, y: layer._latlng.lat } });
+    }
+
     layer.bringToFront();
     layer.openPopup();
   }
@@ -72,10 +76,11 @@ export class ModulesLayoutObjectGeoJSONComponent
       const currentZoom = this._mapService.getZoom(this.context.map_id);
       const currentMapBounds = this._mapService.getMapBounds(this.context.map_id);
 
-      const layerStyle = this.computedLayout.style || this.context.map?.style;
+      const layerStyle =
+        this.computedLayout.style || this.objectConfig()?.map?.style || this.context.map?.style;
       const paneName = this.computedLayout.pane || this.context.map?.pane || `P1`;
       const bZoom = this.computedLayout.zoom || this.context.map?.zoom;
-
+      const bTooltipPermanent = this.computedLayout.tooltip_permanent;
       const bring_to_front = this.computedLayout.bring_to_front || this.context.map?.bring_to_front;
       this.mapData = {
         geojson,
@@ -98,7 +103,7 @@ export class ModulesLayoutObjectGeoJSONComponent
             });
 
             /** tooltip */
-            const label = feature.properties[label_field_name];
+            const label = utils.getAttr(feature.properties, label_field_name);
             if (label) {
               const action = this._mapService.actionTooltipDisplayZoomThreshold(
                 this.context.map_id,
@@ -109,19 +114,21 @@ export class ModulesLayoutObjectGeoJSONComponent
                 currentMapBounds
               );
               layer
-                .bindTooltip(label, {
+                .bindTooltip(label.toString(), {
                   direction: 'top',
-                  permanent: action == 'display',
+                  permanent: action == 'display' && bTooltipPermanent,
                   className: 'anim-tooltip',
                 })
                 .openTooltip();
 
               /** tooltip - zoom et emprise */
-              layer.onZoomMoveEnd = this._mapService.layerZoomMoveEndListener(
-                this.context.map_id,
-                layer,
-                this.tooltipDisplayZoomTreshold
-              );
+              if (bTooltipPermanent) {
+                layer.onZoomMoveEnd = this._mapService.layerZoomMoveEndListener(
+                  this.context.map_id,
+                  layer,
+                  this.tooltipDisplayZoomTreshold
+                );
+              }
             }
             layer.bindPopup(this.popupHTML(feature.properties)).on('popupopen', (event) => {
               this.onPopupOpen(layer);
@@ -130,7 +137,7 @@ export class ModulesLayoutObjectGeoJSONComponent
         },
       };
       const d = {};
-      d[this.computedLayout.key] = this.mapData;
+      d[this.context.object_code] = this.mapData;
       this._mapService.processData(this.context.map_id, d, {
         // key: this.computedLayout.key,
         zoom: this.computedLayout.zoom,
@@ -140,13 +147,14 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   popupHTML(properties) {
     const fields = this.popupFields();
-    const label = `<b>${this.utils.capitalize(this.objectConfig().display.label)}</b>: ${
-      properties[this.labelFieldName()]
-    }`;
+
+    const label = `<b>${this.utils.capitalize(
+      this.objectConfig().display.label
+    )}</b>: ${utils.getAttr(properties, this.labelFieldName())}`;
     var propertiesHTML = '';
     propertiesHTML += '<ul>\n';
     propertiesHTML += fields
-      .filter((fieldKey) => fieldKey != 'ownership')
+      .filter((fieldKey) => fieldKey != 'scope')
       .map((fieldKey) => {
         // gerer les '.'
         const fieldKeyLabel = fieldKey.split('.')[0];
@@ -157,17 +165,14 @@ export class ModulesLayoutObjectGeoJSONComponent
       .join('\n');
     propertiesHTML += '</ul>\n';
 
-    const htmlDetails = this._mObject.checkAction(this.context, 'R', properties.ownership)
-      .actionAllowed
-      ? '<button action="details">Details</button>'
+    const htmlDetails = this._mObject.checkAction(this.context, 'R', properties.scope).actionAllowed
+      ? '<button action="details">Détails</button>'
       : '';
-    const htmlEdit = this._mObject.checkAction(this.context, 'U', properties.ownership)
-      .actionAllowed
+    const htmlEdit = this._mObject.checkAction(this.context, 'U', properties.scope).actionAllowed
       ? '<button action="edit">Éditer</button>'
       : '';
 
-    const htmlDelete = this._mObject.checkAction(this.context, 'D', properties.ownership)
-      .actionAllowed
+    const htmlDelete = this._mObject.checkAction(this.context, 'D', properties.scope).actionAllowed
       ? '<button action="delete">Supprimer</button>'
       : '';
 
@@ -190,7 +195,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
     const fields = this.popupFields(); // ?? computedItems
-    fields.push('ownership');
+    fields.push('scope');
     this._mData
       .getOne(this.moduleCode(), this.objectCode(), value, { fields })
       .subscribe((data) => {

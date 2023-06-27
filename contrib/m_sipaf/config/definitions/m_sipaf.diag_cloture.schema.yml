@@ -1,0 +1,29 @@
+type: schema
+code: m_sipaf.diag_cloture
+title: schema diagnostic passage faune (clotures)
+description: schema pour les diagnostics des passages à faune (clotures)
+
+meta:
+  autoschema: true
+  model: m_sipaf.models.DiagnosticCloture
+  module_code: m_sipaf
+  genre: M
+  label: Diagnostic de clôture
+  labels: Diagnostics de clôture
+  label_field_name: id_diagnostic
+  unique:
+    - id_diagnostic
+    - id_nomenclature_clotures_guidage_type
+    - id_nomenclature_clotures_guidage_etat
+  unique_in_db: true
+properties:
+  clotures_guidage_type_autre:
+    title: Autre type de clôture
+  clotures_guidage_etat_autre:
+    title: Autre état de clôture
+  id_nomenclature_clotures_guidage_type:
+    title: Nature des clôtures
+    description: Nature des clôtures pouvant guider les animaux vers le passage
+  id_nomenclature_clotures_guidage_etat:
+    title: État des clôtures
+    description: État des clôtures pouvant guider les animaux vers le passage

@@ -2,6 +2,8 @@ import { Injectable, Injector } from '@angular/core';
 import { ModulesDataService } from './data.service';
 import { ModulesConfigService } from './config.service';
 import { ModulesSchemaService } from './schema.service';
+import { Subject } from '@librairies/rxjs';
+
 import utils from '../utils';
 @Injectable()
 export class ModulesObjectService {
@@ -10,10 +12,16 @@ export class ModulesObjectService {
   _mSchema: ModulesSchemaService;
   _cacheObjectConfig = {};
 
+  $reProcessObject = new Subject();
+
   constructor(private _injector: Injector) {
     this._mData = this._injector.get(ModulesDataService);
     this._mConfig = this._injector.get(ModulesConfigService);
     this._mSchema = this._injector.get(ModulesSchemaService);
+  }
+
+  reProcessObject(moduleCode, objectCode) {
+    this.$reProcessObject.next({ moduleCode, objectCode });
   }
 
   /** renvoie la configuration d'un object en fonction de
@@ -42,8 +50,9 @@ export class ModulesObjectService {
     }
 
     const objectModuleConfig = this._mConfig.moduleConfig(moduleCode).objects[objectCode];
+
     if (!objectModuleConfig) {
-      // console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
+      console.error(`L'object ${objectCode} du module ${moduleCode} n'est pas présent`);
       return;
     }
 
@@ -76,6 +85,7 @@ export class ModulesObjectService {
     }
 
     this._cacheObjectConfig[cacheKey] = utils.copy(objectConfig);
+
     return objectConfig;
   }
 
@@ -165,6 +175,10 @@ export class ModulesObjectService {
     return this.objectConfigContext(context)?.display.du_label;
   }
 
+  desLabels({ context }) {
+    return this.objectConfigContext(context)?.display.des_labels;
+  }
+
   display({ context }) {
     return this.objectConfigContext(context).display;
   }
@@ -215,9 +229,10 @@ export class ModulesObjectService {
     const nbTotal = objectConfig.nb_total;
     const nbFiltered = objectConfig.nb_filtered;
     const labels = this.labels({ context });
-    const objectTabLabel = nbTotal
-      ? `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`
-      : `${utils.capitalize(labels)} (0)`;
+    const objectTabLabel =
+      nbFiltered == nbTotal
+        ? `${utils.capitalize(labels)} (${nbTotal != null ? nbTotal : '...'})`
+        : `${utils.capitalize(labels)} (${nbFiltered}/${nbTotal})`;
     return objectTabLabel;
   }
 
@@ -225,7 +240,7 @@ export class ModulesObjectService {
     if (!(context.module_code, context.object_code)) {
       return false;
     }
-    const checkAction = this.checkAction(context, action, data?.ownership);
+    const checkAction = this.checkAction(context, action, data?.scope);
     return checkAction.actionAllowed;
   }
 
@@ -269,7 +284,7 @@ export class ModulesObjectService {
    *    - tableaux
    *    - boutton (detail / edit / etc...)
    */
-  checkAction(context, action, ownership = null) {
+  checkAction(context, action, scope = null) {
     // 1) cruved defini pour cet objet ?
 
     const objectConfig = this.objectConfigContext(context);
@@ -277,6 +292,7 @@ export class ModulesObjectService {
     const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
     const testObjectCruved = (objectConfig.cruved || '').includes(action);
+
     if ('CRU'.includes(action)) {
       const moduleConfig = this._mConfig.moduleConfig(context.module_code);
 
@@ -304,7 +320,10 @@ export class ModulesObjectService {
     // 2) l'utilisateur à t'il le droit
 
     // - les droit de l'utilisateur pour ce module et pour un action (CRUVED)
-    const moduleCruvedAction = moduleConfig.cruved[action];
+
+    // patch pour import on teste les droits en 'C' (creation)
+    const cruvedAction = action == 'I' ? 'C' : action;
+    const moduleCruvedAction = moduleConfig.cruved[cruvedAction];
 
     // - on compare ce droit avec l'appartenance de la données
     // la possibilité d'action doit être supérieure à l'appartenance
@@ -312,36 +331,37 @@ export class ModulesObjectService {
     //    si les droit du module sont de 2 pour l'édition
     //    et que l'appartenance de la données est 3 (données autres (ni l'utilisateur ni son organisme))
     //    alors le test echoue
-    // - si ownership est à null => on teste seulement si l'action est bien définie sur cet object
+    // - si scope est à null => on teste seulement si l'action est bien définie sur cet object
     //   (ce qui a été testé précédemment) donc à true
     //   par exemple pour les actions d'export
 
     let testUserCruved;
 
     // si les droit du module sont nul pour cet action => FALSE
-    if (moduleCruvedAction == 0) {
+    if (!moduleCruvedAction) {
       testUserCruved = false;
       // si l'action est CREATE, EXPORT, IMPORT (ne concerne pas une ligne précise) => TRUE
     } else if ('CEI'.includes(action)) {
       testUserCruved = true;
       // pour EDIT ET READ
       // si on a pas d'info d'appartenance
-      // ownership null => False (par sécurité)
-    } else if (ownership == null) {
+      // scope null => False (par sécurité)
+    } else if (scope == null) {
       testUserCruved = false;
-      // on compare ownership, l'appartenance qui doit être supérieur aet les droits du module
+      // on compare scope, l'appartenance qui doit être supérieur aet les droits du module
     } else {
-      testUserCruved = moduleCruvedAction >= ownership;
+      testUserCruved = moduleCruvedAction >= scope;
     }
 
     if (!testUserCruved) {
       const msgDroitsInsuffisants = {
-        C: `Droits inssuffisants pour créer ${objectConfig.display.un_nouveau_label}`,
-        R: `Droits inssuffisants pour voir ${objectConfig.display.le_label}`,
-        U: `Droits inssuffisants pour éditer ${objectConfig.display.le_label}`,
-        V: `Droits inssuffisants pour valider ${objectConfig.display.le_label}`,
-        E: `Droits inssuffisants pour exporter ${objectConfig.display.des_label}`,
-        D: `Droits inssuffisants pour supprimer ${objectConfig.display.le_label}`,
+        C: `Droits insuffisants pour créer ${objectConfig.display.un_nouveau_label}`,
+        R: `Droits insuffisants pour voir ${objectConfig.display.le_label}`,
+        U: `Droits insuffisants pour éditer ${objectConfig.display.le_label}`,
+        V: `Droits insuffisants pour valider ${objectConfig.display.le_label}`,
+        E: `Droits insuffisants pour exporter ${objectConfig.display.des_label}`,
+        D: `Droits insuffisants pour supprimer ${objectConfig.display.le_label}`,
+        I: `Droits insuffisants pour importer ${objectConfig.display.des_label}`,
       };
       return {
         actionAllowed: false,
@@ -358,6 +378,7 @@ export class ModulesObjectService {
       V: `Valider ${objectConfig.display.le_label}`,
       E: `Exporter ${objectConfig.display.des_label}`,
       D: `Supprimer ${objectConfig.display.le_label}`,
+      I: `Importer ${objectConfig.display.des_label}`,
     };
 
     return {
@@ -375,6 +396,7 @@ export class ModulesObjectService {
       schema_code: this.schemaCode.bind(this),
       label: this.label.bind(this),
       du_label: this.duLabel.bind(this),
+      des_labels: this.desLabels.bind(this),
       data_label: this.dataLabel.bind(this),
       labels: this.labels.bind(this),
       tab_label: this.tabLabel.bind(this),

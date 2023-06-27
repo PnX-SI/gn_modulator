@@ -3,11 +3,14 @@ import pkg_resources
 import importlib
 import sys
 import site
+from pathlib import Path
 
 from flask_migrate import upgrade as db_upgrade, downgrade as db_downgrade
-from geonature.utils.module import get_dist_from_code
+from geonature.utils.module import get_dist_from_code, iter_modules_dist
 from geonature.utils.env import db
-from gn_modulator import SchemaMethods
+from gn_modulator.utils.files import symlink
+from gn_modulator.utils.env import config_dir
+from gn_modulator import SchemaMethods, DefinitionMethods
 from . import errors
 
 
@@ -57,7 +60,8 @@ class ModuleCommands:
             print(
                 f"Il y a des modules installés qui dependent du module à supprimer {module_code}"
             )
-            print("- " + ", ".join(module_deps_installed))
+
+            ("- " + ", ".join(module_deps_installed))
             print(f"Afin de pouvoir supprimer le module {module_code} vous pouvez")
             print("  - soit supprimer au préalable des modules ci dessus")
             print(
@@ -74,7 +78,7 @@ class ModuleCommands:
 
             # TODO comment savoir s'il y a une migration
             module_dist = get_dist_from_code(module_code)
-            if "migrations" in module_dist.get_entry_map("gn_module"):
+            if module_dist.entry_points.select(name="migrations"):
                 db_downgrade(revision=f"{module_code.lower()}@base")
 
         # suppression du module en base
@@ -82,6 +86,10 @@ class ModuleCommands:
 
         cls.delete_db_module(module_code)
 
+        # suppression de la config
+
+        if (config_dir() / module_code).is_dir():
+            (config_dir() / module_code).unlink()
         # unregister
         module_config["registred"] = False
 
@@ -91,8 +99,42 @@ class ModuleCommands:
         return True
 
     @classmethod
-    def install_module(cls, module_code, force=False):
+    def install_module(cls, module_code=None, module_path=None, force=False):
+        module_path = module_path and Path(module_path)
+        if module_path:
+            subprocess.run(f"pip install -e '{module_path}'", shell=True, check=True)
+
+            importlib.reload(site)
+            for module_dist in iter_modules_dist():
+                module = module_dist.entry_points["code"].module
+                if module not in sys.modules:
+                    path = Path(importlib.import_module(module).__file__)
+                else:
+                    path = Path(sys.modules[module].__file__)
+                if module_path.resolve() in path.parents:
+                    module_code = module_dist.entry_points["code"].load()
+                    break
+
+            module_dist = get_dist_from_code(module_code)
+            if module_dist.entry_points.select(name="migrations"):
+                db.session.commit()  # pour eviter les locks ???
+                db_upgrade(revision=f"{module_code.lower()}@head")
+
+            symlink((module_path / "config").resolve(), (config_dir() / module_code))
+
+            DefinitionMethods.load_definitions()
+            SchemaMethods.init_schemas()
+            cls.init_module_config(module_code)
+            # ModuleMethods.init_modules()
+
         print("Installation du module {}".format(module_code))
+
+        # si module_path
+
+        # install module
+        # symlink config
+
+        # reload definitions
 
         # test si les dépendances sont installées
         module_config = cls.module_config(module_code)
@@ -111,30 +153,12 @@ class ModuleCommands:
                     return False
                 cls.install_module(module_dep_code, force)
 
-        # si on a un setup.py on installe le module python
-        if cls.is_python_module(module_code):
-            subprocess.run(
-                f"pip install -e '{cls.module_path(module_code)}'", shell=True, check=True
-            )
-            importlib.reload(site)
-            for entry in sys.path:
-                pkg_resources.working_set.add_entry(entry)
-
-            # load python package
-            module_dist = get_dist_from_code(module_code)
-            if "migrations" in module_dist.get_entry_map("gn_module"):
-                db.session.commit()  # pour eviter les locks ???
-                db_upgrade(revision=f"{module_code.lower()}@head")
-
         # pour les update du module ? # test si module existe
         cls.register_db_module(module_code)
 
         # process module data (nomenclature, groups ?, datasets, etc..)
         SchemaMethods.reinit_marshmallow_schemas()
         cls.process_module_features(module_code)
-
-        # assets
-        cls.process_module_assets(module_code)
 
         # register
         module_config["registred"] = True

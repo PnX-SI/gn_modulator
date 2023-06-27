@@ -69,7 +69,7 @@ export class TestLayoutComponent implements OnInit {
                layout_definition: ''
              });
             formGroup.patchValue({
-               layout_definition: x.utils.YML.dump(event.layout_from_list)
+               layout_definition: x.u.YML.dump(event.layout_from_list)
              });
            }
           }
@@ -79,19 +79,6 @@ export class TestLayoutComponent implements OnInit {
           direction: 'row',
           flex: '0',
           items: [
-            {
-              flex: '0',
-              type: 'button',
-              icon: 'refresh',
-              description: 'Recharger le layout',
-              click: `__f__(event) => {
-              formGroup.patchValue({
-                oups: !formGroup.value.oups,
-                layout_definition: '',
-                layout_from_list: { code: data.layout_from_list.code },
-              });
-              }`,
-            },
             {
               flex: '0',
               type: 'boolean',
@@ -116,7 +103,7 @@ export class TestLayoutComponent implements OnInit {
           title_field_name: 'description',
           return_object: true,
           oup: '__f__data.oups',
-          // reload_on_search: true,
+          reload_on_search: true,
           default_item: this.layoutCode && { code: this.layoutCode },
         },
         {

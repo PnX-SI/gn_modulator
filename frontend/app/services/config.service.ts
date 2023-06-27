@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { AppConfig } from '@geonature_config/app.config';
-import { ModuleConfig } from '../module.config';
-import { ModuleService } from '@geonature/services/module.service';
+import { ModuleService as GnModuleService } from '@geonature/services/module.service';
 
 import { of, forkJoin } from '@librairies/rxjs';
 import { mergeMap } from '@librairies/rxjs/operators';
 import { ModulesRequestService } from './request.service';
+import { ConfigService as GNConfigService } from '@geonature/services/config.service';
 import utils from '../utils';
 @Injectable()
 export class ModulesConfigService {
@@ -16,12 +15,16 @@ export class ModulesConfigService {
     layouts: {},
   };
 
-  constructor(private _moduleService: ModuleService, private _mRequest: ModulesRequestService) {}
+  constructor(
+    private _gnModuleService: GnModuleService,
+    private _mRequest: ModulesRequestService,
+    private AppConfig: GNConfigService
+  ) {}
 
   /** Configuration */
 
-  MODULE_CODE = ModuleConfig.MODULE_CODE;
-  MODULE_URL = ModuleConfig.MODULE_URL;
+  MODULE_CODE = 'MODULATOR';
+  MODULE_URL = 'modulator';
 
   init() {
     return forkJoin({
@@ -54,11 +57,11 @@ export class ModulesConfigService {
 
   setModuleCruved(modules) {
     for (const [moduleCode, moduleConfig] of Object.entries(modules)) {
-      const moduleGN = this._moduleService.getModule(moduleCode);
+      const moduleGN = this._gnModuleService.getModule(moduleCode);
       if (!moduleGN) {
         continue;
       }
-      (moduleConfig as any)['cruved'] = this._moduleService.getModule(moduleCode)['cruved'];
+      (moduleConfig as any)['cruved'] = this._gnModuleService.getModule(moduleCode)['cruved'];
     }
   }
 
@@ -117,31 +120,37 @@ export class ModulesConfigService {
         );
   }
 
-  /** Backend Url et static dir ??*/
   backendUrl() {
-    return `${AppConfig.API_ENDPOINT}`;
+    return `${this.AppConfig.API_ENDPOINT}`;
   }
 
   urlApplication() {
-    return `${AppConfig.URL_APPLICATION}`;
+    return `${this.AppConfig.URL_APPLICATION}`;
   }
 
   appConfig() {
-    return AppConfig;
+    return this.AppConfig;
+  }
+
+  moduleURL() {
+    return this.AppConfig[this.MODULE_CODE].MODULE_URL;
   }
 
   /** Backend Module Url */
   backendModuleUrl() {
-    return `${AppConfig.API_ENDPOINT}${ModuleConfig.MODULE_URL}`;
+    return `${this.AppConfig.API_ENDPOINT}${this.moduleURL()}`;
   }
 
-  assetsDirectory() {
-    return this.backendUrl() + '/static/external_assets/modules';
+  moduleImg(moduleCode) {
+    const moduleImg = `${this.backendUrl()}/${
+      this.AppConfig.MEDIA_URL
+    }/modulator/config/${moduleCode.toLowerCase()}/assets/module.jpg`;
+    return moduleImg;
   }
 
   exportUrl(moduleCode, objectCode, exportCode, options: any = {}) {
     const url = this._mRequest.url(
-      `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectCode}/exports/${exportCode}`,
+      `${this.backendUrl()}/modulator/exports/${moduleCode.toLowerCase()}/${objectCode}/${exportCode}`,
       {
         prefilters: options.prefilters,
         filters: options.filters,
@@ -151,7 +160,7 @@ export class ModulesConfigService {
   }
 
   objectUrl(moduleCode, objectCode, value = '', urlSuffix = '') {
-    return `${this.backendUrl()}/${moduleCode.toLowerCase()}/${objectCode}/${urlSuffix}${
+    return `${this.backendUrl()}/modulator/${urlSuffix || 'rest'}/${moduleCode}/${objectCode}/${
       value || ''
     }`;
   }

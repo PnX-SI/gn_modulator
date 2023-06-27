@@ -6,7 +6,6 @@ import copy
 from flask import g
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
-from geonature.core.gn_permissions.tools import cruved_scope_for_user_in_module
 
 
 class ModulesConfigBase:
@@ -39,7 +38,6 @@ class ModulesConfigBase:
 
         # config depuis les definitions
         module_definition = get_global_cache(["module", module_code, "definition"])
-
         # config depuis la base (gn_commons.t_module)
         module_db = SchemaMethods("commons.module").get_row_as_dict(
             module_code,
@@ -76,9 +74,10 @@ class ModulesConfigBase:
 
         cls.process_tree(module_code)
 
+        # cls.process_fields(module_code)
+
         if module_config.get("registred"):
             cls.process_module_params(module_code)
-            cls.process_module_api(module_code)
 
         return module_config
 

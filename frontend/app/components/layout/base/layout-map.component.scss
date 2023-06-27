@@ -1,18 +1,40 @@
 @import '../../../../node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
+// patch pour les modal en fixed absolute
+// pour que la carte (ou ses contrôles ne passent pas devant la modale
+.map .leaflet-map-pane,
+.map .leaflet-top,
+.map .leaflet-bottom {
+  z-index: 1;
+}
+
+.map {
+  height: 100%;
+  z-index: 1 important;
+}
+
+.map > div {
+  height: 100%;
+}
+
+.map-container {
+  height: 100%;
+  position: relative;
+}
+
 .button-container {
   padding: Opx;
 }
 
 .coordinates {
-    position: absolute;
-    bottom: 10px;
-    z-index: 9999;
-    text-align: center;
-    width: 400px;
-    left: 50%;
-    margin-left: -200px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 5px;
-    border-color: gray;
-  }
+  position: absolute;
+  bottom: 10px;
+  z-index: 999;
+  text-align: center;
+  width: 400px;
+  left: 50%;
+  margin-left: -200px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  border-color: gray;
+}

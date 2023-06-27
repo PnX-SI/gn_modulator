@@ -1,10 +1,12 @@
 import { BehaviorSubject } from '@librairies/rxjs';
 import utils from '../../utils';
+import { CustomMarkerIcon } from '@geonature_common/map/marker/marker.component';
 
 const defautDrawOptions = {
   position: 'topleft',
   customMarker: true,
   drawMarker: false,
+  drawMarker2: true,
   editMode: true,
   drawCircle: false,
   drawCircleMarker: false,
@@ -24,6 +26,7 @@ const hiddenDrawOptions = {
   drawRectangle: false,
   customMarker: false,
   drawMarker: false,
+  drawMarker2: false,
   drawPolygon: false,
   drawPolyline: false,
   drawText: false,
@@ -67,6 +70,13 @@ export default {
         options.geometry_type == 'geometry' || options.geometry_type.includes('polygon');
       drawOptions.drawPolyline =
         options.geometry_type == 'geometry' || options.geometry_type.includes('linestring');
+    }
+
+    if (!map.initDrawMarker2) {
+      map.initDrawMarker2 = true;
+      map.pm.Toolbar.copyDrawControl('drawMarker', { name: 'drawMarker2' }).drawInstance.setOptions(
+        { markerStyle: { icon: new CustomMarkerIcon() } }
+      );
     }
 
     if (!utils.fastDeepEqual(drawOptions, map.drawOptions)) {

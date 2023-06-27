@@ -11,7 +11,7 @@ frontend/app/module.config.ts
 
 #!migrations/data/*.sql
 backend/gn_modulator/migrations/versions/*
-!backend/gn_modulator/migrations/versions/*_gn_modulator.py
+!backend/gn_modulator/migrations/versions/*gn_modulator*.py
 
 !.gitkeep
 

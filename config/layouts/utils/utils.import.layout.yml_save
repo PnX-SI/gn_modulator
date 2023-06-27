@@ -1,0 +1,57 @@
+type: layout
+code: utils.import
+title: layout du composant d'import
+description: layout du composant d'import
+layout:
+  title: __f__`Importer ${o.des_labels(x, 'C')}`
+  type: form
+  items:
+    - items:
+        - type: message
+          html: __f__data.importMsg?.html
+          class: __f__data.importMsg?.class
+          hidden: __f__!data.importMsg
+        - hidden: true
+          items:
+            - key: importMsg
+              type: string
+
+        - title: import
+          display: fieldset
+          items:
+            - key: data_file
+              type: file
+              title: Fichier d'import
+              required: __f__!data.tables?.data
+              description: Choisir un fichier à importer
+              disabled: __f__data.id_import
+        - title: Options additionnelles
+          display: fieldset
+          type: dict
+          items:
+            - key: options.enable_update
+              title: "Autoriser les mises à jour"
+              type: boolean
+              default: __f__false
+            - key: options.check_only
+              title: Verifier
+              description: |
+                L'import se fait en deux temps.
+                Une premiere étape de validation des données.
+                Et une deuxième étape d'insertion et de mise à jour des données.
+              type: boolean
+              default: __f__true
+
+    - direction: row
+      items:
+        - type: button
+          color: success
+          title: Valider
+          description: Valider
+          action: import
+          disabled: __f__!(formGroup.valid )
+        - type: button
+          color: primary
+          title: Annuler
+          description: Annuler
+          action: close

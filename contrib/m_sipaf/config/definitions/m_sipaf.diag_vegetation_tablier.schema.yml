@@ -1,0 +1,25 @@
+type: schema
+code: m_sipaf.diag_vegetation_tablier
+title: schema diagnostic passage faune (vegetation_tablier)
+description: schema pour les diagnostics des passages à faune (vegetation_tablier)
+
+meta:
+  autoschema: true
+  model: m_sipaf.models.DiagnosticVegetationTablier
+  module_code: m_sipaf
+  genre: M
+  label: Diagnostic de vegetation tablier
+  labels: Diagnostics de vegetation tablier
+  label_field_name: id_diagnostic
+  unique:
+    - id_diagnostic
+    - id_nomenclature_vegetation_type
+    - id_nomenclature_vegetation_couvert
+  unique_in_db: true
+properties:
+  id_nomenclature_vegetation_type:
+    title: Type de vegation
+    description: Type de vegation présente sur le tablier
+  id_nomenclature_vegetation_couvert:
+    title: Couverture végétale
+    description: Couverture végétale pour ce type de végétationd

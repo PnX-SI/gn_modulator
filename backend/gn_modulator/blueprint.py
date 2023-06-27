@@ -2,19 +2,22 @@ import sys
 from flask import Blueprint, request, g, current_app
 from .commands import commands
 from .schema import SchemaMethods
-from .definition import DefinitionMethods
 from sqlalchemy.exc import NoForeignKeysError
 from gn_modulator.module import ModuleMethods
 from gn_modulator.layout import LayoutMethods
-from gn_modulator.imports import ImportMethods
 from gn_modulator import init_gn_modulator
 from gn_modulator.utils.api import process_dict_path
 from gn_modulator.utils.errors import get_errors, errors_txt
+from gn_modulator.utils.commons import test_is_app_running
 from gn_modulator import MODULE_CODE
 from geonature.core.gn_permissions.decorators import check_cruved_scope
 from geonature.core.gn_commons.models.base import TModules
 
 blueprint = Blueprint(MODULE_CODE.lower(), __name__)
+
+from gn_modulator.routes.rest import *  # noqa
+from gn_modulator.routes.exports import *  # noqa
+from gn_modulator.routes.imports import *  # noqa
 
 # Creation des commandes pour modules
 blueprint.cli.short_help = "Commandes pour l' administration du module MODULES"
@@ -31,19 +34,7 @@ def set_current_module(endpoint, values):
     )
 
 
-# On teste sys.argv pour éviter de charger les définitions
-# si on est dans le cadre d'une commande
-# On initialise dans le cadre d'une application lancée avec
-# - gunicorn
-# - celery
-# - pytest
-# - flask run
-# - geonature run
-test_init = any(sys.argv[0].endswith(x) for x in ["gunicorn", "celery", "pytest"]) or (
-    len(sys.argv) >= 2 and sys.argv[1] == "run"
-)
-
-if test_init:
+if test_is_app_running():
     init_gn_modulator()
     if get_errors():
         print(f"\n{errors_txt()}")
@@ -62,7 +53,12 @@ def api_modules_config(config_path):
 
     # s'il y a des erreurs à l'initialisation du module => on le fait remonter
     if len(errors_init_module) > 0:
-        return f"Il y a {len(errors_init_module)} erreur(s) dans les définitions.", 500
+        txt = f"Il y a {len(errors_init_module)} erreur(s) dans les définitions.<br>"
+        for error in errors_init_module:
+            txt += (
+                f"- {error['error_code']} : {error['error_msg']}<br>{error['file_path']}<br><br>"
+            )
+        return txt, 500
 
     return process_dict_path(
         ModuleMethods.modules_config(),
@@ -84,12 +80,6 @@ def api_breadcrumbs(module_code, page_code):
     """
 
     return ModuleMethods.breadcrumbs(module_code, page_code, request.args.to_dict())
-
-
-@check_cruved_scope("R")  # object import ??
-@blueprint.route("import/<module_code>", methods=["POST"])
-def api_import(module_code):
-    return ImportMethods.process_api_import(module_code)
 
 
 @blueprint.route("/layouts/<path:config_path>", methods=["GET"])
@@ -134,7 +124,7 @@ def api_schemas(config_path):
 
     schemas = {
         schema_code: {
-            "properties": SchemaMethods(schema_code).properties(),
+            "properties": SchemaMethods(schema_code).properties_config(),
             "required": SchemaMethods(schema_code).attr("required"),
         }
         for schema_code in SchemaMethods.schema_codes()

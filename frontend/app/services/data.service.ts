@@ -63,7 +63,7 @@ export class ModulesDataService {
     return this.dataRequest('get', moduleCode, objectCode, {
       value,
       params,
-      urlSuffix: 'page_number/',
+      urlSuffix: 'page_number_and_list',
     });
   }
 
@@ -87,16 +87,6 @@ export class ModulesDataService {
       value,
       params,
     });
-  }
-
-  import(moduleCode, data, params = {}) {
-    return this._mRequest.postRequestWithFormData(
-      `${this._mConfig.backendModuleUrl()}/import/${moduleCode}`,
-      {
-        data,
-        params,
-      }
-    );
   }
 
   getBreadcrumbs(context: any) {

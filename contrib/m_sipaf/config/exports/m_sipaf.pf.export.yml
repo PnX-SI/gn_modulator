@@ -1,0 +1,38 @@
+type: export
+code: m_sipaf.pf
+title: export sipaf
+description: export sipaf
+
+export_label: Test
+object_code: site
+module_code: m_sipaf
+process_field_name: true
+fields:
+  - id_passage_faune
+  - code_passage_faune
+  - code_ouvrage_gestionnaire
+  - nom_usuel_passage_faune
+  - pi_ou_ps
+  - geom_x
+  - geom_y
+  - geom_text
+  - longueur_franchissement
+  - largeur_dispo_faune
+  - hauteur_dispo_faune
+  - largeur_ouvrage
+  - diametre
+  - date_creation_ouvrage
+  - date_requalification_ouvrage
+  - nomenclatures_ouvrage_type.label_fr
+  - nomenclatures_ouvrage_materiaux.label_fr
+  - nomenclature_ouvrage_specificite.label_fr
+  - source
+  - ouvrage_hydrau
+  - ouvrag_hydrau_tirant_air
+  - nomenclature_ouvrage_hydrau_position.label_fr
+  - nomenclature_ouvrage_hydrau_banq_caract.label_fr
+  - nomenclature_ouvrage_hydrau_banq_type.label_fr
+  - label_communes
+  - label_departements
+  - label_infrastructures
+  - label_regions

@@ -6,7 +6,7 @@ description: Définition du schema des object de permission
 meta:
   schema_code: perm.object
   autoschema: true
-  model: geonature.core.gn_permissions.models.TObjects
+  model: geonature.core.gn_permissions.models.PermObject
   label: object
   label_field_name: label_object
   genre: M

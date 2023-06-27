@@ -4,6 +4,10 @@
   background-color: white;
 }
 
+.array-button {
+  margin: 0px 5px 20px 5px;
+}
+
 .layout-section {
   width: 100%;
   height: 100%;
@@ -11,9 +15,14 @@
   // border: 1px solid black;
 }
 
-.layout-tab {
+.layout-tab-out {
   height: 100%;
-  // padding: 10px;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.layout-tab-in {
+  height: 100%;
 }
 
 .element-container {
@@ -28,6 +37,43 @@
 .map-row-container {
   width: 50%;
 }
+
+// couleur custom des bouttons
+.mat-mdc-button-base.mat-success {
+  background-color: green;
+  color: #fff;
+}
+
+// couleur custom des bouttons
+.mat-mdc-button-base.mat-info {
+  background-color: #4b8ed5;
+  color: #fff;
+}
+
+// couleur custom des bouttons
+.mat-mdc-button-base.mat-error {
+  background-color: red;
+  color: #fff;
+}
+
+// couleur custom des bouttons
+.mat-mdc-button-base.mat-reset {
+  background-color: #d5cc4b;
+  color: #fff;
+}
+
+.mat-mdc-raised-button[disabled][disabled] {
+  color: rgba(0, 0, 0, 0.26);
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.mat-stroked-button.mat-button-disabled.mat-button-disabled {
+  color: #ffffff;
+  background-color: #008cba;
+}
+// :host ::ng-deep  .button-just-icon {
+//   font-size: 1.5rem !important;
+// }
 
 .content-container {
   min-width: 50%;
@@ -152,7 +198,7 @@ div.layout-items > div {
   background-color: lightgrey;
   color: grey;
   border-radius: 15px;
-  border: solid 1px;
+  // border: solid 1px;
   display: inline-block;
 }
 
@@ -162,6 +208,11 @@ div.layout-items > div {
 }
 
 .layout-message.ok {
+  color: darkgreen;
+  background-color: lightgreen;
+}
+
+.layout-message.success {
   color: darkgreen;
   background-color: lightgreen;
 }
@@ -258,7 +309,8 @@ div.layout-items > div {
   cursor: pointer;
 }
 
-.geojsons {}
+.geojsons {
+}
 
 .test-layout {
   border: solid 1px lightgray;
@@ -297,4 +349,3 @@ div.layout-items > div {
   background-color: lightgray;
   border-radius: 10px;
 }
-

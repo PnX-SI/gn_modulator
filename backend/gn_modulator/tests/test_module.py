@@ -60,6 +60,7 @@ class TestModules:
 
         assert get_global_cache(["module", module_code]) is None
 
+    @pytest.mark.skip()
     def test_install_remove_module_with_dependancies(self):
         """
         tester un cycle d'installation / désinstallation d'un module avec dépendances

@@ -13,10 +13,10 @@ class SchemaRepositoriesCruved:
     methodes pour l'accès aux données
 
     TODO voire comment parametre les schema
-    pour avoir différentes façon de calculer cruved ownership
+    pour avoir différentes façon de calculer cruved scope
     """
 
-    def expression_ownership(self):
+    def expression_scope(self):
         Model = self.Model()
 
         if self.attr("meta.check_cruved") is None:
@@ -36,9 +36,9 @@ class SchemaRepositoriesCruved:
                 else_=3,
             )
 
-    def add_column_ownership(self, query):
+    def add_column_scope(self, query):
         """
-        ajout d'une colonne 'ownership' à la requête
+        ajout d'une colonne 'scope' à la requête
         afin de
             - filter dans la requete de liste
             - verifier les droit sur un donnée pour les action unitaire (post update delete)
@@ -46,7 +46,7 @@ class SchemaRepositoriesCruved:
                 - affichage de boutton, vérification d'accès aux pages etc ....
         """
 
-        query = query.add_columns(self.expression_ownership().label("ownership"))
+        query = query.add_columns(self.expression_scope().label("scope"))
 
         return query
 
@@ -61,6 +61,8 @@ class SchemaRepositoriesCruved:
 
         user_cruved = get_scopes_by_action(module_code=module_code)
 
-        query = query.filter(self.expression_ownership() <= user_cruved.get(cruved_type))
+        cruved_for_type = user_cruved.get(cruved_type)
+        if cruved_for_type < 3:
+            query = query.filter(self.expression_scope() <= cruved_for_type)
 
         return query

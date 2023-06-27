@@ -5,11 +5,31 @@
     - util
 """
 
+import copy
+
 
 class SchemaConfigBase:
     """
     config used by frontend
     """
+
+    def properties_config(self):
+        """
+        retourne les propriété en traitant les titles
+        - fk
+        - relation(fk)
+        on peut donner par defaut les clé title et description à la relation
+        """
+
+        properties = copy.deepcopy(self.properties())
+        for k in list(properties.keys()):
+            if self.is_relation_n_1(k):
+                prop = self.property(k)
+                fk_prop = self.property(prop["local_key"])
+                for prop_key in ["title", "description"]:
+                    if fk_prop.get(prop_key) and prop_key not in prop:
+                        prop[prop_key] = fk_prop[prop_key]
+        return properties
 
     def config(self, object_definition={}):
         return {
@@ -20,6 +40,7 @@ class SchemaConfigBase:
             # "map": self.config_map(),
             # "filter_defs": self.config_filters(),
             # "details": self.config_details(),
+            # "properties": self.properties_config(),
             "properties": self.properties(),
             "json_schema": self.json_schema,
         }
@@ -97,7 +118,7 @@ class SchemaConfigBase:
             },
             "pk_field_name": self.pk_field_name(),
             "label_field_name": self.label_field_name(),
-            "title_field_name": self.attr("meta.title_field_name"),
+            "title_field_name": self.title_field_name(),
             "value_field_name": self.value_field_name(),
             "geometry_field_name": self.geometry_field_name(),
             "model_name": self.model_name(),
@@ -126,6 +147,9 @@ class SchemaConfigBase:
 
     def label_field_name(self):
         return self.attr("meta.label_field_name")
+
+    def title_field_name(self):
+        return self.attr("meta.title_field_name")
 
     def geometry_field_name(self):
         return self.attr("meta.geometry_field_name")

@@ -7,8 +7,9 @@
         <button
           type="button"
           *ngIf="context.form_group_id"
-          mat-icon-button
-          color="black"
+          class="array-button"
+          mat-mini-fab
+          color="clear"
           [matTooltip]="layout.delete_one_title || 'Supprimer l\'élément'"
           (click)="
             this.emitAction({
@@ -17,7 +18,7 @@
             })
           "
         >
-          <mat-icon class="small-icon-clear">clear</mat-icon>
+          <mat-icon>clear</mat-icon>
         </button>
       </div>
     </div>

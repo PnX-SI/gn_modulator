@@ -44,6 +44,16 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     this.bPostComputeLayout = true;
   }
 
+  postInit() {
+    this._subs['reProcess'] = this._mObject.$reProcessObject.subscribe(
+      ({ moduleCode, objectCode }) => {
+        if (this.moduleCode() == moduleCode && this.objectCode() == objectCode) {
+          this.processObject();
+        }
+      }
+    );
+  }
+
   postComputeLayout(dataChanged: any, layoutChanged: any, contextChanged: any): void {
     if (!utils.fastDeepEqual(this.context.value, this.contextSave?.value)) {
       this.processValue(this.context.value);
@@ -166,7 +176,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   /** champs par defaut si non définis dans items  */
   defaultFields({ geometry = false } = {}) {
-    const defaultFields = [this.pkFieldName(), this.labelFieldName(), 'ownership'];
+    const defaultFields = [this.pkFieldName(), this.labelFieldName(), 'scope'];
     if (this.computedLayout.display == 'geojson' && geometry) {
       defaultFields.push(this.geometryFieldName());
     }
@@ -195,12 +205,15 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   // TODO à clarifier avec page.element ??
   processAction(event) {
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
+      let isSameObject = ['object_code', 'module_code'].every(
+        (k) => this.context[k] == event.context[k]
+      );
       this._mAction.processAction({
         action: event.action,
-        context: this.context,
-        value: event.data[this.pkFieldName()],
+        context: event.context,
+        value: isSameObject && event.data[this.pkFieldName()],
         data: event.data,
-        layout: this.layout,
+        layout: event.layout,
       });
     }
   }

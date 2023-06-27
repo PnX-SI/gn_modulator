@@ -7,7 +7,7 @@
 
 <ng-container *ngIf="isInitialized">
   <div
-    [ngStyle]="computedLayout.style"
+    [ngStyle]="computedLayout.display == 'tabs' ? null : computedLayout.style"
     [attr.id]="_id"
     class="layout-section"
     [ngClass]="computedLayout.class"
@@ -32,26 +32,74 @@
 
       <!-- Tabs -->
       <ng-container *ngSwitchCase="'tabs'">
-        <mat-tab-group class="layout-section" (selectedTabChange)="onTabChanged($event)">
-          <ng-container *ngFor="let item of layout.items; let index = index">
-            <mat-tab
-              [label]="computedItems[index].label || computedItems[index].title || index"
-              *ngIf="!computedItems[index].hidden"
-              class="layout-section"
-            >
-              <div class="layout-tab">
-                <modules-layout
-                  class="layout-tab"
-                  [data]="data"
-                  [layout]="item"
-                  [parentContext]="context"
-                  (onAction)="processAction($event)"
-                >
-                </modules-layout>
-              </div>
-            </mat-tab>
-          </ng-container>
-        </mat-tab-group>
+        <!-- Lazy Loading-->
+        <ng-container *ngIf="computedLayout.lazy_loading">
+          <mat-tab-group
+            class="layout-section"
+            (selectedTabChange)="onTabChanged($event)"
+            [selectedIndex]="selectedIndex"
+            [ngStyle]="computedLayout.style"
+            *ngIf="computedItems?.length"
+          >
+            <ng-container *ngFor="let item of layout.items; let index = index">
+              <mat-tab
+                [label]="computedItems[index].label || computedItems[index].title || index"
+                [disabled]="computedItems[index].disabled"
+                *ngIf="!computedItems[index].hidden"
+                class="layout-section"
+                #tabGroup
+              >
+                <ng-template matTabContent>
+                  <div class="layout-tab-out" [ngStyle]="computedLayout.style_tab">
+                    <div class="layout-tab-in">
+                      <modules-layout
+                        class="layout-tab"
+                        [data]="data"
+                        [layout]="item"
+                        [parentContext]="context"
+                        (onAction)="processAction($event)"
+                      >
+                      </modules-layout>
+                    </div>
+                  </div>
+                </ng-template>
+              </mat-tab>
+            </ng-container>
+          </mat-tab-group>
+        </ng-container>
+        <!-- Not Lazy Loading-->
+        <ng-container *ngIf="!computedLayout.lazy_loading">
+          <mat-tab-group
+            class="layout-section"
+            (selectedTabChange)="onTabChanged($event)"
+            [selectedIndex]="selectedIndex"
+            [ngStyle]="computedLayout.style"
+            *ngIf="computedItems?.length"
+          >
+            <ng-container *ngFor="let item of layout.items; let index = index">
+              <mat-tab
+                [label]="computedItems[index].label || computedItems[index].title || index"
+                [disabled]="computedItems[index].disabled"
+                *ngIf="!computedItems[index].hidden"
+                class="layout-section"
+                #tabGroup
+              >
+                <div class="layout-tab-out" [ngStyle]="computedLayout.style_tab">
+                  <div class="layout-tab-in">
+                    <modules-layout
+                      class="layout-tab"
+                      [data]="data"
+                      [layout]="item"
+                      [parentContext]="context"
+                      (onAction)="processAction($event)"
+                    >
+                    </modules-layout>
+                  </div>
+                </div>
+              </mat-tab>
+            </ng-container>
+          </mat-tab-group>
+        </ng-container>
       </ng-container>
 
       <!-- normal / default -->

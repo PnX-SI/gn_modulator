@@ -9,18 +9,18 @@ layout:
     - flex: "0"
       type: button
       color: primary
-      title: Valider
-      icon: done
-      description: Enregistrer le contenu du formulaire
-      action: submit
-      disabled: __f__!formGroup.valid
-    - flex: "0"
-      type: button
-      color: primary
       title: Annuler
       icon: refresh
       description: "Annuler l'édition"
       action: cancel
+    - flex: "0"
+      type: button
+      color: success
+      title: Valider
+      icon: done
+      description: "__f__formGroup.valid ? `Enregistrer le contenu du formulaire` : `Le formulaire comporte des erreurs`"
+      action: submit
+      disabled: __f__!formGroup.valid
     - flex: "0"
       type: button
       color: warn
@@ -31,18 +31,4 @@ layout:
       action:
         type: modal
         modal_name: delete
-    - type: modal
-      modal_name: delete
-      title: Confirmer la suppression de l'élément
-      direction: row
-      items:
-        - type: button
-          title: Suppression
-          action: delete
-          icon: delete
-          color: warn
-        - type: button
-          title: Annuler
-          action: close
-          icon: refresh
-          color: primary
+    - code: utils.modal_delete

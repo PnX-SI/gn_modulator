@@ -1,0 +1,186 @@
+type: schema
+code: m_sipaf.pf
+title: schema passage faune
+description: schema pour les passages à faune
+
+meta:
+    # sql_processing: true
+    # sql_schema_dot_table: pr_sipaf.t_passages_faune
+    # unique_in_db: true
+    autoschema: true
+    model: m_sipaf.models.PassageFaune
+    module_code: m_sipaf
+    genre: M
+    label: passage à faune
+    labels: passages à faune
+    label_field_name: code_passage_faune
+    geometry_field_name: geom
+    unique:
+        - code_passage_faune
+    check_cruved: true
+
+properties:
+  id_passage_faune:
+      title: ID
+  code_passage_faune:
+      title: Code passage faune
+      description: "Code permettant d'identifier le passage à faune de manière unique (texte)"
+  uuid_passage_faune:
+      title: UUID
+      description: Identifiant universel unique au format UUID (uuid_pf)
+  id_digitiser:
+      title: Numérisateur
+      description: Personne qui a saisi la donnée
+  digitiser:
+      title: Numérisateur
+      description: Personne qui a saisi la donnée
+  pi_ou_ps:
+      title: Positionnement
+      description: Positionnement du passage vis-à vis de l’infrastructure (inférieur (False) ou supérieur (True))
+      labels:
+          - Supérieur
+          - Inférieur
+  geom:
+      title: Geometrie (4326)
+      description: Géometrie du passage à faune (SRID=4326)
+  geom_local:
+      title: Geometrie locale (__LOCAL_SRID__)
+      description: Géométrie locale du passage à faune (SRID=__LOCAL_SRID__)
+  pk:
+      title: Point kilométrique
+      description: Point kilométrique
+      min: 0
+  pr:
+      title: Point Repère
+      description: Point repère
+      min: 0
+  pr_abs:
+      title: Point repère abscisse (m)
+      description: Distance en abscisse curviligne depuis le dernier PR
+      min: 0
+  code_ouvrage_gestionnaire:
+      title: Code ouvrage gestionnaire
+      description: Code de l’ouvrage (pour le gestionnaire)
+  nom_usuel_passage_faune:
+      title: Nom Passage Faune
+      description: "Nom usuel utilisé pour dénommer l'ouvrage (nom_usuel_pf)"
+  issu_requalification:
+      title: Requalification
+      description: "L'ouvrage est issu d'une opération de requalification ?"
+      labels:
+          - Oui
+          - Non
+  date_creation_ouvrage:
+      title: Date de réalisation
+      description: "Date de la réalisation de l'ouvrage"
+  date_requalification_ouvrage:
+      title: Date de requalification
+      description: "Date de la requalification de l'ouvrage"
+  largeur_ouvrage:
+      title: Largeur ouvrage (m)
+      description: "Largeur de l'ouvrage en mètre"
+      min: 0
+  hauteur_ouvrage:
+      title: Hauteur ouvrage (m)
+      description: "Hauteur de l'ouvrage en mètre"
+      min: 0
+  longueur_franchissement:
+      title: Longueur de franchissement (m)
+      description: "Longueur de franchissement de l'ouvrage en mètres (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)"
+      min: 0
+  diametre:
+      title: Diamètre (m)
+      description: Diamètre de la buse en mètre
+      min: 0
+  largeur_dispo_faune:
+      title: Largeur disponible (m)
+      description: "Largeur de l'ouvrage effectivement disponible pour la faune en mètre"
+      min: 0
+  hauteur_dispo_faune:
+      title: Hauteur disponible (m)
+      description: "Hauteur de l'ouvrage effectivement disponible pour la faune en mètre"
+      min: 0
+  id_nomenclature_ouvrage_specificite:
+      title: Spécificité du passage faune
+      description: Exclusivité pour le passage faune (specificite)
+    #   nomenclature_type: PF_OUVRAGE_SPECIFICITE
+  nomenclatures_ouvrage_type:
+      title: "Type d'ouvrage"
+      description: "Type d'ouvrage d'art (lb_type_ouvrage)"
+    #   nomenclature_type: PF_OUVRAGE_TYPE
+  ouvrage_type_autre:
+      type: string
+      title: Autre type d'ouvrage
+  nomenclatures_ouvrage_materiaux:
+      title: Matériaux
+      description: "Matériaux composants l'ouvrage d'art (lb_materiaux)"
+    #   nomenclature_type: PF_OUVRAGE_MATERIAUX
+  ouvrage_hydrau:
+      title: Ouvrage hydraulique
+      description: Ouvrage hydraulique ou non
+      labels:
+          - Oui
+          - Non
+  id_nomenclature_ouvrage_hydrau_position:
+      title: Ouvrage hydraulique Position
+      description: Ouvrage hydraulique Position (ouvrage_hydrau_position)
+    #   nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_POSITION
+  id_nomenclature_ouvrage_hydrau_banq_caract:
+      title: Caractérisation banquette
+      description: "Caractérisation de la banquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_caract_banquette)"
+    #   nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT
+      schema_code: ref_nom.nomenclature
+  id_nomenclature_ouvrage_hydrau_banq_type:
+      title: Type de banquette
+      description: "Type de la banquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_type_banquette)"
+    #   nomenclature_type: PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE
+  ouvrag_hydrau_tirant_air:
+      title: "Tirant d'air banquette (m)"
+      description: " Tirant d'air existant entre la banquette et le plafond de l'ouvrage, en mètre"
+  source:
+      title: Source
+      description: Source de la donnée
+  nomenclature_ouvrage_specificite:
+      title: Spécificité du passage faune
+      description: Exclusivité pour le passage faune
+  nomenclature_ouvrage_hydrau_position:
+      title: Position banquette
+  nomenclature_ouvrage_hydrau_banq_caract:
+      title: OH Caractérisation banquette
+  nomenclature_ouvrage_hydrau_banq_type:
+      title: OH type de banquette
+  meta_create_date:
+      title: Date de création (en base)
+  meta_update_date:
+      title: Date de modification (en base)
+  areas:
+      title: Areas
+  linears:
+      title: Linéaires
+  actors:
+      title: Acteurs
+      description: Acteurs du passage à faune
+  medias:
+      title: medias
+
+  geom_x:
+      type: number
+      title: Latitude
+  geom_y:
+      type: number
+      title: Longitude
+  geom_text:
+      type: string
+      title: Geométrie (text)
+  label_infrastructures:
+      type: string
+      title: Infrastructure traversée
+  label_communes:
+      type: string
+      title: Commune(s)
+  label_departements:
+      type: string
+      title: Département(s)
+  label_regions:
+      type: string
+      title: Région(s)

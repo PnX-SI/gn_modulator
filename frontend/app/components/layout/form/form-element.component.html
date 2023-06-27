@@ -1,7 +1,12 @@
 <ng-container *ngIf="!!formControl && !!data">
   <!-- input -->
   <ng-container *ngIf="computedLayout.type == 'file'">
-    <button mat-raised-button (click)="openInputFile()">
+    <button
+      [color]="computedLayout.color"
+      mat-raised-button
+      (click)="openInputFile()"
+      [disabled]="computedLayout.disabled"
+    >
       {{ computedLayout.title || elementKey }}
     </button>
 
@@ -18,9 +23,9 @@
       [attr.id]="_id + '_inputfile'"
       type="file"
       hidden
+      [disabled]="computedLayout.disabled"
       (change)="fileChange($event.target.files)"
-    />
-    {{ formControl.value?.name}}
+      />
   </ng-container>
 
   <ng-container
@@ -39,44 +44,40 @@
         [placeholder]="computedLayout.placeholder"
         [type]="computedLayout.type"
         [formControl]="formControl"
-        [required]="computedLayout.required && !context.skip_required"
-        [disabled]="computedLayout.disabled"
         [min]="computedLayout.min"
         [max]="computedLayout.max"
         (change)="onInputChange()"
         [errorStateMatcher]="_mForm.matcher"
-      />
+        />
+        <!-- [required]="computedLayout.required && !context.skip_required" -->
 
       <input
         *ngIf="'uuid' == computedLayout.type"
         matInput
         type="text"
-        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [formControl]="formControl"
         [required]="computedLayout.required"
         (change)="onInputChange()"
-      />
+        />
 
       <input
         *ngIf="'integer' == computedLayout.type"
         matInput
         type="number"
         step="1"
-        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [formControl]="formControl"
         [required]="computedLayout.required"
         [min]="computedLayout.min"
         [max]="computedLayout.max"
         (change)="onInputChange()"
-      />
+        />
 
       <textarea
         *ngIf="['textarea', 'json'].includes(computedLayout.type)"
         matInput
         cdkTextareaAutosize
-        [disabled]="computedLayout.disabled"
         [placeholder]="computedLayout.placeholder"
         [cdkAutosizeMinRows]="computedLayout.min_rows"
         [cdkAutosizeMaxRows]="computedLayout.max_rows"
@@ -84,7 +85,7 @@
         [required]="computedLayout.required"
         (change)="onInputChange()"
         style="white-space: pre"
-      ></textarea>
+        ></textarea>
 
       <mat-hint>{{ computedLayout.hint }}</mat-hint>
 
@@ -124,11 +125,19 @@
   </ng-container>
 
   <!-- checkbox -->
-  <mat-checkbox
-    *ngIf="['checkbox', 'boolean'].includes(computedLayout.type)"
-    [formControl]="formControl"
-    >{{ computedLayout.title || elementKey }}
-  </mat-checkbox>
+  <ng-container *ngIf="['checkbox', 'boolean'].includes(computedLayout.type)">
+    <mat-checkbox [formControl]="formControl"
+      >{{ computedLayout.title || elementKey }}
+    </mat-checkbox>
+    <mat-icon
+      matPrefix
+      *ngIf="computedLayout.description"
+      [matTooltip]="computedLayout.description"
+      class="icon-description"
+    >
+      help
+    </mat-icon>
+  </ng-container>
 
   <!-- list-form -->
   <ng-container *ngIf="computedLayout.type == 'list_form'">

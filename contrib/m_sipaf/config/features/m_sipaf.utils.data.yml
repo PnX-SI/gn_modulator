@@ -1,0 +1,185 @@
+type: data
+code: m_sipaf.utils
+title: Data utils m_sipaf
+description: feature pour sipaf (nomenclature, groupe de module)
+items:
+  - schema_code: modules.group
+    items:
+      - name: SI Passage Faune
+        code: SIPAF
+        description: Modules associés aux passage à faune
+        modules:
+          - m_sipaf
+  - schema_code: commons.table_location
+    items:
+      - table_desc: Table centralisant les passages à faune
+        schema_name: pr_sipaf
+        table_name: t_passages_faune
+        pk_field: id_passage_faune
+        uuid_field_name: uuid_passage_faune
+  - schema_code: ref_nom.type
+    keys: [mnemonique, label_default, definition_default]
+    defaults:
+      source: SIPAF
+    items:
+      - [PF_OUVRAGE_MATERIAUX, Matériaux, "Matériaux composant l'ouvrage"]
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, OH Position, "Position de l'ouvrage hydrolique"]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT, OH Caractérisation banquette, Caractérisation de la banquette pour un ouvrage hydraulique]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, OH Type de banquette, Type de banquette pour un ouvrage hydrolique]
+      - [PF_INFRASTRUCTURE_TYPE, "Type d'infrastructure", "Type d'infrastructure pour les passages à faune"]
+      - [PF_OUVRAGE_SPECIFICITE, Spécificité, Exclusivité du passage pour le passage de la faune]
+      - [PF_OUVRAGE_TYPE, "Type d'ouvrage", "Type d'ouvrage d'art pour le passage faune"]
+      - [PF_TYPE_ACTOR, "Type d'acteur", "Type d'acteur pour les passages faune"]
+      - [PF_DIAG_OBSTACLE, Diagnostic obstacle, Diagnostic obstacle]
+      - [PF_DIAG_PERTURBATION, Diagnostic perturbation, Diagnostic perturbation]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, Diagnostic état berge, État des berges à l'entrée de l'ouvrage (ouvrage hydraulique)]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE, Diagnostic Raccordement banquette-berge, État du raccordement entre la banquette et la berge aux sorties d'un ouvrage mixte hydraulique]
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, Défaut de dimensionnement, Défaut de dimensionnement]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, Types d'aménagements, Types d'aménagement complémentaires en faveur de la faune]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, Nature des clôtures, Nature des clôtures pouvant guider les animaux vers le passage]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, État des clôtures, État des clôtures pouvant guider les animaux vers le passage]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, Type de végétation, Type de végétation présente]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, Couverture végétale (%), Couverture végétale (%)]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, Entretient dispositif et végétation, Entretient dispositif et végétation]
+      - [PF_DIAG_FRANCHISSABILITE, Franchissabilité, Estimation de la franchissabilité de l'ouvrage pour les animaux]
+      - [PF_DIAG_INTERET_FAUNE, Intérêt pour les espèces cibles, Intérêt pour les espèces cibles]
+  - schema_code: ref_nom.nomenclature
+    defaults:
+      source: SIPAF
+      active: true
+    keys:
+      [id_type, cd_nomenclature, mnemonique, label_default, definition_default]
+    items:
+      - [PF_OUVRAGE_MATERIAUX, BET, Béta., Béton, Béton]
+      - [PF_OUVRAGE_MATERIAUX, MET, Mét., Métal, Métal]
+      - [PF_OUVRAGE_MATERIAUX, PLT, Pla., Plastique, Plastique]
+      - [PF_OUVRAGE_MATERIAUX, BOI, Boi., Bois, Bois]
+      - [PF_OUVRAGE_MATERIAUX, MAC, Maç., Maçonnerie, Maçonnerie]
+      - [PF_OUVRAGE_MATERIAUX, AUT, Aut., Autre, Autre]
+      - [PF_OUVRAGE_MATERIAUX, IND, Ind., Indéterminé, Indéterminé]
+
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, RG, R. g., Rive Gauche, Rive Gauche]
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, RD, R. d., Rive Droite, Rive Droite]
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, RGD, R. g. & d.", Rive gauche et rive droite, Rive gauche et rive droite (la rive se détermine dans le sens amont/aval)]
+
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT, DOU, Dbl., Double, Banquette double]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT, SIM, Simp., Simple, Banquette simple]
+
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, NAT, Nat., Banquette naturelle, Banquette naturelle]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, BET, Bet., Banquette béton, Banquette béton]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, ECB, Ecb., Encorbellement, Encorbellement]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, POF, Po. F., Ponton flottant, Ponton flottant]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, AUT, Aut., Autre, Autre]
+
+
+      - [PF_INFRASTRUCTURE_TYPE, AU, Auto., Autoroute, Autoroute]
+      - [PF_INFRASTRUCTURE_TYPE, RN, R. N., Route Nationale, Route Nationale]
+      - [PF_INFRASTRUCTURE_TYPE, RD, R. D., Route Départementale, Route Départementale]
+      - [PF_INFRASTRUCTURE_TYPE, VF, V. F., Voie ferrée, Voie ferrée]
+      - [PF_INFRASTRUCTURE_TYPE, CA, Ca., Canal / Rivère navigable, Canal / Rivère navigable]
+
+      - [PF_OUVRAGE_SPECIFICITE, MIX, Mixt., Mixte, Ouvrage mixte construit pour le passage des animaux concomitamment à un ou plusieurs autres usages]
+      - [PF_OUVRAGE_SPECIFICITE, ND, Non déd., Non dédié, Ouvrage non dédié au passage de la faune mais pouvant servir à cet usage]
+      - [PF_OUVRAGE_SPECIFICITE, SPE, Spé., Spécifique, Ouvrage construit que pour le passage des animaux]
+
+      - [PF_OUVRAGE_TYPE, BUS, Bus., Buse, Buse]
+      - [PF_OUVRAGE_TYPE, CAD, Cad., Cadre, Cadre]
+      - [PF_OUVRAGE_TYPE, VOU+R, Voût. Rad., Voûte avec radier, Voûte maçonnée avec radier]
+      - [PF_OUVRAGE_TYPE, AUT, Aut., Autre (préciser), Autre (préciser)]
+      - [PF_OUVRAGE_TYPE, POR, Por., Portique, Portique en béton]
+      - [PF_OUVRAGE_TYPE, VOU, Voû., Voûte sans radier, Voûte maçonnée sans radier]
+      - [PF_OUVRAGE_TYPE, DAL+P, Dal. pal., Dalle et palpaplanche, Dalle et palpaplanche]
+      - [PF_OUVRAGE_TYPE, DAL, Dal., Dalle, Dalle]
+      - [PF_OUVRAGE_TYPE, ARC, Arc., Arc, Arc]
+      - [PF_OUVRAGE_TYPE, VIA, via., Viaduc, Viaduc]
+      - [PF_OUVRAGE_TYPE, PON, pon., Pont, Pont]
+      - [PF_OUVRAGE_TYPE, CAN, can., Canalisation, Canalisation]
+      - [PF_OUVRAGE_TYPE, DALO, dalo., Dalot, Dalot]
+      - [PF_OUVRAGE_TYPE, DIAB, diab., Diabolo, Diabolo]
+      - [PF_OUVRAGE_TYPE, TRA, Tra., Tranchée, Tranchée]
+      - [PF_OUVRAGE_TYPE, TUN, Tun., Tunnel, Tunnel]
+
+      - [PF_TYPE_ACTOR, PRO, Prop., Propriétaire, Propriétaire]
+      - [PF_TYPE_ACTOR, CON, Conc., Concessionaire, Concessionnaire]
+      - [PF_TYPE_ACTOR, INT, Int., Intervenant, Intervenant sur ce passage faune]
+      - [PF_TYPE_ACTOR, GES, Ges., Gestionnaire, Gestionnaire du passage faune]
+      - [PF_TYPE_ACTOR, ETA, État, État, État]
+      - [PF_TYPE_ACTOR, DEP, Dépt., Département, Département]
+
+      - [PF_DIAG_OBSTACLE, CLOT, Clôt., Clôtures, Clôture fermant l'ouvrage]
+      - [PF_DIAG_OBSTACLE, TROT, Trot., Trottoirs, Trottoirs]
+      - [PF_DIAG_OBSTACLE, TROT, Trot., Trottoirs, Trottoirs]
+      - [PF_DIAG_OBSTACLE, GLIS, Glis., Glissières, Glissières]
+      - [PF_DIAG_OBSTACLE, DENIV, Déniv., Dénivelé, Dénivelé]
+      - [PF_DIAG_OBSTACLE, DEP, Dép., Dépôts, Dépôts]
+      - [PF_DIAG_OBSTACLE, STAG, Stag., Stagnation d'eau, Stagnation d'eau]
+      - [PF_DIAG_OBSTACLE, INFR, Infr., Infrastructure, Infrastructure au débouché]
+      - [PF_DIAG_OBSTACLE, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_PERTURBATION, C_P, Circ. Piet., Circulation Piéton, Circulation Piéton]
+      - [PF_DIAG_PERTURBATION, CV, Circ. Voit., Circulation Voiture, Circulation Voiture]
+      - [PF_DIAG_PERTURBATION, C2RQ, Circ. 2R. Qu., Circulation 2-roues & quad, Circulation 2-roues & quad]
+      - [PF_DIAG_PERTURBATION, CTR, Circ. tr., Circulation tracteur, Circulation tracteur]
+      - [PF_DIAG_PERTURBATION, CHA, Cha., Chasse, Chasse]
+      - [PF_DIAG_PERTURBATION, SONO, Sono., Sonore, "Perturbations sonores (vibration, bruit de circulation, etc.)"]
+      - [PF_DIAG_PERTURBATION, VISU, Visu., Visuelle, "Perturbations visuelles (lumières, éclairage, etc.)"]
+      - [PF_DIAG_PERTURBATION, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, STA, Sta., Stable, Stable]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, ERO, Éro., Érodé, Érodé]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, RIPC, Rip. Cont., Ripisylve continue, Ripisylve continue]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, RIPD, Rip. Dis., Ripisylve discontinue, Ripisylve discontinue]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, ENRO, Enroch., Enrochement, Enrochement]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, TECHV, Tech. Vég., Technique végétale, Technique végétale]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_ETAT_BERGE, ENHB, Herb., Enherbées, Enherbées]
+
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE, BON, Bon, Bon, "Bon : raccordement amont et aval"]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE, INS, Insuff., Insuffisant, "Insuffisant : raccordement d'un seul côté"]
+      - [PF_DIAG_OUVRAGE_HYDRAULIQUE_RACCORDEMENT_BANQUETTE, ABS, Abs., Absent, "Absent : pas de raccordement ni en amont ni en aval"]
+
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, LARG_INF, Larg. Faib., Largeur trop faible,  "Largeur trop faible: augmentation de la vitesse d'écoulement empêchant le franchissement piscicole"]
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, LARG_SUP, Larg. Élev., Largeur trop élevée,  "Largeur trop élevée: diminution de la lame d'eau"]
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, HAUT_INF, Larg. Élev., Hauteur insuffisante,  "Hauteur insuffisante: en période de crue, submersion des aménagements"]
+      - [PF_DIAG_OUVRAGE_HYDRAU_DIMENSIONNEMENT, DEF_PENTE, Déf. Pente, Ne respecte pas la pente,  "Ouvrage ne respectant pas la pente du cours d'eau : érosion à l'entrée / sortie de l'ouvrage"]
+
+      - [PF_DIAG_AMENAGEMENT_BIODIV, PAR, Para., Parapet d'accultation, Parapet d'accultation]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, PLA, Planta., Plantations, Plantations]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, MUR, Mur., Andains / muret, Andains / muret]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, MAR, Mar., Mares, Mares]
+      - [PF_DIAG_AMENAGEMENT_BIODIV, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, 'GFS', Gd. Faun. Simp., Grande faune simple, Grande faune simple]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, 'PFS', Pt. Faun. Simp., Petite faune simple, Petite faune simple]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, 'MAIP', Mail. Prog., Mailles progressives, Mailles progressives]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, 'MUR', Mur., Muret, Muret]
+      - [PF_DIAG_CLOTURES_GUIDAGE_TYPE, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, BON, Bon, Bon, Bon]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, MOY, Moy., Moyen, Moyen]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, DEG, Dég., Dégradée, Dégradée]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, NOJ, Non Jo., Non jointive, Non jointive]
+      - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, AUT, Aut., Autre (préciser), Autre (préciser)]
+
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, NU, Nu, Sol nu, Sol nu]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, HER, Herb.,Herbacé (<1m), Herbacé (<1m)]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, BUI, Buis., Buissonant arbustif (1-3m), Buissonant arbustif (1-3m)]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, ARB, Arb., Arboré (>3m), Arboré (>3m)]
+
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "1", 0-25 , 0-25 %, 0-25 %]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "2", 25-50, 25-50 %, 25-50 %]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "3", 50-75, 50-75 %, 50-75 %]
+      - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "4", 75-100, 75-100 %, 75-100 %]
+
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, BON, Bon., Bonne, Bonne]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, MOY, Moy., Moyenne, Moyenne]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, OCC, Occ., Occasionelle, Occasionelle]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, NUL, Nul., Nulle, Nulle]
+
+      - [PF_DIAG_FRANCHISSABILITE, BON, Bon., Bonne, Bonne]
+      - [PF_DIAG_FRANCHISSABILITE, MOY, Moy., Moyenne, Moyenne]
+      - [PF_DIAG_FRANCHISSABILITE, OCC, Occ., Occasionelle, Occasionelle]
+      - [PF_DIAG_FRANCHISSABILITE, NUL, Nul., Nulle, Nulle]
+
+      - [PF_DIAG_INTERET_FAUNE, FAI, Fai., Faible, Faible]
+      - [PF_DIAG_INTERET_FAUNE, MOY, Moy., Moyen, Moyen]
+      - [PF_DIAG_INTERET_FAUNE, FOR, For., Fort, Fort]

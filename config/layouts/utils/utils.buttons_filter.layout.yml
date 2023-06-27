@@ -9,15 +9,14 @@ layout:
   items:
     - flex: "0"
       type: button
-      color: primary
+      color: error
+      icon: refresh
+      description: Réinitialiser filtres
+      action: clear-filters
+    - flex: "0"
+      type: button
+      color: success
       title: Rechercher
       icon: done
       description: Effectuer une recherche avec les filtre définis ci-dessus
       action: filter
-    - flex: "0"
-      type: button
-      color: primary
-      title: Réinitialiser
-      icon: refresh
-      description: RAZ des filtres
-      action: clear-filters

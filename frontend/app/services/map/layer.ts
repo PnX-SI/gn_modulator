@@ -254,6 +254,10 @@ export default {
         if (bring_to_front) {
           setTimeout(() => {
             layer.bringToFront();
+            const tooltip = layer.getTooltip();
+            if (tooltip) {
+              layer.unbindTooltip().bindTooltip(tooltip);
+            }
           }, 500);
         }
         if (!!onEachFeature) {
@@ -308,6 +312,7 @@ export default {
 
   layerZoomMoveEndListener(mapId, layer, tooltipDisplayZoomTreshold) {
     // on garde en mémoire le dernier zoom
+
     var lastZoomLevel;
     var lastMapBounds;
 
@@ -316,6 +321,7 @@ export default {
       if (!tooltip) {
         return;
       }
+
       const tooltipDisplayed = tooltip.options.permanent;
       const action = this.actionTooltipDisplayZoomThreshold(
         mapId,

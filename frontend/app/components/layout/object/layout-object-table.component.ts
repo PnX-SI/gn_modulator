@@ -42,8 +42,6 @@ export class ModulesLayoutObjectTableComponent
     this.tableId = `table_${this._id}`;
   }
 
-  postInit() {}
-
   onRedrawElem(): void {
     this.onHeightChange(true);
     this.setCount();
@@ -84,28 +82,8 @@ export class ModulesLayoutObjectTableComponent
   }
 
   onRowClick = (e, row) => {
-    let action = utils.getAttr(e, 'target.attributes.action.nodeValue')
-      ? utils.getAttr(e, 'target.attributes.action.nodeValue')
-      : e.target.getElementsByClassName('action').length
-      ? utils.getAttr(e.target.getElementsByClassName('action')[0], 'attributes.action.nodeValue')
-      : 'selected';
     const value = this.getRowValue(row);
-
-    if (['details', 'edit'].includes(action)) {
-      this._mAction.processAction({
-        action,
-        context: this.context,
-        value,
-      });
-    }
-
-    if (action == 'delete') {
-      this._mLayout.openModal('delete', this.getRowData(row));
-    }
-
-    if (action == 'selected') {
-      this.setObject({ value });
-    }
+    this.setObject({ value });
   };
 
   getRowValue(row) {
@@ -288,12 +266,16 @@ export class ModulesLayoutObjectTableComponent
         return;
       }
       this.tableHeight = `${elem.clientHeight}px`;
+      this.tableHeight = `${elem.clientHeight}px`;
       this.table.setHeight(elem.clientHeight);
       const pageSize = Math.floor((elem.clientHeight - 90) / 50);
+
+      const nbTotal = this._mObject.objectConfigContext(this.context).nb_total;
 
       if (
         !this.computedLayout.page_size &&
         this.pageSize != pageSize &&
+        nbTotal > pageSize &&
         pageSize > 1 &&
         !this.context.debug
       ) {

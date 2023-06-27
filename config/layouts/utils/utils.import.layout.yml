@@ -1,0 +1,99 @@
+type: layout
+code: utils.import
+title: layout du composant d'import
+description: layout du composant d'import
+layout:
+  type: form
+  form_group_id: form_import
+  items:
+    - display: tabs
+      items:
+        - label: Import
+          items:
+            - hidden: true
+              items:
+                - key: id_import
+                - key: importMsg
+                - key: errorMsgType
+                - key: errorMsgLine
+                - key: errors
+                - key: status
+            - type: message
+              html: __f__data.importMsg.html
+              class: __f__data.importMsg.class
+            - display: fieldset
+              title: Fichier d'import
+              items:
+                - key: data_file
+                  type: file
+                  title: '__f__data.data_file ? data.data_file.name : "Choisir un fichier"'
+                  required: __f__!data.tables?.data
+                  description: Choisir un fichier à importer
+                  disabled: __f__data.id_import
+                  color: info
+                # - key: display_options
+                #   title: Afficher les options avancées.
+                #   type: boolean
+            - display: fieldset
+              title: Options
+              # hidden: __f__!data.display_options
+              items:
+                - key: options.enable_update
+                  title: "Autoriser les mises à jour"
+                  type: boolean
+                  hidden: __f__(context.hidden_options || []).includes('enable_update')
+                  default: __f__false
+                - key: options.check_only
+                  title: Verifier avant insertion
+                  description: |
+                    L'import se fait en deux temps.
+                    Une premiere étape de validation des données.
+                    Et une deuxième étape d'insertion et de mise à jour des données.
+                  type: boolean
+                  default: __f__true
+                - key: options.srid
+                  title: SRID
+                  description: SRID des données fournies
+                  type: string
+        - label: __f__`Erreurs (${data.errors?.length || 0})`
+          disabled: __f__!data.errors?.length
+          items:
+            - key: error_display_line
+              title: Afficher les erreurs en ligne
+              type: boolean
+            - style:
+                max-height: 400px
+                overflow-y: scroll
+              items:
+                - type: message
+                  html: __f__data.errorMsgType
+                  class: error
+                  hidden: __f__!!data.error_display_line
+                - type: message
+                  html: __f__data.errorMsgLine
+                  class: error
+                  hidden: __f__!data.error_display_line
+
+    - direction: row
+      items:
+        - type: button
+          color: primary
+          title: Annuler
+          description: Annuler
+          action: close
+          flex: '0'
+        - type: button
+          flex: '0'
+          icon: refresh
+          color: reset
+          description: Faire un nouvel import
+          action: reset
+          hidden: __f__!data.id_import
+        - type: button
+          flex: '0'
+          color: success
+          title: Valider
+          description: Valider
+          action: import
+          disabled: __f__!(formGroup.valid )
+          hidden: __f__data.status == 'DONE'

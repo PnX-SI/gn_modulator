@@ -6,7 +6,7 @@
 
 from geoalchemy2.shape import to_shape, from_shape
 from geojson import Feature
-from marshmallow import pre_load, fields, ValidationError
+from marshmallow import pre_load, fields, ValidationError, EXCLUDE
 from shapely.geometry import shape
 from utils_flask_sqla_geo.utilsgeometry import remove_third_dimension
 from geonature.utils.env import ma
@@ -195,10 +195,17 @@ class SchemaSerializers:
         def pre_load_make_object(self_marshmallow, data, **kwargs):
             for key in self.pk_field_names():
                 if key in data and data[key] is None:
-                    print("\nmarsh remove pk null\n", key)
                     data.pop(key, None)
 
-            # # pour les champs null avec default defini dans les proprietés
+            # enleve les clés si non dans only
+            for k in list(data.keys()):
+                if self_marshmallow.only and k not in self_marshmallow.only:
+                    print(self, "pop not in only", k)
+                    data.pop(k)
+
+            # # pour les champs null avec default d
+            #
+            # efini dans les proprietés
             # for key, column_def in self.columns().items():
             #     if key in data and data[key] is None and column_def.get('default'):
             #         data.pop(key, None)
@@ -246,10 +253,10 @@ class SchemaSerializers:
             )
 
         # if self.attr('meta.check_cruved'):
-        marshmallow_schema_dict["ownership"] = fields.Integer(metadata={"dumps_only": True})
+        marshmallow_schema_dict["scope"] = fields.Integer(metadata={"dumps_only": True})
         marshmallow_schema_dict["row_number"] = fields.Integer(metadata={"dumps_only": True})
         # else:
-        # marshmallow_schema_dict['ownership'] = 0
+        # marshmallow_schema_dict['scope'] = 0
 
         # store in cache before relation (avoid circular dependencies)
 
@@ -299,7 +306,8 @@ class SchemaSerializers:
             sm_rel = self.cls(property["schema_code"])
 
             fields_to_remove.append(field)
-            if default_fields := sm_rel.attr("meta.default_fields"):
+            default_fields = sm_rel.attr("meta.default_fields")
+            if default_fields:
                 for rel_field in default_fields:
                     fields_to_add.append(f"{field}.{rel_field}")
             else:
@@ -320,7 +328,7 @@ class SchemaSerializers:
 
         data = self.MarshmallowSchema()(**kwargs).dump(m[0] if isinstance(m, tuple) else m)
 
-        # pour gérer les champs supplémentaire (ownership, row_number, etc....)
+        # pour gérer les champs supplémentaire (scope, row_number, etc....)
         if isinstance(m, tuple):
             keys = list(m.keys())
             if len(keys) > 1:
@@ -395,7 +403,7 @@ class SchemaSerializers:
             map(lambda x: x[0] if isinstance(x, tuple) else x, m_list), many=True
         )
 
-        # pour gérer les champs supplémentaire (ownership, row_number, etc....)
+        # pour gérer les champs supplémentaire (scope, row_number, etc....)
         if len(data_list) and isinstance(m_list[0], tuple):
             keys = list(m_list[0].keys())
             if len(keys) > 1:
@@ -421,12 +429,17 @@ class SchemaSerializers:
         geometry = data.pop(geometry_field_name)
         return {"type": "Feature", "geometry": geometry, "properties": data}
 
-    def unserialize(self, m, data):
+    def unserialize(self, m, data, authorized_write_fields=None):
         """
         unserialize using marshmallow
         """
+        kwargs = {}
+        if authorized_write_fields:
+            kwargs = {"only": authorized_write_fields, "unknown": EXCLUDE}
         MS = self.MarshmallowSchema()
-        ms = MS()
+
+        ms = MS(**kwargs)
+
         ms.load(data, instance=m)
 
     @classmethod

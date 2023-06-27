@@ -4,17 +4,39 @@ title: Schema syn.synthese
 description: Définition du schema de la synthese
 
 meta:
-    schema_code: syn.synthese
     autoschema: true
     model: geonature.core.gn_synthese.models.Synthese
     genre: M
     label: element de la synthese
     labels: elements de la synthese
-    label_field_name: cd_nom
+    label_field_name: taxref.nom_vern
     geometry_field_name: the_geom_4326
     unique:
         - id_source
         - entity_source_pk_value
-    properties:
-        entity_source_pk_value:
-            type: string
+properties:
+    entity_source_pk_value:
+        type: string
+    nomenclature_info_geo_type:
+        nomenclature_type: TYP_INF_GEO
+    nomenclature_behaviour:
+        nomenclature_type: OCC_COMPORTEMENT
+    nomenclature_determination_method:
+        nomenclature_type: METH_DETERMIN
+    nomenclature_bio_condition:
+        title: État biologique
+    taxref:
+        title: taxon
+    dataset:
+        title: Jeu de données
+    cor_observers:
+        title: Observateur(s)
+    date_min:
+        title: Date (min)
+    url_source:
+        type: string
+        column_property: concat
+        title: Url source
+        # label: '__CONFIG.URL_APPLICATION__/<source.url_source>/<entity_source_pk_value>'
+        label: '<source.url_source>/<entity_source_pk_value>'
+

@@ -1,0 +1,21 @@
+type: layout
+code: test_form_constraint
+title: Layout formulaire et contraintes
+description: Layout de test pour l'affichage
+
+data:
+
+layout:
+  title: Test Form and display
+  items:
+    - direction: row
+      items:
+        - title: Formulaire
+          type: form
+          items:
+            - key: a
+              type: string
+            - key: b
+              type: string
+              required: __f__data.a==1
+              disabled: __f__data.a!=1

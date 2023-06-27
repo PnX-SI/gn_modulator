@@ -1,0 +1,126 @@
+type: layout
+code: m_sipaf.diagnostic_edit
+title: page edit diagnostic
+description: page edit diagnostic
+
+aliases:
+  - &diag_commons
+    - hidden: true
+      items:
+        - id_diagnostic
+        - key: id_passage_faune
+          default: __f__context.params.id_passage_faune
+    - display: row
+      items:
+        - date_diagnostic
+        - id_organisme
+        - id_role
+        - key: commentaire_diagnostic
+          type: textarea
+
+  - &diag_perturbation_obstacle
+    items:
+      - title: Obstacles
+        direction: row
+        items:
+          - key: nomenclatures_diagnostic_obstacle
+            additional_fields:
+              - cd_nomenclature
+            type: list_form
+            multiple: true
+            return_object: true
+          - key: obstacle_autre
+            disabled: __f__!data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
+            required: __f__data.nomenclatures_diagnostic_obstacle?.some(n => n.cd_nomenclature == 'AUT')
+      - title: Perturbation
+        direction: row
+        items:
+          - key: nomenclatures_diagnostic_perturbation
+            additional_fields:
+              - cd_nomenclature
+            type: list_form
+            multiple: true
+            return_object: true
+          - key: perturbation_autre
+            disabled: __f__!data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
+            required: __f__data.nomenclatures_diagnostic_perturbation?.some(n => n.cd_nomenclature == 'AUT')
+      - title: Ouvrage hydrau
+        items:
+          - nomenclatures_diagnostic_ouvrage_hydrau_etat_berge
+          - id_nomenclature_ouvrage_hydrau_racc_banq
+          - nomenclatures_diagnostic_ouvrage_hydrau_dim
+      - type: textarea
+        key: commentaire_perturbation_obstacle
+
+  - &diag_amenagement
+    - title: Aménagements
+      direction: row
+      items:
+        - key: nomenclatures_diagnostic_amenagement_biodiv
+          additional_fields:
+            - cd_nomenclature
+          type: list_form
+          multiple: true
+          return_object: true
+        - key: amenagement_biodiv_autre
+          disabled: __f__!data.nomenclatures_diagnostic_amenagement_biodiv?.some(n => n.cd_nomenclature == 'AUT')
+          required: __f__data.nomenclatures_diagnostic_amenagement_biodiv?.some(n => n.cd_nomenclature == 'AUT')
+    - key: clotures
+      type: array
+      items:
+        direction: row
+        items:
+          - id_nomenclature_clotures_guidage_type
+          - key: clotures_guidage_type_autre
+            disabled: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_type) == 'AUT')"
+            required: "__f__u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_type) == 'AUT'"
+          - id_nomenclature_clotures_guidage_etat
+          - key: clotures_guidage_etat_autre
+            disabled: "__f__!(u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT')"
+            required: "__f__u.get_cd_nomenclature(data?.id_nomenclature_clotures_guidage_etat) == 'AUT'"
+    - key: vegetation_tablier
+      type: array
+      items:
+        direction: row
+        items:
+          - id_nomenclature_vegetation_type
+          - id_nomenclature_vegetation_couvert
+    - key: vegetation_debouche
+      type: array
+      items:
+        direction: row
+        items:
+          - id_nomenclature_vegetation_type
+          - id_nomenclature_vegetation_couvert
+    - key: commentaire_amenagement
+      type: textarea
+
+  - &diag_synthese
+    - id_nomenclature_franchissabilite
+    - id_nomenclature_interet_petite_faune
+    - id_nomenclature_interet_grande_faune
+    - key: amenagement_faire
+      type: textarea
+    - key: commentaire_synthese
+      type: textarea
+layout:
+  height_auto: true
+  items:
+    code: utils.object_form
+    template_params:
+      object_code: diagnostic
+      layout:
+        - type: breadcrumbs
+          flex: "0"
+        - overflow: true
+          display: tabs
+          lazy_loading: true
+          items:
+            - label: Champs communs
+              items: *diag_commons
+            - label: Perturbations / Obstacles
+              items: *diag_perturbation_obstacle
+            - label: Aménagement
+              items: *diag_amenagement
+            - label: Synthese
+              items: *diag_synthese

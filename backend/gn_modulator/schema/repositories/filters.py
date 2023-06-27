@@ -2,10 +2,11 @@
     repositories - filters
 """
 import unidecode
-from sqlalchemy import cast, and_, or_, not_
+from sqlalchemy import cast, and_, or_, not_, func
 from geonature.utils.env import db
 from ..errors import SchemaRepositoryFilterError, SchemaRepositoryFilterTypeError
 from sqlalchemy.sql.functions import ReturnTypeFromArgs
+from gn_modulator.utils.filters import parse_filters
 
 
 class unaccent(ReturnTypeFromArgs):
@@ -67,6 +68,9 @@ class SchemaRepositoriesFilters:
         cur_filter = None
         cur_ops = []
 
+        if isinstance(filter_array, str):
+            filter_array = [filter_array]
+
         for elem in filter_array:
             loop_filter = None
 
@@ -85,6 +89,11 @@ class SchemaRepositoriesFilters:
                     cur_ops = cur_ops[:-1]
                 else:
                     cur_ops.append(elem)
+
+            elif isinstance(elem, str):
+                loop_filter, query = self.process_filter_array(
+                    Model, parse_filters(elem), query, condition
+                )
 
             else:
                 raise SchemaRepositoryFilterError(
@@ -113,106 +122,6 @@ class SchemaRepositoriesFilters:
                     cur_filter = loop_filter
         return cur_filter, query
 
-    def find_index_close(self, index_open, filters):
-        """
-        pour trouver l'index de la parenthèse fermante ] correspondante
-        """
-        cpt_open = 0
-        for index in range(index_open + 1, len(filters)):
-            if filters[index] == "[":
-                cpt_open += 1
-            if filters[index] == "]":
-                if cpt_open == 0:
-                    return index
-                else:
-                    cpt_open -= 1
-        filters[index_open] = f"   {filters[index_open]}   "
-        raise Exception(f"Pas de parenthèse fermante trouvée {','.join(filters[index_open:])}")
-
-    def parse_filters(self, filters):
-        """
-        traite une liste de chaine de caractères représentant des filtres
-        """
-
-        if not filters:
-            return []
-
-        if isinstance(filters, str):
-            return self.parse_filters(filters.split(","))
-
-        filters_out = []
-
-        nb_filters = len(filters)
-        index = 0
-        while index < nb_filters:
-            # calcul du filtre {field, type, value}
-            filter = self.parse_filter(filters[index])
-
-            # si on tombe sur une parenthèse ouvrante
-            if filter == "[":
-                # on cherche l'index de la parenthèse fermante ] correspondante
-                index_close = self.find_index_close(index, filters)
-
-                # on calcule les filtres entre les deux [...]
-                filters_out.append(self.parse_filters(filters[index + 1 : index_close]))
-
-                # on passe à l'index qui suit index_close
-                index = index_close + 1
-                # de l'indice du ']' correspondant
-
-            # si on tombe sur une parenthère fermante => pb
-            elif filter == "]":
-                filters[index] = f"   {filters[index]}   "
-                raise SchemaRepositoryFilterError(
-                    f"Parenthese fermante non appariée trouvée dans  {','.join(filters)}"
-                )
-
-            # sinon on ajoute le filtre à la liste et on passe à l'index suivant
-            else:
-                filters_out.append(filter)
-                index += 1
-
-        return filters_out
-
-    def parse_filter(self, str_filter):
-        """
-        renvoie un filtre a partir d'une chaine de caractère
-        id_truc=5 => { field: id_truc type: = value: 5 } etc...
-        """
-
-        if str_filter in "*|![]":
-            return str_filter
-
-        index_min = None
-        filter_type_min = None
-        for filter_type in ["=", "<", ">", ">=", "<=", "like", "ilike", "in", "~"]:
-            try:
-                index = str_filter.index(f" {filter_type} ")
-            except ValueError:
-                continue
-
-            if (
-                (index_min is None)
-                or (index < index_min)
-                or (index_min == index and len(filter_type) > len(filter_type_min))
-            ):
-                index_min = index
-                filter_type_min = filter_type
-
-        if not filter_type_min:
-            return None
-
-        filter = {
-            "field": str_filter[:index_min],
-            "type": filter_type_min,
-            "value": str_filter[index_min + len(filter_type_min) + 2 :],
-        }
-
-        if filter_type_min == "in":
-            filter["value"] = filter["value"].split(";")
-
-        return filter
-
     def get_filter(self, Model, filter, query=None, condition=None):
         """
         get filter
@@ -228,7 +137,9 @@ class SchemaRepositoriesFilters:
         filter_type = filter["type"]
         filter_value = filter.get("value", None)
 
-        model_attribute, query = self.custom_getattr(Model, filter_field, query, condition)
+        model_attribute, query = self.custom_getattr(
+            Model, filter_field, query=query, condition=condition
+        )
 
         if filter_type in ["like", "ilike"]:
             if "%" not in filter_value:
@@ -271,13 +182,16 @@ class SchemaRepositoriesFilters:
             filter_out = cast(model_attribute, db.String) != (str(filter_value))
 
         elif filter_type == "in":
-            filter_out = cast(model_attribute, db.String).in_(
-                [str(x) for x in filter_value]
-                # map(
-                #     lambda x: str(x),
-                #     filter_value
-                # )
+            filter_out = cast(model_attribute, db.String).in_([str(x) for x in filter_value])
+
+        elif filter_type == "dwithin":
+            x, y, radius = filter_value.split(";")
+            geo_filter = func.ST_DWithin(
+                func.ST_GeogFromWKB(model_attribute),
+                func.ST_GeogFromWKB(func.ST_MakePoint(x, y)),
+                radius,
             )
+            filter_out = geo_filter
 
         else:
             raise SchemaRepositoryFilterTypeError(

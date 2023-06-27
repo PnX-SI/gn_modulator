@@ -6,18 +6,15 @@ code erreurs
 
 
 def add_error(
-    msg=None,
-    code=None,
+    error_msg=None,
+    error_code=None,
     definition_type=None,
     definition_code=None,
     file_path=None,
     template_file_path=None,
 ):
-    if msg is None:
-        raise Exception("msg is None")
-
-    # if code is None:
-    #     raise Exception("code is None")
+    if error_msg is None:
+        raise Exception("error_msg is None")
 
     file_path = file_path or str(get_global_cache([definition_type, definition_code, "file_path"]))
 
@@ -32,8 +29,8 @@ def add_error(
     #         raise Exception(f"template file path is None {template_code}")
 
     error = {
-        "msg": msg,
-        "code": code,
+        "error_msg": error_msg,
+        "error_code": error_code,
         "file_path": str(file_path),
         "template_file_path": template_file_path,
         "definition_type": definition_type,
@@ -56,7 +53,7 @@ def get_errors(definition_type=None, definition_code=None, error_code=None):
         filter(
             lambda x: (definition_code is None or x.get("definition_code") == definition_code)
             and (definition_type is None or x.get("definition_type") == definition_type)
-            and (error_code is None or error_code in x.get("code")),
+            and (error_code is None or error_code in x.get("error_code")),
             errors,
         )
     )
@@ -101,7 +98,8 @@ def errors_txt():
     # on affiche les erreurs par fichier pour simplifier la lecture
     for definition_error_file_path in sorted(definition_error_file_paths):
         txt_errors += f"\n- {definition_error_file_path}\n"
-        if template_file_path := template_file_paths.get(definition_error_file_path):
+        template_file_path = template_file_paths.get(definition_error_file_path)
+        if template_file_path:
             txt_errors += f"  {template_file_path}\n"
 
         txt_errors += "\n"
@@ -110,7 +108,9 @@ def errors_txt():
             lambda x: x.get("file_path", "") == definition_error_file_path,
             errors,
         ):
-            txt_errors += f"  - {definition_error['code']} {definition_error['msg']}\n\n"
+            txt_errors += (
+                f"  - {definition_error['error_code']} {definition_error['error_msg']}\n\n"
+            )
 
     # Rappel du nombre d'erreur si élevé
     if len(errors) > 5:

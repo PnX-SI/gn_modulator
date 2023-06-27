@@ -37,26 +37,30 @@ class ModuleConfigUtils:
         return f"{object_code}_{action}"
 
     @classmethod
-    def page_url(cls, module_code, object_code, action):
+    def page_url(cls, module_code, object_code, action, pk_field_name):
         if action in ["details", "edit"]:
-            sm = SchemaMethods(cls.schema_code(module_code, object_code))
-            return f"{object_code}_{action}/:{sm.pk_field_name()}"
+            return f"{object_code}_{action}/:{pk_field_name}"
         else:
             return f"{object_code}_{action}"
 
     @classmethod
     def default_page_config(cls, module_code, object_code, action):
-        sm = SchemaMethods(cls.schema_code(module_code, object_code))
+        try:
+            sm = SchemaMethods(cls.schema_code(module_code, object_code))
+            pk_field_name = sm.pk_field_name()
+        except Exception:
+            pk_field_name = "id_xxx"
+
         default_page_config = {
             "action": action,
             "code": cls.page_code(object_code, action),
-            "url": cls.page_url(module_code, object_code, action),
+            "url": cls.page_url(module_code, object_code, action, pk_field_name),
             "layout": {"code": cls.layout_code(module_code, object_code, action)},
             "object_code": object_code,
         }
 
         if action in ["details", "edit"]:
-            default_page_config["objects"] = {object_code: {"value": f":{sm.pk_field_name()}"}}
+            default_page_config["objects"] = {object_code: {"value": f":{pk_field_name}"}}
 
         return default_page_config
 
@@ -202,9 +206,12 @@ class ModuleConfigUtils:
 
             # on récupère la configuration du schéma avec la possibilité de changer certains paramètre
             # comme par exemple 'label', 'labels', 'genre'
-            object_schema_config = SchemaMethods(object_module_config["schema_code"]).config(
-                object_module_config
-            )
+            try:
+                object_schema_config = SchemaMethods(object_module_config["schema_code"]).config(
+                    object_module_config
+                )
+            except Exception:
+                object_schema_config = {}
 
             # insertion de la config schema dans la config module
             for key, _object_schema_config_item in object_schema_config.items():
@@ -269,3 +276,216 @@ class ModuleConfigUtils:
 
         # enregistrement du blueprint pour ce module
         current_app.register_blueprint(bp, url_prefix=f"/{module_code.lower()}")
+
+    @classmethod
+    def process_fields(cls, module_code):
+        """
+        On regarde dans toutes les pages pour déterminer les champs
+        """
+        cls.process_base_fields(module_code)
+        cls.process_layout_fields(module_code)
+
+    @classmethod
+    def process_base_fields(cls, module_code):
+        module_config = cls.module_config(module_code)
+        if not module_config["registred"]:
+            return
+        for object_code in module_config["objects"]:
+            object_config = cls.object_config(module_code, object_code)
+            if "R" in object_config["cruved"]:
+                cls.add_basic_fields(module_code, object_code)
+
+    @classmethod
+    def add_basic_fields(cls, module_code, object_code):
+        sm = SchemaMethods(cls.schema_code(module_code, object_code))
+        if sm.definition is None:
+            return
+        authorized_read_fields = (
+            get_global_cache(
+                [
+                    "keys",
+                    module_code,
+                    object_code,
+                    "read",
+                ]
+            )
+            or []
+        )
+
+        authorized_write_fields = (
+            get_global_cache(
+                [
+                    "keys",
+                    module_code,
+                    object_code,
+                    "read",
+                ]
+            )
+            or []
+        )
+
+        set_global_cache(
+            [
+                "keys",
+                module_code,
+                object_code,
+                "read",
+            ],
+            authorized_read_fields,
+        )
+
+        set_global_cache(
+            [
+                "keys",
+                module_code,
+                object_code,
+                "write",
+            ],
+            authorized_write_fields,
+        )
+
+        # pour la lecture, on ajoute par défaut les champs
+        # - pk_field_name
+        # - label_field_name
+        # - title_field_name
+        # - champs d'unicité
+        # - scope
+        for elem in [
+            sm.pk_field_name(),
+            sm.label_field_name(),
+            sm.title_field_name(),
+            sm.geometry_field_name(),
+            *sm.unique(),
+            "scope",
+        ]:
+            if elem is not None and elem not in authorized_read_fields:
+                authorized_read_fields.append(elem)
+
+    @classmethod
+    def process_layout_fields(cls, module_code):
+        module_config = cls.module_config(module_code)
+
+        pages = module_config.get("pages", {})
+        config_params = module_config.get("config_params", {})
+        config_defaults = module_config.get("config_defaults", {})
+        config_params = {**config_defaults, **config_params}
+        context = {"module_code": module_code}
+        for page_code in pages:
+            cls.get_layout_keys(pages[page_code]["layout"], config_params, context)
+
+    @classmethod
+    def get_layout_keys(cls, layout, params, context):
+        #
+        if isinstance(layout, list):
+            for item in layout:
+                cls.get_layout_keys(item, params, context)
+            return
+
+        # ajout d'une clé
+        if isinstance(layout, str):
+            return cls.add_key(context, layout)
+
+        if layout.get("key") and layout.get("type") not in ["dict", "array"]:
+            cls.add_key(context, layout["key"])
+
+        if layout.get("object_code"):
+            context = {**context, "object_code": layout["object_code"]}
+
+        if layout.get("type") == "form":
+            context = {**context, "form": True}
+
+        if layout.get("module_code"):
+            context = {**context, "module_code": layout["module_code"]}
+
+        # traitement dict array
+        if isinstance(layout, dict) and layout.get("type") in ["dict", "array"]:
+            data_keys = context.get("data_keys", [])
+            data_keys.append(layout["key"])
+            context = {**context, "data_keys": data_keys}
+            return cls.get_layout_keys(layout["items"], params, context)
+
+        # traitement list_form
+        if layout.get("type") == "list_form":
+            key_add = []
+            if layout.get("label_field_name"):
+                key_add.append(layout["label_field_name"])
+            if layout.get("title_field_name"):
+                key_add.append(layout["title_field_name"])
+            if layout.get("additional_fields"):
+                key_add += layout["additional_fields"]
+            if key_add:
+                cls.get_layout_keys(
+                    key_add,
+                    params,
+                    {**context, "data_keys": []},
+                )
+            if (
+                layout.get("return_object")
+                and layout.get("additional_fields")
+                and not context.get("form")
+            ):
+                additional_keys = list(
+                    map(lambda x: f"{layout['key']}.{x}", layout["additional_fields"])
+                )
+                cls.get_layout_keys(additional_keys, params, context)
+
+        if layout.get("code"):
+            template_params = {**params, **layout.get("template_params", {})}
+            layout_from_code = SchemaMethods.get_layout_from_code(
+                layout.get("code"), template_params
+            )
+            return cls.get_layout_keys(layout_from_code, params, context)
+
+        for field_list_type in ["items", "popup_fields"]:
+            if layout.get(field_list_type):
+                return cls.get_layout_keys(layout.get(field_list_type), params, context)
+
+    @classmethod
+    def add_key(cls, context, key):
+        keys = get_global_cache(["keys"])
+
+        if context.get("data_keys"):
+            key = f"{''.join(context['data_keys'])}.{key}"
+
+        module_keys = keys[context["module_code"]] = keys.get(context["module_code"], {})
+        object_keys = module_keys[context["object_code"]] = module_keys.get(
+            context["object_code"], {"read": [], "write": []}
+        )
+
+        object_config = cls.object_config(context["module_code"], context["object_code"])
+        schema_code = object_config["schema_code"]
+
+        sm = SchemaMethods(schema_code)
+        if sm.definition is None:
+            return
+
+        if not sm.has_property(key):
+            # raise error ?
+            # print(f"pb ? {sm} has no {key}")
+            return keys
+
+        # ajout en lecture
+        if key not in object_keys["read"]:
+            object_keys["read"].append(key)
+
+        # ajout en ecriture
+        if context.get("form"):
+            # key si relationship
+            write_key = key
+            if sm.is_relationship(key):
+                rel = SchemaMethods(sm.property(key)["schema_code"])
+                write_key = f"{key}.{rel.pk_field_name()}"
+            if write_key not in object_keys["write"]:
+                object_keys["write"].append(write_key)
+        return keys
+
+    @classmethod
+    def get_autorized_fields(cls, module_code, object_code, write=False):
+        return get_global_cache(
+            [
+                "keys",
+                module_code,
+                object_code,
+                "write" if write else "read",
+            ]
+        )

@@ -79,6 +79,17 @@
     ></modules-layout-card>
   </ng-container>
 
+    <!-- import -->
+    <ng-container *ngIf="layoutType == 'import'">
+      <modules-layout-import
+        [data]="data"
+        [layout]="layout"
+        [parentContext]="context"
+        (onAction)="processAction($event)"
+      ></modules-layout-import>
+    </ng-container>
+
+  <!-- key -->
   <ng-container *ngIf="layoutType == 'key'">
     <modules-layout-element
       [data]="data"
@@ -107,10 +118,24 @@
 
   <!-- buttons -->
   <ng-container *ngIf="layoutType == 'button'">
-    <div class="layout-buttons" [ngStyle]="computedLayout.style">
+    <div class="layout-buttons" [ngStyle]="computedLayout.style" [matTooltip]="computedLayout.description || ''">
+      <!-- mat-raised-button -->
       <button
-        *ngIf="!computedLayout.href"
-        [matTooltip]="computedLayout.description || ''"
+        *ngIf="(!computedLayout.href) && !!computedLayout.icon && !computedLayout.title"
+        mat-mini-fab
+        [color]="computedLayout.color"
+        [disabled]="computedLayout.disabled"
+        (click)="onButtonClick($event)"
+      >
+        <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
+        <mat-icon *ngIf="actionProcessing"
+          ><mat-spinner color="accent" diameter="20"> </mat-spinner
+        ></mat-icon>
+      </button>
+
+
+      <button
+        *ngIf="(!computedLayout.href)  && !!computedLayout.title"
         mat-raised-button
         [color]="computedLayout.color"
         [disabled]="computedLayout.disabled"
@@ -142,9 +167,10 @@
       <div
         [ngClass]="{
           'layout-message': true,
-          error: layout.class == 'error',
-          info: layout.class == 'info',
-          warning: layout.class == 'warning'
+          error: computedLayout.class == 'error',
+          info: computedLayout.class == 'info',
+          warning: computedLayout.class == 'warning',
+          success: computedLayout.class == 'success'
         }"
       >
         <div

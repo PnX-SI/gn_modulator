@@ -9,6 +9,7 @@ from sqlalchemy import (
     cast,
 )
 from geonature.utils.env import db
+from gn_modulator.utils.filters import parse_filters
 from .. import errors
 
 
@@ -54,9 +55,10 @@ class SchemaModelColumnProperties:
 
         if column_property_type == "concat":
             # label = '<area_code> <area_name>'
-            # 1 => ['<area_code>', '', '<area_name>']
+            # 1 => ['<area_code>', ' ', '<area_name>']
             # 2 => map getattr
             # 3 *dans concat
+            conditions = []
             label = column_property_def["label"]
             index = 0
             items = []
@@ -69,14 +71,19 @@ class SchemaModelColumnProperties:
                         items2.append(txt)
                         txt = ""
                 elif label[index] == ">":
-                    model_attribute, _ = self.custom_getattr(Model, txt)
+                    model_attribute, condition = self.custom_getattr(Model, txt)
+                    if condition is not None:
+                        conditions.append(condition)
                     items2.append(txt)
                     items.append(model_attribute)
                     txt = ""
                 else:
                     txt += label[index]
                 index += 1
-            return func.concat(*items)
+            cp = func.concat(*items)
+            if conditions:
+                cp = select([cp]).where(and_(*conditions))
+            return cp
 
         if column_property_type in ["st_astext"]:
             return func.st_astext(getattr(Model, column_property_def["key"]))
@@ -98,7 +105,7 @@ class SchemaModelColumnProperties:
         if column_property_def.get("filters") is not None:
             condition_filters, conditions = rel.process_filter_array(
                 relation.mapper.entity,
-                self.parse_filters(column_property_def.get("filters")),
+                parse_filters(column_property_def.get("filters")),
                 query=conditions,
                 condition=True,
             )

@@ -1,0 +1,86 @@
+type: layout
+code: m_sipaf.site_list
+title: Layout site list
+description: Layout pour la liste de sites
+
+layout:
+  height_auto: true
+  direction: row
+  object_code: site
+  items:
+    - type: object
+      display: filters
+      flex: 1
+      items: __SITE_FILTERS_FIELDS__
+      filter_defs: __SITE_FILTERS_DEFS__
+
+    - type: map
+      flex: 2
+      items:
+        type: object
+        display: geojson
+        popup_fields: __SITE_MAP_POPUP_FIELDS__
+
+    - flex: 2
+      items:
+        - type: breadcrumbs
+          flex: "0"
+        - display: tabs
+          overflow: true
+          items:
+            - label: __f__o.tab_label(x)
+              object_code: site
+              items:
+                - direction: row
+                  items:
+                    - code: utils.button_create
+                      flex: "0"
+                    - type: button
+                      description: Exporter les passages à faune
+                      color: primary
+                      flex: "0"
+                      icon: download
+                      hidden: __f__!o.is_action_allowed(x, 'E')
+                      action:
+                        type: modal
+                        modal_name: exports
+                    - type: modal
+                      flex: "0"
+                      modal_name: exports
+                      items:
+                        - title: Exports pour les passages à faune
+                        - type: button
+                          flex: "0"
+                          title: "Export complet"
+                          description: Télécharger les passages à faune (les filtres sont appliqués)
+                          href: __f__o.url_export(x, 'm_sipaf.pf')
+                        - type: button
+                          flex: "0"
+                          title: "Export import"
+                          description: Export destiné à l'import (les filtres sont appliqués)
+                          href: __f__o.url_export(x, 'm_sipaf.pf_import')
+                    - type: button
+                      flex: "0"
+                      icon: upload
+                      color: primary
+                      description: Importer des passages à faune
+                      action:
+                        type: modal
+                        modal_name: import
+                      hidden: __f__!o.is_action_allowed(x, 'I')
+                    - type: modal
+                      modal_name: import
+                      items:
+                        type: import
+                  flex: "0"
+                - type: object
+                  display: table
+                  sort: code_passage_faune
+                  items: __SITE_TABLE_FIELDS__
+            - object_code: diagnostic
+              label: __f__o.tab_label(x)
+              items:
+                - type: object
+                  display: table
+                  sort: date_diagnostic-
+                  items: __DIAGNOSTIC_TABLE_FIELDS__

@@ -1,0 +1,56 @@
+type: module
+code: m_sipaf
+title: Module de gestion des passage à faune
+description: Module de gestion des passage à faune
+
+config_params: !include ./config.yml
+
+module:
+  module_label: Passages faune
+  module_desc: Module permettant la visualisation et la gestion des passages à Faune de France
+  module_picto: fa-road
+  active_frontend: true
+
+features:
+  - m_sipaf.utils
+  - m_sipaf.permissions
+
+objects:
+  site:
+    schema_code: m_sipaf.pf
+    cruved: CRUIDE
+  actor:
+    schema_code: m_sipaf.actor
+    cruved: R
+  diagnostic:
+    schema_code: m_sipaf.diag
+    cruved: CRUD
+  synthese:
+    schema_code: syn.synthese
+    label: observation
+    labels: observations
+    cruved: R
+    map:
+      style:
+        color: red
+
+
+tree:
+  site:
+    diagnostic:
+
+pages_definition:
+  site:
+    list:
+      root: true
+    create:
+      layout:
+        code: m_sipaf.site_edit
+    edit:
+    details:
+  diagnostic:
+    details:
+    edit:
+    create:
+      layout:
+        code: m_sipaf.diagnostic_edit

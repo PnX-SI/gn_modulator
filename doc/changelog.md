@@ -1,5 +1,52 @@
 # Changelog
 
+## 1.1.0 (2023-06-27)
+
+Nécessite la version 2.13.0 (ou plus) de GeoNature.
+
+**🚀 Nouveautés**
+
+- Ajout de fonctionalités d'import depuis des fichiers CSV (commande + interface frontend) (#25)
+- Compatibilité avec GeoNature 2.13.0 et la refonte des permissions, en définissant les permissions disponibles du module (#232)
+- Possibilité pour chaque sous-module de déclarer ses permissions disponibles
+- [SIPAF] Ajout d'un onglet et du formulaire des diagnostics fonctionnels (#37)
+
+**✨ Améliorations**
+
+- Clarification dans la gestion des routes REST
+- Meilleure gestion des `tabs` et des `scrolls` (#32)
+- Sécurisation des API (contrôle des `fields` en lecture et écriture) (#29)
+  - champs listés à partir de la config
+  - écriture : si un champs demandé n'est pas dans la config -> erreur 403
+  - lecture : ce champs n'est pas pris en compte (utilisation de `only` dans l'initialisation des champs marshmallow)
+- Requêtes SQL (fonction `query_list`)
+    - chargement des relations et des champs pour les requêtes
+    - pour éviter les chargements n+1 (1 requête supplémentaire par relation)
+    - utilisation de `raise_load`
+    - on charge le minimum de champs possibles
+- Déplacement des configurations dans le dossier `media/modulator/config` de GeoNature
+- Changement de nom `ownership` -> `scope`
+- Amélioration du composant list_form
+
+**🐛 Corrections**
+
+- Correction des formulaires dans les onglets (#38)
+
+**⚠️ Notes de version**
+
+Si vous mettez à jour le module :
+
+- Mettre à jour le module SIPAF
+  ```
+  geonature modulator install m_sipaf
+  ```
+  - Cette commande va effectuer les actions suivantes :
+    - créer le dossier `<GN>/backend/media/modulator`
+    - déplacer la config du sous-module dans le dossier `<GN>/backend/media/modulator/config`
+    - mettre à jour les `features` du module et notamment :
+      - ajouter des nomenclatures pour les permissions
+      - corriger de nomenclatures pour les passages à faune
+      - ajouter des permissions disponibles pour le module
 
 ## 1.0.5 (13-03-2023)
 
@@ -54,7 +101,7 @@ Si vous mettez à jour le module :
 
 ## 1.0.0 (16-02-2023)
 
-Première version fonctionnelle du module MODULATOR.  
+Première version fonctionnelle du module MODULATOR.
 Elle inclut une documentation pour créer ses propres sous-modules, mais aussi 2 sous-modules d'exemple (SIPAF pour l'inventaire national des passages à faune et MONITORING pour le gestionnaire de sites).
 
 Compatible avec la version 2.11 de GeoNature.

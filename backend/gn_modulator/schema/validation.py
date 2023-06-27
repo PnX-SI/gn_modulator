@@ -139,7 +139,8 @@ class SchemaValidation:
         if schema_definition_id in definitions:
             return
 
-        if schema_definition := get_global_cache(["js_definition", schema_definition_id]):
+        schema_definition = get_global_cache(["js_definition", schema_definition_id])
+        if schema_definition:
             definitions[schema_definition_id] = schema_definition
             deps = schema_definition["deps"]
             for dep in deps:

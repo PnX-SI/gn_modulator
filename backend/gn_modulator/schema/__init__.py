@@ -4,14 +4,13 @@
     class gathering methods from mixins
 """
 
-from .api import SchemaApi
 from .auto import SchemaAuto
 from .base import SchemaBase
 from .commands import SchemaCommands
 from .config import SchemaConfig
 from .doc import SchemaDoc
 from .export import SchemaExport
-from .imports import SchemaImports
+from .features import SchemaFeatures
 from .models import SchemaModel
 from .repositories import SchemaRepositories
 from .serializers import SchemaSerializers
@@ -20,17 +19,17 @@ from .types import SchemaTypes
 from .validation import SchemaValidation
 from . import errors
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
+from gn_modulator.utils.commons import get_class_from_path
 
 
 class SchemaMethods(
-    SchemaApi,
     SchemaAuto,
     SchemaBase,
     SchemaCommands,
     SchemaConfig,
     SchemaDoc,
     SchemaExport,
-    SchemaImports,
+    SchemaFeatures,
     SchemaModel,
     SchemaRepositories,
     SchemaSerializers,
@@ -72,8 +71,9 @@ class SchemaMethods(
         """
         Initialise le schema et le place dans le cache
         """
-
         definition = self.definition
+        if definition is None:
+            return None
         schema_code = definition["code"]
 
         if not definition:

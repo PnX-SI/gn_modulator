@@ -35,7 +35,7 @@ class DefinitionDynamic:
 
         # on ajoute la resolution des variables
         str_function = f"""{{
-            const {{layout, data, globalData, o, utils, context, formGroup}} = x;
+            const {{layout, data, globalData, o, u, context, formGroup}} = x;
             {str_function[1:-1]}
         }}"""
 
@@ -56,10 +56,11 @@ class DefinitionDynamic:
     layout: {},
     globalData: {},
     formGroup: {},
-    utils: {
+    u: {
         today: () => {},
         departementsForRegion: () => {},
         YML: {},
+        get_cd_nomenclature: () => {}
 
     },
     o: {
@@ -71,6 +72,7 @@ class DefinitionDynamic:
         label: () => {},
         labels: () => {},
         du_label: () => {},
+        des_labels: () => {},
         data_label: () => {},
         tab_label: () => {},
         title_details: () => {},
@@ -148,16 +150,13 @@ f(x);"""
 
                 elif "Uncaught TypeError: formGroup" in str(e):
                     pass
-                # elif "Uncaught TypeError: utils." in str(e) and "is not a function" in str(e):
-                # pass
                 else:
                     str_error = str(e).split("\n")[0]
                     add_error(
                         definition_type=definition_type,
                         definition_code=definition_code,
-                        code="ERR_LOCAL_CHECK_DYNAMIC",
-                        msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}",
-                        # msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}\n\n {str_eval}",
+                        error_code="ERR_LOCAL_CHECK_DYNAMIC",
+                        error_msg=f"[{'.'.join(keys)}] : {str_error}\n    {element}",
                     )
 
             return

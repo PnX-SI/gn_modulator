@@ -102,7 +102,7 @@ export class ModulesRouteService {
     const pathTest = this._mConfig.MODULE_URL.replace('/', '');
     return this._router.config
       .find((config) => !!config.children)
-      .children.find((config) => config.path == pathTest)['_loadedConfig'].routes;
+      .children.find((config) => config.path == pathTest)['_loadedRoutes'];
   }
 
   reloadPage() {
@@ -113,6 +113,9 @@ export class ModulesRouteService {
    * patch pour pouvoir rediriger sur la meme url
    */
   redirect(url) {
+    if (url[0] == '#') {
+      url = url.substring(1);
+    }
     this._router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this._router.navigateByUrl(url);
     });

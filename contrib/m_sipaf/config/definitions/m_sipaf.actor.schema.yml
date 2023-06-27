@@ -1,0 +1,37 @@
+
+type: schema
+code: m_sipaf.actor
+title: schema acteur site
+description: Définition du schema pour les acteurs liés aux sites
+meta:
+    autoschema: true
+    # sql_processing: true
+    # sql_schema_dot_table: pr_sipaf.cor_actor_pf
+    model: m_sipaf.models.Actor
+    module_code: m_sipaf
+    genre: M
+    label: Acteur
+    label_field_name: id_nomenclature_type_actor
+    unique:
+        - id_nomenclature_type_actor
+        - id_organism
+        - id_role
+        - id_passage_faune
+properties:
+    id_actor:
+        title: ID actor
+    id_passage_faune:
+        title: Passage_faune
+    id_organism:
+        schema_code: user.organisme
+    id_role:
+        title: Utilisateur
+    id_nomenclature_type_actor:
+        title: "Type d'acteur"
+        nomenclature_type: PF_TYPE_ACTOR
+    nomenclature_type_actor:
+        title: "Type d'acteur"
+    role:
+        title: Rôle
+    organisme:
+        title: Organisme

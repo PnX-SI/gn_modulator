@@ -8,6 +8,7 @@
 
 import copy
 import json
+from gn_modulator import MODULE_CODE
 from gn_modulator.utils.cache import get_global_cache
 
 column_types = [
@@ -190,7 +191,7 @@ class SchemaBase:
             rel_key = key.split(".")[0]
             rel_prop = self.property(rel_key)
             rel = self.cls(rel_prop["schema_code"])
-            return rel.property(key.split(".")[1])
+            return rel.property(".".join(key.split(".")[1:]))
         return self.properties().get(key)
 
     def has_property(self, key):
@@ -201,7 +202,7 @@ class SchemaBase:
                 return False
             rel_prop = self.property(rel_key)
             rel = self.cls(rel_prop["schema_code"])
-            return rel.has_property(key.split(".")[1])
+            return rel.has_property(".".join(key.split(".")[1:]))
         return self.properties().get(key) is not None
 
     def columns(self, sort=False):
@@ -308,28 +309,54 @@ class SchemaBase:
             for key in keys
         ]
 
-    def process_csv_data(self, key, data, options={}):
+    def flat_keys(self, data, key=None):
+        keys = []
+        for k in data:
+            keys.append(k)
+
+            # if isinstance(data[k], list):
+            #     keys.append(map("k."self.flat_keys(data[k], k)))
+
+            # if isinstance(data[k], dict):
+            # k_all =
+            # if k not in keys:
+            #     if
+            #     keys.append(".".join([*keysParent, k])
+
+        return keys
+
+    def process_csv_data(self, key, data, options={}, process_label=True):
         """
         pour rendre les sorties des relations jolies pour l'export ??
         """
 
         if isinstance(data, list):
-            return ", ".join([self.process_csv_data(key, d) for d in data])
+            return ", ".join(
+                [str(self.process_csv_data(key, d, process_label=process_label)) for d in data]
+            )
 
         if isinstance(data, dict):
             if not key:
-                return "_".join([self.process_csv_data(None, data[k]) for k in data.keys()])
+                return "_".join(
+                    [
+                        self.process_csv_data(None, data[k], process_label=process_label)
+                        for k in data.keys()
+                    ]
+                )
 
             if "." in key:
                 key1 = key.split(".")[0]
                 key2 = ".".join(key.split(".")[1:])
 
-                return self.process_csv_data(key2, data[key1])
+                return self.process_csv_data(key2, data[key1], process_label=process_label)
 
             options = self.has_property(key) and self.property(key) or {}
-            return self.process_csv_data(None, data[key], options)
+            return self.process_csv_data(
+                None, data[key], options=options, process_label=process_label
+            )
 
-        if labels := options.get("labels"):
+        labels = options.get("labels") and process_label
+        if labels:
             if data is True:
                 return labels[0] if len(labels) > 0 else True
             elif data is False:
@@ -338,3 +365,57 @@ class SchemaBase:
                 return labels[1] if len(labels) > 2 else None
 
         return data
+
+    @classmethod
+    def base_url(cls):
+        """
+        base url (may differ with apps (GN, UH, TH, ...))
+        TODO process apps ?
+        """
+        from geonature.utils.config import config
+
+        return "{}/{}".format(config["API_ENDPOINT"], MODULE_CODE.lower())
+
+    def url(self, post_url, full_url=False):
+        """
+        /{schema_code}{post_url}
+        - full/url renvoie l'url complet
+        TODO gérer par type d'url ?
+        """
+
+        url = self.attr("meta.url", "/{}{}".format(self.schema_code(), post_url))
+
+        if full_url:
+            url = "{}{}".format(self.cls.base_url(), url)
+
+        return url
+
+    def unique(self):
+        return self.attr("meta.unique") or []
+
+    def is_relation_n_n(self, key):
+        return self.has_property(key) and self.property(key).get("relation_type") == "n-n"
+
+    def is_relation_n_1(self, key):
+        return self.has_property(key) and self.property(key).get("relation_type") == "n-1"
+
+    def is_relation_1_n(self, key):
+        return self.has_property(key) and self.property(key).get("relation_type") == "1-n"
+
+    def is_primary_key(self, key):
+        return self.has_property(key) and self.property(key).get("primary_key")
+
+    def is_foreign_key(self, key):
+        return self.has_property(key) and self.property(key).get("foreign_key")
+
+    def default_fields(self):
+        return self.attr("meta.default_fields") or list(
+            filter(
+                lambda x: x is not None,
+                [
+                    self.pk_field_name(),
+                    self.label_field_name(),
+                    self.title_field_name(),
+                ],
+            )
+        )

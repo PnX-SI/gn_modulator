@@ -7,8 +7,10 @@ from sqlalchemy.engine import reflection
 from geonature.utils.env import db
 from .errors import SchemaAutoError
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
+from gn_modulator.utils.errors import add_error
 from gn_modulator.utils.commons import get_class_from_path
 from gn_modulator.utils.env import local_srid
+from gn_modulator import DefinitionMethods
 
 cor_type_db_schema = {
     "INTEGER": "integer",
@@ -48,7 +50,6 @@ class SchemaAuto:
             return schema_definition
 
         Model = get_class_from_path(self.attr("meta.model"))
-
         if Model is None:
             raise SchemaAutoError(
                 "Pas de modèles trouvé pour la table {}".format(schema_dot_table)
@@ -59,8 +60,16 @@ class SchemaAuto:
         for key, property in schema_definition.get("properties", {}).items():
             if key in properties_auto:
                 properties_auto[key].update(property)
-            else:
+            elif "type" in property:
                 properties_auto[key] = property
+            else:
+                add_error(
+                    error_msg=f"Propriété non conforme {self.schema_code()}.{key}: {property}",
+                    definition_type="schema",
+                    definition_code=self.schema_code(),
+                    error_code="ERR_SCHEMA_AUTO",
+                    file_path=DefinitionMethods.get_file_path("schema", self.schema_code()),
+                )
 
         schema_definition["properties"] = properties_auto
 
@@ -105,6 +114,7 @@ class SchemaAuto:
                 continue
             properties[k] = {
                 "type": "string",
+                "is_column_property": True
                 # "column_property": "label",
                 # "title": k,
             }
@@ -113,13 +123,13 @@ class SchemaAuto:
         for relation_key, relation in inspect(Model).relationships.items():
             # if relation_key not in self.attr("meta.relations", []):
             # continue
-            property = self.process_relation_auto(relation_key, relation)
+            property = self.process_relation_auto(relation_key, relation, Model)
             if property:
                 properties[relation_key] = property
 
         return properties
 
-    def process_relation_auto(self, relation_key, relation):
+    def process_relation_auto(self, relation_key, relation, Model):
         # return
 
         if not relation.target.schema:
@@ -147,14 +157,51 @@ class SchemaAuto:
                 relation.secondary.schema, relation.secondary.name
             )
 
+        if property["relation_type"] == "n-1":
+            # on cherche local key
+            x = getattr(Model, relation_key).property.local_remote_pairs[0][0]
+            property["local_key"] = x.key
+
         if self.definition.get("properties", {}).get(relation_key):
             property.update(self.property(relation_key))
+
+        if schema_code == "ref_nom.nomenclature":
+            if not property.get("nomenclature_type"):
+                if property["relation_type"] == "n-1":
+                    x = getattr(Model, relation_key)
+                    y = x.property.local_remote_pairs[0][0]
+                    property["nomenclature_type"] = self.reflect_nomenclature_type(
+                        y.table.schema, y.table.name, y.key
+                    )
+
+                if property["relation_type"] == "n-n":
+                    x = getattr(Model, relation_key).property
+
+                    for p in x.local_remote_pairs:
+                        for pp in p:
+                            for ppp in pp.foreign_keys:
+                                if (
+                                    ppp.column.table.schema == "ref_nomenclatures"
+                                    and ppp.column.table.name == "t_nomenclatures"
+                                ):
+                                    property["nomenclature_type"] = self.reflect_nomenclature_type(
+                                        pp.table.schema, pp.table.name, pp.key
+                                    )
+
+            # check si on a bien un type de nomenclature
+            if not property.get("nomenclature_type") and property["relation_type"] != "1-n":
+                add_error(
+                    error_msg=f"nomenclature_type manquante {self.schema_code()} {relation_key}",
+                    error_code="ERR_SCHEMA_AUTO_MISSING_NOMENCLATURE_TYPE",
+                    definition_type="schema",
+                    definition_code=self.schema_code(),
+                    file_path=DefinitionMethods.get_file_path("schema", self.schema_code()),
+                )
 
         return property
 
     def process_column_auto(self, column, sql_schema_name, sql_table_name):
         type = str(column.type)
-
         if "VARCHAR(" in type:
             type = "VARCHAR"
 
@@ -175,9 +222,6 @@ class SchemaAuto:
         if schema_type["type"] == "geometry":
             if schema_type["srid"] == -1:
                 schema_type["srid"] = local_srid()
-                # schema_type["srid"] = db.engine.execute(
-                #     f"SELECT FIND_SRID('{sql_schema_name}', '{sql_table_name}', '{column.key}')"
-                # ).scalar()
             property["srid"] = schema_type["srid"]
             property["geometry_type"] = schema_type["geometry_type"]
             property["geometry_type"] = (
@@ -215,12 +259,20 @@ class SchemaAuto:
 
         column_info = self.cls.get_column_info(sql_schema_name, sql_table_name, column.key) or {}
 
+        # pour être requis
+        # etre nullable
+        # ne pas être que pk (fkpk non nullable ok)
+        # pas de default
+        # meta_date ??
         condition_required = (
             (not column_info.get("nullable", True))
-            and (not column.primary_key)
+            and (not (column.primary_key and not property.get("foreign_key")))
             and (column_info.get("default") is None)
             and (column.key != "meta_create_date")
         )
+
+        if column_info.get("geometry_type"):
+            property["geometry_type"] = column_info["geometry_type"].lower()
 
         if condition_required:
             property["required"] = True

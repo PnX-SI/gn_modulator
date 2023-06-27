@@ -18,3 +18,16 @@ def module_update():
     return {
         "module_label": "TEST_PYTEST_UPDATE",
     }
+
+
+def pf():
+    return {
+        "code_passage_faune": "TEST_PF",
+        "geom": {"type": "Point", "coordinates": [0, 45]},
+    }
+
+
+def pf_update():
+    return {
+        "geom": {"type": "Point", "coordinates": [0, 46]},
+    }

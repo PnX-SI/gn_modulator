@@ -1,0 +1,48 @@
+type: layout
+code: m_sipaf.site_details
+title: Layout site details
+description: Layout pour les details d'un site
+
+layout:
+  height_auto: true
+  direction: row
+  items:
+    - type: map
+      flex: 2
+      zoom: 14
+      items:
+        - type: object
+          zoom: true
+          display: geojson
+          object_code: site
+          prefilters: __f__`id_passage_faune = ${o.object(x, 'site').value}`
+          popup_fields: __SITE_MAP_POPUP_FIELDS__
+          bring_to_front: true
+          tooltip_permanent: true
+        - type: object
+          # M_SIPAF_OBS à reprendre après la release
+          hidden: true
+          display: geojson
+          object_code: synthese
+          prefilters: |
+            __f__{
+            const xy = o.config({...context, object_code: 'site'})?.value_xy;
+            return xy
+                ? `the_geom_4326 dwithin ${xy.x};${xy.y};1000`
+                : `id_synthese = -1`
+            }
+          popup_fields:
+            - date_min
+            - dataset.dataset_name
+            - taxref.nom_vern
+            - nomenclature_bio_condition.label_fr
+            - cor_observers.nom_complet
+
+    - flex: 3
+      items:
+        - type: breadcrumbs
+          flex: "0"
+        - code: utils.object_details
+          template_params:
+            object_code: site
+            layout: __SITE_DETAILS_FIELDS__

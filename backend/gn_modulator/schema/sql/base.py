@@ -15,6 +15,11 @@ from ..errors import (
 
 
 class SchemaSqlBase:
+    def sql_type(self, key):
+        if not self.is_column(key):
+            return None
+        return self.cls.c_get_type(self.property(key)["type"], "definition", "sql")
+
     @classmethod
     def auto_sql_schemas_dot_tables(cls):
         auto_sql_schemas_dot_tables = []
@@ -31,6 +36,38 @@ class SchemaSqlBase:
         return auto_sql_schemas_dot_tables
 
     @classmethod
+    def non_auto_sql_schemas_dot_tables(cls):
+        auto_sql_schemas_dot_tables = []
+        for schema_code in cls.schema_codes():
+            schema_definition = get_global_cache(["schema", schema_code, "definition"])
+            if schema_definition["meta"].get("autoschema"):
+                continue
+
+            auto_sql_schemas_dot_tables.append(schema_definition["meta"]["sql_schema_dot_table"])
+
+        return auto_sql_schemas_dot_tables
+
+    @classmethod
+    def get_tables(cls):
+        tables = get_global_cache(["schema_dot_tables"])
+        if tables:
+            return tables
+
+        sql_txt_tables = f"""
+        SELECT
+        concat(t.table_schema, '.', t.table_name)
+        FROM
+            information_schema.tables t
+        WHERE
+            CONCAT(t.table_schema, '.', t.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables() + cls.non_auto_sql_schemas_dot_tables())}')
+
+        """
+        res = cls.c_sql_exec_txt(sql_txt_tables)
+        tables = [r[0] for r in res]
+        set_global_cache(["schema_dot_tables"], tables)
+        return tables
+
+    @classmethod
     def get_table_columns(cls, schema_dot_table):
         table_schema = schema_dot_table.split(".")[0]
         table_name = schema_dot_table.split(".")[1]
@@ -39,7 +76,7 @@ class SchemaSqlBase:
             column_name
         FROM
             information_schema.columns c
-        WHERE 
+        WHERE
             c.table_schema = '{table_schema}'
             AND c.table_name = '{table_name}'
         """
@@ -59,13 +96,19 @@ class SchemaSqlBase:
         # on récupère les info des colonnes depuis information_schema.columns
         sql_txt_get_columns_info = f"""
 SELECT
-  c.table_schema,
-  c.table_name,
-  column_name,
-  column_default,
-  is_nullable
+    c.table_schema,
+    c.table_name,
+    column_name,
+    column_default,
+    is_nullable,
+    DATA_TYPE AS TYPE,
+    gc.TYPE AS geometry_type
 FROM
-  information_schema.columns c
+    information_schema.columns c
+LEFT JOIN GEOMETRY_COLUMNS GC ON
+    c.TABLE_SCHEMA = GC.F_TABLE_SCHEMA
+    AND c.TABLE_NAME= GC.F_TABLE_NAME
+    AND c.COLUMN_NAME = gc.F_GEOMETRY_COLUMN 
 WHERE
     CONCAT(c.table_schema, '.', c.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
 """
@@ -80,7 +123,12 @@ WHERE
             columns_info[schema_name] = columns_info.get(schema_name) or {}
             columns_info[schema_name][table_name] = columns_info[schema_name].get(table_name) or {}
 
-            column_info = {"default": r[3], "nullable": r[4] == "YES"}
+            column_info = {
+                "default": r[3],
+                "nullable": r[4] == "YES",
+                "type": r[5],
+                "geometry_type": r[6],
+            }
             columns_info[schema_name][table_name][column_name] = column_info
             # set_global_cache(["columns", schema_name, table_name, column_name], column_info)
             set_global_cache(["columns"], columns_info)
@@ -182,19 +230,8 @@ WHERE
         return cls.c_sql_table_exists(sql_schema_name, sql_table_name)
 
     @classmethod
-    def table_names(cls, sql_schema_name):
-        table_names = get_global_cache(["table_names", sql_schema_name])
-        if table_names is None:
-            inspector = inspect(db.engine)
-            table_names = inspector.get_table_names(sql_schema_name) + inspector.get_view_names(
-                sql_schema_name
-            )
-            set_global_cache(["table_names", sql_schema_name], table_names)
-        return table_names
-
-    @classmethod
     def c_sql_table_exists(cls, sql_schema_name, sql_table_name):
-        return sql_table_name.lower() in cls.table_names(sql_schema_name)
+        return f"{sql_schema_name}.{sql_table_name}".lower() in cls.get_tables()
 
     @classmethod
     def c_sql_schema_exists(cls, sql_schema_name):

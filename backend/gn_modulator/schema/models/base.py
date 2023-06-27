@@ -148,7 +148,8 @@ class SchemaModelBase:
 
     def CorTable(self, relation_def):
         # cas cor_schema_code
-        if cor_schema_code := relation_def.get("cor_schema_code"):
+        cor_schema_code = relation_def.get("cor_schema_code")
+        if cor_schema_code:
             sm_cor = self.cls(cor_schema_code)
             Model = sm_cor.Model()
             CorTable = Model.__table__
@@ -205,11 +206,13 @@ class SchemaModelBase:
             return None
 
         # get Model from cache
-        if Model := get_global_cache(["schema", self.schema_code(), "model"]):
+        Model = get_global_cache(["schema", self.schema_code(), "model"])
+        if Model:
             return Model
 
         # get Model from existing
-        if Model := self.get_existing_model():
+        Model = self.get_existing_model()
+        if Model:
             return Model
 
         # dict_model used with type() to list properties and methods for class creation
@@ -232,7 +235,7 @@ class SchemaModelBase:
         Model = type(self.model_name(), (ModelBaseClass,), dict_model)
 
         # patch cruved
-        Model.ownership = 0
+        Model.scope = 0
 
         # store in cache before relations (avoid circular dependencies)
         set_global_cache(["schema", self.schema_code(), "model"], Model)

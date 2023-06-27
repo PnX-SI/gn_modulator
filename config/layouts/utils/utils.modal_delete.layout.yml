@@ -9,12 +9,12 @@ layout:
   direction: row
   items:
     - type: button
-      title: Suppression
-      action: delete
-      icon: delete
-      color: warn
-    - type: button
       title: Annuler
       action: close
       icon: refresh
       color: primary
+    - type: button
+      title: Suppression
+      action: delete
+      icon: delete
+      color: warn

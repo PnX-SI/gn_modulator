@@ -4,7 +4,7 @@ title: boutton edit
 description: Bouton 'editer', destiné aux page de detail de monitoring
 layout:
   type: button
-  color: primary
+  color: success
   title: Éditer
   description: __f__o.label_edit(x)
   action: edit

@@ -1,5 +1,4 @@
 <!-- array -->
-
 <!-- array fieldset -->
 <ng-container *ngIf="!!arrayItemsContext">
   <ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple">
@@ -32,6 +31,7 @@
             *ngIf="!!context.form_group_id"
             mat-mini-fab
             color="primary"
+            class="array-button"
             aria-label="Example icon button with a menu icon"
             [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
             [disabled]="!formControl?.valid"

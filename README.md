@@ -3,7 +3,7 @@
 ## Présentation
 
 Ce module GeoNature est un générateur de modules, qui permet construire dynamiquement des sous-modules disposant de leur propre modèle de données, 
-à partir de fichiers de configuration JSON.
+à partir de fichiers de configuration YAML.
 
 Chaque sous-module dispose d'une page d'accueil avec une carte, liste et filtres des objets du sous-module :
 
@@ -15,18 +15,30 @@ Et une fiche détail et de saisie de chaque objet :
 
 ## Installation
 
-Compatible avec la version 2.11.2 (et plus) de GeoNature.
+Compatible avec la version 2.13.0 (et plus) de GeoNature.
 
-Se placer dans le répertoire backend de GeoNature et activer le virtualenv
+- Téléchargez le module dans ``/home/<myuser>/``, en remplacant ``X.Y.Z`` par la version souhaitée
 
 ```bash
-source venv/bin/activate
+cd
+wget https://github.com/PnX-SI/gn_modulator/archive/X.Y.Z.zip
+unzip X.Y.Z.zip
+rm X.Y.Z.zip
 ```
 
-Lancer la commande d'installation
+- Renommez le répertoire du module
 
 ```bash
-geonature install_gn_module <MON_CHEMIN_ABSOLU_VERS_LE_MODULE> MODULATOR
+mv ~/gn_modulator-X.Y.Z ~/gn_modulator
+```
+
+- Lancez l'installation du module
+
+```bash
+source ~/geonature/backend/venv/bin/activate
+geonature install-gn-module ~/gn_modulator MODULATOR
+sudo systemctl restart geonature
+deactivate
 ```
 
 - [Liste des commandes du module](./doc/commandes.md)

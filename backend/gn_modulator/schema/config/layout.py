@@ -2,6 +2,11 @@
     methodes pour les layout ajsf du frontend
 """
 
+from gn_modulator.definition import DefinitionMethods
+import copy
+from gn_modulator.utils.commons import replace_in_dict
+from gn_modulator.utils.errors import add_error
+
 
 class SchemaConfigLayout:
     def form_layout(self):
@@ -68,3 +73,36 @@ class SchemaConfigLayout:
             return self.process_layout({"key": layout})
 
         return layout
+
+    @classmethod
+    def get_layout_from_code(cls, layout_code, params):
+        layout_from_code = copy.deepcopy(DefinitionMethods.get_definition("layout", layout_code))
+        if layout_from_code is None:
+            add_error(
+                error_msg=f"Le layout de code {layout_code} n'existe pas",
+                definition_type="layout",
+                definition_code=layout_code,
+                error_code="ERR_TEMPLATE_NOT_FOUND",
+            )
+        layout_from_code = layout_from_code["layout"]
+        for param_key, param_item in params.items():
+            layout_from_code = replace_in_dict(
+                layout_from_code, f"__{param_key.upper()}__", param_item
+            )
+
+        unresolved_template_params = DefinitionMethods.get_unresolved_template_params(
+            layout_from_code
+        )
+        if unresolved_template_params:
+            remindings__str = ", ".join(map(lambda x: f"__{x}__", unresolved_template_params))
+            add_error(
+                error_msg=f"Le ou les champs suivants n'ont pas été résolus : {remindings__str}",
+                definition_type="layout",
+                definition_code=layout_code,
+                error_code="ERR_TEMPLATE_UNRESOLVED_FIELDS",
+                template_file_path=str(DefinitionMethods.get_file_path("layout", layout_code)),
+            )
+
+            return {}
+
+        return layout_from_code
