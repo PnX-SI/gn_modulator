@@ -73,7 +73,6 @@ class ImportMixin(
             # en cas d'erreur on arrête le processus
             if self.status == "ERROR":
                 return self
-
             db.session.flush()
 
     def process_insert_and_update(self):

@@ -220,6 +220,24 @@ class TestImport:
             expected_infos=expected_infos,
         )
 
+    def test_sipaf_exemple_simple_uuid(self):
+        if not ModuleMethods.module_config("m_sipaf")["registred"]:
+            return
+
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_simple_uuid.csv"
+        expected_infos = {
+            "res.nb_data": 1,
+            "res.nb_insert": 1,
+        }
+        test_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+        )
+
     def test_sipaf_exemple_complet(self):
         if not ModuleMethods.module_config("m_sipaf")["registred"]:
             return
