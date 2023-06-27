@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 (unreleased)
+
+**🐛 Corrections**
+
+- 
+
 ## 1.1.0 (2023-06-27)
 
 Nécessite la version 2.13.0 (ou plus) de GeoNature.
