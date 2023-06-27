@@ -16,7 +16,6 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
 
   firstEdit = true;
 
-  editedLayerSubscription;
   modalData = {};
   modalsLayout: any;
 
@@ -62,8 +61,8 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
 
     // souscrire aux changements de geometrie
     // (si ce n'est pas déjà fait)
-    if (!this.editedLayerSubscription) {
-      this.editedLayerSubscription = this._map.$editedLayer.subscribe((layer) => {
+    if (!this._subs['edited_layer']) {
+      this._subs['edited_layer'] = this._map.$editedLayer.subscribe((layer) => {
         layer && this.onEditedLayerChange(layer);
       });
     }
@@ -118,6 +117,11 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
       }
 
       this.data[this.computedLayout.key] = dataGeom;
+
+      this._mapService.processData(this.mapId, this.data, {
+        key: this.computedLayout.key,
+      });
+      this.dataSave[this.computedLayout.key] = dataGeom;
       this._mLayout.reComputeLayout('map');
     }
   }
