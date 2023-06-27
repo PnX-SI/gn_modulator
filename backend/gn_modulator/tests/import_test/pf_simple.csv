@@ -1,2 +1,2 @@
-code_passage_faune;geom
-TEST_EX_SIMPLE;POINT(0 45)
+uuid_passage_faune;code_passage_faune;geom
+a879d1a9-962b-4aba-80fb-a0cfc8fd346a;TEST_PF_SIMPLE;POINT(0 45)

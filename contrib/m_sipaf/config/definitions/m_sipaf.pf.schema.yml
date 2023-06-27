@@ -16,7 +16,8 @@ meta:
     label_field_name: code_passage_faune
     geometry_field_name: geom
     unique:
-        - code_passage_faune
+        # - code_passage_faune
+        - uuid_passage_faune
     check_cruved: true
 
 properties:

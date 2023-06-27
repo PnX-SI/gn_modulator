@@ -154,10 +154,11 @@ class ImportMixinMapping(ImportMixinUtils):
                 error_msg=f"La selection de mapping doit contenir le champs 'id_import' dans {self.mapping_file_path}",
             )
 
-        # requete de création de la vue de mapping
+        # requete de création de la table de mapping
+        #
         sql_mapping = f"""
-DROP VIEW IF EXISTS {dest_table};
-CREATE VIEW {dest_table} AS
+DROP TABLE IF EXISTS {dest_table};
+CREATE TABLE {dest_table} AS
 {mapping_select}
 ;"""
 
