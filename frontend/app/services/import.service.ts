@@ -82,16 +82,16 @@ export class ModulesImportService {
     let nbUnchanged = data.res.nb_unchanged.toString().padStart(nbChar, charSpace);
 
     if (data.options.enable_update) {
-      htmlUpdate += `<li>${nbUpdate} lignes mises à jour</li>`;
+      htmlUpdate += `<li>${nbUpdate} ligne(s) mises à jour</li>`;
     }
 
     if (data.res.nb_unchanged) {
-      htmlUnchanged += `<li>${nbUnchanged} lignes non modifiées</li>`;
+      htmlUnchanged += `<li>${nbUnchanged} ligne(s) non modifiées</li>`;
     }
 
     return `<ul>
     <li>${nbRaw} lignes dans le fichier</li>
-    <li>${nbInsert} lignes ajoutées</li>
+    <li>${nbInsert} ligne(s) ajoutées</li>
     ${htmlUpdate}
     ${htmlUnchanged}
     </ul>`.replace(/_/g, '&nbsp;');
@@ -104,7 +104,7 @@ export class ModulesImportService {
 
     const lines = {};
     for (const error of data.errors) {
-      for (const line of error.lines) {
+      for (const line of error.lines || []) {
         lines[line] = lines[line] || {};
         lines[line][error.error_code] = lines[line][error.error_code] || {
           error_msg: error.error_msg,
@@ -150,9 +150,10 @@ export class ModulesImportService {
       for (let error of errorsOfType) {
         if (error.key) {
           errors[errorType].keys[error.key] = { lines: error.lines };
-          errorHTML += `- ${error.key} : ligne${
-            error.lines.length > 1 ? 's' : ''
-          } ${error.lines.join(', ')}<br>`;
+
+          for (const [i, line] of error.lines.entries()) {
+            errorHTML += `- [ligne ${line}] : ${error.error_values[i]}<br>`;
+          }
         }
       }
     }

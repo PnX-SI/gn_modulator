@@ -78,22 +78,22 @@ layout:
       items:
         - type: button
           color: primary
-          title: Annuler
-          description: Annuler
+          title: "__f__data.status == 'DONE' ? 'Terminer' : 'Annuler'"
+          description: "Sortir de l'interface d'import"
           action: close
-          flex: '0'
+          flex: "0"
         - type: button
-          flex: '0'
+          flex: "0"
           icon: refresh
           color: reset
-          description: Faire un nouvel import
+          description: Remise à zero du formulaire pour un nouvel import
           action: reset
           hidden: __f__!data.id_import
         - type: button
-          flex: '0'
+          flex: "0"
           color: success
           title: Valider
           description: Valider
           action: import
-          disabled: __f__!(formGroup.valid )
+          disabled: __f__!formGroup.valid || !!data.errors?.length
           hidden: __f__data.status == 'DONE'

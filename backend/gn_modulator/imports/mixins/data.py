@@ -31,16 +31,30 @@ class ImportMixinData(ImportMixinUtils):
             self.import_csv_file(self.tables["data"])
 
         # TODO traiter autres types de fichier
-
         else:
             self.add_error(
                 error_code="ERR_IMPORT_DATA_FILE_TYPE_NOT_FOUND",
-                error_msg=f"Le type du fichier d'import {self.data_file_path} n'est pas traité",
+                error_msg=f"Le type de fichier '{Path(self.data_file_path).suffix}' n'est pas traité",
             )
             return
 
         # comptage du nombre de ligne et verification de l'intégrité de la table
         self.count_and_check_table("data", self.tables["data"])
+
+        # # on met à jour la table pour changer les valeurs '' en NULL
+        set_columns_txt = ", ".join(
+            map(
+                lambda x: f"{x}=NULLIF({x}, '')",
+                filter(lambda x: x != "id_import", self.get_table_columns(self.tables["data"])),
+            )
+        )
+        self.sql[
+            "process_data"
+        ] = f"""
+        UPDATE {self.tables["data"]} SET {set_columns_txt};
+        """
+
+        SchemaMethods.c_sql_exec_txt(self.sql["process_data"])
 
     def import_csv_file(self, dest_table):
         """
@@ -98,15 +112,6 @@ class ImportMixinData(ImportMixinUtils):
             else:
                 self.copy_csv_data(f, dest_table, import_table_columns)
 
-            # on met à jour la table pour changer les valeurs '' en NULL
-            set_columns_txt = ", ".join("NULLIF({key}, '') AS {key}")
-
-            self.sql[
-                "process_data"
-            ] = f"""
-            UPDATE {dest_table} SET {set_columns_txt};
-            """
-
     def copy_csv_data(self, f, dest_table, table_columns):
         """
         requete sql pour copier les données en utilisant cursor.copy_expert
@@ -120,15 +125,18 @@ class ImportMixinData(ImportMixinUtils):
             "data_copy_csv"
         ] = f"""COPY {dest_table}({columns_fields}) FROM STDIN DELIMITER '{self.csv_delimiter}' QUOTE '"' CSV """
 
+        cursor = db.session.connection().connection.cursor()
         try:
-            cursor = db.session.connection().connection.cursor()
             cursor.copy_expert(sql=self.sql["data_copy_csv"], file=f)
         except Exception as e:
+            cursor.close()
+            db.session.rollback()
             self.add_error(
                 error_code="ERR_IMPORT_DATA_COPY",
                 error_msg=f"Erreur lors de la copie des données csv : {str(e)}",
             )
-            return
+
+        return
 
     def insert_csv_data(self, f, dest_table, table_columns):
         """
