@@ -70,9 +70,9 @@ site_filters_fields:
           object_code: ref_geo.linear_group
           module_code: __REF_MODULE_CODE__
           filters: linears.type.type_code = RTE
-          sort: name
+          sort: code*
           reload_on_search: true
-          page_size: 10
+          page_size: 20
 
 site_filters_defs:
   code_passage_faune:

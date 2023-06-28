@@ -16,7 +16,7 @@
       <!-- [disabled]="computedLayout.disabled" -->
       <mat-option>
         <ngx-mat-select-search
-          placeholderLabel="Filtre"
+          [placeholderLabel]="listFormOptions.reload_on_search ? 'Saisir pour lancer la recherche' : 'Saisir pour filtrer'"
           [ngModel]="search"
           (ngModelChange)="searchChanged($event)"
           [searching]="isLoading"

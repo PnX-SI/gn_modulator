@@ -221,6 +221,7 @@ class SchemaRepositoriesBase:
         # pour être sûr qu'il n'y a qu'une seule ligne de supprimée
         if not multiple:
             m.one()
+
         # https://stackoverflow.com/questions/49794899/flask-sqlalchemy-delete-query-failing-with-could-not-evaluate-current-criteria?noredirect=1&lq=1
         m.delete(synchronize_session=False)
         db.session.flush()
@@ -276,8 +277,7 @@ class SchemaRepositoriesBase:
         # clear_query_cache
         self.clear_query_cache(query)
 
-        order_bys, query = self.get_sorters(Model, params.get("sort", []), query)
-
+        order_bys, query = self.get_sorters(params.get("sort", []), query)
         # if params.get('test'):
         #     print('test')
         #     query = query.options(
