@@ -19,7 +19,8 @@
   <ng-container *ngIf="layoutType == 'assert'">
     <div [ngClass]="{ 'test-layout': true, success: assertionIsTrue, error: !assertionIsTrue }">
       <p>
-        <u>{{ computedLayout.title }}</u> : <i>{{ computedLayout.test }}</i>&#160;<b *ngIf="!assertionIsTrue">({{ computedLayout.test_value }})</b>
+        <u>{{ computedLayout.title }}</u> : <i>{{ computedLayout.test }}</i
+        >&#160;<b *ngIf="!assertionIsTrue">({{ computedLayout.test_value }})</b>
       </p>
     </div>
   </ng-container>
@@ -79,15 +80,15 @@
     ></modules-layout-card>
   </ng-container>
 
-    <!-- import -->
-    <ng-container *ngIf="layoutType == 'import'">
-      <modules-layout-import
-        [data]="data"
-        [layout]="layout"
-        [parentContext]="context"
-        (onAction)="processAction($event)"
-      ></modules-layout-import>
-    </ng-container>
+  <!-- import -->
+  <ng-container *ngIf="layoutType == 'import'">
+    <modules-layout-import
+      [data]="data"
+      [layout]="layout"
+      [parentContext]="context"
+      (onAction)="processAction($event)"
+    ></modules-layout-import>
+  </ng-container>
 
   <!-- key -->
   <ng-container *ngIf="layoutType == 'key'">
@@ -118,46 +119,46 @@
 
   <!-- buttons -->
   <ng-container *ngIf="layoutType == 'button'">
-    <div class="layout-buttons" [ngStyle]="computedLayout.style" [matTooltip]="computedLayout.description || ''">
+    <div class="layout-buttons" [ngStyle]="computedLayout.style">
       <!-- mat-raised-button -->
-      <button
-        *ngIf="(!computedLayout.href) && !!computedLayout.icon && !computedLayout.title"
-        mat-mini-fab
-        [color]="computedLayout.color"
-        [disabled]="computedLayout.disabled"
-        (click)="onButtonClick($event)"
-      >
-        <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
-        <mat-icon *ngIf="actionProcessing"
-          ><mat-spinner color="accent" diameter="20"> </mat-spinner
-        ></mat-icon>
-      </button>
+      <div class="layout-button" [matTooltip]="computedLayout.description || ''">
+        <button
+          *ngIf="!computedLayout.href && !!computedLayout.icon && !computedLayout.title"
+          mat-mini-fab
+          [color]="computedLayout.color"
+          [disabled]="computedLayout.disabled"
+          (click)="onButtonClick($event)"
+        >
+          <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
+          <mat-icon *ngIf="actionProcessing"
+            ><mat-spinner color="accent" diameter="20"> </mat-spinner
+          ></mat-icon>
+        </button>
 
+        <button
+          *ngIf="!computedLayout.href && !!computedLayout.title"
+          mat-raised-button
+          [color]="computedLayout.color"
+          [disabled]="computedLayout.disabled"
+          (click)="onButtonClick($event)"
+        >
+          <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
+          {{ computedLayout.title }}
+          <mat-icon *ngIf="actionProcessing"
+            ><mat-spinner color="accent" diameter="20"> </mat-spinner
+          ></mat-icon>
+        </button>
 
-      <button
-        *ngIf="(!computedLayout.href)  && !!computedLayout.title"
-        mat-raised-button
-        [color]="computedLayout.color"
-        [disabled]="computedLayout.disabled"
-        (click)="onButtonClick($event)"
-      >
-        <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
-        {{ computedLayout.title }}
-        <mat-icon *ngIf="actionProcessing"
-          ><mat-spinner color="accent" diameter="20"> </mat-spinner
-        ></mat-icon>
-      </button>
-
-      <a
-        *ngIf="computedLayout.href"
-        mat-raised-button
-        [href]="computedLayout.href"
-        color="primary"
-        [matTooltip]="computedLayout.description"
-      >
-        <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
-        {{ computedLayout.title }}
-      </a>
+        <a
+          *ngIf="computedLayout.href"
+          mat-raised-button
+          [href]="computedLayout.href"
+          color="primary"
+        >
+          <mat-icon *ngIf="computedLayout.icon">{{ computedLayout.icon }}</mat-icon>
+          {{ computedLayout.title }}
+        </a>
+      </div>
     </div>
   </ng-container>
 
