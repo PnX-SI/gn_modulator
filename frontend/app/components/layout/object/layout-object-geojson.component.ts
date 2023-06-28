@@ -172,9 +172,10 @@ export class ModulesLayoutObjectGeoJSONComponent
       ? '<button action="edit">Éditer</button>'
       : '';
 
-    const htmlDelete = this._mObject.checkAction(this.context, 'D', properties.scope).actionAllowed
-      ? '<button action="delete">Supprimer</button>'
-      : '';
+    const htmlDelete = '';
+    // const htmlDelete = this._mObject.checkAction(this.context, 'D', properties.scope).actionAllowed
+    //   ? '<button action="delete">Supprimer</button>'
+    //   : '';
 
     const html = `
     <h4>${label || ''}</h4>
