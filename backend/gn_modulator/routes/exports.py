@@ -28,7 +28,11 @@ def api_export(module_code, object_code, export_code):
     # - export_definition
     #  - on force fields a être
     #   - TODO faire l'intersection de params['fields'] et export_definition['fields'] (si params['fields'] est défini)
-    params["fields"] = export_definition["fields"]
+
+    sm = SchemaMethods(schema_code)
+
+    _, fields = sm.process_export_fields(export_definition["fields"])
+    params["fields"] = fields
     #   - TODO autres paramètres ????
 
     params["process_field_name"] = export_definition.get("process_field_name")
@@ -37,8 +41,6 @@ def api_export(module_code, object_code, export_code):
     cruved_type = params.get("cruved_type") or "R"
 
     # recupération de la liste
-    sm = SchemaMethods(schema_code)
-
     query_list = sm.query_list(module_code=module_code, cruved_type=cruved_type, params=params)
 
     # on assume qu'il n'y que des export csv
