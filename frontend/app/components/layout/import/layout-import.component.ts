@@ -61,7 +61,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
       code: 'utils.import',
     };
     // this._mLayout.getFormControl('form_import')?.reset()
-    this.importData = this.computedLayout.test_import ? this.importDataTest : {};
+    this.importData = this.computedLayout.test_import ? utils.copy(this.importDataTest) : {};
     this.setStep();
   }
 
@@ -120,6 +120,9 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
       this._mLayout.getFormControl('form_import')?.reset();
       this.initImport();
       this._mLayout.stopActionProcessing('');
+      setTimeout(() => {
+        this._mLayout.reComputeLayout('');
+      }, 50);
     }
   }
 }

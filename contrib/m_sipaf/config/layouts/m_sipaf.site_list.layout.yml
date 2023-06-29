@@ -54,11 +54,11 @@ layout:
                           title: "Export complet"
                           description: Télécharger les passages à faune (les filtres sont appliqués)
                           href: __f__o.url_export(x, 'm_sipaf.pf')
-                        - type: button
-                          flex: "0"
-                          title: "Export import"
-                          description: Export destiné à l'import (les filtres sont appliqués)
-                          href: __f__o.url_export(x, 'm_sipaf.pf_import')
+                        # - type: button
+                          # flex: "0"
+                          # title: "Export import"
+                          # description: Export destiné à l'import (les filtres sont appliqués)
+                          # href: __f__o.url_export(x, 'm_sipaf.pf_import')
                     - type: button
                       flex: "0"
                       icon: upload

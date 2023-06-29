@@ -9,5 +9,5 @@ layout:
   module_code: m_sipaf
   hidden_options:
     - enable_update
-  test_import: true
+  test_import: false
 data:

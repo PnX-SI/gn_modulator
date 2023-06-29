@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.1 (2023-06-29)
+
+**🐛 Corrections**
+
+- Correction des exports
+- Suppression de l'export de test "Export import"
+- Correction des tooltips des boutons
+- Amélioration de la liste du filtre des infrastructures
+- Correction des permissions de suppression d'un objet, s'appuyant sur l'action D du sous-module
+- Retrait du bouton de suppression sur les tooltips des cartes
+- Correction de l'affichage des imports en frontend
+- Import:
+  - fichier csv: passage des valeurs caractère vide ('') à NULL
+  - frontend: correction affichage erreur
 ## 1.1.0 (2023-06-27)
 
 Nécessite la version 2.13.0 (ou plus) de GeoNature.

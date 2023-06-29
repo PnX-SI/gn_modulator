@@ -143,7 +143,9 @@ def delete_rest(module_code, object_code, value):
     dict_out = sm.serialize(m, fields=params.get("fields"), as_geojson=params.get("as_geojson"))
 
     try:
-        sm.delete_row(value, field_name=params.get("field_name"), commit=True)
+        sm.delete_row(
+            value, module_code=module_code, field_name=params.get("field_name"), commit=True
+        )
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
         return "Erreur Cruved : {}".format(str(e)), 403

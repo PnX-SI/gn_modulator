@@ -1,4 +1,5 @@
-from sqlalchemy import orm, and_, nullslast
+import re
+from sqlalchemy import orm, and_, nullslast, func, Numeric, cast
 from sqlalchemy.orm import load_only, Load
 from gn_modulator.utils.commons import getAttr
 
@@ -168,40 +169,43 @@ class SchemaRepositoriesUtil:
             res, query, condition, field_name, index, only_fields
         )
 
-    def get_sorters(self, Model, sort, query):
+    def get_sorters(self, sort, query):
         order_bys = []
 
         for s in sort:
-            sort_dir = "+"
-            sort_field = s
-            if s[-1] == "-":
-                sort_field = s[:-1]
-                sort_dir = s[-1]
-
-            model_attribute, query = self.custom_getattr(Model, sort_field, query)
-
-            if model_attribute is None:
-                continue
-
-            order_by = model_attribute.desc() if sort_dir == "-" else model_attribute.asc()
-
-            # nullslast
-            order_by = nullslast(order_by)
-            order_bys.append(order_by)
+            sorters, query = self.get_sorter(s, query)
+            order_bys.extend(sorters)
 
         return order_bys, query
 
-    def get_sorter(self, Model, sorter, query):
-        sort_field = sorter["field"]
-        sort_dir = sorter["dir"]
+    def get_sorter(self, sorter, query):
+        orders_by = []
+        sort_dir = "-" if "-" in sorter else "+"
+        sort_spe = "str_num" if "*" in sorter else "num_str" if "%" in sorter else None
+        sort_field = re.sub(r"[+-\\*%]", "", sorter)
 
-        model_attribute, query = self.custom_getattr(Model, sort_field, query)
+        model_attribute, query = self.custom_getattr(self.Model(), sort_field, query)
 
-        order_by = model_attribute.desc() if sort_dir == "desc" else model_attribute.asc()
+        if model_attribute is None:
+            raise Exception(f"Pb avec le tri {self.schema_code()}, field: {sort_field}")
 
-        order_by = nullslast(order_by)
+        if sort_spe is not None:
+            sort_string = func.substring(model_attribute, "[a-zA-Z]+")
+            sort_number = cast(func.substring(model_attribute, "[0-9]+"), Numeric)
 
-        return order_by, query
+            if sort_spe == "str_num":
+                orders_by.extend([sort_string, sort_number])
+            else:
+                orders_by.extend([sort_number, sort_string])
+
+        orders_by.append(model_attribute)
+
+        orders_by = [
+            nullslast(order_by.desc() if sort_dir == "-" else order_by.asc())
+            for order_by in orders_by
+        ]
+
+        return orders_by, query
 
     def process_page_size(self, page, page_size, query):
         """

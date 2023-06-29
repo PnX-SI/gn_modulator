@@ -136,7 +136,7 @@ class ImportMixinUtils:
         self.errors.append(
             {
                 "error_code": error_code,
-                "msg": error_msg,
+                "error_msg": error_msg,
                 "key": key,
                 "lines": lines,
                 "valid_values": valid_values,

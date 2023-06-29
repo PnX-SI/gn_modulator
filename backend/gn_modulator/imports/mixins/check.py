@@ -113,7 +113,7 @@ class ImportMixinCheck(ImportMixinUtils):
             nb_lines = res[0]
             lines = res[1]
             error_values = res[2]
-            str_lines = lines and ", ".join(map(lambda x: str(x), lines)) or ""
+            # str_lines = lines and ", ".join(map(lambda x: str(x), lines)) or ""
             if nb_lines == 0:
                 continue
             self.add_error(
@@ -121,7 +121,7 @@ class ImportMixinCheck(ImportMixinUtils):
                 key=key,
                 lines=lines,
                 error_values=error_values,
-                error_msg=f"Il y a des valeurs invalides pour la colonne {key} de type {sql_type}. {nb_lines} ligne(s) concernée(s) : [{str_lines}]",
+                error_msg=f"Valeurs invalides pour `{key}` ({sql_type}).",
             )
 
     def check_required(self):

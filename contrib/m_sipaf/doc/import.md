@@ -1,4 +1,4 @@
-# Impot de passage faune
+# Import de passages faune
 
 ## Définition des champs
 
@@ -8,15 +8,16 @@
 
 - [Exemple simple](/backend/gn_modulator/tests/import_test/pf_simple.csv)
 - [Exemple complet](/backend/gn_modulator/tests/import_test/pf_complet.csv)
-## Procédure d'import sur l'interface web
 
-### Accès au menu d'import
+## Procédure d'import depuis l'interface web
+
+### Accès à l'outil d'import
 
 Si l'utilisateur possède des droits de création pour ce module, alors le bouton d'import est visible.
 
 ![Bouton d'import](img/boutton_import.png)
 
-Le menu d'import apparait dans une fenêtre modale.
+L'outil d'import apparait dans une fenêtre modale.
 
 ![Menu d'import](img/menu_import.png)
 

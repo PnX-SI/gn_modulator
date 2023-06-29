@@ -28,7 +28,7 @@ class SchemaExport:
     export
     """
 
-    def process_export_fields(self, fields_in, process_field_name):
+    def process_export_fields(self, fields_in, process_field_name=False):
         """
         Renvoie
             - la liste des clé
