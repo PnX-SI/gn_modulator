@@ -122,7 +122,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
       this._mLayout.stopActionProcessing('');
       setTimeout(() => {
         this._mLayout.reComputeLayout('');
-      });
+      }, 50);
     }
   }
 }
