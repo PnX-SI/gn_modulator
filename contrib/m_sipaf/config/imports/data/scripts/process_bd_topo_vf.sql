@@ -68,6 +68,7 @@ CREATE TABLE bd_topo.IMPORT_LINEAR_vf AS (
     SELECT 
         TDVF.id AS linear_code,
         STRING_AGG(code, ', ') AS groups,
+        CONCAT(STRING_AGG(code, ', '), ' ', tdvf.id) AS linear_name,
         TDVF.geom,
         CASE
             WHEN nature = 'LGV' THEN 'VF_LGV'
