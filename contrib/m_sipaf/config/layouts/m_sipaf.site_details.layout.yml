@@ -39,7 +39,7 @@ layout:
         - type: object
           display: geojson
           object_code: ref_geo.point
-          hidden: "__f__context.map_zoom <= 12"
+          hidden: "__f__context.map_zoom <= 12 || !context.map_bounds_filter_value"
           module_code: MODULATOR
           popup_fields:
             - point_code
