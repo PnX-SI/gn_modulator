@@ -13,19 +13,15 @@ meta:
     genre: M
     label: passage à faune
     labels: passages à faune
-    label_field_name: code_passage_faune
+    label_field_name: uuid_passage_faune
     geometry_field_name: geom
     unique:
-        # - code_passage_faune
         - uuid_passage_faune
     check_cruved: true
 
 properties:
   id_passage_faune:
       title: ID
-  code_passage_faune:
-      title: Code passage faune
-      description: "Code permettant d'identifier le passage à faune de manière unique (texte)"
   uuid_passage_faune:
       title: UUID
       description: Identifiant universel unique au format UUID (uuid_pf)
