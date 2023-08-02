@@ -2,6 +2,16 @@
 
 ## 1.1.2 (unreleased)
 
+**🚀 Nouveautés**
+
+- suppression du champs code_passage_faune
+- travail sur la bd_topo
+  - départementales
+  - voies ferrées
+  - points de repère
+- api -> filtre sur un rectangle (par exemple emprise de la carte leaflet)
+- meilleure gestion des jsonb
+
 ## 1.1.1 (2023-06-29)
 
 **🐛 Corrections**
