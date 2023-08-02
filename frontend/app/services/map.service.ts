@@ -15,7 +15,7 @@ export class ModulesMapService {
   constructor(
     private _mConfig: ModulesConfigService,
     private _mLayout: ModulesLayoutService,
-    private _gnMapService: MapService
+    private _gnMapService: MapService,
   ) {
     /** on récupère touts les méthodes definies dans les fichiers du répertoire ./map/ */
     for (const methods of Object.values(mapMethods)) {

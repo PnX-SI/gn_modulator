@@ -30,7 +30,7 @@ export default {
       onAdd: (map) => {
         const customControl = this.L.DomUtil.create(
           'div',
-          'leaflet-bar leaflet-control leaflet-control-custom'
+          'leaflet-bar leaflet-control leaflet-control-custom',
         );
         customControl.id = controlId;
         customControl.style.width = '34px';

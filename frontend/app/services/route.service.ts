@@ -51,7 +51,7 @@ export class ModulesRouteService {
         // récupération de la route 'page not found pour la remettre à la fin après l'ajout des routes
         const pageNotFoundRoute = routesModules.splice(
           routesModules.findIndex((route) => route.path == '**'),
-          1
+          1,
         )[0];
 
         // ajout des routes (en fonction de la config des modules)
@@ -69,7 +69,7 @@ export class ModulesRouteService {
         this.routesLoadedSubject.complete();
 
         return of(true);
-      })
+      }),
     );
   }
 
@@ -127,7 +127,7 @@ export class ModulesRouteService {
     if (!pageConfig) {
       this._commonService.regularToaster(
         'error',
-        `Il n'a pas de route définie pour la page ${pageCode} pour le module ${moduleCode}`
+        `Il n'a pas de route définie pour la page ${pageCode} pour le module ${moduleCode}`,
       );
       return;
     }

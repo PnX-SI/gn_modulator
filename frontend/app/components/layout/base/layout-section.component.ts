@@ -53,7 +53,7 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
     setTimeout(() => {
       if (this.computedLayout.display == 'tabs' && this.computedLayout.selected_tab) {
         this.selectedIndex = this.computedItems.findIndex(
-          (i) => i.label == this.computedLayout.selected_tab
+          (i) => i.label == this.computedLayout.selected_tab,
         );
       }
     }, 100);

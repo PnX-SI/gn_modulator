@@ -44,7 +44,7 @@ export class ModulesLayoutModalComponent extends ModulesLayoutComponent implemen
         (data) => {
           this.data = data;
           this.openDialog();
-        }
+        },
       );
       this.modalCloseSubscription = this._mLayout.$closeModals.subscribe(() => {
         this.closeDialog();

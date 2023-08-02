@@ -111,7 +111,7 @@ export class ModulesLayoutObjectGeoJSONComponent
                 this.tooltipDisplayZoomTreshold,
                 false,
                 currentZoom,
-                currentMapBounds
+                currentMapBounds,
               );
               layer
                 .bindTooltip(label.toString(), {
@@ -126,7 +126,7 @@ export class ModulesLayoutObjectGeoJSONComponent
                 layer.onZoomMoveEnd = this._mapService.layerZoomMoveEndListener(
                   this.context.map_id,
                   layer,
-                  this.tooltipDisplayZoomTreshold
+                  this.tooltipDisplayZoomTreshold,
                 );
               }
             }
@@ -148,7 +148,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   popupHTML(properties) {
     const fields = this.popupFields();
     const label = `<b>${this.utils.capitalize(
-      this.objectConfig().display.label
+      this.objectConfig().display.label,
     )}</b>: ${utils.getAttr(properties, this.labelFieldName())}`;
     var propertiesHTML = '';
     propertiesHTML += '<ul>\n';
