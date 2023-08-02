@@ -22,7 +22,8 @@ def module_update():
 
 def pf():
     return {
-        "code_passage_faune": "TEST_PF",
+        "uuid_passage_faune": "f5e5dd42-dcc1-4cfd-97ec-04699d78cb9b",
+        "nom_usuel_passage_faune": "TEST_PF",
         "geom": {"type": "Point", "coordinates": [0, 45]},
     }
 

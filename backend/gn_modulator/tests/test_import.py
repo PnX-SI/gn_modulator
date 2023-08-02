@@ -48,7 +48,7 @@ class TestImport:
         module_code = "MODULATOR"
         object_code = "ref_geo.linear_type"
         data_file_path = import_test_dir / "route/linear_type.csv"
-        expected_infos = {"res.nb_data": 1}
+        expected_infos = {"res.nb_data": 2}
         test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
 
         module_code = "MODULATOR"
@@ -186,7 +186,7 @@ class TestImport:
             "res.nb_update": 0,
             "res.nb_unchanged": 0,
             "data_type": "csv",
-            "csv_delimiter": ",",
+            "csv_delimiter": ";",
         }
         test_data_file(
             module_code,
@@ -198,7 +198,7 @@ class TestImport:
 
         sm = SchemaMethods("m_sipaf.pf")
         res = sm.get_row_as_dict(
-            "TEST_XY", "code_passage_faune", fields=["id_passage_faune", "geom"]
+            "TEST_XY", "nom_usuel_passage_faune", fields=["id_passage_faune", "geom"]
         )
         assert res["geom"] is not None
 
