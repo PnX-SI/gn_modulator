@@ -32,7 +32,7 @@ site_filters_fields:
                 - area_code
               filters: |
                 __f__data?.infrastructures?.length
-                  ? `linears.id_linear in ${data.infrastructures.join(";")}`
+                  ? `linears.groups.id_group in ${data.infrastructures.join(";")}`
                   : null
               area_type: REG
               sort: area_name
@@ -51,9 +51,21 @@ site_filters_fields:
               label_field_name: code_name
               sort: code_name
               filters: |
-                __f__data?.regions?.length
-                  ? `area_code in ${data.regions.map(r => u.departementsForRegion(r.area_code).join(';')).join(';')}`
-                  : null
+                __f__{
+                  const filters = [];
+
+                  if (data?.regions?.length > 0) {
+                    const f = `area_code in ${data.regions.map(r => u.departementsForRegion(r.area_code).join(';')).join(';')}`;
+                    filters.push(f);
+                  }
+
+                  if (data?.infrastructures?.length > 0) {
+                    const f = `linears.groups.id_group in ${data.infrastructures.join(";")}`;
+                    filters.push(f);
+                  }
+
+                  return filters.join(',')
+                }
 
             - key: communes
               object_code: ref_geo.area
@@ -66,18 +78,30 @@ site_filters_fields:
               label_field_name: name_code
               filters: |
                 __f__{
-                  const filters = (
-                    data?.departements?.map(
+                  const filters = [];
+
+                  if (data?.departements?.length) {
+                    const f = data.departements.map(
                       d => `area_code like ${d.area_code}%`
-                    ).join(',|,')
-                    ||
-                    data?.regions?.map(
+                    ).join(',|,');
+                    filters.push(`[,${f},]`);
+                  }
+
+                  if (data?.regions?.length > 0) {
+                    const f = data.regions.map(
                       r => u.departementsForRegion(r.area_code)
                         .map(departementCode => `area_code like ${departementCode}%`)
                         .join(',|,')
-                    ).join(',|,')
-                  );
-                  return filters;
+                    ).join(',|,');
+                    filters.push(`[,${f},]`);
+                  }
+
+                  if (data?.infrastructures?.length > 0) {
+                    const f = `linears.groups.id_group in ${data.infrastructures.join(";")}`;
+                    filters.push(f);
+                  }
+
+                  return filters.join(',');
                 }
               sort: area_name
         - title: Réseau

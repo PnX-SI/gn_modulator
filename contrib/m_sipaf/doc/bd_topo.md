@@ -49,10 +49,13 @@ BD_TOPO_VERSION="3-3"
 Ce script va générer les fichiers suivants:
 
 ```
-- <m_sipaf>/config/import/data/processed
-    - troncon_route.csv
-    - troncon_voie_ferree.csv
-    - point_repere.csv
+- <m_sipaf>/config/import/data/processed/bd_topo
+    - linear_group_route.csv
+    - linear_group_vf.csv
+    - linear_route.csv
+    - linear_vf.csv
+    - point_pkpr.csv
+
 ```
 
 ## III - Import des données de la BD_TOPO dans la base GeoNature
@@ -78,15 +81,16 @@ Pour insérer les types de linéaires correspondant à la bd_topo:
 
 ```
     # route
-    geonature modulator import -m MODULATOR -o ref_geo.linear_group -d data/processed/bd_topo/linear_group_route.csv
-    geonature modulator import -m MODULATOR -o ref_geo.linear -d data/processed/bd_topo/linear_route.csv
+    data_path=data/processed/bd_topo
+    geonature modulator import -m MODULATOR -o ref_geo.linear_group -d ${data_path}/linear_group_route.csv
+    geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear_route.csv
 
     # voie ferree
-    geonature modulator import -m MODULATOR -o ref_geo.linear_group -d data/processed/bd_topo/linear_group_vf.csv
-    geonature modulator import -m MODULATOR -o ref_geo.linear -d data/processed/bd_topo/linear_vf.csv
+    geonature modulator import -m MODULATOR -o ref_geo.linear_group -d ${data_path}/linear_group_vf.csv
+    geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear_vf.csv
 
     # point de repère
-    geonature modulator import -m MODULATOR -o ref_geo.point -d data/processed/bd_topo/point_pkpr.csv
+    geonature modulator import -m MODULATOR -o ref_geo.point -d ${data_path}/point_pkpr.csv
 
 ```
 
