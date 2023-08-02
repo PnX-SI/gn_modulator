@@ -18,7 +18,7 @@ export class ListFormService {
   constructor(
     private _requestService: ModulesRequestService,
     private _mConfig: ModulesConfigService,
-    private _mObject: ModulesObjectService
+    private _mObject: ModulesObjectService,
   ) {}
 
   // fonction de comparaison de deux éléments
@@ -51,12 +51,12 @@ export class ListFormService {
         // on va tester si l'element est bien dans la liste et est bien celui de la liste
         if (options.return_object && control.value && control.value[options.valueFieldName]) {
           const elem = liste.items.find(
-            (item) => item[options.valueFieldName] == control.value[options.valueFieldName]
+            (item) => item[options.valueFieldName] == control.value[options.valueFieldName],
           );
           control.patchValue(elem);
         }
         return of(liste);
-      })
+      }),
     );
   }
 
@@ -101,8 +101,8 @@ export class ListFormService {
       liste.items.find((item) =>
         Object.entries(defaultItem).every(([key, value]) => {
           return item[key] == value;
-        })
-      )
+        }),
+      ),
     );
 
     // erreur si pas de valeur trouvée
@@ -134,7 +134,7 @@ export class ListFormService {
         options.label_field_name = options.label_field_name || 'label';
         options.value_field_name = options.value_field_name || 'value';
         return of(true);
-      })
+      }),
     );
   }
 
@@ -167,7 +167,7 @@ export class ListFormService {
       if (options.module_code) {
         const moduleConfig = this._mConfig.moduleConfig(options.module_code);
         const objectConfig: any = Object.values(moduleConfig.objects || {}).find(
-          (objectConfig: any) => objectConfig.schema_code == options.schema_code
+          (objectConfig: any) => objectConfig.schema_code == options.schema_code,
         );
         if (objectConfig) {
           options.object_code = objectConfig.object_code;
@@ -270,7 +270,7 @@ export class ListFormService {
           options.title_field_name,
           options.label_field_name,
           ...(options.additional_fields || []),
-        ].filter((e) => !!e)
+        ].filter((e) => !!e),
       )
       .join(',');
 
@@ -284,10 +284,10 @@ export class ListFormService {
         mergeMap((res) => {
           const items = this.processItems(
             options,
-            options.items_path ? res[options.items_path] : res
+            options.items_path ? res[options.items_path] : res,
           );
           return of({ items, nbItems: items.length });
-        })
+        }),
       );
   }
 
@@ -304,7 +304,7 @@ export class ListFormService {
           options.title_field_name,
           options.label_field_name,
           ...(options.additional_fields || []),
-        ].filter((e) => !!e)
+        ].filter((e) => !!e),
       )
       .join(',');
 
@@ -314,10 +314,10 @@ export class ListFormService {
         mergeMap((res) => {
           const items = this.processItems(
             options,
-            options.items_path ? res[options.items_path] : res
+            options.items_path ? res[options.items_path] : res,
           );
           return of(items);
-        })
+        }),
       );
   }
 

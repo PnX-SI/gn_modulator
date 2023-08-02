@@ -182,7 +182,7 @@ export class ModulesLayoutComponent implements OnInit {
     this.computeLayout();
     this.assertionIsTrue = utils.fastDeepEqual(
       this.computedLayout?.test,
-      this.computedLayout?.test_value
+      this.computedLayout?.test_value,
     );
     // à redéfinir
     this.postProcessLayout();
@@ -316,7 +316,7 @@ export class ModulesLayoutComponent implements OnInit {
     }
     this.localFormGroup = this._mForm.getFormControl(
       this.context.form_group_id,
-      this.context.data_keys
+      this.context.data_keys,
     );
     this.formControl = this._mForm.getFormControl(this.localFormGroup, this.computedLayout.key);
   }
@@ -373,7 +373,7 @@ export class ModulesLayoutComponent implements OnInit {
       };
       let layoutFromCode = this._mLayout.getLayoutFromCode(
         this.computedLayout.code,
-        templateParams
+        templateParams,
       );
 
       this.layoutFromCode = layoutFromCode.layout;
@@ -510,7 +510,7 @@ export class ModulesLayoutComponent implements OnInit {
       (event) => {
         this.processHeightAuto();
       },
-      true
+      true,
     );
   }
 
@@ -622,16 +622,16 @@ export class ModulesLayoutComponent implements OnInit {
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.layout);
     const prettyComputedLayout = this.prettyTitleObjForDebug(
       'computed layout',
-      this.computedLayout
+      this.computedLayout,
     );
     const prettyData = this.prettyTitleObjForDebug('data', this.data);
     const prettyLocalData = this.prettyTitleObjForDebug(
       `local data (${this.context.data_keys?.join('.')})`,
-      localDataDebug
+      localDataDebug,
     );
     const prettyElementData = this.prettyTitleObjForDebug(
       `element data (${this.elementKey})`,
-      elementDataDebug
+      elementDataDebug,
     );
     const prettyContext = this.prettyTitleObjForDebug('context', contextDebug);
 
@@ -655,7 +655,7 @@ export class ModulesLayoutComponent implements OnInit {
     // let srtPretty = `${title}\n\n${JSON.stringify(obj, null, '____  ')}`
     let srtPretty = `${title}\n\n${utils.YML.dump(obj, { skipInvalid: true }).replaceAll(
       ' ',
-      '_'
+      '_',
     )}`;
     return srtPretty;
   }

@@ -75,7 +75,7 @@ export default {
     if (!map.initDrawMarker2) {
       map.initDrawMarker2 = true;
       map.pm.Toolbar.copyDrawControl('drawMarker', { name: 'drawMarker2' }).drawInstance.setOptions(
-        { markerStyle: { icon: new CustomMarkerIcon() } }
+        { markerStyle: { icon: new CustomMarkerIcon() } },
       );
     }
 

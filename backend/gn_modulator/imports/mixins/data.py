@@ -200,3 +200,9 @@ class ImportMixinData(ImportMixinUtils):
     CONSTRAINT {pk_constraint_name} PRIMARY KEY (id_import)
 );"""
         return txt
+
+    def process_data_uuid():
+        """_summary_"""
+
+        # test si on a une colonne d'unicite qui correspond à un uuid
+        # un peu bancal car on ne prend pas en compte le mapping

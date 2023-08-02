@@ -14,7 +14,10 @@ import utils from '../../../utils';
   styleUrls: ['../../base/base.scss', 'list-form.component.scss'],
 })
 export class ModulesListFormComponent extends ModulesLayoutComponent implements OnInit {
-  constructor(private _listFormService: ListFormService, _injector: Injector) {
+  constructor(
+    private _listFormService: ListFormService,
+    _injector: Injector,
+  ) {
     super(_injector);
     this._name = 'list_form';
     this.bPostComputeLayout = true;
@@ -77,7 +80,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
           // fonction de comparaison
           this.compareFn = this._listFormService.compareFn(
             this.listFormOptions.return_object,
-            this.listFormOptions.value_field_name
+            this.listFormOptions.value_field_name,
           );
 
           // la liste
@@ -90,7 +93,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
           this.itemsSave = utils.copy(infos.items);
           return of(true);
         }),
-        mergeMap(() => this.processItemsValue(this.listFormOptions, this.formControl.value))
+        mergeMap(() => this.processItemsValue(this.listFormOptions, this.formControl.value)),
       )
       .subscribe(() => {
         // fin du chargement
@@ -124,14 +127,14 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
 
     // recherche de values dans la liste (items)
     const missingValuesInItems = values.filter((v) =>
-      this.items.every((i) => i[options.value_field_name] != v)
+      this.items.every((i) => i[options.value_field_name] != v),
     );
 
     // les valeur sont trouvées dans la liste
     // ok retour
     if (missingValuesInItems.length == 0) {
       this.valueSave = this.items.filter((i) =>
-        values.some((v) => i[options.value_field_name] == v)
+        values.some((v) => i[options.value_field_name] == v),
       );
       return of(true);
     }
@@ -142,7 +145,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
       console.error(
         `La ou les valeurs ${missingValuesInItems
           .map((m) => m[options.value_field_name])
-          .join(', ')} ne sont pas présentes dans la liste`
+          .join(', ')} ne sont pas présentes dans la liste`,
       );
       return of(false);
     }
@@ -160,7 +163,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
 
     if (missingValuesInValueSave.length == 0) {
       this.valueSave = this.items.filter((i) =>
-        values.some((v) => i[options.value_field_name] == v)
+        values.some((v) => i[options.value_field_name] == v),
       );
       return of(true);
     }
@@ -173,7 +176,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
           this.valueSave.push(item);
         }
         return of(true);
-      })
+      }),
     );
   }
 
@@ -230,7 +233,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
           this.items = infos.items;
           this.nbItems = infos.nbItems;
           return this.processItemsValue(this.listFormOptions, this.formControl.value);
-        })
+        }),
       )
       .subscribe(() => {
         this.isLoading = false;

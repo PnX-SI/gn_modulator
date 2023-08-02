@@ -1,10 +1,9 @@
+definitions : 274 ms
+schemas     : 506 ms
 
 
 #### Champs obligatoires
 
-- `code_passage_faune`
-  - *type*: `string`
-  - *définition*: Code permettant d'identifier le passage à faune de manière unique (texte)
 - `geom`
   - *type*: `geometry`
   - *geometry_type*: `geometry`
@@ -30,6 +29,13 @@
 - `diametre`
   - *type*: `number`
   - *définition*: Diamètre de la buse en mètre
+- `geom_local`
+  - *type*: `geometry`
+  - *geometry_type*: `geometry`
+  - format:
+    - WKT (par ex. `POINT(0.1 45.2)` (adapter au SRID)')
+    - XY (remplacer geom_local par les colonnes x et y)
+  - *définition*: Géométrie locale du passage à faune (SRID=2154)
 - `hauteur_dispo_faune`
   - *type*: `number`
   - *définition*: Hauteur de l'ouvrage effectivement disponible pour la faune en mètre
@@ -49,6 +55,10 @@
 - `longueur_franchissement`
   - *type*: `number`
   - *définition*: Longueur de franchissement de l'ouvrage en mètres (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)
+- `meta_create_date`
+  - *type*: `datetime`
+- `meta_update_date`
+  - *type*: `datetime`
 - `nom_usuel_passage_faune`
   - *type*: `string`
   - *définition*: Nom usuel utilisé pour dénommer l'ouvrage (nom_usuel_pf)
@@ -80,6 +90,14 @@
 - `uuid_passage_faune`
   - *type*: `uuid`
   - *définition*: Identifiant universel unique au format UUID (uuid_pf)
+- `areas`
+  - *type*: `liste de clés séparées par une virgule `,``
+  - *référence*: `géométries`
+  - *champ(s)*: `id_type`, `area_code`
+- `linears`
+  - *type*: `liste de clés séparées par une virgule `,``
+  - *référence*: `linéaires`
+  - *champ(s)*: `id_type`, `linear_code`
 - `id_nomenclature_ouvrage_hydrau_banq_caract`
   - *type*: `clé simple`
   - *référence*: `nomenclatures`
@@ -105,7 +123,7 @@
   - *champ(s)*: `cd_nomenclature`
   - *définition*: Ouvrage hydraulique Position (ouvrage_hydrau_position)
   - *valeurs*:
-    - **RD** *Rive droite*
+    - **RD** *Rive Droite*
     - **RG** *Rive Gauche*
     - **RGD** *Rive gauche et rive droite*
 - `id_nomenclature_ouvrage_specificite`
@@ -118,7 +136,7 @@
     - **MIX** *Mixte*
     - **ND** *Non dédié*
 - `nomenclatures_ouvrage_materiaux`
-  - *type*: `liste de clé séparée par une virgule `,``
+  - *type*: `liste de clés séparées par une virgule `,``
   - *référence*: `nomenclatures`
   - *champ(s)*: `cd_nomenclature`
   - *définition*: Matériaux composants l'ouvrage d'art (lb_materiaux)
@@ -131,7 +149,7 @@
     - **AUT** *Autre*
     - **IND** *Indéterminé*
 - `nomenclatures_ouvrage_type`
-  - *type*: `liste de clé séparée par une virgule `,``
+  - *type*: `liste de clés séparées par une virgule `,``
   - *référence*: `nomenclatures`
   - *champ(s)*: `cd_nomenclature`
   - *définition*: Type d'ouvrage d'art (lb_type_ouvrage)
@@ -152,4 +170,9 @@
     - **DIAB** *Diabolo*
     - **TRA** *Tranchée*
     - **TUN** *Tunnel*
+- `id_digitiser`
+  - *type*: `clé simple`
+  - *référence*: `utilisateurs`
+  - *champ(s)*: `identifiant`
+  - *définition*: Personne qui a saisi la donnée
 

@@ -231,7 +231,7 @@ const processFilterArray = (filters) => {
             ? f.type == 'in'
               ? `${f.field} ${f.type} ${f.value.join(';')}`
               : `${f.field} ${f.type} ${f.value}`
-            : f
+            : f,
         )
         .join(',')
     : '';

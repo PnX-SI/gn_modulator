@@ -26,7 +26,7 @@ export class ModulesNomenclatureService {
         mergeMap((res) => {
           this._nomenclatures = res.data;
           return of(true);
-        })
+        }),
       );
   }
 

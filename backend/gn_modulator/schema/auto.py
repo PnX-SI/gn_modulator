@@ -253,7 +253,7 @@ class SchemaAuto:
         # if column.comment:
         # property["description"] = column.comment
 
-        column_info = self.cls.get_column_info(sql_schema_name, sql_table_name, column.key) or {}
+        column_info = self.cls.c_get_column_info(sql_schema_name, sql_table_name, column.key) or {}
 
         # pour être requis
         # etre nullable

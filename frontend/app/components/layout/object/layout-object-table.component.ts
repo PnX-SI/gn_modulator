@@ -171,7 +171,7 @@ export class ModulesLayoutObjectTableComponent
         },
         (fail) => {
           reject(fail);
-        }
+        },
       );
     });
   };
@@ -186,7 +186,7 @@ export class ModulesLayoutObjectTableComponent
       },
       (error) => {
         console.error('waitForElement erreur');
-      }
+      },
     );
   }
 

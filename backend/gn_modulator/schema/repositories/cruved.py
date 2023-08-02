@@ -62,6 +62,7 @@ class SchemaRepositoriesCruved:
         user_cruved = get_scopes_by_action(module_code=module_code)
 
         cruved_for_type = user_cruved.get(cruved_type)
+
         if cruved_for_type < 3:
             query = query.filter(self.expression_scope() <= cruved_for_type)
 

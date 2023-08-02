@@ -18,7 +18,7 @@ export class ModulesConfigService {
   constructor(
     private _gnModuleService: GnModuleService,
     private _mRequest: ModulesRequestService,
-    private AppConfig: GNConfigService
+    private AppConfig: GNConfigService,
   ) {}
 
   /** Configuration */
@@ -36,7 +36,7 @@ export class ModulesConfigService {
         // on attibue les droits aux module (depuis le ModuleService de GN)
         this.setModuleCruved(this._config.modules);
         return of(true);
-      })
+      }),
     );
   }
 
@@ -51,7 +51,7 @@ export class ModulesConfigService {
       mergeMap((modulesConfig) => {
         this._config.modules = modulesConfig;
         return of(this._config.modules);
-      })
+      }),
     );
   }
 
@@ -105,7 +105,7 @@ export class ModulesConfigService {
           mergeMap((schemas) => {
             this._config.schemas = schemas;
             return of(this._config.schemas);
-          })
+          }),
         );
   }
 
@@ -116,7 +116,7 @@ export class ModulesConfigService {
           mergeMap((data) => {
             this._config.layouts = data;
             return of(true);
-          })
+          }),
         );
   }
 
@@ -154,7 +154,7 @@ export class ModulesConfigService {
       {
         prefilters: options.prefilters,
         filters: options.filters,
-      }
+      },
     );
     return url;
   }
