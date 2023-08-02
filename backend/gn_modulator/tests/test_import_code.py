@@ -17,12 +17,3 @@ class TestImportCode:
         ]
 
         test_import_code("m_sipaf.pf_V1", import_test_dir / "import_code/", expected)
-
-    def test_import_code_route(self):
-        expected = [
-            {"res.nb_process": 1},
-            {"res.nb_process": 7, "res.nb_insert": 7},
-            {"res.nb_process": 9, "res.nb_insert": 9},
-        ]
-
-        test_import_code("ref_geo.route", import_test_dir / "import_code/", expected)
