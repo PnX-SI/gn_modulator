@@ -99,7 +99,7 @@ class ImportMixin(
         self.status = "DONE"
 
     @classmethod
-    def process_import_code(cls, import_code, data_dir_path, insert_data=False, commit=True):
+    def process_import_code(cls, import_code, data_dir_path=None, insert_data=False, commit=True):
         """
         fonction pour réaliser un scénario d'import
 
@@ -127,6 +127,8 @@ class ImportMixin(
         # tableau pour stocker les instances d'import
         # - pour du log ou du debug
         imports = []
+
+        data_dir_path = data_dir_path or import_definitions_file_path.parent / "data"
 
         # Pour tous les imports du scénario
         for import_definition in import_definitions["items"]:
@@ -174,7 +176,7 @@ class ImportMixin(
             if impt.errors:
                 print(f"Il y a des erreurs dans l'import {import_definition['object_code']}")
                 for error in impt.errors:
-                    print(f"- {error['code']} : {error['msg']}")
+                    print(f"- {error['error_code']} : {error['error_msg']}")
                 return imports
 
             # affichage des résultats

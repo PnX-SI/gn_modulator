@@ -124,6 +124,23 @@ export default {
     return this.getMap(mapId) && this.getMap(mapId).getBounds();
   },
 
+  getMapBoundsArray(mapId) {
+    const bounds = this.getMapBounds(mapId);
+    return (
+      bounds && [
+        bounds._southWest.lng,
+        bounds._southWest.lat,
+        bounds._northEast.lng,
+        bounds._northEast.lat,
+      ]
+    );
+  },
+
+  getMapBoundsFilterValue(mapId) {
+    const boundsArray = this.getMapBoundsArray(mapId);
+    return boundsArray && boundsArray.join(';');
+  },
+
   initMap(mapId, { zoom = null, center = null, bEdit = null, drawOptions = null } = {}) {
     if (this._pendingMaps[mapId]) {
       return this.waitForMap(mapId);
@@ -155,6 +172,7 @@ export default {
           const fnMapZoomMoveEnd = () => {
             const zoomLevel = this.getZoom(mapId);
             const mapBounds = this.getMapBounds(mapId);
+            this._mLayout.reComputeLayout();
             map.eachLayer((l) => {
               l.onZoomMoveEnd && l.onZoomMoveEnd(zoomLevel, mapBounds);
             });

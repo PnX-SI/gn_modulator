@@ -1,0 +1,13 @@
+type: schema
+code: ref_geo.point_type
+title: Schema ref_geo.point_type
+description: Définition du schema des types de points de ref_geo
+
+meta:
+    model: ref_geo.models.BibPointsTypes
+    label: type de point
+    label_field_name: type_name
+    genre: M
+    autoschema: true
+    unique:
+        - type_code

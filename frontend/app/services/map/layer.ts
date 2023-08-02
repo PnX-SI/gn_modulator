@@ -43,7 +43,6 @@ export default {
       return;
     }
     const dataType = this.getDataType(data);
-
     if (!dataType) {
       return;
     }

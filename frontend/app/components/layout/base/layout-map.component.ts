@@ -70,6 +70,10 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
 
   postProcessContext(): void {
     this.context.map_id = this.mapId;
+    this.context.map_bounds_filter_value = this._mapService.getMapBoundsFilterValue(
+      this.context.map_id
+    );
+    this.context.map_zoom = this._mapService.getZoom(this.context.map_id);
   }
 
   /**

@@ -41,6 +41,9 @@ class ImportMixinData(ImportMixinUtils):
         # comptage du nombre de ligne et verification de l'intégrité de la table
         self.count_and_check_table("data", self.tables["data"])
 
+        if self.errors:
+            return
+
         # # on met à jour la table pour changer les valeurs '' en NULL
         set_columns_txt = ", ".join(
             map(

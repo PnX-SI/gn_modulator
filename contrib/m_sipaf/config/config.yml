@@ -1,6 +1,7 @@
 site_filters_fields:
   display: tabs
   overflow: true
+  selected_tab: Localisation
   items:
     - label: Infos
       items:
@@ -18,61 +19,121 @@ site_filters_fields:
 
     - label: Localisation
       items:
-        - key: region
-          object_code: ref_geo.area
-          module_code: __REF_MODULE_CODE__
-          title: Région
-          type: list_form
-          return_object: "true"
-          additional_fields:
-            - area_code
-          area_type: REG
-          sort: area_name
+        - title: Zonage
+          items:
+            - key: regions
+              object_code: ref_geo.area
+              module_code: __REF_MODULE_CODE__
+              title: Région(s)
+              type: list_form
+              return_object: true
+              multiple: true
+              additional_fields:
+                - area_code
+              filters: |
+                __f__data?.infrastructures?.length
+                  ? `linears.id_linear in ${data.infrastructures.join(";")}`
+                  : null
+              area_type: REG
+              sort: area_name
 
-        - key: departement
-          object_code: ref_geo.area
-          module_code: __REF_MODULE_CODE__
-          title: Département
-          type: list_form
-          reload_on_search: true
-          area_type: DEP
-          return_object: true
-          additional_fields:
-            - area_code
-          label_field_name: code_name
-          sort: code_name
-          filters: |
-            __f__data?.region
-              ? `area_code in ${u.departementsForRegion(data.region.area_code).join(';')}`
-              : null
+            - key: departements
+              object_code: ref_geo.area
+              module_code: __REF_MODULE_CODE__
+              title: Département(s)
+              type: list_form
+              reload_on_search: true
+              multiple: true
+              area_type: DEP
+              return_object: true
+              additional_fields:
+                - area_code
+              label_field_name: code_name
+              sort: code_name
+              filters: |
+                __f__data?.regions?.length
+                  ? `area_code in ${data.regions.map(r => u.departementsForRegion(r.area_code).join(';')).join(';')}`
+                  : null
 
-        - key: commune
-          object_code: ref_geo.area
-          module_code: __REF_MODULE_CODE__
-          reload_on_search: true
-          title: Commune
-          type: list_form
-          area_type: COM
-          label_field_name: name_code
-          filters: |
-            __f__data?.departement
-              ? `area_code like ${data.departement.area_code}%`
-              : data?.region
-                ? u.departementsForRegion(data.region.area_code)
-                    .map(departementCode => `area_code like ${departementCode}%`)
-                    .join(',|,')
-                : null
-          sort: area_name
+            - key: communes
+              object_code: ref_geo.area
+              module_code: __REF_MODULE_CODE__
+              reload_on_search: true
+              multiple: true
+              title: Commune(s)
+              type: list_form
+              area_type: COM
+              label_field_name: name_code
+              filters: |
+                __f__{
+                  const filters = (
+                    data?.departements?.map(
+                      d => `area_code like ${d.area_code}%`
+                    ).join(',|,')
+                    ||
+                    data?.regions?.map(
+                      r => u.departementsForRegion(r.area_code)
+                        .map(departementCode => `area_code like ${departementCode}%`)
+                        .join(',|,')
+                    ).join(',|,')
+                  );
+                  return filters;
+                }
+              sort: area_name
+        - title: Réseau
+          items:
+            - key: infrastructure_types
+              title: Type(s) d'infrastructure
+              type: list_form
+              multiple: true
+              object_code: ref_geo.linear_type
+              module_code: __REF_MODULE_CODE__
+              sort: type_name
+              reload_on_search: true
+              page_size: 20
 
-        - key: infrastructure
-          title: Infrastructure
-          type: list_form
-          object_code: ref_geo.linear_group
-          module_code: __REF_MODULE_CODE__
-          filters: linears.type.type_code = RTE
-          sort: code*
-          reload_on_search: true
-          page_size: 20
+            - key: infrastructures
+              title: Infrastructure(s)
+              type: list_form
+              object_code: ref_geo.linear_group
+              module_code: __REF_MODULE_CODE__
+              multiple: true
+              sort: code*
+              reload_on_search: true
+              filters: |
+                __f__{
+
+                  if(!data) {
+                    return "";
+                  };
+
+                  const filters = [];
+
+                  if (data.infrastructure_types?.length) {
+                    const f = `linears.id_type in ${data.infrastructure_types.join(';')}`;
+                    filters.push(f);
+                  };
+
+                  let z_values = data.communes?.length
+                    ? data.communes
+                    : data.departements?.length
+                    ? data.departements.map(v => v.id_area)
+                    : data.regions?.length
+                    ? data.regions.map(v => v.id_area)
+                    : null
+                  ;
+
+                  if (z_values) {
+                    const f = `linears.areas.id_area in ${z_values.join(';')}`
+                    filters.push(f);
+                  };
+
+                  console.log(filters.join(''));
+
+                  return filters.join(',');
+
+                }
+              page_size: 20
 
 site_filters_defs:
   code_passage_faune:
@@ -81,16 +142,18 @@ site_filters_defs:
     type: '~'
   code_ouvrage_gestionnaire:
     type: '~'
-  region:
+  regions:
     field: areas.id_area
     key: id_area
-  departement:
+  departements:
     field: areas.id_area
     key: id_area
-  commune:
+  communes:
     field: areas.id_area
-  infrastructure:
+  infrastructures:
     field: linears.groups.id_group
+  infrastructure_types:
+    field: linears.type.id_type
   nomenclatures_ouvrage_materiaux:
     field: nomenclatures_ouvrage_materiaux.id_nomenclature
     key: id_nomenclature

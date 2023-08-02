@@ -184,12 +184,32 @@ class SchemaRepositoriesFilters:
         elif filter_type == "in":
             filter_out = cast(model_attribute, db.String).in_([str(x) for x in filter_value])
 
+        # filtre sur la distance à un point donnée
+        # filter_value de type '<x>;<y>;radius'
+        # - x : longitude du point
+        # - y : lattitude du point
+        # - radius : distance en m
         elif filter_type == "dwithin":
             x, y, radius = filter_value.split(";")
             geo_filter = func.ST_DWithin(
                 func.ST_GeogFromWKB(model_attribute),
                 func.ST_GeogFromWKB(func.ST_MakePoint(x, y)),
                 radius,
+            )
+            filter_out = geo_filter
+
+        # filtre de type bouding box :
+        #   on souhaite que les données soient comprise dans un rectangle
+        #   par exemple l'emprise d'une carte
+        # filter_value de type '<x_min>;<y_min>;<x_max>;<y_max>'
+        # - x_min(max) : longitude min(max) de la fenetre
+        # - y_min(max) : lattitude min(max) de la fenetre
+
+        elif filter_type == "bbox":
+            x_min, y_min, x_max, y_max = filter_value.split(";")
+            geo_filter = func.ST_Intersects(
+                model_attribute,
+                func.ST_SetSRID(func.ST_MakeEnvelope(x_min, y_min, x_max, y_max), 4326),
             )
             filter_out = geo_filter
 

@@ -1,0 +1,21 @@
+# données communes aux scripts
+REGION_CODES="R11 R24 R27 R28 R32 R44 R52 R53 R75 R76 R84 R93 R94"
+DATA_TYPES="TRONCON_DE_ROUTE TRONCON_DE_VOIE_FERREE POINT_DE_REPERE ROUTE_NUMEROTEE_OU_NOMMEE VOIE_FERREE_NOMMEE TOPONYMIE_TRANSPORT"
+DATA_SNCF_TYPES="lignes-par-statut"
+BD_TOPO_DATE="2023-06-15"
+BD_TOPO_VERSION="3-3"
+
+filter_ROUTE_NUMEROTEE_OU_NOMMEE="WHERE type_route IN ('Départementale', 'Autoroute', 'Nationale')"
+fields_ROUTE_NUMEROTEE_OU_NOMMEE="type_route, numero, gestion, id"
+
+fields_TRONCON_DE_ROUTE="id, id_rn, cl_admin, numero, gestion"
+filter_TRONCON_DE_ROUTE="WHERE cl_admin IN ('Départementale', 'Autoroute', 'Nationale')"
+
+fields_VOIE_FERREE_NOMMEE="id, toponyme, statut_top"
+filter_VOIE_FERREE_NOMMEE=""
+
+fields_TRONCON_DE_VOIE_FERREE="id, nature, etat, id_vfn, usage, toponyme"
+filter_TRONCON_DE_VOIE_FERREE=""
+
+fields_POINT_DE_REPERE=""
+filter_POINT_DE_REPERE=""

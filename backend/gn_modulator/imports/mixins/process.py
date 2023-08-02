@@ -285,7 +285,7 @@ FROM {view_params['from_table']} t
         clé
         - de la table d'alias 'alias_main'
         - associé à la clé d'unicité k_unique
-        - d'index index_unique dans la liste de clé d'unicité
+        - d'index index_unique dans la liste de clés d'unicités
         - pour la résolution de la clé key
         - link_joins ??
         """

@@ -54,6 +54,7 @@ export class ModulesMapService {
   getZoom = mapMethods.base.getZoom;
   getCenter = mapMethods.base.getCenter;
   getMapBounds = mapMethods.base.getMapBounds;
+  getMapBoundsFilterValue = mapMethods.base.getMapBoundsFilterValue;
 
   setView = mapMethods.base.setView;
   setCenter = mapMethods.base.setCenter;

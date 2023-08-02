@@ -302,7 +302,7 @@ export class ModulesObjectService {
         C: 'create',
       };
       const pageCode = `${context.object_code}_${pageCodeAction[action]}`;
-      const pageExists = Object.keys(moduleConfig.pages).includes(pageCode);
+      const pageExists = moduleConfig.pages && Object.keys(moduleConfig.pages).includes(pageCode);
       if (!pageExists) {
         return {
           actionAllowed: null,

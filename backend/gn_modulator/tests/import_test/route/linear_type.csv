@@ -1,2 +1,3 @@
 type_code;type_name;type_desc
 RTE;Tronçons de route;Tronçons de route (Autoroute, Nationales, Départementales ??)
+FER;Lignes de train;Lignes de train

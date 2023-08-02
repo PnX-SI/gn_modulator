@@ -181,8 +181,6 @@ class PassageFaune(db.Model):
             and_(
                 CorPfLinear.id_passage_faune == id_passage_faune,
                 CorPfLinear.id_linear == LLinears.id_linear,
-                BibLinearsTypes.id_type == LLinears.id_type,
-                BibLinearsTypes.type_code == "RTE",
             )
         )
     )

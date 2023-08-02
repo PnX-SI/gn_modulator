@@ -59,7 +59,7 @@ class SchemaDoc:
             type = "clé simple"
 
         if property_def.get("relation_type") == "n-n":
-            type = "liste de clé séparée par une virgule `,`"
+            type = "liste de clés séparées par une virgule `,`"
 
         txt += f"  - *type*: `{type}`\n"
 

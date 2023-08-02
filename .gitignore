@@ -13,6 +13,8 @@ frontend/app/module.config.ts
 backend/gn_modulator/migrations/versions/*
 !backend/gn_modulator/migrations/versions/*gn_modulator*.py
 
+contrib/m_sipaf/config/import/data/*
+
 !.gitkeep
 
 **/*.egg-info

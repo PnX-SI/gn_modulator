@@ -147,18 +147,25 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   popupHTML(properties) {
     const fields = this.popupFields();
-
     const label = `<b>${this.utils.capitalize(
       this.objectConfig().display.label
     )}</b>: ${utils.getAttr(properties, this.labelFieldName())}`;
     var propertiesHTML = '';
     propertiesHTML += '<ul>\n';
     propertiesHTML += fields
-      .filter((fieldKey) => fieldKey != 'scope')
-      .map((fieldKey) => {
-        // gerer les '.'
-        const fieldKeyLabel = fieldKey.split('.')[0];
-        const fieldLabel = this.objectConfig().properties[fieldKeyLabel].title;
+      .filter((field) => field != 'scope')
+      .map((field) => {
+        let fieldLabel, fieldKey;
+        if (utils.isObject(field)) {
+          fieldKey = field.key;
+          fieldLabel = field.title;
+        } else {
+          fieldKey = field;
+        }
+        if (!fieldLabel) {
+          const fieldKeyLabel = fieldKey.split('.')[0];
+          fieldLabel = this.objectConfig().properties[fieldKeyLabel].title || fieldKey;
+        }
         const fieldValue = utils.getAttr(properties, fieldKey);
         return `<li>${fieldLabel} : ${fieldValue}</li>`;
       })
@@ -186,6 +193,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     </div>
     ${propertiesHTML}
     `;
+
     return html;
   }
 
@@ -195,7 +203,7 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
-    const fields = this.popupFields(); // ?? computedItems
+    const fields = this.popupFields().map((f) => f.key || f);
     fields.push('scope');
     this._mData
       .getOne(this.moduleCode(), this.objectCode(), value, { fields })
