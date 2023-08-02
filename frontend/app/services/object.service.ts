@@ -98,7 +98,7 @@ export class ModulesObjectService {
       context.module_code,
       context.object_code,
       context.page_code,
-      context.params
+      context.params,
     );
   }
 
@@ -107,7 +107,7 @@ export class ModulesObjectService {
       context.module_code,
       object_code || context.object_code,
       context.page_code,
-      context.params
+      context.params,
     );
   }
 
@@ -417,7 +417,7 @@ export class ModulesObjectService {
     return this._mData.delete(
       context.module_code,
       context.object_code,
-      this.objectId({ context, data })
+      this.objectId({ context, data }),
     );
   }
 }

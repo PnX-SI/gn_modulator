@@ -217,7 +217,7 @@ export default {
       key = null,
       pane = null,
       bring_to_front = null,
-    } = {}
+    } = {},
   ): any {
     const geojsonLayer = this.L.geoJSON(geojson, {
       pane,
@@ -278,7 +278,7 @@ export default {
     zoomLevel,
     mapBounds,
     lastZoomLevel = null,
-    lastMapBounds = null
+    lastMapBounds = null,
   ) {
     zoomLevel = zoomLevel || this.getZoom(mapId);
     mapBounds = mapBounds || this.getMapBounds(mapId);
@@ -330,7 +330,7 @@ export default {
         zoomLevel,
         mapBounds,
         lastZoomLevel,
-        lastMapBounds
+        lastMapBounds,
       );
 
       if (action == 'display') {

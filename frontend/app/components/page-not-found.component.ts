@@ -14,7 +14,7 @@ export class PageNotFoundComponent implements OnInit {
   constructor(
     private _mConfig: ModulesConfigService,
     private _mRoute: ModulesRouteService,
-    private _router: Router
+    private _router: Router,
   ) {}
 
   ngOnInit() {

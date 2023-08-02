@@ -16,7 +16,7 @@ export default {
         if (maxRetries && index > maxRetries) {
           clearInterval(intervalId);
           console.error(
-            `La carte attendue ${mapId} n'est pas présente (index > maxRetries=${maxRetries})`
+            `La carte attendue ${mapId} n'est pas présente (index > maxRetries=${maxRetries})`,
           );
           reject();
           return;
@@ -49,7 +49,7 @@ export default {
       computedCenter ||
       this.L.latLng(
         this._mConfig.appConfig().MAPCONFIG.CENTER[0],
-        this._mConfig.appConfig().MAPCONFIG.CENTER[1]
+        this._mConfig.appConfig().MAPCONFIG.CENTER[1],
       );
     return computedCenter;
   },
@@ -69,7 +69,7 @@ export default {
       (x, y) => {
         return [x[0] + y[0] / arr.length, x[1] + y[1] / arr.length];
       },
-      [0, 0]
+      [0, 0],
     );
   },
 

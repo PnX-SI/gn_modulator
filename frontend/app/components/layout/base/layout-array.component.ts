@@ -15,7 +15,10 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
 
   // arrayOptions: Array<any>;
 
-  constructor(private _formService: ModulesFormService, _injector: Injector) {
+  constructor(
+    private _formService: ModulesFormService,
+    _injector: Injector,
+  ) {
     super(_injector);
     this._name = 'layout-array';
     this.bPostComputeLayout = true;
@@ -41,7 +44,7 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
       debug: this.context.debug,
     };
     for (const key of Object.keys(this.context).filter(
-      (key) => !['form_group_id', 'data_keys'].includes(key)
+      (key) => !['form_group_id', 'data_keys'].includes(key),
     )) {
       arrayItemContext[key] = this.context[key];
     }

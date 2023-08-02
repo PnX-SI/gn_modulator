@@ -21,7 +21,7 @@ export class ModulesLayoutItemsComponent extends ModulesLayoutComponent implemen
         layout: item,
         data: this.data,
         context: this.context,
-      })
+      }),
     );
   }
 }

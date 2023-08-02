@@ -39,7 +39,7 @@ export class TestLayoutComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _mContext: ModulesContextService,
-    private _mConfig: ModulesConfigService
+    private _mConfig: ModulesConfigService,
   ) {}
 
   ngOnInit() {

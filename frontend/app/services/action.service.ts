@@ -41,11 +41,11 @@ export class ModulesActionService {
       if (!Object.keys(moduleConfig.pages).includes(pageCode)) {
         this._commonService.regularToaster(
           'error',
-          `Il n'y a pas d'action definie pour ${action}, ${context.object_code}`
+          `Il n'y a pas d'action definie pour ${action}, ${context.object_code}`,
         );
         console.error(
           `Il n'y a pas d'action definie pour ${action}, ${context.object_code}`,
-          moduleConfig.actions
+          moduleConfig.actions,
         );
         return;
       }
@@ -127,7 +127,7 @@ export class ModulesActionService {
       },
       (error) => {
         this._commonService.regularToaster('error', `Erreur dans la requête`);
-      }
+      },
     );
   }
 }

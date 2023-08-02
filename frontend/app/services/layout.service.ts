@@ -339,14 +339,14 @@ export class ModulesLayoutService {
     /** section */
     if (['section', 'form'].includes(layoutType)) {
       return utils.flatAndRemoveDoublons(
-        this.getLayoutFields(layout.items || [], context, data, baseKey)
+        this.getLayoutFields(layout.items || [], context, data, baseKey),
       );
     }
 
     /** items */
     if (layoutType == 'items') {
       return utils.flatAndRemoveDoublons(
-        layout.map((l) => this.getLayoutFields(l, context, data, baseKey))
+        layout.map((l) => this.getLayoutFields(l, context, data, baseKey)),
       );
     }
     /** key - array ou object */
@@ -354,7 +354,7 @@ export class ModulesLayoutService {
     if (['array', 'dict'].includes(layoutType)) {
       const newBaseKey = baseKey ? `${baseKey}.${layout.key}` : layout.key;
       return utils.flatAndRemoveDoublons(
-        this.getLayoutFields(layout.items, context, data, newBaseKey)
+        this.getLayoutFields(layout.items, context, data, newBaseKey),
       );
     }
 
