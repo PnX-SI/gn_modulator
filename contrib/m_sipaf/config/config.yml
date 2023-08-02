@@ -5,7 +5,7 @@ site_filters_fields:
   items:
     - label: Infos
       items:
-        - code_passage_faune
+        - uuid_passage_faune
         - nom_usuel_passage_faune
         - nomenclatures_ouvrage_materiaux
         - key: pi_ou_ps
@@ -136,7 +136,7 @@ site_filters_fields:
               page_size: 20
 
 site_filters_defs:
-  code_passage_faune:
+  uuid_passage_faune:
     type: '~'
   nom_usuel_passage_faune:
     type: '~'
@@ -159,14 +159,14 @@ site_filters_defs:
     key: id_nomenclature
 
 site_table_fields:
-  - code_passage_faune
+  - uuid_passage_faune
   - nom_usuel_passage_faune
   - label_infrastructures
   - label_communes
 
 site_map_popup_fields:
   - id_passage_faune
-  - code_passage_faune
+  - uuid_passage_faune
   - nom_usuel_passage_faune
   - nomenclatures_ouvrage_type.label_fr
   - label_infrastructures
@@ -182,7 +182,6 @@ site_details_fields:
           items:
             - direction: row
               items:
-                - code_passage_faune
                 - code_ouvrage_gestionnaire
                 - nom_usuel_passage_faune
                 - uuid_passage_faune
@@ -335,7 +334,7 @@ site_form_fields:
           items:
             - direction: row
               items:
-                - code_passage_faune
+                - uuid_passage_faune
                 - code_ouvrage_gestionnaire
                 - nom_usuel_passage_faune
             - direction: row
@@ -443,6 +442,6 @@ site_form_fields:
 
 diagnostic_table_fields:
   - date_diagnostic
-  - passage_faune.code_passage_faune
+  - passage_faune.uuid_passage_faune
   - organisme.nom_organisme
   - role.nom_complet

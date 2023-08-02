@@ -7,11 +7,8 @@ export_label: Test
 object_code: site
 module_code: m_sipaf
 process_label: false
-fields2:
-  - code_passage_faune
-  - nomenclatures_ouvrage_materiaux.cd_nomenclature,nomenclatures_ouvrage_materiaux
 fields:
-  - code_passage_faune
+  - uuid_passage_faune
   - code_ouvrage_gestionnaire
   - nom_usuel_passage_faune
   - pi_ou_ps
