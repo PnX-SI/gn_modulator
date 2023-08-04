@@ -4,6 +4,12 @@
 
 [Définition des champs](./import_description_champs.md)
 
+Le champs `uuid_passage_faune` permet d'identifier de maniere unique un élément.
+La colonne `uuid_passage_faune` doit être présente dans le fichier d'import même si les valeurs ne sont pas renseignées.
+
+Si la valeur est nulle, une valeur sera générée par défaut. Cependant il sera plus difficile de faire le liens dans la base de donnée source, ou de faire des mises à jour de ces données (en utilisant la fonctionalité d'import).
+
+Il est donc conseillé de fournir une valeur pour ce champs.
 ## Exemples de fichiers
 
 - [Exemple simple](/backend/gn_modulator/tests/import_test/pf_simple.csv)

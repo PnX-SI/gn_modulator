@@ -1,5 +1,6 @@
-definitions : 274 ms
-schemas     : 506 ms
+definitions : 278 ms
+schemas     : 480 ms
+modules     : 49 ms
 
 
 #### Champs obligatoires
@@ -29,13 +30,6 @@ schemas     : 506 ms
 - `diametre`
   - *type*: `number`
   - *définition*: Diamètre de la buse en mètre
-- `geom_local`
-  - *type*: `geometry`
-  - *geometry_type*: `geometry`
-  - format:
-    - WKT (par ex. `POINT(0.1 45.2)` (adapter au SRID)')
-    - XY (remplacer geom_local par les colonnes x et y)
-  - *définition*: Géométrie locale du passage à faune (SRID=2154)
 - `hauteur_dispo_faune`
   - *type*: `number`
   - *définition*: Hauteur de l'ouvrage effectivement disponible pour la faune en mètre
@@ -55,10 +49,6 @@ schemas     : 506 ms
 - `longueur_franchissement`
   - *type*: `number`
   - *définition*: Longueur de franchissement de l'ouvrage en mètres (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)
-- `meta_create_date`
-  - *type*: `datetime`
-- `meta_update_date`
-  - *type*: `datetime`
 - `nom_usuel_passage_faune`
   - *type*: `string`
   - *définition*: Nom usuel utilisé pour dénommer l'ouvrage (nom_usuel_pf)
@@ -170,9 +160,4 @@ schemas     : 506 ms
     - **DIAB** *Diabolo*
     - **TRA** *Tranchée*
     - **TUN** *Tunnel*
-- `id_digitiser`
-  - *type*: `clé simple`
-  - *référence*: `utilisateurs`
-  - *champ(s)*: `identifiant`
-  - *définition*: Personne qui a saisi la donnée
 
