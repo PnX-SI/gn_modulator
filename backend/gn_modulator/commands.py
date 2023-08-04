@@ -331,32 +331,6 @@ def cmd_test(module_path):
     print(module_path, module_code)
     return
 
-    init_gn_modulator()
-
-    a = importlib.reload(site)
-
-    sm = SchemaMethods("m_sipaf.pf")
-    sm.process_features("m_sipaf.pf_test", commit=False)
-    params = {
-        "fields": [
-            "code_passage_faune",
-            "actors.id_organism",
-            "actors.id_role",
-            "actors.role.nom_role",
-            "actors.role.nom_complet",
-        ],
-        "filters": "code_passage_faune = TEST_SIPAF",
-    }
-    query = sm.query_list("m_sipaf", "R", params)
-    print("\n\n", sm.format_sql(sm.sql_txt(query)))
-    print("\n\nrequete\n\n")
-    res = query.all()
-    print("\n\nserial\n\n", params["fields"], "\n\n")
-    res = sm.serialize_list(res, params["fields"])
-    print(res)
-
-    from flask import current_app
-
 
 commands = [
     cmd_check,

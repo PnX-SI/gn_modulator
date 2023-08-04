@@ -1,7 +1,3 @@
-definitions : 274 ms
-schemas     : 506 ms
-
-
 #### Champs obligatoires
 
 - `geom`
@@ -55,10 +51,6 @@ schemas     : 506 ms
 - `longueur_franchissement`
   - *type*: `number`
   - *définition*: Longueur de franchissement de l'ouvrage en mètres (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)
-- `meta_create_date`
-  - *type*: `datetime`
-- `meta_update_date`
-  - *type*: `datetime`
 - `nom_usuel_passage_faune`
   - *type*: `string`
   - *définition*: Nom usuel utilisé pour dénommer l'ouvrage (nom_usuel_pf)
@@ -170,9 +162,4 @@ schemas     : 506 ms
     - **DIAB** *Diabolo*
     - **TRA** *Tranchée*
     - **TUN** *Tunnel*
-- `id_digitiser`
-  - *type*: `clé simple`
-  - *référence*: `utilisateurs`
-  - *champ(s)*: `identifiant`
-  - *définition*: Personne qui a saisi la donnée
 
