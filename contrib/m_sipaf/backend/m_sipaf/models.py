@@ -78,7 +78,6 @@ class PassageFaune(db.Model):
 
     id_passage_faune = db.Column(db.Integer, primary_key=True)
 
-    # code_passage_faune = db.Column(db.Unicode, nullable=False)
     uuid_passage_faune = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
 
     id_digitiser = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))

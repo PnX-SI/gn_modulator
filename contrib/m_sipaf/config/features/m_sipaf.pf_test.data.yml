@@ -5,7 +5,7 @@ description: feature de testpour sipaf
 items:
   - schema_code: m_sipaf.pf
     items:
-      - code_passage_faune: TEST_SIPAF
+      - uuid_passage_faune: 8a69f3af-125a-4b55-96d4-8b57c906dd59
         geom:
           type : 'Point'
           coordinates: [ 0, 45 ]

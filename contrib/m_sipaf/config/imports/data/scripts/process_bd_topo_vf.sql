@@ -55,7 +55,7 @@ DROP TABLE IF EXISTS bd_topo.IMPORT_LINEAR_GROUP_vf;
 CREATE TABLE bd_topo.IMPORT_LINEAR_GROUP_vf AS (
 SELECT
     CODE_LIGNE AS CODE,
-    CONCAT('Ligne ', CODE_LIGNE, ' ', LIB_LIGNE ),
+    CONCAT('Ligne ', CODE_LIGNE, ' ', LIB_LIGNE ) as name,
     ST_UNION(geom) AS geom
 FROM BD_TOPO.LIGNES_PAR_STATUT LPS
 GROUP BY LIB_LIGNE, CODE_LIGNE
@@ -68,6 +68,7 @@ CREATE TABLE bd_topo.IMPORT_LINEAR_vf AS (
     SELECT 
         TDVF.id AS linear_code,
         STRING_AGG(code, ', ') AS groups,
+        CONCAT(STRING_AGG(code, ', '), ' ', tdvf.id) AS linear_name,
         TDVF.geom,
         CASE
             WHEN nature = 'LGV' THEN 'VF_LGV'

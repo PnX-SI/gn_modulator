@@ -75,7 +75,7 @@ layout:
                   flex: "0"
                 - type: object
                   display: table
-                  sort: code_passage_faune
+                  sort: id_passage_faune
                   items: __SITE_TABLE_FIELDS__
             - object_code: diagnostic
               label: __f__o.tab_label(x)
