@@ -221,8 +221,7 @@ export class ModulesLayoutComponent implements OnInit {
       'appearance',
       'index',
       'map_id',
-      'map_zoom',
-      'map_bounds_filter_value',
+      'map_params',
       'skip_required',
       'hidden_options',
     ]) {

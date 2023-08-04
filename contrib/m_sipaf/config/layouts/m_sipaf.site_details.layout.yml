@@ -39,7 +39,6 @@ layout:
         - type: object
           display: geojson
           object_code: ref_geo.point
-          hidden: "__f__context.map_zoom <= 12 || !context.map_bounds_filter_value"
           module_code: MODULATOR
           popup_fields:
             - point_code
@@ -57,8 +56,8 @@ layout:
               title: abscisse
           prefilters: |
             __f__{
-              const mapBoxFilterValue = context.map_bounds_filter_value;
-              const mapZoom = context.map_zoom;
+              const mapBoxFilterValue = context.map_params?.bounds_filter_value;
+              const mapZoom = context.map_params?.zoom;
               return mapBoxFilterValue && mapZoom && mapZoom > 12 && `geom_4326 bbox ${mapBoxFilterValue}` || 'id_point = -1';
             }
           style:

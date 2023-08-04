@@ -70,6 +70,11 @@ export class ModulesLayoutObjectGeoJSONComponent
   processData(response) {
     this.objectData = response.data;
     this._mapService.waitForMap(this.context.map_id).then(() => {
+      console.log(
+        'process data',
+        this.context.object_code,
+        this.context.map_params?.bounds_filter_value,
+      );
       let geojson = response.data;
       const label_field_name = this.objectConfig().utils.label_field_name;
       const pk_field_name = this.objectConfig().utils.pk_field_name;

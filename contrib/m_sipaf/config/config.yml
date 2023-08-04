@@ -152,8 +152,6 @@ site_filters_fields:
                     filters.push(f);
                   };
 
-                  console.log(filters.join(''));
-
                   return filters.join(',');
 
                 }
