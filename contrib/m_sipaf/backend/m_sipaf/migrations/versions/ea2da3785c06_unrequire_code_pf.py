@@ -21,6 +21,7 @@ def upgrade():
         """
         ALTER TABLE pr_sipaf.t_passages_faune ALTER COLUMN code_passage_faune DROP NOT NULL;
         ALTER TABLE pr_sipaf.t_passages_faune DROP CONSTRAINT unique_pr_sipaf_t_passages_faune_code_passage_faune;
+        ALTER TABLE pr_sipaf.t_passages_faune DROP COLUMN code_passage_faune CASCADE;
         """
     )
 
@@ -30,5 +31,6 @@ def downgrade():
         """
         ALTER TABLE pr_sipaf.t_passages_faune ALTER COLUMN code_passage_faune SET NOT NULL;
         ALTER TABLE pr_sipaf.t_passages_faune ADD CONSTRAINT unique_pr_sipaf_t_passages_faune_code_passage_faune UNIQUE(code_passage_faune);
+        ALTER TABLE pr_sipaf.t_passages_faune ADD COLUMN code_passage_faune VARCHAR;
         """
     )
