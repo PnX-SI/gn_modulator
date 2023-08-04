@@ -224,6 +224,19 @@ site_details_fields:
                 title: Utilisateur
               - organisme.nom_organisme
               - nomenclature_type_actor.label_fr
+        - display: fieldset
+          key: usages
+          type: array
+          items:
+            direction: row
+            items:
+              - nomenclature_usage_type.label_fr
+              - detail_usage
+              - commentaire
+        - display: fieldset
+          title: Objectifs
+          items:
+              - nomenclatures_ouvrage_categorie.label_fr
         - direction: row
           items:
             - title: Référentiel
@@ -377,6 +390,23 @@ site_form_fields:
                 title: Utilisateur
               - id_organism
               - id_nomenclature_type_actor
+        - title: Usages
+          type: array
+          key: usages
+          display: fieldset
+          items:
+            direction: row
+            items:
+              - id_nomenclature_usage_type
+              - detail_usage
+              - commentaire
+        - title: Objectifs
+          display: fieldset
+          items:
+            - key: nomenclatures_ouvrage_categorie
+              type: list_form
+              multiple: true
+              return_object: true
         - title: Localisation
           display: fieldset
           items:

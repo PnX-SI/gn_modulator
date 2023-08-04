@@ -105,6 +105,9 @@ properties:
       title: "Type d'ouvrage"
       description: "Type d'ouvrage d'art (lb_type_ouvrage)"
     #   nomenclature_type: PF_OUVRAGE_TYPE
+  nomenclatures_ouvrage_categorie:
+    title: "Catégorie d'ouvrage"
+    description: "Catégorie d'ouvrage d'art (utilisation)"
   ouvrage_type_autre:
       type: string
       title: Autre type d'ouvrage
@@ -157,6 +160,8 @@ properties:
   actors:
       title: Acteurs
       description: Acteurs du passage à faune
+  usages:
+    title: Usages
   medias:
       title: medias
 

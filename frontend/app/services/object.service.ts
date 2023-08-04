@@ -32,7 +32,6 @@ export class ModulesObjectService {
    */
   objectConfig(moduleCode, objectCode, pageCode = null, params: any = null) {
     // config provenant du module
-
     const cacheKey = this.objectConfigCacheKey(moduleCode, objectCode, pageCode, params);
 
     if (this._cacheObjectConfig[cacheKey]) {

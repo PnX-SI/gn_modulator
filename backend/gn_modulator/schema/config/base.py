@@ -108,7 +108,6 @@ class SchemaConfigBase:
         """
         frontend processing
         """
-
         return {
             "columns_array": self.columns_array(columns_only=True),
             "urls": {

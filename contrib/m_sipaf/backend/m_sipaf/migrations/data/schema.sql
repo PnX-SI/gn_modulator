@@ -193,14 +193,14 @@ ALTER TABLE pr_sipaf.cor_actor_pf
         CHECK (ref_nomenclatures.check_nomenclature_type_by_mnemonique(id_nomenclature_type_actor,'PF_TYPE_ACTOR'))
         NOT VALID;
 
-CREATE TABLE IF NOT EXISTS pr_sipaf.cor_pf_nomenclature_ouvrage_type (
-    id_passage_faune INTEGER NOT NULL NOT NULL,
-    id_nomenclature INTEGER NOT NULL NOT NULL
-);
 
 
 -- cor pr_sipaf.cor_pf_nomenclature_ouvrage_type
 
+CREATE TABLE IF NOT EXISTS pr_sipaf.cor_pf_nomenclature_ouvrage_type (
+    id_passage_faune INTEGER NOT NULL NOT NULL,
+    id_nomenclature INTEGER NOT NULL NOT NULL
+);
 
 
 ---- pr_sipaf.cor_pf_nomenclature_ouvrage_type primary keys contraints
