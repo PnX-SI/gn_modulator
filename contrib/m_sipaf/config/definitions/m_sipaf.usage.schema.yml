@@ -14,3 +14,10 @@ meta:
         - id_nomenclature_categorie_usage
         - id_passage_faune
 
+properties:
+    nomenclature_usage_type:
+        title: "Type d'usage"
+    detail_usage:
+        title: Détails
+    commentaire:
+        title: Commentaires

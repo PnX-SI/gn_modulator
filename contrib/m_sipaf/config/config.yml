@@ -235,8 +235,10 @@ site_details_fields:
               - commentaire
         - display: fieldset
           title: Objectifs
+          direction: row
           items:
               - nomenclatures_ouvrage_categorie.label_fr
+              - taxons.nom_vern
         - direction: row
           items:
             - title: Référentiel
@@ -402,11 +404,19 @@ site_form_fields:
               - commentaire
         - title: Objectifs
           display: fieldset
+          direction: row
           items:
             - key: nomenclatures_ouvrage_categorie
               type: list_form
               multiple: true
               return_object: true
+            - key: taxons
+              type: list_form
+              schema_code: tax.taxsearch
+              multiple: true
+              return_object: true
+              reload_on_search: true
+              page_size: 20
         - title: Localisation
           display: fieldset
           items:
