@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade():
     operations = pkg_resources.resource_string(
-        "m_sipaf.migrations", "data/schema_diagno.sql"
+        "m_sipaf.migrations", "data/schema_usage_objectifs.sql"
     ).decode("utf-8")
     op.get_bind().execute(sa.sql.text(operations))
     pass
