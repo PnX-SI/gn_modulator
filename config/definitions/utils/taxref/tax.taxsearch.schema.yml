@@ -9,5 +9,6 @@ meta:
     genre: F
     label: taxonomie
     label_field_name: search_name
+    value_field_name: cd_nom
     unique:
         - cd_nom
