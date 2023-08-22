@@ -10,7 +10,7 @@ items:
       - type_desc
     items:
       - [RT_AUT, Autoroute, Tronçons d'autoroute]
-      - [RT_NAT, Noute nationale, Tronçons de route nationale]
+      - [RT_NAT, Route nationale, Tronçons de route nationale]
       - [RT_DEP, Route départementale, Tronçons de route départementale]
       - [VF_P, Voie ferrée (Principale), Tronçons de voie ferrée (Principale)]
       - [VF_LGV, Voie ferrée (LGV), Tronçons de voie ferrée (LGV)]
