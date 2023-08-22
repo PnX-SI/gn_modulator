@@ -323,7 +323,6 @@ class SchemaRepositoriesBase:
         return query
 
     def process_field(self, field):
-
         field != self.cut_to_json(field) and print(field, self.cut_to_json(field))
         field = self.cut_to_json(field)
         only_field = [field]
@@ -381,7 +380,7 @@ class SchemaRepositoriesBase:
             map(
                 lambda x: getattr(self.Model(), x),
                 filter(
-                    lambda x: '.' not in x
+                    lambda x: "." not in x
                     and self.has_property(x)
                     and not self.is_relationship(x),
                     fields_to_process,

@@ -144,7 +144,7 @@ class SchemaRepositoriesFilters:
         if filter_type in ["like", "ilike"]:
             if "%" not in filter_value:
                 filter_value = f"%{filter_value}%"
-                if "_" in filter_value and '\\_' not in filter_value:
+                if "_" in filter_value and "\\_" not in filter_value:
                     filter_value = filter_value.replace("_", "\\_")
 
                 filter_value
@@ -156,7 +156,7 @@ class SchemaRepositoriesFilters:
             filter_value_unaccent = unidecode.unidecode(filter_value)
             filters_out = []
             for v in filter_value_unaccent.split(" "):
-                if "_" in v and '\\_' not in v:
+                if "_" in v and "\\_" not in v:
                     v = v.replace("_", "\\_")
                 filters_out.append(
                     getattr(unaccent(cast(model_attribute, db.String)), "ilike")(f"%{v}%")
