@@ -423,3 +423,14 @@ class SchemaBase:
                 ],
             )
         )
+
+    def cut_to_json(self, key):
+        '''
+            renvoie le champs json de la variable key
+        '''
+        keys = key.split('.')
+        for index, k in enumerate(keys):
+            current_key = '.'.join(keys[: index + 1])
+            if self.property(current_key)['type'] == 'json':
+                return current_key
+        return key

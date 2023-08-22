@@ -83,8 +83,9 @@ SELECT
     STRING_AGG(rn.NUMERO_DEPT, ',') AS groups,
     ST_ASEWKT(tr.geom) AS geom,
     'IGN BDTOPO 3-3' AS SOURCE,
+    '{ "largeur": ' || tr.largeur || ' }' AS additional_data,
     TRUE AS ENABLED
     FROM unnest_rn_id TR
     JOIN BD_TOPO.ROUTE_NUMEROTEE_OU_NOMMEE RN ON RN.id = TR.id_rn_split
-    GROUP BY tr.id, tr.geom, tr.CL_ADMIN
+    GROUP BY tr.id, tr.geom, tr.CL_ADMIN, tr.largeur
 ;

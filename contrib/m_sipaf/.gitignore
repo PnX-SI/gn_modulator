@@ -1,4 +1,4 @@
-config/imports/data/sources/*
-config/imports/data/processed/*
+data/sources/*
+data/processed/*
 
 !.gitkeep

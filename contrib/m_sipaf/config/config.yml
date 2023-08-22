@@ -246,6 +246,8 @@ site_details_fields:
               items:
                 - items:
                     - label_infrastructures
+                    - title: Largeur de la voie (m)
+                      key: linears.additional_data.largeur
                     - label_communes
                     - label_departements
                     - label_regions
@@ -324,9 +326,7 @@ site_details_fields:
 
     - label: __f__o.tab_label(x)
       object_code: synthese
-      # M_SIPAF_OBS à reprendre après la release
-      hidden: true
-      # hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
+      hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
       items:
         - type: object
           display: table

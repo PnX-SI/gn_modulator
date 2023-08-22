@@ -461,8 +461,6 @@ class ModuleConfigUtils:
             return
 
         if not sm.has_property(key):
-            # raise error ?
-            # print(f"pb ? {sm} has no {key}")
             return keys
 
         # ajout en lecture

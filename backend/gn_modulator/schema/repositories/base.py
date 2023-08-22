@@ -323,6 +323,9 @@ class SchemaRepositoriesBase:
         return query
 
     def process_field(self, field):
+
+        field != self.cut_to_json(field) and print(field, self.cut_to_json(field))
+        field = self.cut_to_json(field)
         only_field = [field]
         field_to_process = field
         if self.is_relationship(field):
@@ -374,12 +377,16 @@ class SchemaRepositoriesBase:
                     field_to_remove_from_process.append(f1)
 
         # champs du modèle
-        property_fields = map(
-            lambda x: getattr(self.Model(), x),
-            filter(
-                lambda x: "." not in x and self.has_property(x) and not self.is_relationship(x),
-                fields_to_process,
-            ),
+        property_fields = list(
+            map(
+                lambda x: getattr(self.Model(), x),
+                filter(
+                    lambda x: '.' not in x
+                    and self.has_property(x)
+                    and not self.is_relationship(x),
+                    fields_to_process,
+                ),
+            )
         )
 
         query = query.options(load_only(*property_fields))

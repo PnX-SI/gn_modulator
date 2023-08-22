@@ -113,14 +113,16 @@ class SchemaRepositoriesUtil:
     def custom_getattr(
         self, Model, field_name, query=None, condition=None, only_fields="", index=0
     ):
+        
         # liste des champs 'rel1.rel2.pro1' -> 'rel1', 'rel2', 'prop1'
         fields = field_name.split(".")
-
+        
         # champs courrant (index)
         current_field = fields[index]
 
         # clé pour le cache
         cache_key = ".".join(fields[: index + 1])
+
         # test si c'est le dernier champs
         is_last_field = index == len(fields) - 1
 
