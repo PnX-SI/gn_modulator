@@ -166,11 +166,10 @@ properties:
     title: Usages
   medias:
       title: medias
-
-  geom_x:
+  geom_y:
       type: number
       title: Latitude
-  geom_y:
+  geom_x:
       type: number
       title: Longitude
   geom_text:
