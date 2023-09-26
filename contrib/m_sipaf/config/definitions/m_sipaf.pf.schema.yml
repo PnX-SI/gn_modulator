@@ -13,7 +13,7 @@ meta:
     genre: M
     label: passage à faune
     labels: passages à faune
-    label_field_name: uuid_passage_faune
+    label_field_name: id_passage_faune
     geometry_field_name: geom
     unique:
         - uuid_passage_faune
