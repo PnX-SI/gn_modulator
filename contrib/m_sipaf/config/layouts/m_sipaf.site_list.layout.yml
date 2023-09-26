@@ -51,7 +51,7 @@ layout:
                         - title: Exports pour les passages à faune
                         - type: button
                           flex: "0"
-                          title: "Export complet"
+                          title: "Export des passages à faune"
                           description: Télécharger les passages à faune (les filtres sont appliqués)
                           href: __f__o.url_export(x, 'm_sipaf.pf')
                         # - type: button
