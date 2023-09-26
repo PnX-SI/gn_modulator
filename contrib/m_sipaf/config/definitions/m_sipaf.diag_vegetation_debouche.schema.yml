@@ -18,8 +18,8 @@ meta:
   unique_in_db: true
 properties:
   id_nomenclature_vegetation_type:
-    title: Type de vegation
-    description: Type de vegation présente sur aux débouchés de l'ouvrage
+    title: Type de végétation
+    description: Type de végétation présente sur aux débouchés de l'ouvrage
   id_nomenclature_vegetation_couvert:
     title: Couverture végétale
     description: Couverture végétale pour ce type de végétation
