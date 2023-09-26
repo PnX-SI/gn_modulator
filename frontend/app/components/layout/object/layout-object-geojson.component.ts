@@ -56,7 +56,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     }
 
     layer.bringToFront();
-    layer.openPopup();
+    this.computedLayout.open_popup && layer.openPopup();
   }
 
   processFilters() {
