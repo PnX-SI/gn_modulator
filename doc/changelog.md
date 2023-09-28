@@ -4,13 +4,47 @@
 
 **🚀 Nouveautés**
 
-- suppression du champs code_passage_faune
+- suppression du champs `code_passage_faune`
+- filtres carte listes: gestion dynamique des routes et des zonages.
 - travail sur la bd_topo
   - départementales
   - voies ferrées
   - points de repère
 - api -> filtre sur un rectangle (par exemple emprise de la carte leaflet)
 - meilleure gestion des jsonb
+
+**🐛 Corrections**
+
+- inversion `lat`, `lon` dans les propriété des PF
+- carte-liste: ligne du tableau qui ne se mettait plus en surbrillance avec un click sur la carte
+- corrections, avancées diverses (voir #54)
+
+**⚠️ Notes de version**
+
+Pour gérer la maj du module sipaf
+
+### GN et alembic
+
+passer en GN 2.13.1 (ou .2 ???)
+
+```
+geonature db autoupgrade
+```
+
+```
+# vérifier que tout est ok ?
+geonature db status
+```
+
+
+### Données (nomenclature etc ...)
+```
+    geonature modulator features m_sipaf.utils
+```
+
+### Bd topo
+- routes, voie ferrée, point de repère
+- voir le fichier [maj-bd_topo-sipaf_1.1.2.md](./maj-bd_topo-sipaf_1.1.2.md)
 
 ## 1.1.1 (2023-06-29)
 

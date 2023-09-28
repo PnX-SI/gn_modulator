@@ -1,7 +1,6 @@
 # MAJ data & bd topo pour 1.1.2
 
 ```
-    geonature modulator features m_sipaf.utils
     geonature modulator features bd_topo.type
 ```
 
@@ -56,5 +55,5 @@ INSERT INTO ref_geo.cor_linear_area (id_linear, id_area)
 
 ```
 SELECT pr_sipaf.process_all_cor_area_pf();
-SELECT pr_sipaf.process_all_cor_linear_pf()
+SELECT pr_sipaf.process_all_cor_linear_pf();
 ```
