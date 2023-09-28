@@ -48,7 +48,7 @@ export class ModulesLayoutObjectTableComponent
   }
 
   columns() {
-    return this._mTable.columnsTable(this.fields(), this.computedLayout, this.context);
+    return this._mTable.columnsTable(this.computedItems, this.computedLayout, this.context);
   }
 
   drawTable(): void {
@@ -222,8 +222,9 @@ export class ModulesLayoutObjectTableComponent
     if (!fieldName) {
       fieldName = this.pkFieldName();
     }
-    const row = this.table.getRows().find((row) => row.getData()[fieldName] == value);
-
+    const row = this.table.getRows().find((row) => {
+      return row.getData()[fieldName] == value;
+    });
     if (row) {
       this.table.selectRow(row);
     }
@@ -293,5 +294,15 @@ export class ModulesLayoutObjectTableComponent
     if (objectCode == this.context.object_code) {
       this.drawTable();
     }
+  }
+
+  processItems() {
+    this.computedItems = this.layout.items.map((item) =>
+      this._mLayout.computeLayout({
+        layout: item,
+        data: this.data,
+        context: this.context,
+      }),
+    );
   }
 }

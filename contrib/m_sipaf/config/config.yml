@@ -185,6 +185,8 @@ site_filters_defs:
     key: id_nomenclature
 
 site_table_fields:
+  - key: id_passage_faune
+    hidden: true
   - uuid_passage_faune
   - nom_usuel_passage_faune
   - label_infrastructures

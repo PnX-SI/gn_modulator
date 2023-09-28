@@ -154,7 +154,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   // renvoie la liste des clés concernées par le layout
   // sert pour l'appel aux api
-  fields({ geometry = false, addDefault = false } = {}) {
+  fields({ geometry = false, addDefault = false, columns = false } = {}) {
     if (!this.layout.items) {
       return this.defaultFields({ geometry });
     }
