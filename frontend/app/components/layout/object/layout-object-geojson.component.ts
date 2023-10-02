@@ -23,6 +23,8 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   tooltipDisplayZoomTreshold = 12;
 
+  removedByZoom = false;
+
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'layout-object-geojson';
@@ -68,6 +70,9 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   processData(response) {
+    if (!response.data) {
+      return;
+    }
     this.objectData = response.data;
     this._mapService.waitForMap(this.context.map_id).then(() => {
       let geojson = response.data;
@@ -89,7 +94,8 @@ export class ModulesLayoutObjectGeoJSONComponent
           pane: paneName,
           zoom: bZoom,
           key: this.computedLayout.key,
-          label: `${this.objectConfig().display.labels}`,
+          pk_field_name,
+          title: utils.capitalize(this.computedLayout.title || this.objectConfig().display.labels),
           style: layerStyle,
           onLayersAdded: () => {
             this.processValue(this.getDataValue());
@@ -139,7 +145,6 @@ export class ModulesLayoutObjectGeoJSONComponent
       const d = {};
       d[this.context.object_code] = this.mapData;
       this._mapService.processData(this.context.map_id, d, {
-        // key: this.computedLayout.key,
         zoom: this.computedLayout.zoom,
       });
     });
@@ -223,6 +228,31 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   getData(): Observable<any> {
+    // test Zoom min
+    const key = this.context.object_code;
+    const currentLayer = this._mapService.getLayerData(
+      this.context.map_id,
+      this.context.object_code,
+    );
+
+    const condZoom =
+      !this.computedLayout.zoom_min ||
+      this._mapService.getZoom(this.context.map_id) >= this.computedLayout.zoom_min;
+
+    if (this.removedByZoom && condZoom) {
+      this.removedByZoom = false;
+      this._mapService.showLayers(this.context.map_id, { key });
+    }
+
+    if (currentLayer && !this.removedByZoom && !condZoom) {
+      this.removedByZoom = true;
+      this._mapService.hideLayers(this.context.map_id, { key });
+    }
+
+    if (!condZoom) {
+      return of({});
+    }
+
     if (this.getDataPreFilters()?.includes('undefined')) {
       console.error('prefilter inconnu');
       return of({});

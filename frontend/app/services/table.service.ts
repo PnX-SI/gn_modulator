@@ -166,7 +166,7 @@ export class ModulesTableService {
 
     const property = this._mObject.property(context, layoutItem.key);
     layoutItemOut['title'] =
-      layoutItem['title'] || layoutItem.includes('.') ? property.parent?.title : property.title;
+      layoutItem['title'] || layoutItem['key']('.') ? property.parent?.title : property.title;
     layoutItemOut['type'] = layoutItem['type'] || property.type;
     layoutItemOut['field'] = layoutItem['key'];
 

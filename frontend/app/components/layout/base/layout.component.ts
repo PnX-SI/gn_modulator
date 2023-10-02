@@ -689,9 +689,12 @@ export class ModulesLayoutComponent implements OnInit {
 
   refreshData(objectCode) {}
 
+  onDestroy() {}
+
   ngOnDestroy() {
     for (const [subKey, sub] of Object.entries(this._subs)) {
       sub && (sub as any).unsubscribe();
     }
+    this.onDestroy();
   }
 }

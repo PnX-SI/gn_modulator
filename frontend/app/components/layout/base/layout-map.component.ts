@@ -153,4 +153,8 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
   }
 
   refreshData(objectCode: any): void {}
+
+  onDestroy() {
+    this._mapService.cleanLayers(this.mapId);
+  }
 }

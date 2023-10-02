@@ -37,9 +37,12 @@ layout:
             - nomenclature_bio_condition.label_fr
             - cor_observers.nom_complet
         - type: object
+          hidden: __f__!context.map_params?.bounds_filter_value
           display: geojson
           object_code: ref_geo.point
+          title: PK / PR
           module_code: MODULATOR
+          zoom_min: 12
           popup_fields:
             - point_code
             - point_name
@@ -57,8 +60,7 @@ layout:
           prefilters: |
             __f__{
               const mapBoxFilterValue = context.map_params?.bounds_filter_value;
-              const mapZoom = context.map_params?.zoom;
-              return mapBoxFilterValue && mapZoom && mapZoom > 12 && `geom_4326 bbox ${mapBoxFilterValue}` || 'id_point = -1';
+              return mapBoxFilterValue && `geom_4326 bbox ${mapBoxFilterValue}`;
             }
           style:
             color: orange

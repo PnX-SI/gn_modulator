@@ -68,10 +68,15 @@ export class ModulesMapService {
 
   processLayersData = mapMethods.layer.processLayersData;
   processData = mapMethods.layer.processData;
+  cleanLayers = mapMethods.layer.cleanLayers;
   layerZoomMoveEndListener = mapMethods.layer.layerZoomMoveEndListener;
   actionTooltipDisplayZoomThreshold = mapMethods.layer.actionTooltipDisplayZoomThreshold;
   findLayer = mapMethods.layer.findLayer;
   zoomOnLayer = mapMethods.layer.zoomOnLayer;
+  getLayerData = mapMethods.layer.getLayerData;
+  hideLayers = mapMethods.layer.hideLayers;
+  showLayers = mapMethods.layer.showLayers;
+
   /** ./map/draw */
 
   // initDraw = mapMethods.draw.initDraw;
