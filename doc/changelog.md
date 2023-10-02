@@ -12,6 +12,7 @@
   - points de repère
 - api -> filtre sur un rectangle (par exemple emprise de la carte leaflet)
 - meilleure gestion des jsonb
+- composant `select`: affichage du nombre de données (total, filtré)
 
 **🐛 Corrections**
 

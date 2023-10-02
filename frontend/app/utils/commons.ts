@@ -240,28 +240,46 @@ const processFilterArray = (filters) => {
 
 const JSONStringify = (obj) => JSON.stringify(obj, null, 4);
 
+const numberForHuman = (x, prec = 0) => {
+  const fPrec = Math.pow(10, prec);
+
+  const params = [
+    { grandeur: 1e9, lettre: 'G' },
+    { grandeur: 1e6, lettre: 'M' },
+    { grandeur: 1e3, lettre: 'K' },
+  ];
+
+  for (const p of params) {
+    if (x > p.grandeur) {
+      return `${Math.round((x / p.grandeur) * fPrec) / fPrec}${p.lettre}`;
+    }
+  }
+  return x;
+};
+
 export default {
-  fastDeepEqual,
+  addKey,
   copy,
+  capitalize,
+  fastDeepEqual,
   filterAttr,
   filtersAttr,
   flat,
   flatAndRemoveDoublons,
   getAttr,
-  addKey,
   isObject,
   isFile,
-  removeDoublons,
-  setAttr,
-  unaccent,
+  JSON,
+  JSONStringify,
   lowerUnaccent,
+  numberForHuman,
   parseJSON,
   parseYML,
   processFilterArray,
-  JSONStringify,
+  unaccent,
+  removeDoublons,
   replace,
+  setAttr,
   today,
-  capitalize,
-  JSON,
   YML,
 };

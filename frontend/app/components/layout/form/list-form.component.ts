@@ -34,7 +34,11 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
   itemsSave: any[] = [];
 
   // nombre d'items
-  nbItems;
+  nbItemsTotal;
+  nbItemsFiltered;
+
+  // titre avec nb données (total/filtrée)
+  titleWithCount;
 
   /** fonction de comparaison pour mat-select */
   compareFn = (a, b) => a == b;
@@ -87,8 +91,10 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
           this.items = infos.items;
 
           // le nombre d'items
-          this.nbItems = infos.nbItems;
+          this.nbItemsTotal = infos.total;
+          this.nbItemsFiltered = infos.filtered;
 
+          this.setTitle();
           // pour la recherche en local
           this.itemsSave = utils.copy(infos.items);
           return of(true);
@@ -99,6 +105,17 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
         // fin du chargement
         this.isLoading = false;
       });
+  }
+
+  setTitle() {
+    const strNbItemsTotal = utils.numberForHuman(this.nbItemsTotal, 1);
+    const strNbItemsFiltered = utils.numberForHuman(this.nbItemsFiltered, 1);
+    this.titleWithCount =
+      this.nbItemsTotal == this.nbItemsFiltered
+        ? `${this.computedLayout.title || this.computedLayout.key} (${strNbItemsTotal})`
+        : `${
+            this.computedLayout.title || this.computedLayout.key
+          } (${strNbItemsFiltered}/${strNbItemsTotal})`;
   }
 
   processItemsValue(options, value) {
@@ -231,7 +248,9 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
       .pipe(
         mergeMap((infos) => {
           this.items = infos.items;
-          this.nbItems = infos.nbItems;
+          this.nbItemsTotal = infos.nb_total;
+          this.nbItemsFiltered = infos.nb_filtered;
+          this.setTitle();
           return this.processItemsValue(this.listFormOptions, this.formControl.value);
         }),
       )

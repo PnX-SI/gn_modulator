@@ -149,10 +149,10 @@ export class ListFormService {
      * - nomenclature_type
      * - area_type
      **/
-    let schemaFilters: Array<any> = [];
+    let schemaPreFilters: Array<any> = [];
     if (options.nomenclature_type) {
       options.object_code = 'ref_nom.nomenclature';
-      schemaFilters.push(`nomenclature_type.mnemonique = ${options.nomenclature_type}`);
+      schemaPreFilters.push(`nomenclature_type.mnemonique = ${options.nomenclature_type}`);
       options.module_code = this._mConfig.MODULE_CODE;
       options.additional_fields = options.additional_fields || [];
       options.cache = true;
@@ -160,7 +160,7 @@ export class ListFormService {
     if (options.area_type) {
       options.object_code = 'ref_geo.area';
       options.module_code = this._mConfig.MODULE_CODE;
-      schemaFilters.push(`area_type.type_code = ${options.area_type}`);
+      schemaPreFilters.push(`area_type.type_code = ${options.area_type}`);
     }
 
     if (options.schema_code && !options.object_code) {
@@ -192,7 +192,7 @@ export class ListFormService {
     options.title_field_name = options.title_field_name || objectConfig.utils.title_field_name;
     options.page_size = options.cache ? null : options.page_size || 10;
     options.items_path = 'data';
-    options.schema_filters = schemaFilters;
+    options.schema_prefilters = schemaPreFilters;
     return of(true);
   }
 
@@ -212,7 +212,8 @@ export class ListFormService {
     if (options.items) {
       return of({
         items: this.processItems(options, options.items),
-        nbItems: options.items.length,
+        total: options.items.length,
+        filtered: options.items.length,
       });
     }
 
@@ -242,11 +243,16 @@ export class ListFormService {
 
     // ajout des filtres ?
     // TODO à gérer différemment
+
     params.filters = options.filters || '';
+    params.prefilters = options.prefilters || '';
 
     // objects gestion des filtres et des tris ?
     if (options.object_code) {
-      params.filters = [params.filters, options.schema_filters || []].flat().filter((f) => !!f);
+      params.prefilters = [params.prefilters, options.schema_prefilters || []]
+        .flat()
+        .filter((f) => !!f);
+      params.filters = [params.filters || []].flat().filter((f) => !!f);
       params.sort = params.sort || options.sort;
 
       // ajout d'un filtre pour la recherche
@@ -257,6 +263,7 @@ export class ListFormService {
 
     // filtres
     params.filters = utils.processFilterArray(params.filters);
+    params.prefilters = utils.processFilterArray(params.prefilters);
 
     // les champs demandés
     // - value
@@ -286,7 +293,7 @@ export class ListFormService {
             options,
             options.items_path ? res[options.items_path] : res,
           );
-          return of({ items, nbItems: items.length });
+          return of({ items, total: res.total, filtered: res.filtered });
         }),
       );
   }
