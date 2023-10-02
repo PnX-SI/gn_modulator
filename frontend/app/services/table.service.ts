@@ -197,8 +197,16 @@ export class ModulesTableService {
 
         return value;
       };
-      delete column.type;
+      this.cleanColumn(column);
       return column;
     });
+  }
+
+  cleanColumn(column) {
+    const fieldsToKeep = ['field', 'visible', 'hearFilter', 'formatter'];
+    const keys = Object.keys(column);
+    for (const k of keys.filter((kk) => !fieldsToKeep.includes(kk))) {
+      delete column[k];
+    }
   }
 }
