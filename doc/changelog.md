@@ -13,6 +13,7 @@
 - api -> filtre sur un rectangle (par exemple emprise de la carte leaflet)
 - meilleure gestion des jsonb
 - composant `select`: affichage du nombre de données (total, filtré)
+- ajout d'une permission avec l'objet `ADMIN` pour le module `MODULATOR` pour pouvoir restreindre l'accès à des fonctionalité d'administration.
 
 **🐛 Corrections**
 
