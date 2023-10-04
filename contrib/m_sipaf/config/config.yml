@@ -398,31 +398,6 @@ site_form_fields:
                 title: Utilisateur
               - id_organism
               - id_nomenclature_type_actor
-        - title: Usages
-          type: array
-          key: usages
-          display: fieldset
-          items:
-            direction: row
-            items:
-              - id_nomenclature_usage_type
-              - detail_usage
-              - commentaire
-        - title: Objectifs
-          display: fieldset
-          direction: row
-          items:
-            - key: nomenclatures_ouvrage_categorie
-              type: list_form
-              multiple: true
-              return_object: true
-            # - key: taxons
-            #   type: list_form
-            #   schema_code: tax.taxsearch
-            #   multiple: true
-            #   return_object: true
-            #   reload_on_search: true
-            #   page_size: 20
         - title: Localisation
           display: fieldset
           items:
@@ -464,6 +439,31 @@ site_form_fields:
                   type: string
                   hidden: __f__!data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
                   required: __f__data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+        - title: Usages
+          type: array
+          key: usages
+          display: fieldset
+          items:
+            direction: row
+            items:
+              - id_nomenclature_usage_type
+              - detail_usage
+              - commentaire
+        - title: Objectifs
+          display: fieldset
+          direction: row
+          items:
+            - key: nomenclatures_ouvrage_categorie
+              type: list_form
+              multiple: true
+              return_object: true
+            # - key: taxons
+            #   type: list_form
+            #   schema_code: tax.taxsearch
+            #   multiple: true
+            #   return_object: true
+            #   reload_on_search: true
+            #   page_size: 20
 
         - title: Dimensions
           display: fieldset
