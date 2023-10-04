@@ -27,5 +27,6 @@ meta:
       - nomenclature_type.label_fr
   label_field_name: label_fr
   title_field_name: definition_fr
+  sort: label_fr
   relations:
     - nomenclature_type

@@ -192,6 +192,7 @@ export class ListFormService {
     options.title_field_name = options.title_field_name || objectConfig.utils.title_field_name;
     options.page_size = options.cache ? null : options.page_size || 10;
     options.items_path = 'data';
+    options.sort = options.sort || objectConfig.utils.sort;
     options.schema_prefilters = schemaPreFilters;
     return of(true);
   }
