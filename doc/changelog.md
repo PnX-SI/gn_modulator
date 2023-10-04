@@ -46,7 +46,7 @@ geonature db status
 
 ### Bd topo
 - routes, voie ferrée, point de repère
-- voir le fichier [maj-bd_topo-sipaf_1.1.2.md](./maj-bd_topo-sipaf_1.1.2.md)
+- voir le fichier [../contrib/m_sipaf/doc/maj-bd_topo-sipaf_1.1.2.md](./maj-bd_topo-sipaf_1.1.2.md)
 
 ## 1.1.1 (2023-06-29)
 
