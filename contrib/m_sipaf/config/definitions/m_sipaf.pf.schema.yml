@@ -18,6 +18,14 @@ meta:
     unique:
         - uuid_passage_faune
     check_cruved: true
+    import_excluded_fields:
+        - id_digitiser
+        - geom_local
+        - meta_create_date
+        - meta_update_date
+        - areas
+        - linears
+        - taxons
 
 properties:
   id_passage_faune:

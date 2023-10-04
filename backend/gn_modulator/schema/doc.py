@@ -42,13 +42,13 @@ class SchemaDoc:
 
         for key, property_def in self.columns().items():
             txt += f"- `{key}`\n"
-            txt += f"  - *type*: `{property_def['type']}`\n"
+            txt += f"  - *type* : `{property_def['type']}`\n"
             if property_def.get("description"):
-                txt += f"  - *définition*: {property_def['description']}\n"
+                txt += f"  - *définition* : {property_def['description']}\n"
 
         return txt
 
-    def doc_import_key(self, key):
+    def doc_import_key(self, key, unique=False):
         txt = ""
 
         property_def = self.property(key)
@@ -61,23 +61,23 @@ class SchemaDoc:
         if property_def.get("relation_type") == "n-n":
             type = "liste de clés séparées par une virgule `,`"
 
-        txt += f"  - *type*: `{type}`\n"
+        txt += f"  - *type* : `{type}`\n"
 
         if type == "geometry":
-            txt += f"  - *geometry_type*: `{self.property(key)['geometry_type']}`\n"
-            txt += "  - format:\n"
-            txt += "    - WKT (par ex. `POINT(0.1 45.2)` (adapter au SRID)')\n"
-            txt += f"    - XY (remplacer {key} par les colonnes x et y)\n"
+            txt += f"  - *geometry_type* : `{self.property(key)['geometry_type']}`\n"
+            txt += f"  - *format* (exemples à adapter au `SRID`=`{self.property(key)['srid']}`):\n"
+            txt += "    - WKT (par ex. `POINT(0.1 45.2)`\n"
+            txt += f"    - XY (remplacer `{key}` par les colonnes `x` et `y`)\n"
 
         if type == "date":
-            txt += "  - format: `YYYY-MM-DD` (par ex. `2023-03-31`)\n"
+            txt += "  - *format* : `YYYY-MM-DD` (par ex. `2023-03-31`)\n"
 
         if type == "boolean":
-            txt += "  - format: `true`,`t`,`false`,`f`\n"
+            txt += "  - *format* : `true`,`t`,`false`,`f`\n"
 
         if property_def.get("schema_code"):
             rel = self.cls(property_def["schema_code"])
-            txt += f"  - *référence*: `{rel.labels()}`\n"
+            txt += f"  - *référence* : `{rel.labels()}`\n"
 
             champs = (
                 ["cd_nomenclature"]
@@ -85,13 +85,20 @@ class SchemaDoc:
                 else rel.unique()
             )
             champs_txt = ", ".join(map(lambda x: f"`{x}`", champs))
-            txt += f"  - *champ(s)*: {champs_txt}\n"
+            txt += f"  - *champ(s)* : {champs_txt}\n"
 
         if property_def.get("description"):
-            txt += f"  - *définition*: {property_def['description']}\n"
+            txt += f"  - *définition* : {property_def['description']}\n"
 
         if property_def.get("nomenclature_type"):
             txt += self.doc_nomenclature_values(key)
+
+        if unique:
+            column_default = self.property(key).get("default") or self.get_column_info(key).get(
+                "default"
+            )
+            if column_default:
+                txt += "  - champ autogénéré pour les lignes où il est de valeur nulle"
 
         return txt
 
@@ -99,7 +106,7 @@ class SchemaDoc:
         txt = ""
         property_def = self.property(key)
         nomenclature_type = property_def["nomenclature_type"]
-        txt += "  - *valeurs*:\n"
+        txt += "  - *valeurs* :\n"
         sm_nom = self.cls("ref_nom.nomenclature")
         res = sm_nom.query_list(
             params={
@@ -115,6 +122,7 @@ class SchemaDoc:
         return txt
 
     def import_keys(self, exclude=[]):
+        exclude = exclude or self.attr("meta.import_excluded_fields") or []
         import_keys = list(
             filter(
                 lambda x: (
@@ -132,17 +140,25 @@ class SchemaDoc:
 
         import_keys.sort(key=lambda x: (self.property(x).get("schema_code") or "", x))
 
+        unique_import_keys = list(filter(lambda x: x in self.unique(), import_keys))
+
         required_import_keys = list(
             filter(
-                lambda x: self.is_required(x) and not self.property(x).get("default"), import_keys
+                lambda x: self.is_required(x)
+                and not self.property(x).get("default")
+                and x not in unique_import_keys,
+                import_keys,
             )
         )
 
         non_required_import_keys = list(
-            filter(lambda x: x not in required_import_keys, import_keys)
+            filter(
+                lambda x: x not in required_import_keys and x not in unique_import_keys,
+                import_keys,
+            )
         )
 
-        return required_import_keys, non_required_import_keys
+        return unique_import_keys, required_import_keys, non_required_import_keys
 
     def doc_import_fields(self, exclude=[]):
         required_import_keys, non_required_import_keys = self.import_keys(exclude)
@@ -151,7 +167,16 @@ class SchemaDoc:
 
     def doc_import(self, exclude=[]):
         txt = ""
-        required_import_keys, non_required_import_keys = self.import_keys(exclude)
+
+        unique_import_keys, required_import_keys, non_required_import_keys = self.import_keys(
+            exclude
+        )
+
+        txt += "\n\n#### Champs d'unicité\n\n"
+        txt += "\nLa présence des colonnes suivantes est obligatoire.\n\n"
+
+        for key in unique_import_keys:
+            txt += self.doc_import_key(key, unique=True)
 
         txt += "\n\n#### Champs obligatoires\n\n"
 

@@ -3,7 +3,15 @@
 Le module présente un ensemble d\'action à effectuer en ligne de
 commandes
 
+## Documentation
+
+### Description champs import
+
+```
+geonature modulator doc m_sipaf.pf import  > contrib/m_sipaf/doc/import_description_champs.md
+```
 ## Gestion des modules
+
 
 ### Installation
 

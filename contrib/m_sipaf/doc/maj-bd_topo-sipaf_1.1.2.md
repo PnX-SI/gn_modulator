@@ -1,13 +1,15 @@
-# MAJ data & bd topo pour 1.1.2
+# Mise à jour du Référentiel Géographique
+
+
+## Ajout de type de linéaires et points
 
 ```
     geonature modulator features bd_topo.type
 ```
 
-# RAZ ref_geo
+## Remise à zéros du RefGeo Linéaire
 
 ```
-DELETE FROM PR_SIPAF.COR_AREA_PF;
 DELETE FROM PR_SIPAF.COR_LINEAR_PF;
 DELETE FROM REF_GEO.COR_AREAS;
 DELETE FROM REF_GEO.COR_LINEAR_AREA;
@@ -16,12 +18,12 @@ DELETE FROM REF_GEO.T_LINEAR_GROUPS;
 DELETE FROM REF_GEO.L_LINEARS;
 ```
 
-# Recup data
-
-
+## Récupération des données
 
 - https://outils.cevennes-parcnational.net/demo-sipaf/geonature/api/media/bd_topo.zip
 
+
+## Intégration et import des données
 
 Adapter `data_path` pour les commandes suivantes
 ```
@@ -38,7 +40,7 @@ Adapter `data_path` pour les commandes suivantes
 
 ```
 
-# Ref Geo Linears Cors
+# Corrélation aires-lineaires
 
 ```
 INSERT INTO ref_geo.cor_linear_area (id_linear, id_area)
@@ -51,7 +53,7 @@ INSERT INTO ref_geo.cor_linear_area (id_linear, id_area)
 
 ```
 
-# Ref Geo Linears Cors
+# Corrélation passages à faune-ref_geo
 
 ```
 SELECT pr_sipaf.process_all_cor_area_pf();

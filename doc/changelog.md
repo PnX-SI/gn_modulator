@@ -10,7 +10,7 @@ Nécessite la version 2.13.1 (ou plus) de GeoNature.
 - [SIPAF] Ajout des objectifs et usages dans la base de données, les formulaires et fiches des PAF (#53)
 - [SIPAF] Ajout des observations de biodiversité présentes dans la Synthèse à proximité des PAF, dans leurs fiches de détail (#42)
 - [SIPAF] Affichage des diagnostics fonctionnels dans les fiches détails des PAF (#37)
-- filtres carte listes: gestion dynamique des routes et des zonages.
+- Filtres géographiques : gestion dynamique des routes et des zonages
 - Intégration des routes départementales, des voies ferrées et des points de repères, à partir de la BD TOPO de l'IGN
 - Possibilité de filtrer sur une bounding box (par exemple emprise de la carte leaflet)
 - Meilleure gestion des champs au format "jsonb"
