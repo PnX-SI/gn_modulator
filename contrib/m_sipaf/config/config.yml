@@ -459,8 +459,6 @@ site_form_fields:
                   multiple: true
                   return_object: true
                   additional_fields: ["cd_nomenclature"]
-                  module_code: __REF_MODULE_CODE__
-                  object_code: ref_nom.nomenclature
                 - key: ouvrage_type_autre
                   description: __f__data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
                   type: string
