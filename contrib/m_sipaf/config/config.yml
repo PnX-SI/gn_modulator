@@ -230,21 +230,6 @@ site_details_fields:
                 title: Utilisateur
               - organisme.nom_organisme
               - nomenclature_type_actor.label_fr
-        - display: fieldset
-          key: usages
-          type: array
-          items:
-            direction: row
-            items:
-              - nomenclature_usage_type.label_fr
-              - detail_usage
-              - commentaire
-        - display: fieldset
-          title: Objectifs
-          direction: row
-          items:
-              - nomenclatures_ouvrage_categorie.label_fr
-              # - taxons.nom_vern
         - direction: row
           items:
             - title: Référentiel
@@ -286,6 +271,21 @@ site_details_fields:
               items:
                 - pi_ou_ps
                 - ouvrage_hydrau
+        - display: fieldset
+          key: usages
+          type: array
+          items:
+            direction: row
+            items:
+              - nomenclature_usage_type.label_fr
+              - detail_usage
+              - commentaire
+        - display: fieldset
+          title: Objectifs
+          direction: row
+          items:
+              - nomenclatures_ouvrage_categorie.label_fr
+              # - taxons.nom_vern
         - title: Dimensions
           display: fieldset
           items:
