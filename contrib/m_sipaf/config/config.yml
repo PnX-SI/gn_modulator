@@ -1,7 +1,6 @@
 site_filters_fields:
   display: tabs
   overflow: true
-  selected_tab: Localisation
   items:
     - label: Infos
       items:
