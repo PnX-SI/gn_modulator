@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 (unreleased)
+## 1.2.0 (2023-10-09)
 
 Nécessite la version 2.13.1 (ou plus) de GeoNature.
 
@@ -12,10 +12,9 @@ Nécessite la version 2.13.1 (ou plus) de GeoNature.
 - [SIPAF] Affichage des diagnostics fonctionnels dans les fiches détails des PAF (#37)
 - Filtres géographiques : gestion dynamique des routes et des zonages
 - Intégration des routes départementales, des voies ferrées et des points de repères, à partir de la BD TOPO de l'IGN
-- Possibilité de filtrer sur une bounding box (par exemple emprise de la carte leaflet)
+- Possibilité de filtrer sur une bounding box (par exemple emprise de la carte Leaflet)
 - Meilleure gestion des champs au format "jsonb"
 - Composant `select` : affichage du nombre de données (total, filtré)
-- Ajout d'une permission avec l'objet `ADMIN` pour le module `MODULATOR` pour pouvoir restreindre l'accès aux fonctionalités d'administration
 
 **🐛 Corrections**
 
