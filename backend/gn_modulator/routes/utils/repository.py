@@ -26,12 +26,12 @@ def get_list_rest(module_code, object_code, additional_params={}):
     query_list = sm.query_list(module_code=module_code, cruved_type=cruved_type, params=params)
 
     if params.get("sql"):
-        if not has_any_permissions("R", g.current_user.id_role, "MODULATOR", "ADMIN"):
-            return (
-                "Vous n'avez pas les droit pour effectuer des actions d'admin pour le module MODULATOR",
-                403,
-            )
         # test si droit admin
+        # if not has_any_permissions("R", g.current_user.id_role, "MODULATOR", "ADMIN"):
+        #     return (
+        #         "Vous n'avez pas les droit pour effectuer des actions d'admin pour le module MODULATOR",
+        #         403,
+        #     )
         sql_txt = sm.cls.sql_txt(query_list)
         response = make_response(
             sm.cls.format_sql(sql_txt),
