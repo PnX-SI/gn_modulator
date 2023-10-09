@@ -1,13 +1,12 @@
 # Mise à jour du Référentiel Géographique
 
-
 ## Ajout de type de linéaires et points
 
 ```
-    geonature modulator features bd_topo.type
+geonature modulator features bd_topo.type
 ```
 
-## Remise à zéros du RefGeo Linéaire
+## Remise à zéro du RefGeo linéaire
 
 ```
 DELETE FROM PR_SIPAF.COR_LINEAR_PF;
@@ -22,25 +21,24 @@ DELETE FROM REF_GEO.L_LINEARS;
 
 - https://outils.cevennes-parcnational.net/demo-sipaf/geonature/api/media/bd_topo.zip
 
-
 ## Intégration et import des données
 
 Adapter `data_path` pour les commandes suivantes
-```
-    # route
-    geonature modulator import -m MODULATOR -o ref_geo.linear_group -d ${data_path}/linear_group_route.csv
-    geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear_route.csv
-
-    # voie ferree
-    geonature modulator import -m MODULATOR -o ref_geo.linear_group -d ${data_path}/linear_group_vf.csv
-    geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear_vf.csv
-
-    # point de repère
-    geonature modulator import -m MODULATOR -o ref_geo.point -d ${data_path}/point_pkpr.csv
 
 ```
+# Routes
+geonature modulator import -m MODULATOR -o ref_geo.linear_group -d ${data_path}/linear_group_route.csv
+geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear_route.csv
 
-# Corrélation aires-lineaires
+# Voies ferrées
+geonature modulator import -m MODULATOR -o ref_geo.linear_group -d ${data_path}/linear_group_vf.csv
+geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear_vf.csv
+
+# Points de repère
+geonature modulator import -m MODULATOR -o ref_geo.point -d ${data_path}/point_pkpr.csv
+```
+
+# Corrélation entre zonages et linéaires
 
 ```
 INSERT INTO ref_geo.cor_linear_area (id_linear, id_area)
@@ -50,10 +48,9 @@ INSERT INTO ref_geo.cor_linear_area (id_linear, id_area)
     JOIN ref_geo.bib_areas_types bat ON bat.id_type =la.id_type
     WHERE bat.type_code IN ('DEP', 'REG', 'COM')
 ;
-
 ```
 
-# Corrélation passages à faune-ref_geo
+# Corrélation entre passages à faune et ref_geo
 
 ```
 SELECT pr_sipaf.process_all_cor_area_pf();
