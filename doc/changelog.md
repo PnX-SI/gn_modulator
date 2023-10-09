@@ -1,52 +1,41 @@
 # Changelog
 
-## 1.1.2 (unreleased)
+## 1.2.0 (2023-10-09)
+
+Nécessite la version 2.13.1 (ou plus) de GeoNature.
 
 **🚀 Nouveautés**
 
-- suppression du champs `code_passage_faune`
-- filtres carte listes: gestion dynamique des routes et des zonages.
-- travail sur la bd_topo
-  - départementales
-  - voies ferrées
-  - points de repère
-- api -> filtre sur un rectangle (par exemple emprise de la carte leaflet)
-- meilleure gestion des jsonb
-- composant `select`: affichage du nombre de données (total, filtré)
-- ajout d'une permission avec l'objet `ADMIN` pour le module `MODULATOR` pour pouvoir restreindre l'accès à des fonctionalité d'administration.
+- [SIPAF] Suppression du champs `code_passage_faune` au profit des UUID (#50)
+- [SIPAF] Ajout des objectifs et usages dans la base de données, les formulaires et fiches des PAF (#53)
+- [SIPAF] Ajout des observations de biodiversité présentes dans la Synthèse à proximité des PAF, dans leurs fiches de détail (#42)
+- [SIPAF] Affichage des diagnostics fonctionnels dans les fiches détails des PAF (#37)
+- Filtres géographiques : gestion dynamique des routes et des zonages
+- Intégration des routes départementales, des voies ferrées et des points de repères, à partir de la BD TOPO de l'IGN
+- Possibilité de filtrer sur une bounding box (par exemple emprise de la carte Leaflet)
+- Meilleure gestion des champs au format "jsonb"
+- Composant `select` : affichage du nombre de données (total, filtré)
 
 **🐛 Corrections**
 
-- inversion `lat`, `lon` dans les propriété des PF
-- carte-liste: ligne du tableau qui ne se mettait plus en surbrillance avec un click sur la carte
-- corrections, avancées diverses (voir #54)
+- Inversion `lat`, `lon` dans les propriétés des PAF
+- Carte-liste : correction de la surbrillance d'une ligne de la liste quand on ligne du tableau qui ne se mettait plus en surbrillance avec un click sur la carte
+- Corrections et améliorations diverses (voir #54)
 
 **⚠️ Notes de version**
 
-Pour gérer la maj du module sipaf
-
-### GN et alembic
-
-passer en GN 2.13.1 (ou .2 ???)
-
-```
-geonature db autoupgrade
-```
-
-```
-# vérifier que tout est ok ?
-geonature db status
-```
-
-
-### Données (nomenclature etc ...)
-```
+- Mettez à jour le module Modulator avec la procédure classique
+- Pour mettre à jour le sous-module SIPAF :
+  - lancez les mises à jour de la BDD
+    ```
+    geonature db autoupgrade
+    geonature db status
+    ```
+  - mettez à jour les données et nomenclatures
+    ```
     geonature modulator features m_sipaf.utils
-```
-
-### Bd topo
-- routes, voie ferrée, point de repère
-- voir le fichier [../contrib/m_sipaf/doc/maj-bd_topo-sipaf_1.1.2.md](./maj-bd_topo-sipaf_1.1.2.md)
+    ```
+  - Mettez à jour le référentiel géographique des routes, voies ferrées et points de repère en suivant la documentation dédiée (`contrib/m_sipaf/doc/maj-bd_topo-sipaf_1.2.0.md`)
 
 ## 1.1.1 (2023-06-29)
 
@@ -62,6 +51,7 @@ geonature db status
 - Import:
   - fichier csv: passage des valeurs caractère vide ('') à NULL
   - frontend: correction affichage erreur
+
 ## 1.1.0 (2023-06-27)
 
 Nécessite la version 2.13.0 (ou plus) de GeoNature.
