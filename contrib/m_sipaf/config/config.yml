@@ -4,8 +4,9 @@ site_filters_fields:
   items:
     - label: Infos
       items:
-        - code_passage_faune
+        - uuid_passage_faune
         - nom_usuel_passage_faune
+        - nomenclature_ouvrage_specificite
         - nomenclatures_ouvrage_materiaux
         - key: pi_ou_ps
           title: Passage inférieur / supérieur
@@ -18,92 +19,181 @@ site_filters_fields:
 
     - label: Localisation
       items:
-        - key: region
-          object_code: ref_geo.area
-          module_code: __REF_MODULE_CODE__
-          title: Région
-          type: list_form
-          return_object: "true"
-          additional_fields:
-            - area_code
-          area_type: REG
-          sort: area_name
+        - title: Zonage
+          items:
+            - key: regions
+              object_code: ref_geo.area
+              module_code: __REF_MODULE_CODE__
+              title: Région(s)
+              type: list_form
+              return_object: true
+              multiple: true
+              additional_fields:
+                - area_code
+              filters: |
+                __f__data?.infrastructures?.length
+                  ? `linears.groups.id_group in ${data.infrastructures.join(";")}`
+                  : null
+              area_type: REG
+              sort: area_name
 
-        - key: departement
-          object_code: ref_geo.area
-          module_code: __REF_MODULE_CODE__
-          title: Département
-          type: list_form
-          reload_on_search: true
-          area_type: DEP
-          return_object: true
-          additional_fields:
-            - area_code
-          label_field_name: code_name
-          sort: code_name
-          filters: |
-            __f__data?.region
-              ? `area_code in ${u.departementsForRegion(data.region.area_code).join(';')}`
-              : null
+            - key: departements
+              object_code: ref_geo.area
+              module_code: __REF_MODULE_CODE__
+              title: Département(s)
+              type: list_form
+              reload_on_search: true
+              multiple: true
+              area_type: DEP
+              return_object: true
+              additional_fields:
+                - area_code
+              label_field_name: code_name
+              sort: code_name
+              filters: |
+                __f__{
+                  const filters = [];
 
-        - key: commune
-          object_code: ref_geo.area
-          module_code: __REF_MODULE_CODE__
-          reload_on_search: true
-          title: Commune
-          type: list_form
-          area_type: COM
-          label_field_name: name_code
-          filters: |
-            __f__data?.departement
-              ? `area_code like ${data.departement.area_code}%`
-              : data?.region
-                ? u.departementsForRegion(data.region.area_code)
-                    .map(departementCode => `area_code like ${departementCode}%`)
-                    .join(',|,')
-                : null
-          sort: area_name
+                  if (data?.regions?.length > 0) {
+                    const f = `area_code in ${data.regions.map(r => u.departementsForRegion(r.area_code).join(';')).join(';')}`;
+                    filters.push(f);
+                  }
 
-        - key: infrastructure
-          title: Infrastructure
-          type: list_form
-          object_code: ref_geo.linear_group
-          module_code: __REF_MODULE_CODE__
-          filters: linears.type.type_code = RTE
-          sort: code*
-          reload_on_search: true
-          page_size: 20
+                  if (data?.infrastructures?.length > 0) {
+                    const f = `linears.groups.id_group in ${data.infrastructures.join(";")}`;
+                    filters.push(f);
+                  }
+
+                  return filters.join(',')
+                }
+
+            - key: communes
+              object_code: ref_geo.area
+              module_code: __REF_MODULE_CODE__
+              reload_on_search: true
+              multiple: true
+              title: Commune(s)
+              type: list_form
+              area_type: COM
+              label_field_name: name_code
+              filters: |
+                __f__{
+                  const filters = [];
+
+                  if (data?.departements?.length) {
+                    const f = data.departements.map(
+                      d => `area_code like ${d.area_code}%`
+                    ).join(',|,');
+                    filters.push(`[,${f},]`);
+                  }
+
+                  if (data?.regions?.length > 0) {
+                    const f = data.regions.map(
+                      r => u.departementsForRegion(r.area_code)
+                        .map(departementCode => `area_code like ${departementCode}%`)
+                        .join(',|,')
+                    ).join(',|,');
+                    filters.push(`[,${f},]`);
+                  }
+
+                  if (data?.infrastructures?.length > 0) {
+                    const f = `linears.groups.id_group in ${data.infrastructures.join(";")}`;
+                    filters.push(f);
+                  }
+
+                  return filters.join(',');
+                }
+              sort: area_name
+        - title: Réseau
+          items:
+            - key: infrastructure_types
+              title: Type(s) d'infrastructure
+              type: list_form
+              multiple: true
+              object_code: ref_geo.linear_type
+              module_code: __REF_MODULE_CODE__
+              sort: type_name
+              reload_on_search: true
+              page_size: 20
+
+            - key: infrastructures
+              title: Infrastructure(s)
+              type: list_form
+              object_code: ref_geo.linear_group
+              module_code: __REF_MODULE_CODE__
+              multiple: true
+              sort: code*
+              reload_on_search: true
+              filters: |
+                __f__{
+
+                  if(!data) {
+                    return "";
+                  };
+
+                  const filters = [];
+
+                  if (data.infrastructure_types?.length) {
+                    const f = `linears.id_type in ${data.infrastructure_types.join(';')}`;
+                    filters.push(f);
+                  };
+
+                  let z_values = data.communes?.length
+                    ? data.communes
+                    : data.departements?.length
+                    ? data.departements.map(v => v.id_area)
+                    : data.regions?.length
+                    ? data.regions.map(v => v.id_area)
+                    : null
+                  ;
+
+                  if (z_values) {
+                    const f = `linears.areas.id_area in ${z_values.join(';')}`
+                    filters.push(f);
+                  };
+
+                  return filters.join(',');
+
+                }
+              page_size: 20
 
 site_filters_defs:
-  code_passage_faune:
+  uuid_passage_faune:
     type: '~'
   nom_usuel_passage_faune:
     type: '~'
   code_ouvrage_gestionnaire:
     type: '~'
-  region:
+  regions:
     field: areas.id_area
     key: id_area
-  departement:
+  departements:
     field: areas.id_area
     key: id_area
-  commune:
+  communes:
     field: areas.id_area
-  infrastructure:
+  infrastructures:
     field: linears.groups.id_group
+  infrastructure_types:
+    field: linears.type.id_type
   nomenclatures_ouvrage_materiaux:
     field: nomenclatures_ouvrage_materiaux.id_nomenclature
     key: id_nomenclature
+  nomenclatures_ouvrage_specificite:
+    field: nomenclatures_ouvrage_specificite.id_nomenclature
+    key: id_nomenclature
 
 site_table_fields:
-  - code_passage_faune
+  - key: id_passage_faune
+    hidden: true
+  - uuid_passage_faune
   - nom_usuel_passage_faune
   - label_infrastructures
   - label_communes
 
 site_map_popup_fields:
   - id_passage_faune
-  - code_passage_faune
+  - uuid_passage_faune
   - nom_usuel_passage_faune
   - nomenclatures_ouvrage_type.label_fr
   - label_infrastructures
@@ -119,7 +209,6 @@ site_details_fields:
           items:
             - direction: row
               items:
-                - code_passage_faune
                 - code_ouvrage_gestionnaire
                 - nom_usuel_passage_faune
                 - uuid_passage_faune
@@ -147,6 +236,8 @@ site_details_fields:
               items:
                 - items:
                     - label_infrastructures
+                    - title: Largeur de la voie (m)
+                      key: linears.additional_data.largeur
                     - label_communes
                     - label_departements
                     - label_regions
@@ -179,6 +270,21 @@ site_details_fields:
               items:
                 - pi_ou_ps
                 - ouvrage_hydrau
+        - display: fieldset
+          key: usages
+          type: array
+          items:
+            direction: row
+            items:
+              - nomenclature_usage_type.label_fr
+              - detail_usage
+              - commentaire
+        - display: fieldset
+          title: Objectifs
+          direction: row
+          items:
+              - nomenclatures_ouvrage_categorie.label_fr
+              # - taxons.nom_vern
         - title: Dimensions
           display: fieldset
           items:
@@ -225,9 +331,7 @@ site_details_fields:
 
     - label: __f__o.tab_label(x)
       object_code: synthese
-      # M_SIPAF_OBS à reprendre après la release
-      hidden: true
-      # hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
+      hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
       items:
         - type: object
           display: table
@@ -272,7 +376,7 @@ site_form_fields:
           items:
             - direction: row
               items:
-                - code_passage_faune
+                - uuid_passage_faune
                 - code_ouvrage_gestionnaire
                 - nom_usuel_passage_faune
             - direction: row
@@ -329,13 +433,36 @@ site_form_fields:
                   multiple: true
                   return_object: true
                   additional_fields: ["cd_nomenclature"]
-                  module_code: __REF_MODULE_CODE__
-                  object_code: ref_nom.nomenclature
                 - key: ouvrage_type_autre
                   description: __f__data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
                   type: string
                   hidden: __f__!data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
                   required: __f__data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+        - title: Usages
+          type: array
+          key: usages
+          display: fieldset
+          items:
+            direction: row
+            items:
+              - id_nomenclature_usage_type
+              - detail_usage
+              - commentaire
+        - title: Objectifs
+          display: fieldset
+          direction: row
+          items:
+            - key: nomenclatures_ouvrage_categorie
+              type: list_form
+              multiple: true
+              return_object: true
+            # - key: taxons
+            #   type: list_form
+            #   schema_code: tax.taxsearch
+            #   multiple: true
+            #   return_object: true
+            #   reload_on_search: true
+            #   page_size: 20
 
         - title: Dimensions
           display: fieldset
@@ -380,6 +507,6 @@ site_form_fields:
 
 diagnostic_table_fields:
   - date_diagnostic
-  - passage_faune.code_passage_faune
+  - passage_faune.uuid_passage_faune
   - organisme.nom_organisme
   - role.nom_complet

@@ -29,12 +29,12 @@ export default {
       if (basemap.service === 'wms') {
         baseControl[formatedBasemap.name] = L.tileLayer.wms(
           formatedBasemap.url,
-          formatedBasemap.options
+          formatedBasemap.options,
         );
       } else {
         baseControl[formatedBasemap.name] = L.tileLayer(
           formatedBasemap.url,
-          formatedBasemap.options
+          formatedBasemap.options,
         );
       }
       if (index === 0) {
@@ -43,6 +43,7 @@ export default {
     });
 
     const overlaysLayers = this._gnMapService.createOverLayers(map);
-    L.control.layers(baseControl, overlaysLayers).addTo(map);
+    map.controls = L.control.layers(baseControl, overlaysLayers);
+    map.controls.addTo(map);
   },
 };

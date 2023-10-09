@@ -107,7 +107,7 @@ export class PageComponent implements OnInit {
           if (this.moduleCode) {
             setTimeout(() => {
               this._gnModuleService.currentModule$.next(
-                this._gnModuleService.getModule(this.moduleCode)
+                this._gnModuleService.getModule(this.moduleCode),
               );
             });
           }
@@ -122,11 +122,11 @@ export class PageComponent implements OnInit {
             },
           });
           return of(true);
-        })
+        }),
       )
       .subscribe(() => {
         const cruved = this._gnModuleService.modules.find(
-          (m) => m.module_code == this.moduleCode
+          (m) => m.module_code == this.moduleCode,
         ).cruved;
         this.pageInitialized = true;
         this.pageAuthorized = !!cruved.R;

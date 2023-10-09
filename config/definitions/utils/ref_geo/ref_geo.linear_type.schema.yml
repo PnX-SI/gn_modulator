@@ -11,3 +11,4 @@ meta:
     autoschema: true
     unique:
         - type_code
+    sort: type_name

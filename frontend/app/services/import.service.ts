@@ -20,7 +20,7 @@ export class ModulesImportService {
       {
         data: data.id_import ? {} : data,
         params,
-      }
+      },
     );
   }
 
@@ -73,7 +73,7 @@ export class ModulesImportService {
     let htmlUpdate = '',
       htmlUnchanged = '';
     let nbChar = Math.max(
-      ...Object.values(data.res).map((v) => Math.ceil(v ? Math.log10(Number(v)) : 0))
+      ...Object.values(data.res).map((v) => Math.ceil(v ? Math.log10(Number(v)) : 0)),
     );
     let charSpace = '_';
     let nbRaw = data.res.nb_raw.toString().padStart(nbChar, charSpace);
@@ -124,7 +124,7 @@ export class ModulesImportService {
       for (const errorCode of Object.keys(lines[line]).sort()) {
         errorHTML += `&nbsp;&nbsp;&nbsp;&nbsp;${lines[line][errorCode].error_msg}:<br>`;
         errorHTML += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>${lines[line][errorCode].keys.join(
-          ', '
+          ', ',
         )}</i><br>`;
       }
     }

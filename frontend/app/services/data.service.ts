@@ -12,7 +12,7 @@ export class ModulesDataService {
   constructor(
     private _mRequest: ModulesRequestService,
     private _mConfig: ModulesConfigService,
-    private _http: HttpClient
+    private _http: HttpClient,
   ) {}
 
   init() {}
@@ -93,7 +93,7 @@ export class ModulesDataService {
     return this._mRequest.request(
       'get',
       `${this._mConfig.backendModuleUrl()}/breadcrumbs/${context.module_code}/${context.page_code}`,
-      { params: context.params }
+      { params: context.params },
     );
   }
 }

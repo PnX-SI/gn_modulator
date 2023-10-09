@@ -1,0 +1,27 @@
+type: schema
+code: ref_geo.point
+title: Schema ref_geo.point
+description: Définition du schema des points de ref_geo
+
+meta:
+    model: ref_geo.models.LPoints
+    label: point
+    label_field_name: point_name
+    geometry_field_name: geom_4326
+    genre: M
+    autoschema: true
+    relations:
+        - type
+    unique:
+        - id_type
+        - point_code
+properties:
+    geom_4326:
+        type: geometry
+        geometry_type: geometry
+    point_code:
+        title: code
+    point_name:
+        title: nom
+    type:
+        title: type

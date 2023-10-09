@@ -23,6 +23,8 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   tooltipDisplayZoomTreshold = 12;
 
+  removedByZoom = false;
+
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'layout-object-geojson';
@@ -56,7 +58,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     }
 
     layer.bringToFront();
-    layer.openPopup();
+    this.computedLayout.open_popup && layer.openPopup();
   }
 
   processFilters() {
@@ -68,6 +70,9 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   processData(response) {
+    if (!response.data) {
+      return;
+    }
     this.objectData = response.data;
     this._mapService.waitForMap(this.context.map_id).then(() => {
       let geojson = response.data;
@@ -89,7 +94,8 @@ export class ModulesLayoutObjectGeoJSONComponent
           pane: paneName,
           zoom: bZoom,
           key: this.computedLayout.key,
-          label: `${this.objectConfig().display.labels}`,
+          pk_field_name,
+          title: utils.capitalize(this.computedLayout.title || this.objectConfig().display.labels),
           style: layerStyle,
           onLayersAdded: () => {
             this.processValue(this.getDataValue());
@@ -111,7 +117,7 @@ export class ModulesLayoutObjectGeoJSONComponent
                 this.tooltipDisplayZoomTreshold,
                 false,
                 currentZoom,
-                currentMapBounds
+                currentMapBounds,
               );
               layer
                 .bindTooltip(label.toString(), {
@@ -126,7 +132,7 @@ export class ModulesLayoutObjectGeoJSONComponent
                 layer.onZoomMoveEnd = this._mapService.layerZoomMoveEndListener(
                   this.context.map_id,
                   layer,
-                  this.tooltipDisplayZoomTreshold
+                  this.tooltipDisplayZoomTreshold,
                 );
               }
             }
@@ -139,7 +145,6 @@ export class ModulesLayoutObjectGeoJSONComponent
       const d = {};
       d[this.context.object_code] = this.mapData;
       this._mapService.processData(this.context.map_id, d, {
-        // key: this.computedLayout.key,
         zoom: this.computedLayout.zoom,
       });
     });
@@ -147,18 +152,25 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   popupHTML(properties) {
     const fields = this.popupFields();
-
     const label = `<b>${this.utils.capitalize(
-      this.objectConfig().display.label
+      this.objectConfig().display.label,
     )}</b>: ${utils.getAttr(properties, this.labelFieldName())}`;
     var propertiesHTML = '';
     propertiesHTML += '<ul>\n';
     propertiesHTML += fields
-      .filter((fieldKey) => fieldKey != 'scope')
-      .map((fieldKey) => {
-        // gerer les '.'
-        const fieldKeyLabel = fieldKey.split('.')[0];
-        const fieldLabel = this.objectConfig().properties[fieldKeyLabel].title;
+      .filter((field) => field != 'scope')
+      .map((field) => {
+        let fieldLabel, fieldKey;
+        if (utils.isObject(field)) {
+          fieldKey = field.key;
+          fieldLabel = field.title;
+        } else {
+          fieldKey = field;
+        }
+        if (!fieldLabel) {
+          const fieldKeyLabel = fieldKey.split('.')[0];
+          fieldLabel = this.objectConfig().properties[fieldKeyLabel].title || fieldKey;
+        }
         const fieldValue = utils.getAttr(properties, fieldKey);
         return `<li>${fieldLabel} : ${fieldValue}</li>`;
       })
@@ -186,6 +198,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     </div>
     ${propertiesHTML}
     `;
+
     return html;
   }
 
@@ -195,7 +208,7 @@ export class ModulesLayoutObjectGeoJSONComponent
 
   onPopupOpen(layer) {
     const value = layer.feature.properties[this.pkFieldName()];
-    const fields = this.popupFields(); // ?? computedItems
+    const fields = this.popupFields().map((f) => f.key || f);
     fields.push('scope');
     this._mData
       .getOne(this.moduleCode(), this.objectCode(), value, { fields })
@@ -215,6 +228,31 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   getData(): Observable<any> {
+    // test Zoom min
+    const key = this.context.object_code;
+    const currentLayer = this._mapService.getLayerData(
+      this.context.map_id,
+      this.context.object_code,
+    );
+
+    const condZoom =
+      !this.computedLayout.zoom_min ||
+      this._mapService.getZoom(this.context.map_id) >= this.computedLayout.zoom_min;
+
+    if (this.removedByZoom && condZoom) {
+      this.removedByZoom = false;
+      this._mapService.showLayers(this.context.map_id, { key });
+    }
+
+    if (currentLayer && !this.removedByZoom && !condZoom) {
+      this.removedByZoom = true;
+      this._mapService.hideLayers(this.context.map_id, { key });
+    }
+
+    if (!condZoom) {
+      return of({});
+    }
+
     if (this.getDataPreFilters()?.includes('undefined')) {
       console.error('prefilter inconnu');
       return of({});

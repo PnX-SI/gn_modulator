@@ -12,7 +12,7 @@ aliases:
           default: __f__context.params.id_passage_faune
     - display: row
       items:
-        - passage_faune.code_passage_faune
+        - passage_faune.uuid_passage_faune
         - passage_faune.nom_usuel_passage_faune
         - date_diagnostic
         - organisme.nom_organisme

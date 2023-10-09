@@ -4,7 +4,7 @@
     [ngClass]="computedLayout.class"
     [appearance]="context.appearance || 'outline'"
   >
-    <mat-label>{{ listFormOptions.title || listFormOptions.key }}</mat-label>
+    <mat-label>{{ titleWithCount }}</mat-label>
     <mat-select
       [formControl]="formControl"
       [multiple]="listFormOptions.multiple"

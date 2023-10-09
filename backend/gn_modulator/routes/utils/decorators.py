@@ -27,7 +27,7 @@ def check_fields(module_code, object_code):
 
     # les champs autorisés sont récupérés depuis le cache
     # ils ont été déterminés à l'unitialisation des modules (methode ModuleMethods.process_fields)
-    authorized_fields = ModuleMethods.get_autorized_fields(module_code, object_code)
+    authorized_fields = sorted(ModuleMethods.get_autorized_fields(module_code, object_code))
 
     # liste des champs invalides
     # - cad ne correspondent pas à un champs du schema

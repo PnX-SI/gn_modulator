@@ -77,7 +77,7 @@ properties:
 
   # synthese
   id_nomenclature_franchissabilite:
-    title: Franchissibilité
+    title: Franchissabilité
     description: Estimation de la franchissabilité de l'ouvrage pour les animaux
   id_nomenclature_interet_petite_faune:
     title: Intérêt petite_faune

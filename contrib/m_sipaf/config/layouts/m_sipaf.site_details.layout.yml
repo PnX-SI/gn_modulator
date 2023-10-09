@@ -20,8 +20,7 @@ layout:
           bring_to_front: true
           tooltip_permanent: true
         - type: object
-          # M_SIPAF_OBS à reprendre après la release
-          hidden: true
+          hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
           display: geojson
           object_code: synthese
           prefilters: |
@@ -37,6 +36,34 @@ layout:
             - taxref.nom_vern
             - nomenclature_bio_condition.label_fr
             - cor_observers.nom_complet
+        - type: object
+          hidden: __f__!context.map_params?.bounds_filter_value
+          display: geojson
+          object_code: ref_geo.point
+          title: PK / PR
+          module_code: MODULATOR
+          zoom_min: 12
+          popup_fields:
+            - point_code
+            - point_name
+            - type.type_name
+            - key: additional_data.route_dept
+              title: axe
+            - key: additional_data.gestion
+              title: gestion
+            - key: additional_data.id_section
+              title: section
+            - key: additional_data.numero
+              title: numero
+            - key: additional_data.abscisse
+              title: abscisse
+          prefilters: |
+            __f__{
+              const mapBoxFilterValue = context.map_params?.bounds_filter_value;
+              return mapBoxFilterValue && `geom_4326 bbox ${mapBoxFilterValue}`;
+            }
+          style:
+            color: orange
 
     - flex: 3
       items:

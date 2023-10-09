@@ -139,7 +139,7 @@ class DefinitionBase:
             model_path = definition["meta"]["model"]
             try:
                 get_class_from_path(model_path)
-            except Exception:
+            except Exception as e:
                 if (not definition["meta"].get("module_code")) or cls.module_in_db(
                     definition["meta"].get("module_code")
                 ):
@@ -471,6 +471,7 @@ class DefinitionBase:
 
         # vérification locale des définitions
         cls.local_check_definitions(),
+
         if get_errors():
             return
 

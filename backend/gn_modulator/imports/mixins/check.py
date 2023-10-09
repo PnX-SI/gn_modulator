@@ -20,8 +20,60 @@ class ImportMixinCheck(ImportMixinUtils):
             - est ce que les colonnes qui permettre d'assurer l'unicité sont bien présentes
         """
 
-        self.check_types()
         self.check_uniques()
+        self.check_and_process_default()
+
+        self.check_types()
+
+    def check_and_process_default(self):
+        """
+        verifie si les unique ont des valeur par defaut (par ex uuid -> uuid_generate_v4)
+        au besoin les rempli (à rendre optionnel ??)
+        le check sur les unique a été fait précedemment ?
+        """
+
+        # - sur la table de mapping si elle existe
+        # - ou sur la table des données
+        table_test = self.tables.get("mapping") or self.tables["data"]
+
+        # récupération de la liste des champs d'unicité
+        sm = SchemaMethods(self.schema_code)
+
+        # group_by_columns
+        group_by_columns = ", ".join(
+            filter(lambda x: sm.is_column(x), self.get_table_columns(table_test))
+        )
+
+        # Recherche du champs uuid d'unicite
+        for unique_field_name in sm.unique():
+            default = sm.get_column_info(unique_field_name).get("default")
+            if not (default):
+                continue
+
+            # Pour gérer les cas ou on a des lignes multiple avec les relations 1-n
+            # on regroupe selon les colonnes de la table destinaire
+            # pour avoir la meme valeur par defaut du champs unique_field_name pour ces lignes
+            txt_update_uuid = f"""
+            WITH pre AS (
+                SELECT
+                    ARRAY_AGG(id_import) AS ids_import,
+                    {default} as unique_default
+                FROM {table_test}
+                WHERE {unique_field_name} is NULL
+                GROUP BY {group_by_columns}
+            ), unnest_pre AS (
+                SELECT
+                    UNNEST(ids_import) AS id_import,
+                    unique_default
+                FROM pre
+            )
+            UPDATE {table_test} t
+                SET {unique_field_name}=p.unique_default
+                FROM unnest_pre p
+                WHERE p.id_import = t.id_import
+            """
+
+            SchemaMethods.c_sql_exec_txt(txt_update_uuid)
 
     def process_post_check(self):
         """

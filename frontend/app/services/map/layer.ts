@@ -43,7 +43,6 @@ export default {
       return;
     }
     const dataType = this.getDataType(data);
-
     if (!dataType) {
       return;
     }
@@ -102,15 +101,11 @@ export default {
       return;
     }
 
-    this._layersData[mapId] = this._layersData[mapId] || {};
-
     for (const [key, value] of Object.entries(layersData)) {
       if (!value) {
         continue;
       }
-      this.removeLayers(mapId, { key });
       this.loadGeojson(mapId, key, value['geojson'], value['layerOptions']);
-      this._layersData[mapId][key] = value;
     }
   },
 
@@ -132,6 +127,7 @@ export default {
     if (!map) return;
 
     for (const layer of this.filterLayers(mapId, filters)) {
+      map.controls.removeLayer(layer);
       map.removeLayer(layer);
     }
   },
@@ -144,8 +140,7 @@ export default {
 
   filterLayers(mapId, filters = {}) {
     const map = this.getMap(mapId);
-    if (!map) return;
-    var layers = this.layers(mapId);
+    if (!map) return [];
     return this.layers(mapId).filter((layer) => {
       return Object.entries(filters).every(([key, value]) => {
         const layerValue = this.layerValue(layer, key);
@@ -154,18 +149,92 @@ export default {
     });
   },
 
+  getLayerData(mapId, key) {
+    return this._layersData[mapId]?.[key];
+  },
+
+  setLayerData(mapId, key, data) {
+    this._layersData[mapId] = this._layersData[mapId] || {};
+    return (this._layersData[mapId][key] = data);
+  },
+
+  cleanLayers(mapId) {
+    if (this._layersData[mapId]) {
+      delete this._layersData[mapId];
+    }
+  },
+
+  setLayersStyle(mapId, style, filters) {
+    for (const layer of this.filterLayers(mapId, filters)) {
+      layer.setStyle && layer.setStyle(style);
+    }
+  },
+
+  hideLayers(mapId, filters) {
+    for (const layer of this.filterLayers(mapId, filters)) {
+      layer.oldOptions = { opacity: layer.options.opacity, fillOpacity: layer.options.fillOpacity };
+      layer.setStyle({ opacity: 0, fillOpacity: 0 });
+      if (layer.getTooltip) {
+        var toolTip = layer.getTooltip();
+        if (toolTip) {
+          layer._oldTooltip = toolTip;
+          layer.unbindTooltip();
+        }
+      }
+      layer.closePopup();
+    }
+  },
+
+  showLayers(mapId, filters) {
+    for (const layer of this.filterLayers(mapId, filters)) {
+      if (layer.oldOptions) {
+        layer.setStyle(layer.oldOptions);
+      }
+      if (layer._oldTooltip) {
+        layer.bindTooltip(layer._oldTooltip);
+      }
+    }
+  },
+
   loadGeojson(mapId, key, geojson, layerOptions) {
     const map = this.getMap(mapId);
 
     layerOptions = layerOptions || defaultLayerOptions;
     layerOptions.key = key;
 
-    const currentGeojson = this.createlayersFromGeojson(geojson, layerOptions);
+    let layerGroup = this.getLayerData(mapId, key);
 
-    const layerGroup = new this.L.FeatureGroup();
-    layerGroup.key = key;
-    map.addLayer(layerGroup);
-    layerGroup.addLayer(currentGeojson);
+    if (!layerGroup) {
+      layerGroup = new this.L.FeatureGroup();
+      // layerGroup.key = key;
+      map.addLayer(layerGroup);
+      map.controls.addOverlay(
+        layerGroup,
+        `<span class="fa fa-circle-o" style="color: ${
+          layerOptions.style?.color || 'blue'
+        }"></span> ${layerOptions.title}`,
+      );
+      this.setLayerData(mapId, key, layerGroup);
+    } else {
+    }
+    const existingIds = Object.values(layerGroup._layers)
+      .map((l) => l['id'])
+      .filter((id) => !!id);
+
+    const actualGeojson = {
+      type: 'FeatureCollection',
+      features: geojson.features.filter(
+        (f) => !existingIds.includes(f.properties[layerOptions['pk_field_name']]),
+      ),
+    };
+
+    const newLayers = this.createlayersFromGeojson(actualGeojson, layerOptions);
+
+    for (const layer of Object.values(newLayers._layers)) {
+      layerGroup.addLayer(layer);
+    }
+
+    // TODO UPDATE EXISTING LAYER ?????
 
     // onLayersAdded : action effectuée après l'ajout des layers
     if (layerOptions.onLayersAdded) {
@@ -215,10 +284,11 @@ export default {
       onEachFeature = null,
       style = null,
       type = null,
+      pk_field_name = 'id',
       key = null,
       pane = null,
       bring_to_front = null,
-    } = {}
+    } = {},
   ): any {
     const geojsonLayer = this.L.geoJSON(geojson, {
       pane,
@@ -250,6 +320,7 @@ export default {
         return this.L.circleMarker(latlng, { pane });
       },
       onEachFeature: (feature, layer) => {
+        layer.id = feature.properties[pk_field_name];
         layer.key = key;
         if (bring_to_front) {
           setTimeout(() => {
@@ -279,7 +350,7 @@ export default {
     zoomLevel,
     mapBounds,
     lastZoomLevel = null,
-    lastMapBounds = null
+    lastMapBounds = null,
   ) {
     zoomLevel = zoomLevel || this.getZoom(mapId);
     mapBounds = mapBounds || this.getMapBounds(mapId);
@@ -331,7 +402,7 @@ export default {
         zoomLevel,
         mapBounds,
         lastZoomLevel,
-        lastMapBounds
+        lastMapBounds,
       );
 
       if (action == 'display') {

@@ -29,6 +29,7 @@ items:
       - [PF_INFRASTRUCTURE_TYPE, "Type d'infrastructure", "Type d'infrastructure pour les passages à faune"]
       - [PF_OUVRAGE_SPECIFICITE, Spécificité, Exclusivité du passage pour le passage de la faune]
       - [PF_OUVRAGE_TYPE, "Type d'ouvrage", "Type d'ouvrage d'art pour le passage faune"]
+      - [PF_OUVRAGE_CATEGORIE, "Catégorie d'ouvrage", "Groupe taxonomique / cortège pour lequel a été construit/aménagé spécifiquement l'ouvrage"]
       - [PF_TYPE_ACTOR, "Type d'acteur", "Type d'acteur pour les passages faune"]
       - [PF_DIAG_OBSTACLE, Diagnostic obstacle, Diagnostic obstacle]
       - [PF_DIAG_PERTURBATION, Diagnostic perturbation, Diagnostic perturbation]
@@ -43,6 +44,8 @@ items:
       - [PF_DIAG_AMENAGEMENT_ENTRETIENT, Entretient dispositif et végétation, Entretient dispositif et végétation]
       - [PF_DIAG_FRANCHISSABILITE, Franchissabilité, Estimation de la franchissabilité de l'ouvrage pour les animaux]
       - [PF_DIAG_INTERET_FAUNE, Intérêt pour les espèces cibles, Intérêt pour les espèces cibles]
+      - [PF_USAGE_CATEGORIE, Catégorie d'usage, Attribut définissant le type d'usage en dehors du passage de la faune (type de mixité)]
+      
   - schema_code: ref_nom.nomenclature
     defaults:
       source: SIPAF
@@ -98,6 +101,14 @@ items:
       - [PF_OUVRAGE_TYPE, DIAB, diab., Diabolo, Diabolo]
       - [PF_OUVRAGE_TYPE, TRA, Tra., Tranchée, Tranchée]
       - [PF_OUVRAGE_TYPE, TUN, Tun., Tunnel, Tunnel]
+
+      - [PF_OUVRAGE_CATEGORIE, VIA, Via., Viaduc, Viaduc]
+      - [PF_OUVRAGE_CATEGORIE, TF, Tou. F., Toute faune, Toute faune]
+      - [PF_OUVRAGE_CATEGORIE, PF, Pet. Fau., Petite faune, Petite faune]
+      - [PF_OUVRAGE_CATEGORIE, GF, Grd. Fau., Grande faune, Grande faune]
+      - [PF_OUVRAGE_CATEGORIE, SPE_CHI, Spé. Chi., "Ouvrage spécifique: chiroptéroduc", "Ouvrage spécifique: chiroptéroduc"]
+      - [PF_OUVRAGE_CATEGORIE, SPE_BAT, Spé. Bat., "Ouvrage spécifique: batracoduc", "Ouvrage spécifique: batracoduc"]
+      - [PF_OUVRAGE_CATEGORIE, SPE_CANOP, Spé. Canop., "Ouvrage spécifique: passage canopée", "Ouvrage spécifique: passage canopée"]
 
       - [PF_TYPE_ACTOR, PRO, Prop., Propriétaire, Propriétaire]
       - [PF_TYPE_ACTOR, CON, Conc., Concessionaire, Concessionnaire]
@@ -183,3 +194,10 @@ items:
       - [PF_DIAG_INTERET_FAUNE, FAI, Fai., Faible, Faible]
       - [PF_DIAG_INTERET_FAUNE, MOY, Moy., Moyen, Moyen]
       - [PF_DIAG_INTERET_FAUNE, FOR, For., Fort, Fort]
+
+      - [PF_USAGE_CATEGORIE, H, Hydr., Hydraulique, "Ouvrage traversé par un cours d'eau, un fossé"]
+      - [PF_USAGE_CATEGORIE, A, Agri., Agricole, Ouvrage avec chemin stabilisé servant au passage d'engins agricoles]
+      - [PF_USAGE_CATEGORIE, F, For., Forestier, Ouvrage avec chemin stabilisé servant de passage d'engins forestiers]
+      - [PF_USAGE_CATEGORIE, R, Rou., Routier, Ouvrage comportant une route goudronnée]
+      - [PF_USAGE_CATEGORIE, P, Pié., Piétonnier, Ouvrage de chemin de randonnées et matérialisé par un cheminement]
+      - [PF_USAGE_CATEGORIE, D, Déf., Défense, Ouvrage de défense contre les innondations (ouvrage de décharge)]

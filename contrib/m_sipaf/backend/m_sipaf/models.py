@@ -19,6 +19,7 @@ from geonature.utils.env import db
 from geonature.core.gn_commons.models import TMedias
 from pypnusershub.db.models import User, Organisme
 from pypnnomenclature.models import TNomenclatures
+from apptax.taxonomie.models import Taxref
 from ref_geo.models import LAreas, LLinears, BibAreasTypes, BibLinearsTypes
 
 
@@ -50,6 +51,30 @@ class CorPfNomenclatureOuvrageMateriaux(db.Model):
     )
 
 
+class CorPfNomenclatureOuvrageCategorie(db.Model):
+    __tablename__ = "cor_pf_nomenclature_ouvrage_categorie"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_passage_faune = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_passages_faune.id_passage_faune"), primary_key=True
+    )
+    id_nomenclature = db.Column(
+        db.Integer,
+        db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
+        primary_key=True,
+    )
+
+
+class CorPfTaxref(db.Model):
+    __tablename__ = "cor_pf_taxref"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_passage_faune = db.Column(
+        db.Integer, db.ForeignKey("pr_sipaf.t_passages_faune.id_passage_faune"), primary_key=True
+    )
+    cd_nom = db.Column(db.Integer, db.ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
+
+
 class CorPfArea(db.Model):
     __tablename__ = "cor_area_pf"
     __table_args__ = {"schema": "pr_sipaf"}
@@ -78,7 +103,6 @@ class PassageFaune(db.Model):
 
     id_passage_faune = db.Column(db.Integer, primary_key=True)
 
-    code_passage_faune = db.Column(db.Unicode, nullable=False)
     uuid_passage_faune = db.Column(UUID(as_uuid=True), default=uuid.uuid4)
 
     id_digitiser = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
@@ -123,6 +147,10 @@ class PassageFaune(db.Model):
 
     nomenclatures_ouvrage_materiaux = db.relationship(
         TNomenclatures, secondary=CorPfNomenclatureOuvrageMateriaux.__table__
+    )
+
+    nomenclatures_ouvrage_categorie = db.relationship(
+        TNomenclatures, secondary=CorPfNomenclatureOuvrageCategorie.__table__
     )
 
     ouvrage_hydrau = db.Column(db.Boolean)
@@ -171,6 +199,9 @@ class PassageFaune(db.Model):
     # actors
     actors = db.relationship("Actor", cascade="all,delete,delete-orphan")
 
+    # taxon objectifs
+    taxons = db.relationship(Taxref, secondary=CorPfTaxref.__table__)
+
     # columns properties
     geom_x = column_property(func.st_x(func.st_centroid(geom)))
     geom_y = column_property(func.st_y(func.st_centroid(geom)))
@@ -181,8 +212,6 @@ class PassageFaune(db.Model):
             and_(
                 CorPfLinear.id_passage_faune == id_passage_faune,
                 CorPfLinear.id_linear == LLinears.id_linear,
-                BibLinearsTypes.id_type == LLinears.id_type,
-                BibLinearsTypes.type_code == "RTE",
             )
         )
     )
@@ -521,4 +550,37 @@ class DiagnosticVegetationDebouche(db.Model):
 
     nomenclature_vegetation_couvert = db.relationship(
         TNomenclatures, foreign_keys=[id_nomenclature_vegetation_couvert]
+    )
+
+
+class Usage(db.Model):
+    __tablename__ = "t_usages"
+    __table_args__ = {"schema": "pr_sipaf"}
+
+    id_usage = db.Column(db.Integer, primary_key=True)
+
+    detail_usage = db.Column(db.Unicode)
+
+    commentaire = db.Column(db.Unicode)
+
+    id_passage_faune = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "pr_sipaf.t_passages_faune.id_passage_faune",
+            ondelete="CASCADE",
+            onupdate="CASCADE",
+        ),
+        nullable=False,
+    )
+
+    passage_faune = db.relationship(
+        PassageFaune, backref=backref("usages", cascade="all,delete,delete-orphan")
+    )
+
+    id_nomenclature_usage_type = db.Column(
+        db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
+    )
+
+    nomenclature_usage_type = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_usage_type]
     )

@@ -4,6 +4,13 @@
 
 [Définition des champs](./import_description_champs.md)
 
+Le champs `uuid_passage_faune` permet d'identifier de maniere unique un passage à faune.  
+La colonne `uuid_passage_faune` doit être présente dans le fichier d'import même si les valeurs ne sont pas renseignées.
+
+Si la valeur est nulle, une valeur sera générée par défaut. Cependant il sera plus difficile de faire le lien avec la base de donnée source, ou de faire des mises à jour de ces données (en utilisant la fonctionalité de mise à jour lors d'un import).
+
+Il est donc conseillé de fournir une valeur pour ce champs.
+
 ## Exemples de fichiers
 
 - [Exemple simple](/backend/gn_modulator/tests/import_test/pf_simple.csv)
@@ -13,7 +20,7 @@
 
 ### Accès à l'outil d'import
 
-Si l'utilisateur possède des droits de création pour ce module, alors le bouton d'import est visible.
+Si l'utilisateur possède des permissions de création pour ce module, alors le bouton d'import est visible.
 
 ![Bouton d'import](img/boutton_import.png)
 
@@ -59,9 +66,9 @@ Il faudra revoir et corriger les données pour pouvoir reprocéder à l'import.
 
 - `Verifier avant insertion`
   - décocher pour passer à l'étape de vérification des données et ne plus avoir à valider une fois le fichier chargé
-<!-- - `Autoriser les mises à jour`
+- `Autoriser les mises à jour`
   - par défaut les mises à jour ne sont pas autorisées
-  - appuyer sur cette case pour pouvoir mettre à jour des données -->
+  - appuyer sur cette case pour pouvoir mettre à jour des données à partir de leur UUID
 - `SRID`
-  - par défaut le SRID est `4326`
+  - par défaut le SRID (système de projection des coordonées) est `4326`
     - vous pouvez préciser un SRID différent pour le fichier

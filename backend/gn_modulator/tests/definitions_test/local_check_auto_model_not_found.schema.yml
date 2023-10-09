@@ -7,7 +7,7 @@ meta:
   unique:
     - id_acquisition_framework
     - dataset_name
-  model: geonature.core.gn_meta.models.TDatasets_youlpa
+  model: geonature.core.gn_meta.models.TDatasets_youpla
   label: jeu de données
   labels: jeux de données
   label_field_name: dataset_shortname

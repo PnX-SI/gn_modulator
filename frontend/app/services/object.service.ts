@@ -32,7 +32,6 @@ export class ModulesObjectService {
    */
   objectConfig(moduleCode, objectCode, pageCode = null, params: any = null) {
     // config provenant du module
-
     const cacheKey = this.objectConfigCacheKey(moduleCode, objectCode, pageCode, params);
 
     if (this._cacheObjectConfig[cacheKey]) {
@@ -98,7 +97,7 @@ export class ModulesObjectService {
       context.module_code,
       context.object_code,
       context.page_code,
-      context.params
+      context.params,
     );
   }
 
@@ -107,7 +106,7 @@ export class ModulesObjectService {
       context.module_code,
       object_code || context.object_code,
       context.page_code,
-      context.params
+      context.params,
     );
   }
 
@@ -302,7 +301,7 @@ export class ModulesObjectService {
         C: 'create',
       };
       const pageCode = `${context.object_code}_${pageCodeAction[action]}`;
-      const pageExists = Object.keys(moduleConfig.pages).includes(pageCode);
+      const pageExists = moduleConfig.pages && Object.keys(moduleConfig.pages).includes(pageCode);
       if (!pageExists) {
         return {
           actionAllowed: null,
@@ -417,7 +416,7 @@ export class ModulesObjectService {
     return this._mData.delete(
       context.module_code,
       context.object_code,
-      this.objectId({ context, data })
+      this.objectId({ context, data }),
     );
   }
 }

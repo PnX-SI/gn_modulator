@@ -456,12 +456,11 @@ class ModuleConfigUtils:
         schema_code = object_config["schema_code"]
 
         sm = SchemaMethods(schema_code)
+
         if sm.definition is None:
             return
 
         if not sm.has_property(key):
-            # raise error ?
-            # print(f"pb ? {sm} has no {key}")
             return keys
 
         # ajout en lecture
@@ -477,6 +476,7 @@ class ModuleConfigUtils:
                 write_key = f"{key}.{rel.pk_field_name()}"
             if write_key not in object_keys["write"]:
                 object_keys["write"].append(write_key)
+
         return keys
 
     @classmethod

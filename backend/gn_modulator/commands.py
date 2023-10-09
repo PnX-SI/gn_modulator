@@ -132,7 +132,6 @@ def cmd_doc_schema(schema_code, doc_type, file_path=None, exclude=""):
 @click.option("-m", "module_code")
 @click.option("-d", "data_path", type=click.Path(exists=True))
 @click.option(
-    "-m",
     "--mapping",
     "mapping_file_path",
     type=click.Path(exists=True),
@@ -166,8 +165,20 @@ def cmd_import_bulk_data(
         impt = TImport(
             module_code, object_code, data_file_path=data_path, mapping_file_path=mapping_file_path
         )
+        db.session.add(impt)
+        db.session.flush()
         impt.process_import_schema()
         print(impt.pretty_infos())
+        # En cas d'erreur on sort
+        if impt.errors:
+            print("Il y a des erreurs dans l'import")
+            for error in impt.errors:
+                print(f"- {error['error_code']} : {error['error_msg']}")
+            return
+
+        db.session.commit()
+
+        return
 
     if import_code:
         res = TImport.process_import_code(import_code, data_path)
@@ -201,10 +212,12 @@ def cmd_import_features(data_code=None, verbose=False):
             print(f"La donnée demandée {data_code} n'existe pas.")
             print("Veuillez choisir un code parmi la liste suivante\n")
         for data_code in data_codes:
-            print(f"- {data_code}")
             if verbose:
                 data = DefinitionMethods.get_definition("data", data_code)
-                print(f"    {data['title']}\n")
+                print(f"- {data_code}: {data['title']}")
+                print(f"    {data['description']}\n")
+            else:
+                print(f"- {data_code}")
         if not verbose:
             print("\n(Utiliser -v pour voir les détails)\n")
 
@@ -317,32 +330,6 @@ def cmd_test(module_path):
             break
     print(module_path, module_code)
     return
-
-    init_gn_modulator()
-
-    a = importlib.reload(site)
-
-    sm = SchemaMethods("m_sipaf.pf")
-    sm.process_features("m_sipaf.pf_test", commit=False)
-    params = {
-        "fields": [
-            "code_passage_faune",
-            "actors.id_organism",
-            "actors.id_role",
-            "actors.role.nom_role",
-            "actors.role.nom_complet",
-        ],
-        "filters": "code_passage_faune = TEST_SIPAF",
-    }
-    query = sm.query_list("m_sipaf", "R", params)
-    print("\n\n", sm.format_sql(sm.sql_txt(query)))
-    print("\n\nrequete\n\n")
-    res = query.all()
-    print("\n\nserial\n\n", params["fields"], "\n\n")
-    res = sm.serialize_list(res, params["fields"])
-    print(res)
-
-    from flask import current_app
 
 
 commands = [

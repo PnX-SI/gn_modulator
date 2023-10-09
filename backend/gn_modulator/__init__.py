@@ -19,7 +19,7 @@ def init_gn_modulator():
         config_dir().mkdir(parents=True, exist_ok=True)
         symlink(config_modulator_dir, config_dir() / "modulator")
 
-    verbose = True
+    verbose = False
     # - definitions
     start_time = time.time()
     DefinitionMethods.init_definitions()

@@ -229,6 +229,9 @@ FROM {from_table} t{txt_limit};
         if property["type"] == "string":
             return f"{key}"
 
+        if property["type"] == "json":
+            return f"{key}::JSONB"
+
         raise SchemaMethods.errors.SchemaImportError(
             f"process_raw_import_column, type non traité {self.schema_code} {key} {property}"
         )

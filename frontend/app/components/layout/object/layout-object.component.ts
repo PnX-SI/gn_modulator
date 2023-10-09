@@ -50,7 +50,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
         if (this.moduleCode() == moduleCode && this.objectCode() == objectCode) {
           this.processObject();
         }
-      }
+      },
     );
   }
 
@@ -105,7 +105,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
         console.error(error);
         this.isProcessing = false;
         return of(false);
-      }
+      },
     );
   }
 
@@ -154,7 +154,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
 
   // renvoie la liste des clés concernées par le layout
   // sert pour l'appel aux api
-  fields({ geometry = false, addDefault = false } = {}) {
+  fields({ geometry = false, addDefault = false, columns = false } = {}) {
     if (!this.layout.items) {
       return this.defaultFields({ geometry });
     }
@@ -206,7 +206,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
   processAction(event) {
     if (['submit', 'cancel', 'edit', 'details', 'create', 'delete'].includes(event.action)) {
       let isSameObject = ['object_code', 'module_code'].every(
-        (k) => this.context[k] == event.context[k]
+        (k) => this.context[k] == event.context[k],
       );
       this._mAction.processAction({
         action: event.action,

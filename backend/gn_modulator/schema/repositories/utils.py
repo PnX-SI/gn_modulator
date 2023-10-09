@@ -121,6 +121,7 @@ class SchemaRepositoriesUtil:
 
         # clé pour le cache
         cache_key = ".".join(fields[: index + 1])
+
         # test si c'est le dernier champs
         is_last_field = index == len(fields) - 1
 

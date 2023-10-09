@@ -1,6 +1,9 @@
 from gn_modulator.schema.errors import SchemaRepositoryFilterError, SchemaRepositoryFilterTypeError
 
 
+REGISTRED_FILTERS = ["=", "<", ">", ">=", "<=", "like", "ilike", "in", "~", "dwithin", "bbox"]
+
+
 def parse_filters(filters):
     """
     traite une liste de chaine de caractères représentant des filtres
@@ -58,7 +61,7 @@ def parse_filter(str_filter):
 
     index_min = None
     filter_type_min = None
-    for filter_type in ["=", "<", ">", ">=", "<=", "like", "ilike", "in", "~", "dwithin"]:
+    for filter_type in REGISTRED_FILTERS:
         try:
             index = str_filter.index(f" {filter_type} ")
         except ValueError:

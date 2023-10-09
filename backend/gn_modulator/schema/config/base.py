@@ -108,7 +108,6 @@ class SchemaConfigBase:
         """
         frontend processing
         """
-
         return {
             "columns_array": self.columns_array(columns_only=True),
             "urls": {
@@ -126,6 +125,7 @@ class SchemaConfigBase:
             "sql_schema_name": self.sql_schema_name(),
             "sql_table_name": self.sql_table_name(),
             "page_size": self.page_size(),
+            "sort": self.attr("meta.sort"),
         }
 
     def page_size(self):

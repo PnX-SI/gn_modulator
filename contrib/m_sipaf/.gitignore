@@ -1,0 +1,4 @@
+data/sources/*
+data/processed/*
+
+!.gitkeep

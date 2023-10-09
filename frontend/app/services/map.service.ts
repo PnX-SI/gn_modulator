@@ -15,7 +15,7 @@ export class ModulesMapService {
   constructor(
     private _mConfig: ModulesConfigService,
     private _mLayout: ModulesLayoutService,
-    private _gnMapService: MapService
+    private _gnMapService: MapService,
   ) {
     /** on récupère touts les méthodes definies dans les fichiers du répertoire ./map/ */
     for (const methods of Object.values(mapMethods)) {
@@ -54,6 +54,7 @@ export class ModulesMapService {
   getZoom = mapMethods.base.getZoom;
   getCenter = mapMethods.base.getCenter;
   getMapBounds = mapMethods.base.getMapBounds;
+  getMapBoundsFilterValue = mapMethods.base.getMapBoundsFilterValue;
 
   setView = mapMethods.base.setView;
   setCenter = mapMethods.base.setCenter;
@@ -67,10 +68,15 @@ export class ModulesMapService {
 
   processLayersData = mapMethods.layer.processLayersData;
   processData = mapMethods.layer.processData;
+  cleanLayers = mapMethods.layer.cleanLayers;
   layerZoomMoveEndListener = mapMethods.layer.layerZoomMoveEndListener;
   actionTooltipDisplayZoomThreshold = mapMethods.layer.actionTooltipDisplayZoomThreshold;
   findLayer = mapMethods.layer.findLayer;
   zoomOnLayer = mapMethods.layer.zoomOnLayer;
+  getLayerData = mapMethods.layer.getLayerData;
+  hideLayers = mapMethods.layer.hideLayers;
+  showLayers = mapMethods.layer.showLayers;
+
   /** ./map/draw */
 
   // initDraw = mapMethods.draw.initDraw;

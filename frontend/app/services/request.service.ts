@@ -11,7 +11,10 @@ export class ModulesRequestService {
 
   private _cacheRequests = {};
 
-  constructor(private _http: HttpClient, private _commonService: CommonService) {}
+  constructor(
+    private _http: HttpClient,
+    private _commonService: CommonService,
+  ) {}
 
   init() {}
 
@@ -27,7 +30,7 @@ export class ModulesRequestService {
   httpRequestWithFormData(url, data) {
     const formData = new FormData();
     for (const [key, value] of Object.entries(data).filter(
-      ([key, value]) => !utils.isFile(value)
+      ([key, value]) => !utils.isFile(value),
     )) {
       const processedValue = utils.isObject(value) ? JSON.stringify(value) : value;
       formData.append(key, processedValue as any);
@@ -41,7 +44,7 @@ export class ModulesRequestService {
         params: params,
         reportProgress: true,
         responseType: 'json',
-      })
+      }),
     );
   }
 
@@ -87,7 +90,7 @@ export class ModulesRequestService {
             this._pendingRequests[urlRequest] = undefined;
             this._commonService.regularToaster('error', errorOutHTML);
             return observer.error(errorOut);
-          }
+          },
         );
       } else {
         pendingSubject.asObservable().subscribe((value) => {

@@ -1,3 +1,4 @@
 from flask import Blueprint
+from m_sipaf import MODULE_CODE
 
-blueprint = Blueprint("monitorings", __name__)
+blueprint = Blueprint(MODULE_CODE.lower(), __name__)

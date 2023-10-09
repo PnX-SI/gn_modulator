@@ -1,0 +1,23 @@
+type: schema
+code: m_sipaf.usage
+title: schema usage
+description: schema pour les usage de passages à faune
+
+meta:
+    autoschema: true
+    model: m_sipaf.models.Usage
+    module_code: m_sipaf
+    genre: M
+    label: usage
+    label_field_name: id_passage_faune
+    unique:
+        - id_nomenclature_categorie_usage
+        - id_passage_faune
+
+properties:
+    nomenclature_usage_type:
+        title: "Type d'usage"
+    detail_usage:
+        title: Détails
+    commentaire:
+        title: Commentaires

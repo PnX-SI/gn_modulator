@@ -190,6 +190,8 @@ class SchemaBase:
             # on cherche la relation
             rel_key = key.split(".")[0]
             rel_prop = self.property(rel_key)
+            if rel_prop["type"] == "json":
+                return rel_prop
             rel = self.cls(rel_prop["schema_code"])
             return rel.property(".".join(key.split(".")[1:]))
         return self.properties().get(key)
@@ -201,6 +203,8 @@ class SchemaBase:
             if not self.has_property(rel_key):
                 return False
             rel_prop = self.property(rel_key)
+            if rel_prop["type"] == "json":
+                return True
             rel = self.cls(rel_prop["schema_code"])
             return rel.has_property(".".join(key.split(".")[1:]))
         return self.properties().get(key) is not None
@@ -419,3 +423,14 @@ class SchemaBase:
                 ],
             )
         )
+
+    def cut_to_json(self, key):
+        """
+        renvoie le champs json de la variable key
+        """
+        keys = key.split(".")
+        for index, k in enumerate(keys):
+            current_key = ".".join(keys[: index + 1])
+            if self.property(current_key)["type"] == "json":
+                return current_key
+        return key

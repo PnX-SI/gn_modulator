@@ -1,2 +1,2 @@
-code_passage_faune;geom;nomenclatures_ouvrage_materiaux
-TEST_EX_SIMPLE;POINT(0 45);BET,MET
+uuid_passage_faune;nom_usuel_passage_faune;geom;nomenclatures_ouvrage_materiaux
+6b4347d4-310f-11ee-9337-2738500c4351;TEST_EX_SIMPLE;POINT(0 45);BET,MET

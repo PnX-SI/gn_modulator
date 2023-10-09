@@ -1,6 +1,8 @@
 import { Component, OnInit, Injector, ViewEncapsulation } from '@angular/core';
 import { ModulesMapService } from '../../../services/map.service';
 import { ModulesLayoutComponent } from './layout.component';
+import { Subject } from '@librairies/rxjs';
+import { debounceTime } from '@librairies/rxjs/operators';
 import utils from '../../../utils';
 @Component({
   selector: 'modules-layout-map',
@@ -19,12 +21,30 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
   modalData = {};
   modalsLayout: any;
 
+  $onMapChanged = new Subject();
+
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'layout-map';
     this._mapService = this._injector.get(ModulesMapService);
     this.mapId = `map_${this._id}`;
     this.bPostComputeLayout = true;
+  }
+
+  /** */
+  postInit() {
+    this._mapService.waitForMap(this.mapId).then((map) => {
+      map.on('moveend', () => this.$onMapChanged.next());
+      map.on('zoomend', () => this.$onMapChanged.next());
+    });
+    this._subs['onMapChanged'] = this.$onMapChanged.pipe(debounceTime(1000)).subscribe(() => {
+      this.context.map_params = this.context.map_params || {};
+      this.context.map_params.bounds_filter_value = this._mapService.getMapBoundsFilterValue(
+        this.context.map_id,
+      );
+      this.context.map_params.zoom = this._mapService.getZoom(this.context.map_id);
+      this._mLayout.reComputeLayout();
+    });
   }
 
   /**
@@ -133,4 +153,8 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
   }
 
   refreshData(objectCode: any): void {}
+
+  onDestroy() {
+    this._mapService.cleanLayers(this.mapId);
+  }
 }

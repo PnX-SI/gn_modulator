@@ -31,7 +31,7 @@ export class ModulesFormService {
     private _formBuilder: FormBuilder,
     private _mLayout: ModulesLayoutService,
     private _mObject: ModulesObjectService,
-    private _mediaService: MediaService
+    private _mediaService: MediaService,
   ) {
     this.matcher = new MyErrorStateMatcher();
   }

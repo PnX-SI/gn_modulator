@@ -16,6 +16,10 @@ objects:
         cruved: R
     ref_geo.linear:
         cruved: R
+    ref_geo.point_type:
+        cruved: R
+    ref_geo.point:
+        cruved: R
     user.role:
         cruved: R
     user.organisme:

@@ -20,6 +20,7 @@ cor_type_db_schema = {
     "UUID": "uuid",
     "DATETIME": "datetime",
     "DATE": "date",
+    "JSONB": "json",
 }
 
 
@@ -112,12 +113,7 @@ class SchemaAuto:
             col = getattr(Model, k)
             if (not isinstance(col.property, ColumnProperty)) or (k in columns):
                 continue
-            properties[k] = {
-                "type": "string",
-                "is_column_property": True
-                # "column_property": "label",
-                # "title": k,
-            }
+            properties[k] = {"type": "string", "is_column_property": True}
 
         # relationships
         for relation_key, relation in inspect(Model).relationships.items():
@@ -257,7 +253,7 @@ class SchemaAuto:
         # if column.comment:
         # property["description"] = column.comment
 
-        column_info = self.cls.get_column_info(sql_schema_name, sql_table_name, column.key) or {}
+        column_info = self.cls.c_get_column_info(sql_schema_name, sql_table_name, column.key) or {}
 
         # pour être requis
         # etre nullable

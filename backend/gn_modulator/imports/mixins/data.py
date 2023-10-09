@@ -41,6 +41,9 @@ class ImportMixinData(ImportMixinUtils):
         # comptage du nombre de ligne et verification de l'intégrité de la table
         self.count_and_check_table("data", self.tables["data"])
 
+        if self.errors:
+            return
+
         # # on met à jour la table pour changer les valeurs '' en NULL
         set_columns_txt = ", ".join(
             map(
@@ -197,3 +200,9 @@ class ImportMixinData(ImportMixinUtils):
     CONSTRAINT {pk_constraint_name} PRIMARY KEY (id_import)
 );"""
         return txt
+
+    def process_data_uuid():
+        """_summary_"""
+
+        # test si on a une colonne d'unicite qui correspond à un uuid
+        # un peu bancal car on ne prend pas en compte le mapping

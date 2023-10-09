@@ -1,0 +1,23 @@
+type: data
+code: bd_topo.type
+title: Types ref_geo
+description: Types ref_geo (lineaire, point) destinés à la bd_topo
+items:
+  - schema_code: ref_geo.linear_type
+    keys:
+      - type_code
+      - type_name
+      - type_desc
+    items:
+      - [RT_AUT, Autoroute, Tronçons d'autoroute]
+      - [RT_NAT, Route nationale, Tronçons de route nationale]
+      - [RT_DEP, Route départementale, Tronçons de route départementale]
+      - [VF_P, Voie ferrée (Principale), Tronçons de voie ferrée (Principale)]
+      - [VF_LGV, Voie ferrée (LGV), Tronçons de voie ferrée (LGV)]
+  - schema_code: ref_geo.point_type
+    keys:
+      - type_code
+      - type_name
+      - type_desc
+    items:
+      - [PK_PR, 'PK / PR', 'Point de repère / point kilométrique']

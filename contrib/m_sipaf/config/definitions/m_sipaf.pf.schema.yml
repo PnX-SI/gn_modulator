@@ -13,18 +13,23 @@ meta:
     genre: M
     label: passage à faune
     labels: passages à faune
-    label_field_name: code_passage_faune
+    label_field_name: id_passage_faune
     geometry_field_name: geom
     unique:
-        - code_passage_faune
+        - uuid_passage_faune
     check_cruved: true
+    import_excluded_fields:
+        - id_digitiser
+        - geom_local
+        - meta_create_date
+        - meta_update_date
+        - areas
+        - linears
+        - taxons
 
 properties:
   id_passage_faune:
       title: ID
-  code_passage_faune:
-      title: Code passage faune
-      description: "Code permettant d'identifier le passage à faune de manière unique (texte)"
   uuid_passage_faune:
       title: UUID
       description: Identifiant universel unique au format UUID (uuid_pf)
@@ -108,6 +113,11 @@ properties:
       title: "Type d'ouvrage"
       description: "Type d'ouvrage d'art (lb_type_ouvrage)"
     #   nomenclature_type: PF_OUVRAGE_TYPE
+  nomenclatures_ouvrage_categorie:
+    title: "Catégorie d'ouvrage"
+    description: "Catégorie d'ouvrage d'art (utilisation)"
+  taxons:
+    title: Espèce(s) ciblée(s)
   ouvrage_type_autre:
       type: string
       title: Autre type d'ouvrage
@@ -160,13 +170,14 @@ properties:
   actors:
       title: Acteurs
       description: Acteurs du passage à faune
+  usages:
+    title: Usages
   medias:
       title: medias
-
-  geom_x:
+  geom_y:
       type: number
       title: Latitude
-  geom_y:
+  geom_x:
       type: number
       title: Longitude
   geom_text:

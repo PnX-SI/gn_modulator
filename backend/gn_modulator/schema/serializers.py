@@ -5,6 +5,7 @@
 """
 
 from geoalchemy2.shape import to_shape, from_shape
+from geoalchemy2.functions import ST_Transform
 from geojson import Feature
 from marshmallow import pre_load, fields, ValidationError, EXCLUDE
 from shapely.geometry import shape

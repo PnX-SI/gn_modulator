@@ -1,4 +1,4 @@
-code_passage_faune, geom, id_nomenclature_ouvrage_hydrau_position
-_TEST01, POINT (4.01 43.61 ),RD
-_TEST02, POINT (4.02 43.62  ),
-_TEST02345, POINT (4.03 43.63  ),RG
+uuid_passage_faune;nom_usuel_passage_faune;geom;id_nomenclature_ouvrage_hydrau_position
+;_TEST01; POINT (4.01 43.61 );RD
+;_TEST02; POINT (4.02 43.62  );
+;_TEST02345; POINT (4.03 43.63  );RG

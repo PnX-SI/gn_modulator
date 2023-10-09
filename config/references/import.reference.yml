@@ -25,7 +25,7 @@ properties:
       required:
         - module_code
         - object_code
-        - data
+        # - data
       type: object
       properties:
         module_code:

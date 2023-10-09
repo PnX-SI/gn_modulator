@@ -18,7 +18,7 @@ class ImportMixinProcess(ImportMixinUtils):
 
     table                       champs                              exemple
 
-    pr_sipaf.t_passage_faunes   ['code_passage_faune']              'PF_01'
+    pr_sipaf.t_passage_faunes   ['uuid_passage_faune']              'ff13308e-f404-4603-a480-e0559dc59baf'
     ref_geo.l_areas :           ['id_type', 'area_code']            'COM|48061' (Florac trois rivières)
     ref_nomenclatures.t_nomenclature ['id_type', 'cd_nomenclature'] 'STADE_VIE|2' (Adulte)
 
@@ -285,7 +285,7 @@ FROM {view_params['from_table']} t
         clé
         - de la table d'alias 'alias_main'
         - associé à la clé d'unicité k_unique
-        - d'index index_unique dans la liste de clé d'unicité
+        - d'index index_unique dans la liste de clés d'unicités
         - pour la résolution de la clé key
         - link_joins ??
         """

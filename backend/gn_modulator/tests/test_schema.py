@@ -10,13 +10,13 @@ class TestSchemas:
         sm.process_features("m_sipaf.pf_test", commit=False)
         params = {
             "fields": [
-                "code_passage_faune",
+                "nom_usuel_passage_faune",
                 "actors.id_organism",
                 "actors.id_role",
                 "actors.role.nom_role",
                 "actors.role.nom_complet",
             ],
-            "filters": "code_passage_faune = TEST_SIPAF",
+            "filters": "nom_usuel_passage_faune = TEST_SIPAF",
         }
         query = sm.query_list("m_sipaf", "R", params)
         sql_txt = sm.format_sql(sm.sql_txt(query))

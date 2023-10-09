@@ -19,6 +19,7 @@ layout:
       items:
         type: object
         display: geojson
+        open_popup: true
         popup_fields: __SITE_MAP_POPUP_FIELDS__
 
     - flex: 2
@@ -51,7 +52,7 @@ layout:
                         - title: Exports pour les passages à faune
                         - type: button
                           flex: "0"
-                          title: "Export complet"
+                          title: "Export des passages à faune"
                           description: Télécharger les passages à faune (les filtres sont appliqués)
                           href: __f__o.url_export(x, 'm_sipaf.pf')
                         # - type: button
@@ -75,9 +76,10 @@ layout:
                   flex: "0"
                 - type: object
                   display: table
-                  sort: code_passage_faune
+                  sort: id_passage_faune
                   items: __SITE_TABLE_FIELDS__
             - object_code: diagnostic
+              hidden: true
               label: __f__o.tab_label(x)
               items:
                 - type: object

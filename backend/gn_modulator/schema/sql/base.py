@@ -54,13 +54,20 @@ class SchemaSqlBase:
             return tables
 
         sql_txt_tables = f"""
+        WITH tables AS (
+            SELECT
+                CONCAT(t.table_schema, '.', t.table_name) AS schema_dot_table
+            FROM information_schema.tables t
+            UNION
+            SELECT
+                oid::regclass::text AS schema_dot_table
+            FROM   pg_class
+            WHERE  relkind = 'm'
+        )
         SELECT
-        concat(t.table_schema, '.', t.table_name)
-        FROM
-            information_schema.tables t
-        WHERE
-            CONCAT(t.table_schema, '.', t.table_name)  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables() + cls.non_auto_sql_schemas_dot_tables())}')
-
+            schema_dot_table
+        FROM tables
+        WHERE schema_dot_table  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables() + cls.non_auto_sql_schemas_dot_tables())}')
         """
         res = cls.c_sql_exec_txt(sql_txt_tables)
         tables = [r[0] for r in res]
@@ -134,15 +141,19 @@ WHERE
             set_global_cache(["columns"], columns_info)
 
     @classmethod
-    def get_column_info(cls, schema_name, table_name, column_name):
+    def c_get_column_info(cls, schema_name, table_name, column_name):
         cls.get_columns_info()
         return get_global_cache(["columns", schema_name, table_name, column_name])
 
+    def get_column_info(self, column_name):
+        self.cls.get_columns_info()
+        return get_global_cache(
+            ["columns", self.sql_schema_name(), self.sql_table_name(), column_name]
+        )
+
     def is_nullable(self, column_name):
         return (
-            self.cls.get_column_info(self.sql_schema_name(), self.sql_table_name(), column_name)[
-                "nullable"
-            ]
+            self.get_column_info(column_name)["nullable"]
             if self.autoschema()
             else getattr(self.Model().__table__.columns, column_name).nullable
         )

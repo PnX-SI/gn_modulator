@@ -9,7 +9,7 @@ module_code: m_sipaf
 process_field_name: true
 fields:
   - id_passage_faune
-  - code_passage_faune
+  - uuid_passage_faune
   - code_ouvrage_gestionnaire
   - nom_usuel_passage_faune
   - pi_ou_ps
