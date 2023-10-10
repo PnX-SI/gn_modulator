@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 (2023-10-10)
+
+**🐛 Corrections**
+
+- [FRONTEND] les fichiers `package-lock.json` et `package.json` ne sont pas en phase.
 ## 1.2.0 (2023-10-09)
 
 Nécessite la version 2.13.1 (ou plus) de GeoNature.
