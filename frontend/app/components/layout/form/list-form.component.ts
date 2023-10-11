@@ -105,17 +105,17 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
       });
   }
 
+  /** Calcul du titre du composant pour afficher le nombre d'élément total/filtré */
   setTitle(nbItemsTotal, nbItemsFiltered) {
     this.nbItemsFiltered = nbItemsFiltered;
     this.nbItemsTotal = nbItemsTotal;
     const strNbItemsTotal = utils.numberForHuman(this.nbItemsTotal, 1);
     const strNbItemsFiltered = utils.numberForHuman(this.nbItemsFiltered, 1);
+    const title = this.computedLayout.title || this.computedLayout.key;
     this.titleWithCount =
       this.nbItemsTotal == this.nbItemsFiltered
-        ? `${this.computedLayout.title || this.computedLayout.key} (${strNbItemsTotal})`
-        : `${
-            this.computedLayout.title || this.computedLayout.key
-          } (${strNbItemsFiltered}/${strNbItemsTotal})`;
+        ? `${title} (${strNbItemsTotal})`
+        : `${title} (${strNbItemsFiltered}/${strNbItemsTotal})`;
   }
 
   processItemsValue(options, value) {
