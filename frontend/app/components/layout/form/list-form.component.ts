@@ -91,10 +91,8 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
           this.items = infos.items;
 
           // le nombre d'items
-          this.nbItemsTotal = infos.total;
-          this.nbItemsFiltered = infos.filtered;
+          this.setTitle(infos.total, infos.filtered);
 
-          this.setTitle();
           // pour la recherche en local
           this.itemsSave = utils.copy(infos.items);
           return of(true);
@@ -107,7 +105,9 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
       });
   }
 
-  setTitle() {
+  setTitle(nbItemsTotal, nbItemsFiltered) {
+    this.nbItemsFiltered = nbItemsFiltered;
+    this.nbItemsTotal = nbItemsTotal;
     const strNbItemsTotal = utils.numberForHuman(this.nbItemsTotal, 1);
     const strNbItemsFiltered = utils.numberForHuman(this.nbItemsFiltered, 1);
     this.titleWithCount =
@@ -230,6 +230,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
       // - filtrage de la liste selon la valeur de search
     } else {
       this.items = this.localSearch(search);
+      this.setTitle(this.itemsSave.length, this.items.length);
     }
   }
 
@@ -248,9 +249,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
       .pipe(
         mergeMap((infos) => {
           this.items = infos.items;
-          this.nbItemsTotal = infos.nb_total;
-          this.nbItemsFiltered = infos.nb_filtered;
-          this.setTitle();
+          this.setTitle(infos.total, infos.filtered);
           return this.processItemsValue(this.listFormOptions, this.formControl.value);
         }),
       )
