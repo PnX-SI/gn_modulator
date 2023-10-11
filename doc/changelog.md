@@ -3,11 +3,13 @@
 ## 1.2.2 (unreleased)
 
 
-## 1.2.1 (2023-10-10)
+## 1.2.1 (2023-10-11)
 
 **🐛 Corrections**
 
-- [FRONTEND] les fichiers `package-lock.json` et `package.json` ne sont pas en phase.
+- Correction du compteur de nombre d'éléments dans les listes déroulantes quand celles-ci sont filtrés par une recherche textuelle
+- [FRONTEND] Correction du fichier `frontend/package-lock.json` qui n'était pas à jour avec le fichier `package.json`
+
 ## 1.2.0 (2023-10-09)
 
 Nécessite la version 2.13.1 (ou plus) de GeoNature.
