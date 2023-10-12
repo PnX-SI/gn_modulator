@@ -1,15 +1,11 @@
 # Changelog
 
-## 1.2.2 (unreleased)
-
-**🐛 Corrections**
-
-- [FRONTEND] Correction bug dans la gestion des colonnes des tableaux.
 ## 1.2.1 (2023-10-12)
 
 **🐛 Corrections**
 
-- Correction du compteur de nombre d'éléments dans les listes déroulantes quand celles-ci sont filtrés par une recherche textuelle
+- [FRONTEND] Correction du compteur de nombre d'éléments dans les listes déroulantes quand celles-ci sont filtrés par une recherche textuelle
+- [FRONTEND] Correction de la gestion des colonnes des tableaux.
 - [FRONTEND] Correction du fichier `frontend/package-lock.json` qui n'était pas à jour avec le fichier `package.json`
 
 ## 1.2.0 (2023-10-09)
