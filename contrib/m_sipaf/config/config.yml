@@ -317,6 +317,7 @@ site_details_fields:
 
     - label: __f__o.tab_label(x)
       object_code: diagnostic
+      hidden: __f__!o.object(x, 'site').value
       items:
         - code: utils.button_create
           flex: "0"

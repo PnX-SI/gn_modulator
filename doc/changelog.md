@@ -1,4 +1,10 @@
 # Changelog
+
+## 1.2.2 (unreleased)
+
+**🐛 Corrections**
+
+- [FRONTEND] Correction bug dans la gestion des colonnes des tableaux.
 ## 1.2.1 (2023-10-12)
 
 **🐛 Corrections**

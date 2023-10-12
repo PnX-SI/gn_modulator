@@ -162,13 +162,14 @@ export class ModulesTableService {
       layoutItemOut['key'] = layoutItemOut['field'] = layoutItem;
     } else {
       layoutItemOut = utils.copy(layoutItem);
+      layoutItemOut['field'] = layoutItem['key'];
     }
-
-    const property = this._mObject.property(context, layoutItem.key);
+    const property = this._mObject.property(context, layoutItemOut['key']);
     layoutItemOut['title'] =
-      layoutItem['title'] || layoutItem['key']('.') ? property.parent?.title : property.title;
-    layoutItemOut['type'] = layoutItem['type'] || property.type;
-    layoutItemOut['field'] = layoutItem['key'];
+      layoutItemOut['title'] ||
+      (layoutItemOut['key'].includes('.') ? property.parent.title : property.title) ||
+      layoutItemOut['key'];
+    layoutItemOut['type'] = layoutItemOut['type'] || property.type;
 
     if (layoutItemOut['hidden']) {
       layoutItemOut['visible'] = false;
@@ -177,7 +178,6 @@ export class ModulesTableService {
     if (layoutItemOut['headerFilter'] == null) {
       layoutItemOut['headerFilter'] == true;
     }
-
     return layoutItemOut;
   }
 
@@ -203,7 +203,7 @@ export class ModulesTableService {
   }
 
   cleanColumn(column) {
-    const fieldsToKeep = ['field', 'visible', 'hearFilter', 'formatter'];
+    const fieldsToKeep = ['field', 'visible', 'hearFilter', 'formatter', 'title'];
     const keys = Object.keys(column);
     for (const k of keys.filter((kk) => !fieldsToKeep.includes(kk))) {
       delete column[k];
