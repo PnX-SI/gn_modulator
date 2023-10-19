@@ -52,6 +52,9 @@ def get_list_rest(module_code, object_code, additional_params={}):
         ),
     }
 
+    if params.get("no_info"):
+        return out["data"]
+
     return out
 
 
