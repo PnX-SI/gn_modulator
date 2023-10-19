@@ -225,8 +225,6 @@ site_details_fields:
           items:
             direction: row
             items:
-              - key: role.nom_role
-                title: Utilisateur
               - organisme.nom_organisme
               - nomenclature_type_actor.label_fr
         - direction: row
@@ -392,10 +390,6 @@ site_form_fields:
           items:
             direction: row
             items:
-              - key: id_role
-                type: list_form
-                schema_code: user.role
-                title: Utilisateur
               - id_organism
               - id_nomenclature_type_actor
         - title: Localisation

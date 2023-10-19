@@ -11,6 +11,8 @@ meta:
     label_field_name: nom_organisme
     unique:
         - nom_organisme
+    sort: nom_organisme
+
 properties:
     id_organisme:
         type: integer

@@ -24,6 +24,7 @@ properties:
         title: Passage_faune
     id_organism:
         schema_code: user.organisme
+        required: true
     id_role:
         title: Utilisateur
     id_nomenclature_type_actor:
