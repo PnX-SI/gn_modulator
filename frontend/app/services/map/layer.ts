@@ -217,24 +217,46 @@ export default {
       this.setLayerData(mapId, key, layerGroup);
     } else {
     }
+
+    // ids présentes dans le GeoJSON
+    const geojsonIds = geojson.features.map((f) => f.properties[layerOptions['pk_field_name']]);
+
+    // ids déjà présentes sur la carte (dans le groupe de layer)
     const existingIds = Object.values(layerGroup._layers)
       .map((l) => l['id'])
       .filter((id) => !!id);
 
-    const actualGeojson = {
+    // ids nouvelles
+    // -> présentes dans le geojson mais non sur la carte
+    const newIds = geojsonIds.filter((id) => !existingIds.includes(id));
+
+    // ids à supprimer
+    // présentes sur la carte mais pas dans le geojson
+    const toDeleteIds = existingIds.filter((id) => !geojsonIds.includes(id));
+
+    // suppression des layer qui ne sont pas dans le geojson
+    for (const [index, l] of Object.entries(layerGroup._layers).filter(([index, l]) =>
+      toDeleteIds.includes(l['id']),
+    )) {
+      map.removeLayer(l);
+      delete layerGroup._layers[index];
+    }
+
+    // filtrage du geojson entrant (pour ne traiter que les nouveaux)
+    const newGeojson = {
       type: 'FeatureCollection',
-      features: geojson.features.filter(
-        (f) => !existingIds.includes(f.properties[layerOptions['pk_field_name']]),
+      features: geojson.features.filter((f) =>
+        newIds.includes(f.properties[layerOptions['pk_field_name']]),
       ),
     };
 
-    const newLayers = this.createlayersFromGeojson(actualGeojson, layerOptions);
-
+    // creation et ajout des nouveaux layers
+    const newLayers = this.createlayersFromGeojson(newGeojson, layerOptions);
     for (const layer of Object.values(newLayers._layers)) {
       layerGroup.addLayer(layer);
     }
 
-    // TODO UPDATE EXISTING LAYER ?????
+    // mise à jour des layer existants ?????
 
     // onLayersAdded : action effectuée après l'ajout des layers
     if (layerOptions.onLayersAdded) {
