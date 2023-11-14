@@ -15,7 +15,6 @@ meta:
     unique:
         - id_nomenclature_type_actor
         - id_organism
-        - id_role
         - id_passage_faune
 properties:
     id_actor:
@@ -24,9 +23,6 @@ properties:
         title: Passage_faune
     id_organism:
         schema_code: user.organisme
-        required: true
-    id_role:
-        title: Utilisateur
     id_nomenclature_type_actor:
         title: "Type d'acteur"
         nomenclature_type: PF_TYPE_ACTOR
