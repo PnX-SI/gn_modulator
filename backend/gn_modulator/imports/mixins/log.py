@@ -93,7 +93,7 @@ class ImportMixinLog(ImportMixinUtils):
         agrège les requêtes sql utilisée pour l'import
         """
 
-        txt = f"-- Log Import {self.id_import}\n"
+        txt = f"-- Log Import {replace_id if replace_id else self.id_import}\n"
         txt += f"-- - schema_code: {self.schema_code}\n"
 
         # explication des tables

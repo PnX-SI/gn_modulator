@@ -1,4 +1,4 @@
--- Log Import 6557
+-- Log Import xxx
 -- - schema_code: ref_geo.area
 
 -- Tables et vues utlisées pour l'import

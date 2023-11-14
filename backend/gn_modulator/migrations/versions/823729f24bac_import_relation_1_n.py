@@ -42,5 +42,7 @@ def downgrade():
         ALTER TABLE gn_modulator.t_imports DROP COLUMN relation_key;
         ALTER TABLE gn_modulator.t_imports DROP COLUMN id_import_parent;
         ALTER TABLE gn_modulator.t_imports DROP COLUMN steps;
+        ALTER TABLE gn_modulator.t_imports DROP COLUMN task_id;
+        
     """
     )

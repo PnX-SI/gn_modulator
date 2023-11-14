@@ -1,4 +1,4 @@
--- Log Import 6559
+-- Log Import xxx
 -- - schema_code: syn.synthese
 
 -- Tables et vues utlisées pour l'import
