@@ -27,7 +27,6 @@ meta:
         - linears
         - medias
         - diagnostics
-        - taxons
 
 properties:
   id_passage_faune:
@@ -118,8 +117,6 @@ properties:
   nomenclatures_ouvrage_categorie:
     title: "Catégorie d'ouvrage"
     description: "Catégorie d'ouvrage d'art (utilisation)"
-  taxons:
-    title: Espèce(s) ciblée(s)
   ouvrage_type_autre:
       type: string
       title: Autre type d'ouvrage

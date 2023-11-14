@@ -19,7 +19,6 @@ from geonature.utils.env import db
 from geonature.core.gn_commons.models import TMedias
 from pypnusershub.db.models import User, Organisme
 from pypnnomenclature.models import TNomenclatures
-from apptax.taxonomie.models import Taxref
 from ref_geo.models import LAreas, LLinears, BibAreasTypes, BibLinearsTypes
 
 
@@ -63,16 +62,6 @@ class CorPfNomenclatureOuvrageCategorie(db.Model):
         db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature"),
         primary_key=True,
     )
-
-
-class CorPfTaxref(db.Model):
-    __tablename__ = "cor_pf_taxref"
-    __table_args__ = {"schema": "pr_sipaf"}
-
-    id_passage_faune = db.Column(
-        db.Integer, db.ForeignKey("pr_sipaf.t_passages_faune.id_passage_faune"), primary_key=True
-    )
-    cd_nom = db.Column(db.Integer, db.ForeignKey("taxonomie.taxref.cd_nom"), primary_key=True)
 
 
 class CorPfArea(db.Model):
@@ -198,9 +187,6 @@ class PassageFaune(db.Model):
 
     # actors
     actors = db.relationship("Actor", cascade="all,delete,delete-orphan")
-
-    # taxon objectifs
-    taxons = db.relationship(Taxref, secondary=CorPfTaxref.__table__)
 
     # columns properties
     geom_x = column_property(func.st_x(func.st_centroid(geom)))
