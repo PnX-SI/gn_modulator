@@ -82,6 +82,16 @@ class SchemaRepositoriesFilters:
             elif isinstance(elem, dict):
                 loop_filter, query = self.get_filter(Model, elem, query, condition)
 
+            # elif elem.startswith("has_"):
+            #     relation_name = elem.replace("has_", "")
+            #     if not self.is_relationship(relation_name):
+            #         raise SchemaRepositoryFilterError(
+            #             f"L'élément de liste de filtre {elem} est mal défini. ({relation_name} ne correspond pas a une relation)"
+            #         )
+            #     model_attribute, query = self.custom_getattr(
+            #     Model, relation_name, query=query, condition=condition
+            #     )
+
             # operation
             elif elem in "!|*":
                 # deux négations '!' s'annulent
@@ -97,7 +107,7 @@ class SchemaRepositoriesFilters:
 
             else:
                 raise SchemaRepositoryFilterError(
-                    "L'élément de liste de filtre {} est mal défini.".format(elem)
+                    f"L'élément de liste de filtre {elem} est mal défini."
                 )
 
             if loop_filter is not None:
@@ -137,8 +147,10 @@ class SchemaRepositoriesFilters:
         filter_type = filter["type"]
         filter_value = filter.get("value", None)
 
+        output_field = "val" if filter_type == "any" else "relation_alias"
+
         model_attribute, query = self.custom_getattr(
-            Model, filter_field, query=query, condition=condition
+            Model, filter_field, query=query, condition=condition, output_field=output_field
         )
 
         if filter_type in ["like", "ilike"]:
@@ -218,6 +230,9 @@ class SchemaRepositoriesFilters:
                 func.ST_SetSRID(func.ST_MakeEnvelope(x_min, y_min, x_max, y_max), 4326),
             )
             filter_out = geo_filter
+
+        elif filter_type == "any":
+            filter_out = model_attribute.any()
 
         else:
             raise SchemaRepositoryFilterTypeError(

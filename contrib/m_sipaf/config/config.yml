@@ -16,6 +16,9 @@ site_filters_fields:
               label: Passage supérieur
             - value: false
               label: Passage inférieur
+        - title: Possède des diagnostic
+          key: diagnostics
+          type: boolean
 
     - label: Localisation
       items:
@@ -182,6 +185,8 @@ site_filters_defs:
   nomenclatures_ouvrage_specificite:
     field: nomenclatures_ouvrage_specificite.id_nomenclature
     key: id_nomenclature
+  diagnostics:
+    type: any
 
 site_table_fields:
   - key: id_passage_faune

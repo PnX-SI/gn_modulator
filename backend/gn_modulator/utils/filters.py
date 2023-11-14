@@ -1,7 +1,20 @@
 from gn_modulator.schema.errors import SchemaRepositoryFilterError, SchemaRepositoryFilterTypeError
 
 
-REGISTRED_FILTERS = ["=", "<", ">", ">=", "<=", "like", "ilike", "in", "~", "dwithin", "bbox"]
+REGISTRED_FILTERS = [
+    "=",
+    "<",
+    ">",
+    ">=",
+    "<=",
+    "like",
+    "ilike",
+    "in",
+    "~",
+    "dwithin",
+    "bbox",
+    "any",
+]
 
 
 def parse_filters(filters):
@@ -22,7 +35,6 @@ def parse_filters(filters):
     while index < nb_filters:
         # calcul du filtre {field, type, value}
         filter = parse_filter(filters[index])
-
         # si on tombe sur une parenthèse ouvrante
         if filter == "[":
             # on cherche l'index de la parenthèse fermante ] correspondante
@@ -58,6 +70,12 @@ def parse_filter(str_filter):
 
     if str_filter in "*|![]":
         return str_filter
+
+    if str_filter.startswith("has_"):
+        return {"field": str_filter[4:], "type": "any"}
+
+    if str_filter.count(" ") == 1:
+        str_filter = str_filter + " "
 
     index_min = None
     filter_type_min = None

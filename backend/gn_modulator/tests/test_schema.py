@@ -12,7 +12,6 @@ class TestSchemas:
             "fields": [
                 "nom_usuel_passage_faune",
                 "actors.id_organism",
-                "actors.id_role",
                 "actors.role.nom_role",
                 "actors.role.nom_complet",
             ],

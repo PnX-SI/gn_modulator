@@ -10,5 +10,5 @@ items:
           type : 'Point'
           coordinates: [ 0, 45 ]
         actors:
-          - id_role: admin
-            id_nomenclature_type_actor: PRO
+          - id_organism: ALL
+            id_nomenclature_type_actor: GES

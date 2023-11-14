@@ -55,7 +55,6 @@ export class ModulesLayoutObjectFiltersComponent
 
   processFiltersFormData(data) {
     const filterDefs = this.computedLayout.filter_defs;
-
     this.filters = Object.entries(data)
       .filter(([key, val]: any) => val != null)
       .map(([key, val]: any) => {
@@ -63,7 +62,6 @@ export class ModulesLayoutObjectFiltersComponent
         const field = filterDef?.field || key;
         let value = filterDef.key ? utils.getAttr(val, filterDef.key) : val;
         let type = filterDef?.type;
-
         if (Array.isArray(value)) {
           value = value.join(';');
           type = type || 'in';
@@ -72,6 +70,11 @@ export class ModulesLayoutObjectFiltersComponent
         type = type || '=';
 
         value != null && console.log(field, type, value, key);
+
+        if (type == 'any' && val !== true) {
+          value = null;
+        }
+
         return {
           field,
           type,

@@ -29,7 +29,16 @@ class SchemaRepositoriesUtil:
             return None
         return query._cache.get(key)
 
-    def process_custom_getattr_res(self, res, query, condition, field_name, index, only_fields=[]):
+    def process_custom_getattr_res(
+        self,
+        res,
+        query,
+        condition,
+        field_name,
+        index,
+        only_fields=[],
+        output_field="relation_alias",
+    ):
         # si c'est une propriété
         fields = field_name.split(".")
         is_relationship = self.is_val_relationship(res["val"])
@@ -53,9 +62,10 @@ class SchemaRepositoriesUtil:
                 query=query,
                 condition=condition,
                 only_fields=only_fields,
+                output_field=output_field,
             )
 
-        return res["relation_alias"], query or condition
+        return res[output_field], query or condition
 
     def eager_load_only(self, field_name, query, only_fields, index):
         """
@@ -111,7 +121,14 @@ class SchemaRepositoriesUtil:
         return hasattr(val, "mapper") and hasattr(val.mapper, "entity")
 
     def custom_getattr(
-        self, Model, field_name, query=None, condition=None, only_fields="", index=0
+        self,
+        Model,
+        field_name,
+        query=None,
+        condition=None,
+        only_fields="",
+        index=0,
+        output_field="relation_alias",
     ):
         # liste des champs 'rel1.rel2.pro1' -> 'rel1', 'rel2', 'prop1'
         fields = field_name.split(".")
@@ -129,7 +146,7 @@ class SchemaRepositoriesUtil:
         res = self.get_query_cache(query, cache_key)
         if res:
             return self.process_custom_getattr_res(
-                res, query, condition, field_name, index, only_fields
+                res, query, condition, field_name, index, only_fields, output_field=output_field
             )
 
         # si non en cache
@@ -167,7 +184,7 @@ class SchemaRepositoriesUtil:
 
         # retour
         return self.process_custom_getattr_res(
-            res, query, condition, field_name, index, only_fields
+            res, query, condition, field_name, index, only_fields, output_field=output_field
         )
 
     def get_sorters(self, sort, query):
