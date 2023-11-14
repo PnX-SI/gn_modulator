@@ -21,7 +21,7 @@ def upgrade():
         f"""
     DELETE FROM pr_sipaf.cor_actor_pf WHERE id_organism IS NULL;
     ALTER TABLE pr_sipaf.cor_actor_pf ALTER id_organism SET NOT NULL;
-    ALTER TABLE pr_sipaf.cor_actor_pf DROP COLUMN id_role CASCADE; // dependance avec les imports ???
+    ALTER TABLE pr_sipaf.cor_actor_pf DROP COLUMN id_role CASCADE; -- dependance avec les imports ???
     """
     )
 
