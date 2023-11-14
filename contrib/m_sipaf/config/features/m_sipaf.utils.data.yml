@@ -45,7 +45,7 @@ items:
       - [PF_DIAG_FRANCHISSABILITE, Franchissabilité, Estimation de la franchissabilité de l'ouvrage pour les animaux]
       - [PF_DIAG_INTERET_FAUNE, Intérêt pour les espèces cibles, Intérêt pour les espèces cibles]
       - [PF_USAGE_CATEGORIE, Catégorie d'usage, Attribut définissant le type d'usage en dehors du passage de la faune (type de mixité)]
-      
+
   - schema_code: ref_nom.nomenclature
     defaults:
       source: SIPAF
@@ -53,7 +53,7 @@ items:
     keys:
       [id_type, cd_nomenclature, mnemonique, label_default, definition_default]
     items:
-      - [PF_OUVRAGE_MATERIAUX, BET, Béta., Béton, Béton]
+      - [PF_OUVRAGE_MATERIAUX, BET, Bét., Béton, Béton]
       - [PF_OUVRAGE_MATERIAUX, MET, Mét., Métal, Métal]
       - [PF_OUVRAGE_MATERIAUX, PLT, Pla., Plastique, Plastique]
       - [PF_OUVRAGE_MATERIAUX, BOI, Boi., Bois, Bois]

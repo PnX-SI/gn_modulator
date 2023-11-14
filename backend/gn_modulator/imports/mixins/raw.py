@@ -24,13 +24,13 @@ class ImportMixinRaw(ImportMixinUtils):
       - et le champs geometrie n'est pas présent
     """
 
-    def process_raw_view(self):
+    def process_step_raw_view(self):
         """
         creation de la vue d'import brute
         """
 
         # table source : mapping si elle existe ou données
-        from_table = self.tables.get("mapping") or self.tables["data"]
+        from_table = self.tables["mapping"]
 
         # table destinataire: 'raw'
         dest_table = self.tables["raw"] = self.table_name("raw")
@@ -58,8 +58,6 @@ class ImportMixinRaw(ImportMixinUtils):
         script de creation de la vue d'import 'raw'
         """
 
-        sm = SchemaMethods(self.schema_code)
-
         # colonnes de la table source
         from_table_columns = self.get_table_columns(from_table)
 
@@ -69,13 +67,15 @@ class ImportMixinRaw(ImportMixinUtils):
         # ou les colonnes ["id_import", "x", "y"]
         columns = list(
             filter(
-                lambda x: sm.is_column(x) or sm.is_relation_n_n(x) or x in ["id_import", "x", "y"],
+                lambda x: (self.sm().is_column(x))
+                or self.sm().is_relation_n_n(x)
+                or x in ["id_import"],
                 from_table_columns,
             )
         )
 
-        if sm.pk_field_name() not in columns:
-            columns.append(sm.pk_field_name())
+        if self.sm().pk_field_name() not in columns:
+            columns.append(self.sm().pk_field_name())
 
         # traitement des colonnes
         # - typage
@@ -86,8 +86,8 @@ class ImportMixinRaw(ImportMixinUtils):
         # si des champs x et y sont présents
         # s'il n'y a pas de champs geom
         if (
-            sm.geometry_field_name()
-            and sm.geometry_field_name() not in columns
+            self.sm().geometry_field_name()
+            and self.sm().geometry_field_name() not in columns
             and "x" in from_table_columns
             and "y" in from_table_columns
         ):
@@ -112,13 +112,12 @@ FROM {from_table} t{txt_limit};
         process de la geometrie
         à partir des colonnes 'x' et 'y'
         """
-        sm = SchemaMethods(self.schema_code)
 
         # clé de la colonne geometrie
-        geom_key = sm.geometry_field_name()
+        geom_key = self.sm().geometry_field_name()
 
         # srid associé à la colonne geometrie
-        srid_column = sm.property(geom_key).get("srid")
+        srid_column = self.sm().property(geom_key).get("srid")
 
         # srid de l'input
         # - précisé en option
@@ -145,11 +144,10 @@ FROM {from_table} t{txt_limit};
           (doit marcher avec le WKB)
         """
 
-        sm = SchemaMethods(self.schema_code)
-        property = sm.property(key)
+        property = self.sm().property(key)
 
         # srid de la colonne
-        srid_column = sm.property(key)["srid"]
+        srid_column = self.sm().property(key)["srid"]
 
         # srid des données
         # - à préciser en options
@@ -179,24 +177,31 @@ FROM {from_table} t{txt_limit};
         - traitement de la geometrie
         """
 
-        sm = SchemaMethods(self.schema_code)
+        propper_column_name = self.propper_column_name(key)
 
         # colonnes de la liste ["id_import", "x", "y"]
-        if key in ["id_import", "x", "y"] and not sm.has_property(key):
+        if key in ["id_import", "x", "y"] and not self.sm().has_property(key):
             return f"t.{key}"
 
-        property = sm.property(key)
+        property = self.sm().property(key)
 
         # clé primaire
         # on concatène les champs d'unicité
         # séparés par des '|'
         if property.get("primary_key"):
-            txt_uniques = ", '|', ".join(map(lambda x: f"t.{x}", sm.attr("meta.unique")))
-            return f"""CONCAT({txt_uniques}) AS {sm.pk_field_name()}"""
+            unique_keys = self.sm().attr("meta.unique")
+            if len(unique_keys) == 1:
+                txt_uniques = unique_keys[0]
+            else:
+                txt_uniques = ", '|', ".join(
+                    map(lambda x: f"t.{x}", self.sm().attr("meta.unique"))
+                )
+                txt_uniques = f"CONCAT({txt_uniques})"
+            return f"""{txt_uniques} AS {self.sm().pk_field_name()}"""
 
         # clé étrangère ou relation n-n : on renvoie tel quel
-        if sm.is_foreign_key(key) or sm.is_relation_n_n(key):
-            return f"t.{key}"
+        if self.sm().is_foreign_key(key) or self.sm().is_relation_n_n(key):
+            return f"t.{propper_column_name}"
 
         # geometrie
         if property["type"] == "geometry":
@@ -206,31 +211,31 @@ FROM {from_table} t{txt_limit};
         # typage sql
 
         if property["type"] == "number":
-            return f"{key}::FLOAT"
+            return f"{propper_column_name}::FLOAT"
 
         if property["type"] == "boolean":
-            return f"{key}::BOOLEAN"
+            return f"{propper_column_name}::BOOLEAN"
 
         if property["type"] == "uuid":
-            return f"{key}::UUID"
+            return f"{propper_column_name}::UUID"
 
         if property["type"] == "date":
-            return f"{key}::DATE"
+            return f"{propper_column_name}::DATE"
 
         if property["type"] == "datetime":
-            return f"{key}::TIMESTAMP"
+            return f"{propper_column_name}::TIMESTAMP"
 
         if property["type"] == "integer":
-            return f"{key}::INTEGER"
+            return f"{propper_column_name}::INTEGER"
 
         if property["type"] == "integer":
-            return f"{key}::INTEGER"
+            return f"{propper_column_name}::INTEGER"
 
         if property["type"] == "string":
-            return f"{key}"
+            return f"{propper_column_name}"
 
         if property["type"] == "json":
-            return f"{key}::JSONB"
+            return f"{propper_column_name}::JSONB"
 
         raise SchemaMethods.errors.SchemaImportError(
             f"process_raw_import_column, type non traité {self.schema_code} {key} {property}"

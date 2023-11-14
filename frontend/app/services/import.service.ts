@@ -14,7 +14,7 @@ export class ModulesImportService {
 
   importRequest(moduleCode, object_code, data, params = {}) {
     return this._mRequest.postRequestWithFormData(
-      `${this._mConfig.backendModuleUrl()}/import/${moduleCode}/${object_code}/${
+      `${this._mConfig.backendModuleUrl()}/import_async/${moduleCode}/${object_code}/${
         data.id_import || ''
       }`,
       {
@@ -33,7 +33,31 @@ export class ModulesImportService {
       };
     }
 
-    if (data.status == 'READY') {
+    if (data.status == 'STARTING') {
+      let html = `
+      <h4>Import en attente de démarrage</h4>
+      `;
+      return {
+        html,
+        class: 'info',
+      };
+    }
+
+    if (data.status == 'PROCESSING') {
+      let steps = Object.values(data['steps']);
+      let currentStep = steps[steps.length - 1];
+      let html = `
+      <h4>Import en cours</h4>
+      <p> Étape : ${currentStep}</p>
+      `;
+      // html += `<p><b>Veuillez appuyer sur valider pour insérer les données</b></p>`;
+      return {
+        html,
+        class: 'info',
+      };
+    }
+
+    if (data.status == 'PENDING') {
       let html = `
       <h4>Données prêtes pour l'import</h4>
       <p> Ensemble des modifications à venir</p>
@@ -77,6 +101,7 @@ export class ModulesImportService {
     );
     let charSpace = '_';
     let nbRaw = data.res.nb_raw.toString().padStart(nbChar, charSpace);
+    let nbProcess = data.res.nb_process.toString().padStart(nbChar, charSpace);
     let nbInsert = data.res.nb_insert.toString().padStart(nbChar, charSpace);
     let nbUpdate = data.res.nb_update.toString().padStart(nbChar, charSpace);
     let nbUnchanged = data.res.nb_unchanged.toString().padStart(nbChar, charSpace);
@@ -90,8 +115,9 @@ export class ModulesImportService {
     }
 
     return `<ul>
-    <li>${nbRaw} lignes dans le fichier</li>
-    <li>${nbInsert} ligne(s) ajoutées</li>
+    <li>${nbRaw} ligne(s) dans le fichier</li>
+    <li>${nbProcess} ligne(s) à traiter</li>
+    <li>${nbInsert} ligne(s) à insérer</li>
     ${htmlUpdate}
     ${htmlUnchanged}
     </ul>`.replace(/_/g, '&nbsp;');

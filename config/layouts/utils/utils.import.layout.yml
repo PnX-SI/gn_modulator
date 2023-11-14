@@ -43,7 +43,7 @@ layout:
                   type: boolean
                   hidden: __f__(context.hidden_options || []).includes('enable_update')
                   default: __f__false
-                - key: options.check_only
+                - key: options.check_first
                   title: Verifier avant insertion
                   description: |
                     L'import se fait en deux temps.

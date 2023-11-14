@@ -2,10 +2,11 @@ import pytest
 from gn_modulator.imports.models import TImport
 from gn_modulator.utils.commons import getAttr
 from geonature.utils.env import db
+from gn_modulator import SchemaMethods
 
 
 @pytest.mark.skip()
-def test_data_file(
+def test_import_data_file(
     module_code,
     object_code,
     data_file_path=None,
@@ -22,23 +23,23 @@ def test_data_file(
             object_code=object_code,
             data_file_path=data_file_path,
             mapping_file_path=mapping_file_path,
-            options={"insert_data": True, **options},
+            options={"no_commit": True, "insert_data": True, **options},
         )
         db.session.add(impt)
     assert impt.id_import is not None
 
     impt.process_import_schema()
 
-    import_infos = impt.as_dict()
+    import_infos = SchemaMethods("modules.import").serialize(
+        impt, fields=["errors", "res", "status", "id_import", "data_type", "csv_delimiter"]
+    )
 
     expected_errors = expected_infos.pop("errors", [])
     if len(expected_errors) == 0:
         # on teste si le nombre d'erreur est bien nul
-        assert len(import_infos["errors"]) == 0, import_infos["errors"]
+        assert not impt.has_errors(), impt.pretty_errors_txt()
     else:
         # on teste si on rencontre bien les erreurs attendues parmi les erreurs rencontrées
-        print(expected_errors)
-        print(import_infos["errors"])
         assert len(expected_errors) == len(import_infos["errors"])
         for expected_error in expected_errors:
             assert (
@@ -52,26 +53,16 @@ def test_data_file(
                 > 0
             ), f"L'erreur de code {expected_error['error_code']} n'a pas été trouvée"
 
+    expected_nb_errors = []
     for key in expected_infos:
-        txt_err = f"module_code: {module_code}, object_code: {object_code}, key: {key},  expected: {expected_infos.get(key)}, import: {getAttr(import_infos, key)}"
-        assert getAttr(import_infos, key) == expected_infos.get(key), txt_err
+        if getAttr(import_infos, key) == expected_infos.get(key):
+            continue
+        txt_expectation_error = (
+            f"module_code: {module_code}, object_code: {object_code}, key: {key}"
+        )
+        txt_expectation_error += f", result: {getAttr(import_infos, key)}"
+        txt_expectation_error += f", expected: {expected_infos.get(key)}"
+        expected_nb_errors.append(txt_expectation_error)
 
+    assert len(expected_nb_errors) == 0, "\n".join(expected_nb_errors)
     return impt
-
-
-@pytest.mark.skip()
-def test_import_code(import_code=None, data_dir_path=None, expected_infos=[]):
-    imports = TImport.process_import_code(
-        import_code, data_dir_path, insert_data=True, commit=False
-    )
-    assert len(imports) > 0
-
-    for impt in imports:
-        assert len(impt.errors) == 0
-
-    for index, expected_info in enumerate(expected_infos):
-        impt = imports[index]
-        import_infos = impt.as_dict()
-        for key in expected_info:
-            txt_err = f"schema_code: {impt.schema_code}, key: {key},  expected: {expected_info.get(key)}, import: {getAttr(import_infos, key)}"
-            assert getAttr(import_infos, key) == expected_info.get(key), txt_err

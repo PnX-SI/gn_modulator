@@ -1,6 +1,7 @@
 import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ModulesLayoutComponent } from '../base/layout.component';
 import { ModulesImportService } from '../../../services/import.service';
+import { ModulesDataService } from '../../../services/data.service';
 import { HttpEventType, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { MatStepper } from '@angular/material/stepper';
 
@@ -15,6 +16,7 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
   importLayout: any; // layout pour l'import
   importContext: any;
   _mImport: ModulesImportService;
+  _mData: ModulesDataService;
 
   step = 0;
 
@@ -25,7 +27,6 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
   importMsg: any = {};
 
   importDataTest = {
-    // status: 'READY',
     status: 'DONE',
     res: {
       nb_data: 367,
@@ -39,13 +40,14 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
     options: {},
   };
 
-  @ViewChild('stepper') stepper: MatStepper;
+  // @ViewChild('stepper') stepper: MatStepper;
 
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'layout-import';
     this.bPostComputeLayout = true;
     this._mImport = this._injector.get(ModulesImportService);
+    this._mData = this._injector.get(ModulesDataService);
   }
 
   postProcessLayout() {
@@ -66,46 +68,52 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
   }
 
   setStep() {
-    // this.editableStep = true;
-    this.step = this.importData.status == 'READY' ? 1 : this.importData.status == 'DONE' ? 2 : 0;
-
-    if (this.stepper) {
-      this.editableStep = true;
-      setTimeout(() => {
-        const diff = this.step - this.stepper.selectedIndex;
-        for (let i = 0; i < Math.abs(diff); i++) {
-          if (diff > 0) {
-            this.stepper.next();
-          }
-          if (diff < 0) {
-            this.stepper.previous();
-          }
-        }
-        this.editableStep = false;
-      });
-    }
     this.importData.importMsg = this._mImport.processMessage(this.importData);
     this.importData.errorMsgType = this._mImport.processErrorsType(this.importData);
     this.importData.errorMsgLine = this._mImport.processErrorsLine(this.importData);
   }
 
+  apiFields = ['res', 'status', 'id_import', 'errors'];
+
   processImport(context, data) {
-    this._mImport
-      .importRequest(context.module_code, context.object_code, data)
+    // gestion des options
+    if (data.options.check_first) {
+      data.options['target_step'] = 'count';
+    }
+
+    this._subs['process_import'] = this._mImport
+      .importRequest(context.module_code, context.object_code, data, { fields: this.apiFields })
       .pipe()
       .subscribe((importEvent) => {
         if (importEvent.type === HttpEventType.UploadProgress) {
           this.uploadPercentDone = Math.round((100 * importEvent.loaded) / importEvent.total);
-        }
-        if (importEvent instanceof HttpResponse) {
-          this._mLayout.stopActionProcessing('');
-          const response = importEvent.body as any;
-          this.importData = { ...this.importData, ...response };
+        } else if (importEvent instanceof HttpResponse) {
+          let data = (importEvent.body as any) || importEvent;
+          this.importData = { ...this.importData, ...data };
           this.setStep();
-          if (response.status == 'DONE') {
-            if (response.res.nb_unchanged != response.res.nb_process) {
-              this._mObject.reProcessObject(this.context.module_code, this.context.object_code);
-            }
+          this.checkImport(this.importData.id_import);
+        }
+      });
+  }
+
+  checkImport(id_import) {
+    if (this.isDestroyed) {
+      return;
+    }
+    this._subs['check_import'] = this._mData
+      .getOne('MODULATOR', 'modules.import', id_import, { fields: this.apiFields })
+      .subscribe((data) => {
+        this.importData = { ...this.importData, ...data };
+        this.setStep();
+        if (['PROCESSING', 'STARTING'].includes(this.importData.status)) {
+          setTimeout(() => this.checkImport(id_import), 1000);
+        }
+        if (['DONE', 'PENDING', 'ERROR'].includes(this.importData.status)) {
+          this._mLayout.stopActionProcessing('');
+        }
+        if (this.importData.status == 'DONE') {
+          if (this.importData.res.nb_unchanged != this.importData.res.nb_process) {
+            this._mObject.reProcessObject(this.context.module_code, this.context.object_code);
           }
         }
       });

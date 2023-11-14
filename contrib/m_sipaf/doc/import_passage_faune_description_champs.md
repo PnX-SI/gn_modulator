@@ -1,90 +1,86 @@
 
 
-#### Champs d'unicité
+# Import des passages à faune
 
 
-La présence des colonnes suivantes est obligatoire.
 
-- `uuid_passage_faune`
+### Champs
+
+##### uuid_passage_faune
+ - *champ d'unicité*
   - *type* : `uuid`
   - *définition* : Identifiant universel unique au format UUID (uuid_pf)
   - champ autogénéré pour les lignes où il est de valeur nulle
-
-#### Champs obligatoires
-
-- `geom`
+##### geom
+ - *obligatoire*
   - *type* : `geometry`
   - *geometry_type* : `geometry`
   - *format* (exemples à adapter au `SRID`=`4326`):
     - WKT (par ex. `POINT(0.1 45.2)`
     - XY (remplacer `geom` par les colonnes `x` et `y`)
   - *définition* : Géometrie du passage à faune (SRID=4326)
-
-
-#### Champs facultatifs
-
-- `code_ouvrage_gestionnaire`
+##### code_ouvrage_gestionnaire
   - *type* : `string`
   - *définition* : Code de l’ouvrage (pour le gestionnaire)
-- `date_creation_ouvrage`
+##### date_creation_ouvrage
   - *type* : `date`
   - *format* : `YYYY-MM-DD` (par ex. `2023-03-31`)
   - *définition* : Date de la réalisation de l'ouvrage
-- `date_requalification_ouvrage`
+##### date_requalification_ouvrage
   - *type* : `date`
   - *format* : `YYYY-MM-DD` (par ex. `2023-03-31`)
   - *définition* : Date de la requalification de l'ouvrage
-- `diametre`
+##### diametre
   - *type* : `number`
   - *définition* : Diamètre de la buse en mètre
-- `hauteur_dispo_faune`
+##### hauteur_dispo_faune
   - *type* : `number`
   - *définition* : Hauteur de l'ouvrage effectivement disponible pour la faune en mètre
-- `hauteur_ouvrage`
+##### hauteur_ouvrage
   - *type* : `number`
   - *définition* : Hauteur de l'ouvrage en mètre
-- `issu_requalification`
+##### issu_requalification
   - *type* : `boolean`
   - *format* : `true`,`t`,`false`,`f`
   - *définition* : L'ouvrage est issu d'une opération de requalification ?
-- `largeur_dispo_faune`
+##### largeur_dispo_faune
   - *type* : `number`
   - *définition* : Largeur de l'ouvrage effectivement disponible pour la faune en mètre
-- `largeur_ouvrage`
+##### largeur_ouvrage
   - *type* : `number`
   - *définition* : Largeur de l'ouvrage en mètre
-- `longueur_franchissement`
+##### longueur_franchissement
   - *type* : `number`
   - *définition* : Longueur de franchissement de l'ouvrage en mètres (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)
-- `nom_usuel_passage_faune`
+##### nom_usuel_passage_faune
   - *type* : `string`
   - *définition* : Nom usuel utilisé pour dénommer l'ouvrage (nom_usuel_pf)
-- `ouvrag_hydrau_tirant_air`
+##### ouvrag_hydrau_tirant_air
   - *type* : `number`
   - *définition* :  Tirant d'air existant entre la banquette et le plafond de l'ouvrage, en mètre
-- `ouvrage_hydrau`
+##### ouvrage_hydrau
   - *type* : `boolean`
   - *format* : `true`,`t`,`false`,`f`
   - *définition* : Ouvrage hydraulique ou non
-- `ouvrage_type_autre`
+##### ouvrage_type_autre
   - *type* : `string`
-- `pi_ou_ps`
+##### pi_ou_ps
   - *type* : `boolean`
   - *format* : `true`,`t`,`false`,`f`
   - *définition* : Positionnement du passage vis-à vis de l’infrastructure (inférieur (False) ou supérieur (True))
-- `pk`
+##### pk
   - *type* : `number`
   - *définition* : Point kilométrique
-- `pr`
+##### pr
   - *type* : `number`
   - *définition* : Point repère
-- `pr_abs`
+##### pr_abs
   - *type* : `integer`
   - *définition* : Distance en abscisse curviligne depuis le dernier PR
-- `source`
+##### source
   - *type* : `string`
   - *définition* : Source de la donnée
-- `id_nomenclature_ouvrage_hydrau_banq_caract`
+##### id_nomenclature_ouvrage_hydrau_banq_caract
   - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
@@ -92,7 +88,7 @@ La présence des colonnes suivantes est obligatoire.
   - *valeurs* :
     - **SIM** *Simple*
     - **DOU** *Double*
-- `id_nomenclature_ouvrage_hydrau_banq_type`
+##### id_nomenclature_ouvrage_hydrau_banq_type
   - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
@@ -103,7 +99,7 @@ La présence des colonnes suivantes est obligatoire.
     - **ECB** *Encorbellement*
     - **POF** *Ponton flottant*
     - **AUT** *Autre*
-- `id_nomenclature_ouvrage_hydrau_position`
+##### id_nomenclature_ouvrage_hydrau_position
   - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
@@ -112,7 +108,7 @@ La présence des colonnes suivantes est obligatoire.
     - **RD** *Rive Droite*
     - **RG** *Rive Gauche*
     - **RGD** *Rive gauche et rive droite*
-- `id_nomenclature_ouvrage_specificite`
+##### id_nomenclature_ouvrage_specificite
   - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
@@ -121,8 +117,8 @@ La présence des colonnes suivantes est obligatoire.
     - **SPE** *Spécifique*
     - **MIX** *Mixte*
     - **ND** *Non dédié*
-- `nomenclatures_ouvrage_categorie`
-  - *type* : `liste de clés séparées par une virgule `,``
+##### nomenclatures_ouvrage_categorie
+  - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
   - *définition* : Catégorie d'ouvrage d'art (utilisation)
@@ -134,8 +130,8 @@ La présence des colonnes suivantes est obligatoire.
     - **SPE_CHI** *Ouvrage spécifique: chiroptéroduc*
     - **SPE_BAT** *Ouvrage spécifique: batracoduc*
     - **SPE_CANOP** *Ouvrage spécifique: passage canopée*
-- `nomenclatures_ouvrage_materiaux`
-  - *type* : `liste de clés séparées par une virgule `,``
+##### nomenclatures_ouvrage_materiaux
+  - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
   - *définition* : Matériaux composants l'ouvrage d'art (lb_materiaux)
@@ -147,8 +143,8 @@ La présence des colonnes suivantes est obligatoire.
     - **MAC** *Maçonnerie*
     - **AUT** *Autre*
     - **IND** *Indéterminé*
-- `nomenclatures_ouvrage_type`
-  - *type* : `liste de clés séparées par une virgule `,``
+##### nomenclatures_ouvrage_type
+  - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
   - *définition* : Type d'ouvrage d'art (lb_type_ouvrage)
@@ -169,4 +165,54 @@ La présence des colonnes suivantes est obligatoire.
     - **DIAB** *Diabolo*
     - **TRA** *Tranchée*
     - **TUN** *Tunnel*
+
+
+## Relations
+
+
+
+### Acteurs`
+
+##### actors.id_nomenclature_type_actor
+ - *champ d'unicité*, *obligatoire*
+  - *type* : `clé simple`
+  - *référence* : `nomenclatures`
+  - *champ(s)* : `cd_nomenclature`
+  - *valeurs* :
+    - **PRO** *Propriétaire*
+    - **CON** *Concessionaire*
+    - **INT** *Intervenant*
+    - **GES** *Gestionnaire*
+    - **ETA** *État*
+    - **DEP** *Département*
+##### actors.id_organism
+ - *champ d'unicité*
+  - *type* : `clé simple`
+  - *référence* : `organismes`
+  - *champ(s)* : `nom_organisme`
+##### actors.id_role
+ - *champ d'unicité*
+  - *type* : `clé simple`
+  - *référence* : `utilisateurs`
+  - *champ(s)* : `identifiant`
+
+
+### Usages`
+
+##### usages.id_nomenclature_usage_type
+ - *champ d'unicité*, *obligatoire*
+  - *type* : `clé simple`
+  - *référence* : `nomenclatures`
+  - *champ(s)* : `cd_nomenclature`
+  - *valeurs* :
+    - **H** *Hydraulique*
+    - **A** *Agricole*
+    - **F** *Forestier*
+    - **R** *Routier*
+    - **P** *Piétonnier*
+    - **D** *Défense*
+##### usages.commentaire
+  - *type* : `string`
+##### usages.detail_usage
+  - *type* : `string`
 

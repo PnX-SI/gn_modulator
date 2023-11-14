@@ -1,10 +1,22 @@
-import re
-from pathlib import Path
-
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.env import schema_import
-from gn_modulator.utils.commons import getAttr
 from gn_modulator import ModuleMethods
+
+
+import_steps = [
+    "init",
+    "data_table",
+    "mapping_view",
+    "pre_check",
+    "raw_view",
+    "import_view",
+    "relations_view",
+    "post_check",
+    "count",
+    "update",
+    "insert",
+    "relations_data",
+]
 
 
 class ImportMixinUtils:
@@ -27,7 +39,20 @@ class ImportMixinUtils:
         "json": "JSONB",
     }
 
-    def init_import(self):
+    def remaining_import_steps(self):
+        remaining_import_steps = []
+        for step in self.import_steps():
+            if step in self.steps or step in self.options.get("skip_steps", []):
+                continue
+            remaining_import_steps.append(step)
+            if self.options.get("target_step") == step:
+                break
+        return remaining_import_steps
+
+    def import_steps(self):
+        return import_steps
+
+    def process_step_init(self):
         """
         Initialisation de l'import
         """
@@ -58,29 +83,6 @@ class ImportMixinUtils:
                     error_code="ERR_IMPORT_OPTIONS",
                     error_msg=f"Le srid n'est pas valide {self.options.get('srid')}",
                 )
-
-    def pretty_infos(self):
-        """
-        Affiche des informations de l'import
-        Pour les imports en ligne de commande
-        """
-        txt = ""
-        if self.res.get("nb_data") is not None:
-            txt += f"\n-- import csv file {Path(self.data_file_path).name}"
-            txt += f"   {self.res.get('nb_data')} lignes\n\n"
-        txt += f"   - {self.schema_code}\n"
-        if self.res.get("nb_raw") != self.res.get("nb_process"):
-            txt += f"       raw       : {self.res.get('nb_raw'):10d}\n"
-        if self.res.get("nb_process"):
-            txt += f"       process   : {self.res.get('nb_process'):10d}\n"
-        if self.res.get("nb_insert"):
-            txt += f"       insert    : {self.res['nb_insert']:10d}\n"
-        if self.res.get("nb_update"):
-            txt += f"       update    : {self.res['nb_update']:10d}\n"
-        if self.res.get("nb_unchanged"):
-            txt += f"       unchanged : {self.res['nb_unchanged']:10d}\n"
-
-        return txt
 
     def count_and_check_table(self, table_type, table_name):
         """
@@ -115,7 +117,7 @@ class ImportMixinUtils:
         nommange de la table
         """
 
-        if type == "data":
+        if type == "data" and key is None:
             return f"{schema_import}.t_{self.id_import}_{type}"
         else:
             rel = f"_{key}" if key is not None else ""
@@ -145,11 +147,13 @@ class ImportMixinUtils:
         )
         self.status = "ERROR"
 
-    def get_table_columns(self, table_name):
+    def get_table_columns(self, table_name, reset_cache=False):
         """
         récupération des colonnes d'une table
         - avec mise en cache pour éviter de multiplier les requetes
         """
+        if reset_cache:
+            self._columns[table_name] = None
         if not self._columns.get(table_name):
             self._columns[table_name] = SchemaMethods.get_table_columns(table_name)
         return self._columns[table_name]
@@ -165,109 +169,17 @@ class ImportMixinUtils:
             if SchemaMethods(self.schema_code).has_property(key):
                 return key
 
-    def log_sql(self, file_path, replace_id=None):
-        """
-        écrit le sql réalisé pour un import dans un fichier
-        """
+    def propper_column_name(self, x):
+        return f'"{x}"' if "." in x else x
 
-        with open(file_path, "w") as f:
-            f.write(self.all_sql(replace_id))
+    def propper_column_names(self, x):
+        return map(lambda y: self.propper_column_name(y), x)
 
-    def txt_sql(self, txt_comment, key):
-        txt = f"-- {txt_comment}\n\n"
-        try:
-            sql = getAttr(self.sql, key)
-        except KeyError:
-            return ""
-        txt += sql
-        txt += "\n\n"
-        return txt
+    def sm(self):
+        return SchemaMethods(self.schema_code)
 
-    def txt_tables(self):
-        txt = "\n-- Tables et vues utlisées pour l'import\n"
+    def has_mapping(self):
+        return self.mapping is not None or self.mapping_file_path is not None
 
-        txt += f"-- - data: {self.tables['data']}\n"
-        txt += "--    table contenant les données du fichier à importer\n"
-        txt += "--\n"
-
-        if self.tables.get("mapping"):
-            txt += f"-- - mapping: {self.tables['mapping']}\n"
-            txt += "--    vue permettant de faire la corresondance entre\n"
-            txt += "--             le fichier source et la table destinataire\n"
-            txt += "--\n"
-
-        txt += f"-- - raw: {self.tables['raw']}\n"
-        txt += "--    choix des colonnes, typage\n"
-        txt += "--\n"
-
-        txt += f"-- - process: {self.tables['process']}\n"
-        txt += "--    résolution des clés\n"
-        txt += "--\n"
-
-        for key in self.tables["relations"]:
-            txt += f"-- - process relation n-n {key}: {self.tables['relations'][key]['process']}\n"
-
-        txt += "\n\n"
-        return txt
-
-    def all_sql(self, replace_id=None):
-        """
-        agrège les requêtes sql utilisée pour l'import
-        """
-
-        txt = "-- Log Import {id import}\n"
-        txt += f"-- - schema_code: {self.schema_code}\n"
-
-        # explication des tables
-        txt += self.txt_tables()
-
-        # gestion du fichier à importer
-        txt += self.txt_sql("Creation de la table des données", "data_table")
-        txt += self.txt_sql("Copie des données", "data_copy_csv")
-        txt += self.txt_sql("Insertion des données", "data_insert")
-
-        # mapping
-        txt += self.txt_sql("Mapping", "mapping_view")
-
-        # raw
-        txt += self.txt_sql("Typage (raw)", "raw_view")
-
-        # process
-        txt += self.txt_sql("Résolution des clés (process)", "process_view")
-
-        # insert
-        txt += self.txt_sql("Insertion des données", "insert")
-
-        # update
-        txt += self.txt_sql("Mise à jour des données", "update")
-
-        # relations
-        for key in self.sql["relations"]:
-            txt += f"-- - Traitement relation n-n {key}\n"
-            txt += self.txt_sql("    - process", f"relations.{key}.process_view")
-            txt += self.txt_sql("    - suppression", f"relations.{key}.delete")
-            txt += self.txt_sql("    - suppression", f"relations.{key}.insert")
-
-        if replace_id:
-            txt = self.replace_id_in_txt(txt, replace_id)
-
-        return txt
-
-    def replace_id_in_txt(self, txt, replace_id):
-        """
-        remplace une id_import par replace_id (par ex 'xxx')
-        """
-
-        for k in filter(lambda x: x != "relations", self.tables):
-            table_name = self.tables[k]
-            txt = self.replace_table_name_in_txt(txt, replace_id, table_name)
-
-        for k in self.tables["relations"]:
-            table_name = self.tables["relations"][k]["process"]
-            txt = self.replace_table_name_in_txt(txt, replace_id, table_name)
-
-        return txt
-
-    def replace_table_name_in_txt(self, txt, replace_id, table_name):
-        table_name_r = table_name.replace(str(self.id_import), replace_id)
-        return re.sub(table_name, table_name_r, txt)
+    def has_errors(self):
+        return len(self.errors) > 0 or any(child.has_errors() for child in self.imports_1_n)

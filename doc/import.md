@@ -1,5 +1,44 @@
 # Import de données
 
+## Techinque
+
+### Statuts
+
+Les différents statuts d'un import sont:
+
+- `IDLE`: le processus d'import est en attente d'instruction
+- `PROCESSING`: l'import est en train d'effectuer des instructions
+- `ERROR`: l'import a rencontré une erreur
+- `DONE`: l'import est terminé
+
+### Étapes
+
+Les différentes étapes d'un import sont dans l'ordre
+
+- `init`
+- `data_table`
+- `mapping_view`
+- `pre_check`
+- `raw_view`
+- `import_view`
+- `post_check`
+- `relations_view`
+- `count`
+- `update`
+- `insert`
+- `relations_data`
+
+### Options
+
+- `target_step`: étape visée, le process d'import s'arêtera après cette étape.
+- `commit`: l'instruction `db.session.commit` est effectué après chaque étape (sinon `db.session.flush`).
+
+
+
+
+
+
+
 ## Commande d'import
 
 ```

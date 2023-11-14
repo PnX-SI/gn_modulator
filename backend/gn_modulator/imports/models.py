@@ -36,9 +36,18 @@ class TImport(db.Model, ImportMixin):
         self.sql = {}
         self.tables = {}
 
+        self.status = "PENDING"
+
     _columns = {}
 
     id_import = db.Column(db.Integer, primary_key=True)
+
+    id_import_parent = db.Column(db.Integer, db.ForeignKey("gn_modulator.t_imports.id_import"))
+    parent = db.relationship(
+        "TImport", remote_side=[id_import], foreign_keys=[id_import_parent], backref="imports_1_n"
+    )
+
+    relation_key = db.Column(db.Unicode)
 
     id_digitiser = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
     module_code = db.Column(db.Unicode)
@@ -58,21 +67,7 @@ class TImport(db.Model, ImportMixin):
     tables = db.Column(MutableDict.as_mutable(JSONB))
     sql = db.Column(MutableDict.as_mutable(JSONB))
     errors = db.Column(MutableList.as_mutable(JSONB))
-
     options = db.Column(MutableDict.as_mutable(JSONB))
+    steps = db.Column(MutableDict.as_mutable(JSONB), default={})
 
-    def as_dict(self):
-        return {
-            "id_import": self.id_import,
-            "schema_code": self.schema_code,
-            "module_code": self.module_code,
-            "object_code": self.object_code,
-            "id_digitiser": self.id_digitiser,
-            "data_type": self.data_type,
-            "csv_delimiter": self.csv_delimiter,
-            "res": self.res,
-            "errors": self.errors,
-            "options": self.options,
-            "tables": self.tables,
-            "status": self.status,
-        }
+    task_id = db.Column(db.Unicode)

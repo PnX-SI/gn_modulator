@@ -29,6 +29,7 @@ setuptools.setup(
             "blueprint = gn_modulator.blueprint:blueprint",
             "migrations = gn_modulator.migrations:versions",
             "config_schema = gn_modulator.conf_schema_toml:GnModuleSchemaConf",
+            "tasks = gn_modulator.tasks",
         ],
     },
     classifiers=[

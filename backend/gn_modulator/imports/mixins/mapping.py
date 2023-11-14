@@ -24,22 +24,7 @@ class ImportMixinMapping(ImportMixinUtils):
     il faut bien utiliser le nom detable ':table_data'
     """
 
-    def mapping_from_file(self):
-        """
-        récupération du mapping à partir du fichier
-        """
-
-        if not Path(self.mapping_file_path).exists():
-            self.add_error(
-                error_code="ERR_IMPORT_MAPPING_FILE_MISSING",
-                error_msg=f"Le fichier de preprocess {self.mapping_file_path} n'existe pas",
-            )
-            return
-
-        with open(self.mapping_file_path, "r") as f:
-            self.mapping = f.read()
-
-    def process_mapping_view(self):
+    def process_step_mapping_view(self):
         """
         Contruction de la vue de mapping
         le mapping peut venir
@@ -50,6 +35,8 @@ class ImportMixinMapping(ImportMixinUtils):
         # si pas de mapping ou mapping_file_path
         # on passe cette etape
         if not (self.mapping or self.mapping_file_path):
+            self.mapping_check_and_process_missing_unique()
+            self.tables["mapping"] = self.tables.get("mapping") or self.tables["data"]
             return
 
         # si l'attribut mapping n'est pas défini
@@ -69,6 +56,57 @@ class ImportMixinMapping(ImportMixinUtils):
             return
 
         # creation de la vue de mapping
+        try:
+            SchemaMethods.c_sql_exec_txt(self.sql["mapping_view"])
+        except Exception as e:
+            self.add_error(
+                error_code="ERR_IMPORT_MAPPING_CREATE_VIEW",
+                error_msg=f"La vue de mapping n'a pas pu être créée : {str(e)}",
+            )
+            return
+
+        self.count_and_check_table("mapping", self.tables["mapping"])
+
+    def mapping_from_file(self):
+        """
+        récupération du mapping à partir du fichier
+        """
+
+        if not Path(self.mapping_file_path).exists():
+            self.add_error(
+                error_code="ERR_IMPORT_MAPPING_FILE_MISSING",
+                error_msg=f"Le fichier de preprocess {self.mapping_file_path} n'existe pas",
+            )
+            return
+
+        with open(self.mapping_file_path, "r") as f:
+            self.mapping = f.read()
+
+    def mapping_check_and_process_missing_unique(self):
+        # check unique nonrequired
+        columns = self.get_table_columns(self.tables["data"])
+
+        missing_uniques = [
+            key_unique
+            for key_unique in self.sm().unique()
+            if self.sm().has_property(key_unique) and key_unique not in columns
+        ]
+
+        if len(missing_uniques) == 0:
+            return
+
+        self.tables["mapping"] = self.table_name("mapping")
+
+        missing_uniques_txt = "\n    ,".join(map(lambda x: f"NULL AS {x}", missing_uniques))
+
+        self.sql[
+            "mapping_view"
+        ] = f"""CREATE VIEW {self.tables["mapping"]} AS
+SELECT 
+    *,
+    {missing_uniques_txt}
+FROM {self.tables["data"]}
+"""
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["mapping_view"])
         except Exception as e:

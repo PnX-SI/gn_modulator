@@ -355,6 +355,7 @@ class ModuleConfigUtils:
             sm.label_field_name(),
             sm.title_field_name(),
             sm.geometry_field_name(),
+            *(sm.attr("meta.authorized_fields", [])),
             *sm.unique(),
             "scope",
         ]:

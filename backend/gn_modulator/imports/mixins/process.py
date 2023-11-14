@@ -1,5 +1,6 @@
 from gn_modulator import SchemaMethods
 from .utils import ImportMixinUtils
+from copy import copy
 
 
 class ImportMixinProcess(ImportMixinUtils):
@@ -25,7 +26,7 @@ class ImportMixinProcess(ImportMixinUtils):
     pour les nomenclatures, on ne renseigne que le code (le type de nomenclature était connu pour une colonne)
     """
 
-    def process_view(self):
+    def process_step_import_view(self):
         """
         Création de la vue de process
         """
@@ -37,10 +38,10 @@ class ImportMixinProcess(ImportMixinUtils):
         dest_table = self.tables["process"] = self.table_name("process")
 
         # requete de creation de la table process
-        self.sql["process_view"] = self.sql_process_view(from_table, dest_table)
+        self.sql["import_view"] = self.sql_process_import_view(from_table, dest_table)
 
         try:
-            SchemaMethods.c_sql_exec_txt(self.sql["process_view"])
+            SchemaMethods.c_sql_exec_txt(self.sql["import_view"])
         except Exception as e:
             self.add_error(
                 error_code="ERR_IMPORT_PROCESS_CREATE_VIEW",
@@ -51,31 +52,40 @@ class ImportMixinProcess(ImportMixinUtils):
         # comptage et verification de l'intégrité de la table process
         self.count_and_check_table("process", dest_table)
 
-    def sql_process_view(self, from_table, dest_table, key_nn=None):
+    def sql_process_import_view(self, from_table, dest_table, relation_key=None):
         """
         requete pour créer la vue process
 
-        si key_nn : création de la vue process pour la relation
         """
-
-        sm = SchemaMethods(self.schema_code)
 
         # colonnes de la table raw
         from_table_columns = self.get_table_columns(from_table)
-
         # toutes les colonnes sauf la clé primaires
-        columns_sans_cle_primaire = (
-            [key_nn]
-            if key_nn
+        columns = (
+            [relation_key]
+            if relation_key and self.sm().is_relation_n_n(relation_key)
             else list(
                 filter(
-                    lambda x: (sm.is_column(x) and not sm.property(x).get("primary_key")),
+                    lambda x: (
+                        self.sm().is_column(x)
+                        and x.startswith(f"{relation_key}.")
+                        and not x == self.sm().pk_field_name()
+                    ),
+                    from_table_columns,
+                )
+            )
+            if relation_key and self.sm().is_relation_1_n(relation_key)
+            else list(
+                filter(
+                    lambda x: (
+                        self.sm().is_column(x)
+                        and "." not in x
+                        and not x == self.sm().pk_field_name()
+                    ),
                     from_table_columns,
                 )
             )
         )
-
-        columns = [key_nn] if key_nn else columns_sans_cle_primaire
 
         # colonnes de la table process
         v_columns = []
@@ -104,7 +114,10 @@ class ImportMixinProcess(ImportMixinUtils):
         # - on peut réutiliser au besoin les clé étrangère déjà résoles
         #   avec solved_keys
         txt_pk_column, v_join = self.resolve_key(
-            self.schema_code, sm.pk_field_name(), alias_join_base="j_pk", solved_keys=solved_keys
+            self.schema_code,
+            self.sm().pk_field_name(),
+            alias_join_base="j_pk",
+            solved_keys=solved_keys,
         )
         v_columns.append(txt_pk_column)
         v_joins += v_join
@@ -113,63 +126,78 @@ class ImportMixinProcess(ImportMixinUtils):
         txt_columns = ",\n    ".join(v_columns)
         txt_joins = "\n".join(v_joins)
 
+        group_bys = []
+
         # Gestion du numérisateur
         # - pour l'insert se sera l'utilisateur courrant (self.id_digitiser)
         # - pour l'update se sera l'utilisateur courrant si la ligne n'a pas de numérisateur
         txt_id_digitiser = ""
-        if self.id_digitiser and self.id_digitiser_key():
-            txt_id_digitiser = f"\n{self.id_digitiser} AS {self.id_digitiser_key()},"
 
+        if self.id_digitiser and self.id_digitiser_key():
+            group_bys.append(self.id_digitiser_key())
+            txt_id_digitiser = f"{self.id_digitiser} AS {self.id_digitiser_key()},\n"
+
+        group_bys.extend(v_columns)
+
+        txt_group_by = ", ".join(map(lambda x: x.split(" AS ")[0], group_bys))
         # paramètres pour la création des vues
         view_params = {
             "dest_table": dest_table,
             "from_table": from_table,
-            "pk_field_name": sm.pk_field_name(),
-            "key_nn": key_nn,
+            "pk_field_name": self.sm().pk_field_name(),
+            "relation_key": relation_key,
             "txt_id_digitiser": txt_id_digitiser,
             "txt_columns": txt_columns,
+            "txt_group_by": txt_group_by,
             "txt_joins": txt_joins,
             "dest_table": dest_table,
         }
 
         # vue process pour les relations
-        if key_nn:
-            return self.process_view_txt_nn(view_params)
+        if relation_key and self.sm().is_relation_n_n(relation_key):
+            return self.import_view_txt_nn(view_params)
 
         # vue process
-        return self.process_view_txt(view_params)
+        return self.import_view_txt(view_params)
 
-    def process_view_txt_nn(self, view_params):
+    def import_view_txt_nn(self, view_params):
         """
         vue 'process' pour les relations n-n
         """
         return f"""DROP VIEW IF EXISTS {view_params['dest_table']} CASCADE;
 CREATE VIEW {view_params['dest_table']} AS
-WITH unnest_{view_params['key_nn']} AS (
+WITH unnest_{view_params['relation_key']} AS (
     SELECT
         id_import,
         {view_params['pk_field_name']},
-        TRIM(UNNEST(STRING_TO_ARRAY({view_params['key_nn']}, ','))) AS {view_params['key_nn']}
+        TRIM(UNNEST(STRING_TO_ARRAY({view_params['relation_key']}, ','))) AS {view_params['relation_key']}
         FROM {view_params['from_table']}
+), remove_doublons AS (
+    SELECT min(id_import) as id_import
+    FROM {view_params['from_table']}
+    GROUP BY {view_params['pk_field_name']}
 )
 SELECT
-    id_import,{view_params['txt_id_digitiser']}
+    t.id_import,
     {view_params['txt_columns']}
-FROM unnest_{view_params['key_nn']} AS t
+FROM unnest_{view_params['relation_key']} AS t
+JOIN remove_doublons r ON r.id_import = t.id_import
 {view_params['txt_joins']};
 """
 
-    def process_view_txt(self, view_params):
+    def import_view_txt(self, view_params):
         """
         vue 'process' pour la table destinataire
         """
         return f"""DROP VIEW IF EXISTS {view_params['dest_table']} CASCADE;
 CREATE VIEW {view_params['dest_table']} AS
 SELECT
-    id_import,{view_params['txt_id_digitiser']}
-    {view_params['txt_columns']}
+    min(id_import) AS id_import,
+    {view_params['txt_id_digitiser']}{view_params['txt_columns']}
 FROM {view_params['from_table']} t
-{view_params['txt_joins']};
+{view_params['txt_joins']}
+GROUP BY {view_params['txt_group_by']}
+;
 """
 
     def resolve_key(
@@ -254,19 +282,33 @@ FROM {view_params['from_table']} t
                 schema_code, key, k_unique, index_unique, link_joins, alias_main
             )
 
-            cast = "::TEXT"
+            k_unique_type = sm.property(k_unique)["type"]
+            cast = ""
+
+            # ????????
+            # t correspond à la table raw, ou les champs à résoudre sont très certainement en varchar ?????
+            # ????????
+            if var_key.startswith("t."):
+                cast = (
+                    "::UUID"
+                    if k_unique_type == "uuid"
+                    else "::INTEGER"
+                    if k_unique_type == "integer"
+                    else ""
+                )
+
             # condition de jointure
             # - "{alias_join}.{k_unique} = {var_key}"
             # - on caste en TEXT pour éviter les pb de comparaison intertype
 
             # si le champs n'est pas nullable ou obligatoire
             if not sm.is_nullable(k_unique) or sm.is_required(k_unique):
-                txt_join_on = f"{alias_join}.{k_unique}{cast} = {var_key}{cast}"
+                txt_join_on = f"{alias_join}.{k_unique} = {var_key}{cast}"
 
             # si le champs peut être NULL
             # - on en tient compte dans la condition de jointure
             else:
-                txt_join_on = f"({alias_join}.{k_unique}{cast} = {var_key}{cast}\n      OR ({alias_join}.{k_unique} IS NULL AND {var_key} IS NULL))"
+                txt_join_on = f"({alias_join}.{k_unique} = {var_key}{cast}\n      OR ({alias_join}.{k_unique} IS NULL AND {var_key} IS NULL))"
             v_join_on.append(txt_join_on)
 
         # assemblage des conditions de jointure
@@ -325,13 +367,12 @@ FROM {view_params['from_table']} t
         - sinon on résoud la clé et on renvoie les jointures
         """
 
-        sm = SchemaMethods(self.schema_code)
-        property = sm.property(key)
+        property = self.sm().property(key)
 
         # dans le cas des clé étrangères ou des relations n-n
         # si ce n'est pas une clé etrangère ou une relation n-n
         # - on renvoie le champs tel quel sans jointures
-        if not (property.get("foreign_key") or sm.is_relation_n_n(key)):
+        if not (property.get("foreign_key") or self.sm().is_relation_n_n(key)):
             return f"t.{key}", []
 
         # Pour les clé étrangère ou les relations n-n
@@ -349,13 +390,14 @@ FROM {view_params['from_table']} t
         # - on suppose que la clé sera toujours
         #   la clé primaire de la table associée par correlation
         # - TODO sinon à rendre paramétrable
-        if sm.is_relation_n_n(key):
-            rel = SchemaMethods(sm.property(key)["schema_code"])
+        if self.sm().is_relation_n_n(key):
+            rel = SchemaMethods(self.sm().property(key)["schema_code"])
             txt_column = f"{txt_column.split('.')[0]}.{rel.pk_field_name()}"
 
         # les clé étrangères
         else:
-            txt_column = f"{txt_column} AS {key}"
+            alias_key = key.split(".")[-1]
+            txt_column = f"{txt_column} AS {alias_key}"
 
         return txt_column, v_join
 

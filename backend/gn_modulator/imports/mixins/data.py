@@ -12,7 +12,7 @@ class ImportMixinData(ImportMixinUtils):
     Insertion des données fichiers dans une table temporaire
     """
 
-    def process_data_table(self):
+    def process_step_data_table(self):
         """
         methodes pour insérer les données d'un fichier csv
         dans une table temporaire nommée self.tables['data']
@@ -44,11 +44,21 @@ class ImportMixinData(ImportMixinUtils):
         if self.errors:
             return
 
+        self.process_data_set_null_on_empty_field()
+        # dans le cas ou il n'y a pas de mapping
+        if not self.has_mapping():
+            self.data_add_missing_unique_column()
+            self.data_process_default()
+
+    def process_data_set_null_on_empty_field(self):
         # # on met à jour la table pour changer les valeurs '' en NULL
         set_columns_txt = ", ".join(
             map(
                 lambda x: f"{x}=NULLIF({x}, '')",
-                filter(lambda x: x != "id_import", self.get_table_columns(self.tables["data"])),
+                filter(
+                    lambda x: x != "id_import",
+                    self.propper_column_names(self.get_table_columns(self.tables["data"])),
+                ),
             )
         )
         self.sql[
@@ -121,19 +131,25 @@ class ImportMixinData(ImportMixinUtils):
         """
 
         # la liste des colonne à copier
-        columns_fields = ", ".join(table_columns)
+        columns_fields = ",\n    ".join(self.propper_column_names(table_columns))
 
         # instruction de copie des données depuis STDIN
         self.sql[
             "data_copy_csv"
-        ] = f"""COPY {dest_table}({columns_fields}) FROM STDIN DELIMITER '{self.csv_delimiter}' QUOTE '"' CSV """
+        ] = f"""COPY {dest_table}(
+    {columns_fields}
+)
+FROM STDIN
+DELIMITER '{self.csv_delimiter}'
+QUOTE '"' CSV
+;
+"""
 
         cursor = db.session.connection().connection.cursor()
         try:
             cursor.copy_expert(sql=self.sql["data_copy_csv"], file=f)
         except Exception as e:
             cursor.close()
-            db.session.rollback()
             self.add_error(
                 error_code="ERR_IMPORT_DATA_COPY",
                 error_msg=f"Erreur lors de la copie des données csv : {str(e)}",
@@ -147,7 +163,7 @@ class ImportMixinData(ImportMixinUtils):
         (sert principalement pour les test, COPY est sensé être plus rapide pour les grands fichiers)
         """
 
-        sql_columns_fields = ", ".join(table_columns)
+        sql_columns_fields = ", ".join(self.propper_column_names(table_columns))
 
         values = []
 
@@ -187,7 +203,9 @@ class ImportMixinData(ImportMixinUtils):
         """
 
         # déclaration des colonnes de la table
-        columns_sql = "\n    ".join(map(lambda x: f"{x} VARCHAR,", table_columns))
+        columns_sql = "\n    ".join(
+            map(lambda x: f"{x} VARCHAR,", self.propper_column_names(table_columns))
+        )
 
         # contrainte de clé primaire pour id_import
         # qui référence les lignes d'import
@@ -198,11 +216,92 @@ class ImportMixinData(ImportMixinUtils):
     id_import SERIAL NOT NULL,
     {columns_sql}
     CONSTRAINT {pk_constraint_name} PRIMARY KEY (id_import)
-);"""
+);
+"""
         return txt
 
-    def process_data_uuid():
-        """_summary_"""
+    def data_add_missing_unique_column(self):
+        """
+        Vérifie si les colonne d'unicité sont présente
+        Les ajoute à la table data
+        """
 
-        # test si on a une colonne d'unicite qui correspond à un uuid
-        # un peu bancal car on ne prend pas en compte le mapping
+        columns = self.get_table_columns(self.tables["data"])
+
+        missing_uniques = [
+            key_unique
+            for key_unique in self.sm().unique()
+            if self.sm().has_property(key_unique) and key_unique not in columns
+        ]
+
+        if len(missing_uniques) == 0:
+            return
+
+        txt_add_missing_unique_columns = "\n".join(
+            [
+                f"ALTER TABLE {self.tables['data']} ADD COLUMN {key} VARCHAR;"
+                for key in missing_uniques
+            ]
+        )
+
+        self.sql["data_add_unique_columns"] = txt_add_missing_unique_columns
+        try:
+            SchemaMethods.c_sql_exec_txt(self.sql["data_add_unique_columns"])
+        except Exception as e:
+            self.add_error(
+                error_code="ERR_IMPORT_ADD_MISSING_UNIQUE_COLUMNS",
+                error_msg=f"L'ajout des colonnes d'unicité manquantes n'a pas pu être effectué : {str(e)}",
+            )
+            return
+
+        self.get_table_columns(self.tables["data"], reset_cache=True)
+
+    def data_process_default(self):
+        """
+        verifie si les unique ont des valeur par defaut (par ex uuid -> uuid_generate_v4)
+        au besoin les rempli (à rendre optionnel ??)
+        le check sur les unique a été fait précedemment ?
+        """
+
+        table_data = self.tables["data"]
+
+        # récupération de la liste des champs d'unicité
+
+        # group_by_columns
+        group_by_columns = ", ".join(
+            filter(
+                lambda x: self.sm().is_column(x) and "." not in x,
+                self.get_table_columns(table_data),
+            )
+        )
+
+        # Recherche du champs uuid d'unicite
+        for unique_field_name in self.sm().unique():
+            default = self.sm().get_column_info(unique_field_name).get("default")
+            if not (default):
+                continue
+
+            # Pour gérer les cas ou on a des lignes multiple avec les relations 1-n
+            # on regroupe selon les colonnes de la table destinaire
+            # pour avoir la meme valeur par defaut du champs unique_field_name pour ces lignes
+            txt_update_uuid = f"""
+            WITH pre AS (
+                SELECT
+                    ARRAY_AGG(id_import) AS ids_import,
+                    {default} as unique_default
+                FROM {table_data}
+                WHERE {unique_field_name} is NULL
+                GROUP BY {group_by_columns}
+            ), unnest_pre AS (
+                SELECT
+                    UNNEST(ids_import) AS id_import,
+                    unique_default
+                FROM pre
+            )
+            UPDATE {table_data} t
+                SET {unique_field_name}=p.unique_default
+                FROM unnest_pre p
+                WHERE p.id_import = t.id_import
+            """
+
+            SchemaMethods.c_sql_exec_txt(txt_update_uuid)

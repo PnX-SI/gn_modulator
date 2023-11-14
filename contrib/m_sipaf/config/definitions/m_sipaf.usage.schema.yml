@@ -11,7 +11,7 @@ meta:
     label: usage
     label_field_name: id_passage_faune
     unique:
-        - id_nomenclature_categorie_usage
+        - id_nomenclature_usage_type
         - id_passage_faune
 
 properties:

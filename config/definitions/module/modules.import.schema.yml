@@ -1,0 +1,17 @@
+type: schema
+code: modules.import
+title: Schema modules.import
+description: Définition du schema des imports
+
+meta:
+    autoschema: true
+    model: gn_modulator.imports.models.TImport
+    genre: M
+    label: import
+    label_field_name: id_import
+    unique:
+        - id_import
+    authorized_fields:
+      - res
+      - status
+      - errors

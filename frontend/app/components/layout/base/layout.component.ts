@@ -92,6 +92,9 @@ export class ModulesLayoutComponent implements OnInit {
   // composant initialisé (pour l'affichage)
   isInitialized = false;
 
+  // composant destroyed
+  isDestroyed = false;
+
   // services
   _mConfig: ModulesConfigService;
   _mAction: ModulesActionService;
@@ -692,6 +695,7 @@ export class ModulesLayoutComponent implements OnInit {
   onDestroy() {}
 
   ngOnDestroy() {
+    this.isDestroyed = true;
     for (const [subKey, sub] of Object.entries(this._subs)) {
       sub && (sub as any).unsubscribe();
     }

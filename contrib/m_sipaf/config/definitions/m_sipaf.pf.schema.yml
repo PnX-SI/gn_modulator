@@ -25,6 +25,8 @@ meta:
         - meta_update_date
         - areas
         - linears
+        - medias
+        - diagnostics
         - taxons
 
 properties:

@@ -48,18 +48,41 @@ class SchemaDoc:
 
         return txt
 
-    def doc_import_key(self, key, unique=False):
+    def doc_import_key(
+        self,
+        key,
+        unique=False,
+        relation_key=None,
+    ):
         txt = ""
 
+        key_txt = f"{relation_key}.{key}" if relation_key is not None else key
+
         property_def = self.property(key)
-        txt += f"- `{key}`\n"
-        type = property_def["type"]
+        # txt += f"- `{key_txt}`\n"
+        txt += f"##### {key_txt}\n"
 
-        if property_def.get("schema_code"):
-            type = "clé simple"
+        type = (
+            "clé simple"
+            if property_def.get("schema_code")
+            else "liste de clés séparées par une virgule"
+            if property_def.get("relation_type") == "n-n"
+            else property_def["type"]
+        )
 
-        if property_def.get("relation_type") == "n-n":
-            type = "liste de clés séparées par une virgule `,`"
+        column_default = self.property(key).get("default") or (
+            self.get_column_info(key) or {}
+        ).get("default")
+
+        infos = []
+        if unique:
+            infos.append("champ d'unicité")
+        if self.is_required(key) and not column_default:
+            infos.append("obligatoire")
+
+        if len(infos) > 0:
+            info_txt = ", ".join(map(lambda x: f"*{x}*", infos))
+            txt += f" - {info_txt}\n"
 
         txt += f"  - *type* : `{type}`\n"
 
@@ -94,11 +117,8 @@ class SchemaDoc:
             txt += self.doc_nomenclature_values(key)
 
         if unique:
-            column_default = self.property(key).get("default") or self.get_column_info(key).get(
-                "default"
-            )
             if column_default:
-                txt += "  - champ autogénéré pour les lignes où il est de valeur nulle"
+                txt += "  - champ autogénéré pour les lignes où il est de valeur nulle\n"
 
         return txt
 
@@ -165,27 +185,54 @@ class SchemaDoc:
 
         return ",".join(required_import_keys + non_required_import_keys)
 
-    def doc_import(self, exclude=[]):
+    def doc_import(self, exclude=[], relation_key=None):
         txt = ""
 
         unique_import_keys, required_import_keys, non_required_import_keys = self.import_keys(
             exclude
         )
 
-        txt += "\n\n#### Champs d'unicité\n\n"
-        txt += "\nLa présence des colonnes suivantes est obligatoire.\n\n"
+        if relation_key is None:
+            txt += f"\n\n# Import des {self.labels()}\n\n"
+            txt += "\n\n### Champs\n\n"
+        else:
+            txt += f"\n\n### {self.labels().capitalize()}`\n\n"
+
+        # txt += "\n\n#### Champs d'unicité\n\n"
 
         for key in unique_import_keys:
-            txt += self.doc_import_key(key, unique=True)
+            txt += self.doc_import_key(key, unique=True, relation_key=relation_key)
 
-        txt += "\n\n#### Champs obligatoires\n\n"
+        if len(required_import_keys) > 0:
+            # txt += "\n\n#### Champs obligatoires\n\n"
 
-        for key in required_import_keys:
-            txt += self.doc_import_key(key)
+            for key in required_import_keys:
+                txt += self.doc_import_key(key, relation_key=relation_key)
 
-        txt += "\n\n#### Champs facultatifs\n\n"
+        if len(non_required_import_keys):
+            # txt += "\n\n#### Champs facultatifs\n\n"
 
-        for key in non_required_import_keys:
-            txt += self.doc_import_key(key)
+            for key in non_required_import_keys:
+                txt += self.doc_import_key(key, relation_key=relation_key)
+
+        if relation_key:
+            return txt
+
+        relations_1_n_import_keys = [
+            relation_key
+            for relation_key in self.relationship_1_n_keys()
+            if relation_key not in self.attr("meta.import_excluded_fields", [])
+        ]
+
+        if len(relations_1_n_import_keys) == 0:
+            return txt
+
+        txt += "\n\n## Relations\n\n"
+
+        for relation_key in relations_1_n_import_keys:
+            rel = self.cls(self.property(relation_key)["schema_code"])
+            exclude = rel.attr("meta.import_excluded_fields", [])
+            exclude.append(self.pk_field_name())
+            txt += rel.doc_import(relation_key=relation_key, exclude=exclude)
 
         return txt

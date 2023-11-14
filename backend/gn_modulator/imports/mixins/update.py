@@ -9,7 +9,7 @@ class ImportMixinUpdate(ImportMixinUtils):
     gestion de la mise à jour des données
     """
 
-    def process_update(self):
+    def process_step_update(self):
         """
         méthode pour mettre à jour les données
         """
@@ -40,7 +40,6 @@ class ImportMixinUpdate(ImportMixinUtils):
         """
         script pour la mise à jour des données
         """
-        sm = SchemaMethods(self.schema_code)
 
         # toutes les colonnes de la table 'process'
         columns = self.get_table_columns(from_table)
@@ -50,7 +49,7 @@ class ImportMixinUpdate(ImportMixinUtils):
             map(
                 lambda x: x,
                 filter(
-                    lambda x: sm.is_column(x) and x != self.id_digitiser_key(),
+                    lambda x: self.sm().is_column(x) and x != self.id_digitiser_key(),
                     columns,
                 ),
             )
@@ -60,7 +59,10 @@ class ImportMixinUpdate(ImportMixinUtils):
         # toutes les colonnes sauf la clé primaire
         # et la clé digitiser
         v_set_keys = list(
-            map(lambda x: f"{x}=p.{x}", filter(lambda x: not sm.is_primary_key(x), v_column_keys))
+            map(
+                lambda x: f"{x}=p.{x}",
+                filter(lambda x: not self.sm().is_primary_key(x), v_column_keys),
+            )
         )
 
         # les condition d'update
@@ -68,7 +70,7 @@ class ImportMixinUpdate(ImportMixinUtils):
         # on regarde si la données importée est distincte des données existante
         v_update_condition = list(
             map(
-                lambda x: f"(t.{x}::TEXT IS DISTINCT FROM p.{x}::TEXT)",
+                lambda x: f"(t.{x} IS DISTINCT FROM p.{x})",
                 v_column_keys,
             )
         )
@@ -82,14 +84,14 @@ class ImportMixinUpdate(ImportMixinUtils):
         # condition pour voir si une ligne est modifiée
         txt_update_conditions = "NOT (\n    " + "\n    AND ".join(v_update_condition) + "\n)"
 
-        return f"""UPDATE {sm.sql_schema_dot_table()} t SET
+        return f"""UPDATE {self.sm().sql_schema_dot_table()} t SET
     {txt_set_keys}
 FROM (
     SELECT
         {txt_columns_keys}
     FROM {from_table}
 )p
-WHERE p.{sm.pk_field_name()} = t.{sm.pk_field_name()}
+WHERE p.{self.sm().pk_field_name()} = t.{self.sm().pk_field_name()}
   AND {txt_update_conditions}
 ;
 """

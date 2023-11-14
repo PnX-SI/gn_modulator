@@ -11,7 +11,7 @@ class ImportMixinCheck(ImportMixinUtils):
     Vérification des données
     """
 
-    def process_pre_check(self):
+    def process_step_pre_check(self):
         """
         Verfication des données apres l'insertion des données
         (et de la phase de mapping si elle a lieu)
@@ -21,61 +21,9 @@ class ImportMixinCheck(ImportMixinUtils):
         """
 
         self.check_uniques()
-        self.check_and_process_default()
-
         self.check_types()
 
-    def check_and_process_default(self):
-        """
-        verifie si les unique ont des valeur par defaut (par ex uuid -> uuid_generate_v4)
-        au besoin les rempli (à rendre optionnel ??)
-        le check sur les unique a été fait précedemment ?
-        """
-
-        # - sur la table de mapping si elle existe
-        # - ou sur la table des données
-        table_test = self.tables.get("mapping") or self.tables["data"]
-
-        # récupération de la liste des champs d'unicité
-        sm = SchemaMethods(self.schema_code)
-
-        # group_by_columns
-        group_by_columns = ", ".join(
-            filter(lambda x: sm.is_column(x), self.get_table_columns(table_test))
-        )
-
-        # Recherche du champs uuid d'unicite
-        for unique_field_name in sm.unique():
-            default = sm.get_column_info(unique_field_name).get("default")
-            if not (default):
-                continue
-
-            # Pour gérer les cas ou on a des lignes multiple avec les relations 1-n
-            # on regroupe selon les colonnes de la table destinaire
-            # pour avoir la meme valeur par defaut du champs unique_field_name pour ces lignes
-            txt_update_uuid = f"""
-            WITH pre AS (
-                SELECT
-                    ARRAY_AGG(id_import) AS ids_import,
-                    {default} as unique_default
-                FROM {table_test}
-                WHERE {unique_field_name} is NULL
-                GROUP BY {group_by_columns}
-            ), unnest_pre AS (
-                SELECT
-                    UNNEST(ids_import) AS id_import,
-                    unique_default
-                FROM pre
-            )
-            UPDATE {table_test} t
-                SET {unique_field_name}=p.unique_default
-                FROM unnest_pre p
-                WHERE p.id_import = t.id_import
-            """
-
-            SchemaMethods.c_sql_exec_txt(txt_update_uuid)
-
-    def process_post_check(self):
+    def process_step_post_check(self):
         """
         Verification des données
         Avant la phase d'insertion des données
@@ -95,14 +43,13 @@ class ImportMixinCheck(ImportMixinUtils):
 
         # - sur la table de mapping si elle existe
         # - ou sur la table des données
-        table_test = self.tables.get("mapping") or self.tables["data"]
+        table_test = self.tables["mapping"]
 
         # liste des colonnes de la table testée
         columns = self.get_table_columns(table_test)
 
         # récupération de la liste des champs d'unicité
-        sm = SchemaMethods(self.schema_code)
-        unique = sm.unique()
+        unique = self.sm().unique()
 
         # recherche des champs manquant
         missing_unique = [key for key in unique if key not in columns]
@@ -123,17 +70,15 @@ class ImportMixinCheck(ImportMixinUtils):
 
         # - sur la table de mapping si elle existe
         # - ou sur la table des données
-        table_test = self.tables.get("mapping") or self.tables["data"]
-
-        sm = SchemaMethods(self.schema_code)
+        table_test = self.tables["mapping"]
 
         # pour chaque colonne de la table qui est aussi dans la table destinataire
         for key in filter(
-            lambda x: sm.is_column(x) and not sm.property(x).get("foreign_key"),
+            lambda x: self.sm().is_column(x) and not self.sm().property(x).get("foreign_key"),
             self.get_table_columns(table_test),
         ):
             # récupération du type SQL de la colonne
-            sql_type = self.sql_type_dict[sm.property(key)["type"]]
+            sql_type = self.sql_type_dict[self.sm().property(key)["type"]]
 
             # la fonction gn_modulator.check_value_for_type
             # renvoie faux pour les colonnes ou le format ne correspond pas
@@ -149,7 +94,7 @@ class ImportMixinCheck(ImportMixinUtils):
             FROM {table_test}
             WHERE NOT (
                 {key} is NULL
-                OR 
+                OR
                 gn_modulator.check_value_for_type('{sql_type}', {key}::VARCHAR)
             )
             GROUP BY id_import
@@ -185,11 +130,9 @@ class ImportMixinCheck(ImportMixinUtils):
         # on vérifie sur la table 'raw'
         raw_table = self.tables["raw"]
 
-        sm = SchemaMethods(self.schema_code)
-
         # Pour toutes les colonnes obligatoires de la table 'raw'
         for key in self.get_table_columns(raw_table):
-            if not sm.is_required(key):
+            if not self.sm().is_required(key):
                 continue
 
             # requête pour repérer les lignes ayant des éléments à NULL
@@ -215,7 +158,7 @@ SELECT
                 error_code="ERR_IMPORT_REQUIRED",
                 key=key,
                 lines=lines,
-                error_msg="Champs obligatoire à null",
+                error_msg=f"Champs {key} obligatoire et de valeur nulle",
             )
 
         return
@@ -233,11 +176,13 @@ SELECT
         raw_table = self.tables["raw"]
         process_table = self.tables["process"]
 
-        sm = SchemaMethods(self.schema_code)
-
         # pour toutes les clés représentant un clé étrangère
         for key in self.get_table_columns(raw_table):
-            if not (sm.has_property(key) and sm.property(key).get("foreign_key")):
+            if key in self.options.get("skip_check_on", []) or not (
+                self.sm().has_property(key)
+                and self.sm().property(key).get("foreign_key")
+                and "." not in key
+            ):
                 continue
 
             # requête sql pour lister les 'id_import' des lignes qui sont
@@ -267,7 +212,7 @@ WHERE
 
             # Dans le cas des nomenclatures on peut faire remonter les valeurs possible ??
 
-            code_type = sm.property(key).get("nomenclature_type")
+            code_type = self.sm().property(key).get("nomenclature_type")
             if code_type:
                 valid_values = list(
                     map(
@@ -282,7 +227,7 @@ WHERE
                 error_code="ERR_IMPORT_UNRESOLVED",
                 key=key,
                 lines=lines,
-                error_msg="Clé étrangère non résolue",
+                error_msg=f"Clé étrangère '{key}' non résolue ",
                 valid_values=valid_values,
                 error_values=error_values,
             )

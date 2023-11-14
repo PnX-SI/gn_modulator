@@ -9,7 +9,7 @@ class ImportMixinCount(ImportMixinUtils):
     Comptage des différentes tables liées à l'import
     """
 
-    def process_count(self):
+    def process_step_count(self):
         """
         Methode pour compter
         - le nombre de lignes insérées
@@ -37,12 +37,22 @@ class ImportMixinCount(ImportMixinUtils):
         # depuis la table process
         from_table = self.tables["process"]
 
-        sm = SchemaMethods(self.schema_code)
+        unique_fields = ", ".join(self.sm().unique())
 
         # requete pour compter les lignes dont la clé primaire est à null
         self.sql[
             "nb_insert"
-        ] = f"SELECT COUNT(*) FROM {from_table} WHERE {sm.pk_field_name()} IS NULL"
+        ] = f"""WITH d AS (
+    SELECT
+        DISTINCT {unique_fields}
+    FROM {from_table}
+    WHERE {self.sm().pk_field_name()} IS NULL
+)
+SELECT
+    COUNT(*)
+FROM d
+;
+"""
 
         try:
             self.res["nb_insert"] = SchemaMethods.c_sql_exec_txt(self.sql["nb_insert"]).scalar()
@@ -78,12 +88,13 @@ class ImportMixinCount(ImportMixinUtils):
         """
         requete sql pour compter le nombre de ligne mise à jour
         """
-        sm = SchemaMethods(self.schema_code)
 
         # toutes les colonnes de la table 'raw' sauf la clé primaire
         columns = list(
             filter(
-                lambda x: sm.has_property(x) and not sm.is_primary_key(x),
+                lambda x: self.sm().has_property(x)
+                and "." not in x
+                and not self.sm().is_primary_key(x),
                 self.get_table_columns(self.tables["raw"]),
             )
         )
@@ -92,7 +103,10 @@ class ImportMixinCount(ImportMixinUtils):
         # on regarde si la valeur change entre la table 'process' et la table destinaire
         # pour les relations n-n, on compare des liste d'entiers
         update_conditions_columns = list(
-            map(lambda x: self.update_count_condition_column(x), columns)
+            filter(
+                lambda x: x is not None,
+                map(lambda x: self.update_count_condition_column(x), columns),
+            )
         )
 
         # pour les relations n-n, ajout de with et join dans la requete
@@ -100,7 +114,7 @@ class ImportMixinCount(ImportMixinUtils):
         # pour pouvoir comparer les valeurs des données et les valeurs existantes
         relations_nn = list(
             filter(
-                lambda x: sm.is_relation_n_n(x),
+                lambda x: self.sm().is_relation_n_n(x),
                 columns,
             )
         )
@@ -116,18 +130,17 @@ class ImportMixinCount(ImportMixinUtils):
         # s'il y a des relations n-n
         # texte pour les with et join associés à ces relations
         if len(withs_rel):
-            withs_rel_txt = "    WITH " + "\n,".join(withs_rel)
+            withs_rel_txt = "    WITH " + "\n,".join(withs_rel) + "\n"
             joins_rel_txt = "\n".join(joins_rel)
 
         # requete pour compter le nombre de ligne à mettre à jour
-        return f"""{withs_rel_txt}
-    SELECT
-        COUNT(*)
-    FROM {sm.sql_schema_dot_table()} t
-    JOIN {self.tables['process']} a
-        ON a.{sm.pk_field_name()} = t.{sm.pk_field_name()}
+        return f"""{withs_rel_txt}SELECT
+    COUNT(*)
+FROM {self.sm().sql_schema_dot_table()} t
+JOIN {self.tables['process']} a
+    ON a.{self.sm().pk_field_name()} = t.{self.sm().pk_field_name()}
 {joins_rel_txt}
-    WHERE {txt_update_conditions}
+WHERE {txt_update_conditions}
 ;
 """
 
@@ -138,28 +151,32 @@ class ImportMixinCount(ImportMixinUtils):
         - la valeur de la table destinataires
         - pour les relation n-n, on utilise des sous requete pour agréger et comparer des listes d'entiers
         """
-        sm = SchemaMethods(self.schema_code)
-        if sm.is_relation_n_n(key):
-            return f"""process_{key}.a IS DISTINCT FROM cor_{key}.a"""
 
-        return f"(t.{key}::TEXT IS DISTINCT FROM a.{key}::TEXT)"
+        if self.sm().is_relation_n_n(key):
+            rel = SchemaMethods(self.sm().property(key)["schema_code"])
+            rel_pk = rel.pk_field_name()
+            return f"""process_{key}.{rel_pk} IS DISTINCT FROM cor_{key}.{rel_pk}"""
+
+        if self.sm().is_relation_1_n(key):
+            return
+
+        return f"(t.{key} IS DISTINCT FROM a.{key})"
 
     def update_count_with_rel(self, key):
         """
         texte utilisé pour faire des sous-requete pour les relations n-n
         """
 
-        sm = SchemaMethods(self.schema_code)
-        rel = SchemaMethods(sm.property(key)["schema_code"])
+        rel = SchemaMethods(self.sm().property(key)["schema_code"])
 
         # clé primaire
-        pk = sm.pk_field_name()
+        pk = self.sm().pk_field_name()
 
         # clé primaire de la relation
         rel_pk = rel.pk_field_name()
 
         # table de correlation
-        cor_table = sm.property(key)["schema_dot_table"]
+        cor_table = self.sm().property(key)["schema_dot_table"]
 
         # sous requete pour agréger les clé dans une liste
         # cor_{key} : pour les clé existantes (cor_table)
@@ -168,13 +185,13 @@ class ImportMixinCount(ImportMixinUtils):
         return f"""process_{key} AS (
         SELECT
             {pk},
-            ARRAY_AGG({rel_pk}) AS a
+            ARRAY_AGG({rel_pk}) AS {rel_pk}
             FROM {self.tables['relations'][key]['process']}
             GROUP BY {pk}
     ), cor_{key} AS (
         SELECT
             {pk},
-            ARRAY_AGG({rel_pk}) AS a
+            ARRAY_AGG({rel_pk}) AS {rel_pk}
             FROM {cor_table}
             GROUP BY {pk}
     )"""
@@ -187,8 +204,7 @@ class ImportMixinCount(ImportMixinUtils):
             - cor_{key}: données existantes
         """
 
-        sm = SchemaMethods(self.schema_code)
-        pk = sm.pk_field_name()
+        pk = self.sm().pk_field_name()
 
         return f"""    LEFT JOIN process_{key}
         ON process_{key}.{pk} = t.{pk}

@@ -1,6 +1,6 @@
 import pytest  # noqa
 from gn_modulator.utils.env import import_test_dir
-from .utils.imports import test_data_file
+from .utils.imports import test_import_data_file
 from gn_modulator import SchemaMethods, ModuleMethods
 
 
@@ -22,7 +22,9 @@ class TestImport:
             "data_type": "csv",
             "csv_delimiter": ",",
         }
-        test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+        test_import_data_file(
+            module_code, object_code, data_file_path, expected_infos=expected_infos
+        )
 
     def test_synthese2(self):
         """
@@ -38,7 +40,9 @@ class TestImport:
             "res.nb_update": 0,
             "res.nb_unchanged": 0,
         }
-        test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+        test_import_data_file(
+            module_code, object_code, data_file_path, expected_infos=expected_infos
+        )
 
     def test_ref_geo_linear(self):
         """
@@ -49,7 +53,9 @@ class TestImport:
         object_code = "ref_geo.linear_type"
         data_file_path = import_test_dir / "route/linear_type.csv"
         expected_infos = {"res.nb_data": 2}
-        test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+        test_import_data_file(
+            module_code, object_code, data_file_path, expected_infos=expected_infos
+        )
 
         module_code = "MODULATOR"
         object_code = "ref_geo.linear_group"
@@ -61,7 +67,7 @@ class TestImport:
             "res.nb_update": 0,
             "res.nb_unchanged": 0,
         }
-        test_data_file(
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -79,7 +85,7 @@ class TestImport:
             "res.nb_update": 0,
             "res.nb_unchanged": 0,
         }
-        test_data_file(
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -97,7 +103,7 @@ class TestImport:
             "res.nb_update": 0,
             "res.nb_unchanged": 0,
         }
-        impt = test_data_file(
+        impt = test_import_data_file(
             module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
@@ -115,7 +121,9 @@ class TestImport:
             "data_type": "csv",
             "csv_delimiter": ",",
         }
-        test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+        test_import_data_file(
+            module_code, object_code, data_file_path, expected_infos=expected_infos
+        )
 
     def test_synthese_update_obs(self):
         module_code = "MODULATOR"
@@ -129,7 +137,7 @@ class TestImport:
             "data_type": "csv",
             "csv_delimiter": ",",
         }
-        impt = test_data_file(
+        impt = test_import_data_file(
             module_code, object_code, data_file_path, expected_infos=expected_infos
         )
         impt.log_sql(import_test_dir / "synthese_obs.log.sql", "xxx")
@@ -143,7 +151,9 @@ class TestImport:
             "data_type": "csv",
             "csv_delimiter": ",",
         }
-        test_data_file(module_code, object_code, data_file_path, expected_infos=expected_infos)
+        test_import_data_file(
+            module_code, object_code, data_file_path, expected_infos=expected_infos
+        )
 
     def test_synthese_srid(self):
         module_code = "MODULATOR"
@@ -158,7 +168,7 @@ class TestImport:
             "data_type": "csv",
             "csv_delimiter": ",",
         }
-        test_data_file(
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -188,7 +198,7 @@ class TestImport:
             "data_type": "csv",
             "csv_delimiter": ";",
         }
-        test_data_file(
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -213,7 +223,7 @@ class TestImport:
             "res.nb_data": 1,
             "res.nb_insert": 1,
         }
-        test_data_file(
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -231,7 +241,25 @@ class TestImport:
             "res.nb_data": 1,
             "res.nb_insert": 1,
         }
-        test_data_file(
+        test_import_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+        )
+
+    def test_sipaf_missing_uuid(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_missing_uuid.csv"
+        expected_infos = {
+            "res.nb_data": 2,
+            "res.nb_raw": 2,
+            "res.nb_process": 2,
+            "res.nb_insert": 2,
+            "res.nb_update": 0,
+        }
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -249,7 +277,7 @@ class TestImport:
             "res.nb_data": 1,
             "res.nb_insert": 1,
         }
-        test_data_file(
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -268,7 +296,7 @@ class TestImport:
             "res.nb_insert": 1,
             "res.nb_update": 0,
         }
-        test_data_file(
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -281,7 +309,25 @@ class TestImport:
             "res.nb_insert": 0,
             "res.nb_update": 1,
         }
-        test_data_file(
+        test_import_data_file(
+            module_code,
+            object_code,
+            data_file_path,
+            expected_infos=expected_infos,
+        )
+
+    def test_sipaf_actors(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_actors.csv"
+        expected_infos = {
+            "res.nb_data": 2,
+            "res.nb_raw": 2,
+            "res.nb_process": 1,
+            "res.nb_insert": 1,
+            "res.nb_update": 0,
+        }
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -295,7 +341,7 @@ class TestImport:
         object_code = "syn.synthese"
         data_file_path = import_test_dir / "synthese_ERR_IMPORT_INVALID_VALUE_FOR_TYPE.csv"
         expected_infos = {"errors": [{"error_code": "ERR_IMPORT_INVALID_VALUE_FOR_TYPE"}]}
-        test_data_file(
+        test_import_data_file(
             module_code,
             object_code,
             data_file_path,
@@ -303,15 +349,15 @@ class TestImport:
             expected_infos=expected_infos,
         )
 
-    def test_error_ERR_IMPORT_MISSING_UNIQUE(self):
-        module_code = "MODULATOR"
-        object_code = "ref_geo.area"
-        data_file_path = import_test_dir / "ref_geo.area_ERR_IMPORT_MISSING_UNIQUE.csv"
-        expected_infos = {"errors": [{"error_code": "ERR_IMPORT_MISSING_UNIQUE"}]}
-        test_data_file(
-            module_code,
-            object_code,
-            data_file_path,
-            mapping_file_path=None,
-            expected_infos=expected_infos,
-        )
+    # def test_error_ERR_IMPORT_MISSING_UNIQUE(self):
+    #     module_code = "MODULATOR"
+    #     object_code = "ref_geo.area"
+    #     data_file_path = import_test_dir / "ref_geo.area_ERR_IMPORT_MISSING_UNIQUE.csv"
+    #     expected_infos = {"errors": [{"error_code": "ERR_IMPORT_MISSING_UNIQUE"}]}
+    #     test_import_data_file(
+    #         module_code,
+    #         object_code,
+    #         data_file_path,
+    #         mapping_file_path=None,
+    #         expected_infos=expected_infos,
+    #     )

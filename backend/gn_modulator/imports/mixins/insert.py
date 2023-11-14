@@ -14,7 +14,7 @@ class ImportMixinInsert(ImportMixinUtils):
       (sinon il s'agit de lignes déjà existantes)
     """
 
-    def process_insert(self):
+    def process_step_insert(self):
         """
         méthode pour l'insertion des données dans la table destinataire
         """
@@ -23,8 +23,6 @@ class ImportMixinInsert(ImportMixinUtils):
         # les données peuvent être intégrées telles quelles
         # le format est vérifié et les clé étrangères sont résolues
         from_table = self.tables["process"]
-
-        sm = SchemaMethods(self.schema_code)
 
         # s'il n'y a pas de ligne à insérer
         # on passe
@@ -49,10 +47,8 @@ class ImportMixinInsert(ImportMixinUtils):
         requete d'insertion des données
         """
 
-        sm = SchemaMethods(self.schema_code)
-
         # récupération de la table destinataire
-        table_name = dest_table or sm.sql_schema_dot_table()
+        table_name = dest_table or self.sm().sql_schema_dot_table()
 
         # list des colonnes à insérer
         # - toutes les colonnes de la table process
@@ -62,7 +58,7 @@ class ImportMixinInsert(ImportMixinUtils):
                 lambda x: (
                     x in keys
                     if keys is not None
-                    else sm.is_column(x) and not (sm.property(x).get("primary_key"))
+                    else self.sm().is_column(x) and not (self.sm().property(x).get("primary_key"))
                 ),
                 self.get_table_columns(from_table),
             )
@@ -74,7 +70,7 @@ class ImportMixinInsert(ImportMixinUtils):
         # condition pour choisir les lignes à insérer
         # - la clé primaire doit être nulle dans la table source)
         # - il n'y a pas de correspondance avec une ligne existant dans la table destinataire
-        txt_where = f" WHERE {sm.pk_field_name()} IS NULL" if keys is None else ""
+        txt_where = f" WHERE {self.sm().pk_field_name()} IS NULL" if keys is None else ""
 
         # requete d'insertion des données
         return f"""INSERT INTO {table_name} (
@@ -82,5 +78,6 @@ class ImportMixinInsert(ImportMixinUtils):
 )
 SELECT
     {txt_columns_select_keys}
-FROM {from_table}{txt_where};
+FROM {from_table}{txt_where}
+;
 """

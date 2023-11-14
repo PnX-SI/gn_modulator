@@ -128,32 +128,27 @@ def cmd_doc_schema(schema_code, doc_type, file_path=None, exclude=""):
 
 
 @click.command("import")
-@click.option("-o", "object_code")
-@click.option("-m", "module_code")
-@click.option("-d", "data_path", type=click.Path(exists=True))
+@click.option("-o", "object_code", required=True, help="code de l'object")
+@click.option("-m", "module_code", required=True, help="code du module")
 @click.option(
-    "--mapping",
-    "mapping_file_path",
+    "-d",
+    "data_path",
     type=click.Path(exists=True),
-    help="chemin vers le script sql de pre-process",
+    required=True,
+    help="chemin vers le fichier de données",
 )
-@click.option(
-    "-i",
-    "--import-code",
-    "import_code",
-    help="code de l'import de ficher",
-)
-@click.option(
-    "-v", "--verbose", type=int, default=1, help="1 : affiche les sortie, 2: les commandes sql  "
-)
+@click.option("--no-commit", is_flag=True, help="de pas persiter l'import")
+@click.option("-v", "verbose", default=1, help="Affiche les détails")
+@click.option("--sql", is_flag=True, default=False, help="Affiche les requete sql")
 @with_appcontext
 def cmd_import_bulk_data(
-    module_code=None,
-    object_code=None,
-    import_code=None,
-    data_path=None,
+    module_code,
+    object_code,
+    data_path,
     mapping_file_path=None,
-    verbose=None,
+    no_commit=False,
+    sql=True,
+    verbose=1,
 ):
     """
     importe des données pour un schema
@@ -161,35 +156,25 @@ def cmd_import_bulk_data(
 
     init_gn_modulator()
 
-    if module_code and object_code and data_path:
-        impt = TImport(
-            module_code, object_code, data_file_path=data_path, mapping_file_path=mapping_file_path
-        )
-        db.session.add(impt)
-        db.session.flush()
-        impt.process_import_schema()
-        print(impt.pretty_infos())
-        # En cas d'erreur on sort
-        if impt.errors:
-            print("Il y a des erreurs dans l'import")
-            for error in impt.errors:
-                print(f"- {error['error_code']} : {error['error_msg']}")
-            return
-
+    impt = TImport(
+        module_code,
+        object_code,
+        data_file_path=data_path,
+        mapping_file_path=mapping_file_path,
+        options={},
+    )
+    db.session.add(impt)
+    impt.process_import_schema()
+    if not no_commit:
         db.session.commit()
 
-        return
-
-    if import_code:
-        res = TImport.process_import_code(import_code, data_path)
-        if res is None:
-            print(f"L'import de code {import_code} n'existe pas\n")
-            import_codes = sorted(DefinitionMethods.definition_codes_for_type("import"))
-            print(f"Veuillez choisir parmi codes suivants\n")
-            for import_code in import_codes:
-                print(
-                    f"- {import_code:>15} : {DefinitionMethods.get_definition('import', import_code)['title']}"
-                )
+    print(impt.pretty_errors_txt())
+    if verbose >= 1:
+        print(impt.pretty_infos_txt())
+    if verbose >= 2:
+        print(impt.pretty_steps_txt())
+    if not impt.has_errors() and sql:
+        print(impt.all_sql())
 
     return True
 
@@ -306,35 +291,8 @@ def cmd_check():
     return not get_errors()
 
 
-@click.command("test")
-@click.option("-p", "module_path", type=click.Path(exists=True))
-def cmd_test(module_path):
-    """
-    test random
-    """
-
-    import subprocess, importlib, site, sys, pkg_resources
-    from geonature.utils.module import get_dist_from_code, iter_modules_dist
-    from pathlib import Path
-
-    subprocess.run(f"pip install -e '{module_path}'", shell=True, check=True)
-    importlib.reload(site)
-    for entry in sys.path:
-        print(entry)
-        pkg_resources.working_set.add_entry(entry)
-    # load python package
-    for module_dist in iter_modules_dist():
-        path = Path(sys.modules[module_dist.entry_points["code"].module].__file__)
-        if Path(module_path).resolve() in path.parents:
-            module_code = module_dist.entry_points["code"].load()
-            break
-    print(module_path, module_code)
-    return
-
-
 commands = [
     cmd_check,
-    cmd_test,
     cmd_test_grammar,
     cmd_install_module,
     cmd_remove_module,

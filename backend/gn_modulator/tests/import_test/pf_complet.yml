@@ -24,5 +24,5 @@
   id_nomenclature_ouvrage_hydrau_banq_type: NAT
   id_nomenclature_ouvrage_hydrau_position: RD
   id_nomenclature_ouvrage_specificite: SPE
-  nomenclatures_ouvrage_materiaux: BET|MET
-  nomenclatures_ouvrage_type: BUS|CAD|AUT
+  nomenclatures_ouvrage_materiaux: BET,MET
+  nomenclatures_ouvrage_type: BUS,CAD,AUT

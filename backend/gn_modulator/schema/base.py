@@ -182,6 +182,9 @@ class SchemaBase:
     def relationship_keys(self):
         return [k for k, v in self.properties().items() if self.is_relationship(k)]
 
+    def relationship_1_n_keys(self):
+        return [k for k, v in self.properties().items() if self.is_relation_1_n(k)]
+
     def properties(self):
         return self.definition["properties"]
 
