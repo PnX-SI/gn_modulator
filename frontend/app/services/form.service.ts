@@ -330,19 +330,19 @@ export class ModulesFormService {
         ? ['name', 'lastModified', 'size', 'type'].every((k) => data[k] == formValue[k])
         : false
       : utils.isObject(formValue)
-      ? !utils.isObject(data)
-        ? false
-        : // Object.keys(formValue).length == Object.keys(data).length &&
-          Object.entries(formValue)
-            .filter(([k, v]) => k != 'pendingRequest')
-            .every(([k, v]) => this.isEqual(v, data[k]))
-      : Array.isArray(formValue)
-      ? !Array.isArray(data)
-        ? false
-        : formValue.length != data.length
-        ? false
-        : formValue.every((elem) => data.find((d) => this.isEqual(elem, d)))
-      : formValue == data;
+        ? !utils.isObject(data)
+          ? false
+          : // Object.keys(formValue).length == Object.keys(data).length &&
+            Object.entries(formValue)
+              .filter(([k, v]) => k != 'pendingRequest')
+              .every(([k, v]) => this.isEqual(v, data[k]))
+        : Array.isArray(formValue)
+          ? !Array.isArray(data)
+            ? false
+            : formValue.length != data.length
+              ? false
+              : formValue.every((elem) => data.find((d) => this.isEqual(elem, d)))
+          : formValue == data;
   }
 
   integerValidator(): ValidatorFn {

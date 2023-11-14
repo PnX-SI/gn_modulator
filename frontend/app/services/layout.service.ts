@@ -90,8 +90,8 @@ export class ModulesLayoutService {
     return typeof layout == 'string'
       ? '__f__' == layout.substring(0, 5)
       : Array.isArray(layout) && layout.length
-      ? this.isStrFunction(layout[0])
-      : false;
+        ? this.isStrFunction(layout[0])
+        : false;
   }
 
   processLayoutDefinition(layout) {
@@ -321,16 +321,16 @@ export class ModulesLayoutService {
     const layoutType = !layout
       ? null
       : Array.isArray(layout)
-      ? 'items'
-      : ['array', 'dict', 'map', 'medias'].includes(layout.type)
-      ? layout.type
-      : typeof layout == 'string' || layout.key
-      ? 'key'
-      : !layout.type
-      ? layout.code
-        ? 'code'
-        : 'section'
-      : layout.type;
+        ? 'items'
+        : ['array', 'dict', 'map', 'medias'].includes(layout.type)
+          ? layout.type
+          : typeof layout == 'string' || layout.key
+            ? 'key'
+            : !layout.type
+              ? layout.code
+                ? 'code'
+                : 'section'
+              : layout.type;
     return layoutType;
   };
 
