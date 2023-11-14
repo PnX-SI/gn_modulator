@@ -22,6 +22,7 @@ class ImportMixinLog(ImportMixinUtils):
         Affiche des informations de l'import
         Pour les imports en ligne de commande
         """
+
         txt = ""
         if self.res.get("nb_data") is not None:
             txt += f"\n-- import csv file {Path(self.data_file_path).name}"

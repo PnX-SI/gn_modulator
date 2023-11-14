@@ -38,12 +38,16 @@ class ImportMixin(
         for step in self.remaining_import_steps():
             self.process_step(step)
             if self.has_errors():
+                errors = self.errors
+                steps = self.steps
                 try:
                     self.flush_or_commit()
                 except:
                     db.session.rollback()
-                self.status = "ERROR"
-                self.flush_or_commit()
+                    self.errors = errors
+                    self.steps = steps
+                    self.status = "ERROR"
+                    self.flush_or_commit()
                 return
 
         self.status = "PENDING" if step != self.import_steps()[-1] else "DONE"
