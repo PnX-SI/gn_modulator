@@ -86,7 +86,9 @@ SELECT
             WHEN nature = 'LGV' THEN 'VF_LGV'
             WHEN nature IN ('Voie de service', 'Voie ferrée principale') THEN 'VF_P'
             ELSE NULL
-        END AS id_type
+        END AS id_type,
+        'IGN BDTOPO 3-3' AS SOURCE,
+        TRUE AS ENABLED
         --,
         --'{ "largeur": ' || tdvf.largeur || ' }' AS additional_data
     FROM BD_TOPO.TRONCON_DE_VOIE_FERREE TDVF

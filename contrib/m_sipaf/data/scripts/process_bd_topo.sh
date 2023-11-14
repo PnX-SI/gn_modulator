@@ -56,9 +56,20 @@ csv_linear_group_vf=$processed_dir/linear_group_vf.csv
 csv_linear_vf=$processed_dir/linear_vf.csv
 if [ ! -f $csv_linear_vf ]; then
     export PGPASSWORD=$user_pg_pass;
-      psql -h $db_host -U $user_pg -d $db_name -v ON_ERROR_STOP=1 -f $script_dir/process_bd_topo_vf.sql
+    psql -h $db_host -U $user_pg -d $db_name -v ON_ERROR_STOP=1 -f $script_dir/process_bd_topo_vf.sql
     psql -h $db_host -U $user_pg -d $db_name -v ON_ERROR_STOP=1 -c "COPY (SELECT * FROM BD_TOPO.IMPORT_LINEAR_GROUP_vf) TO STDOUT WITH CSV HEADER DELIMITER ';'" > $csv_linear_group_vf
     psql -h $db_host -U $user_pg -d $db_name -v ON_ERROR_STOP=1 -c "COPY (SELECT * FROM BD_TOPO.IMPORT_LINEAR_vf) TO STDOUT WITH CSV HEADER DELIMITER ';'" > $csv_linear_vf
+fi
+
+
+# Process bd_topo voie navigable
+csv_linear_group_vn=$processed_dir/linear_group_vn.csv
+csv_linear_vn=$processed_dir/linear_vn.csv
+if [ ! -f $csv_linear_vn ]; then
+    export PGPASSWORD=$user_pg_pass;
+    psql -h $db_host -U $user_pg -d $db_name -v ON_ERROR_STOP=1 -f $script_dir/process_bd_topo_vn.sql
+    psql -h $db_host -U $user_pg -d $db_name -v ON_ERROR_STOP=1 -c "COPY (SELECT * FROM BD_TOPO.IMPORT_LINEAR_GROUP_vn) TO STDOUT WITH CSV HEADER DELIMITER ';'" > $csv_linear_group_vn
+    psql -h $db_host -U $user_pg -d $db_name -v ON_ERROR_STOP=1 -c "COPY (SELECT * FROM BD_TOPO.IMPORT_LINEAR_vn) TO STDOUT WITH CSV HEADER DELIMITER ';'" > $csv_linear_vn
 fi
 
 # Process bd_topo pkpr

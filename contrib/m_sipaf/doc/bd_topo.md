@@ -105,6 +105,11 @@ Pour insérer les types de linéaires correspondant à la bd_topo:
     geonature modulator import -m MODULATOR -o ref_geo.linear_group -d ${data_path}/linear_group_vf.csv
     geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear_vf.csv
 
+    # voie navigables
+    geonature modulator import -m MODULATOR -o ref_geo.linear_group -d ${data_path}/linear_group_vn.csv
+    geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear_vn.csv
+
+
     # point de repère
     geonature modulator import -m MODULATOR -o ref_geo.point -d ${data_path}/point_pkpr.csv
 

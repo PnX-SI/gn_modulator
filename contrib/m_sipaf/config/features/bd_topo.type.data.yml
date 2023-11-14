@@ -14,6 +14,7 @@ items:
       - [RT_DEP, Route départementale, Tronçons de route départementale]
       - [VF_P, Voie ferrée (Principale), Tronçons de voie ferrée (Principale)]
       - [VF_LGV, Voie ferrée (LGV), Tronçons de voie ferrée (LGV)]
+      - [VN, Voies navigables, Tronçons de voies navigables]
   - schema_code: ref_geo.point_type
     keys:
       - type_code
