@@ -13,6 +13,7 @@ from .data import commons as data_commons
 from .data import meta as data_meta
 from gn_modulator import SchemaMethods
 from .fixtures import passage_faune_with_diagnostic
+from geonature.tests.test_synthese import synthese_for_observers, source, datasets
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -37,6 +38,21 @@ class TestRepository:
                 "filters": [
                     "diagnostics any",
                     f"uuid_passage_faune = {passage_faune_with_diagnostic.uuid_passage_faune}",
+                ]
+            },
+        )
+        res = q.all()
+
+        assert len(res) == 1
+
+    def test_filter_d_within(self, passage_faune_with_diagnostic, synthese_for_observers):
+        sm = SchemaMethods("syn.synthese")
+        q = sm.query_list(
+            "MODULATOR",
+            "R",
+            {
+                "prefilters": [
+                    f"the_geom_4326 dwithin m_sipaf.pf;{passage_faune_with_diagnostic.id_passage_faune};geom;1000"
                 ]
             },
         )

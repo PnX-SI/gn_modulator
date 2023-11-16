@@ -335,17 +335,10 @@ site_details_fields:
 
     - label: __f__o.tab_label(x)
       object_code: synthese
-      hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
       items:
         - type: object
           display: table
-          prefilters: |
-            __f__{
-            const xy = o.config({...context, object_code: 'site'})?.value_xy;
-            return xy
-                ? `the_geom_4326 dwithin ${xy.x};${xy.y};1000`
-                : `id_synthese = -1`
-            }
+          prefilters: __f__`the_geom_4326 dwithin m_sipaf.pf;${o.object(x, 'site').value};geom;1000`
           actions:
             R:
               url: "#/synthese/occurrence/<id>"

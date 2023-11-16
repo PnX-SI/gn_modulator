@@ -2,7 +2,7 @@
     repositories - filters
 """
 import unidecode
-from sqlalchemy import cast, and_, or_, not_, func
+from sqlalchemy import cast, and_, or_, not_, func, orm
 from geonature.utils.env import db
 from ..errors import SchemaRepositoryFilterError, SchemaRepositoryFilterTypeError
 from sqlalchemy.sql.functions import ReturnTypeFromArgs
@@ -203,18 +203,34 @@ class SchemaRepositoriesFilters:
             filter_out = cast(model_attribute, db.String).in_([str(x) for x in filter_value])
 
         # filtre sur la distance à un point donnée
-        # filter_value de type '<x>;<y>;radius'
-        # - x : longitude du point
-        # - y : lattitude du point
-        # - radius : distance en m
         elif filter_type == "dwithin":
-            x, y, radius = filter_value.split(";")
-            geo_filter = func.ST_DWithin(
-                func.ST_GeogFromWKB(model_attribute),
-                func.ST_GeogFromWKB(func.ST_MakePoint(x, y)),
-                radius,
-            )
-            filter_out = geo_filter
+            # if ";" in filter_value:
+            #     # filter_value de type '<x>;<y>;radius'
+            #     # - x : longitude du point
+            #     # - y : lattitude du point
+            #     # - radius : distance en m
+
+            #     x, y, radius = filter_value.split(";")
+            #     geo_filter = func.ST_DWithin(
+            #         func.ST_GeogFromWKB(model_attribute),
+            #         func.ST_GeogFromWKB(func.ST_MakePoint(x, y)),
+            #         radius,
+            #     )
+            #     filter_out = geo_filter
+
+            if ";" in filter_value:
+                schema_code, value, geom_field, radius = filter_value.split(";")
+                sm = self.cls(schema_code)
+                Model = sm.Model()
+                alias = orm.aliased(Model)
+                query = query.join(alias, getattr(alias, sm.pk_field_name()) == value)
+                geom = getattr(alias, geom_field)
+                geo_filter = func.ST_DWithin(
+                    func.ST_GeogFromWKB(model_attribute),
+                    func.ST_GeogFromWKB(geom),
+                    radius,
+                )
+                filter_out = geo_filter
 
         # filtre de type bouding box :
         #   on souhaite que les données soient comprise dans un rectangle

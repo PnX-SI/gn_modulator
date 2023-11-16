@@ -53,9 +53,6 @@ export class ModulesLayoutObjectGeoJSONComponent
       console.error(`le layer (${this.pkFieldName()}==${value}) n'est pas présent`);
       return;
     }
-    if (layer._latlng) {
-      this.setObject({ value_xy: { x: layer._latlng.lng, y: layer._latlng.lat } });
-    }
 
     layer.bringToFront();
     this.computedLayout.open_popup && layer.openPopup();
@@ -117,7 +114,7 @@ export class ModulesLayoutObjectGeoJSONComponent
                 this.tooltipDisplayZoomTreshold,
                 false,
                 currentZoom,
-                currentMapBounds,
+                currentMapBounds
               );
               layer
                 .bindTooltip(label.toString(), {
@@ -132,7 +129,7 @@ export class ModulesLayoutObjectGeoJSONComponent
                 layer.onZoomMoveEnd = this._mapService.layerZoomMoveEndListener(
                   this.context.map_id,
                   layer,
-                  this.tooltipDisplayZoomTreshold,
+                  this.tooltipDisplayZoomTreshold
                 );
               }
             }
@@ -153,7 +150,7 @@ export class ModulesLayoutObjectGeoJSONComponent
   popupHTML(properties) {
     const fields = this.popupFields();
     const label = `<b>${this.utils.capitalize(
-      this.objectConfig().display.label,
+      this.objectConfig().display.label
     )}</b>: ${utils.getAttr(properties, this.labelFieldName())}`;
     var propertiesHTML = '';
     propertiesHTML += '<ul>\n';
@@ -232,7 +229,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     const key = this.context.object_code;
     const currentLayer = this._mapService.getLayerData(
       this.context.map_id,
-      this.context.object_code,
+      this.context.object_code
     );
 
     const condZoom =

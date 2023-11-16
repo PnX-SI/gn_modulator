@@ -1,4 +1,5 @@
 import pytest
+import datetime
 from geonature.utils.env import db
 from m_sipaf.models import PassageFaune, Diagnostic
 from shapely.geometry import Point

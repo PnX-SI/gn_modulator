@@ -20,16 +20,9 @@ layout:
           bring_to_front: true
           tooltip_permanent: true
         - type: object
-          hidden: "__f__!o.config({...context, object_code: 'site'})?.value_xy"
           display: geojson
           object_code: synthese
-          prefilters: |
-            __f__{
-            const xy = o.config({...context, object_code: 'site'})?.value_xy;
-            return xy
-                ? `the_geom_4326 dwithin ${xy.x};${xy.y};1000`
-                : `id_synthese = -1`
-            }
+          prefilters: __f__`the_geom_4326 dwithin m_sipaf.pf;${o.object(x, 'site').value};geom;1000`
           popup_fields:
             - date_min
             - dataset.dataset_name
