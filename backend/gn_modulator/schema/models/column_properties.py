@@ -18,7 +18,6 @@ class SchemaModelColumnProperties:
 
     def column_property_relation_x_n(self, key, column_property_def, Model):
         # a passer en argument
-
         cp_query = cp_select = self.cp_select(key, column_property_def, Model)
         if column_property_def.get("relation_key"):
             cp_where_conditions = self.column_property_util_relation_where_conditions(

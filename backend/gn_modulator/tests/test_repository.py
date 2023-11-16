@@ -12,8 +12,7 @@ from .utils.repository import test_schema_repository
 from .data import commons as data_commons
 from .data import meta as data_meta
 from gn_modulator import SchemaMethods
-from .fixtures import passage_faune_with_diagnostic
-from geonature.tests.test_synthese import synthese_for_observers, source, datasets
+from .fixtures import passage_faune_with_diagnostic, synthese_for_passage_faune
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -45,7 +44,7 @@ class TestRepository:
 
         assert len(res) == 1
 
-    def test_filter_d_within(self, passage_faune_with_diagnostic, synthese_for_observers):
+    def test_filter_d_within(self, passage_faune_with_diagnostic, synthese_for_passage_faune):
         sm = SchemaMethods("syn.synthese")
         q = sm.query_list(
             "MODULATOR",

@@ -52,6 +52,9 @@ class SchemaModelBase:
 
     def process_column_model(self, key, column_def):
         """ """
+
+        if column_def.get("column_property"):
+            return
         # get field_options
         field_args = []
         field_kwargs = {}

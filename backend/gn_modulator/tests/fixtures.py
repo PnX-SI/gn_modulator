@@ -5,6 +5,9 @@ from m_sipaf.models import PassageFaune, Diagnostic
 from shapely.geometry import Point
 from geoalchemy2.shape import from_shape
 from pypnusershub.db.models import Organisme
+from geonature.core.gn_synthese.models import TSources, Synthese
+from sqlalchemy import func
+from apptax.taxonomie.models import Taxref
 
 
 @pytest.fixture
@@ -21,3 +24,30 @@ def passage_faune_with_diagnostic():
         )
         pf.diagnostics.append(diagnostic)
     return pf
+
+
+@pytest.fixture()
+def synthese_for_passage_faune():
+    """
+    Seems redondant with synthese_data fixture, but synthese data
+    insert in cor_observers_synthese and run a trigger which override the observers_txt field
+
+    """
+
+    with db.session.begin_nested():
+        now = datetime.datetime.now()
+        taxon = Taxref.query.first()
+        point = Point(5.486786, 42.832182)
+        geom = from_shape(point, srid=4326)
+        source = TSources.query.filter_by(name_source="Occtax").one()
+        synthese = Synthese(
+            id_source=source.id_source,
+            nom_cite=taxon.lb_nom,
+            cd_nom=taxon.cd_nom,
+            date_min=now,
+            date_max=now,
+            the_geom_4326=geom,
+            the_geom_point=geom,
+            the_geom_local=func.st_transform(geom, 2154),
+        )
+        db.session.add(synthese)

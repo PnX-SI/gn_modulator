@@ -113,6 +113,7 @@ class SchemaAuto:
             col = getattr(Model, k)
             if (not isinstance(col.property, ColumnProperty)) or (k in columns):
                 continue
+            print(self, k)
             properties[k] = {"type": "string", "is_column_property": True}
 
         # relationships
