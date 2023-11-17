@@ -76,9 +76,7 @@ class SchemaMethods(
         schema_code = definition["code"]
 
         if not definition:
-            raise errors.SchemaLoadError(
-                "pas de definition pour le schema: {}".format(schema_code)
-            )
+            raise errors.SchemaLoadError(f"pas de definition pour le schema: {schema_code}")
 
         set_global_cache(["schema", schema_code, "schema"], self)
 

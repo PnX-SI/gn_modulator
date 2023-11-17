@@ -32,9 +32,8 @@ def get_list_rest(module_code, object_code, additional_params={}):
         #         "Vous n'avez pas les droit pour effectuer des actions d'admin pour le module MODULATOR",
         #         403,
         #     )
-        sql_txt = sm.cls.sql_txt(query_list)
         response = make_response(
-            sm.cls.format_sql(sql_txt),
+            query_list.sql_txt(),
             200,
         )
         response.mimetype = "text/plain"
@@ -99,7 +98,7 @@ def post_rest(module_code, object_code):
         m = sm.insert_row(data, commit=True)
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
-        return "Erreur Cruved : {}".format(str(e)), 403
+        return f"Erreur Cruved : {str(e)}", 403
 
     return sm.serialize(m, fields=params.get("fields"), as_geojson=params.get("as_geojson"))
 
@@ -128,9 +127,8 @@ def patch_rest(module_code, object_code, value):
         )
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
-        return "Erreur Cruved : {}".format(str(e)), 403
+        return f"Erreur Cruved : {str(e)}", 403
     except Exception as e:
-        print(e)
         raise (e)
 
     return sm.serialize(m, fields=params.get("fields"), as_geojson=params.get("as_geojson"))
@@ -158,7 +156,7 @@ def delete_rest(module_code, object_code, value):
         )
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
-        return "Erreur Cruved : {}".format(str(e)), 403
+        return f"Erreur Cruved : {str(e)}", 403
 
     return dict_out
 

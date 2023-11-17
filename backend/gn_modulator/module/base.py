@@ -121,13 +121,13 @@ class ModuleBase:
 
         sql_file_path = cls.migrations_dir(module_code) / "data/schema.sql"
         if sql_file_path.exists() and not force:
-            print("- Le fichier existe déjà {}".format(sql_file_path))
+            print(f"- Le fichier existe déjà {sql_file_path}")
             print("- Veuillez relancer la commande avec -f pour forcer la réécriture")
             return
         sql_file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(sql_file_path, "w") as f:
             f.write(txt)
-        print("- Création du fichier {}".format(sql_file_path.name))
+        print(f"- Création du fichier {sql_file_path.name}")
 
     @classmethod
     def process_module_features(cls, module_code):

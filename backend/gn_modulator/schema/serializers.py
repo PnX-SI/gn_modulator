@@ -49,13 +49,10 @@ class SchemaSerializers:
     def marshmallow_schema_code(self):
         """ """
 
-        return self.attr(
-            "meta.marshmallow_schema_code",
-            "ma{}".format(self.schema_code("pascal_case")),
-        )
+        return self.attr("meta.marshmallow_schema_code", f"ma{self.schema_code('pascal_case')}")
 
     def marshmallow_meta_name(self):
-        return "Meta{}".format(self.marshmallow_schema_code())
+        return f"Meta{self.marshmallow_schema_code()}"
 
     def process_column_marshmallow(self, column_key, column_def):
         field_type = column_def.get("type")
@@ -99,7 +96,7 @@ class SchemaSerializers:
         if field_type == "json":
             return fields.Raw(**kwargs)
 
-        raise SchemaProcessedPropertyError("type {} non traité".format(column_def["type"]))
+        raise SchemaProcessedPropertyError(f"type {column_def['type']} non traité")
 
     def opposite_relation_def(self, relation_def):
         opposite = {
@@ -164,7 +161,7 @@ class SchemaSerializers:
             relation_serializer = fields.List(relation_serializer)
 
         if relation_serializer is None:
-            raise Exception("relation_serializer is None for {}".format(relation_def))
+            raise Exception(f"relation_serializer is None for {relation_def}")
 
         return relation_serializer
 

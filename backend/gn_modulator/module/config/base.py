@@ -23,7 +23,7 @@ class ModulesConfigBase:
 
         if module_config is None:
             raise cls.errors.ModuleNotFoundError(
-                "La config du module de code {} n'a pas été trouvée".format(module_code)
+                f"La config du module de code {module_code} n'a pas été trouvée"
             )
 
         return module_config

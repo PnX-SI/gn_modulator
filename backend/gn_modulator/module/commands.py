@@ -44,7 +44,7 @@ class ModuleCommands:
         if not module_config["registred"]:
             print("Le module n'est pas enregistré")
 
-        print("Suppression du module {}".format(module_code))
+        print(f"Suppression du module {module_code}")
 
         # suppression des modules depandant du module en cours
         module_deps_installed = [
@@ -82,7 +82,7 @@ class ModuleCommands:
                 db_downgrade(revision=f"{module_code.lower()}@base")
 
         # suppression du module en base
-        print("- suppression du module {} en base".format(module_code))
+        print(f"- suppression du module {module_code} en base")
 
         cls.delete_db_module(module_code)
 
@@ -127,7 +127,7 @@ class ModuleCommands:
             cls.init_module_config(module_code)
             # ModuleMethods.init_modules()
 
-        print("Installation du module {}".format(module_code))
+        print(f"Installation du module {module_code}")
 
         # si module_path
 

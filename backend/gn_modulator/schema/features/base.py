@@ -100,7 +100,7 @@ class SchemaBaseFeatures:
             return pk
         except NoResultFound:
             raise errors.SchemaImportPKError(
-                "{}={} Pk not found {}".format(key_process, rel_test_values, sm_rel.schema_code())
+                f"{key_process}={rel_test_values} Pk not found {sm_rel.schema_code()}"
             )
 
     def get_foreign_keys(self, d):
@@ -134,7 +134,7 @@ class SchemaBaseFeatures:
         if data_file.suffix == ".yml":
             return cls.load_yml_file(data_file)
         else:
-            raise errors.SchemaError("Le fichier {} n'est pas valide".format(data_file))
+            raise errors.SchemaError(f"Le fichier {data_file} n'est pas valide")
 
     @classmethod
     def get_data_item(cls, data_item, file_path):
@@ -259,16 +259,16 @@ class SchemaBaseFeatures:
                 list_second_key = [
                     elem[1] for elem in filter(lambda e: e[0] == elem_first_key, items)
                 ]
-                elem_new = "{}.({})".format(elem_first_key, ", ".join(list_second_key))
+                elem_new = f"{elem_first_key}.({', '.join(list_second_key)})"
                 items_new.append(elem_new)
             items = items_new
 
-        # detail = '\n  - {}  ({})'.format(info_type, nb)
         detail = ""
 
         if nb and details:
             tab = "      - "
-            detail += "{}{}".format(tab, ("\n" + tab).join(items))
+            detail_items = ("\n" + tab).join(items)
+            detail += f"{tab}{detail_items}"
             detail += "\n"
         return detail
 
@@ -279,17 +279,6 @@ class SchemaBaseFeatures:
         """ """
 
         txt = ""
-        # detail_updates = cls.log_data_info_detail(info, "updates", details=details)
-        # detail_inserts = cls.log_data_info_detail(info, "inserts", details=details)
-        # detail_errors = cls.log_data_info_detail(info, "errors", details=details)
-        # print('detail_errors', detail_errors)
-        # print('detail_errors', info['errors'])
-        # txt += '  - {schema_code}\n'.format(schema_code=info['schema_code'])
-        # txt += '    - items ({})\n'.format(len(info['items']))
-        # txt += '    - updates ({})\n'.format(len(info['updates']))
-        # txt += '{}'.format(detail_updates)
-        # txt += '    - inserts ({})\n'.format(len(info['inserts']))
-        # txt += '{}'.format(detail_inserts)
 
         txt = """    - {schema_code:45}    #:{nb_items:4}    I:{nb_inserts:4}    U:{nb_updates:4}    E:{nb_errors:4}""".format(
             schema_code=info["schema_code"],
@@ -300,7 +289,7 @@ class SchemaBaseFeatures:
         )
 
         for info_error in info["errors"]:
-            txt += "\n      - {}".format(info_error["error"])
+            txt += f"\n      - {info_error['error']}"
 
         return txt
 
@@ -310,9 +299,8 @@ class SchemaBaseFeatures:
 
         txt_list = []
         for schema_code, info_file_value in infos_file.items():
-            # txt = "  - {}".format(schema_code, len(info_file_value))
-            txt = "  - {}".format(schema_code)
+            txt = f"  - {schema_code}"
             for info in info_file_value:
-                txt += "\n{}".format(cls.txt_data_info(info, details=details))
+                txt += f"\n{cls.txt_data_info(info, details=details)}"
             txt_list.append(txt)
         return "\n\n".join(txt_list)

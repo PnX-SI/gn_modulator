@@ -25,16 +25,12 @@ def process_dict_path(d, dict_path, base_url):
                 p_error.append(p)
             except Exception:
                 path_error = "/".join(p_error)
-                txt_error = "La chemin demandé <b>{}/{}</b> n'est pas correct\n".format(
-                    path_error, p
-                )
+                txt_error = f"La chemin demandé <b>{path_error}/{p}</b> n'est pas correct\n"
                 if type(out) is dict and out.keys():
                     txt_error += "<br><br>Vous pouvez choisir un chemin parmi :"
                     for key in sorted(list(out.keys())):
                         url_key = base_url + path_error + "/" + key
-                        txt_error += '<br> - <a href="{}">{}{}</a>'.format(
-                            url_key, path_error + "/" if path_error else "", key
-                        )
+                        txt_error += f'<br> - <a href="{url_key}">{path_error + "/" if path_error else ""}{key}</a>'
                 return txt_error, 500
 
     return jsonify(out)

@@ -178,15 +178,11 @@ WHERE
             sql_type = "SERIAL NOT NULL"
 
         if field_type == "geometry":
-            sql_type = "GEOMETRY({}, {})".format(
-                column_def.get("geometry_type", "GEOMETRY").upper(), column_def["srid"]
-            )
+            sql_type = f'GEOMETRY({column_def.get("geometry_type", "GEOMETRY").upper()}, {column_def["srid"]})'
 
         if not sql_type:
             raise SchemaProcessedPropertyError(
-                "Property type {} in processed_properties but not managed yet for SQL processing".format(
-                    field_type
-                )
+                f"Property type {field_type} in processed_properties but not managed yet for SQL processing"
             )
 
         if required and ("NOT NULL" not in sql_type):
@@ -264,7 +260,7 @@ WHERE
         """
         Create schema sql schema
         """
-        txt = "CREATE SCHEMA  IF NOT EXISTS {};".format(self.sql_schema_name())
+        txt = f"CREATE SCHEMA  IF NOT EXISTS {self.sql_schema_name()};"
         return txt
 
     def sql_txt_drop_schema(self):
@@ -274,7 +270,7 @@ WHERE
         Jamais de drop cascade !!!!!!!
         """
 
-        txt = "DROP SCHEMA {};".format(self.sql_schema_name())
+        txt = f"DROP SCHEMA {self.sql_schema_name()};"
         return txt
 
     def sql_processing(self):
@@ -304,7 +300,7 @@ WHERE
         """
         txt = ""
 
-        txt += "DROP TABLE {}.{};".format(self.sql_schema_name(), self.sql_table_name())
+        txt += f"DROP TABLE {self.sql_schema_name()}.{self.sql_table_name()};"
 
         return txt
 
@@ -331,9 +327,9 @@ WHERE
             ):
                 schema_codes_to_process.append(name)
 
-        txt = "-- process schema : {}\n".format(self.schema_code())
+        txt = "-- process schema : {self.schema_code()}\n"
         if schema_codes_to_process:
-            txt += "--\n-- and dependencies : {}\n".format(", ".join(schema_codes_to_process))
+            txt += f"--\n-- and dependencies : {', '.join(schema_codes_to_process)}\n"
         txt += "\n\n"
 
         if self.schema_code() not in processed_schema_codes:
@@ -347,10 +343,8 @@ WHERE
                 sql_schema_names.append(sm.sql_schema_name())
 
         for sql_schema_name in sql_schema_names:
-            txt += "---- sql schema {sql_schema_name}\n\n".format(sql_schema_name=sql_schema_name)
-            txt += "CREATE SCHEMA IF NOT EXISTS {sql_schema_name};\n\n".format(
-                sql_schema_name=sql_schema_name
-            )
+            txt += f"---- sql schema {sql_schema_name}\n\n"
+            txt += f"CREATE SCHEMA IF NOT EXISTS {sql_schema_name};\n\n"
 
         # actions
         for action in [
@@ -367,6 +361,6 @@ WHERE
                 sm = self.cls(name)
                 txt_action = getattr(sm, action)()
                 if txt_action:
-                    txt += "{}\n".format(txt_action)
+                    txt += f"{txt_action}\n"
 
         return txt, processed_schema_codes + schema_codes_to_process

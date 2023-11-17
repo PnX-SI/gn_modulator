@@ -94,7 +94,7 @@ class SchemaModelColumnProperties:
             return select([func_min_max(relation_field)])
 
         raise errors.SchemaModelColumnPropertyError(
-            "La column_property {} {} est mal définie".format(self.schema_code(), key)
+            f"La column_property {self.schema_code()} {key} est mal définie"
         )
 
     def column_property_util_relation_where_conditions(self, key, column_property_def, Model):

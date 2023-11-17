@@ -41,7 +41,7 @@ class SchemaBase:
         Pour les log, print pour l'instant
         TODO
         """
-        print("{}".format(msg))
+        print(msg)
 
     @classmethod
     def pprint(cls, d, indent=2):
@@ -129,10 +129,10 @@ class SchemaBase:
         return self.schema_code().split(".")[-2]
 
     def code_field_name(self):
-        return self.attr("meta.code_field_name", "{}_code".format(self.object_code()))
+        return self.attr("meta.code_field_name", f"{self.object_code()}_code")
 
     def name_field_name(self):
-        return self.attr("meta.name_field_name", "{}_name".format(self.object_code()))
+        return self.attr("meta.name_field_name", f"{self.object_code()}_name")
 
     def is_column(self, key):
         return self.has_property(key) and self.property(key).get("type") in column_types
@@ -234,7 +234,7 @@ class SchemaBase:
 
         if relation_type is None:
             raise self.errors.SchemaRelationError(
-                "relation type is None for relation_def : {}".format(relation_def)
+                f"relation type is None for relation_def : {relation_def}"
             )
         return relation_type
 
@@ -361,7 +361,7 @@ class SchemaBase:
         """
         from geonature.utils.config import config
 
-        return "{}/{}".format(config["API_ENDPOINT"], MODULE_CODE.lower())
+        return f'{config["API_ENDPOINT"]}/{MODULE_CODE.lower()}'
 
     def url(self, post_url, full_url=False):
         """
@@ -370,10 +370,10 @@ class SchemaBase:
         TODO gérer par type d'url ?
         """
 
-        url = self.attr("meta.url", "/{}{}".format(self.schema_code(), post_url))
+        url = self.attr("meta.url", f"/{self.schema_code()}{post_url}")
 
         if full_url:
-            url = "{}{}".format(self.cls.base_url(), url)
+            url = f"{self.cls.base_url()}{url}"
 
         return url
 

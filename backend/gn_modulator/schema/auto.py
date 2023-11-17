@@ -52,9 +52,7 @@ class SchemaAuto:
 
         Model = get_class_from_path(self.attr("meta.model"))
         if Model is None:
-            raise SchemaAutoError(
-                "Pas de modèles trouvé pour la table {}".format(schema_dot_table)
-            )
+            raise SchemaAutoError("Pas de modèles trouvé pour la table {schema_dot_table}")
 
         properties_auto = self.autoproperties(Model)
 
@@ -131,7 +129,7 @@ class SchemaAuto:
         if not relation.target.schema:
             return
 
-        sql_schema_dot_table = "{}.{}".format(relation.target.schema, relation.target.name)
+        sql_schema_dot_table = f"{relation.target.schema}.{relation.target.name}"
         schema_code = self.cls.c_get_schema_code_from_sql_schema_dot_table(sql_schema_dot_table)
         if not schema_code:
             return
@@ -294,9 +292,7 @@ class SchemaAuto:
         check_constraints = self.get_check_constraints(sql_schema_name, sql_table_name)
         for check_constraint in check_constraints:
             sqltext = check_constraint["sqltext"]
-            s_test1 = "ref_nomenclatures.check_nomenclature_type_by_mnemonique({}, '".format(
-                column_key
-            )
+            s_test1 = f"ref_nomenclatures.check_nomenclature_type_by_mnemonique({column_key}, '"
             s_test2 = "'::character varying)"
             if s_test1 in sqltext:
                 nomenclature_type = sqltext.replace(s_test1, "").replace(s_test2, "")

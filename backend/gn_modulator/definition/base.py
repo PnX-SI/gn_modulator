@@ -187,7 +187,8 @@ class DefinitionBase:
         for error in jsonschema_errors:
             msg = error.message
             if error.path:
-                msg = "[{}]\n    {}".format(".".join(str(x) for x in error.absolute_path), msg)
+                msg_title = ".".join(str(x) for x in error.absolute_path)
+                msg = f"[{msg_title}]\n    {msg}"
 
             add_error(
                 definition_type=definition_type,

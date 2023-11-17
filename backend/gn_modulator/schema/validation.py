@@ -25,9 +25,9 @@ class SchemaValidation:
         for key, _column_def in self.columns().items():
             column_def = copy.deepcopy(_column_def)
             if column_def["type"] == "geometry":
-                schema_code = "references.geom.{}".format(column_def["geometry_type"])
+                schema_code = f"references.geom.{column_def['geometry_type']}"
                 self.set_definition_from_schema_code(definitions, schema_code)
-                column_def["$ref"] = "#/definitions/{}".format(self.cls.defs_id(schema_code))
+                column_def["$ref"] = f"#/definitions/{self.cls.defs_id(schema_code)}"
                 column_def.pop("type")
 
             properties[key] = self.process_json_schema(column_def)
@@ -64,7 +64,7 @@ class SchemaValidation:
 
             properties[key] = self.process_json_schema(relation_def)
 
-            ref = "#/definitions/{}".format(self.cls.defs_id(relation_def["schema_code"]))
+            ref = "#/definitions/{self.cls.defs_id(relation_def['schema_code'])}"
 
             # relation 1 n
             if relation_def["relation_type"] == "n-1":
