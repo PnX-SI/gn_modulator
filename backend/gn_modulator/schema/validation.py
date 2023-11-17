@@ -64,7 +64,7 @@ class SchemaValidation:
 
             properties[key] = self.process_json_schema(relation_def)
 
-            ref = "#/definitions/{self.cls.defs_id(relation_def['schema_code'])}"
+            ref = f"#/definitions/{self.cls.defs_id(relation_def['schema_code'])}"
 
             # relation 1 n
             if relation_def["relation_type"] == "n-1":
@@ -196,7 +196,7 @@ class SchemaValidation:
 
         try:
             jsonschema.validate(instance=data, schema=self.json_schema)
-        except Exception as e:
+        except jsonschema.exceptions.ValidationError as e:
             if "is a required property" in e.message and not check_required:
                 pass
             else:
