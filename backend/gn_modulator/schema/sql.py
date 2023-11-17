@@ -9,17 +9,9 @@ from sqlalchemy import inspect
 from geonature.utils.env import db
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
 from gn_modulator.utils.commons import get_class_from_path
-from ..errors import (
-    SchemaProcessedPropertyError,
-)
 
 
-class SchemaSqlBase:
-    def sql_type(self, key):
-        if not self.Model().is_column(key):
-            return None
-        return self.cls.c_get_type(self.property(key)["type"], "definition", "sql")
-
+class SchemaSql:
     @classmethod
     def auto_sql_schemas_dot_tables(cls):
         auto_sql_schemas_dot_tables = []
@@ -170,26 +162,6 @@ WHERE
     def pprint_sql(cls, sql_txt):
         print(cls.format_sql(sql_txt))
 
-    def get_sql_type(self, column_def, cor_table=False, required=False):
-        field_type = column_def.get("type")
-
-        sql_type = self.cls.c_get_type(field_type, "definition", "sql")["type"]
-        if column_def.get("primary_key") and not cor_table:
-            sql_type = "SERIAL NOT NULL"
-
-        if field_type == "geometry":
-            sql_type = f'GEOMETRY({column_def.get("geometry_type", "GEOMETRY").upper()}, {column_def["srid"]})'
-
-        if not sql_type:
-            raise SchemaProcessedPropertyError(
-                f"Property type {field_type} in processed_properties but not managed yet for SQL processing"
-            )
-
-        if required and ("NOT NULL" not in sql_type):
-            sql_type += " NOT NULL"
-
-        return sql_type
-
     def sql_default(self, column_def):
         if column_def.get("default") is None:
             return None
@@ -240,46 +212,11 @@ WHERE
     def c_sql_table_exists(cls, sql_schema_name, sql_table_name):
         return f"{sql_schema_name}.{sql_table_name}".lower() in cls.get_tables()
 
-    @classmethod
-    def c_sql_schema_exists(cls, sql_schema_name):
-        return sql_schema_name in inspect(db.engine).get_schema_names()
-
-    def sql_schema_exists(self):
-        """
-        check if sql schema exists
-        """
-        return self.cls.c_sql_schema_exists(self.sql_schema_name())
-
     def sql_table_exists(self):
         """
         check if sql table exists
         """
         return self.cls.c_sql_table_exists(self.sql_schema_name(), self.sql_table_name())
-
-    def sql_txt_create_schema(self):
-        """
-        Create schema sql schema
-        """
-        txt = f"CREATE SCHEMA  IF NOT EXISTS {self.sql_schema_name()};"
-        return txt
-
-    def sql_txt_drop_schema(self):
-        """
-        Drop schema sql schema
-
-        Jamais de drop cascade !!!!!!!
-        """
-
-        txt = f"DROP SCHEMA {self.sql_schema_name()};"
-        return txt
-
-    def sql_processing(self):
-        """
-        Variable meta
-            - pour authoriser l'execution de script sql pour le schema
-            - par defaut à False
-        """
-        return self.attr("meta.sql_processing", False)
 
     @classmethod
     def c_sql_exec_txt(cls, txt):
@@ -293,74 +230,3 @@ WHERE
             filter(lambda l: (l and not l.strip().startswith("--")), txt.split("\n"))
         )
         return db.session.execute(txt_no_comment)
-
-    def sql_txt_drop_table(self):
-        """
-        code sql qui permet de supprimer la table du schema
-        """
-        txt = ""
-
-        txt += f"DROP TABLE {self.sql_schema_name()}.{self.sql_table_name()};"
-
-        return txt
-
-    def sql_txt_process(self, processed_schema_codes=[]):
-        """
-        process all sql for a schema
-        """
-
-        clear_global_cache(["sql_table"])
-        if not self.sql_processing():
-            processed_schema_codes.append(self.schema_code())
-            return "", processed_schema_codes
-
-        schema_codes_to_process = []
-        for name in self.dependencies():
-            sm = self.cls(name)
-            if (
-                # si la creation de sql est permise pour ce schema
-                sm.sql_processing()
-                # et si la table n'existe pas déjà
-                and (not sm.sql_table_exists())
-                # et si le code sql pour ce schema ne vient pas d'être crée par un appel précédent à sql_txt_process
-                and (name not in processed_schema_codes)
-            ):
-                schema_codes_to_process.append(name)
-
-        txt = "-- process schema : {self.schema_code()}\n"
-        if schema_codes_to_process:
-            txt += f"--\n-- and dependencies : {', '.join(schema_codes_to_process)}\n"
-        txt += "\n\n"
-
-        if self.schema_code() not in processed_schema_codes:
-            schema_codes_to_process.insert(0, self.schema_code())
-
-        # schemas
-        sql_schema_names = []
-        for name in schema_codes_to_process:
-            sm = self.cls(name)
-            if sm.sql_schema_name() not in sql_schema_names and not sm.sql_schema_exists():
-                sql_schema_names.append(sm.sql_schema_name())
-
-        for sql_schema_name in sql_schema_names:
-            txt += f"---- sql schema {sql_schema_name}\n\n"
-            txt += f"CREATE SCHEMA IF NOT EXISTS {sql_schema_name};\n\n"
-
-        # actions
-        for action in [
-            "sql_txt_create_table",
-            "slq_txt_unique_key_constraint",
-            "sql_txt_primary_key_constraints",
-            "sql_txt_foreign_key_constraints",
-            "sql_txt_nomenclature_type_constraints",
-            "sql_txt_process_correlations",
-            "sql_txt_process_triggers",
-            "sql_txt_process_index",
-        ]:
-            for name in schema_codes_to_process:
-                sm = self.cls(name)
-                txt_action = getattr(sm, action)()
-                if txt_action:
-                    txt += f"{txt_action}\n"
-
-        return txt, processed_schema_codes + schema_codes_to_process
