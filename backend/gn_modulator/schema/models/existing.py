@@ -52,9 +52,7 @@ class SchemaModelExisting:
             raise "error model TODO"
 
         for key, column_def in self.columns().items():
-            if hasattr(Model, key):
-                self.process_existing_column_model(key, column_def, getattr(Model, key))
-            else:
+            if not hasattr(Model, key) and not column_def.get("column_property"):
                 setattr(Model, key, self.process_column_model(key, column_def))
 
         # store in cache before relation (avoid circular dependencies)
