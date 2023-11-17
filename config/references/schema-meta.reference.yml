@@ -8,8 +8,7 @@ required:
   - label_field_name
   - genre
   - unique
-dependencies:
-  autoschema: [model]
+  - model
 properties:
   label:
     type: string
@@ -25,5 +24,3 @@ properties:
       type: string
   model:
     type: string
-  autoschema:
-    type: boolean

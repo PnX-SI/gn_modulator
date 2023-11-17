@@ -4,7 +4,6 @@ title: Schema user.liste
 description: Définition du schema pour les liste d'utilisateurs
 
 meta:
-    autoschema: true
     model: pypnusershub.db.models.UserList
     label: liste
     label_field_name: nom_liste

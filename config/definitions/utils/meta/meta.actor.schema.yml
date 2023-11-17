@@ -5,7 +5,6 @@ description: Définition du schema des acteurs de jeux de données
 
 meta:
   schema_code: meta.actor
-  autoschema: true
   model: geonature.core.gn_meta.models.CorDatasetActor
   label: Acteur de jeux de données
   label_field_name: id_cda

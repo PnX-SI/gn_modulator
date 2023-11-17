@@ -9,10 +9,6 @@ meta:
     label_field_name: linear_name
     geometry_field_name: geom
     genre: M
-    autoschema: true
-    relations:
-        - type
-        - groups
     unique:
         - id_type
         - linear_code

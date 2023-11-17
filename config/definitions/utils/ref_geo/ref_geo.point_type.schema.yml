@@ -8,6 +8,5 @@ meta:
     label: type de point
     label_field_name: type_name
     genre: M
-    autoschema: true
     unique:
         - type_code

@@ -11,6 +11,5 @@ meta:
     genre: M
     relation:
         - linears
-    autoschema: true
     unique:
         - code

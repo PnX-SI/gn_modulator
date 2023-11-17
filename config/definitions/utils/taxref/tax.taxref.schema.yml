@@ -4,7 +4,6 @@ title: Schema tax.taxref
 description: Définition du schema de taxonomie
 
 meta:
-    autoschema: true
     model: apptax.taxonomie.models.Taxref
     genre: F
     label: taxonomie

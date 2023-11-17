@@ -4,7 +4,6 @@ title: Schema tax.taxsearch
 description: Définition du schema de taxonomie pour la recherche de taxon
 
 meta:
-    autoschema: true
     model: apptax.taxonomie.models.VMTaxrefListForautocomplete
     genre: F
     label: taxonomie

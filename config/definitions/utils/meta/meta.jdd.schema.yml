@@ -13,10 +13,6 @@ meta:
   label_field_name: dataset_shortname
   title_field_name: dataset_desc
   genre: M
-  autoschema: true
-  relations:
-    - modules
-    - acquisition_framework
 properties:
   dataset_name:
     title: Nom du jeu de données

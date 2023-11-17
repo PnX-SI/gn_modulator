@@ -12,9 +12,6 @@ meta:
   labels: "cadre d'acquistion"
   label_field_name: acquisition_framework_name
   genre: M
-  autoschema: true
-  relations:
-    - cor_af_actor
 properties:
   acquisition_framework_name:
     title: Nom du cadre d'acquisition

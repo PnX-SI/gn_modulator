@@ -7,7 +7,6 @@ required:
     - nom_role
     - prenom_role
 meta:
-    autoschema: true
     model: pypnusershub.db.models.User
     label: utilisateur
     label_field_name: nom_role
@@ -19,8 +18,6 @@ meta:
             - organisme.nom_organisme
     unique:
         - identifiant
-    relations:
-        - groups
 properties:
     password:
         type: string

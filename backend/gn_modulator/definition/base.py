@@ -135,7 +135,7 @@ class DefinitionBase:
             cls.remove_from_cache(definition_type, definition_code)
 
         # test si le modèle existe (pour les schemas auto)
-        if definition_type == "schema" and definition["meta"].get("autoschema"):
+        if definition_type == "schema":
             model_path = definition["meta"]["model"]
             try:
                 get_class_from_path(model_path)
@@ -164,10 +164,6 @@ class DefinitionBase:
 
         # schema de validation de la definition
         definition_reference_code = definition_type
-
-        # patch schema_auto
-        if definition_type == "schema" and definition["meta"].get("autoschema"):
-            definition_reference_code = "schema_auto"
 
         definition_reference = cls.get_definition("reference", definition_reference_code)
 

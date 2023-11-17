@@ -4,7 +4,6 @@ title: Schema modules.tag
 description: Définition du schema des tags de sous-modules
 
 meta:
-    autoschema: true
     model: gn_modulator.models.ModuleTags
     label: Tag de modules
     labels: Tags de modules

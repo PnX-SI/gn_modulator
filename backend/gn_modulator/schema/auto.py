@@ -32,16 +32,8 @@ class SchemaAuto:
             set_global_cache(["insp"], insp)
         return insp
 
-    def autoschema(self):
-        """
-        boolean pour savoir si on calcule le schema automatiquement
-        """
-        return self.attr("meta.autoschema")
-
-    def get_autoschema(self):
-        """
-        combine definition schema & autoschema
-        """
+    def get_auto_schema(self):
+        """ """
         schema_definition = self.definition
 
         schema_dot_table = self.sql_schema_dot_table()

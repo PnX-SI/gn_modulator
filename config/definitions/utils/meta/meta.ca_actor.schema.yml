@@ -13,8 +13,3 @@ meta:
     - id_role
     - id_passage_faune
   model: geonature.core.gn_meta.models.CorAcquisitionFrameworkActor
-  relations:
-    - role
-    - organism
-    - nomenclature_actor_role
-  autoschema: true

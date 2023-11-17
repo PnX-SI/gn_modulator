@@ -14,7 +14,6 @@
         "labels": "jeux de données",
         "label_field_name": "dataset_shortname",
         "title_field_name": "dataset_desc",
-        "genre": "M",
-        "autoschema": true
+        "genre": "M"
     }
 }

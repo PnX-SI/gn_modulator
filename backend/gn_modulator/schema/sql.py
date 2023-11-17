@@ -17,25 +17,11 @@ class SchemaSql:
         auto_sql_schemas_dot_tables = []
         for schema_code in cls.schema_codes():
             schema_definition = get_global_cache(["schema", schema_code, "definition"])
-            if not schema_definition["meta"].get("autoschema"):
-                continue
 
             Model = get_class_from_path(schema_definition["meta"]["model"])
             table_name = Model.__tablename__
             table_schema = Model.__table__.schema
             auto_sql_schemas_dot_tables.append(f"{table_schema}.{table_name}")
-
-        return auto_sql_schemas_dot_tables
-
-    @classmethod
-    def non_auto_sql_schemas_dot_tables(cls):
-        auto_sql_schemas_dot_tables = []
-        for schema_code in cls.schema_codes():
-            schema_definition = get_global_cache(["schema", schema_code, "definition"])
-            if schema_definition["meta"].get("autoschema"):
-                continue
-
-            auto_sql_schemas_dot_tables.append(schema_definition["meta"]["sql_schema_dot_table"])
 
         return auto_sql_schemas_dot_tables
 
@@ -59,7 +45,7 @@ class SchemaSql:
         SELECT
             schema_dot_table
         FROM tables
-        WHERE schema_dot_table  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables() + cls.non_auto_sql_schemas_dot_tables())}')
+        WHERE schema_dot_table  IN ('{"', '".join(cls.auto_sql_schemas_dot_tables())}')
         """
         res = cls.c_sql_exec_txt(sql_txt_tables)
         tables = [r[0] for r in res]
@@ -144,11 +130,7 @@ WHERE
         )
 
     def is_nullable(self, column_name):
-        return (
-            self.get_column_info(column_name)["nullable"]
-            if self.autoschema()
-            else getattr(self.Model().__table__.columns, column_name).nullable
-        )
+        return self.get_column_info(column_name)["nullable"]
 
     @classmethod
     def sql_txt(cls, query):

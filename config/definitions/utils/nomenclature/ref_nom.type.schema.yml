@@ -7,7 +7,6 @@ required:
   - mnemonique
 meta:
   schema_code: ref_nom.type
-  autoschema: true
   unique:
     - mnemonique
   import:

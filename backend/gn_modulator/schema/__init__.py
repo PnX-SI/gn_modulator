@@ -82,8 +82,7 @@ class SchemaMethods(
 
         self.definition = definition
 
-        if self.autoschema():
-            self.definition = self.get_autoschema()
+        self.definition = self.get_auto_schema()
 
         self.json_schema = self.get_json_schema()
 

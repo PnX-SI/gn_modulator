@@ -4,7 +4,6 @@ title: Schema syn.source
 description: Définition du schema des sources de la synthese
 
 meta:
-    autoschema: true
     model: geonature.core.gn_synthese.models.TSources
     genre: F
     label: source

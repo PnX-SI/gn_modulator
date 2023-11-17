@@ -4,7 +4,6 @@ title: Schema user.organisme
 description: Définition du schema pour les organimes
 
 meta:
-    autoschema: true
     model: pypnusershub.db.models.Organisme
     genre: M
     label: organisme

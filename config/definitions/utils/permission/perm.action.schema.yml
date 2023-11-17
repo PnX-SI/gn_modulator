@@ -4,7 +4,6 @@ title: Schema perm.action
 description: Définition du schema des actions
 
 meta:
-  autoschema: true
   model: geonature.core.gn_permissions.models.PermAction
   label: action
   label_field_name: code_action

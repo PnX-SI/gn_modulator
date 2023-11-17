@@ -5,7 +5,6 @@ description: Définition du schema des nomenclatures
 
 meta:
   schema_code: ref_nom.nomenclature
-  autoschema: true
   unique:
     - id_type
     - cd_nomenclature
@@ -28,5 +27,3 @@ meta:
   label_field_name: label_fr
   title_field_name: definition_fr
   sort: label_fr
-  relations:
-    - nomenclature_type

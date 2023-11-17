@@ -4,7 +4,6 @@ title: schema usage
 description: schema pour les usage de passages à faune
 
 meta:
-    autoschema: true
     model: m_sipaf.models.Usage
     module_code: m_sipaf
     genre: M

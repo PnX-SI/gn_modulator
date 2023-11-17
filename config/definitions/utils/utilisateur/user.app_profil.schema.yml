@@ -4,7 +4,6 @@ title: Schema user.app_profil
 description: Définition du schema pour les profils utilisateurs applications
 
 meta:
-    autoschema: true
     model: pypnusershub.db.models.UserApplicationRight
     label: application profil
     label_field_name: id_app

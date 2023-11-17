@@ -4,7 +4,6 @@ title: Schema user.profil
 description: Définition du schema pour les profils d'utilisateurs
 
 meta:
-    autoschema: true
     model: pypnusershub.db.models.Profils
     label: profil
     label_field_name: nom_profil

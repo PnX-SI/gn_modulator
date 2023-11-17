@@ -4,7 +4,6 @@ title: schema diagnostic passage faune
 description: schema pour les diagnostics des passages à faune
 
 meta:
-  autoschema: true
   model: m_sipaf.models.Diagnostic
   module_code: m_sipaf
   genre: M

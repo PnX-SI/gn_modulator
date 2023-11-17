@@ -4,7 +4,6 @@ title: Schema modules.import
 description: Définition du schema des imports
 
 meta:
-    autoschema: true
     model: gn_modulator.imports.models.TImport
     genre: M
     label: import

@@ -4,7 +4,6 @@ title: schema passage faune
 description: schema pour les passages à faune
 
 meta:
-    autoschema: true
     model: m_sipaf.models.PassageFaune
     module_code: m_sipaf
     genre: M

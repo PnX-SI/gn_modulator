@@ -4,7 +4,6 @@ title: schema diagnostic passage faune (vegetation_tablier)
 description: schema pour les diagnostics des passages à faune (vegetation_tablier)
 
 meta:
-  autoschema: true
   model: m_sipaf.models.DiagnosticVegetationTablier
   module_code: m_sipaf
   genre: M

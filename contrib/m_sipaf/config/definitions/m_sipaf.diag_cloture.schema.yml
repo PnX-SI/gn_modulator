@@ -4,7 +4,6 @@ title: schema diagnostic passage faune (clotures)
 description: schema pour les diagnostics des passages à faune (clotures)
 
 meta:
-  autoschema: true
   model: m_sipaf.models.DiagnosticCloture
   module_code: m_sipaf
   genre: M

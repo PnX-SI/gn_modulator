@@ -4,7 +4,6 @@ title: Schema syn.synthese
 description: Définition du schema de la synthese
 
 meta:
-    autoschema: true
     model: geonature.core.gn_synthese.models.Synthese
     genre: M
     label: element de la synthese

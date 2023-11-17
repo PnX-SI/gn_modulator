@@ -3,7 +3,6 @@ code: commons.table_location
 title: Schema commons.table_location
 description: Définition du schema des 'table_locations'
 meta:
-    autoschema: true
     model: geonature.core.gn_commons.models.base.BibTablesLocation
     label: table_location
     label_field_name: table_desc

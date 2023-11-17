@@ -4,7 +4,6 @@ title: Schema commons.media
 description: Définition du schema des medias
 
 meta:
-  autoschema: true
   model: geonature.core.gn_commons.models.base.TMedias
   label: média
   label_field_name: title_fr

@@ -8,9 +8,6 @@ meta:
     label: géométrie
     label_field_name: area_name
     genre: F
-    autoschema: true
-    relations:
-        - area_type
     unique:
         - id_type
         - area_code

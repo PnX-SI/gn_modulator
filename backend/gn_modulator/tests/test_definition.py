@@ -42,7 +42,7 @@ class TestDefinitions:
 
         # on a bien les références
         # - pour les définitions
-        for reference_key in ["schema", "schema_auto", "import", "module"]:
+        for reference_key in ["schema", "import", "module"]:
             assert get_global_cache(["reference", reference_key]) is not None
 
         # - pour la validation

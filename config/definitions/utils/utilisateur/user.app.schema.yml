@@ -4,7 +4,6 @@ title: Schema user.app
 description: Définition du schema pour les applications
 
 meta:
-    autoschema: true
     model: pypnusershub.db.models.Application
     label: application
     label_field_name: nom_application

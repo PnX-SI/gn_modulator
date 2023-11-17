@@ -4,7 +4,6 @@ title: Schema perm.filter
 description: Définition du schema des filtres
 
 meta:
-  autoschema: true
   model: geonature.core.gn_permissions.models.TFilters
   label: filtre
   label_field_name: label_filter

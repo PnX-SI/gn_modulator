@@ -4,7 +4,6 @@ title: schema diagnostic passage faune (vegetation_debouche)
 description: schema pour les diagnostics des passages à faune (vegetation_debouche)
 
 meta:
-  autoschema: true
   model: m_sipaf.models.DiagnosticVegetationDebouche
   module_code: m_sipaf
   genre: M

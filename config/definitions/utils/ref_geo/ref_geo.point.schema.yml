@@ -9,9 +9,6 @@ meta:
     label_field_name: point_name
     geometry_field_name: geom_4326
     genre: M
-    autoschema: true
-    relations:
-        - type
     unique:
         - id_type
         - point_code
