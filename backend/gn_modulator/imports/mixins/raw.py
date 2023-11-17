@@ -67,15 +67,15 @@ class ImportMixinRaw(ImportMixinUtils):
         # ou les colonnes ["id_import", "x", "y"]
         columns = list(
             filter(
-                lambda x: (self.sm().is_column(x))
-                or self.sm().is_relation_n_n(x)
+                lambda x: (self.Model().is_column(x))
+                or self.Model().is_relation_n_n(x)
                 or x in ["id_import"],
                 from_table_columns,
             )
         )
 
-        if self.sm().pk_field_name() not in columns:
-            columns.append(self.sm().pk_field_name())
+        if self.Model().pk_field_name() not in columns:
+            columns.append(self.Model().pk_field_name())
 
         # traitement des colonnes
         # - typage
@@ -180,15 +180,13 @@ FROM {from_table} t{txt_limit};
         propper_column_name = self.propper_column_name(key)
 
         # colonnes de la liste ["id_import", "x", "y"]
-        if key in ["id_import", "x", "y"] and not self.sm().has_property(key):
+        if key in ["id_import", "x", "y"] and not self.Model().has_property(key):
             return f"t.{key}"
-
-        property = self.sm().property(key)
 
         # clé primaire
         # on concatène les champs d'unicité
         # séparés par des '|'
-        if property.get("primary_key"):
+        if self.Model().is_primary_key(key):
             unique_keys = self.sm().attr("meta.unique")
             if len(unique_keys) == 1:
                 txt_uniques = unique_keys[0]
@@ -197,46 +195,22 @@ FROM {from_table} t{txt_limit};
                     map(lambda x: f"t.{x}", self.sm().attr("meta.unique"))
                 )
                 txt_uniques = f"CONCAT({txt_uniques})"
-            return f"""{txt_uniques} AS {self.sm().pk_field_name()}"""
+            return f"""{txt_uniques} AS {self.Model().pk_field_name()}"""
 
         # clé étrangère ou relation n-n : on renvoie tel quel
-        if self.sm().is_foreign_key(key) or self.sm().is_relation_n_n(key):
+        if self.Model().is_foreign_key(key) or self.Model().is_relation_n_n(key):
             return f"t.{propper_column_name}"
 
+        sql_type = str(self.Model().sql_type(key))
+
         # geometrie
-        if property["type"] == "geometry":
+        if sql_type == "GEOMETRY":
             return self.process_raw_import_column_geom(key)
 
         # pour tous les cas suivants
         # typage sql
-
-        if property["type"] == "number":
-            return f"{propper_column_name}::FLOAT"
-
-        if property["type"] == "boolean":
-            return f"{propper_column_name}::BOOLEAN"
-
-        if property["type"] == "uuid":
-            return f"{propper_column_name}::UUID"
-
-        if property["type"] == "date":
-            return f"{propper_column_name}::DATE"
-
-        if property["type"] == "datetime":
-            return f"{propper_column_name}::TIMESTAMP"
-
-        if property["type"] == "integer":
-            return f"{propper_column_name}::INTEGER"
-
-        if property["type"] == "integer":
-            return f"{propper_column_name}::INTEGER"
-
-        if property["type"] == "string":
+        if sql_type == "VARCHAR":
             return f"{propper_column_name}"
 
-        if property["type"] == "json":
-            return f"{propper_column_name}::JSONB"
-
-        raise SchemaMethods.errors.SchemaImportError(
-            f"process_raw_import_column, type non traité {self.schema_code} {key} {property}"
-        )
+        else:
+            return f"{propper_column_name}::{sql_type}"

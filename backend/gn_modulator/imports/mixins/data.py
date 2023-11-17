@@ -231,7 +231,7 @@ QUOTE '"' CSV
         missing_uniques = [
             key_unique
             for key_unique in self.sm().unique()
-            if self.sm().has_property(key_unique) and key_unique not in columns
+            if self.Model().has_property(key_unique) and key_unique not in columns
         ]
 
         if len(missing_uniques) == 0:
@@ -270,7 +270,7 @@ QUOTE '"' CSV
         # group_by_columns
         group_by_columns = ", ".join(
             filter(
-                lambda x: self.sm().is_column(x) and "." not in x,
+                lambda x: self.Model().is_column(x) and "." not in x,
                 self.get_table_columns(table_data),
             )
         )

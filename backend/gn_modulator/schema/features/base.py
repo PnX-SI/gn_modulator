@@ -62,7 +62,9 @@ class SchemaBaseFeatures:
                 self.get_foreign_key(key_process, value, process_one=True)
                 for value in rel_test_values
             ]
-            return [fk if isinstance(fk, dict) else {sm_rel.pk_field_name(): fk} for fk in fks]
+            return [
+                fk if isinstance(fk, dict) else {sm_rel.Model().pk_field_name(): fk} for fk in fks
+            ]
 
         if not isinstance(rel_test_values, list):
             rel_test_values = [rel_test_values]
@@ -93,7 +95,7 @@ class SchemaBaseFeatures:
                 rel_test_keys,
                 params={},  # sinon bug et utilise un param précédent ????
             ).one()
-            pk = getattr(m, sm_rel.pk_field_name())
+            pk = getattr(m, sm_rel.Model().pk_field_name())
             set_global_cache(["import_pk_keys", self.schema_code(), cache_key], pk)
             return pk
         except NoResultFound:

@@ -49,7 +49,7 @@ class ImportMixinUpdate(ImportMixinUtils):
             map(
                 lambda x: x,
                 filter(
-                    lambda x: self.sm().is_column(x) and x != self.id_digitiser_key(),
+                    lambda x: self.Model().is_column(x) and x != self.id_digitiser_key(),
                     columns,
                 ),
             )
@@ -61,7 +61,7 @@ class ImportMixinUpdate(ImportMixinUtils):
         v_set_keys = list(
             map(
                 lambda x: f"{x}=p.{x}",
-                filter(lambda x: not self.sm().is_primary_key(x), v_column_keys),
+                filter(lambda x: not self.Model().is_primary_key(x), v_column_keys),
             )
         )
 
@@ -84,14 +84,14 @@ class ImportMixinUpdate(ImportMixinUtils):
         # condition pour voir si une ligne est modifiée
         txt_update_conditions = "NOT (\n    " + "\n    AND ".join(v_update_condition) + "\n)"
 
-        return f"""UPDATE {self.sm().sql_schema_dot_table()} t SET
+        return f"""UPDATE {self.Model().sql_schema_dot_table()} t SET
     {txt_set_keys}
 FROM (
     SELECT
         {txt_columns_keys}
     FROM {from_table}
 )p
-WHERE p.{self.sm().pk_field_name()} = t.{self.sm().pk_field_name()}
+WHERE p.{self.Model().pk_field_name()} = t.{self.Model().pk_field_name()}
   AND {txt_update_conditions}
 ;
 """

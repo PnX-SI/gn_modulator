@@ -34,8 +34,10 @@ class ModuleBreadCrumbs:
         # dans le cas ou l'on a une page parent, on refait un appel à breadcrumbs
         if parent_page_code:
             # label ???
-            if data.get(sm.pk_field_name()):
-                m = sm.get_row(data[sm.pk_field_name()], module_code=module_code, params={}).one()
+            if data.get(sm.Model().pk_field_name()):
+                m = sm.get_row(
+                    data[sm.Model().pk_field_name()], module_code=module_code, params={}
+                ).one()
                 data_label = sm.serialize(m, fields=[sm.label_field_name()])
                 # label_page = f"{sm.label()} {data_label[sm.label_field_name()]}"
                 label_page = f"{sm.label()} {getAttr(data_label, sm.label_field_name())}"
@@ -56,9 +58,9 @@ class ModuleBreadCrumbs:
             # TODO pour les page de creation pas de pk mais on peut récupérer le pk du parent directement
             data_parent = {}
 
-            if ":" in parent_page_url and data.get(sm.pk_field_name()):
+            if ":" in parent_page_url and data.get(sm.Model().pk_field_name()):
                 data_parent_key = parent_page_url.split(":")[1]
-                m = sm.get_row(data[sm.pk_field_name()], params={}).one()
+                m = sm.get_row(data[sm.Model().pk_field_name()], params={}).one()
 
                 data_parent = sm.serialize(m, fields=[data_parent_key])
             else:

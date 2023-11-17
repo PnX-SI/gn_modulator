@@ -51,7 +51,7 @@ class SchemaSqlTrigger:
         cor_table_name = property_def["schema_dot_table"].split(".")[1]
         sql_schema_name = self.sql_schema_name()
         sql_table_name = self.sql_table_name()
-        local_key = self.pk_field_name()
+        local_key = self.Model().pk_field_name()
         trigger_function_insert_name = (
             f"{cor_schema_code}.fct_trig_insert_{cor_table_name}_on_each_statement"
         )
@@ -183,7 +183,7 @@ CREATE TRIGGER trg_update_{cor_schema_code}_{cor_table_name}
         relation_geometry_field_name = relation.geometry_field_name()
         cor_schema_code = cor_schema_code
         cor_table_name = cor_table_name
-        local_key = self.pk_field_name()
+        local_key = self.Model().pk_field_name()
         of_key = property_def["trigger"].get("on", property_def["trigger"]["key"])
         foreign_key = relation.pk_field_name()
         trigger_function_insert_name = (

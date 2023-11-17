@@ -194,7 +194,7 @@ class SchemaSerializers:
 
         @pre_load
         def pre_load_make_object(self_marshmallow, data, **kwargs):
-            for key in self.pk_field_names():
+            for key in self.Model().pk_field_names():
                 if key in data and data[key] is None:
                     data.pop(key, None)
 
@@ -292,7 +292,7 @@ class SchemaSerializers:
         """
 
         if not fields:
-            fields = [self.pk_field_name()]
+            fields = [self.Model().pk_field_name()]
 
         # quand une relation est demandée
         # on veut éviter de sortir toute la base dans la foulée
@@ -312,7 +312,7 @@ class SchemaSerializers:
                 for rel_field in default_fields:
                     fields_to_add.append(f"{field}.{rel_field}")
             else:
-                fields_to_add.append(f"{field}.{sm_rel.pk_field_name()}")
+                fields_to_add.append(f"{field}.{sm_rel.Model().pk_field_name()}")
                 fields_to_add.append(f"{field}.{sm_rel.label_field_name()}")
 
         for f in fields_to_remove:

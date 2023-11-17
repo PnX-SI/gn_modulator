@@ -34,7 +34,7 @@ class SchemaSqlConstraint:
 
         #  - clés primaires
 
-        pk_field_names = self.pk_field_names()
+        pk_field_names = self.Model().pk_field_names()
 
         if not pk_field_names:
             raise SchemaSqlError(

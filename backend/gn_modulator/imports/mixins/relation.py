@@ -41,7 +41,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
 
             relation_key = key.split(".")[0]
             if (
-                self.sm().is_relation_1_n(relation_key)
+                self.Model().is_relation_1_n(relation_key)
                 and relation_key not in relations_1_n
                 and relation_key not in self.sm().attr("meta.import_excluded_fields", [])
             ):
@@ -56,7 +56,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
 
         return list(
             filter(
-                lambda x: self.sm().is_relation_n_n(x),
+                lambda x: self.Model().is_relation_n_n(x),
                 self.get_table_columns(self.tables["raw"]),
             )
         )
@@ -82,7 +82,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             options={
                 "skip_steps": ["update"],
                 "target_step": "post_check",
-                "skip_check_on": [self.sm().pk_field_name()],
+                "skip_check_on": [self.Model().pk_field_name()],
             },
         )
         relation_import.relation_key = relation_key
@@ -96,8 +96,8 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
         import_relation_key.sql["delete"] = import_relation_key.delete_relation(
             relation_key,
             import_relation_key.tables["process"],
-            import_relation_key.sm().sql_schema_dot_table(),
-            self.sm().pk_field_name(),
+            import_relation_key.Model().sql_schema_dot_table(),
+            self.Model().pk_field_name(),
         )
         import_relation_key.options["target_step"] = None
         import_relation_key.process_import_schema()
@@ -144,7 +144,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
         sql_rel_data = f"""CREATE VIEW {tables_rel_data} AS
 SELECT
     id_import,
-    {self.sm().pk_field_name()},
+    {self.Model().pk_field_name()},
     {txt_rel_columns}
     FROM {from_table}
         """
@@ -195,28 +195,25 @@ SELECT
         tables_rel = self.tables["relations"][relation_key]
         sql_rel = self.sql["relations"][relation_key]
 
-        property = self.sm().property(relation_key)
-
         # table de corrélation
-        rel = SchemaMethods(property["schema_code"])
-
+        relation_Model = self.Model().relation_Model(relation_key)
         dest_table = (
-            property["schema_dot_table"]
-            if self.sm().is_relation_n_n(relation_key)
-            else rel.sql_schema_dot_table()
+            self.Model().cor_schema_dot_table(relation_key)
+            if self.Model().is_relation_n_n(relation_key)
+            else relation_Model.sql_schema_dot_table()
         )
 
         # - script de suppression des données
         #   dans la table de correlation
         #   on supprime toutes les données associé aux lignes d'import
         sql_rel["delete"] = self.delete_relation(
-            relation_key, tables_rel["process"], dest_table, self.sm().pk_field_name()
+            relation_key, tables_rel["process"], dest_table, self.Model().pk_field_name()
         )
 
         # - script d'insertion des données
         #   dans la table de correlation
         #   on ajoute toutes les données associé aux lignes d'import
-        keys = [self.sm().pk_field_name(), rel.pk_field_name()]
+        keys = [self.Model().pk_field_name(), relation_Model.pk_field_name()]
 
         sql_rel["insert"] = self.sql_insert(
             tables_rel["process"],

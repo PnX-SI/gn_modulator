@@ -4,8 +4,8 @@ title: Schema modules.tag
 description: Définition du schema des tags de sous-modules
 
 meta:
-    sql_processing: true
-    sql_schema_dot_table: gn_modulator.t_module_tags
+    autoschema: true
+    model: gn_modulator.models.ModuleTags
     label: Tag de modules
     labels: Tags de modules
     label_field_name: name
@@ -14,23 +14,12 @@ meta:
         - code
 properties:
     id_module_tag:
-        type: integer
-        primary_key: true
         title: Id
     code:
-        type: string
         title: Code du tag de module
     name:
-        type: string
         title: Nom du tag de module
     description:
-        type: string
         title: Description du tag de module
     modules:
-        type: relation
-        relation_type: n-n
         title: modules
-        description: Liste des modules associés à ce tag
-        schema_dot_table: gn_modulator.cor_module_tag
-        schema_code: commons.module
-        backref: tags

@@ -12,6 +12,9 @@ from geonature.utils.env import db
 from gn_modulator.utils.cache import set_global_cache
 
 from gn_modulator.utils.commons import get_class_from_path
+from gn_modulator.query import SchemaQuery
+
+from gn_modulator.schematisable import schematisable
 
 cache_existing_tables = {
     "utilisateurs.cor_role_liste": cor_role_liste,
@@ -24,40 +27,6 @@ class SchemaModelExisting:
     def get_cache_existing_tables(self, schema_dot_table):
         return cache_existing_tables.get(schema_dot_table)
 
-    # def get_model_from_schema_dot_table(self, schema_dot_table):
-    #     Model = cache_existing_models.get(self.schema_code())
-
-    #     # Patch pourris bug nvelle version gn avec Taxref et Synthese (Taxref)
-    #     # TODO arranger existings ??
-
-    #     if self.attr('meta.model'):
-
-    #         model_module_name, model_object_name = self.attr('meta.model').rsplit(".", 1)
-    #         model_module = import_module(model_module_name)
-    #         Model = getattr(model_module, model_object_name)
-    #         return Model
-
-    #     if Model:
-    #         return Model
-
-    # for Model in db.Model._decl_class_registry.values():
-    #     if not (isinstance(Model, type) and issubclass(Model, db.Model)):
-    #         continue
-
-    #     sql_table_name = Model.__tablename__
-    #     sql_schema_name = Model.__table__.schema
-
-    #     if "{}.{}".format(sql_schema_name, sql_table_name) == schema_dot_table:
-    #         return Model
-
-    # def search_existing_model(self):
-    #     Model = None
-    #     for Model_ in db.Model._decl_class_registry.values():
-    #         if isinstance(Model_, type) and issubclass(Model_, db.Model):
-    #             if self.model_name() == Model_.__name__:
-    #                 Model = Model_
-    #     return Model
-
     def get_existing_model(self):
         """ """
 
@@ -67,6 +36,17 @@ class SchemaModelExisting:
             return
 
         Model = get_class_from_path(model_path)
+        # ajout de methodes
+        Model = schematisable(Model)
+
+        try:
+            Model.query_class = type(
+                f"{self.model_name()}SchemaQuery", (SchemaQuery, Model.query_class), {}
+            )
+        except:
+            Model.query_class = type(
+                f"{self.model_name()}SchemaQuery", (Model.query_class, SchemaQuery), {}
+            )
 
         if not Model:
             raise "error model TODO"

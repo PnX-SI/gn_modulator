@@ -10,8 +10,8 @@ def test_schema_repository(schema_code=None, data=None, data_update=None):
         return
 
     sm = SchemaMethods(schema_code)
-    fields = list(data.keys()) + [sm.pk_field_name()]
-    pk_field_name = sm.pk_field_name()
+    fields = list(data.keys()) + [sm.Model().pk_field_name()]
+    pk_field_name = sm.Model().pk_field_name()
     label_field_name = sm.label_field_name()
 
     unique = sm.unique()

@@ -113,7 +113,6 @@ class SchemaAuto:
             col = getattr(Model, k)
             if (not isinstance(col.property, ColumnProperty)) or (k in columns):
                 continue
-            print(self, k)
             properties[k] = {"type": "string", "is_column_property": True}
 
         # relationships
@@ -150,9 +149,7 @@ class SchemaAuto:
         }
 
         if property["relation_type"] == "n-n":
-            property["schema_dot_table"] = "{}.{}".format(
-                relation.secondary.schema, relation.secondary.name
-            )
+            property["schema_dot_table"] = f"{relation.secondary.schema}.{relation.secondary.name}"
 
         if property["relation_type"] == "n-1":
             # on cherche local key
@@ -194,6 +191,9 @@ class SchemaAuto:
                     definition_code=self.schema_code(),
                     file_path=DefinitionMethods.get_file_path("schema", self.schema_code()),
                 )
+
+            if property.get("nomenclature_type"):
+                getattr(Model, relation_key).nomenclature_type = property["nomenclature_type"]
 
         return property
 
@@ -248,7 +248,7 @@ class SchemaAuto:
                     sql_schema_name, sql_table_name, column.key
                 )
                 property["nomenclature_type"] = nomenclature_type
-                # property.pop('foreign_key')
+                column.nomenclature_type = nomenclature_type
 
         # commentaires
         # if column.comment:

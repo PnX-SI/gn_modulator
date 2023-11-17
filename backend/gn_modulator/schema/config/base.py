@@ -115,7 +115,7 @@ class SchemaConfigBase:
                 "rest": self.url("/rest/", full_url=True),
                 "page_number": self.url("/page_number/", full_url=True),
             },
-            "pk_field_name": self.pk_field_name(),
+            "pk_field_name": self.Model().pk_field_name(),
             "label_field_name": self.label_field_name(),
             "title_field_name": self.title_field_name(),
             "value_field_name": self.value_field_name(),
@@ -143,7 +143,7 @@ class SchemaConfigBase:
         }
 
     def value_field_name(self):
-        return self.attr("meta.value_field_name", self.pk_field_name())
+        return self.attr("meta.value_field_name", self.Model().pk_field_name())
 
     def label_field_name(self):
         return self.attr("meta.label_field_name")

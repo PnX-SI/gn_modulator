@@ -74,7 +74,6 @@ class SchemaBase:
                 self.properties()[key].get("primary_key")
                 and self.properties()[key].get("foreign_key")
             )
-            # or key in self.pk_field_names()
         )
 
     def attr(self, prop=None, default=None):
@@ -122,25 +121,6 @@ class SchemaBase:
         renvoie la liste des noms de schemas (depuis les données du cache)
         """
         return list(get_global_cache(["schema"], {}).keys())
-
-    def pk_field_names(self):
-        """
-        returns list of primary keys from self.definition_schema['properties']
-        """
-
-        pk_field_names = []
-        for key, column_def in self.columns().items():
-            if column_def.get("primary_key"):
-                pk_field_names.append(key)
-
-        return pk_field_names
-
-    def pk_field_name(self):
-        """
-        checks primary key uniqueness and returns it
-        """
-        pk_field_names = self.pk_field_names()
-        return pk_field_names[0] if len(pk_field_names) == 1 else None
 
     def object_code(self):
         return self.schema_code().split(".")[-1]
@@ -420,7 +400,7 @@ class SchemaBase:
             filter(
                 lambda x: x is not None,
                 [
-                    self.pk_field_name(),
+                    self.Model().pk_field_name(),
                     self.label_field_name(),
                     self.title_field_name(),
                 ],

@@ -47,7 +47,7 @@ class ModuleConfigUtils:
     def default_page_config(cls, module_code, object_code, action):
         try:
             sm = SchemaMethods(cls.schema_code(module_code, object_code))
-            pk_field_name = sm.pk_field_name()
+            pk_field_name = sm.Model().pk_field_name()
         except Exception:
             pk_field_name = "id_xxx"
 
@@ -351,7 +351,7 @@ class ModuleConfigUtils:
         # - champs d'unicité
         # - scope
         for elem in [
-            sm.pk_field_name(),
+            sm.Model().pk_field_name(),
             sm.label_field_name(),
             sm.title_field_name(),
             sm.geometry_field_name(),
@@ -474,7 +474,7 @@ class ModuleConfigUtils:
             write_key = key
             if sm.is_relationship(key):
                 rel = SchemaMethods(sm.property(key)["schema_code"])
-                write_key = f"{key}.{rel.pk_field_name()}"
+                write_key = f"{key}.{rel.Model().pk_field_name()}"
             if write_key not in object_keys["write"]:
                 object_keys["write"].append(write_key)
 

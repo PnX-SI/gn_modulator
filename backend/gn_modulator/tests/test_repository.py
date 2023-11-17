@@ -30,7 +30,7 @@ class TestRepository:
 
     def test_filter_has_diagnostic(self, passage_faune_with_diagnostic):
         sm = SchemaMethods("m_sipaf.pf")
-        q = sm.query_list(
+        q = sm.Model().query.query_list(
             "m_sipaf.pf",
             "R",
             {
@@ -39,6 +39,7 @@ class TestRepository:
                     f"uuid_passage_faune = {passage_faune_with_diagnostic.uuid_passage_faune}",
                 ]
             },
+            "select",
         )
         res = q.all()
 
@@ -46,7 +47,7 @@ class TestRepository:
 
     def test_filter_d_within(self, passage_faune_with_diagnostic, synthese_for_passage_faune):
         sm = SchemaMethods("syn.synthese")
-        q = sm.query_list(
+        q = sm.Model().query.query_list(
             "MODULATOR",
             "R",
             {
@@ -54,6 +55,7 @@ class TestRepository:
                     f"the_geom_4326 dwithin m_sipaf.pf;{passage_faune_with_diagnostic.id_passage_faune};geom;1000"
                 ]
             },
+            "select",
         )
         res = q.all()
 

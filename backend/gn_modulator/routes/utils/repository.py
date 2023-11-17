@@ -79,7 +79,7 @@ def get_one_rest(module_code, object_code, value):
 
     except orm.exc.NoResultFound as e:
         return (
-            f"Pas de resultats trouvé pour {schema_code} avec ({params.get('field_name') or sm.pk_field_name()})=({value})",
+            f"Pas de resultats trouvé pour {schema_code} avec ({params.get('field_name') or sm.Model().pk_field_name()})=({value})",
             404,
         )
 

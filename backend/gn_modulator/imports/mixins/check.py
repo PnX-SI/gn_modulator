@@ -74,11 +74,11 @@ class ImportMixinCheck(ImportMixinUtils):
 
         # pour chaque colonne de la table qui est aussi dans la table destinataire
         for key in filter(
-            lambda x: self.sm().is_column(x) and not self.sm().property(x).get("foreign_key"),
+            lambda x: self.Model().is_column(x) and not self.Model().is_foreign_key(x),
             self.get_table_columns(table_test),
         ):
             # récupération du type SQL de la colonne
-            sql_type = self.sql_type_dict[self.sm().property(key)["type"]]
+            sql_type = self.Model().sql_type(key)
 
             # la fonction gn_modulator.check_value_for_type
             # renvoie faux pour les colonnes ou le format ne correspond pas
@@ -179,9 +179,7 @@ SELECT
         # pour toutes les clés représentant un clé étrangère
         for key in self.get_table_columns(raw_table):
             if key in self.options.get("skip_check_on", []) or not (
-                self.sm().has_property(key)
-                and self.sm().property(key).get("foreign_key")
-                and "." not in key
+                self.Model().is_foreign_key(key) and "." not in key
             ):
                 continue
 
@@ -211,8 +209,7 @@ WHERE
             valid_values = None
 
             # Dans le cas des nomenclatures on peut faire remonter les valeurs possible ??
-
-            code_type = self.sm().property(key).get("nomenclature_type")
+            code_type = self.Model().get_nomenclature_type(key)
             if code_type:
                 valid_values = list(
                     map(

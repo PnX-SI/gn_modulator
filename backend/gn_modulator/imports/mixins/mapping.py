@@ -89,7 +89,7 @@ class ImportMixinMapping(ImportMixinUtils):
         missing_uniques = [
             key_unique
             for key_unique in self.sm().unique()
-            if self.sm().has_property(key_unique) and key_unique not in columns
+            if self.Model().has_property(key_unique) and key_unique not in columns
         ]
 
         if len(missing_uniques) == 0:

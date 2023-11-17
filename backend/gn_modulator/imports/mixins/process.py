@@ -63,24 +63,24 @@ class ImportMixinProcess(ImportMixinUtils):
         # toutes les colonnes sauf la clé primaires
         columns = (
             [relation_key]
-            if relation_key and self.sm().is_relation_n_n(relation_key)
+            if relation_key and self.Model().is_relation_n_n(relation_key)
             else list(
                 filter(
                     lambda x: (
-                        self.sm().is_column(x)
+                        self.Model().is_column(x)
                         and x.startswith(f"{relation_key}.")
-                        and not x == self.sm().pk_field_name()
+                        and not x == self.Model().pk_field_name()
                     ),
                     from_table_columns,
                 )
             )
-            if relation_key and self.sm().is_relation_1_n(relation_key)
+            if relation_key and self.Model().is_relation_1_n(relation_key)
             else list(
                 filter(
                     lambda x: (
-                        self.sm().is_column(x)
+                        self.Model().is_column(x)
                         and "." not in x
-                        and not x == self.sm().pk_field_name()
+                        and not x == self.Model().pk_field_name()
                     ),
                     from_table_columns,
                 )
@@ -115,7 +115,7 @@ class ImportMixinProcess(ImportMixinUtils):
         #   avec solved_keys
         txt_pk_column, v_join = self.resolve_key(
             self.schema_code,
-            self.sm().pk_field_name(),
+            self.Model().pk_field_name(),
             alias_join_base="j_pk",
             solved_keys=solved_keys,
         )
@@ -144,7 +144,7 @@ class ImportMixinProcess(ImportMixinUtils):
         view_params = {
             "dest_table": dest_table,
             "from_table": from_table,
-            "pk_field_name": self.sm().pk_field_name(),
+            "pk_field_name": self.Model().pk_field_name(),
             "relation_key": relation_key,
             "txt_id_digitiser": txt_id_digitiser,
             "txt_columns": txt_columns,
@@ -154,7 +154,7 @@ class ImportMixinProcess(ImportMixinUtils):
         }
 
         # vue process pour les relations
-        if relation_key and self.sm().is_relation_n_n(relation_key):
+        if relation_key and self.Model().is_relation_n_n(relation_key):
             return self.import_view_txt_nn(view_params)
 
         # vue process
@@ -227,14 +227,14 @@ GROUP BY {view_params['txt_group_by']}
 
         """
         sm = SchemaMethods(schema_code)
-
+        Model = sm.Model()
         # alias pour la jointure associé à la clé étrangère 'key'
         # j_1, j_{index}, j_1_2
         # j_pk pour la clé primaire
         alias_join = alias_join_base if index is None else f"{alias_join_base}_{index}"
 
         # on renvoie la clé primaire de la table de jointure
-        txt_column = f"{alias_join}.{sm.pk_field_name()}"
+        txt_column = f"{alias_join}.{Model.pk_field_name()}"
 
         # calcul des jointures
         unique = sm.unique()
@@ -251,16 +251,16 @@ GROUP BY {view_params['txt_group_by']}
             )
 
             # si le champs d'unicité est lui meme une clé étrangère
-            if sm.property(k_unique).get("foreign_key"):
+            if Model.is_foreign_key(k_unique):
                 # si elle a déjà été résolue dans solved_keys
                 if k_unique in solved_keys:
                     link_joins[k_unique] = solved_keys[k_unique]
 
                 # sinon on la calcule avec resolve_key
                 else:
-                    rel = SchemaMethods(sm.property(k_unique)["schema_code"])
+                    rel_schema_code = sm.property(k_unique)["schema_code"]
                     txt_column_join, v_join_inter = self.resolve_key(
-                        rel.schema_code(),
+                        rel_schema_code,
                         var_key,
                         index=index_unique,
                         alias_main=alias_join,
@@ -270,7 +270,9 @@ GROUP BY {view_params['txt_group_by']}
                     v_join += v_join_inter
 
                     # clarifier link oin
-                    link_joins[k_unique] = f"{alias_join}_{index_unique}.{rel.pk_field_name()}"
+                    link_joins[
+                        k_unique
+                    ] = f"{alias_join}_{index_unique}.{SchemaMethods(rel_schema_code).Model().pk_field_name()}"
 
         # conditions de jointures
         v_join_on = []
@@ -282,20 +284,14 @@ GROUP BY {view_params['txt_group_by']}
                 schema_code, key, k_unique, index_unique, link_joins, alias_main
             )
 
-            k_unique_type = sm.property(k_unique)["type"]
+            k_unique_type = Model.sql_type(k_unique)
             cast = ""
 
             # ????????
             # t correspond à la table raw, ou les champs à résoudre sont très certainement en varchar ?????
             # ????????
             if var_key.startswith("t."):
-                cast = (
-                    "::UUID"
-                    if k_unique_type == "uuid"
-                    else "::INTEGER"
-                    if k_unique_type == "integer"
-                    else ""
-                )
+                cast = f"::{k_unique_type}" if k_unique_type in ["UUID", "INTEGER"] else ""
 
             # condition de jointure
             # - "{alias_join}.{k_unique} = {var_key}"
@@ -315,7 +311,7 @@ GROUP BY {view_params['txt_group_by']}
         txt_joins_on = "\n    AND ".join(v_join_on)
 
         # texte de la jointure
-        txt_join = f"LEFT JOIN {sm.sql_schema_dot_table()} {alias_join}\n    ON {txt_joins_on}"
+        txt_join = f"LEFT JOIN {Model.sql_schema_dot_table()} {alias_join}\n    ON {txt_joins_on}"
 
         # ajout du texte de la jointure à v_join
         v_join.append(txt_join)
@@ -367,32 +363,31 @@ GROUP BY {view_params['txt_group_by']}
         - sinon on résoud la clé et on renvoie les jointures
         """
 
-        property = self.sm().property(key)
-
         # dans le cas des clé étrangères ou des relations n-n
         # si ce n'est pas une clé etrangère ou une relation n-n
         # - on renvoie le champs tel quel sans jointures
-        if not (property.get("foreign_key") or self.sm().is_relation_n_n(key)):
+        if not (self.Model().is_foreign_key(key) or self.Model().is_relation_n_n(key)):
             return f"t.{key}", []
 
         # Pour les clé étrangère ou les relations n-n
 
         # traitement spécial pour les nomenclatures
-        if property.get("nomenclature_type"):
+        if self.Model().get_nomenclature_type(key):
             txt_column, v_join = self.resolve_key_nomenclature(
-                key, index, property["nomenclature_type"]
+                key, index, self.Model().get_nomenclature_type(key)
             )
         # on essaye de résoudre la clé étrangère
         else:
+            property = self.sm().property(key)
             txt_column, v_join = self.resolve_key(property["schema_code"], key, index)
 
         # pour les relations n-n
         # - on suppose que la clé sera toujours
         #   la clé primaire de la table associée par correlation
         # - TODO sinon à rendre paramétrable
-        if self.sm().is_relation_n_n(key):
-            rel = SchemaMethods(self.sm().property(key)["schema_code"])
-            txt_column = f"{txt_column.split('.')[0]}.{rel.pk_field_name()}"
+        if self.Model().is_relation_n_n(key):
+            relation_Model = self.Model().relation_Model(key)
+            txt_column = f"{txt_column.split('.')[0]}.{relation_Model.pk_field_name()}"
 
         # les clé étrangères
         else:
@@ -414,13 +409,14 @@ GROUP BY {view_params['txt_group_by']}
         """
 
         alias_join = f"j_{index}"
-        table = SchemaMethods("ref_nom.nomenclature").sql_schema_dot_table()
         joins_on = [
             f"j_{index}.cd_nomenclature = t.{key}",
             f"j_{index}.id_type = ref_nomenclatures.get_id_nomenclature_type('{nomenclature_type}')",
         ]
         txt_join_on = "\n      AND ".join(joins_on)
-        txt_join = f"LEFT JOIN {table} {alias_join} \n    ON {txt_join_on}"
+        txt_join = (
+            f"LEFT JOIN ref_nomenclatures.t_nomenclatures {alias_join} \n    ON {txt_join_on}"
+        )
         v_join = [txt_join]
         txt_column = f"{alias_join}.id_nomenclature"
         return txt_column, v_join

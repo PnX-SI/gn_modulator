@@ -183,3 +183,6 @@ class ImportMixinUtils:
 
     def has_errors(self):
         return len(self.errors) > 0 or any(child.has_errors() for child in self.imports_1_n)
+
+    def Model(self):
+        return self.sm().Model()

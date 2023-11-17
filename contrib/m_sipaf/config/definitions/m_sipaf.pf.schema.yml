@@ -4,9 +4,6 @@ title: schema passage faune
 description: schema pour les passages à faune
 
 meta:
-    # sql_processing: true
-    # sql_schema_dot_table: pr_sipaf.t_passages_faune
-    # unique_in_db: true
     autoschema: true
     model: m_sipaf.models.PassageFaune
     module_code: m_sipaf

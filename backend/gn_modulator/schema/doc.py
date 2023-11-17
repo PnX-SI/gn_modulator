@@ -128,12 +128,16 @@ class SchemaDoc:
         nomenclature_type = property_def["nomenclature_type"]
         txt += "  - *valeurs* :\n"
         sm_nom = self.cls("ref_nom.nomenclature")
-        res = sm_nom.query_list(
-            params={
-                "fields": ["label_fr", "cd_nomenclature"],
-                "filters": [f"nomenclature_type.mnemonique = {nomenclature_type}"],
-            }
-        ).all()
+        res = (
+            sm_nom.Model()
+            .query_list(
+                params={
+                    "fields": ["label_fr", "cd_nomenclature"],
+                    "filters": [f"nomenclature_type.mnemonique = {nomenclature_type}"],
+                }
+            )
+            .all()
+        )
         values = sm_nom.serialize_list(res, ["label_fr", "cd_nomenclature"])
 
         for v in values:
@@ -232,7 +236,7 @@ class SchemaDoc:
         for relation_key in relations_1_n_import_keys:
             rel = self.cls(self.property(relation_key)["schema_code"])
             exclude = rel.attr("meta.import_excluded_fields", [])
-            exclude.append(self.pk_field_name())
+            exclude.append(self.Model().pk_field_name())
             txt += rel.doc_import(relation_key=relation_key, exclude=exclude)
 
         return txt

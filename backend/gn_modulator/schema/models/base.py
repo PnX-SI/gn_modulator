@@ -106,7 +106,7 @@ class SchemaModelBase:
             rel = self.cls(relationship_def["schema_code"])
 
             if relationship_def.get("local_key"):
-                local_key = relationship_def.get("local_key") or self.pk_field_name()
+                local_key = relationship_def.get("local_key") or self.Model().pk_field_name()
                 foreign_key = relationship_def.get("foreign_key")
                 kwargs["primaryjoin"] = getattr(self.Model(), local_key) == getattr(
                     relation.Model(), foreign_key
@@ -136,14 +136,16 @@ class SchemaModelBase:
                 relationship_def.get("local_key")
                 and relationship_def.get("foreign_key")
             ):
-                kwargs["primaryjoin"] = getattr(self.Model(), self.pk_field_name()) == getattr(
-                    CorTable.c, relationship_def.get("local_key", self.pk_field_name())
+                kwargs["primaryjoin"] = getattr(
+                    self.Model(), self.Model().pk_field_name()
+                ) == getattr(
+                    CorTable.c, relationship_def.get("local_key", self.Model().pk_field_name())
                 )
                 kwargs["secondaryjoin"] = getattr(
-                    relation.Model(), relation.pk_field_name()
+                    relation.Model(), relation.Model().pk_field_name()
                 ) == getattr(
                     CorTable.c,
-                    relationship_def.get("foreign_key", self.pk_field_name()),
+                    relationship_def.get("foreign_key", self.Model().pk_field_name()),
                 )
 
         relationship = db.relationship(relation.Model(), **kwargs)
@@ -173,7 +175,7 @@ class SchemaModelBase:
             return CorTable
 
         relation = self.cls(relation_def["schema_code"])
-        local_key = self.pk_field_name()
+        local_key = self.Model().pk_field_name()
         foreign_key = relation.pk_field_name()
         CorTable = db.Table(
             cor_table_name,

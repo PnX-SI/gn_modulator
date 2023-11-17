@@ -19,7 +19,6 @@ from .types import SchemaTypes
 from .validation import SchemaValidation
 from . import errors
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
-from gn_modulator.utils.commons import get_class_from_path
 
 
 class SchemaMethods(

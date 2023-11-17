@@ -48,7 +48,7 @@ class ImportMixinInsert(ImportMixinUtils):
         """
 
         # récupération de la table destinataire
-        table_name = dest_table or self.sm().sql_schema_dot_table()
+        table_name = dest_table or self.Model().sql_schema_dot_table()
 
         # list des colonnes à insérer
         # - toutes les colonnes de la table process
@@ -58,7 +58,7 @@ class ImportMixinInsert(ImportMixinUtils):
                 lambda x: (
                     x in keys
                     if keys is not None
-                    else self.sm().is_column(x) and not (self.sm().property(x).get("primary_key"))
+                    else self.Model().is_column(x) and not (self.Model().is_primary_key(x))
                 ),
                 self.get_table_columns(from_table),
             )
@@ -70,7 +70,7 @@ class ImportMixinInsert(ImportMixinUtils):
         # condition pour choisir les lignes à insérer
         # - la clé primaire doit être nulle dans la table source)
         # - il n'y a pas de correspondance avec une ligne existant dans la table destinataire
-        txt_where = f" WHERE {self.sm().pk_field_name()} IS NULL" if keys is None else ""
+        txt_where = f" WHERE {self.Model().pk_field_name()} IS NULL" if keys is None else ""
 
         # requete d'insertion des données
         return f"""INSERT INTO {table_name} (

@@ -42,7 +42,7 @@ def test_schema_rest(client, user, module_code, object_code, data_post, data_upd
 
     # POST
     fields = list(data_post.keys())
-    fields.append(sm.pk_field_name())
+    fields.append(sm.Model().pk_field_name())
 
     r = client.post(
         url_for(
@@ -59,8 +59,8 @@ def test_schema_rest(client, user, module_code, object_code, data_post, data_upd
     data_from_post = r.json
     assert all(data_post[k] == data_from_post[k] for k in list(data_post.keys()))
 
-    assert sm.pk_field_name() in data_from_post
-    id = data_from_post[sm.pk_field_name()]
+    assert sm.Model().pk_field_name() in data_from_post
+    id = data_from_post[sm.Model().pk_field_name()]
 
     # GET OK
     r = client.get(

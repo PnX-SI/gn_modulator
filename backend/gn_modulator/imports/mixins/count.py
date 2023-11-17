@@ -46,7 +46,7 @@ class ImportMixinCount(ImportMixinUtils):
     SELECT
         DISTINCT {unique_fields}
     FROM {from_table}
-    WHERE {self.sm().pk_field_name()} IS NULL
+    WHERE {self.Model().pk_field_name()} IS NULL
 )
 SELECT
     COUNT(*)
@@ -92,9 +92,9 @@ FROM d
         # toutes les colonnes de la table 'raw' sauf la clé primaire
         columns = list(
             filter(
-                lambda x: self.sm().has_property(x)
+                lambda x: self.Model().has_property(x)
                 and "." not in x
-                and not self.sm().is_primary_key(x),
+                and not self.Model().is_primary_key(x),
                 self.get_table_columns(self.tables["raw"]),
             )
         )
@@ -114,7 +114,7 @@ FROM d
         # pour pouvoir comparer les valeurs des données et les valeurs existantes
         relations_nn = list(
             filter(
-                lambda x: self.sm().is_relation_n_n(x),
+                lambda x: self.Model().is_relation_n_n(x),
                 columns,
             )
         )
@@ -136,9 +136,9 @@ FROM d
         # requete pour compter le nombre de ligne à mettre à jour
         return f"""{withs_rel_txt}SELECT
     COUNT(*)
-FROM {self.sm().sql_schema_dot_table()} t
+FROM {self.Model().sql_schema_dot_table()} t
 JOIN {self.tables['process']} a
-    ON a.{self.sm().pk_field_name()} = t.{self.sm().pk_field_name()}
+    ON a.{self.Model().pk_field_name()} = t.{self.Model().pk_field_name()}
 {joins_rel_txt}
 WHERE {txt_update_conditions}
 ;
@@ -152,12 +152,11 @@ WHERE {txt_update_conditions}
         - pour les relation n-n, on utilise des sous requete pour agréger et comparer des listes d'entiers
         """
 
-        if self.sm().is_relation_n_n(key):
-            rel = SchemaMethods(self.sm().property(key)["schema_code"])
-            rel_pk = rel.pk_field_name()
+        if self.Model().is_relation_n_n(key):
+            rel_pk = self.Model().relation_Model(key).pk_field_name()
             return f"""process_{key}.{rel_pk} IS DISTINCT FROM cor_{key}.{rel_pk}"""
 
-        if self.sm().is_relation_1_n(key):
+        if self.Model().is_relation_1_n(key):
             return
 
         return f"(t.{key} IS DISTINCT FROM a.{key})"
@@ -167,17 +166,15 @@ WHERE {txt_update_conditions}
         texte utilisé pour faire des sous-requete pour les relations n-n
         """
 
-        rel = SchemaMethods(self.sm().property(key)["schema_code"])
-
         # clé primaire
-        pk = self.sm().pk_field_name()
+        pk = self.Model().pk_field_name()
 
         # clé primaire de la relation
-        rel_pk = rel.pk_field_name()
+        relation_Model = self.Model().relation_Model(key)
+        rel_pk = relation_Model().pk_field_name()
 
         # table de correlation
-        cor_table = self.sm().property(key)["schema_dot_table"]
-
+        cor_table = self.Model().cor_schema_dot_table(key)
         # sous requete pour agréger les clé dans une liste
         # cor_{key} : pour les clé existantes (cor_table)
         # process_{key} : pour le données du fichier à importers
@@ -204,7 +201,7 @@ WHERE {txt_update_conditions}
             - cor_{key}: données existantes
         """
 
-        pk = self.sm().pk_field_name()
+        pk = self.Model().pk_field_name()
 
         return f"""    LEFT JOIN process_{key}
         ON process_{key}.{pk} = t.{pk}

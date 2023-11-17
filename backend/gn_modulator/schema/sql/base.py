@@ -16,7 +16,7 @@ from ..errors import (
 
 class SchemaSqlBase:
     def sql_type(self, key):
-        if not self.is_column(key):
+        if not self.Model().is_column(key):
             return None
         return self.cls.c_get_type(self.property(key)["type"], "definition", "sql")
 
