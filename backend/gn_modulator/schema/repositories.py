@@ -229,27 +229,6 @@ class SchemaRepositories:
             db.session.commit()
         return m
 
-    def process_query_columns(self, params, query, order_by):
-        """
-        permet d'ajouter de colonnes selon les besoin
-        - scope pour cruved (toujours?)
-        - row_number (si dans fields)
-        """
-
-        fields = params.get("fields") or []
-
-        # cruved
-        if "scope" in fields:
-            query = self.add_column_scope(query)
-
-        # row_number
-        if "row_number" in fields:
-            query = query.add_columns(
-                func.row_number().over(order_by=order_by).label("row_number")
-            )
-
-        return query
-
     def get_query_infos(self, module_code=MODULE_CODE, cruved_type="R", params={}, url=None):
         count_total = (
             self.Model()

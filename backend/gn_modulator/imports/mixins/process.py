@@ -258,7 +258,7 @@ GROUP BY {view_params['txt_group_by']}
 
                 # sinon on la calcule avec resolve_key
                 else:
-                    rel_schema_code = sm.property(k_unique)["schema_code"]
+                    rel_schema_code = self.sm().property(k_unique)["schema_code"]
                     txt_column_join, v_join_inter = self.resolve_key(
                         rel_schema_code,
                         var_key,

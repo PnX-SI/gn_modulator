@@ -23,7 +23,9 @@ def get_list_rest(module_code, object_code, additional_params={}):
         url=request.url,
     )
 
-    query_list = sm.query_list(module_code=module_code, cruved_type=cruved_type, params=params)
+    query_list = sm.Model().query.query_list(
+        module_code=module_code, cruved_type=cruved_type, params=params, query_type="select"
+    )
 
     if params.get("sql"):
         # test si droit admin

@@ -5,4 +5,4 @@ from gn_modulator import MODULE_CODE
 
 class BaseSchemaQuery(BaseQuery):
     def Model(self):
-        return self._only_full_mapper_zero("get").entity
+        return self._primary_entity.mapper.entity

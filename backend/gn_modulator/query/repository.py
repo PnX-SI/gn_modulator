@@ -28,7 +28,7 @@ class RepositorySchemaQuery(
         order_bys, self = self.get_sorters(params.get("sort", []))
 
         # ajout colonnes row_number, scope (cruved)
-        self = self.process_query_columns(params, order_bys)
+        self = self.process_query_columns(params, order_bys, check_cruved)
 
         # - prefiltrage CRUVED
         if check_cruved:

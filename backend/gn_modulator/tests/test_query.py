@@ -12,4 +12,11 @@ class TestRepository:
         assert hasattr(Model, "is_schematisable")
         assert Model.is_schematisable
         assert Model.pk_field_names() == ["id_passage_faune"]
-        query = Model.query.query_list("m_sipaf", "R", {"fields": ["id_passage_faune"]}, "select")
+        query = Model.query.query_list(
+            "m_sipaf",
+            "R",
+            {"fields": ["id_passage_faune", "nomenclatures_ouvrage_type.label_fr"]},
+            "select",
+        )
+        res = query.all()
+        sm.serialize_list(res, fields=["nomenclatures_ouvrage_type.label_fr"])

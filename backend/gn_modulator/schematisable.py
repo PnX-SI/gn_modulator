@@ -24,21 +24,21 @@ def get_schematisable_decorator():
                 rel_key = key.split(".")[0]
                 # propriete associée à la relation
                 rel_prop = cls.property(rel_key)
-                # modele associé à la relation
-                rel_Model = rel_prop.mapper.entity
 
                 # en cas de JSON on stoppe ici
-                if rel_prop.type == "JSONB":
+                if hasattr(rel_prop, "type") and rel_prop.type == "JSONB":
                     return rel_prop
+
+                # modele associé à la relation
+                relation_Model = rel_prop.mapper.entity
 
                 # clé restante
                 remaining_key = ".".join(key.split(".")[1:])
-
                 # propriété associée à la clé restante
-                return rel_Model.property(remaining_key)
+                return relation_Model.property(remaining_key)
 
             if not hasattr(cls, key):
-                raise ModelPropertyError(f"Le modèle {cls} n'a pas de cle {rel_prop} ({key})")
+                raise ModelPropertyError(f"Le modèle {cls} n'a pas de cle ({key})")
 
             return getattr(cls, key)
 
@@ -88,11 +88,17 @@ def get_schematisable_decorator():
             """
             Renvoie True si la propriété décrite par key est une relation
             """
-            return cls.is_relationship(key) and cls.property(key).direction.name == "ONETOMANY"
+            return (
+                cls.is_relationship(key)
+                and cls.property(key).property.direction.name == "ONETOMANY"
+            )
 
         @classmethod
         def relation_Model(cls, key):
-            return cls.is_relationship(key) and cls.property(key).mapper.entity or None
+            if cls.is_relationship(key):
+                return cls.property(key).mapper.entity
+            if cls.is_foreign_key(key):
+                return cls.property(key).target
 
         @classmethod
         def cor_schema_dot_table(cls, key):
@@ -130,7 +136,8 @@ def get_schematisable_decorator():
             keys = key.split(".")
             for index, k in enumerate(keys):
                 current_key = ".".join(keys[: index + 1])
-                if self.property(current_key).type == "JSONB":
+                prop = self.property(current_key)
+                if hasattr(prop, "type") and getattr(prop, "type") == "JSONB":
                     return current_key
             return key
 
@@ -219,7 +226,7 @@ def get_schematisable_decorator():
 
             # chargement des champs si is last field
             if is_relationship and is_last_field and only_fields:
-                query = query.eager_load_only(field_name, query, only_fields, index)
+                query = query.eager_load_only(field_name, only_fields, index)
 
             # retour
             return cls.process_getattr_res(res, query, field_name, index, only_fields)

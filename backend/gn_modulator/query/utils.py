@@ -23,7 +23,7 @@ class SchemaQueryUtils(BaseSchemaQuery):
         order_bys = []
 
         for s in sort:
-            self, sorters = self.get_sorter(s)
+            sorters, self = self.get_sorter(s)
             order_bys.extend(sorters)
 
         return order_bys, self
@@ -41,7 +41,7 @@ class SchemaQueryUtils(BaseSchemaQuery):
 
         if sort_spe is not None:
             sort_string = sa.func.substring(model_attribute, "[a-zA-Z]+")
-            sort_number = sa.cast(sa.unc.substring(model_attribute, "[0-9]+"), sa.Numeric)
+            sort_number = sa.cast(sa.func.substring(model_attribute, "[0-9]+"), sa.Numeric)
 
             if sort_spe == "str_num":
                 orders_by.extend([sort_string, sort_number])
@@ -71,7 +71,7 @@ class SchemaQueryUtils(BaseSchemaQuery):
 
         return self
 
-    def process_query_columns(self, params, order_by):
+    def process_query_columns(self, params, order_by, check_cruved):
         """
         permet d'ajouter de colonnes selon les besoin
         - scope pour cruved (toujours?)
@@ -82,7 +82,7 @@ class SchemaQueryUtils(BaseSchemaQuery):
 
         # cruved
         if "scope" in fields:
-            self = self.add_column_scope()
+            self = self.add_column_scope(check_cruved)
 
         # row_number
         if "row_number" in fields:
@@ -92,10 +92,10 @@ class SchemaQueryUtils(BaseSchemaQuery):
 
         return self
 
-    def expression_scope(self):
+    def expression_scope(self, check_cruved):
         Model = self.Model()
 
-        if self.attr("meta.check_cruved") is None:
+        if not check_cruved:
             return sa.literal(0)
         else:
             return sa.case(
@@ -112,7 +112,7 @@ class SchemaQueryUtils(BaseSchemaQuery):
                 else_=3,
             )
 
-    def add_column_scope(self, query):
+    def add_column_scope(self, check_cruved):
         """
         ajout d'une colonne 'scope' à la requête
         afin de
@@ -122,15 +122,12 @@ class SchemaQueryUtils(BaseSchemaQuery):
                 - affichage de boutton, vérification d'accès aux pages etc ....
         """
 
-        query = query.add_columns(self.expression_scope().label("scope"))
+        self = self.add_columns(self.expression_scope(check_cruved).label("scope"))
 
-        return query
+        return self
 
     def process_cruved_filter(self, cruved_type, module_code):
         """ """
-
-        if self.attr("meta.check_cruved") is None:
-            return self
 
         if not hasattr(g, "current_user"):
             return self
