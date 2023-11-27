@@ -7,6 +7,7 @@ from geonature.utils.env import db
 from sqlalchemy.sql.functions import ReturnTypeFromArgs
 from gn_modulator.utils.filters import parse_filters
 from .base import BaseSchemaQuery
+from .getattr import _getModelAttr, _clear_query_cache
 
 
 # late import ?
@@ -28,7 +29,9 @@ class unaccent(ReturnTypeFromArgs):
     pass
 
 
-class SchemaQueryFilters(BaseSchemaQuery):
+class SchemaQueryFilters(
+    BaseSchemaQuery,
+):
     """
     repositories - filters
 
@@ -97,16 +100,6 @@ class SchemaQueryFilters(BaseSchemaQuery):
             elif isinstance(elem, dict):
                 loop_filter, self = self.get_filter(elem)
 
-            # elif elem.startswith("has_"):
-            #     relation_name = elem.replace("has_", "")
-            #     if not self.is_relationship(relation_name):
-            #         raise SchemaQueryFilterError(
-            #             f"L'élément de liste de filtre {elem} est mal défini. ({relation_name} ne correspond pas a une relation)"
-            #         )
-            #     model_attribute, query = self.Model().getModelAttr(
-            #     Model, relation_name, query=query, condition=condition
-            #     )
-
             # operation
             elif elem in "!|*":
                 # deux négations '!' s'annulent
@@ -160,7 +153,7 @@ class SchemaQueryFilters(BaseSchemaQuery):
         filter_type = filter["type"]
         filter_value = filter.get("value", None)
 
-        model_attribute, self = self.Model().getModelAttr(filter_field, query=self)
+        model_attribute, self = self.getModelAttr(self.Model(), filter_field)
 
         if filter_type in ["like", "ilike"]:
             if "%" not in filter_value:

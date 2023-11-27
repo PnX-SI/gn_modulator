@@ -46,7 +46,7 @@ class FieldSchemaQuery(BaseSchemaQuery):
             lambda x: not (x in field_to_remove_from_process or x in property_fields),
             fields_to_process,
         ):
-            _, self = Model.getModelAttr(field, query=self, only_fields=only_fields)
+            _, self = self.getModelAttr(Model, field, only_fields=only_fields)
 
         return self
 
@@ -74,21 +74,6 @@ class FieldSchemaQuery(BaseSchemaQuery):
             only_field.extend(["prenom_role", "nom_role"])
 
         return field_to_process, only_field
-
-    def set_query_cache(self, key, value):
-        self._cache = hasattr(self, "_cache") and self._cache or {}
-        self._cache[key] = value
-        return self
-
-    def clear_query_cache(self):
-        if hasattr(self, "_cache"):
-            delattr(self, "_cache")
-        return self
-
-    def get_query_cache(self, key):
-        if not hasattr(self, "_cache"):
-            return None
-        return self._cache.get(key)
 
     def eager_load_only(self, field_name, only_fields, index):
         """

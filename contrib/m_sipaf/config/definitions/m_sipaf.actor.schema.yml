@@ -4,7 +4,6 @@ code: m_sipaf.actor
 title: schema acteur site
 description: Définition du schema pour les acteurs liés aux sites
 meta:
-    autoschema: true
     model: m_sipaf.models.Actor
     module_code: m_sipaf
     genre: M

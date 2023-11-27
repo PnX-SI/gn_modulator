@@ -4,12 +4,13 @@ from .base import BaseSchemaQuery
 from .field import FieldSchemaQuery
 from .utils import SchemaQueryUtils
 from .filters import SchemaQueryFilters
+from .permission import SchemaQueryPermission
 
 
 class RepositorySchemaQuery(
-    SchemaQueryFilters, SchemaQueryUtils, FieldSchemaQuery, BaseSchemaQuery
+    SchemaQueryPermission, SchemaQueryFilters, SchemaQueryUtils, FieldSchemaQuery, BaseSchemaQuery
 ):
-    def query_list(self, module_code, cruved_type, params, query_type, check_cruved=False):
+    def query_list(self, module_code, cruved_type, params, query_type, id_role=None):
         Model = self.Model()
         model_pk_fields = [
             getattr(Model, pk_field_name) for pk_field_name in Model.pk_field_names()
@@ -28,11 +29,11 @@ class RepositorySchemaQuery(
         order_bys, self = self.get_sorters(params.get("sort", []))
 
         # ajout colonnes row_number, scope (cruved)
-        self = self.process_query_columns(params, order_bys, check_cruved)
+        self = self.process_query_columns(params, order_bys, id_role)
 
         # - prefiltrage CRUVED
-        if check_cruved:
-            self = self.process_cruved_filter(cruved_type, module_code)
+        if id_role:
+            self = self.process_permission_filter(cruved_type, module_code, id_role)
 
         # - prefiltrage params
         self = self.process_filters(params.get("prefilters", []))

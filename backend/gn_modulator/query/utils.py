@@ -2,8 +2,6 @@ import re
 from flask import g
 from .base import BaseSchemaQuery
 import sqlalchemy as sa
-from geonature.core.gn_permissions.tools import get_scopes_by_action
-import sqlparse
 
 
 class SchemaQueryUtils(BaseSchemaQuery):
@@ -12,12 +10,6 @@ class SchemaQueryUtils(BaseSchemaQuery):
     page/size
     cruved?
     """
-
-    def sql_txt(self):
-        txt = str(self.statement.compile(compile_kwargs={"literal_binds": True}))
-        txt = txt.replace("%%", "%")
-        txt = sqlparse.format(txt, reindent=True, keywordcase="upper")
-        return txt
 
     def get_sorters(self, sort):
         order_bys = []
@@ -34,7 +26,7 @@ class SchemaQueryUtils(BaseSchemaQuery):
         sort_spe = "str_num" if "*" in sorter else "num_str" if "%" in sorter else None
         sort_field = re.sub(r"[+-\\*%]", "", sorter)
 
-        model_attribute, self = self.Model().getModelAttr(sort_field, self)
+        model_attribute, self = self.getModelAttr(self.Model(), sort_field, self)
 
         if model_attribute is None:
             raise Exception(f"Pb avec le tri {self.schema_code()}, field: {sort_field}")
@@ -89,54 +81,5 @@ class SchemaQueryUtils(BaseSchemaQuery):
             self = self.add_columns(
                 sa.func.row_number().over(order_by=order_by).label("row_number")
             )
-
-        return self
-
-    def expression_scope(self, check_cruved):
-        Model = self.Model()
-
-        if not check_cruved:
-            return sa.literal(0)
-        else:
-            return sa.case(
-                [
-                    (
-                        sa.or_(
-                            Model.actors.any(id_role=g.current_user.id_role),
-                            Model.id_digitiser == g.current_user.id_role,
-                        ),
-                        1,
-                    ),
-                    (Model.actors.any(id_organism=g.current_user.id_organisme), 2),
-                ],
-                else_=3,
-            )
-
-    def add_column_scope(self, check_cruved):
-        """
-        ajout d'une colonne 'scope' à la requête
-        afin de
-            - filter dans la requete de liste
-            - verifier les droit sur un donnée pour les action unitaire (post update delete)
-            - le rendre accessible pour le frontend
-                - affichage de boutton, vérification d'accès aux pages etc ....
-        """
-
-        self = self.add_columns(self.expression_scope(check_cruved).label("scope"))
-
-        return self
-
-    def process_cruved_filter(self, cruved_type, module_code):
-        """ """
-
-        if not hasattr(g, "current_user"):
-            return self
-
-        user_cruved = get_scopes_by_action(module_code=module_code)
-
-        cruved_for_type = user_cruved.get(cruved_type)
-
-        if cruved_for_type < 3:
-            self = self.filter(self.expression_scope() <= cruved_for_type)
 
         return self

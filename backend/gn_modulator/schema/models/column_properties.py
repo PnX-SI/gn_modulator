@@ -10,6 +10,7 @@ from sqlalchemy import (
 )
 from geonature.utils.env import db
 from gn_modulator.utils.filters import parse_filters
+from gn_modulator.query.getattr import _getModelAttr
 from .. import errors
 
 
@@ -42,7 +43,7 @@ class SchemaModelColumnProperties:
             label_key = ".".join(
                 [column_property_def["relation_key"], column_property_def["label_key"]]
             )
-            relation_label, _ = self.Model().getModelAttr(label_key)
+            relation_label, _ = _getModelAttr(None, self.Model(), label_key)
             return select(
                 [func.string_agg(cast(relation_label, db.String), literal_column("', '"))]
             )
@@ -70,7 +71,7 @@ class SchemaModelColumnProperties:
                         items2.append(txt)
                         txt = ""
                 elif label[index] == ">":
-                    model_attribute, condition = self.Model().getModelAttr(txt)
+                    model_attribute, condition = _getModelAttr(None, self.Model(), txt)
                     if condition is not None:
                         conditions.append(condition)
                     items2.append(txt)
@@ -89,7 +90,7 @@ class SchemaModelColumnProperties:
 
         if column_property_type in ["min", "max"]:
             field_key = ".".join([column_property_def["relation_key"], column_property_def["key"]])
-            relation_field, _ = self.Model().getModelAttr(field_key)
+            relation_field, _ = _getModelAttr(None, self.Model(), field_key)
             func_min_max = getattr(func, column_property_type)
             return select([func_min_max(relation_field)])
 
@@ -98,7 +99,7 @@ class SchemaModelColumnProperties:
         )
 
     def column_property_util_relation_where_conditions(self, key, column_property_def, Model):
-        relation, _ = self.Model().getModelAttr(Model, column_property_def["relation_key"])
+        relation, _ = _getModelAttr(None, Model, column_property_def["relation_key"])
         rel = self.cls(self.property(column_property_def["relation_key"])["schema_code"])
         conditions = relation
         if column_property_def.get("filters") is not None:
