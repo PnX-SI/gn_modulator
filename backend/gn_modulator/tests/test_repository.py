@@ -89,10 +89,13 @@ class TestRepository:
 
         assert len(res) == 2
 
-    def test_filter_d_within(self, passages_faune_with_diagnostic, synthese_for_passage_faune):
+    def test_filter_d_within(
+        self, passages_faune_with_diagnostic, synthese_for_passage_faune, users, permission_cache
+    ):
         sm = SchemaMethods("syn.synthese")
+        assert hasattr(sm.Model(), "expression_scope")
         q = sm.Model().query.query_list(
-            "MODULATOR",
+            "SYNTHESE",
             "R",
             {
                 "prefilters": [
@@ -100,7 +103,10 @@ class TestRepository:
                 ]
             },
             "select",
+            id_role=users["user"].id_role,
         )
+        print(q.sql_txt())
         res = q.all()
 
         assert len(res) == 1
+        assert False

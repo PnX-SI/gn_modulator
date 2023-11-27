@@ -228,21 +228,16 @@ class PassageFaune(db.Model):
     )
 
     @classmethod
-    def expression_scope(cls, id_role):
-        if not id_role:
-            return sa.literal(0)
-        else:
-            subquery_users = (
-                User.query.filter_by(id_role=id_role)
-                .options(sa.orm.load_only(User.id_role, User.id_organisme))
-                .subquery()
-            )
-            return sa.case(
-                [
-                    (cls.actors.any(id_organism=subquery_users.c.id_organisme), 2),
-                ],
-                else_=3,
-            )
+    def expression_scope(cls, query, id_role):
+        query = query.join(User, User.id_role == id_role)
+        expression_scope = sa.case(
+            [
+                # scope 2 si acteur de meme organisme
+                (cls.actors.any(id_organism=User.id_organisme), 2),
+            ],
+            else_=3,
+        )
+        return expression_scope, query
 
 
 class Actor(db.Model):
