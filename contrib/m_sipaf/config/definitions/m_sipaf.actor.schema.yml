@@ -25,7 +25,5 @@ properties:
         nomenclature_type: PF_TYPE_ACTOR
     nomenclature_type_actor:
         title: "Type d'acteur"
-    role:
-        title: Rôle
     organisme:
         title: Organisme

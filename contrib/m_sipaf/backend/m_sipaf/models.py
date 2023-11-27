@@ -3,15 +3,7 @@ from datetime import datetime
 
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import column_property, backref
-from sqlalchemy import (
-    func,
-    literal,
-    select,
-    exists,
-    and_,
-    literal_column,
-    cast,
-)
+import sqlalchemy as sa
 from geoalchemy2 import Geometry
 
 from geonature.utils.env import db
@@ -189,13 +181,13 @@ class PassageFaune(db.Model):
     actors = db.relationship("Actor", cascade="all,delete,delete-orphan")
 
     # columns properties
-    geom_x = column_property(func.st_x(func.st_centroid(geom)))
-    geom_y = column_property(func.st_y(func.st_centroid(geom)))
-    geom_text = column_property(func.st_astext(geom))
+    geom_x = column_property(sa.func.st_x(sa.func.st_centroid(geom)))
+    geom_y = column_property(sa.func.st_y(sa.func.st_centroid(geom)))
+    geom_text = column_property(sa.func.st_astext(geom))
 
     label_infrastructures = column_property(
-        select([func.string_agg(LLinears.linear_name, literal_column("', '"))]).where(
-            and_(
+        sa.select([sa.func.string_agg(LLinears.linear_name, sa.literal_column("', '"))]).where(
+            sa.and_(
                 CorPfLinear.id_passage_faune == id_passage_faune,
                 CorPfLinear.id_linear == LLinears.id_linear,
             )
@@ -203,8 +195,8 @@ class PassageFaune(db.Model):
     )
 
     label_communes = column_property(
-        select([func.string_agg(LAreas.area_name, literal_column("', '"))]).where(
-            and_(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+            sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
                 BibAreasTypes.id_type == LAreas.id_type,
@@ -214,8 +206,8 @@ class PassageFaune(db.Model):
     )
 
     label_departements = column_property(
-        select([func.string_agg(LAreas.area_name, literal_column("', '"))]).where(
-            and_(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+            sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
                 BibAreasTypes.id_type == LAreas.id_type,
@@ -225,8 +217,8 @@ class PassageFaune(db.Model):
     )
 
     label_regions = column_property(
-        select([func.string_agg(LAreas.area_name, literal_column("', '"))]).where(
-            and_(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+            sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
                 BibAreasTypes.id_type == LAreas.id_type,
@@ -234,6 +226,23 @@ class PassageFaune(db.Model):
             )
         )
     )
+
+    @classmethod
+    def expression_scope(cls, id_role):
+        if not id_role:
+            return sa.literal(0)
+        else:
+            subquery_users = (
+                User.query.filter_by(id_role=id_role)
+                .options(sa.orm.load_only(User.id_role, User.id_organisme))
+                .subquery()
+            )
+            return sa.case(
+                [
+                    (cls.actors.any(id_organism=subquery_users.c.id_organisme), 2),
+                ],
+                else_=3,
+            )
 
 
 class Actor(db.Model):
@@ -252,9 +261,6 @@ class Actor(db.Model):
         nullable=False,
     )
     passage_faune = db.relationship(PassageFaune)
-
-    id_role = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
-    role = db.relationship(User)
 
     id_organism = db.Column(db.Integer, db.ForeignKey("utilisateurs.bib_organismes.id_organisme"))
     organisme = db.relationship(Organisme)

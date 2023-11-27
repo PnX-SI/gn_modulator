@@ -2,7 +2,10 @@ import pytest
 
 from flask import url_for
 from gn_modulator import SchemaMethods, ModuleMethods
-from geonature.tests.utils import set_logged_user_cookie, unset_logged_user_cookie
+from pypnusershub.tests.utils import (
+    set_logged_user_cookie,
+    unset_logged_user_cookie,
+)
 
 
 @pytest.mark.skip()
