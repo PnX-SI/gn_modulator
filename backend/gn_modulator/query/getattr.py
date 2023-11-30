@@ -22,6 +22,7 @@ def _clear_query_cache(query):
 
 def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=None):
     """ """
+
     # liste des champs 'rel1.rel2.pro1' -> 'rel1', 'rel2', 'prop1'
     fields = field_name.split(".")
 
@@ -40,7 +41,7 @@ def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=N
     res = _get_query_cache(query, cache_key)
 
     if res:
-        return process_getattr_res(res, Model, field_name, index, only_fields=only_fields)
+        return _process_getattr_res(query, res, Model, field_name, index, only_fields=only_fields)
     # si non en cache
     # on le calcule
 
@@ -59,7 +60,7 @@ def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=N
             sa.orm.aliased(res["relation_model"]) if query else res["relation_model"]
         )
         res["val_of_type"] = res["val"].of_type(res["relation_alias"])
-        if hasattr(query, "join") is None:
+        if hasattr(query, "join"):
             # toujours en outer ???
             query = query.join(res["val_of_type"], isouter=True)
 
@@ -68,15 +69,15 @@ def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=N
 
     # chargement des champs si is last field
     if is_relationship and is_last_field and only_fields:
-        query = query.eager_load_only(field_name, only_fields, index)
+        query = _eager_load_only(query, field_name, only_fields, index)
 
     # retour
-    return process_getattr_res(
+    return _process_getattr_res(
         query, res, Model, field_name, index, only_fields=only_fields, condition=condition
     )
 
 
-def process_getattr_res(query, res, Model, field_name, index, only_fields=[], condition=None):
+def _process_getattr_res(query, res, Model, field_name, index, only_fields=[], condition=None):
     # si c'est une propriété
     fields = field_name.split(".")
     # clé pour le cache
@@ -106,3 +107,51 @@ def process_getattr_res(query, res, Model, field_name, index, only_fields=[], co
 
     output_field = "val" if is_last_field and is_relationship else "relation_alias"
     return res[output_field], query or condition
+
+
+def _eager_load_only(query, field_name, only_fields, index):
+    """
+    charge les relations et les colonnes voulues
+    """
+
+    fields = field_name.split(".")
+
+    # table à charger en eager_load
+    eagers = []
+
+    # boucle de 0 à index
+    # pour le calcul de eagers et only_columns
+    for i in range(0, index + 1):
+        # recupération des relations depuis le cache
+        key_cache_eager = ".".join(fields[: i + 1])
+        cache = query.get_query_cache(key_cache_eager)
+        eager_i = cache["val_of_type"]
+        eagers.append(eager_i)
+
+        # calcul des colonnes
+        only_columns_i = list(
+            map(
+                lambda x: getattr(cache["relation_alias"], x.replace(f"{key_cache_eager}.", "")),
+                filter(
+                    lambda x: key_cache_eager in x
+                    and x.startswith(f"{key_cache_eager}.")
+                    and "." not in x.replace(f"{key_cache_eager}.", "")
+                    and hasattr(
+                        getattr(cache["relation_alias"], x.replace(f"{key_cache_eager}.", "")),
+                        "property",
+                    ),
+                    only_fields,
+                ),
+            ),
+        )
+        if not only_columns_i:
+            relation_Model = query.Model().relation_Model(key_cache_eager)
+            only_columns_i = [
+                getattr(cache["relation_alias"], pk_field_name)
+                for pk_field_name in relation_Model.pk_field_names()
+            ]
+
+        # chargement de relation en eager et choix des champs
+        query = query.options(sa.orm.contains_eager(*eagers).load_only(*only_columns_i))
+
+    return query

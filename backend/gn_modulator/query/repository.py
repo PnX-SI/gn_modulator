@@ -10,7 +10,7 @@ from .permission import SchemaQueryPermission
 class RepositorySchemaQuery(
     SchemaQueryPermission, SchemaQueryFilters, SchemaQueryUtils, FieldSchemaQuery, BaseSchemaQuery
 ):
-    def query_list(self, module_code, cruved_type, params, query_type, id_role=None):
+    def query_list(self, module_code, action, params, query_type, id_role=None):
         Model = self.Model()
         model_pk_fields = [
             getattr(Model, pk_field_name) for pk_field_name in Model.pk_field_names()
@@ -31,9 +31,8 @@ class RepositorySchemaQuery(
         # ajout colonnes row_number, scope (cruved)
         self = self.process_query_columns(params, order_bys, id_role)
 
-        # - prefiltrage CRUVED
-        if id_role:
-            self = self.process_permission_filter(cruved_type, module_code, id_role)
+        # - prefiltrage permissions (CRUVED sensibilité etc)
+        self = self.process_filter_permission(id_role, action, module_code)
 
         # - prefiltrage params
         self = self.process_filters(params.get("prefilters", []))

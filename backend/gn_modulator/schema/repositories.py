@@ -46,7 +46,7 @@ class SchemaRepositories:
         value,
         field_name=None,
         module_code=MODULE_CODE,
-        cruved_type="R",
+        action="R",
         params={},
         query_type="all",
     ):
@@ -72,7 +72,7 @@ class SchemaRepositories:
 
         query = self.Model().query.query_list(
             module_code=module_code,
-            cruved_type=cruved_type,
+            action=action,
             params=params_query,
             query_type=query_type,
         )
@@ -181,7 +181,7 @@ class SchemaRepositories:
             value,
             field_name=field_name,
             module_code=module_code,
-            cruved_type="U",
+            action="U",
             params=params,
             query_type="update",
         ).one()
@@ -213,7 +213,7 @@ class SchemaRepositories:
             value,
             field_name=field_name,
             module_code=module_code,
-            cruved_type="D",
+            action="D",
             params=params,
             query_type="delete",
         )
@@ -229,11 +229,11 @@ class SchemaRepositories:
             db.session.commit()
         return m
 
-    def get_query_infos(self, module_code=MODULE_CODE, cruved_type="R", params={}, url=None):
+    def get_query_infos(self, module_code=MODULE_CODE, action="R", params={}, url=None):
         count_total = (
             self.Model()
             .query.query_list(
-                module_code=module_code, cruved_type="R", params=params, query_type="total"
+                module_code=module_code, action="R", params=params, query_type="total"
             )
             .count()
         )
@@ -242,7 +242,7 @@ class SchemaRepositories:
             self.Model()
             .query.query_list(
                 module_code=module_code,
-                cruved_type="R",
+                action="R",
                 params=params,
                 query_type="filtered",
             )
@@ -294,10 +294,10 @@ class SchemaRepositories:
 
         return query_infos
 
-    def get_page_number(self, value, module_code, cruved_type, params):
+    def get_page_number(self, value, module_code, action, params):
         params["fields"] = ["row_number"]
 
-        query_list = self.Model().query.query_list(module_code, cruved_type, params, "page_number")
+        query_list = self.Model().query.query_list(module_code, action, params, "page_number")
 
         sub_query = query_list.subquery()
 

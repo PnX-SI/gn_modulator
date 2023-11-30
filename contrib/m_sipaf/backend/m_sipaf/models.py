@@ -1,7 +1,6 @@
 import uuid
-from datetime import datetime
 
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import column_property, backref
 import sqlalchemy as sa
 from geoalchemy2 import Geometry
@@ -11,7 +10,7 @@ from geonature.utils.env import db
 from geonature.core.gn_commons.models import TMedias
 from pypnusershub.db.models import User, Organisme
 from pypnnomenclature.models import TNomenclatures
-from ref_geo.models import LAreas, LLinears, BibAreasTypes, BibLinearsTypes
+from ref_geo.models import LAreas, LLinears, BibAreasTypes
 
 
 class CorPfNomenclatureOuvrageType(db.Model):
@@ -227,17 +226,41 @@ class PassageFaune(db.Model):
         )
     )
 
-    @classmethod
-    def expression_scope(cls, query, id_role):
-        query = query.join(User, User.id_role == id_role)
-        expression_scope = sa.case(
-            [
-                # scope 2 si acteur de meme organisme
-                (cls.actors.any(id_organism=User.id_organisme), 2),
-            ],
-            else_=3,
+
+def subquery_scope(cls, query, id_role):
+    CurrentUser = sa.orm.aliased(User)
+
+    pre_scope = (
+        db.session.query(cls)
+        .join(CurrentUser, CurrentUser.id_role == id_role)
+        .join(Observers, Synthese.cor_observers, isouter=True)
+        .join(TDatasets, Synthese.dataset, isouter=True)
+        .join(TDatasets.cor_dataset_actor, isouter=True)
+        .join(TAcquisitionFramework, TDatasets.acquisition_framework, isouter=True)
+        .join(TAcquisitionFramework.cor_af_actor, isouter=True)
+        .with_entities(
+            Synthese.id_synthese,
+            Synthese.id_digitiser,
+            Observers.id_role.label("id_role_obs"),
+            Observers.id_organisme.label("id_organisme_obs"),
+            CurrentUser.id_role.label("id_role_cur"),
+            CurrentUser.id_organisme.label("id_organisme_cur"),
+            CorDatasetActor.id_role.label("id_role_jdd"),
+            CorDatasetActor.id_organism.label("id_organisme_jdd"),
+            CorAcquisitionFrameworkActor.id_role.label("id_role_af"),
+            CorAcquisitionFrameworkActor.id_organism.label("id_organisme_af"),
         )
-        return expression_scope, query
+    ).cte("pre_scope")
+
+    # query = query.join(User, User.id_role == id_role)
+    subquery_scope = sa.case(
+        [
+            # scope 2 si acteur de meme organisme
+            (cls.actors.any(id_organism=User.id_organisme), 2),
+        ],
+        else_=3,
+    )
+    return subquery_scope
 
 
 class Actor(db.Model):

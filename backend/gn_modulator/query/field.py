@@ -56,9 +56,8 @@ class FieldSchemaQuery(BaseSchemaQuery):
         only_field = [field]
         field_to_process = field
         if Model.is_relationship(field):
-            rel_schema_code = self.property(field)["schema_code"]
-            rel = self.cls(rel_schema_code)
-            default_field_names = rel.default_fields()
+            relation_Model = Model.relation_Model(field)
+            default_field_names = relation_Model.default_fields
             only_field = default_field_names
 
         elif "." in field:
@@ -74,52 +73,3 @@ class FieldSchemaQuery(BaseSchemaQuery):
             only_field.extend(["prenom_role", "nom_role"])
 
         return field_to_process, only_field
-
-    def eager_load_only(self, field_name, only_fields, index):
-        """
-        charge les relations et les colonnes voulues
-        """
-
-        fields = field_name.split(".")
-
-        # table à charger en eager_load
-        eagers = []
-
-        # boucle de 0 à index
-        # pour le calcul de eagers et only_columns
-        for i in range(0, index + 1):
-            # recupération des relations depuis le cache
-            key_cache_eager = ".".join(fields[: i + 1])
-            cache = self.get_query_cache(key_cache_eager)
-            eager_i = cache["val_of_type"]
-            eagers.append(eager_i)
-
-            # calcul des colonnes
-            only_columns_i = list(
-                map(
-                    lambda x: getattr(
-                        cache["relation_alias"], x.replace(f"{key_cache_eager}.", "")
-                    ),
-                    filter(
-                        lambda x: key_cache_eager in x
-                        and x.startswith(f"{key_cache_eager}.")
-                        and "." not in x.replace(f"{key_cache_eager}.", "")
-                        and hasattr(
-                            getattr(cache["relation_alias"], x.replace(f"{key_cache_eager}.", "")),
-                            "property",
-                        ),
-                        only_fields,
-                    ),
-                ),
-            )
-            if not only_columns_i:
-                relation_Model = self.Model().relation_Model(key_cache_eager)
-                only_columns_i = [
-                    getattr(cache["relation_alias"], pk_field_name)
-                    for pk_field_name in relation_Model.pk_field_names()
-                ]
-
-            # chargement de relation en eager et choix des champs
-            self = self.options(orm.contains_eager(*eagers).load_only(*only_columns_i))
-
-        return self

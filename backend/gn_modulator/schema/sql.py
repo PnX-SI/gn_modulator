@@ -133,7 +133,7 @@ WHERE
         return self.get_column_info(column_name)["nullable"]
 
     @classmethod
-    def sql_txt(cls, query):
+    def pretty_sql(cls, query):
         return str(query.statement.compile(compile_kwargs={"literal_binds": True}))
 
     @classmethod

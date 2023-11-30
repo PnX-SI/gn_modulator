@@ -38,12 +38,10 @@ def api_export(module_code, object_code, export_code):
     params["process_field_name"] = export_definition.get("process_field_name")
     params["process_label"] = export_definition.get("process_label")
 
-    cruved_type = params.get("cruved_type") or "R"
+    action = params.get("action") or "R"
 
     # recupération de la liste
-    query_list = sm.Model().query_list(
-        module_code=module_code, cruved_type=cruved_type, params=params
-    )
+    query_list = sm.Model().query_list(module_code=module_code, action=action, params=params)
 
     # on assume qu'il n'y que des export csv
     # TODO ajouter query param export_type (csv, shape, geosjon, etc) et traiter les différents cas

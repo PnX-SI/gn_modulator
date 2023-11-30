@@ -18,7 +18,7 @@ def parse_request_args(object_definition={}):
         "sort": load_array_param(request.args.get("sort")),
         "value": load_param(request.args.get("value", "null")),
         "as_csv": load_param(request.args.get("as_csv", "false")),
-        "cruved_type": load_param(request.args.get("cruved_type", "null")),
+        "action": load_param(request.args.get("action", "null")),
         "sql": "sql" in request.args,
         "test": load_param(request.args.get("test", "null")),
     }

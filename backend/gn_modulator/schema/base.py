@@ -395,12 +395,14 @@ class SchemaBase:
     def is_foreign_key(self, key):
         return self.has_property(key) and self.property(key).get("foreign_key")
 
-    def default_fields(self):
+    def default_fields(self, Model=None):
+        if Model is None:
+            Model = self.Model()
         return self.attr("meta.default_fields") or list(
             filter(
                 lambda x: x is not None,
                 [
-                    self.Model().pk_field_name(),
+                    Model.pk_field_name(),
                     self.label_field_name(),
                     self.title_field_name(),
                 ],

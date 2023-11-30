@@ -23,7 +23,7 @@ class BaseSchemaQuery(BaseQuery):
     def get_query_cache(self, key):
         return _get_query_cache(self, key)
 
-    def sql_txt(self):
+    def pretty_sql(self):
         txt = str(self.statement.compile(compile_kwargs={"literal_binds": True}))
         txt = txt.replace("%%", "%")
         txt = sqlparse.format(txt, reindent=True, keywordcase="upper")

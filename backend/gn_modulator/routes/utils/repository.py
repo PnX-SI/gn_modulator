@@ -15,16 +15,16 @@ def get_list_rest(module_code, object_code, additional_params={}):
         **additional_params,
     }
 
-    cruved_type = params.get("cruved_type") or "R"
+    action = params.get("action") or "R"
     query_infos = sm.get_query_infos(
         module_code=module_code,
-        cruved_type=cruved_type,
+        action=action,
         params=params,
         url=request.url,
     )
 
     query_list = sm.Model().query.query_list(
-        module_code=module_code, cruved_type=cruved_type, params=params, query_type="select"
+        module_code=module_code, action=action, params=params, query_type="select"
     )
 
     if params.get("sql"):
@@ -35,7 +35,7 @@ def get_list_rest(module_code, object_code, additional_params={}):
         #         403,
         #     )
         response = make_response(
-            query_list.sql_txt(),
+            query_list.pretty_sql(),
             200,
         )
         response.mimetype = "text/plain"
@@ -71,7 +71,7 @@ def get_one_rest(module_code, object_code, value):
             value,
             field_name=params.get("field_name"),
             module_code=module_code,
-            cruved_type="R",
+            action="R",
             params=params,
         ).one()
 
@@ -147,7 +147,7 @@ def delete_rest(module_code, object_code, value):
         value,
         field_name=params.get("field_name"),
         module_code=module_code,
-        cruved_type="D",
+        action="D",
         params=params,
     ).one()
     dict_out = sm.serialize(m, fields=params.get("fields"), as_geojson=params.get("as_geojson"))
@@ -171,6 +171,6 @@ def get_page_number_and_list(module_code, object_code, value):
     sm = SchemaMethods(schema_code)
 
     params = parse_request_args(object_definition)
-    page_number = sm.get_page_number(value, module_code, params.get("cruved_type") or "R", params)
+    page_number = sm.get_page_number(value, module_code, params.get("action") or "R", params)
 
     return get_list_rest(module_code, object_code, additional_params={"page": page_number})

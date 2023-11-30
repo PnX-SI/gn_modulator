@@ -10,6 +10,7 @@ from gn_modulator.utils.cache import get_global_cache, set_global_cache
 from gn_modulator.utils.errors import add_error
 from gn_modulator.utils.commons import get_class_from_path
 from gn_modulator.utils.env import local_srid
+from gn_modulator.schematisable import schematisable
 from gn_modulator import DefinitionMethods
 
 cor_type_db_schema = {
@@ -42,7 +43,7 @@ class SchemaAuto:
             schema_definition["properties"] = {}
             return schema_definition
 
-        Model = get_class_from_path(self.attr("meta.model"))
+        Model = schematisable(get_class_from_path(self.attr("meta.model")))
         if Model is None:
             raise SchemaAutoError("Pas de modèles trouvé pour la table {schema_dot_table}")
 
@@ -80,7 +81,20 @@ class SchemaAuto:
                     self,
                     {"elem": elem, "required": required, "auto": required_auto},
                 )
+
+        self.processModel(Model)
+
         return schema_definition
+
+    def processModel(self, Model):
+        """
+        ajout d'info au niveau du modele
+        default field
+        TODO
+        unique
+        nomenclature_type ?
+        """
+        Model.default_fields = self.default_fields(Model)
 
     def autoproperties(self, Model):
         properties = {}
