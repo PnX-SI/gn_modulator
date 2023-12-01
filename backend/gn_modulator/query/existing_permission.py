@@ -54,18 +54,16 @@ def synthese_subquery_scope(self, id_role):
         )
     ).cte("pre_scope")
 
-    pre_scope_alias = sa.alias(pre_scope, name="pre_scope_main")
-
-    scope_expression = db.session.query(pre_scope_alias).with_entities(
-        pre_scope_alias.c.id_synthese,
+    scope_expression = db.session.query(Synthese).with_entities(
+        Synthese.id_synthese,
         sa.case(
             [
                 (
                     sa.or_(
-                        pre_scope_alias.c.id_digitiser == id_role,
+                        Synthese.id_digitiser == id_role,
                         sa.exists().where(
                             sa.and_(
-                                pre_scope.c.id_synthese == pre_scope_alias.c.id_synthese,
+                                pre_scope.c.id_synthese == Synthese.id_synthese,
                                 sa.or_(
                                     pre_scope.c.id_role_obs == pre_scope.c.id_role_cur,
                                     pre_scope.c.id_role_jdd == pre_scope.c.id_role_cur,
@@ -80,7 +78,7 @@ def synthese_subquery_scope(self, id_role):
                     sa.or_(
                         sa.exists().where(
                             sa.and_(
-                                pre_scope.c.id_synthese == pre_scope_alias.c.id_synthese,
+                                pre_scope.c.id_synthese == Synthese.id_synthese,
                                 sa.or_(
                                     pre_scope.c.id_organisme_obs == pre_scope.c.id_organisme_cur,
                                     pre_scope.c.id_organisme_jdd == pre_scope.c.id_organisme_cur,

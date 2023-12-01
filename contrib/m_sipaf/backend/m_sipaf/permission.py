@@ -22,22 +22,19 @@ def passage_faune_subquery_scope(self, id_role):
         )
         .cte("pre_scope")
     )
-    pre_scope_alias = sa.alias(pre_scope, name="pre_scope_main")
     scope_expression = (
         # sa.orm.select(pre_scope_alias)
-        db.session.query(pre_scope_alias)
+        db.session.query(PassageFaune)
         # .join(PassageFaune, PassageFaune.id_passage_faune == pre_scope.c.id_passage_faune)
         .with_entities(
-            pre_scope_alias.c.id_passage_faune,
-            pre_scope_alias.c.uuid_passage_faune,
-            pre_scope_alias.c.identifiant,
+            PassageFaune.id_passage_faune,
             sa.case(
                 [
-                    (pre_scope_alias.c.id_digitiser == id_role, 1),
+                    (PassageFaune.id_digitiser == id_role, 1),
                     (
                         sa.exists().where(
                             sa.and_(
-                                pre_scope.c.id_passage_faune == pre_scope_alias.c.id_passage_faune,
+                                pre_scope.c.id_passage_faune == PassageFaune.id_passage_faune,
                                 pre_scope.c.id_organisme_acteur == pre_scope.c.id_organisme_cur,
                             )
                         ),
