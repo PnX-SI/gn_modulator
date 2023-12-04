@@ -10,6 +10,8 @@ def get_list_rest(module_code, object_code, additional_params={}):
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
 
+    # on peut redéfinir le module_code pour le choix des droits
+    permission_module_code = object_definition.get("permission_module_code", module_code)
     params = {
         **parse_request_args(object_definition),
         **additional_params,
@@ -17,14 +19,14 @@ def get_list_rest(module_code, object_code, additional_params={}):
 
     action = params.get("action") or "R"
     query_infos = sm.get_query_infos(
-        module_code=module_code,
+        module_code=permission_module_code,
         action=action,
         params=params,
         url=request.url,
     )
 
     query_list = sm.Model().query.query_list(
-        module_code=module_code, action=action, params=params, query_type="select"
+        module_code=permission_module_code, action=action, params=params, query_type="select"
     )
 
     if params.get("sql"):
@@ -66,11 +68,13 @@ def get_one_rest(module_code, object_code, value):
 
     params = parse_request_args(object_definition)
 
+    permission_module_code = object_definition.get("permission_module_code", module_code)
+
     try:
         m = sm.get_row(
             value,
             field_name=params.get("field_name"),
-            module_code=module_code,
+            module_code=permission_module_code,
             action="R",
             params=params,
         ).one()
@@ -110,6 +114,8 @@ def patch_rest(module_code, object_code, value):
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
 
+    permission_module_code = object_definition.get("permission_module_code", module_code)
+
     data = request.get_json()
     params = parse_request_args(object_definition)
 
@@ -122,7 +128,7 @@ def patch_rest(module_code, object_code, value):
             value,
             data,
             field_name=params.get("field_name"),
-            module_code=module_code,
+            module_code=permission_module_code,
             params=params,
             authorized_write_fields=authorized_write_fields,
             commit=True,
@@ -140,13 +146,14 @@ def delete_rest(module_code, object_code, value):
     object_definition = ModuleMethods.object_config(module_code, object_code)
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
+    permission_module_code = object_definition.get("permission_module_code", module_code)
 
     params = parse_request_args(object_definition)
 
     m = sm.get_row(
         value,
         field_name=params.get("field_name"),
-        module_code=module_code,
+        module_code=permission_module_code,
         action="D",
         params=params,
     ).one()
@@ -170,7 +177,11 @@ def get_page_number_and_list(module_code, object_code, value):
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
 
+    permission_module_code = object_definition.get("permission_module_code", module_code)
+
     params = parse_request_args(object_definition)
-    page_number = sm.get_page_number(value, module_code, params.get("action") or "R", params)
+    page_number = sm.get_page_number(
+        value, permission_module_code, params.get("action") or "R", params
+    )
 
     return get_list_rest(module_code, object_code, additional_params={"page": page_number})

@@ -28,6 +28,7 @@ objects:
     cruved: CRUD
   synthese:
     schema_code: syn.synthese
+    permission_module_code: SYNTHESE
     label: observation
     labels: observations
     cruved: R
