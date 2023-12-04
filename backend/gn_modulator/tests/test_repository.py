@@ -17,7 +17,7 @@ from geonature.tests.fixtures import *
 from geonature.tests.test_permissions import g_permissions
 
 
-@pytest.mark.usefixtures("client_class", "temporary_transaction")
+@pytest.mark.usefixtures("client_class", "temporary_transaction", "g_permissions")
 class TestRepository:
     from flask import g
 
@@ -32,7 +32,93 @@ class TestRepository:
     def test_repo_gn_meta_jdd(self):
         test_schema_repository("meta.jdd", data_meta.jdd(), data_meta.jdd_update())
 
-    def test_repo_pf_cruved(self, passages_faune_with_diagnostic, users, g_permissions):
+    def test_repo_diag(self, users, passages_faune_with_diagnostic):
+        sm = SchemaMethods("m_sipaf.diag")
+        fields = ["scope"]
+        params = {
+            "fields": fields,
+        }
+        q = sm.Model().query.query_list(
+            "m_sipaf",
+            "R",
+            params,
+            "select",
+            id_role=users["admin_user"].id_role,
+        )
+        m_list = q.all()
+        res = sm.serialize_list(m_list, fields)
+        assert True
+
+    def test_repo_pf_rel(self, passages_faune_with_diagnostic, users):
+        sm = SchemaMethods("m_sipaf.pf")
+        uuids_filter_value = ";".join(
+            map(lambda x: x.uuid_passage_faune, passages_faune_with_diagnostic)
+        )
+        fields = [
+            # "code_ouvrage_gestionnaire",
+            # "nom_usuel_passage_faune",
+            # "uuid_passage_faune",
+            # "date_creation_ouvrage",
+            # "issu_requalification",
+            # "date_requalification_ouvrage",
+            # "digitiser.nom_complet",
+            "actors.organisme.nom_organisme",
+            "linears.additional_data.largeur"
+            # "actors.nomenclature_type_actor.label_fr",
+            # "label_infrastructures",
+            # "linears.additional_data.largeur",
+            # "label_communes",
+            # "label_departements",
+            # "label_regions",
+            # "geom_x",
+            # "geom_y",
+            # "pk",
+            # "pr",
+            # "pr_abs",
+            # "nomenclature_ouvrage_specificite.label_fr",
+            # "nomenclatures_ouvrage_materiaux.label_fr",
+            # "nomenclatures_ouvrage_type.label_fr",
+            # "nomenclatures_ouvrage_type.cd_nomenclature",
+            # "ouvrage_type_autre",
+            # "pi_ou_ps",
+            # "ouvrage_hydrau",
+            # "usages.nomenclature_usage_type.label_fr",
+            # "usages.detail_usage",
+            # "usages.commentaire",
+            # "nomenclatures_ouvrage_categorie.label_fr",
+            # "largeur_ouvrage",
+            # "hauteur_ouvrage",
+            # "longueur_franchissement",
+            # "largeur_dispo_faune",
+            # "hauteur_dispo_faune",
+            # "diametre",
+            # "nomenclature_ouvrage_hydrau_position.label_fr",
+            # "nomenclature_ouvrage_hydrau_banq_caract.label_fr",
+            # "nomenclature_ouvrage_hydrau_banq_type.label_fr",
+            # "ouvrag_hydrau_tirant_air",
+            # "medias",
+            # "id_passage_faune",
+            # "scope",
+        ]
+        params = {
+            "filters": [
+                f"uuid_passage_faune in {uuids_filter_value}",
+            ],
+            "fields": fields,
+        }
+        q = sm.Model().query.query_list(
+            "m_sipaf",
+            "R",
+            params,
+            "select",
+            id_role=users["admin_user"].id_role,
+        )
+        m_list = q.all()
+        res = sm.serialize_list(m_list, fields)
+
+        assert len(res) == 2
+
+    def test_repo_pf_cruved(self, passages_faune_with_diagnostic, users):
         sm = SchemaMethods("m_sipaf.pf")
         uuids_filter_value = ";".join(
             map(lambda x: x.uuid_passage_faune, passages_faune_with_diagnostic)
@@ -67,9 +153,7 @@ class TestRepository:
 
         assert len(res) == 1
 
-    def test_repo_pf_filter_has_diagnostic(
-        self, passages_faune_with_diagnostic, users, g_permissions
-    ):
+    def test_repo_pf_filter_has_diagnostic(self, passages_faune_with_diagnostic, users):
         sm = SchemaMethods("m_sipaf.pf")
         uuids_filter_value = ";".join(
             map(lambda x: x.uuid_passage_faune, passages_faune_with_diagnostic)
@@ -111,7 +195,7 @@ class TestRepository:
 
         assert len(res) == 4
 
-    def test_repo_synthese_scope(self, synthese_data, users, g_permissions, datasets):
+    def test_repo_synthese_scope(self, synthese_data, users, datasets):
         datasets
         sm = SchemaMethods("syn.synthese")
         res = {}

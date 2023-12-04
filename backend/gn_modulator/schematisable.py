@@ -6,7 +6,7 @@ class ModelPropertyNomenclatureError(ModelPropertyError):
     pass
 
 
-from sqlalchemy import orm
+import sqlalchemy as sa
 
 
 def get_schematisable_decorator():
@@ -26,14 +26,14 @@ def get_schematisable_decorator():
                 rel_prop = cls.property(rel_key)
 
                 # en cas de JSON on stoppe ici
-                if hasattr(rel_prop, "type") and rel_prop.type == "JSONB":
+                if hasattr(rel_prop, "type") and str(rel_prop.type) == "JSONB":
                     return rel_prop
 
                 # modele associé à la relation
                 relation_Model = rel_prop.mapper.entity
-
                 # clé restante
                 remaining_key = ".".join(key.split(".")[1:])
+
                 # propriété associée à la clé restante
                 return relation_Model.property(remaining_key)
 
@@ -44,6 +44,11 @@ def get_schematisable_decorator():
 
         @classmethod
         def sql_type(cls, key):
+            if not hasattr(cls.property(key), "type"):
+                return None
+            if isinstance(cls.property(key).type, sa.sql.sqltypes.NullType):
+                return None
+
             sql_type = str(cls.property(key).type)
             if "VARCHAR" in sql_type:
                 sql_type = "VARCHAR"
@@ -51,6 +56,7 @@ def get_schematisable_decorator():
                 sql_type = "TIMESTAMP"
             if "GEOMETRY" in sql_type:
                 sql_type = "GEOMETRY"
+
             return sql_type
 
         @classmethod
@@ -69,9 +75,15 @@ def get_schematisable_decorator():
             """
             Renvoie True si la propriété décrite par key est une relation
             """
-            return cls.has_property(key) and isinstance(
-                cls.property(key).property, orm.relationships.RelationshipProperty
+            res = (
+                cls.has_property(key)
+                and hasattr(cls.property(key), "property")
+                and isinstance(
+                    cls.property(key).property, sa.orm.relationships.RelationshipProperty
+                )
             )
+
+            return res
 
         @classmethod
         def is_relation_n_n(cls, key):
@@ -114,7 +126,7 @@ def get_schematisable_decorator():
                 return False
 
             prop = cls.property(key)
-            return isinstance(prop.property, orm.properties.ColumnProperty)
+            return isinstance(prop.property, sa.orm.properties.ColumnProperty)
 
         @classmethod
         def is_foreign_key(cls, key):
@@ -136,8 +148,7 @@ def get_schematisable_decorator():
             keys = key.split(".")
             for index, k in enumerate(keys):
                 current_key = ".".join(keys[: index + 1])
-                prop = self.property(current_key)
-                if hasattr(prop, "type") and getattr(prop, "type") == "JSONB":
+                if self.sql_type(current_key) == "JSONB":
                     return current_key
             return key
 

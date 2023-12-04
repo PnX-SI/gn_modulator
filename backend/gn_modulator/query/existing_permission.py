@@ -11,13 +11,14 @@ from pypnusershub.db.models import User
 import sqlalchemy as sa
 
 
-def synthese_permission_filter(self, id_role, scope_for_action, sensitivity):
+@classmethod
+def synthese_permission_filter(cls, query, id_role, scope_for_action, sensitivity):
     conditions = []
 
     # conditions sur le scope
     if scope_for_action < 3:
-        self = self.add_subquery_scope(id_role)
-        conditions.append(self._subquery_scope.c.scope <= scope_for_action)
+        query = query.add_subquery_scope(id_role)
+        conditions.append(query._subquery_scope.c.scope <= scope_for_action)
 
     if sensitivity:
         conditions.append(
@@ -25,10 +26,11 @@ def synthese_permission_filter(self, id_role, scope_for_action, sensitivity):
             == sa.func.ref_nomenclatures.get_id_nomenclature("SENSIBILITE", "0")
         )
 
-    return sa.and_(*conditions), self
+    return sa.and_(*conditions), query
 
 
-def synthese_subquery_scope(self, id_role):
+@classmethod
+def synthese_subquery_scope(cls, id_role):
     Observers = sa.orm.aliased(User)
     CurrentUser = sa.orm.aliased(User)
 
@@ -42,7 +44,6 @@ def synthese_subquery_scope(self, id_role):
         .join(TAcquisitionFramework.cor_af_actor, isouter=True)
         .with_entities(
             Synthese.id_synthese,
-            Synthese.id_digitiser,
             Observers.id_role.label("id_role_obs"),
             Observers.id_organisme.label("id_organisme_obs"),
             CurrentUser.id_role.label("id_role_cur"),
@@ -97,5 +98,5 @@ def synthese_subquery_scope(self, id_role):
     return scope_expression
 
 
-Synthese.query_class.subquery_scope = synthese_subquery_scope
-Synthese.query_class.permission_filter = synthese_permission_filter
+Synthese.subquery_scope = synthese_subquery_scope
+Synthese.permission_filter = synthese_permission_filter

@@ -4,21 +4,21 @@ CREATE VIEW import_sinp_sipaf.v_sinp AS WITH geom AS (
     SELECT
         geom,
         cleobjet AS cleobjet,
-        x_prec
+        CASE WHEN x_prec is NULL THEN NULL ELSE ROUND(x_prec::NUMERIC) END AS x_prec
     FROM
         import_sinp_sipaf.point
     UNION
     SELECT
         geom,
         cleobjet AS cleobjet,
-        x_prec
+        CASE WHEN x_prec is NULL THEN NULL ELSE ROUND(x_prec::NUMERIC) END AS x_prec
     FROM
         import_sinp_sipaf.ligne
     UNION
     SELECT
         geom,
         cleobjet AS cleobjet,
-        x_prec
+        CASE WHEN x_prec is NULL THEN NULL ELSE ROUND(x_prec::NUMERIC) END AS x_prec
     FROM
         import_sinp_sipaf.polygone
 ),

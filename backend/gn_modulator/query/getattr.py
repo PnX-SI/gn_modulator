@@ -20,7 +20,7 @@ def _clear_query_cache(query):
     return query
 
 
-def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=None):
+def _getModelAttr(query, BaseModel, field_name, only_fields="", index=0, condition=None):
     """ """
 
     # liste des champs 'rel1.rel2.pro1' -> 'rel1', 'rel2', 'prop1'
@@ -32,7 +32,7 @@ def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=N
     # clé pour le cache
     cache_key = ".".join(fields[: index + 1])
 
-    is_relationship = Model.is_relationship(cache_key)
+    is_relationship = BaseModel.is_relationship(cache_key)
 
     # test si c'est le dernier champs
     is_last_field = index == len(fields) - 1
@@ -41,13 +41,26 @@ def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=N
     res = _get_query_cache(query, cache_key)
 
     if res:
-        return _process_getattr_res(query, res, Model, field_name, index, only_fields=only_fields)
+        return _process_getattr_res(
+            query, BaseModel, res, field_name, index, only_fields=only_fields
+        )
     # si non en cache
     # on le calcule
 
     # dictionnaire de résultat pour le cache
+
+    current_relation_cache_key = ".".join(fields[:index])
+
+    current_Model = (
+        _get_query_cache(query, current_relation_cache_key)["relation_alias"]
+        if query and current_relation_cache_key
+        else BaseModel.relation_Model(current_relation_cache_key)
+        if current_relation_cache_key
+        else BaseModel
+    )
+
     res = {
-        "val": getattr(Model, current_field),
+        "val": getattr(current_Model, current_field),
     }
 
     # si c'est une propriété
@@ -55,7 +68,6 @@ def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=N
         res["relation_model"] = res["val"].mapper.entity
         if not hasattr(res["relation_model"], "is_schematisable"):
             res["relation_model"] = schematisable(res["relation_model"])
-            # raise Exception(f"Model {res['relation_model']} is not schematisable")
         res["relation_alias"] = (
             sa.orm.aliased(res["relation_model"]) if query else res["relation_model"]
         )
@@ -64,7 +76,7 @@ def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=N
             # toujours en outer ???
             query = query.join(res["val_of_type"], isouter=True)
 
-    if only_fields:
+    if query:
         query = _set_query_cache(query, cache_key, res)
 
     # chargement des champs si is last field
@@ -73,17 +85,17 @@ def _getModelAttr(query, Model, field_name, only_fields="", index=0, condition=N
 
     # retour
     return _process_getattr_res(
-        query, res, Model, field_name, index, only_fields=only_fields, condition=condition
+        query, BaseModel, res, field_name, index, only_fields=only_fields, condition=condition
     )
 
 
-def _process_getattr_res(query, res, Model, field_name, index, only_fields=[], condition=None):
+def _process_getattr_res(query, BaseModel, res, field_name, index, only_fields=[], condition=None):
     # si c'est une propriété
     fields = field_name.split(".")
     # clé pour le cache
     cache_key = ".".join(fields[: index + 1])
 
-    is_relationship = Model.is_relationship(cache_key)
+    is_relationship = BaseModel.is_relationship(cache_key)
     is_last_field = index == len(fields) - 1
 
     if not is_relationship:
@@ -98,7 +110,7 @@ def _process_getattr_res(query, res, Model, field_name, index, only_fields=[], c
 
         return _getModelAttr(
             query,
-            res["relation_alias"],
+            BaseModel,
             field_name,
             index=index + 1,
             only_fields=only_fields,
@@ -150,7 +162,6 @@ def _eager_load_only(query, field_name, only_fields, index):
                 getattr(cache["relation_alias"], pk_field_name)
                 for pk_field_name in relation_Model.pk_field_names()
             ]
-
         # chargement de relation en eager et choix des champs
         query = query.options(sa.orm.contains_eager(*eagers).load_only(*only_columns_i))
 

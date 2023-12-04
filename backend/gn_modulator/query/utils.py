@@ -63,7 +63,7 @@ class SchemaQueryUtils(BaseSchemaQuery):
 
         return self
 
-    def process_query_columns(self, params, order_by, check_cruved):
+    def process_query_columns(self, params, order_by, id_role):
         """
         permet d'ajouter de colonnes selon les besoin
         - scope pour cruved (toujours?)
@@ -74,11 +74,11 @@ class SchemaQueryUtils(BaseSchemaQuery):
 
         # cruved
         if "scope" in fields:
-            self = self.add_column_scope(check_cruved)
+            self = self.add_column_scope(id_role)
 
         # row_number
         if "row_number" in fields:
-            self = self.add_columns(
+            self = self.add_column(
                 sa.func.row_number().over(order_by=order_by).label("row_number")
             )
 
