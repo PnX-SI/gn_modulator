@@ -78,7 +78,7 @@ class SchemaQueryUtils(BaseSchemaQuery):
 
         # row_number
         if "row_number" in fields:
-            self = self.add_column(
+            self = self.add_columns(
                 sa.func.row_number().over(order_by=order_by).label("row_number")
             )
 
