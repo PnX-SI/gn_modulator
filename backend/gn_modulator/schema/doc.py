@@ -1,5 +1,6 @@
 import yaml
 from gn_modulator.utils.yaml import YmlLoader
+from gn_modulator.query.repository import query_list
 
 
 class SchemaDoc:
@@ -123,16 +124,13 @@ class SchemaDoc:
         nomenclature_type = property_def["nomenclature_type"]
         txt += "  - *valeurs* :\n"
         sm_nom = self.cls("ref_nom.nomenclature")
-        res = (
-            sm_nom.Model()
-            .query_list(
-                params={
-                    "fields": ["label_fr", "cd_nomenclature"],
-                    "filters": [f"nomenclature_type.mnemonique = {nomenclature_type}"],
-                }
-            )
-            .all()
-        )
+        res = query_list(
+            sm_nom.Model(),
+            params={
+                "fields": ["label_fr", "cd_nomenclature"],
+                "filters": [f"nomenclature_type.mnemonique = {nomenclature_type}"],
+            },
+        ).all()
         values = sm_nom.serialize_list(res, ["label_fr", "cd_nomenclature"])
 
         for v in values:

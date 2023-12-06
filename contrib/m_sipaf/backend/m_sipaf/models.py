@@ -172,10 +172,13 @@ class PassageFaune(db.Model):
         foreign_keys=[TMedias.uuid_attached_row],
         cascade="all",
         lazy="select",
+        overlaps="medias",
     )
 
     # actors
-    actors = db.relationship("Actor", cascade="all,delete,delete-orphan")
+    actors = db.relationship(
+        "Actor", backref=backref("passage_faune"), cascade="all,delete,delete-orphan"
+    )
 
     # columns properties
     geom_x = column_property(sa.func.st_x(sa.func.st_centroid(geom)))
@@ -183,16 +186,19 @@ class PassageFaune(db.Model):
     geom_text = column_property(sa.func.st_astext(geom))
 
     label_infrastructures = column_property(
-        sa.select([sa.func.string_agg(LLinears.linear_name, sa.literal_column("', '"))]).where(
+        sa.select(sa.func.string_agg(LLinears.linear_name, sa.literal_column("', '")))
+        .where(
             sa.and_(
                 CorPfLinear.id_passage_faune == id_passage_faune,
                 CorPfLinear.id_linear == LLinears.id_linear,
             )
         )
+        .scalar_subquery()
     )
 
     label_communes = column_property(
-        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+        sa.select(sa.func.string_agg(LAreas.area_name, sa.literal_column("', '")))
+        .where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -200,10 +206,12 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "COM",
             )
         )
+        .scalar_subquery()
     )
 
     label_departements = column_property(
-        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+        sa.select(sa.func.string_agg(LAreas.area_name, sa.literal_column("', '")))
+        .where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -211,10 +219,12 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "DEP",
             )
         )
+        .scalar_subquery()
     )
 
     label_regions = column_property(
-        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+        sa.select(sa.func.string_agg(LAreas.area_name, sa.literal_column("', '")))
+        .where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -222,43 +232,8 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "REG",
             )
         )
+        .scalar_subquery()
     )
-
-
-def subquery_scope(cls, query, id_role):
-    CurrentUser = sa.orm.aliased(User)
-
-    pre_scope = (
-        db.session.query(cls)
-        .join(CurrentUser, CurrentUser.id_role == id_role)
-        .join(Observers, Synthese.cor_observers, isouter=True)
-        .join(TDatasets, Synthese.dataset, isouter=True)
-        .join(TDatasets.cor_dataset_actor, isouter=True)
-        .join(TAcquisitionFramework, TDatasets.acquisition_framework, isouter=True)
-        .join(TAcquisitionFramework.cor_af_actor, isouter=True)
-        .with_entities(
-            Synthese.id_synthese,
-            Synthese.id_digitiser,
-            Observers.id_role.label("id_role_obs"),
-            Observers.id_organisme.label("id_organisme_obs"),
-            CurrentUser.id_role.label("id_role_cur"),
-            CurrentUser.id_organisme.label("id_organisme_cur"),
-            CorDatasetActor.id_role.label("id_role_jdd"),
-            CorDatasetActor.id_organism.label("id_organisme_jdd"),
-            CorAcquisitionFrameworkActor.id_role.label("id_role_af"),
-            CorAcquisitionFrameworkActor.id_organism.label("id_organisme_af"),
-        )
-    ).cte("pre_scope")
-
-    # query = query.join(User, User.id_role == id_role)
-    subquery_scope = sa.case(
-        [
-            # scope 2 si acteur de meme organisme
-            (cls.actors.any(id_organism=User.id_organisme), 2)
-        ],
-        else_=3,
-    )
-    return subquery_scope
 
 
 class Actor(db.Model):
@@ -274,7 +249,7 @@ class Actor(db.Model):
         ),
         nullable=False,
     )
-    passage_faune = db.relationship(PassageFaune)
+    # passage_faune = db.relationship(PassageFaune)
 
     id_organism = db.Column(db.Integer, db.ForeignKey("utilisateurs.bib_organismes.id_organisme"))
     organisme = db.relationship(Organisme)

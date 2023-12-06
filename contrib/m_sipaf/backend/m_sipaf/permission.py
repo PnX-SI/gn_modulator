@@ -2,6 +2,7 @@ import sqlalchemy as sa
 from pypnusershub.db.models import User
 from .models import PassageFaune, Actor, Diagnostic
 from geonature.utils.env import db
+from gn_modulator.query.permission import add_subquery_scope
 
 
 @classmethod
@@ -25,18 +26,16 @@ def passage_faune_subquery_scope(cls, id_role):
     scope_expression = db.session.query(PassageFaune).with_entities(
         PassageFaune.id_passage_faune,
         sa.case(
-            [
-                (PassageFaune.id_digitiser == id_role, 1),
-                (
-                    sa.exists().where(
-                        sa.and_(
-                            pre_scope.c.id_passage_faune == PassageFaune.id_passage_faune,
-                            pre_scope.c.id_organisme_acteur == pre_scope.c.id_organisme_cur,
-                        )
-                    ),
-                    2,
+            (PassageFaune.id_digitiser == id_role, 1),
+            (
+                sa.exists().where(
+                    sa.and_(
+                        pre_scope.c.id_passage_faune == PassageFaune.id_passage_faune,
+                        pre_scope.c.id_organisme_acteur == pre_scope.c.id_organisme_cur,
+                    )
                 ),
-            ],
+                2,
+            ),
             else_=3,
         ).label("scope"),
     )
@@ -47,7 +46,7 @@ def passage_faune_subquery_scope(cls, id_role):
 @classmethod
 def passage_faune_permission_filter(cls, query, id_role, scope_for_action, sensitivity):
     if scope_for_action < 3:
-        query = query.add_subquery_scope(id_role)
+        query = add_subquery_scope(cls, query, id_role)
         return query._subquery_scope.c.scope <= scope_for_action, query
     else:
         return None, query
@@ -71,7 +70,7 @@ def diagnostic_subquery_scope(cls, id_role):
 @classmethod
 def diagnostic_permission_filter(cls, query, id_role, scope_for_action, sensitivity):
     if scope_for_action < 3:
-        query = query.add_subquery_scope(id_role)
+        query = add_subquery_scope(cls, query, id_role)
         return query._subquery_scope.c.scope <= scope_for_action, query
     else:
         return None, query

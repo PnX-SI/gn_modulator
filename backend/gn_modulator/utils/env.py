@@ -37,7 +37,7 @@ def local_srid():
     local_srid_ = get_global_cache(["local_srid"])
 
     if not local_srid_:
-        local_srid_ = get_local_srid(db.engine)
+        local_srid_ = get_local_srid(db.session)
         set_global_cache(["local_srid"], local_srid_)
 
     return local_srid_

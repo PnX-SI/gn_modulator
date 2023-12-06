@@ -1,62 +1,58 @@
-from sqlalchemy import orm
-from gn_modulator import MODULE_CODE
-from .base import BaseSchemaQuery
-from .field import FieldSchemaQuery
-from .utils import SchemaQueryUtils
-from .filters import SchemaQueryFilters
-from .permission import SchemaQueryPermission
+import sqlalchemy as sa
+from .getattr import clear_query_cache
+from .field import process_fields
+from .utils import get_sorters, process_additional_columns, process_page_size
+from .permission import process_filter_permission
+from .filters import process_filters
 
 
-class RepositorySchemaQuery(
-    SchemaQueryPermission, SchemaQueryFilters, SchemaQueryUtils, FieldSchemaQuery, BaseSchemaQuery
-):
-    def query_list(self, module_code, action, params, query_type, id_role=None):
-        Model = self.Model()
-        model_pk_fields = [
-            getattr(Model, pk_field_name) for pk_field_name in Model.pk_field_names()
-        ]
+def query_list(Model, module_code, action, params, query_type, id_role=None):
+    query = sa.select(Model)
 
-        self = self.options(orm.load_only(*model_pk_fields))
+    model_pk_fields = [getattr(Model, pk_field_name) for pk_field_name in Model.pk_field_names()]
 
-        if query_type not in ["update", "delete"]:
-            self = self.distinct()
+    query = query.options(sa.orm.load_only(*model_pk_fields))
 
-        self = self.process_fields(params.get("fields") or [])
+    # if query_type not in ["update", "delete"]:
+    # query = query.distinct()
 
-        # clear_query_cache
-        self.clear_query_cache()
+    query = process_fields(Model, query, params.get("fields") or [])
 
-        order_bys, self = self.get_sorters(params.get("sort", []))
+    # clear_query_cache
+    clear_query_cache(query)
 
-        # ajout colonnes row_number, scope (cruved)
-        self = self.process_query_columns(params, order_bys, id_role)
+    order_bys, query = get_sorters(Model, query, params.get("sort", []))
 
-        # - prefiltrage permissions (CRUVED sensibilité etc)
-        self = self.process_filter_permission(id_role, action, module_code)
+    # ajout colonnes row_number, scope (cruved)
+    query = process_additional_columns(Model, query, params, order_bys, id_role)
 
-        # - prefiltrage params
-        self = self.process_filters(params.get("prefilters", []))
+    # - prefiltrage permissions (CRUVED sensibilité etc)
+    query = process_filter_permission(Model, query, id_role, action, module_code)
 
-        if query_type == "total":
-            return self.with_entities(*model_pk_fields).group_by(*model_pk_fields)
+    # - prefiltrage params
+    query = process_filters(Model, query, params.get("prefilters", []))
 
-        # filtrage
-        self = self.process_filters(params.get("filters", []))
+    # requete pour count 'total'
+    if query_type == "total":
+        return query.options(sa.orm.load_only(*model_pk_fields))
 
-        # requete pour count 'filtered'
-        if query_type == "filtered":
-            return self.with_entities(*model_pk_fields).group_by(*model_pk_fields)
+    # filtrage
+    query = process_filters(Model, query, params.get("filters", []))
 
-        if query_type in ["update", "delete", "page_number"]:
-            return self
+    # requete pour count 'filtered'
+    if query_type == "filtered":
+        return query.options(sa.orm.load_only(*model_pk_fields))
 
-        # raise load
-        self = self.options(orm.raiseload("*"))
+    if query_type in ["update", "delete", "page_number"]:
+        return query
 
-        # sort
-        self = self.order_by(*(tuple(order_bys)))
+    # raise load
+    query = query.options(sa.orm.raiseload("*"))
 
-        # limit offset
-        self = self.process_page_size(params.get("page"), params.get("page_size"))
+    # sort
+    query = query.order_by(*(tuple(order_bys)))
 
-        return self
+    # limit offset
+    query = process_page_size(query, params.get("page"), params.get("page_size"))
+
+    return query

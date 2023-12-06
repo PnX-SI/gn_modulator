@@ -5,12 +5,12 @@
 import math
 import re
 import copy
-from sqlalchemy import func
-
+import sqlalchemy as sa
 from geonature.utils.env import db
 
 from gn_modulator import MODULE_CODE
-
+from gn_modulator.query.repository import query_list
+from gn_modulator.query.utils import pretty_sql
 from . import errors
 
 
@@ -70,8 +70,12 @@ class SchemaRepositories:
         params_query = copy.deepcopy(params)
         params_query["filters"] = params_query.get("filters", []) + value_filters
 
-        query = self.Model().query.query_list(
-            module_code=module_code, action=action, params=params_query, query_type=query_type
+        query = query_list(
+            self.Model(),
+            module_code=module_code,
+            action=action,
+            params=params_query,
+            query_type=query_type,
         )
 
         return query
@@ -174,14 +178,16 @@ class SchemaRepositories:
         """
         self.validate_data(data, check_required=False)
 
-        m = self.get_row(
+        q = self.get_row(
             value,
             field_name=field_name,
             module_code=module_code,
             action="U",
             params=params,
             query_type="update",
-        ).one()
+        )
+
+        m = db.session.execute(q).unique().scalar_one()
 
         if not self.is_new_data(m, data):
             return m, False
@@ -206,42 +212,70 @@ class SchemaRepositories:
         """
         delete row (Model.<field_name> == value)
         """
-        m = self.get_row(
+        subquery_delete = self.get_row(
             value,
             field_name=field_name,
             module_code=module_code,
             action="D",
             params=params,
             query_type="delete",
-        )
-        # pour être sûr qu'il n'y a qu'une seule ligne de supprimée
-        if not multiple:
-            m.one()
+        ).cte("pre_delete")
 
+        Model = self.Model()
+        table = Model.__table__
+        q_delete = sa.delete(table).where(
+            sa.and_(
+                *map(
+                    lambda x: getattr(table.c, x) == getattr(subquery_delete.c, x),
+                    Model.pk_field_names(),
+                )
+            )
+        )
+
+        # patch pourris pourquoi sql ne met pas USING PDBDMSRMLGP???
+        propper_sql_delete = str(q_delete.compile(compile_kwargs={"literal_binds": True})).replace(
+            ", pre_delete", "USING pre_delete"
+        )
+
+        db.session.execute(
+            sa.text(propper_sql_delete), execution_options={"synchronize_session": False}
+        )
         # https://stackoverflow.com/questions/49794899/flask-sqlalchemy-delete-query-failing-with-could-not-evaluate-current-criteria?noredirect=1&lq=1
-        m.delete(synchronize_session=False)
-        db.session.flush()
+        # db.session.execute(q)
+        # m.delete(synchronize_session=False)
+        # db.session.flush()
 
         if commit:
             db.session.commit()
-        return m
+        return None
 
     def get_query_infos(self, module_code=MODULE_CODE, action="R", params={}, url=None):
-        count_total = (
-            self.Model()
-            .query.query_list(
-                module_code=module_code, action="R", params=params, query_type="total"
-            )
-            .count()
-        )
 
-        count_filtered = (
-            self.Model()
-            .query.query_list(
-                module_code=module_code, action="R", params=params, query_type="filtered"
-            )
-            .count()
-        )
+        subquery_count_total = query_list(
+            self.Model(),
+            module_code=module_code,
+            action=action,
+            params=params,
+            query_type="total",
+        ).cte("count_total")
+        count_total = db.session.execute(
+            sa.select(sa.func.count()).select_from(subquery_count_total)
+        ).scalar_one()
+
+        if params.get("filters"):
+            subquery_count_filtered = query_list(
+                self.Model(),
+                module_code=module_code,
+                action=action,
+                params=params,
+                query_type="filtered",
+            ).cte("count_filtered")
+
+            count_total = db.session.execute(
+                sa.select(sa.func.count()).select_from(subquery_count_filtered)
+            ).scalar_one()
+        else:
+            count_filtered = count_total
 
         page = 1
         page_size = params.get("page_size")
@@ -291,16 +325,16 @@ class SchemaRepositories:
     def get_page_number(self, value, module_code, action, params):
         params["fields"] = ["row_number"]
 
-        query_list = self.Model().query.query_list(module_code, action, params, "page_number")
-
-        sub_query = query_list.subquery()
+        sub_query_list = query_list(
+            self.Model(), module_code, action, params, "page_number"
+        ).sub_query()
 
         # value_filters = self.value_filters(value, params.get('field_name'))
         # filters, sub_query = self.process_filters(self.Model(), value_filters, sub_query)
 
         row_number = (
-            db.session.query(sub_query.c.row_number)
-            .filter(getattr(sub_query.c, self.Model().pk_field_name()) == value)
+            db.session.query(sub_query_list.c.row_number)
+            .filter(getattr(sub_query_list.c, self.Model().pk_field_name()) == value)
             .one()[0]
         )
 

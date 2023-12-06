@@ -4,8 +4,8 @@
     Utilisation de marshmallow
 """
 
+import sqlalchemy as sa
 from geoalchemy2.shape import to_shape, from_shape
-from geoalchemy2.functions import ST_Transform
 from geojson import Feature
 from marshmallow import pre_load, fields, ValidationError, EXCLUDE
 from shapely.geometry import shape
@@ -14,7 +14,6 @@ from geonature.utils.env import ma
 from .errors import SchemaProcessedPropertyError
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
 from gn_modulator import MODULE_CODE
-from sqlalchemy.orm.exc import NoResultFound
 from geonature.utils.env import db
 
 
@@ -320,11 +319,11 @@ class SchemaSerializers:
             if fields and geometry_field_name not in fields:
                 fields.append(geometry_field_name)
 
-        data = self.MarshmallowSchema()(**kwargs).dump(m[0] if isinstance(m, tuple) else m)
+        data = self.MarshmallowSchema()(**kwargs).dump(self.get_res_model(m))
 
         # pour gérer les champs supplémentaire (scope, row_number, etc....)
-        if isinstance(m, tuple):
-            keys = list(m.keys())
+        if self.is_res_multiple_columns(m):
+            keys = list(m._fields)
             if len(keys) > 1:
                 keys = keys[1:]
 
@@ -335,6 +334,12 @@ class SchemaSerializers:
             return self.as_geojson(data, geometry_field_name)
         else:
             return data
+
+    def is_res_multiple_columns(self, m):
+        return isinstance(m, sa.engine.row.Row)
+
+    def get_res_model(self, m):
+        return m[0] if self.is_res_multiple_columns(m) else m
 
     def get_row_as_dict(
         self,
@@ -352,16 +357,17 @@ class SchemaSerializers:
         si la ligne n'est pas trouvée, on renvoie None
         """
         try:
-            m = self.get_row(
+            q = self.get_row(
                 value,
                 field_name=field_name,
                 module_code=module_code,
                 action=action,
                 params={"fields": fields},
                 query_type=query_type,
-            ).one()
+            )
+            m = db.session.execute(q).one()
 
-        except NoResultFound:
+        except sa.orm.exc.NoResultFound:
             return None
 
         return self.serialize(
@@ -385,17 +391,20 @@ class SchemaSerializers:
                 fields.append(geometry_field_name)
 
         marshmallowSchema = self.MarshmallowSchema()(**kwargs)
+
+        res_list = [m for m in m_list]
+
         data_list = marshmallowSchema.dump(
-            map(lambda x: x[0] if isinstance(x, tuple) else x, m_list), many=True
+            map(lambda x: self.get_res_model(x), res_list), many=True
         )
 
         # pour gérer les champs supplémentaire (scope, row_number, etc....)
-        if len(data_list) and isinstance(m_list[0], tuple):
-            keys = list(m_list[0].keys())
+        if len(data_list) and self.is_res_multiple_columns(res_list[0]):
+            keys = list(res_list[0]._fields)
             if len(keys) > 1:
                 keys = keys[1:]
 
-                for index, res in enumerate(m_list):
+                for index, res in enumerate(res_list):
                     for key in keys:
                         data_list[index][key] = getattr(res, key)
 

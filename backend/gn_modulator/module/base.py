@@ -100,7 +100,7 @@ class ModuleBase:
     @classmethod
     def delete_db_module(cls, module_code):
         schema_module = SchemaMethods("commons.module")
-        id_module = schema_module.get_row(module_code, "module_code").one().id_module
+        id_module = schema_module.get_row_as_dict(module_code, "module_code")["id_module"]
         SchemaMethods("perm.perm_dispo").delete_row(id_module, "id_module", multiple=True)
 
         schema_module.delete_row(module_code, field_name="module_code", params={})

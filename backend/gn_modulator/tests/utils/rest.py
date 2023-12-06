@@ -6,7 +6,9 @@ from pypnusershub.tests.utils import set_logged_user_cookie, unset_logged_user_c
 
 
 @pytest.mark.skip()
-def test_schema_rest(client, user, module_code, object_code, data_post, data_update):
+def test_schema_rest(
+    client, user, module_code, object_code, data_post, data_update, breacrumbs=None
+):
     """
     Test chainage sur les api rest
         - get (vide)
@@ -108,6 +110,18 @@ def test_schema_rest(client, user, module_code, object_code, data_post, data_upd
         )
     )
     assert r.status_code == 404, "La donnée n'a pas été effacée"
+
+    # GET LIST
+    r = client.get(
+        url_for(
+            "modulator.api_rest_get_list",
+            module_code=module_code,
+            object_code=object_code,
+            fields=",".join(fields),
+        )
+    )
+
+    assert r.status_code == 200
 
     # FINALIZE
     unset_logged_user_cookie(client)

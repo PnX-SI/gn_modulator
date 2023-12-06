@@ -12,9 +12,13 @@ from .utils.repository import test_schema_repository
 from .data import commons as data_commons
 from .data import meta as data_meta
 from gn_modulator import SchemaMethods, ModuleMethods
+from gn_modulator import SchemaMethods
+from gn_modulator.query.repository import query_list
+from gn_modulator.query.utils import pretty_sql
 from .fixtures import passages_faune_with_diagnostic
 from geonature.tests.fixtures import *
 from geonature.tests.test_permissions import g_permissions
+from geonature.utils.env import db
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction", "g_permissions")
@@ -34,12 +38,20 @@ class TestRepository:
 
     def test_repo_diag(self, users, passages_faune_with_diagnostic):
         sm = SchemaMethods("m_sipaf.diag")
-        fields = ["scope"]
-        params = {"fields": fields}
-        q = sm.Model().query.query_list(
-            "m_sipaf", "R", params, "select", id_role=users["admin_user"].id_role
+        fields = ["scope", "id_diagnostic"]
+        params = {
+            "fields": fields,
+        }
+        q = query_list(
+            sm.Model(),
+            "m_sipaf",
+            "R",
+            params,
+            "select",
+            id_role=users["admin_user"].id_role,
         )
-        m_list = q.all()
+
+        m_list = db.session.execute(q)
         res = sm.serialize_list(m_list, fields)
         assert True
 
@@ -94,11 +106,21 @@ class TestRepository:
             # "id_passage_faune",
             # "scope",
         ]
-        params = {"filters": [f"uuid_passage_faune in {uuids_filter_value}"], "fields": fields}
-        q = sm.Model().query.query_list(
-            "m_sipaf", "R", params, "select", id_role=users["admin_user"].id_role
+        params = {
+            "filters": [
+                f"uuid_passage_faune in {uuids_filter_value}",
+            ],
+            "fields": fields,
+        }
+        q = query_list(
+            sm.Model(),
+            "m_sipaf",
+            "R",
+            params,
+            "select",
+            id_role=users["admin_user"].id_role,
         )
-        m_list = q.all()
+        m_list = db.session.execute(q).unique().all()
         res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 2
@@ -170,18 +192,34 @@ class TestRepository:
             map(lambda x: x.uuid_passage_faune, passages_faune_with_diagnostic)
         )
         fields = ["scope", "uuid_passage_faune"]
-        params = {"filters": [f"uuid_passage_faune in {uuids_filter_value}"], "fields": fields}
-        q = sm.Model().query.query_list(
-            "m_sipaf", "R", params, "select", id_role=users["admin_user"].id_role
+        params = {
+            "filters": [
+                f"uuid_passage_faune in {uuids_filter_value}",
+            ],
+            "fields": fields,
+        }
+        q = query_list(
+            sm.Model(),
+            "m_sipaf",
+            "R",
+            params,
+            "select",
+            id_role=users["admin_user"].id_role,
         )
-        res = q.all()
+        m_list = db.session.execute(q)
+        res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 2
 
-        q = sm.Model().query.query_list(
-            "m_sipaf", "R", params, "select", id_role=users["user"].id_role
+        q = query_list(
+            sm.Model(),
+            "m_sipaf",
+            "R",
+            params,
+            "select",
+            id_role=users["user"].id_role,
         )
-        m_list = q.all()
+        m_list = db.session.execute(q)
         res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 1
@@ -191,23 +229,34 @@ class TestRepository:
         uuids_filter_value = ";".join(
             map(lambda x: x.uuid_passage_faune, passages_faune_with_diagnostic)
         )
+        fields = ["scope", "actors.id_organism"]
+
         params = {
-            "filters": ["diagnostics any", f"uuid_passage_faune in {uuids_filter_value}"],
-            "fields": ["scope", "actors"],
+            "filters": [
+                "diagnostics any",
+                f"uuid_passage_faune in {uuids_filter_value}",
+            ],
+            "fields": fields,
         }
 
-        q = sm.Model().query.query_list(
-            "m_sipaf", "R", params, "select", id_role=users["admin_user"].id_role
+        q = query_list(
+            sm.Model(),
+            "m_sipaf",
+            "R",
+            params,
+            "select",
+            id_role=users["admin_user"].id_role,
         )
-        res = q.all()
+        m_list = db.session.execute(q).unique().all()
+        res = sm.serialize_list(m_list, fields)
         assert len(res) == 2
 
     def test_repo_synthese_d_within(
         self, passages_faune_with_diagnostic, synthese_data, users, g_permissions
     ):
         sm = SchemaMethods("syn.synthese")
-
-        q = sm.Model().query.query_list(
+        q = query_list(
+            sm.Model(),
             "SYNTHESE",
             "R",
             {
@@ -218,7 +267,8 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        res = q.all()
+        m_list = db.session.execute(q).unique().all()
+        res = sm.serialize_list(m_list, fields=["id_synthese"])
 
         assert len(res) == 4
 
@@ -229,7 +279,8 @@ class TestRepository:
         comment_description_filter_list = ";".join(list(synthese_data.keys()))
         fields = ["scope", "comment_description", "dataset.dataset_name"]
         for user in users:
-            q = sm.Model().query.query_list(
+            q = query_list(
+                sm.Model(),
                 "SYNTHESE",
                 "R",
                 {
@@ -240,7 +291,7 @@ class TestRepository:
                 id_role=users[user].id_role,
             )
 
-            m_list = q.all()
+            m_list = db.session.execute(q)
             res[user] = sm.serialize_list(m_list, fields=fields)
 
             if user in ["admin_user", "user", "self_user"]:
@@ -260,7 +311,8 @@ class TestRepository:
         fields = ["scope", "comment_description", "nomenclature_sensitivity.cd_nomenclature"]
         for user in users:
             # continue
-            q = sm.Model().query.query_list(
+            q = query_list(
+                sm.Model(),
                 "SYNTHESE",
                 "R",
                 {
@@ -270,7 +322,7 @@ class TestRepository:
                 "select",
                 id_role=users[user].id_role,
             )
-            m_list = q.all()
+            m_list = db.session.execute(q)
             res[user] = sm.serialize_list(m_list, fields=fields)
 
         for user in users:

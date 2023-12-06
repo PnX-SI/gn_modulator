@@ -2,25 +2,25 @@ import sqlalchemy as sa
 from gn_modulator.schematisable import schematisable
 
 
-def _set_query_cache(query, key, value):
+def set_query_cache(query, key, value):
     query._cache = hasattr(query, "_cache") and query._cache or {}
     query._cache[key] = value
     return query
 
 
-def _get_query_cache(query, key):
+def get_query_cache(query, key):
     if not hasattr(query, "_cache"):
         return None
     return query._cache.get(key)
 
 
-def _clear_query_cache(query):
+def clear_query_cache(query):
     if hasattr(query, "_cache"):
         delattr(query, "_cache")
     return query
 
 
-def _getModelAttr(query, BaseModel, field_name, only_fields="", index=0, condition=None):
+def getModelAttr(Model, query, field_name, only_fields="", index=0, condition=None):
     """ """
 
     # liste des champs 'rel1.rel2.pro1' -> 'rel1', 'rel2', 'prop1'
@@ -32,18 +32,16 @@ def _getModelAttr(query, BaseModel, field_name, only_fields="", index=0, conditi
     # clé pour le cache
     cache_key = ".".join(fields[: index + 1])
 
-    is_relationship = BaseModel.is_relationship(cache_key)
+    is_relationship = Model.is_relationship(cache_key)
 
     # test si c'est le dernier champs
     is_last_field = index == len(fields) - 1
 
     # récupération depuis le cache associé à la query
-    res = _get_query_cache(query, cache_key)
+    res = get_query_cache(query, cache_key)
 
     if res:
-        return _process_getattr_res(
-            query, BaseModel, res, field_name, index, only_fields=only_fields
-        )
+        return process_getattr_res(Model, query, res, field_name, index, only_fields=only_fields)
     # si non en cache
     # on le calcule
 
@@ -52,11 +50,11 @@ def _getModelAttr(query, BaseModel, field_name, only_fields="", index=0, conditi
     current_relation_cache_key = ".".join(fields[:index])
 
     current_Model = (
-        _get_query_cache(query, current_relation_cache_key)["relation_alias"]
-        if query and current_relation_cache_key
-        else BaseModel.relation_Model(current_relation_cache_key)
+        get_query_cache(query, current_relation_cache_key)["relation_alias"]
+        if query is not None and current_relation_cache_key
+        else Model.relation_Model(current_relation_cache_key)
         if current_relation_cache_key
-        else BaseModel
+        else Model
     )
 
     res = {"val": getattr(current_Model, current_field)}
@@ -67,33 +65,33 @@ def _getModelAttr(query, BaseModel, field_name, only_fields="", index=0, conditi
         if not hasattr(res["relation_model"], "is_schematisable"):
             res["relation_model"] = schematisable(res["relation_model"])
         res["relation_alias"] = (
-            sa.orm.aliased(res["relation_model"]) if query else res["relation_model"]
+            sa.orm.aliased(res["relation_model"]) if query is not None else res["relation_model"]
         )
         res["val_of_type"] = res["val"].of_type(res["relation_alias"])
         if hasattr(query, "join"):
             # toujours en outer ???
             query = query.join(res["val_of_type"], isouter=True)
 
-    if query:
-        query = _set_query_cache(query, cache_key, res)
+    if query is not None:
+        query = set_query_cache(query, cache_key, res)
 
     # chargement des champs si is last field
     if is_relationship and is_last_field and only_fields:
-        query = _eager_load_only(query, field_name, only_fields, index)
+        query = eager_load_only(Model, query, field_name, only_fields, index)
 
     # retour
-    return _process_getattr_res(
-        query, BaseModel, res, field_name, index, only_fields=only_fields, condition=condition
+    return process_getattr_res(
+        Model, query, res, field_name, index, only_fields=only_fields, condition=condition
     )
 
 
-def _process_getattr_res(query, BaseModel, res, field_name, index, only_fields=[], condition=None):
+def process_getattr_res(Model, query, res, field_name, index, only_fields=[], condition=None):
     # si c'est une propriété
     fields = field_name.split(".")
     # clé pour le cache
     cache_key = ".".join(fields[: index + 1])
 
-    is_relationship = BaseModel.is_relationship(cache_key)
+    is_relationship = Model.is_relationship(cache_key)
     is_last_field = index == len(fields) - 1
 
     if not is_relationship:
@@ -106,9 +104,9 @@ def _process_getattr_res(query, BaseModel, res, field_name, index, only_fields=[
         if condition is not None:
             condition = sa.orm.and_(condition, res["val"].expression)
 
-        return _getModelAttr(
+        return getModelAttr(
+            Model,
             query,
-            BaseModel,
             field_name,
             index=index + 1,
             only_fields=only_fields,
@@ -116,10 +114,10 @@ def _process_getattr_res(query, BaseModel, res, field_name, index, only_fields=[
         )
 
     output_field = "val" if is_last_field and is_relationship else "relation_alias"
-    return res[output_field], query or condition
+    return res[output_field], query if query is not None else condition
 
 
-def _eager_load_only(query, field_name, only_fields, index):
+def eager_load_only(Model, query, field_name, only_fields, index):
     """
     charge les relations et les colonnes voulues
     """
@@ -134,7 +132,7 @@ def _eager_load_only(query, field_name, only_fields, index):
     for i in range(0, index + 1):
         # recupération des relations depuis le cache
         key_cache_eager = ".".join(fields[: i + 1])
-        cache = query.get_query_cache(key_cache_eager)
+        cache = get_query_cache(query, key_cache_eager)
         eager_i = cache["val_of_type"]
         eagers.append(eager_i)
 
@@ -155,7 +153,7 @@ def _eager_load_only(query, field_name, only_fields, index):
             )
         )
         if not only_columns_i:
-            relation_Model = query.Model().relation_Model(key_cache_eager)
+            relation_Model = Model.relation_Model(key_cache_eager)
             only_columns_i = [
                 getattr(cache["relation_alias"], pk_field_name)
                 for pk_field_name in relation_Model.pk_field_names()

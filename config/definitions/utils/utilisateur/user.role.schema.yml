@@ -38,6 +38,7 @@ properties:
         schema_code: user.liste
         schema_dot_table: utilisateurs.cor_role_liste
         title: Listes
+        overlaps: users
     groupes:
         type: relation
         relation_type: n-n
@@ -46,3 +47,4 @@ properties:
         title: Groupes
         local_key: id_role_utilisateur
         foreign_key: id_role_groupe
+        overlaps: role

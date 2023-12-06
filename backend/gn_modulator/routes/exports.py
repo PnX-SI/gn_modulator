@@ -2,6 +2,7 @@ from gn_modulator import DefinitionMethods, ModuleMethods, SchemaMethods
 from gn_modulator.blueprint import blueprint
 from .utils.decorators import check_module_object_route
 from .utils.params import parse_request_args
+from gn_modulator.query.repository import query_list
 
 
 @blueprint.route("/exports/<module_code>/<object_code>/<export_code>", methods=["GET"])
@@ -41,8 +42,8 @@ def api_export(module_code, object_code, export_code):
     action = params.get("action") or "R"
 
     # recupération de la liste
-    query_list = sm.Model().query_list(module_code=module_code, action=action, params=params)
+    q = query_list(sm.Model(), module_code=module_code, action=action, params=params)
 
     # on assume qu'il n'y que des export csv
     # TODO ajouter query param export_type (csv, shape, geosjon, etc) et traiter les différents cas
-    return sm.process_export_csv(module_code, query_list, params)
+    return sm.process_export_csv(module_code, q, params)

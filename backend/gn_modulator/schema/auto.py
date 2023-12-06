@@ -3,7 +3,6 @@
 """
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.properties import ColumnProperty
-from sqlalchemy.engine import reflection
 from geonature.utils.env import db
 from .errors import SchemaAutoError
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
@@ -29,7 +28,7 @@ class SchemaAuto:
     def insp(self):
         insp = get_global_cache(["insp"])
         if insp is None:
-            insp = reflection.Inspector.from_engine(db.engine)
+            insp = inspect(db.engine)
             set_global_cache(["insp"], insp)
         return insp
 

@@ -8,7 +8,6 @@ from geonature.utils.env import db
 from gn_modulator.utils.cache import set_global_cache
 
 from gn_modulator.utils.commons import get_class_from_path
-from gn_modulator.query import SchemaQuery
 
 from gn_modulator.schematisable import schematisable
 
@@ -34,15 +33,6 @@ class SchemaModelExisting:
         Model = get_class_from_path(model_path)
         # ajout de methodes
         Model = schematisable(Model)
-
-        try:
-            Model.query_class = type(
-                f"{self.model_name()}SchemaQuery", (SchemaQuery, Model.query_class), {}
-            )
-        except:
-            Model.query_class = type(
-                f"{self.model_name()}SchemaQuery", (Model.query_class, SchemaQuery), {}
-            )
 
         if not Model:
             raise "error model TODO"

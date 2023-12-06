@@ -90,7 +90,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
         relation_import.sql = relation_import.sql or {}
         relation_import.tables["data"] = table_rel_data
         relation_import.sql["data_view"] = sql_rel_data
-        relation_import.parent = self
+        self.imports_1_n.append(relation_import)
         relation_import.process_import_schema()
 
     def process_relation_1_n_data(self, relation_key):

@@ -2,7 +2,10 @@ from flask import request, make_response, g
 from gn_modulator import ModuleMethods, SchemaMethods
 from .params import parse_request_args
 from sqlalchemy import orm
+from gn_modulator.query.utils import pretty_sql
+from gn_modulator.query.repository import query_list
 from geonature.core.gn_permissions.tools import has_any_permissions
+from geonature.utils.env import db
 
 
 def get_list_rest(module_code, object_code, additional_params={}):
@@ -19,8 +22,12 @@ def get_list_rest(module_code, object_code, additional_params={}):
         module_code=permission_module_code, action=action, params=params, url=request.url
     )
 
-    query_list = sm.Model().query.query_list(
-        module_code=permission_module_code, action=action, params=params, query_type="select"
+    q_list = query_list(
+        sm.Model(),
+        module_code=permission_module_code,
+        action=action,
+        params=params,
+        query_type="select",
     )
 
     if params.get("sql"):
@@ -30,11 +37,14 @@ def get_list_rest(module_code, object_code, additional_params={}):
         #         "Vous n'avez pas les droit pour effectuer des actions d'admin pour le module MODULATOR",
         #         403,
         #     )
-        response = make_response(query_list.pretty_sql(), 200)
+        response = make_response(
+            pretty_sql(q_list),
+            200,
+        )
         response.mimetype = "text/plain"
         return response
 
-    res_list = query_list.all()
+    res_list = db.session.execute(q_list).all()
 
     out = {
         **query_infos,
@@ -62,14 +72,15 @@ def get_one_rest(module_code, object_code, value):
     permission_module_code = object_definition.get("permission_module_code", module_code)
 
     try:
-        m = sm.get_row(
+        q = sm.get_row(
             value,
             field_name=params.get("field_name"),
             module_code=permission_module_code,
             action="R",
             params=params,
-        ).one()
+        )
 
+        m = db.session.execute(q).unique().scalar_one()
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
         return f"Erreur Cruved : {str(e)}", 403
 
@@ -139,13 +150,15 @@ def delete_rest(module_code, object_code, value):
 
     params = parse_request_args(object_definition)
 
-    m = sm.get_row(
+    q = sm.get_row(
         value,
         field_name=params.get("field_name"),
         module_code=permission_module_code,
         action="D",
         params=params,
-    ).one()
+    )
+    m = db.session.execute(q).scalar_one()
+
     dict_out = sm.serialize(m, fields=params.get("fields"), as_geojson=params.get("as_geojson"))
 
     try:

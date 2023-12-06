@@ -5,7 +5,7 @@
 """
 
 import sqlparse
-from sqlalchemy import inspect
+import sqlalchemy as sa
 from geonature.utils.env import db
 from gn_modulator.utils.cache import get_global_cache, set_global_cache
 from gn_modulator.utils.commons import get_class_from_path
@@ -211,4 +211,4 @@ WHERE
         txt_no_comment = "\n".join(
             filter(lambda l: (l and not l.strip().startswith("--")), txt.split("\n"))
         )
-        return db.session.execute(txt_no_comment)
+        return db.session.execute(sa.text(txt_no_comment))
