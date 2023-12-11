@@ -19,6 +19,7 @@ layout:
       items:
         type: object
         display: geojson
+        deflate: true
         open_popup: true
         popup_fields: __SITE_MAP_POPUP_FIELDS__
 
