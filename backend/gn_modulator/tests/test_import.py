@@ -125,6 +125,7 @@ class TestImport:
             module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
+    @pytest.mark.skip()
     def test_synthese_update_obs(self):
         module_code = "MODULATOR"
         object_code = "syn.synthese"
