@@ -8,7 +8,8 @@ site_filters_fields:
       items:
         - uuid_passage_faune
         - nom_usuel_passage_faune
-        - nomenclature_ouvrage_specificite
+        - key: nomenclature_ouvrage_specificite
+          additional_fields: ["cd_nomenclature"]
         - nomenclatures_ouvrage_materiaux
         - key: pi_ou_ps
           title: Passage inférieur / supérieur
@@ -164,11 +165,11 @@ site_filters_fields:
 
 site_filters_defs:
   uuid_passage_faune:
-    type: '~'
+    type: "~"
   nom_usuel_passage_faune:
-    type: '~'
+    type: "~"
   code_ouvrage_gestionnaire:
-    type: '~'
+    type: "~"
   regions:
     field: areas.id_area
     key: id_area
@@ -263,6 +264,8 @@ site_details_fields:
             - direction: row
               items:
                 - nomenclature_ouvrage_specificite.label_fr
+                - key: nomenclature_ouvrage_specificite.cd_nomenclature
+                  hidden: true
                 - nomenclatures_ouvrage_materiaux.label_fr
             - direction: row
               items:
@@ -277,6 +280,7 @@ site_details_fields:
                 - ouvrage_hydrau
         - display: fieldset
           key: usages
+          hidden: __f__data.nomenclature_ouvrage_specificite.cd_nomenclature == "SPE"
           type: array
           items:
             direction: row
@@ -284,12 +288,14 @@ site_details_fields:
               - nomenclature_usage_type.label_fr
               - detail_usage
               - commentaire
+              - key:
+                hidden: true
         - display: fieldset
           title: Objectifs
           direction: row
           items:
-              - nomenclatures_ouvrage_categorie.label_fr
-              # - taxons.nom_vern
+            - nomenclatures_ouvrage_categorie.label_fr
+            # - taxons.nom_vern
         - title: Dimensions
           display: fieldset
           items:
@@ -415,14 +421,6 @@ site_form_fields:
                 - ouvrage_hydrau
             - direction: row
               items:
-                - key: id_nomenclature_ouvrage_specificite
-                  type: list_form
-                - key: nomenclatures_ouvrage_materiaux
-                  type: list_form
-                  multiple: true
-                  return_object: true
-            - direction: row
-              items:
                 - key: nomenclatures_ouvrage_type
                   type: list_form
                   multiple: true
@@ -433,7 +431,18 @@ site_form_fields:
                   type: string
                   hidden: __f__!data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
                   required: __f__data?.nomenclatures_ouvrage_type?.some(n => n.cd_nomenclature == 'AUT')
+            - direction: row
+              items:
+                - key: nomenclature_ouvrage_specificite
+                  additional_fields: ["cd_nomenclature"]
+                  return_object: true
+                  type: list_form
+                - key: nomenclatures_ouvrage_materiaux
+                  type: list_form
+                  multiple: true
+                  return_object: true
         - title: Usages
+          disabled: __f__data.nomenclature_ouvrage_specificite.cd_nomenclature == "SPE"
           type: array
           key: usages
           display: fieldset

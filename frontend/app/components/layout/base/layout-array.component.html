@@ -2,7 +2,7 @@
 <!-- array fieldset -->
 <ng-container *ngIf="!!arrayItemsContext">
   <ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple">
-    <fieldset class="fieldset">
+    <fieldset class="fieldset" [ngClass]="{'disabled': !!computedLayout.disabled}">
       <legend *ngIf="computedLayout.title">
         {{ computedLayout.title }} ({{ data && data[layout.key]?.length }})
       </legend>
