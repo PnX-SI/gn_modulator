@@ -50,7 +50,6 @@ export class ModulesLayoutObjectGeoJSONComponent
     }
     const layer = this._mapService.findLayer(this.context.map_id, layerSearcghFilters);
     if (!layer) {
-      console.error(`le layer (${this.pkFieldName()}==${value}) n'est pas présent`);
       return;
     }
 
