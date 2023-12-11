@@ -97,7 +97,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
    *  data -> layoutData
    */
   postComputeLayout(dataChanged, layoutChanged): void {
-    this._mapService.initMap(this.mapId, { zoom: this.computedLayout.zoom }).then((map) => {
+    this._mapService.initMap(this.mapId, { ...this.computedLayout }).then((map) => {
       this._map = map;
 
       if (layoutChanged) {
@@ -107,9 +107,11 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
       // affichage des données
 
       if (dataChanged && this.computedLayout.key) {
+        console;
         const layer = this._mapService.processData(this.mapId, this.data, {
           key: this.computedLayout.key,
           zoom: this.computedLayout.zoom && this.firstEdit,
+          title: this.computedLayout.title,
         });
 
         // initialisation du layer d'edition (s'il edit est à true et s'il n'est pas déjà )
@@ -139,6 +141,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
       this.data[this.computedLayout.key] = dataGeom;
 
       this._mapService.processData(this.mapId, this.data, {
+        title: this.computedLayout.title,
         key: this.computedLayout.key,
       });
       this.dataSave[this.computedLayout.key] = dataGeom;

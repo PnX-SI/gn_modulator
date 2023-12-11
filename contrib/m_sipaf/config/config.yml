@@ -1,3 +1,5 @@
+skip_ref_layers:
+  - passages_faune
 site_filters_fields:
   display: tabs
   overflow: true

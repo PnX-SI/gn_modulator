@@ -11,3 +11,4 @@ layout:
       object_code: site
       layout: __SITE_FORM_FIELDS__
       zoom: "__f__o.value(x) ? 12 : 6"
+      skip_ref_layers: __SKIP_REF_LAYERS__

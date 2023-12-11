@@ -141,7 +141,10 @@ export default {
     return boundsArray && boundsArray.join(';');
   },
 
-  initMap(mapId, { zoom = null, center = null, bEdit = null, drawOptions = null } = {}) {
+  initMap(
+    mapId,
+    { zoom = null, center = null, bEdit = null, drawOptions = null, skip_ref_layers = [] } = {},
+  ) {
     if (this._pendingMaps[mapId]) {
       return this.waitForMap(mapId);
     }
@@ -165,7 +168,7 @@ export default {
 
           /** set baseMaps (from geonature config) */
 
-          this.addBaseMap(mapId);
+          this.addBaseMap(mapId, skip_ref_layers);
 
           /** listen to moveend and zoomend */
 

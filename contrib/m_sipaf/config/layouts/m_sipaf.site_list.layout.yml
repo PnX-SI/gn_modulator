@@ -16,6 +16,7 @@ layout:
 
     - type: map
       flex: 2
+      skip_ref_layers: __SKIP_REF_LAYERS__
       items:
         type: object
         display: geojson

@@ -18,10 +18,12 @@ layout:
     direction: row
     items:
       - type: map
+        title: __f__o.label(x)
         key: __f__o.geometry_field_name(x)
         edit: true
         gps: true
         zoom: __ZOOM__
+        skip_ref_layers: __SKIP_REF_LAYERS__
 
       - items:
         - type: breadcrumbs

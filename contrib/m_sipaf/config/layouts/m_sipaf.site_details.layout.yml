@@ -10,6 +10,7 @@ layout:
     - type: map
       flex: 2
       zoom: 14
+      skip_ref_layers: __SKIP_REF_LAYERS__
       items:
         - type: object
           zoom: true

@@ -67,14 +67,16 @@ export class ModulesLayoutObjectGeoJSONComponent
   }
 
   processData(response) {
+    const pk_field_name = this.objectConfig().utils.pk_field_name;
+
     if (!response.data) {
       return;
     }
+
     this.objectData = response.data;
     this._mapService.waitForMap(this.context.map_id).then(() => {
       let geojson = response.data;
       const label_field_name = this.objectConfig().utils.label_field_name;
-      const pk_field_name = this.objectConfig().utils.pk_field_name;
       const currentZoom = this._mapService.getZoom(this.context.map_id);
       const currentMapBounds = this._mapService.getMapBounds(this.context.map_id);
 
@@ -92,6 +94,7 @@ export class ModulesLayoutObjectGeoJSONComponent
           zoom: bZoom,
           key: this.computedLayout.key,
           deflate: this.computedLayout.deflate,
+          add_control: this.computedLayout.add_control,
           pk_field_name,
           title: utils.capitalize(this.computedLayout.title || this.objectConfig().display.labels),
           style: layerStyle,

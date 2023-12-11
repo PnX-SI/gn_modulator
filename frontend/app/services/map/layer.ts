@@ -47,7 +47,7 @@ export default {
       return;
     }
 
-    if (options.key && data[options.key]) {
+    if (options.key && Object.keys(data).includes(options.key)) {
       this.removeLayers(mapId, { key: options.key });
       return this.processData(mapId, data[options.key], options);
     }
@@ -213,14 +213,14 @@ export default {
         : new this.L.FeatureGroup();
       layerGroup.addTo(map);
 
-      map.controls.addOverlay(
-        layerGroup,
-        `<span class="fa fa-circle-o" style="color: ${
+      if (layerOptions.title) {
+        const controlTitle = `<span class="fa fa-circle-o" style="color: ${
           layerOptions.style?.color || 'blue'
-        }"></span> ${layerOptions.title}`,
-      );
+        }"></span> ${layerOptions.title}`;
+        map.controls.addOverlay(layerGroup, controlTitle);
+      }
+
       this.setLayerData(mapId, key, layerGroup);
-    } else {
     }
 
     // ids présentes dans le GeoJSON
