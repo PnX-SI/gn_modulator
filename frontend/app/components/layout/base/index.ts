@@ -5,6 +5,7 @@ import { ModulesLayoutSectionComponent } from './layout-section.component';
 import { ModulesLayoutCardComponent } from './layout-card.component';
 import { ModulesLayoutElementComponent } from './layout-element.component';
 import { ModulesLayoutMapComponent } from './layout-map.component';
+import { ModulesLayoutMapSearchComponent } from './layout-map-search.component';
 import { ModulesLayoutArrayComponent } from './layout-array.component';
 import { ModulesLayoutBreadcrumbsComponent } from './layout-breadcrumbs.component';
 import { ModulesLayoutItemsComponent } from './layout-items.component';
@@ -13,6 +14,7 @@ import { ModulesLayoutMediasComponent } from './layout-medias.component';
 export default [
   ModulesLayoutMediasComponent,
   ModulesLayoutMapComponent,
+  ModulesLayoutMapSearchComponent,
   ModulesLayoutDebugComponent,
   ModulesLayoutBreadcrumbsComponent,
   ModulesLayoutComponent,
