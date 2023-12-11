@@ -21,7 +21,7 @@ layout:
         key: __f__o.geometry_field_name(x)
         edit: true
         gps: true
-        zoom: 12
+        zoom: __ZOOM__
 
       - items:
         - type: breadcrumbs
