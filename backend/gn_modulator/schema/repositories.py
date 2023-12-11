@@ -235,6 +235,8 @@ class SchemaRepositories:
             .count()
         )
 
+        print(count_total)
+
         count_filtered = (
             self.Model()
             .query.query_list(

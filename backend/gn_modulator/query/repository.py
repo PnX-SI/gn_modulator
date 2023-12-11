@@ -37,6 +37,9 @@ class RepositorySchemaQuery(
         # - prefiltrage params
         self = self.process_filters(params.get("prefilters", []))
 
+        if query_type == "total":
+            return self.with_entities(*model_pk_fields).group_by(*model_pk_fields)
+
         # filtrage
         self = self.process_filters(params.get("filters", []))
 
