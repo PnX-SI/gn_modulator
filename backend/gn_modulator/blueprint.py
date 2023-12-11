@@ -61,9 +61,7 @@ def api_modules_config(config_path):
         return txt, 500
 
     return process_dict_path(
-        ModuleMethods.modules_config(),
-        config_path,
-        SchemaMethods.base_url() + "/config/",
+        ModuleMethods.modules_config(), config_path, SchemaMethods.base_url() + "/config/"
     )
 
 
@@ -108,11 +106,7 @@ def api_layout(config_path):
             layout_search_code=layout_search_code, as_dict=as_dict
         )
 
-    return process_dict_path(
-        layout_out,
-        config_path,
-        SchemaMethods.base_url() + "/layouts/",
-    )
+    return process_dict_path(layout_out, config_path, SchemaMethods.base_url() + "/layouts/")
 
 
 @blueprint.route("/schemas/<path:config_path>", methods=["GET"])
@@ -130,8 +124,4 @@ def api_schemas(config_path):
         for schema_code in SchemaMethods.schema_codes()
     }
 
-    return process_dict_path(
-        schemas,
-        config_path,
-        SchemaMethods.base_url() + "/schemas/",
-    )
+    return process_dict_path(schemas, config_path, SchemaMethods.base_url() + "/schemas/")

@@ -9,15 +9,13 @@ def get_acquisition_framework_id():
     sm_ca = SchemaMethods("meta.ca")
     ca_data = ca()
     ca_row = sm_ca.get_row_as_dict(
-        ca_data["acquisition_framework_name"],
-        field_name="acquisition_framework_name",
+        ca_data["acquisition_framework_name"], field_name="acquisition_framework_name"
     )
 
     if not ca_row:
         sm_ca.insert_row(ca_data)
         ca_row = sm_ca.get_row_as_dict(
-            ca_data["acquisition_framework_name"],
-            field_name="acquisition_framework_name",
+            ca_data["acquisition_framework_name"], field_name="acquisition_framework_name"
         )
     return ca_row["id_acquisition_framework"]
 
@@ -31,9 +29,7 @@ def ca():
 
 
 def ca_update():
-    return {
-        "acquisition_framework_desc": "test pytest 2",
-    }
+    return {"acquisition_framework_desc": "test pytest 2"}
 
 
 def jdd():
@@ -48,6 +44,4 @@ def jdd():
 
 
 def jdd_update():
-    return {
-        "dataset_name": "muche",
-    }
+    return {"dataset_name": "muche"}

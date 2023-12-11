@@ -24,10 +24,9 @@ def check_errors(definition=None, error_code=None, context=None):
         definition
         assert definition is not None
 
-        (
-            definition_type,
-            definition_code,
-        ) = DefinitionMethods.get_definition_type_and_code(definition)
+        (definition_type, definition_code) = DefinitionMethods.get_definition_type_and_code(
+            definition
+        )
 
         assert definition_type is not None
         assert definition_code is not None
@@ -44,10 +43,9 @@ def check_errors(definition=None, error_code=None, context=None):
 
         # on teste si la definition a bien été supprimé
         if (definition is not None) and (error_code not in ["ERR_LOAD_EXISTING"]):
-            (
-                definition_type,
-                definition_code,
-            ) = DefinitionMethods.get_definition_type_and_code(definition)
+            (definition_type, definition_code) = DefinitionMethods.get_definition_type_and_code(
+                definition
+            )
             assert (
                 get_global_cache([definition_type, definition_code]) is None
             ), f"({context}, {error_code}) : la definition erronée aurait du être supprimée du cache"

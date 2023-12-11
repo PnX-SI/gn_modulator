@@ -42,13 +42,7 @@ class ModulesConfigBase:
         module_db = SchemaMethods("commons.module").get_row_as_dict(
             module_code,
             field_name="module_code",
-            fields=[
-                "module_code",
-                "module_picto",
-                "module_desc",
-                "module_label",
-                "module_path",
-            ],
+            fields=["module_code", "module_picto", "module_desc", "module_label", "module_path"],
         )
 
         module_config = copy.deepcopy(module_definition)

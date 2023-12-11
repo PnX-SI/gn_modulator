@@ -49,8 +49,7 @@ class ImportMixinUpdate(ImportMixinUtils):
             map(
                 lambda x: x,
                 filter(
-                    lambda x: self.Model().is_column(x) and x != self.id_digitiser_key(),
-                    columns,
+                    lambda x: self.Model().is_column(x) and x != self.id_digitiser_key(), columns
                 ),
             )
         )
@@ -68,12 +67,7 @@ class ImportMixinUpdate(ImportMixinUtils):
         # les condition d'update
         # - pour toutes les colonnes v_set_keys
         # on regarde si la données importée est distincte des données existante
-        v_update_condition = list(
-            map(
-                lambda x: f"(t.{x} IS DISTINCT FROM p.{x})",
-                v_column_keys,
-            )
-        )
+        v_update_condition = list(map(lambda x: f"(t.{x} IS DISTINCT FROM p.{x})", v_column_keys))
 
         # texte sql pour l'instruction SET
         txt_set_keys = ",\n    ".join(v_set_keys)

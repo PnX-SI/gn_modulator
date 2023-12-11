@@ -8,13 +8,7 @@ class BaseSchemaQuery(BaseQuery):
     def Model(self):
         return self._primary_entity.mapper.entity
 
-    def getModelAttr(
-        self,
-        Model,
-        field_name,
-        only_fields="",
-        index=0,
-    ):
+    def getModelAttr(self, Model, field_name, only_fields="", index=0):
         return _getModelAttr(self, Model, field_name, only_fields=only_fields, index=index)
 
     def clear_query_cache(self):

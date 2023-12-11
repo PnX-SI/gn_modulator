@@ -160,9 +160,7 @@ class PassageFaune(db.Model):
 
     source = db.Column(db.Unicode)
 
-    meta_create_date = db.Column(
-        db.DateTime,
-    )
+    meta_create_date = db.Column(db.DateTime)
     meta_update_date = db.Column(db.DateTime)
 
     areas = db.relationship(LAreas, secondary=CorPfArea.__table__)
@@ -256,7 +254,7 @@ def subquery_scope(cls, query, id_role):
     subquery_scope = sa.case(
         [
             # scope 2 si acteur de meme organisme
-            (cls.actors.any(id_organism=User.id_organisme), 2),
+            (cls.actors.any(id_organism=User.id_organisme), 2)
         ],
         else_=3,
     )
@@ -272,9 +270,7 @@ class Actor(db.Model):
     id_passage_faune = db.Column(
         db.Integer,
         db.ForeignKey(
-            "pr_sipaf.t_passages_faune.id_passage_faune",
-            ondelete="CASCADE",
-            onupdate="CASCADE",
+            "pr_sipaf.t_passages_faune.id_passage_faune", ondelete="CASCADE", onupdate="CASCADE"
         ),
         nullable=False,
     )
@@ -377,9 +373,7 @@ class Diagnostic(db.Model):
     id_passage_faune = db.Column(
         db.Integer,
         db.ForeignKey(
-            "pr_sipaf.t_passages_faune.id_passage_faune",
-            ondelete="CASCADE",
-            onupdate="CASCADE",
+            "pr_sipaf.t_passages_faune.id_passage_faune", ondelete="CASCADE", onupdate="CASCADE"
         ),
         nullable=False,
     )
@@ -403,8 +397,7 @@ class Diagnostic(db.Model):
         db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
     )
     nomenclature_ouvrage_hydrau_racc_banq = db.relationship(
-        TNomenclatures,
-        foreign_keys=[id_nomenclature_ouvrage_hydrau_racc_banq],
+        TNomenclatures, foreign_keys=[id_nomenclature_ouvrage_hydrau_racc_banq]
     )
 
     nomenclatures_diagnostic_obstacle = db.relationship(
@@ -576,9 +569,7 @@ class Usage(db.Model):
     id_passage_faune = db.Column(
         db.Integer,
         db.ForeignKey(
-            "pr_sipaf.t_passages_faune.id_passage_faune",
-            ondelete="CASCADE",
-            onupdate="CASCADE",
+            "pr_sipaf.t_passages_faune.id_passage_faune", ondelete="CASCADE", onupdate="CASCADE"
         ),
         nullable=False,
     )

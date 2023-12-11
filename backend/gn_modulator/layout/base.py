@@ -33,8 +33,7 @@ class BaseLayout:
 
         if layout_search_code:
             layout_codes = filter(
-                lambda x: layout_search_code is None or layout_search_code in x,
-                layout_codes,
+                lambda x: layout_search_code is None or layout_search_code in x, layout_codes
             )
 
         if as_dict:

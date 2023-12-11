@@ -12,17 +12,11 @@ def get_list_rest(module_code, object_code, additional_params={}):
 
     # on peut redéfinir le module_code pour le choix des droits
     permission_module_code = object_definition.get("permission_module_code", module_code)
-    params = {
-        **parse_request_args(object_definition),
-        **additional_params,
-    }
+    params = {**parse_request_args(object_definition), **additional_params}
 
     action = params.get("action") or "R"
     query_infos = sm.get_query_infos(
-        module_code=permission_module_code,
-        action=action,
-        params=params,
-        url=request.url,
+        module_code=permission_module_code, action=action, params=params, url=request.url
     )
 
     query_list = sm.Model().query.query_list(
@@ -36,10 +30,7 @@ def get_list_rest(module_code, object_code, additional_params={}):
         #         "Vous n'avez pas les droit pour effectuer des actions d'admin pour le module MODULATOR",
         #         403,
         #     )
-        response = make_response(
-            query_list.pretty_sql(),
-            200,
-        )
+        response = make_response(query_list.pretty_sql(), 200)
         response.mimetype = "text/plain"
         return response
 

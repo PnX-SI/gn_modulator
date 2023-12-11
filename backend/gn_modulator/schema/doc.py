@@ -48,12 +48,7 @@ class SchemaDoc:
 
         return txt
 
-    def doc_import_key(
-        self,
-        key,
-        unique=False,
-        relation_key=None,
-    ):
+    def doc_import_key(self, key, unique=False, relation_key=None):
         txt = ""
 
         key_txt = f"{relation_key}.{key}" if relation_key is not None else key

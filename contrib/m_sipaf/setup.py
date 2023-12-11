@@ -31,7 +31,7 @@ setuptools.setup(
             f"blueprint = {module_name}.blueprint:blueprint",
             f"migrations = {module_name}.migrations:versions",
             f"config_schema = {module_name}.conf_schema_toml:GnModuleSchemaConf",
-        ],
+        ]
     },
     classifiers=[
         "Development Status :: 1 - Planning",

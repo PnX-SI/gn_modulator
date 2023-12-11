@@ -401,11 +401,7 @@ class SchemaBase:
         return self.attr("meta.default_fields") or list(
             filter(
                 lambda x: x is not None,
-                [
-                    Model.pk_field_name(),
-                    self.label_field_name(),
-                    self.title_field_name(),
-                ],
+                [Model.pk_field_name(), self.label_field_name(), self.title_field_name()],
             )
         )
 

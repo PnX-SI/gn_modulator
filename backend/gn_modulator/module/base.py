@@ -52,8 +52,7 @@ class ModuleBase:
         """
         return list(
             filter(
-                lambda module_code: cls.module_config(module_code)["registred"],
-                cls.module_codes(),
+                lambda module_code: cls.module_config(module_code)["registred"], cls.module_codes()
             )
         )
 

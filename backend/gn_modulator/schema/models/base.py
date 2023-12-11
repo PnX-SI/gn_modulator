@@ -79,8 +79,7 @@ class SchemaModelBase:
                 kwargs["secondaryjoin"] = getattr(
                     relation.Model(), relation.Model().pk_field_name()
                 ) == getattr(
-                    CorTable.c,
-                    relationship_def.get("foreign_key", self.Model().pk_field_name()),
+                    CorTable.c, relationship_def.get("foreign_key", self.Model().pk_field_name())
                 )
 
         relationship = db.relationship(relation.Model(), **kwargs)

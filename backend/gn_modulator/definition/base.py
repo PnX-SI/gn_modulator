@@ -70,10 +70,7 @@ class DefinitionBase:
             #     - dans ce cas c'est une partie du fichier de config,
             #     - par exemple
             #       - site-propertie.yml contient la clé 'properties' du dictionnaire de definition de site
-            for file in filter(
-                lambda f: (f.endswith(".yml") or f.endswith(".json")),
-                files,
-            ):
+            for file in filter(lambda f: (f.endswith(".yml") or f.endswith(".json")), files):
                 file_path = Path(root) / file
                 cls.load_definition_file(
                     file_path, check_existing_definition=check_existing_definition
@@ -225,10 +222,7 @@ class DefinitionBase:
         if definition_type not in cls.definition_types():
             cls.definition_types().append(definition_type)
         set_global_cache([definition_type, definition_code, "definition"], definition)
-        set_global_cache(
-            [definition_type, definition_code, "file_path"],
-            file_path,
-        )
+        set_global_cache([definition_type, definition_code, "file_path"], file_path)
 
     @classmethod
     def local_check_definitions(cls):
@@ -238,8 +232,7 @@ class DefinitionBase:
 
         # pour chaque type de definition sauf reférence qui sont validée en amont
         for definition_type in filter(
-            lambda x: x not in ["reference", "template", "use_template"],
-            cls.definition_types(),
+            lambda x: x not in ["reference", "template", "use_template"], cls.definition_types()
         ):
             # pour
             definition_codes = list(get_global_cache([definition_type], {}).keys())
@@ -349,10 +342,7 @@ class DefinitionBase:
             )
 
     @classmethod
-    def get_definition_type_and_code(
-        cls,
-        definition,
-    ):
+    def get_definition_type_and_code(cls, definition):
         """
         renvoie le type de definition et la clé pour le stockage dans le cache
         lorsque l'on peut en trouver une pour le dictionnaire de definition
@@ -410,10 +400,9 @@ class DefinitionBase:
             )
 
         # dépendancies
-        dependencies = definition_type not in [
-            "template",
-            "use_template",
-        ] and definition.get("dependencies")
+        dependencies = definition_type not in ["template", "use_template"] and definition.get(
+            "dependencies"
+        )
         if dependencies:
             definition_codes = cls.definition_codes_for_type(definition_type)
             missing_dependencies = [

@@ -14,10 +14,7 @@ import pytest
 
 from flask import url_for
 
-from pypnusershub.tests.utils import (
-    set_logged_user_cookie,
-    unset_logged_user_cookie,
-)
+from pypnusershub.tests.utils import set_logged_user_cookie, unset_logged_user_cookie
 
 from gn_modulator import ModuleMethods
 from .utils.rest import test_schema_rest

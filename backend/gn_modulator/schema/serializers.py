@@ -151,8 +151,7 @@ class SchemaSerializers:
         exclude = relation.excluded_relations(self.opposite_relation_def(relation_def))
 
         relation_serializer = fields.Nested(
-            relation.marshmallow_schema_code(),
-            **{"exclude": exclude, "dump_default": None},
+            relation.marshmallow_schema_code(), **{"exclude": exclude, "dump_default": None}
         )
 
         if relation_def["relation_type"] == "n-1":
@@ -178,10 +177,7 @@ class SchemaSerializers:
         if self.Model() is None:
             return None
 
-        marshmallow_meta_dict = {
-            "model": self.Model(),
-            "load_instance": True,
-        }
+        marshmallow_meta_dict = {"model": self.Model(), "load_instance": True}
 
         Meta = type(self.marshmallow_meta_name(), (), marshmallow_meta_dict)
 
@@ -267,9 +263,7 @@ class SchemaSerializers:
             marshmallow_schema_dict[relation_key] = relation_marshmallow
 
         MarshmallowSchema = type(
-            self.marshmallow_schema_code(),
-            (ma.SQLAlchemyAutoSchema,),
-            marshmallow_schema_dict,
+            self.marshmallow_schema_code(), (ma.SQLAlchemyAutoSchema,), marshmallow_schema_dict
         )
 
         set_global_cache(["schema", self.schema_code(), "marshmallow"], MarshmallowSchema)
@@ -369,19 +363,11 @@ class SchemaSerializers:
             return None
 
         return self.serialize(
-            m,
-            fields=fields,
-            as_geojson=as_geojson,
-            geometry_field_name=geometry_field_name,
+            m, fields=fields, as_geojson=as_geojson, geometry_field_name=geometry_field_name
         )
 
     def serialize_list(
-        self,
-        m_list,
-        fields=None,
-        as_geojson=False,
-        geometry_field_name=False,
-        flat_keys=False,
+        self, m_list, fields=None, as_geojson=False, geometry_field_name=False, flat_keys=False
     ):
         """
         serialize using marshmallow

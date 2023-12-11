@@ -48,12 +48,7 @@ class ImportMixinRaw(ImportMixinUtils):
         # comptage et vérification de l'intégrité de la table
         self.count_and_check_table("raw", dest_table)
 
-    def sql_raw_view(
-        self,
-        from_table,
-        dest_table,
-        limit=None,
-    ):
+    def sql_raw_view(self, from_table, dest_table, limit=None):
         """
         script de creation de la vue d'import 'raw'
         """

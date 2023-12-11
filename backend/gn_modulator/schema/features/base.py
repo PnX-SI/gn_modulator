@@ -9,11 +9,7 @@ import jsonschema
 import marshmallow
 from sqlalchemy.orm.exc import NoResultFound
 from .. import errors
-from gn_modulator.utils.cache import (
-    get_global_cache,
-    clear_global_cache,
-    set_global_cache,
-)
+from gn_modulator.utils.cache import get_global_cache, clear_global_cache, set_global_cache
 
 
 class SchemaBaseFeatures:

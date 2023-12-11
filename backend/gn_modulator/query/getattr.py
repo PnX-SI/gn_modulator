@@ -59,9 +59,7 @@ def _getModelAttr(query, BaseModel, field_name, only_fields="", index=0, conditi
         else BaseModel
     )
 
-    res = {
-        "val": getattr(current_Model, current_field),
-    }
+    res = {"val": getattr(current_Model, current_field)}
 
     # si c'est une propriété
     if is_relationship:
@@ -154,7 +152,7 @@ def _eager_load_only(query, field_name, only_fields, index):
                     ),
                     only_fields,
                 ),
-            ),
+            )
         )
         if not only_columns_i:
             relation_Model = query.Model().relation_Model(key_cache_eager)

@@ -216,9 +216,7 @@ SELECT
         keys = [self.Model().pk_field_name(), relation_Model.pk_field_name()]
 
         sql_rel["insert"] = self.sql_insert(
-            tables_rel["process"],
-            keys=keys,
-            dest_table=dest_table,
+            tables_rel["process"], keys=keys, dest_table=dest_table
         )
 
         try:

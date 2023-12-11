@@ -86,7 +86,7 @@ def synthese_subquery_scope(cls, id_role):
                                     pre_scope.c.id_organisme_af == pre_scope.c.id_organisme_cur,
                                 ),
                             )
-                        ),
+                        )
                     ),
                     2,
                 ),

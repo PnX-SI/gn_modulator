@@ -30,7 +30,7 @@ setuptools.setup(
             "migrations = gn_modulator.migrations:versions",
             "config_schema = gn_modulator.conf_schema_toml:GnModuleSchemaConf",
             "tasks = gn_modulator.tasks",
-        ],
+        ]
     },
     classifiers=[
         "Development Status :: 1 - Planning",

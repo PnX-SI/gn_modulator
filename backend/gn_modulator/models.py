@@ -5,10 +5,7 @@ from geonature.core.gn_commons.models import TModules
 cor_module_groups = db.Table(
     "cor_module_groupe",
     db.Column(
-        "id_module",
-        db.Integer,
-        db.ForeignKey("gn_commons.t_modules.id_module"),
-        primary_key=True,
+        "id_module", db.Integer, db.ForeignKey("gn_commons.t_modules.id_module"), primary_key=True
     ),
     db.Column(
         "id_module_group",
@@ -22,10 +19,7 @@ cor_module_groups = db.Table(
 cor_module_tags = db.Table(
     "cor_module_tag",
     db.Column(
-        "id_module",
-        db.Integer,
-        db.ForeignKey("gn_commons.t_modules.id_module"),
-        primary_key=True,
+        "id_module", db.Integer, db.ForeignKey("gn_commons.t_modules.id_module"), primary_key=True
     ),
     db.Column(
         "id_module_tag",

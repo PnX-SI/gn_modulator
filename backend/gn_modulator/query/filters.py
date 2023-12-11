@@ -29,9 +29,7 @@ class unaccent(ReturnTypeFromArgs):
     pass
 
 
-class SchemaQueryFilters(
-    BaseSchemaQuery,
-):
+class SchemaQueryFilters(BaseSchemaQuery):
     """
     repositories - filters
 
@@ -227,9 +225,7 @@ class SchemaQueryFilters(
                 self = self.join(alias, getattr(alias, Model.pk_field_name()) == value)
                 geom = getattr(alias, geom_field)
                 geo_filter = func.ST_DWithin(
-                    func.ST_GeogFromWKB(model_attribute),
-                    func.ST_GeogFromWKB(geom),
-                    radius,
+                    func.ST_GeogFromWKB(model_attribute), func.ST_GeogFromWKB(geom), radius
                 )
                 filter_out = geo_filter
 

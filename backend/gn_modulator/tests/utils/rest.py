@@ -2,10 +2,7 @@ import pytest
 
 from flask import url_for
 from gn_modulator import SchemaMethods, ModuleMethods
-from pypnusershub.tests.utils import (
-    set_logged_user_cookie,
-    unset_logged_user_cookie,
-)
+from pypnusershub.tests.utils import set_logged_user_cookie, unset_logged_user_cookie
 
 
 @pytest.mark.skip()
@@ -95,10 +92,7 @@ def test_schema_rest(client, user, module_code, object_code, data_post, data_upd
     # DELETE
     r = client.delete(
         url_for(
-            "modulator.api_rest_delete",
-            value=id,
-            module_code=module_code,
-            object_code=object_code,
+            "modulator.api_rest_delete", value=id, module_code=module_code, object_code=object_code
         )
     )
 

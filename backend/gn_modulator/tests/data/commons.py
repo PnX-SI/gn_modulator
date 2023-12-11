@@ -15,9 +15,7 @@ def module():
 
 
 def module_update():
-    return {
-        "module_label": "TEST_PYTEST_UPDATE",
-    }
+    return {"module_label": "TEST_PYTEST_UPDATE"}
 
 
 def pf():
@@ -29,6 +27,4 @@ def pf():
 
 
 def pf_update():
-    return {
-        "geom": {"type": "Point", "coordinates": [0, 46]},
-    }
+    return {"geom": {"type": "Point", "coordinates": [0, 46]}}

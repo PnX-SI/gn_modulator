@@ -112,12 +112,7 @@ FROM d
         # pour les relations n-n, ajout de with et join dans la requete
         # les sous requete permettre d'agreger les clé étrangère dans des liste
         # pour pouvoir comparer les valeurs des données et les valeurs existantes
-        relations_nn = list(
-            filter(
-                lambda x: self.Model().is_relation_n_n(x),
-                columns,
-            )
-        )
+        relations_nn = list(filter(lambda x: self.Model().is_relation_n_n(x), columns))
         withs_rel = list(map(lambda x: self.update_count_with_rel(x), relations_nn))
         joins_rel = list(map(lambda x: self.update_count_join_rel(x), relations_nn))
 

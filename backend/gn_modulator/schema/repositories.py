@@ -71,10 +71,7 @@ class SchemaRepositories:
         params_query["filters"] = params_query.get("filters", []) + value_filters
 
         query = self.Model().query.query_list(
-            module_code=module_code,
-            action=action,
-            params=params_query,
-            query_type=query_type,
+            module_code=module_code, action=action, params=params_query, query_type=query_type
         )
 
         return query
@@ -241,10 +238,7 @@ class SchemaRepositories:
         count_filtered = (
             self.Model()
             .query.query_list(
-                module_code=module_code,
-                action="R",
-                params=params,
-                query_type="filtered",
+                module_code=module_code, action="R", params=params, query_type="filtered"
             )
             .count()
         )

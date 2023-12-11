@@ -300,49 +300,15 @@ class ModuleConfigUtils:
         sm = SchemaMethods(cls.schema_code(module_code, object_code))
         if sm.definition is None:
             return
-        authorized_read_fields = (
-            get_global_cache(
-                [
-                    "keys",
-                    module_code,
-                    object_code,
-                    "read",
-                ]
-            )
-            or []
-        )
+        authorized_read_fields = get_global_cache(["keys", module_code, object_code, "read"]) or []
 
         authorized_write_fields = (
-            get_global_cache(
-                [
-                    "keys",
-                    module_code,
-                    object_code,
-                    "read",
-                ]
-            )
-            or []
+            get_global_cache(["keys", module_code, object_code, "read"]) or []
         )
 
-        set_global_cache(
-            [
-                "keys",
-                module_code,
-                object_code,
-                "read",
-            ],
-            authorized_read_fields,
-        )
+        set_global_cache(["keys", module_code, object_code, "read"], authorized_read_fields)
 
-        set_global_cache(
-            [
-                "keys",
-                module_code,
-                object_code,
-                "write",
-            ],
-            authorized_write_fields,
-        )
+        set_global_cache(["keys", module_code, object_code, "write"], authorized_write_fields)
 
         # pour la lecture, on ajoute par défaut les champs
         # - pk_field_name
@@ -415,11 +381,7 @@ class ModuleConfigUtils:
             if layout.get("additional_fields"):
                 key_add += layout["additional_fields"]
             if key_add:
-                cls.get_layout_keys(
-                    key_add,
-                    params,
-                    {**context, "data_keys": []},
-                )
+                cls.get_layout_keys(key_add, params, {**context, "data_keys": []})
             if (
                 layout.get("return_object")
                 and layout.get("additional_fields")
@@ -482,11 +444,4 @@ class ModuleConfigUtils:
 
     @classmethod
     def get_autorized_fields(cls, module_code, object_code, write=False):
-        return get_global_cache(
-            [
-                "keys",
-                module_code,
-                object_code,
-                "write" if write else "read",
-            ]
-        )
+        return get_global_cache(["keys", module_code, object_code, "write" if write else "read"])

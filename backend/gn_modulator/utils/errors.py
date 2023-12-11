@@ -105,8 +105,7 @@ def errors_txt():
         txt_errors += "\n"
 
         for definition_error in filter(
-            lambda x: x.get("file_path", "") == definition_error_file_path,
-            errors,
+            lambda x: x.get("file_path", "") == definition_error_file_path, errors
         ):
             txt_errors += (
                 f"  - {definition_error['error_code']} {definition_error['error_msg']}\n\n"

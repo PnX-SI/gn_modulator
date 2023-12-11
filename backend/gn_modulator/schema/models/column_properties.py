@@ -1,13 +1,5 @@
 from sqlalchemy.orm import column_property
-from sqlalchemy import (
-    func,
-    literal,
-    select,
-    exists,
-    and_,
-    literal_column,
-    cast,
-)
+from sqlalchemy import func, literal, select, exists, and_, literal_column, cast
 from geonature.utils.env import db
 from gn_modulator.utils.filters import parse_filters
 from gn_modulator.query.getattr import _getModelAttr

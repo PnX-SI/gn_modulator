@@ -1,10 +1,6 @@
 from pypnnomenclature.models import TNomenclatures, BibNomenclaturesTypes
-from pypnusershub.db.models import (
-    cor_role_liste,
-)
-from geonature.core.gn_commons.models.base import (
-    CorModuleDataset,
-)
+from pypnusershub.db.models import cor_role_liste
+from geonature.core.gn_commons.models.base import CorModuleDataset
 from geonature.core.users.models import CorRole
 
 from geonature.utils.env import db
@@ -67,9 +63,7 @@ class SchemaModelExisting:
         # process column properties
         for key, column_property_def in self.column_properties().items():
             setattr(
-                Model,
-                key,
-                self.process_column_property_model(key, column_property_def, Model),
+                Model, key, self.process_column_property_model(key, column_property_def, Model)
             )
 
         return Model

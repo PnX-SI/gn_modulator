@@ -7,9 +7,7 @@ from sqlalchemy import func
 from geonature.utils.env import db
 from pypnnomenclature.repository import get_nomenclature_id_term
 from pypnusershub.db.models import Organisme
-from pypnusershub.db.models import (
-    Organisme,
-)
+from pypnusershub.db.models import Organisme
 
 from m_sipaf.models import PassageFaune, Diagnostic, Actor
 

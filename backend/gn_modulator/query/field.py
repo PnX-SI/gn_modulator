@@ -34,10 +34,7 @@ class FieldSchemaQuery(BaseSchemaQuery):
         property_fields = list(
             map(
                 lambda x: getattr(Model, x),
-                filter(
-                    lambda x: "." not in x and not Model.is_relationship(x),
-                    fields_to_process,
-                ),
+                filter(lambda x: "." not in x and not Model.is_relationship(x), fields_to_process),
             )
         )
 

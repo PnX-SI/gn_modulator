@@ -20,10 +20,7 @@ class SchemaConfigFilters:
     def config_filters_form_schema(self):
         filters_defs = self.attr("filter_defs.defs", {})
         properties = {
-            key_filter: {
-                "type": filter_def.get("type") or "string",
-                "title": filter_def["title"],
-            }
+            key_filter: {"type": filter_def.get("type") or "string", "title": filter_def["title"]}
             for key_filter, filter_def in filters_defs.items()
         }
         return {"properties": properties}

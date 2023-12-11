@@ -31,7 +31,6 @@ class SchemaTypes:
 
         # autres
         type_out = next(
-            (item[field_name_out] for item in cor_type if item[field_name_in] == type_in),
-            None,
+            (item[field_name_out] for item in cor_type if item[field_name_in] == type_in), None
         )
         return {"type": type_out}

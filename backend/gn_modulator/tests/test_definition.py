@@ -98,8 +98,7 @@ class TestDefinitions:
     def test_load_definition_unknown_fail(self):
         # load unknown fail
         test_load_definition(
-            definitions_test_dir / "load_definition_unknown_fail.yml",
-            "ERR_LOAD_UNKNOWN",
+            definitions_test_dir / "load_definition_unknown_fail.yml", "ERR_LOAD_UNKNOWN"
         )
 
     def test_load_definition_existing_fail(self):
@@ -107,8 +106,7 @@ class TestDefinitions:
         test_load_definition(definitions_test_dir / "load_definition_existing_fail.schema.yml")
 
         test_load_definition(
-            definitions_test_dir / "load_definition_existing_fail.schema.yml",
-            "ERR_LOAD_EXISTING",
+            definitions_test_dir / "load_definition_existing_fail.schema.yml", "ERR_LOAD_EXISTING"
         )
         DefinitionMethods.remove_from_cache("schema", "load_definition_existing_fail")
 

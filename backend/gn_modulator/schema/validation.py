@@ -118,9 +118,7 @@ class SchemaValidation:
 
             definitions[key] = definition
 
-        schema_definition = {
-            "type": "object",
-        }
+        schema_definition = {"type": "object"}
 
         if "properties" in schema:
             schema_definition["properties"] = schema["properties"]

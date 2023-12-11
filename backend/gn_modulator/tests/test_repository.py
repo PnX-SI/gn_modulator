@@ -35,15 +35,9 @@ class TestRepository:
     def test_repo_diag(self, users, passages_faune_with_diagnostic):
         sm = SchemaMethods("m_sipaf.diag")
         fields = ["scope"]
-        params = {
-            "fields": fields,
-        }
+        params = {"fields": fields}
         q = sm.Model().query.query_list(
-            "m_sipaf",
-            "R",
-            params,
-            "select",
-            id_role=users["admin_user"].id_role,
+            "m_sipaf", "R", params, "select", id_role=users["admin_user"].id_role
         )
         m_list = q.all()
         res = sm.serialize_list(m_list, fields)
@@ -100,18 +94,9 @@ class TestRepository:
             # "id_passage_faune",
             # "scope",
         ]
-        params = {
-            "filters": [
-                f"uuid_passage_faune in {uuids_filter_value}",
-            ],
-            "fields": fields,
-        }
+        params = {"filters": [f"uuid_passage_faune in {uuids_filter_value}"], "fields": fields}
         q = sm.Model().query.query_list(
-            "m_sipaf",
-            "R",
-            params,
-            "select",
-            id_role=users["admin_user"].id_role,
+            "m_sipaf", "R", params, "select", id_role=users["admin_user"].id_role
         )
         m_list = q.all()
         res = sm.serialize_list(m_list, fields)
@@ -124,29 +109,16 @@ class TestRepository:
             map(lambda x: x.uuid_passage_faune, passages_faune_with_diagnostic)
         )
         fields = ["scope", "uuid_passage_faune"]
-        params = {
-            "filters": [
-                f"uuid_passage_faune in {uuids_filter_value}",
-            ],
-            "fields": fields,
-        }
+        params = {"filters": [f"uuid_passage_faune in {uuids_filter_value}"], "fields": fields}
         q = sm.Model().query.query_list(
-            "m_sipaf",
-            "R",
-            params,
-            "select",
-            id_role=users["admin_user"].id_role,
+            "m_sipaf", "R", params, "select", id_role=users["admin_user"].id_role
         )
         res = q.all()
 
         assert len(res) == 2
 
         q = sm.Model().query.query_list(
-            "m_sipaf",
-            "R",
-            params,
-            "select",
-            id_role=users["user"].id_role,
+            "m_sipaf", "R", params, "select", id_role=users["user"].id_role
         )
         m_list = q.all()
         res = sm.serialize_list(m_list, fields)
@@ -159,19 +131,12 @@ class TestRepository:
             map(lambda x: x.uuid_passage_faune, passages_faune_with_diagnostic)
         )
         params = {
-            "filters": [
-                "diagnostics any",
-                f"uuid_passage_faune in {uuids_filter_value}",
-            ],
+            "filters": ["diagnostics any", f"uuid_passage_faune in {uuids_filter_value}"],
             "fields": ["scope", "actors"],
         }
 
         q = sm.Model().query.query_list(
-            "m_sipaf",
-            "R",
-            params,
-            "select",
-            id_role=users["admin_user"].id_role,
+            "m_sipaf", "R", params, "select", id_role=users["admin_user"].id_role
         )
         res = q.all()
         assert len(res) == 2
@@ -230,11 +195,7 @@ class TestRepository:
         sm = SchemaMethods("syn.synthese")
         res = {}
         comment_description_filter_list = ";".join(list(synthese_sensitive_data.keys()))
-        fields = [
-            "scope",
-            "comment_description",
-            "nomenclature_sensitivity.cd_nomenclature",
-        ]
+        fields = ["scope", "comment_description", "nomenclature_sensitivity.cd_nomenclature"]
         for user in users:
             # continue
             q = sm.Model().query.query_list(

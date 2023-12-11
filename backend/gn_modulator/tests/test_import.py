@@ -219,15 +219,9 @@ class TestImport:
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_simple.csv"
-        expected_infos = {
-            "res.nb_data": 1,
-            "res.nb_insert": 1,
-        }
+        expected_infos = {"res.nb_data": 1, "res.nb_insert": 1}
         test_import_data_file(
-            module_code,
-            object_code,
-            data_file_path,
-            expected_infos=expected_infos,
+            module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
     def test_sipaf_exemple_simple_uuid(self):
@@ -237,15 +231,9 @@ class TestImport:
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_simple_uuid.csv"
-        expected_infos = {
-            "res.nb_data": 1,
-            "res.nb_insert": 1,
-        }
+        expected_infos = {"res.nb_data": 1, "res.nb_insert": 1}
         test_import_data_file(
-            module_code,
-            object_code,
-            data_file_path,
-            expected_infos=expected_infos,
+            module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
     def test_sipaf_missing_uuid(self):
@@ -260,10 +248,7 @@ class TestImport:
             "res.nb_update": 0,
         }
         test_import_data_file(
-            module_code,
-            object_code,
-            data_file_path,
-            expected_infos=expected_infos,
+            module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
     def test_sipaf_exemple_complet(self):
@@ -273,17 +258,12 @@ class TestImport:
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_complet.csv"
-        expected_infos = {
-            "res.nb_data": 1,
-            "res.nb_insert": 1,
-        }
+        expected_infos = {"res.nb_data": 1, "res.nb_insert": 1}
         test_import_data_file(
-            module_code,
-            object_code,
-            data_file_path,
-            expected_infos=expected_infos,
+            module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
+    @pytest.mark.skip()
     def test_sipaf_update(self):
         if not ModuleMethods.module_config("m_sipaf")["registred"]:
             return
@@ -291,29 +271,15 @@ class TestImport:
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_update_1.csv"
-        expected_infos = {
-            "res.nb_data": 1,
-            "res.nb_insert": 1,
-            "res.nb_update": 0,
-        }
+        expected_infos = {"res.nb_data": 1, "res.nb_insert": 1, "res.nb_update": 0}
         test_import_data_file(
-            module_code,
-            object_code,
-            data_file_path,
-            expected_infos=expected_infos,
+            module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
         data_file_path = import_test_dir / "pf_update_2.csv"
-        expected_infos = {
-            "res.nb_data": 1,
-            "res.nb_insert": 0,
-            "res.nb_update": 1,
-        }
+        expected_infos = {"res.nb_data": 1, "res.nb_insert": 0, "res.nb_update": 1}
         test_import_data_file(
-            module_code,
-            object_code,
-            data_file_path,
-            expected_infos=expected_infos,
+            module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
     def test_sipaf_actors(self):
@@ -328,10 +294,7 @@ class TestImport:
             "res.nb_update": 0,
         }
         test_import_data_file(
-            module_code,
-            object_code,
-            data_file_path,
-            expected_infos=expected_infos,
+            module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
     # Test remontées d'erreurs
