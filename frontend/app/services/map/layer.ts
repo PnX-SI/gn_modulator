@@ -205,9 +205,14 @@ export default {
     let layerGroup = this.getLayerData(mapId, key);
 
     if (!layerGroup) {
-      layerGroup = new this.L.FeatureGroup();
-      // layerGroup.key = key;
-      map.addLayer(layerGroup);
+      layerGroup = layerOptions?.deflate
+        ? this.L.deflate({
+            minsize: layerOptions.deflate.minSize || 10,
+            markerType: this.L.circleMarker,
+          })
+        : new this.L.FeatureGroup();
+      layerGroup.addTo(map);
+
       map.controls.addOverlay(
         layerGroup,
         `<span class="fa fa-circle-o" style="color: ${
@@ -253,7 +258,7 @@ export default {
     // creation et ajout des nouveaux layers
     const newLayers = this.createlayersFromGeojson(newGeojson, layerOptions);
     for (const layer of Object.values(newLayers._layers)) {
-      layerGroup.addLayer(layer);
+      (layer as any).addTo(layerGroup);
     }
 
     // mise à jour des layer existants ?????
