@@ -149,11 +149,11 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     }
   }
 
-  onHeightChange(): void {
-    this._mapService.waitForMap(this.mapId).then((map) => {
-      map.invalidateSize();
-    });
-  }
+  // onHeightChange(): void {
+  //   this._mapService.waitForMap(this.mapId).then((map) => {
+  //     map.invalidateSize();
+  //   });
+  // }
 
   refreshData(objectCode: any): void {}
 

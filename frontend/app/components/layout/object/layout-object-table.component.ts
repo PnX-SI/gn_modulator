@@ -40,11 +40,11 @@ export class ModulesLayoutObjectTableComponent
     this._mTable = this._injector.get(ModulesTableService);
     this._mAction = this._injector.get(ModulesActionService);
     this.tableId = `table_${this._id}`;
+    this.bCheckParentsHeight = true;
   }
 
   onRedrawElem(): void {
-    this.onHeightChange(true);
-    this.setCount();
+    this.reDrawTable();
   }
 
   columns() {
@@ -137,8 +137,6 @@ export class ModulesLayoutObjectTableComponent
       // pour ne pas trainer sortersça dans l'api
       delete extendedParams['sorters'];
 
-      this._mLayout.reComputeHeight();
-
       // patch
       if (extendedParams.prefilters?.includes('undefined')) {
         console.error('prefilter inconnu');
@@ -155,7 +153,7 @@ export class ModulesLayoutObjectTableComponent
             this.pageData = null;
           }
           resolve(res);
-          this.onHeightChange(true);
+          this.reDrawTable();
 
           if (this.getDataValue()) {
             setTimeout(() => {
@@ -184,8 +182,7 @@ export class ModulesLayoutObjectTableComponent
           this.context.nb_total || 0
         }</b>`;
       },
-      (error) => {
-      },
+      (error) => {},
     );
   }
 
@@ -232,57 +229,58 @@ export class ModulesLayoutObjectTableComponent
   }
 
   processConfig() {
-    this.drawTable();
+    this.reDrawTable();
   }
 
   processFilters() {
-    this.drawTable();
+    this.reDrawTable();
   }
 
   processPreFilters() {
-    this.drawTable();
+    this.reDrawTable();
   }
 
-  onHeightChange(force = false) {
+  reDrawTable() {
+    const elem = document.getElementById(this._id);
+    if (!elem) {
+      return;
+    }
     if (!this.table) {
-      return;
-    }
-    const docHeight = document.body.clientHeight;
-
-    // si la taille du body n'a pas changé on retourne
-    if (this.docHeightSave == docHeight && !force) {
-      return;
+      this.drawTable();
     }
 
-    if (this.docHeightSave > docHeight || !this.docHeightSave) {
-      this.table.setHeight('50px');
+    this.tableHeight = `${elem.clientHeight}px`;
+    this.table.setHeight(elem.clientHeight);
+    const pageSize = Math.floor((elem.clientHeight - 90) / 50);
+
+    const nbTotal = this._mObject.objectConfigContext(this.context).nb_total;
+
+    if (
+      !this.computedLayout.page_size &&
+      this.pageSize != pageSize &&
+      nbTotal > pageSize &&
+      pageSize > 1 &&
+      !this.context.debug
+    ) {
+      this.pageSize = pageSize;
+      this.drawTable();
+    }
+    this.setCount();
+  }
+
+  customParentsHeightChange(): void {
+    if (!this.table) {
+      this.drawTable();
     }
 
-    this.docHeightSave = docHeight;
+    // // si la taille du body n'a pas changé on retourne
+    const tableHeight = parseInt(this.tableHeight?.replace('px', ''));
+    const elementHeight = document.getElementById(this._id)?.clientHeight;
+    if (this.table) {
+      this.table.setHeight('100px');
+    }
 
-    setTimeout(() => {
-      const elem = document.getElementById(this._id);
-      if (!elem) {
-        return;
-      }
-      this.tableHeight = `${elem.clientHeight}px`;
-      this.tableHeight = `${elem.clientHeight}px`;
-      this.table.setHeight(elem.clientHeight);
-      const pageSize = Math.floor((elem.clientHeight - 90) / 50);
-
-      const nbTotal = this._mObject.objectConfigContext(this.context).nb_total;
-
-      if (
-        !this.computedLayout.page_size &&
-        this.pageSize != pageSize &&
-        nbTotal > pageSize &&
-        pageSize > 1 &&
-        !this.context.debug
-      ) {
-        this.pageSize = pageSize;
-        this.drawTable();
-      }
-    }, 500);
+    this.reDrawTable();
   }
 
   getData(): Observable<any> {
@@ -291,7 +289,7 @@ export class ModulesLayoutObjectTableComponent
 
   refreshData(objectCode: any): void {
     if (objectCode == this.context.object_code) {
-      this.drawTable();
+      this.reDrawTable();
     }
   }
 

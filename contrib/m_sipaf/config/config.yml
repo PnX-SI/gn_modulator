@@ -280,7 +280,7 @@ site_details_fields:
                 - ouvrage_hydrau
         - display: fieldset
           key: usages
-          hidden: __f__data.nomenclature_ouvrage_specificite.cd_nomenclature == "SPE"
+          hidden: __f__data.nomenclature_ouvrage_specificite?.cd_nomenclature == "SPE"
           type: array
           items:
             direction: row
@@ -329,6 +329,7 @@ site_details_fields:
     - label: __f__o.tab_label(x)
       object_code: diagnostic
       hidden: __f__!o.object(x, 'site').value
+      no_margin: true
       items:
         - code: utils.button_create
           flex: "0"
@@ -442,7 +443,7 @@ site_form_fields:
                   multiple: true
                   return_object: true
         - title: Usages
-          disabled: __f__data.nomenclature_ouvrage_specificite.cd_nomenclature == "SPE"
+          disabled: __f__data.nomenclature_ouvrage_specificite?.cd_nomenclature == "SPE"
           type: array
           key: usages
           display: fieldset

@@ -13,6 +13,7 @@ import { ModulesContextService } from '../../../services/context.service';
 import { ModulesFormService } from '../../../services/form.service';
 import { ModulesActionService } from '../../../services/action.service';
 import { ModulesObjectService } from '../../../services/object.service';
+import { Subject } from '@librairies/rxjs';
 
 import { debounceTime } from '@librairies/rxjs/operators';
 
@@ -58,9 +59,11 @@ export class ModulesLayoutComponent implements OnInit {
   contextSave: any;
 
   bPostComputeLayout; // pour ne pas avoir tojours à comparer dataSave/data computedLayoutSave/computedLayout
+  bCheckParentsHeight;
+  $parentsHeight;
 
   // layout récupéré depuis layoutCode
-  // TODO à gérer en backend ?
+  // TODO à gérer overen backend ?
   layoutFromCode;
 
   /** margin for debug display
@@ -104,6 +107,13 @@ export class ModulesLayoutComponent implements OnInit {
   _mObject: ModulesObjectService;
 
   // pour les éléments avec overflow = true
+  parentResizeObserver;
+  parentsHeightSave;
+  parentsHeight;
+  parentsElement;
+  heightOverflowSave;
+
+  // height auto
   docHeightSave;
 
   // listenPage resize
@@ -147,10 +157,6 @@ export class ModulesLayoutComponent implements OnInit {
       this.refreshData(objectCode);
     });
 
-    this._subs['recompHeight'] = this._mLayout.$reComputedHeight.subscribe(() => {
-      this.onHeightChange();
-    });
-
     this._subs['redrawElem'] = this._mLayout.$reDrawElem.subscribe(() => {
       this.onRedrawElem();
     });
@@ -158,9 +164,6 @@ export class ModulesLayoutComponent implements OnInit {
     this._mLayout.$stopActionProcessing.subscribe(() => {
       this.actionProcessing = false;
     });
-
-    // pour les élément avec heigh_auto = true
-    // this.listenPageResize();
 
     // lorque une postInitialisation est nécessaire
     this.postInit();
@@ -206,7 +209,7 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   processContext() {
-    // passage de parentContext (venant des layout parents) à context (à destination des enfants)
+    // passage de parentContext (venant des layout parentsElement) à context (à destination des enfants)
     // copie
 
     // à clarifier
@@ -382,7 +385,11 @@ export class ModulesLayoutComponent implements OnInit {
     }
 
     if (this.computedLayout.overflow) {
-      this.processHeightOverflow();
+      this.bCheckParentsHeight = true;
+    }
+
+    if (this.bCheckParentsHeight) {
+      this.initCheckParentsHeight();
     }
 
     /** pour éviter de déclencher postComputeLayout s'il n'y a pas de changmeent effectif */
@@ -420,68 +427,76 @@ export class ModulesLayoutComponent implements OnInit {
 
   processItems() {}
 
-  // pour gérer les composant avec overflow = true
-  processHeightOverflow() {
-    if (!(this.computedLayout?.overflow || this.layout?.overflow)) {
-      return;
-    }
-
+  initCheckParentsHeight() {
     const elem = document.getElementById(this._id);
-    if (!elem) {
+    if (!elem || this.parentResizeObserver) {
       return;
     }
+    this.$parentsHeight = new Subject();
+    this.$parentsHeight.pipe(debounceTime(100)).subscribe(() => {
+      this.processParentsHeightChange();
+    });
+    this.parentResizeObserver = new ResizeObserver(() => this.$parentsHeight.next(true));
 
-    const docHeight = document.body.clientHeight;
+    this.parentsElement = [];
+    let p = elem.parentElement?.closest('div.layout-item');
 
-    // si la taille du body n'a pas changé on retourne
-    if (this.docHeightSave == docHeight) {
-      return;
+    while (p) {
+      // this.parentsElement.push(p.id as never);
+      this.parentsElement.push(p as never);
+      p = p.parentElement?.closest('div.layout-item');
     }
-
-    // si on a reduit la fenetre
-    // -> on remet à 0
-
-    if (this.docHeightSave > docHeight || !this.docHeightSave) {
-      setTimeout(() => {
-        this.setStyleHeight(200);
-      }, 10);
-    }
-
-    this.docHeightSave = docHeight;
-
-    setTimeout(() => {
-      const parent = elem.closest('div.layout-item');
-      const height = parent?.clientHeight;
-
-      this.setStyleHeight(height);
-    }, 200);
+    this.parentResizeObserver.observe(...this.parentsElement, document.body);
+    this.$parentsHeight.next(true);
+    window.addEventListener('resize', () => this.$parentsHeight.next(true));
   }
 
-  setStyleHeight(height) {
-    let overflowStyle = {};
-    if (this.computedLayout.display != 'tabs') {
-      overflowStyle['overflow-y'] = 'scroll';
+  processParentsHeightChange() {
+    if (this.computedLayout.overflow) {
+      this.processHeightOverflow();
     }
-    let style = {
-      height: `${height}px`,
-      ...overflowStyle,
-    };
-    this.layout.style = {
-      ...(this.layout.style || {}),
-      ...style,
-    };
-    this.computedLayout.style = {
-      ...(this.computedLayout.style || {}),
-      ...style,
-    };
+    this.customParentsHeightChange();
+  }
 
-    if (this.computedLayout.display == 'tabs') {
-      let heightTab = height - 50;
-      let styleTab = {
-        height: `${heightTab}px`,
-      };
-      this.computedLayout.style_tab = this.layout.style_tab = styleTab;
+  customParentsHeightChange() {}
+
+  // pour gérer les composant avec overflow = true
+  processHeightOverflow() {
+    if (!this.heightOverflowSave || this.parentsElement[0].clientHeight < this.heightOverflowSave) {
+      this.setStyleOverFlow();
+      setTimeout(() => {
+        this.setStyleOverFlow(this.parentsElement[0].clientHeight);
+      });
+    } else {
+      this.setStyleOverFlow(this.parentsElement[0].clientHeight);
     }
+  }
+
+  setStyleOverFlow(height: any = null) {
+    if (!height) {
+      height = 50;
+    } else {
+      this.heightOverflowSave = height;
+    }
+    const isTabs = this.computedLayout.display == 'tabs';
+    const style = {};
+
+    style['height'] = isTabs ? `${height - 50}px` : `${height}px`;
+
+    if (!isTabs) {
+      style['overflow-y'] = 'scroll';
+    }
+
+    const layoutStyleKey = isTabs ? 'style_tab' : 'style';
+
+    this.layout[layoutStyleKey] = {
+      ...(this.layout[layoutStyleKey] || {}),
+      ...style,
+    };
+    this.computedLayout[layoutStyleKey] = {
+      ...(this.computedLayout[layoutStyleKey] || {}),
+      ...style,
+    };
   }
 
   /**
@@ -502,25 +517,20 @@ export class ModulesLayoutComponent implements OnInit {
     this.bListenPageResize = true;
 
     // on attend l'element html pour lui donner la taille de la page
-    utils.waitForElement(this._id).then(() => {
+    utils.waitForElement(this._id).then((elem) => {
       this.processHeightAuto();
+      // on ajoute un évènement en cas de changement de la hauteur de la fenêtre
+      window.addEventListener(
+        'resize',
+        (event) => {
+          this.processHeightAuto();
+        },
+        true,
+      );
     });
-
-    // on ajoute un évènement en cas de changement de la hauteur de la fenêtre
-    window.addEventListener(
-      'resize',
-      (event) => {
-        this.processHeightAuto();
-      },
-      true,
-    );
   }
 
   // action quand la taille change
-  onHeightChange() {
-    // this.processHeightAuto();
-    this.processHeightOverflow();
-  }
 
   /** pour mettre les layout avec height_auto = true à la hauteur totale de la page */
   processHeightAuto() {
@@ -532,7 +542,6 @@ export class ModulesLayoutComponent implements OnInit {
     if (!elem) {
       return;
     }
-
     const elementHeight = elem && `${elem.clientHeight}px`;
     const bodyHeight = `${document.body.clientHeight - elem.offsetTop - 4}px`;
 
@@ -548,8 +557,6 @@ export class ModulesLayoutComponent implements OnInit {
 
     this.layout.style = this.layout.style || {};
     this.layout.style.height = bodyHeight;
-
-    this._mLayout.reComputeHeight('auto');
   }
 
   // a redefinir pour faire des actions après processLayout

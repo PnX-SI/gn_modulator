@@ -88,20 +88,23 @@ aliases:
 layout:
   height_auto: true
   items:
-    - type: breadcrumbs
-      flex: "0"
-    - code: utils.object_details
-      template_params:
-        object_code: diagnostic
-        layout:
-          display: tabs
-          overflow: true
-          items:
-            - label: Champs communs
-              items: *diag_commons
-            - label: Perturbations / Obstacles
-              items: *diag_perturbation_obstacle
-            - label: Aménagement
-              items: *diag_amenagement
-            - label: Synthese
-              items: *diag_synthese
+    style:
+      padding: 0px 20px
+    items:
+      - type: breadcrumbs
+        flex: "0"
+      - code: utils.object_details
+        template_params:
+          object_code: diagnostic
+          layout:
+            display: tabs
+            overflow: true
+            items:
+              - label: Champs communs
+                items: *diag_commons
+              - label: Perturbations / Obstacles
+                items: *diag_perturbation_obstacle
+              - label: Aménagement
+                items: *diag_amenagement
+              - label: Synthese
+                items: *diag_synthese

@@ -26,9 +26,9 @@ export class ModulesLayoutService {
   }
 
   $reComputeLayout = new Subject();
-  $reComputedHeight = new Subject();
   $reDrawElem = new Subject();
   $refreshData = new Subject();
+  $heightChange = new Subject();
   $stopActionProcessing = new Subject();
   _modals = {};
   $closeModals = new Subject();
@@ -68,10 +68,6 @@ export class ModulesLayoutService {
 
   reComputeLayout(name: any = null) {
     this.$reComputeLayout.next(true);
-  }
-
-  reComputeHeight(name: any = null) {
-    this.$reComputedHeight.next(true);
   }
 
   reDrawElem(name: any = null) {

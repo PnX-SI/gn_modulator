@@ -11,15 +11,13 @@
 .layout-section {
   width: 100%;
   height: 100%;
-  // background-color:lightblue;
-  // border: 1px solid black;
 }
 
 .layout-tab-out {
   height: 100%;
-  padding-bottom: 4px;
-  padding-top: 4px;
+  padding: 4px 0px;
 }
+
 
 .layout-tab-in {
   height: 100%;
@@ -297,10 +295,6 @@ div.layout-items > div {
   height: 100%;
 }
 
-.flexiflex-title {
-  flex: 0;
-}
-
 .flexiflex-content {
   flex: 1;
 }
@@ -308,6 +302,11 @@ div.layout-items > div {
 :host ::ng-deep .mat-tab-body-wrapper {
   height: 100%;
 }
+
+.breadcrumb {
+  // margin-bottom: 20px;
+}
+
 
 .breadcrumb-home {
   position: relative;

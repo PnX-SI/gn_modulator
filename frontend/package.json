@@ -11,6 +11,7 @@
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.14.2",
     "Leaflet.Deflate": "^2.1.0",
+    "angular-resize-event": "^3.2.0",
     "js-yaml": "^4.1.0",
     "prettier": "^3.1.0",
     "tabulator": "^0.2.40",
