@@ -466,7 +466,7 @@ export class ModulesLayoutComponent implements OnInit {
       this.setStyleOverFlow();
       setTimeout(() => {
         this.setStyleOverFlow(this.parentsElement[0].clientHeight);
-      });
+      }, 10);
     } else {
       this.setStyleOverFlow(this.parentsElement[0].clientHeight);
     }

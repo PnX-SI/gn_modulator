@@ -95,7 +95,6 @@ export class PageComponent implements OnInit {
         mergeMap((queryParams) => {
           this.routeQueryParams = queryParams;
           this.debug = this.routeQueryParams.debug != undefined;
-          setTimeout(() => this._mLayout.reComputeLayout(''), 200);
           const moduleConfig = this._mConfig.moduleConfig(this.moduleCode);
           this.moduleParams = moduleConfig.params || {};
           this.params = {

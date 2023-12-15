@@ -26,10 +26,6 @@ export default {
   },
 
   setMap(mapId, map) {
-    // if(this._maps[mapId]) {
-    // console.error(`ModuleMapServices, setMap : La carte ${mapId} existe déjà`)
-    // return;
-    // }
     this._maps[mapId] = map;
   },
 
@@ -175,7 +171,7 @@ export default {
           const fnMapZoomMoveEnd = () => {
             const zoomLevel = this.getZoom(mapId);
             const mapBounds = this.getMapBounds(mapId);
-            this._mLayout.reComputeLayout();
+            this._mLayout.reComputeLayout('map zoom end');
             map.eachLayer((l) => {
               l.onZoomMoveEnd && l.onZoomMoveEnd(zoomLevel, mapBounds);
             });

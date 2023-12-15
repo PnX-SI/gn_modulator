@@ -43,7 +43,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
         this.context.map_id,
       );
       this.context.map_params.zoom = this._mapService.getZoom(this.context.map_id);
-      this._mLayout.reComputeLayout();
+      this._mLayout.reComputeLayout('post init map');
     });
   }
 
