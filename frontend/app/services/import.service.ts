@@ -12,9 +12,16 @@ export class ModulesImportService {
     this._mConfig = this._injector.get(ModulesConfigService);
   }
 
-  importRequest(moduleCode, object_code, data, params = {}) {
+  featureRequest(data) {
+    return this._mRequest.request('post', `${this._mConfig.backendModuleUrl()}/import_feature`, {
+      data,
+    });
+  }
+
+  importRequest(moduleCode, object_code, data, params = {}, admin = false) {
+    const urlPartAdmin = admin ? '_admin' : '';
     return this._mRequest.postRequestWithFormData(
-      `${this._mConfig.backendModuleUrl()}/import_async/${moduleCode}/${object_code}/${
+      `${this._mConfig.backendModuleUrl()}/import_async${urlPartAdmin}/${moduleCode}/${object_code}/${
         data.id_import || ''
       }`,
       {

@@ -1,0 +1,12 @@
+<div class="import">
+  <h1>Importer des features</h1>
+
+  <div>
+    <modules-layout
+      [data]="featureData"
+      [layout]="featureLayout"
+      [parentContext]="context"
+      (onAction)="processAction($event)"
+    ></modules-layout>
+  </div>
+</div>

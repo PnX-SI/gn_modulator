@@ -82,7 +82,13 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
     }
 
     this._subs['process_import'] = this._mImport
-      .importRequest(context.module_code, context.object_code, data, { fields: this.apiFields })
+      .importRequest(
+        context.module_code,
+        context.object_code,
+        data,
+        { fields: this.apiFields },
+        !!this.computedLayout.admin,
+      )
       .pipe()
       .subscribe((importEvent) => {
         if (importEvent.type === HttpEventType.UploadProgress) {

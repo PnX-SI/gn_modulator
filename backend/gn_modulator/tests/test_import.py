@@ -2,6 +2,7 @@ import pytest  # noqa
 from gn_modulator.utils.env import import_test_dir
 from .utils.imports import test_import_data_file
 from gn_modulator import SchemaMethods, ModuleMethods
+from .fixtures import mappings_field
 
 
 @pytest.mark.usefixtures("temporary_transaction", scope="session")
@@ -44,7 +45,7 @@ class TestImport:
             module_code, object_code, data_file_path, expected_infos=expected_infos
         )
 
-    def test_ref_geo_linear(self):
+    def test_ref_geo_linear(self, mappings_field):
         """
         test import_route
         """
@@ -60,7 +61,6 @@ class TestImport:
         module_code = "MODULATOR"
         object_code = "ref_geo.linear_group"
         data_file_path = import_test_dir / "route/route.csv"
-        mapping_file_path = import_test_dir / "route/pp_linear_group.sql"
         expected_infos = {
             "res.nb_data": 1,
             "res.nb_insert": 1,
@@ -71,14 +71,13 @@ class TestImport:
             module_code,
             object_code,
             data_file_path,
-            mapping_file_path,
+            id_mapping_field=mappings_field["ref_geo.linear_group__test1"].id_mapping_field,
             expected_infos=expected_infos,
         )
 
         module_code = "MODULATOR"
         object_code = "ref_geo.linear"
         data_file_path = import_test_dir / "route/route.csv"
-        mapping_file_path = import_test_dir / "route/pp_linear.sql"
         expected_infos = {
             "res.nb_data": 1,
             "res.nb_insert": 1,
@@ -89,7 +88,7 @@ class TestImport:
             module_code,
             object_code,
             data_file_path,
-            mapping_file_path,
+            id_mapping_field=mappings_field["ref_geo.linear__test1"].id_mapping_field,
             expected_infos=expected_infos,
         )
 
@@ -309,19 +308,5 @@ class TestImport:
             module_code,
             object_code,
             data_file_path,
-            mapping_file_path=None,
             expected_infos=expected_infos,
         )
-
-    # def test_error_ERR_IMPORT_MISSING_UNIQUE(self):
-    #     module_code = "MODULATOR"
-    #     object_code = "ref_geo.area"
-    #     data_file_path = import_test_dir / "ref_geo.area_ERR_IMPORT_MISSING_UNIQUE.csv"
-    #     expected_infos = {"errors": [{"error_code": "ERR_IMPORT_MISSING_UNIQUE"}]}
-    #     test_import_data_file(
-    #         module_code,
-    #         object_code,
-    #         data_file_path,
-    #         mapping_file_path=None,
-    #         expected_infos=expected_infos,
-    #     )

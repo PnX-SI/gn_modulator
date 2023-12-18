@@ -10,7 +10,7 @@ def test_import_data_file(
     module_code,
     object_code,
     data_file_path=None,
-    mapping_file_path=None,
+    id_mapping_field=None,
     expected_infos={},
     options={},
 ):
@@ -21,8 +21,8 @@ def test_import_data_file(
         impt = TImport(
             module_code=module_code,
             object_code=object_code,
-            data_file_path=data_file_path,
-            mapping_file_path=mapping_file_path,
+            data_file_path=str(data_file_path),
+            id_mapping_field=id_mapping_field,
             options={"no_commit": True, "insert_data": True, **options},
         )
         db.session.add(impt)
@@ -40,7 +40,9 @@ def test_import_data_file(
         assert not impt.has_errors(), impt.pretty_errors_txt()
     else:
         # on teste si on rencontre bien les erreurs attendues parmi les erreurs rencontrées
-        assert len(expected_errors) == len(import_infos["errors"])
+        assert len(expected_errors) == len(
+            import_infos["errors"]
+        ), f"expected {len(expected_errors)} nb_error {len(import_infos['errors'])} {impt.pretty_errors_txt()}"
         for expected_error in expected_errors:
             assert (
                 len(

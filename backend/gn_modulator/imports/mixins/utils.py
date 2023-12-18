@@ -179,7 +179,11 @@ class ImportMixinUtils:
         return SchemaMethods(self.schema_code)
 
     def has_mapping(self):
-        return self.mapping is not None or self.mapping_file_path is not None
+        return (
+            self.id_mapping is not None
+            or self.id_mapping_value is not None
+            or self.id_mapping_field is not None
+        )
 
     def has_errors(self):
         return len(self.errors) > 0 or any(child.has_errors() for child in self.imports_1_n)

@@ -1,0 +1,18 @@
+type: layout
+code: utils.feature
+title: layout du composant d'import de feature
+description: layout du composant d'import de feature
+layout:
+  - type: form
+    form_group_id: form_feature
+    items:
+      - key: feature
+        type: textarea
+      - type: button
+        flex: "0"
+        color: success
+        title: Valider
+        description: Valider
+        action: feature
+  - type: message
+    json: __f__data.msg

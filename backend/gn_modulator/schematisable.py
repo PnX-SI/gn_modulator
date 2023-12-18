@@ -52,6 +52,8 @@ def get_schematisable_decorator():
             sql_type = str(cls.property(key).type)
             if "VARCHAR" in sql_type:
                 sql_type = "VARCHAR"
+            if "TEXT" == sql_type:
+                sql_type = "VARCHAR"
             if sql_type == "DATETIME":
                 sql_type = "TIMESTAMP"
             if "GEOMETRY" in sql_type:

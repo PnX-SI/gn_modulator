@@ -38,7 +38,6 @@ class ImportMixinRaw(ImportMixinUtils):
         self.sql["raw_view"] = self.sql_raw_view(from_table, dest_table)
         try:
             SchemaMethods.c_sql_exec_txt(self.sql["raw_view"])
-
         except Exception as e:
             self.add_error(
                 error_code="ERR_IMPORT_CREATE_RAW_VIEW",

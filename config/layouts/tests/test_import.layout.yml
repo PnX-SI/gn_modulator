@@ -4,10 +4,27 @@ title: test import
 description: test pour le composant d'import
 
 layout:
-  type: import
-  object_code: site
-  module_code: m_sipaf
-  hidden_options:
-    - enable_update
-  test_import: false
+  permission_object_code: "ADMIN"
+  hidden: __f__!o.has_permission(x, "R")
+  items:
+    - title: Choix import
+      type: form
+      flex: "0"
+      direction: row
+      items:
+        - key: module_code
+          type: string
+        - key: object_code
+          type: string
+
+    - title: __f__`import ${data.module_code} ${data.object_code}`
+    - items:
+        module_code: __f__data.module_code
+        object_code: __f__data.object_code
+        type: import
+        admin: true
+        hidden_options:
+          - enable_update
 data:
+  module_code: MODULATOR
+  object_code: syn.synthese

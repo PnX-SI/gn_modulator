@@ -1,42 +1,44 @@
 # modeles d'import
 from flask import g
+import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import JSONB
 from geonature.utils.env import db
 from .mixins import ImportMixin
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 
 
+class TMappingField(db.Model):
+    __tablename__ = "t_mapping_field"
+    __table_args__ = {"schema": "gn_modulator"}
+
+    id_mapping_field = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Unicode, nullable=False)
+    schema_code = db.Column(db.Unicode, nullable=False)
+    value = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
+
+
+class TMappingValue(db.Model):
+    __tablename__ = "t_mapping_value"
+    __table_args__ = {"schema": "gn_modulator"}
+
+    id_mapping_value = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Unicode, nullable=False)
+    schema_code = db.Column(db.Unicode, nullable=False)
+    value = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
+
+
+class TMapping(db.Model):
+    __tablename__ = "t_mappings"
+    __table_args__ = {"schema": "gn_modulator"}
+
+    id_mapping = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Unicode, nullable=False)
+    value = db.Column(db.Unicode, nullable=False)
+
+
 class TImport(db.Model, ImportMixin):
     __tablename__ = "t_imports"
     __table_args__ = {"schema": "gn_modulator"}
-
-    def __init__(
-        self,
-        module_code=None,
-        object_code=None,
-        schema_code=None,
-        data_file_path=None,
-        mapping_file_path=None,
-        mapping=None,
-        options={},
-    ):
-        self.id_digitiser = g.current_user.id_role if hasattr(g, "current_user") else None
-
-        self.schema_code = schema_code
-        self.module_code = module_code
-        self.object_code = object_code
-        self.data_file_path = data_file_path and str(data_file_path)
-        self.mapping_file_path = mapping_file_path and str(mapping_file_path)
-
-        self.mapping = mapping
-        self.options = options
-
-        self.res = {}
-        self.errors = []
-        self.sql = {}
-        self.tables = {}
-
-        self.status = "PENDING"
 
     _columns = {}
 
@@ -50,6 +52,20 @@ class TImport(db.Model, ImportMixin):
     relation_key = db.Column(db.Unicode)
 
     id_digitiser = db.Column(db.Integer, db.ForeignKey("utilisateurs.t_roles.id_role"))
+
+    id_mapping_field = db.Column(
+        db.Integer, db.ForeignKey("gn_modulator.t_mapping_field.id_mapping_field")
+    )
+    mapping_field = db.relationship(TMappingField)
+
+    id_mapping_value = db.Column(
+        db.Integer, db.ForeignKey("gn_modulator.t_mapping_value.id_mapping_value")
+    )
+    mapping_value = db.relationship(TMappingValue)
+
+    id_mapping = db.Column(db.Integer, db.ForeignKey("gn_modulator.t_mappings.id_mapping"))
+    mapping = db.relationship(TMapping)
+
     module_code = db.Column(db.Unicode)
     object_code = db.Column(db.Unicode)
     schema_code = db.Column(db.Unicode)
@@ -57,17 +73,15 @@ class TImport(db.Model, ImportMixin):
     status = db.Column(db.Unicode)
 
     data_file_path = db.Column(db.Unicode)
-    mapping_file_path = db.Column(db.Unicode)
-    mapping = db.Column(db.Unicode)
 
     csv_delimiter = db.Column(db.Unicode)
     data_type = db.Column(db.Unicode)
 
-    res = db.Column(MutableDict.as_mutable(JSONB))
-    tables = db.Column(MutableDict.as_mutable(JSONB))
-    sql = db.Column(MutableDict.as_mutable(JSONB))
-    errors = db.Column(MutableList.as_mutable(JSONB))
-    options = db.Column(MutableDict.as_mutable(JSONB))
-    steps = db.Column(MutableDict.as_mutable(JSONB), default={})
+    res = db.Column(MutableDict.as_mutable(JSONB), default=sa.text("'{}'"))
+    tables = db.Column(MutableDict.as_mutable(JSONB), default=sa.text("'{}'"))
+    sql = db.Column(MutableDict.as_mutable(JSONB), default=sa.text("'{}'"))
+    errors = db.Column(MutableList.as_mutable(JSONB), default=[])
+    options = db.Column(MutableDict.as_mutable(JSONB), default=sa.text("'{}'"))
+    steps = db.Column(MutableDict.as_mutable(JSONB), default=sa.text("'{}'"))
 
     task_id = db.Column(db.Unicode)

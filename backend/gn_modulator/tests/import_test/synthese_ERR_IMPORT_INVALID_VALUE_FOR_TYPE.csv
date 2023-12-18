@@ -1,3 +1,3 @@
-cd_nom,id_source,entity_source_pk_value,nom_cite,date_min,date_max,cor_observers
-67111,Occtax,21,Ablette,"xxx","2017-01-08 23:00:00.000","admin"
-67111,Occtax,22,Ablette,"2017-01-08 20:00:00.000","2017-01-08 23:00:00.000","admin"
+unique_id_sinp,cd_nom,id_source,entity_source_pk_value,nom_cite,date_min,date_max,cor_observers
+25080252-005d-4a56-b7f5-7add86d190bf,67111,Occtax,21,Ablette,"xxx","2017-01-08 23:00:00.000","admin"
+d563eafe-ca0f-425e-97a4-56150716b9f4,67111,Occtax,22,Ablette,"2017-01-08 20:00:00.000","2017-01-08 23:00:00.000","admin"

@@ -56,10 +56,10 @@ site_filters_fields:
                 - area_code
               label_field_name: code_name
               sort: code_name
+              test: __f__truc.bidule
               filters: |
                 __f__{
                   const filters = [];
-
                   if (data?.regions?.length > 0) {
                     const f = `area_code in ${data.regions.map(r => u.departementsForRegion(r.area_code).join(';')).join(';')}`;
                     filters.push(f);

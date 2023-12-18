@@ -1,10 +1,10 @@
-import json
+import json, yaml
 from flask import request, jsonify
 
 from sqlalchemy import orm
 from gn_modulator.routes.utils.decorators import check_module_object_route
 from geonature.utils.env import db
-
+from geonature.core.gn_permissions import decorators as permissions
 from gn_modulator.blueprint import blueprint
 from gn_modulator.module import ModuleMethods
 
@@ -14,12 +14,44 @@ from gn_modulator.tasks import process_import
 from gn_modulator import SchemaMethods
 
 
+@permissions.check_cruved_scope("R", module_code="MODULATOR", object_code="ADMIN")
+@blueprint.route("import_feature", methods=["POST"])
+def api_admin_import_feature():
+    feature_data = request.get_json()
+
+    out = ""
+    if isinstance(feature_data, dict):
+        res = SchemaMethods.process_data_item(feature_data)
+        out += SchemaMethods.txt_data_info(res)
+
+    if isinstance(feature_data, list):
+        for fd in feature_data:
+            res = SchemaMethods.process_data_item(fd)
+            out += SchemaMethods.txt_data_info(res)
+
+    return {"msg": out}, 200
+
+
 @check_module_object_route("I")  # object import ??
 @blueprint.route("import_async/<module_code>/<object_code>/<id_import>", methods=["POST"])
 @blueprint.route(
     "import_async/<module_code>/<object_code>/", methods=["POST"], defaults={"id_import": None}
 )
 def api_import_async(module_code, object_code, id_import):
+    return f_api_import_async(module_code, object_code, id_import)
+
+
+@blueprint.route("import_async_admin/<module_code>/<object_code>/<id_import>", methods=["POST"])
+@blueprint.route(
+    "import_async_admin/<module_code>/<object_code>/",
+    methods=["POST"],
+    defaults={"id_import": None},
+)
+def api_import_async_admin(module_code, object_code, id_import):
+    return f_api_import_async(module_code, object_code, id_import)
+
+
+def f_api_import_async(module_code, object_code, id_import):
     """_summary_"""
 
     sm = SchemaMethods("modules.import")
@@ -32,7 +64,7 @@ def api_import_async(module_code, object_code, id_import):
         except orm.exc.NoResultFound:
             return f"Pas d'import trouvé pour id_import={id_import}", 404
     else:
-        impt = TImport(module_code, object_code, options=options)
+        impt = TImport(module_code=module_code, object_code=object_code, options=options)
         db.session.add(impt)
         impt.status = "STARTING"
         db.session.commit()

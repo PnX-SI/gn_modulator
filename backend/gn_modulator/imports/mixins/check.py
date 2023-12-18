@@ -20,7 +20,8 @@ class ImportMixinCheck(ImportMixinUtils):
             - est ce que les colonnes qui permettre d'assurer l'unicité sont bien présentes
         """
 
-        self.check_uniques()
+        self.check_unique_missing()
+        self.check_unique_doublons()
         self.check_types()
 
     def process_step_post_check(self):
@@ -34,11 +35,47 @@ class ImportMixinCheck(ImportMixinUtils):
         self.check_required()
         self.check_resolve_keys()
 
-    def check_uniques(self):
+    def check_unique_doublons(self):
+        table_test = self.tables["mapping"]
+        unique = self.sm().unique()
+        group_by_columns = ", ".join(
+            filter(
+                lambda x: self.Model().is_column(x) and "." not in x,
+                self.get_table_columns(table_test),
+            )
+        )
+        unique_columns = ", ".join(unique)
+
+        req_check_doublons_unique = f"""
+        WITH pre AS (
+            SELECT {unique_columns}, ARRAY_AGG(id_import) AS id_import
+            FROM {table_test}
+            GROUP BY {group_by_columns}
+        )
+        SELECT COUNT(*), ARRAY_AGG(pre.id_import), CONCAT({unique_columns}) AS is_import
+        FROM pre
+        GROUP BY {unique_columns}
+        HAVING COUNT(*) > 1
+        """
+
+        qres = SchemaMethods.c_sql_exec_txt(req_check_doublons_unique)
+        res = []
+        for r in qres:
+            rr = {"count": r[0], "lines": [xx for x in r[1] for xx in x], "value": r[2]}
+            res.append(rr)
+
+        if res:
+            self.add_error(
+                error_code="ERR_IMPORT_UNIQUE_DOUBLON",
+                error_msg=f"Import {self.schema_code}, doublons trouvés pour les champs d'unicités   {unique_columns}",
+            )
+
+    def check_unique_missing(self):
         """
         Vérification
         - est ce que les colonnes qui permettre d'assurer l'unicité sont bien présentes
         Ces champs permette la bonne résolution de la clé primaire
+        - existence de doublons pour les champs d'unicité ?
         """
 
         # - sur la table de mapping si elle existe
@@ -182,7 +219,6 @@ SELECT
                 self.Model().is_foreign_key(key) and "." not in key
             ):
                 continue
-
             # requête sql pour lister les 'id_import' des lignes qui sont
             # - non nulles dans 'raw'
             # - et nulles dans 'process
@@ -203,7 +239,6 @@ WHERE
             # s'il n'y a pas de résultat, on passe à la colonne suivante
             if nb_lines == 0:
                 continue
-
             # sinon on ajoute une erreur référençant les lignes concernée
 
             valid_values = None

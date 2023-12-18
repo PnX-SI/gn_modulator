@@ -90,6 +90,17 @@
     ></modules-layout-import>
   </ng-container>
 
+  <!-- feature -->
+  <ng-container *ngIf="layoutType == 'feature'">
+    <modules-layout-feature
+      [data]="data"
+      [layout]="layout"
+      [parentContext]="context"
+      (onAction)="processAction($event)"
+    ></modules-layout-feature>
+  </ng-container>
+
+  
   <!-- key -->
   <ng-container *ngIf="layoutType == 'key'">
     <modules-layout-element

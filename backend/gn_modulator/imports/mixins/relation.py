@@ -86,6 +86,8 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
             },
         )
         relation_import.relation_key = relation_key
+        relation_import.tables = relation_import.tables or {}
+        relation_import.sql = relation_import.sql or {}
         relation_import.tables["data"] = table_rel_data
         relation_import.sql["data_view"] = sql_rel_data
         relation_import.parent = self

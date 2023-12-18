@@ -81,6 +81,7 @@ class DefinitionDynamic:
         label_create: () => {},
         label_delete: () => {},
         is_action_allowed: () => {},
+        has_permission: () => {},
         geometry_type: () => {},
         geometry_field_name: () => {},
         object: () => {},

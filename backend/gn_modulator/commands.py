@@ -132,11 +132,13 @@ def cmd_doc_schema(schema_code, doc_type, file_path=None, exclude=""):
 @click.option("-m", "module_code", required=True, help="code du module")
 @click.option(
     "-d",
-    "data_path",
+    "data_file_path",
     type=click.Path(exists=True),
     required=True,
     help="chemin vers le fichier de données",
 )
+@click.option("--mapping_field_code", help="mapping de champs")
+@click.option("--mapping_value_code", help="mapping de valeurs")
 @click.option("--no-commit", is_flag=True, help="de pas persiter l'import")
 @click.option("-v", "verbose", default=1, help="Affiche les détails")
 @click.option("--sql", is_flag=True, default=False, help="Affiche les requete sql")
@@ -144,9 +146,10 @@ def cmd_doc_schema(schema_code, doc_type, file_path=None, exclude=""):
 def cmd_import_bulk_data(
     module_code,
     object_code,
-    data_path,
-    mapping_file_path=None,
+    data_file_path,
     no_commit=False,
+    mapping_value_code=False,
+    mapping_field_code=False,
     sql=True,
     verbose=1,
 ):
@@ -156,11 +159,24 @@ def cmd_import_bulk_data(
 
     init_gn_modulator()
 
+    id_mapping_value = None
+    if mapping_value_code:
+        id_mapping_value = SchemaMethods("modules.mapping_value").get_row_as_dict(
+            mapping_value_code, "code"
+        )["id_mapping_value"]
+
+    id_mapping_field = None
+    if mapping_field_code:
+        id_mapping_field = SchemaMethods("modules.mapping_field").get_row_as_dict(
+            mapping_field_code, "code"
+        )["id_mapping_field"]
+
     impt = TImport(
-        module_code,
-        object_code,
-        data_file_path=data_path,
-        mapping_file_path=mapping_file_path,
+        module_code=module_code,
+        object_code=object_code,
+        id_mapping_value=id_mapping_value,
+        id_mapping_field=id_mapping_field,
+        data_file_path=data_file_path,
         options={},
     )
     db.session.add(impt)

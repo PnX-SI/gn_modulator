@@ -1,0 +1,17 @@
+type: data
+code: modulator.permissions
+title: Data permissions modulator
+description: Permissions disponibles pour le module modulator
+items:
+  - schema_code: perm.object
+    items:
+      - code_object: "ADMIN"
+        label_object: "Administration"
+        modules: 
+          - MODULATOR
+  - schema_code: perm.perm_dispo
+    defaults:
+      id_module: MODULATOR
+    keys: [id_object, id_action, label]
+    items:
+      - [ADMIN, R, "fonctionalités admin modulator"]

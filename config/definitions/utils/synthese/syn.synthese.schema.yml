@@ -11,16 +11,17 @@ meta:
     label_field_name: taxref.nom_vern
     geometry_field_name: the_geom_4326
     unique:
-        - id_source
-        - entity_source_pk_value
+        - unique_id_sinp
+        # - id_source
+        # - entity_source_pk_value
 properties:
     entity_source_pk_value:
         type: string
-    nomenclature_info_geo_type:
+    id_nomenclature_info_geo_type:
         nomenclature_type: TYP_INF_GEO
-    nomenclature_behaviour:
+    id_nomenclature_behaviour:
         nomenclature_type: OCC_COMPORTEMENT
-    nomenclature_determination_method:
+    id_nomenclature_determination_method:
         nomenclature_type: METH_DETERMIN
     nomenclature_bio_condition:
         title: État biologique

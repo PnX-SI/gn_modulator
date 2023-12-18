@@ -49,7 +49,6 @@ class ImportMixin(
                     self.status = "ERROR"
                     self.flush_or_commit()
                 return
-
         self.status = "PENDING" if step != self.import_steps()[-1] else "DONE"
         self.flush_or_commit()
 

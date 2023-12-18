@@ -34,16 +34,7 @@ class SchemaBaseFeatures:
         for data_item in data["items"]:
             info = cls.process_data_item(data_item, data_file_path, commit=commit)
 
-            infos.append(
-                {
-                    "file_path": str(data_file_path),
-                    "schema_code": data_item["schema_code"],
-                    "updates": info["updates"],
-                    "errors": info["errors"],
-                    "inserts": info["inserts"],
-                    "items": cls.get_data_item(data_item, file_path=data_file_path),
-                }
-            )
+            infos.append(info)
 
         return infos
 
@@ -133,7 +124,7 @@ class SchemaBaseFeatures:
             raise errors.SchemaError(f"Le fichier {data_file} n'est pas valide")
 
     @classmethod
-    def get_data_item(cls, data_item, file_path):
+    def get_data_item(cls, data_item, file_path=None):
         items = (
             data_item["items"]
             if "items" in data_item
@@ -164,7 +155,7 @@ class SchemaBaseFeatures:
         return items
 
     @classmethod
-    def process_data_item(cls, data_item, file_path, commit=True):
+    def process_data_item(cls, data_item, file_path=None, commit=True):
         clear_global_cache(["import_pk_keys"])
         schema_code = data_item["schema_code"]
         sm = cls(schema_code)
@@ -199,6 +190,7 @@ class SchemaBaseFeatures:
                 # on tente un update
                 try:
                     m, b_update = sm.update_row(values, d, test_keys, params={}, commit=commit)
+
                     if b_update:
                         v_updates.append(value)
 
@@ -237,7 +229,14 @@ class SchemaBaseFeatures:
                 )
                 v_errors.append({"value": value, "data": d, "error": msg_error})
 
-        return {"updates": v_updates, "inserts": v_inserts, "errors": v_errors}
+        return {
+            "items": items,
+            "file_path": str(file_path),
+            "schema_code": data_item["schema_code"],
+            "updates": v_updates,
+            "inserts": v_inserts,
+            "errors": v_errors,
+        }
 
     @classmethod
     def log_data_info_detail(cls, info, info_type, details=False):

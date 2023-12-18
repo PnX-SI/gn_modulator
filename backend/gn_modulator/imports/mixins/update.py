@@ -57,26 +57,37 @@ class ImportMixinUpdate(ImportMixinUtils):
         # pour les instructions SET
         # toutes les colonnes sauf la clé primaire
         # et la clé digitiser
+        v_update_keys = list(
+            filter(lambda x: not self.Model().is_primary_key(x), v_column_keys),
+        )
         v_set_keys = list(
             map(
                 lambda x: f"{x}=p.{x}",
-                filter(lambda x: not self.Model().is_primary_key(x), v_column_keys),
+                v_update_keys,
             )
         )
 
         # les condition d'update
         # - pour toutes les colonnes v_set_keys
         # on regarde si la données importée est distincte des données existante
-        v_update_condition = list(map(lambda x: f"(t.{x} IS DISTINCT FROM p.{x})", v_column_keys))
+        v_update_condition = list(map(lambda x: f"t.{x} IS DISTINCT FROM p.{x}", v_update_keys))
 
         # texte sql pour l'instruction SET
         txt_set_keys = ",\n    ".join(v_set_keys)
 
         # texte sql pour la selection des colonnes de la table process p
         txt_columns_keys = ",\n        ".join(v_column_keys)
+        txt_check_p_keys = ", ".join(map(lambda x: f"p.{x}", v_column_keys))
+        txt_check_t_keys = ", ".join(map(lambda x: f"t.{x}", v_column_keys))
 
         # condition pour voir si une ligne est modifiée
-        txt_update_conditions = "NOT (\n    " + "\n    AND ".join(v_update_condition) + "\n)"
+        txt_update_conditions_distinct = "\n    OR ".join(v_update_condition)
+        txt_update_conditions_md5 = f"""    md5(({txt_check_p_keys})::text) 
+    != 
+    md5(({txt_check_t_keys})::text)
+"""
+
+        txt_update_conditions = txt_update_conditions_md5
 
         return f"""UPDATE {self.Model().sql_schema_dot_table()} t SET
     {txt_set_keys}
@@ -86,6 +97,8 @@ FROM (
     FROM {from_table}
 )p
 WHERE p.{self.Model().pk_field_name()} = t.{self.Model().pk_field_name()}
-  AND {txt_update_conditions}
+  AND (
+    {txt_update_conditions}
+)
 ;
 """

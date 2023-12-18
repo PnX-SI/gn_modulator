@@ -136,12 +136,11 @@ FROM (
     FROM gn_modulator_import.v_xxx_process_ref_geo_area
 )p
 WHERE p.id_area = t.id_area
-  AND NOT (
-    (t.id_type IS DISTINCT FROM p.id_type)
-    AND (t.area_name IS DISTINCT FROM p.area_name)
-    AND (t.area_code IS DISTINCT FROM p.area_code)
-    AND (t.geom IS DISTINCT FROM p.geom)
-    AND (t.id_area IS DISTINCT FROM p.id_area)
+  AND (
+        md5((p.id_type, p.area_name, p.area_code, p.geom, p.id_area)::text) 
+    != 
+    md5((t.id_type, t.area_name, t.area_code, t.geom, t.id_area)::text)
+
 )
 ;
 

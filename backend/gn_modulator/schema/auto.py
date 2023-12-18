@@ -47,7 +47,7 @@ class SchemaAuto:
         if Model is None:
             raise SchemaAutoError("Pas de modèles trouvé pour la table {schema_dot_table}")
 
-        properties_auto = self.autoproperties(Model)
+        properties_auto = self.autoproperties(Model, schema_definition.get("properties", {}))
 
         for key, property in schema_definition.get("properties", {}).items():
             if key in properties_auto:
@@ -96,7 +96,7 @@ class SchemaAuto:
         """
         Model.default_fields = self.default_fields(Model)
 
-    def autoproperties(self, Model):
+    def autoproperties(self, Model, properties_from_definition):
         properties = {}
 
         sql_table_name = Model.__tablename__
@@ -106,7 +106,12 @@ class SchemaAuto:
         for column in Model.__table__.columns:
             if not hasattr(Model, column.key):
                 continue
-            column_auto = self.process_column_auto(column, sql_schema_name, sql_table_name)
+            column_auto = self.process_column_auto(
+                column,
+                sql_schema_name,
+                sql_table_name,
+                properties_from_definition.get(column.key, {}),
+            )
             if column_auto:
                 properties[column.key] = column_auto
 
@@ -123,13 +128,13 @@ class SchemaAuto:
         for relation_key, relation in inspect(Model).relationships.items():
             # if relation_key not in self.attr("meta.relations", []):
             # continue
-            property = self.process_relation_auto(relation_key, relation, Model)
+            property = self.process_relation_auto(relation_key, relation, Model, properties)
             if property:
                 properties[relation_key] = property
 
         return properties
 
-    def process_relation_auto(self, relation_key, relation, Model):
+    def process_relation_auto(self, relation_key, relation, Model, properties):
         # return
 
         if not relation.target.schema:
@@ -168,10 +173,10 @@ class SchemaAuto:
                 if property["relation_type"] == "n-1":
                     x = getattr(Model, relation_key)
                     y = x.property.local_remote_pairs[0][0]
-                    property["nomenclature_type"] = self.reflect_nomenclature_type(
-                        y.table.schema, y.table.name, y.key
-                    )
-
+                    property["nomenclature_type"] = properties[y.key]["nomenclature_type"]
+                    # self.reflect_nomenclature_type(
+                    # y.table.schema, y.table.name, y.key
+                    # )
                 if property["relation_type"] == "n-n":
                     x = getattr(Model, relation_key).property
 
@@ -201,7 +206,9 @@ class SchemaAuto:
 
         return property
 
-    def process_column_auto(self, column, sql_schema_name, sql_table_name):
+    def process_column_auto(
+        self, column, sql_schema_name, sql_table_name, property_from_definition
+    ):
         type = str(column.type)
         if "VARCHAR(" in type:
             type = "VARCHAR"
@@ -248,9 +255,9 @@ class SchemaAuto:
 
             if schema_code == "ref_nom.nomenclature":
                 # nomenclature_type
-                nomenclature_type = self.reflect_nomenclature_type(
-                    sql_schema_name, sql_table_name, column.key
-                )
+                nomenclature_type = property_from_definition.get(
+                    "nomenclature_type"
+                ) or self.reflect_nomenclature_type(sql_schema_name, sql_table_name, column.key)
                 property["nomenclature_type"] = nomenclature_type
                 column.nomenclature_type = nomenclature_type
 

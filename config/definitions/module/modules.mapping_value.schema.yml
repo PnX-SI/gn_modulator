@@ -1,0 +1,14 @@
+type: schema
+code: modules.mapping_value
+title: Schema modules mapping value
+description: Définition du schema des mapping value
+
+meta:
+  model: gn_modulator.imports.models.TMappingValue
+  genre: M
+  label: mapping valeurs
+  label_field_name: code
+  unique:
+    - code
+  authorized_fields:
+    - value

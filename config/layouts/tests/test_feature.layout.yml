@@ -1,0 +1,11 @@
+type: layout
+code: test_feature
+title: test feature
+description: test pour le composant feature
+layout:
+  # type: feature
+  permission_object_code: "ADMIN"
+  hidden: __f__!o.has_permission(x, "R")
+  title: Test Feature
+  type:  feature
+data:

@@ -10,6 +10,7 @@ from pypnusershub.db.models import Organisme
 from pypnusershub.db.models import Organisme
 
 from m_sipaf.models import PassageFaune, Diagnostic, Actor
+from gn_modulator.imports.models import TMappingField, TMappingValue
 
 
 @pytest.fixture
@@ -39,3 +40,34 @@ def passages_faune_with_diagnostic(users):
                 )
             passages_faune.append(pf)
     return passages_faune
+
+
+@pytest.fixture
+def mappings_field():
+    mappings = {}
+    with db.session.begin_nested():
+        mapping = TMappingField(
+            code="ref_geo.linear_group__test1",
+            schema_code="ref_geo.linear_group",
+            value={"id_type": "'RTE'", "code": "numero", "name": "CONCAT(cl_admin, ' ', numero)"},
+        )
+        db.session.add(mapping)
+        mappings[mapping.code] = mapping
+
+        mapping = TMappingField(
+            code="ref_geo.linear__test1",
+            schema_code="ref_geo.linear",
+            value={
+                "id_type": "'RTE'",
+                "linear_code": "id",
+                "linear_name": "CONCAT(numero, '_', substring(id, 9))",
+                "geom": "wkt",
+                "enable": True,
+                "source": "https://geoservices.ign.fr/bdtopo#telechargementshpreg",
+                "groups": "numero",
+            },
+        )
+        db.session.add(mapping)
+        mappings[mapping.code] = mapping
+
+    return mappings

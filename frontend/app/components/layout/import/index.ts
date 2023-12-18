@@ -1,3 +1,4 @@
 import { ModulesLayoutImportComponent } from './layout-import.component';
+import { ModulesLayoutFeatureComponent } from './layout-feature.component';
 
-export default [ModulesLayoutImportComponent];
+export default [ModulesLayoutImportComponent, ModulesLayoutFeatureComponent];
