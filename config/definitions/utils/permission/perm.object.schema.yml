@@ -7,7 +7,7 @@ meta:
   schema_code: perm.object
   model: geonature.core.gn_permissions.models.PermObject
   label: object
-  label_field_name: label_object
+  label_field_name: description_object
   genre: M
   unique:
     - code_object

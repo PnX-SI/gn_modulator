@@ -12,7 +12,7 @@ meta:
   unique:
     - id_passage_faune
     - date_diagnostic
-    - id_organism
+    - id_organisme
   unique_in_db: true
 properties:
   # commons

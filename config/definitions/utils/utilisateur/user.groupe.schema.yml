@@ -6,7 +6,7 @@ description: Définition du schema pour les groupes d'utilisateurs
 meta:
     model: geonature.core.users.models.CorRole
     label: groupe
-    label_field_name: id_role
+    label_field_name: id_role_groupe
     genre: M
     unique:
         - id_role_utilisateur

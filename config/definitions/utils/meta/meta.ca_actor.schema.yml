@@ -6,10 +6,10 @@ description: Définition du schema pour les acteurs liés aux cadres d'acquisiti
 meta:
   genre: M
   label: Acteur
-  label_field_name: id_nomenclature_type_actor
+  label_field_name: id_nomenclature_actor_role
   unique:
-    - id_nomenclature_type_actor
+    - id_nomenclature_actor_role
     - id_organism
     - id_role
-    - id_passage_faune
+    - id_acquisition_framework
   model: geonature.core.gn_meta.models.CorAcquisitionFrameworkActor

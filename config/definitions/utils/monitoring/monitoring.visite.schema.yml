@@ -1,0 +1,20 @@
+type: schema
+code: monitoring.visite
+title: Schema monitoring.visite
+description: Définition du schema visite de monitoring
+
+meta:
+  model: geonature.core.gn_monitoring.models.TBaseVisits
+  genre: M
+  label: visite
+  label_field_name: visit_date_min
+  unique:
+    - visit_date_min
+    - id_module
+    - id_base_site
+properties:
+  # patchs missing foreign_key in model
+  id_module:
+    type: integer
+    foreign_key: true
+    schema_code: commons.module

@@ -31,6 +31,8 @@ def get_schematisable_decorator():
 
                 # modele associé à la relation
                 relation_Model = rel_prop.mapper.entity
+                if not hasattr(relation_Model, "schematisable"):
+                    relation_Model = schematisable(relation_Model)
                 # clé restante
                 remaining_key = ".".join(key.split(".")[1:])
 
@@ -69,7 +71,7 @@ def get_schematisable_decorator():
             try:
                 cls.property(key)
                 return True
-            except:
+            except Exception as e:
                 return False
 
         @classmethod
@@ -132,7 +134,13 @@ def get_schematisable_decorator():
 
         @classmethod
         def is_foreign_key(cls, key):
-            return cls.is_column(key) and cls.property(key).foreign_keys
+            return cls.is_column(key) and (
+                cls.property(key).foreign_keys
+                or (
+                    hasattr(cls.property(key), "foreign_key")
+                    and getattr(cls.property(key), "foreign_key")
+                )
+            )
 
         @classmethod
         def is_primary_key(cls, key):

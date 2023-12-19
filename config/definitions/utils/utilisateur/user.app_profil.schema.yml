@@ -6,7 +6,7 @@ description: Définition du schema pour les profils utilisateurs applications
 meta:
     model: pypnusershub.db.models.UserApplicationRight
     label: application profil
-    label_field_name: id_app
+    label_field_name: id_application
     genre: F
     unique:
         - id_profil

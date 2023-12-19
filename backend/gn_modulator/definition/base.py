@@ -10,6 +10,7 @@ from gn_modulator.utils.env import config_dir
 from gn_modulator.utils.cache import set_global_cache, get_global_cache
 from gn_modulator.utils.errors import add_error, get_errors
 from gn_modulator.utils.commons import get_class_from_path
+from gn_modulator.schematisable import schematisable
 
 
 class DefinitionBase:
@@ -132,10 +133,15 @@ class DefinitionBase:
             cls.remove_from_cache(definition_type, definition_code)
 
         # test si le modèle existe (pour les schemas auto)
+        # et test sur les
+        #  - unique
+        #  - label_field_name
+        #  - geom_field_name
         if definition_type == "schema":
             model_path = definition["meta"]["model"]
+            Model = None
             try:
-                get_class_from_path(model_path)
+                Model = get_class_from_path(model_path)
             except Exception as e:
                 if (not definition["meta"].get("module_code")) or cls.module_in_db(
                     definition["meta"].get("module_code")
@@ -149,6 +155,29 @@ class DefinitionBase:
                 else:
                     get_global_cache(["uninstalled_schema"]).append(definition["code"])
                 cls.remove_from_cache(definition_type, definition_code)
+                return
+            Model = schematisable(Model)
+            unique = definition["meta"].get("unique", [])
+            missing_unique = list(filter(lambda x: not Model.is_column(x), unique))
+            missing_unique_txt = ", ".join(missing_unique)
+            if missing_unique:
+                add_error(
+                    error_msg=f"Une ou plusieurs variables d'unicité (meta.unique) sont mal définies: {missing_unique_txt}",
+                    definition_type=definition_type,
+                    definition_code=definition_code,
+                    error_code="ERR_LOCAL_CHECK_SCHEMA_UNIQUE",
+                )
+
+            for field_name in ["label_field_name", "geometry_field_name", "title_field_name"]:
+                field = definition["meta"].get(field_name)
+                if field is None or Model.is_column(field):
+                    continue
+                add_error(
+                    error_msg=f"Il y a une erreur sur le champs meta.{field_name}: {field}",
+                    definition_type=definition_type,
+                    definition_code=definition_code,
+                    error_code="ERR_LOCAL_CHECK_SCHEMA_FIELD",
+                )
 
     @classmethod
     def local_check_definition_reference(cls, definition_type, definition_code):

@@ -1,0 +1,19 @@
+type: schema
+code: monitoring.site
+title: Schema monitoring.site
+description: Définition du schema site de monitoring
+
+meta:
+  model: geonature.core.gn_monitoring.models.TBaseSites
+  genre: M
+  label: Site
+  label_field_name: base_site_name
+  geometry_field_name: geom
+  unique:
+    - uuid_base_site
+properties:
+  # patchs missing foreign_key in model (field will disapear soon)
+  id_nomenclature_type_site:
+    type: integer
+    foreign_key: true
+    schema_code: ref_nom.nomenclature
