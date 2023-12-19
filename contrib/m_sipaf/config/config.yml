@@ -19,7 +19,7 @@ site_filters_fields:
               label: Passage supérieur
             - value: false
               label: Passage inférieur
-        - title: Possède des diagnostic
+        - title: Possède des diagnostics
           key: diagnostics
           type: boolean
 
