@@ -190,6 +190,11 @@ export class ModulesLayoutObjectTableComponent
     if (!value) {
       return;
     }
+
+    if (!this.table) {
+      return;
+    }
+
     if (this.selectRow(value)) {
       return;
     }
