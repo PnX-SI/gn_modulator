@@ -77,7 +77,6 @@ export default {
     if (!this.getMap(mapId)) {
       return;
     }
-    this.getMap(mapId).invalidateSize();
     this.getMap(mapId).panTo(this.computeCenter(center));
   },
 

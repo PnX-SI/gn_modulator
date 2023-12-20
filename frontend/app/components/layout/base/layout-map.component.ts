@@ -16,10 +16,10 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
   mapId; // identifiant HTML pour la table;
   _map;
 
-  firstEdit = true;
-
   modalData = {};
   modalsLayout: any;
+
+  currentLayer;
 
   $onMapChanged = new Subject();
 
@@ -29,6 +29,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     this._mapService = this._injector.get(ModulesMapService);
     this.mapId = `map_${this._id}`;
     this.bPostComputeLayout = true;
+    this.bCheckParentsHeight = true;
   }
 
   /** */
@@ -37,14 +38,19 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
       map.on('moveend', () => this.$onMapChanged.next());
       map.on('zoomend', () => this.$onMapChanged.next());
     });
-    this._subs['onMapChanged'] = this.$onMapChanged.pipe(debounceTime(1000)).subscribe(() => {
-      this.context.map_params = this.context.map_params || {};
-      this.context.map_params.bounds_filter_value = this._mapService.getMapBoundsFilterValue(
-        this.context.map_id,
-      );
-      this.context.map_params.zoom = this._mapService.getZoom(this.context.map_id);
-      this._mLayout.reComputeLayout('post init map');
+    this._subs['onMapChangedInvalidate'] = this.$onMapChanged.subscribe(() => {
+      this._map.invalidateSize();
     });
+    this._subs['onMapChangedZoomContext'] = this.$onMapChanged
+      .pipe(debounceTime(1000))
+      .subscribe(() => {
+        this.context.map_params = this.context.map_params || {};
+        this.context.map_params.bounds_filter_value = this._mapService.getMapBoundsFilterValue(
+          this.context.map_id,
+        );
+        this.context.map_params.zoom = this._mapService.getZoom(this.context.map_id);
+        this._mLayout.reComputeLayout('onMapChanged');
+      });
   }
 
   /**
@@ -100,60 +106,67 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     this._mapService.initMap(this.mapId, { ...this.computedLayout }).then((map) => {
       this._map = map;
 
+      if (!this.computedLayout.key) {
+        return;
+      }
+
       if (layoutChanged) {
         this.processDrawConfig();
       }
+      const geomChanged = !utils.fastDeepEqual(
+        this.data[this.computedLayout.key],
+        this.dataSave[this.computedLayout.key],
+      );
 
-      // affichage des données
+      if (this.currentLayer && geomChanged) {
+        console.log('new data!!', this.currentLayer, this.data[this.computedLayout.key])
+      }
 
-      if (dataChanged && this.computedLayout.key) {
-        console;
-        const layer = this._mapService.processData(this.mapId, this.data, {
+      // initialisation
+      if (!this.currentLayer && this.data[this.computedLayout.key]) {
+        this.currentLayer = this._mapService.processData(this.mapId, this.data, {
           key: this.computedLayout.key,
-          zoom: this.computedLayout.zoom && this.firstEdit,
+          zoom: this.computedLayout.zoom,
           title: this.computedLayout.title,
         });
-
-        // initialisation du layer d'edition (s'il edit est à true et s'il n'est pas déjà )
-        if (this.computedLayout.edit && !this._map.$editedLayer.getValue()) {
-          this._map.$editedLayer.next(layer);
-          this.firstEdit = false;
-          // this._mapService.zoomOnLayer(this.mapId, layer);
+        if (this.computedLayout.edit) {
+          this._mapService.layerListenToChange(this.mapId, this.currentLayer);
+          this._map.$editedLayer.next(this.currentLayer);
         }
       }
     });
   }
 
   onEditedLayerChange(layer) {
-    if (this.computedLayout.key) {
-      let dataGeom = null;
-      if (layer.toGeoJSON) {
-        const layerGeoJson = layer.toGeoJSON();
-        dataGeom =
-          layerGeoJson.type == 'FeatureCollection'
-            ? layerGeoJson.features[0].geometry
-            : layerGeoJson.geometry;
-      }
-      if (layer.coordinates) {
-        dataGeom = layer;
-      }
-
-      this.data[this.computedLayout.key] = dataGeom;
-
-      this._mapService.processData(this.mapId, this.data, {
-        title: this.computedLayout.title,
-        key: this.computedLayout.key,
-      });
-      this.dataSave[this.computedLayout.key] = dataGeom;
-      this._mLayout.reComputeLayout('map');
+    if (!this.computedLayout.key) {
+      return;
     }
+    let dataGeom = null;
+    if (layer.toGeoJSON) {
+      const layerGeoJson = layer.toGeoJSON();
+      dataGeom =
+        layerGeoJson.type == 'FeatureCollection'
+          ? layerGeoJson.features[0].geometry
+          : layerGeoJson.geometry;
+    }
+    if (layer.coordinates) {
+      dataGeom = layer;
+    }
+
+    if (utils.fastDeepEqual(this.data[this.computedLayout.key], dataGeom)) {
+      return;
+    }
+    // console.log('edit geom changed', this.dataSave[this.computedLayout.key])
+
+    this.data[this.computedLayout.key] = dataGeom;
+    // this._mLayout.reComputeLayout('map');
   }
 
-  // onHeightChange(): void {
-  //   this._mapService.waitForMap(this.mapId).then((map) => {
-  //     map.invalidateSize();
-  //   });
-  // }
+  customParentsHeightChange(): void {
+    this._mapService.waitForMap(this.mapId).then((map) => {
+      map.invalidateSize();
+    });
+  }
 
   refreshData(objectCode: any): void {}
 

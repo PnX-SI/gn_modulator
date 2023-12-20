@@ -112,9 +112,23 @@ export default {
       }
       map.$editedLayer.next(event.layer);
       // on edit
-      event.layer.on('pm:edit', ({ layer }) => {
-        map.$editedLayer.next(layer);
-      });
+      this.layerListenToChange(mapId, event.layer);
     });
+  },
+
+  layerListenToChange(mapId, layer) {
+    const map = this.getMap(mapId);
+    if (!map) return;
+
+    // todo tester sur les listener sur layer idrectement
+    if (layer.bListenToChange) {
+      return;
+    }
+
+    layer.setStyle && layer.setStyle({ color: 'green' });
+    layer.on('pm:edit', (event) => {
+      map.$editedLayer.next(event.layer);
+    });
+    layer.bListenToChange = true;
   },
 };

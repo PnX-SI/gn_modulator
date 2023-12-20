@@ -80,8 +80,8 @@ export class ModulesMapService {
 
   /** ./map/draw */
 
-  // initDraw = mapMethods.draw.initDraw;
   setDrawConfig = mapMethods.draw.setDrawConfig;
+  layerListenToChange = mapMethods.draw.layerListenToChange;
 
   /** ./map/control */
   addControl = mapMethods.control.addControl;

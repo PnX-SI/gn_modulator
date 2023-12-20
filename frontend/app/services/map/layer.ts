@@ -65,6 +65,7 @@ export default {
         return this.L.circleMarker(latlng);
       },
     });
+
     layer.key = options.key;
     this.getMap(mapId)._layers;
     this.getMap(mapId).addLayer(layer);
