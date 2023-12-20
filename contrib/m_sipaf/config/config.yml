@@ -55,7 +55,6 @@ site_filters_fields:
                 - area_code
               label_field_name: code_name
               sort: code_name
-              test: __f__truc.bidule
               filters: |
                 __f__{
                   const filters = [];
