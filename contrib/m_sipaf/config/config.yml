@@ -355,7 +355,6 @@ site_details_fields:
             - dataset.dataset_name
             - taxref.nom_vern
             - nomenclature_bio_condition.label_fr
-            - cor_observers.nom_complet
           sort: date_min-
 
 site_form_fields:

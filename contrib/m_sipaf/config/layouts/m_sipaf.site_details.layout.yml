@@ -29,7 +29,6 @@ layout:
             - dataset.dataset_name
             - taxref.nom_vern
             - nomenclature_bio_condition.label_fr
-            - cor_observers.nom_complet
         - type: object
           hidden: __f__!context.map_params?.bounds_filter_value
           display: geojson
