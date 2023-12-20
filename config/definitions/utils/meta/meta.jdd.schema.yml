@@ -5,8 +5,7 @@ description: Définition du schema des jeux de données
 
 meta:
   unique:
-    - id_acquisition_framework
-    - dataset_name
+    - unique_dataset_id
   model: geonature.core.gn_meta.models.TDatasets
   label: jeu de données
   labels: jeux de données
