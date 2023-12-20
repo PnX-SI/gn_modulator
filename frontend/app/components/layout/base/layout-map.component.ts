@@ -119,7 +119,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
       );
 
       if (this.currentLayer && geomChanged) {
-        console.log('new data!!', this.currentLayer, this.data[this.computedLayout.key])
+        console.log('new data!!', this.currentLayer, this.data[this.computedLayout.key]);
       }
 
       // initialisation
