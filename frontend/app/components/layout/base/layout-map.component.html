@@ -28,10 +28,10 @@
       <mat-progress-bar class="bar" mode="indeterminate"></mat-progress-bar>
     </div>
   </div>
- <modules-layout-map-search [mapId]="mapId"></modules-layout-map-search>
   <div class="map">
+    <modules-layout-map-search [mapId]="mapId"></modules-layout-map-search>
     <div [attr.id]="mapId"></div>
   </div>
+  <!-- <div class="coordinates" *ngIf="_map?.coordinatesTxt">{{ _map?.coordinatesTxt }}</div> -->
 
-  <div class="coordinates" *ngIf="_map?.coordinatesTxt">{{ _map?.coordinatesTxt }}</div>
 </div>

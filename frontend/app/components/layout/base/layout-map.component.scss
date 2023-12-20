@@ -10,7 +10,8 @@
 
 .map {
   height: 100%;
-  z-index: 1 important;
+  position: relative;
+  z-index: 1
 }
 
 .map > div {
