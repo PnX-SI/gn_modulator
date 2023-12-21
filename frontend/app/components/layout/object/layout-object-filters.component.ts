@@ -69,8 +69,6 @@ export class ModulesLayoutObjectFiltersComponent
 
         type = type || '=';
 
-        value != null && console.log(field, type, value, key);
-
         if (type == 'any' && val !== true) {
           value = null;
         }

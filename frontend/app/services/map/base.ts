@@ -185,13 +185,6 @@ export default {
             navigator.clipboard.writeText(`${event.latlng.lng}, ${event.latlng.lat}`);
           });
 
-          // init panes
-          for (let i = 1; i <= 10; i += 1) {
-            const paneName = `P${i}`;
-            map.createPane(paneName);
-            map.getPane(paneName).style.zIndex = 600 + i;
-          }
-
           map.isInitialized = true;
 
           resolve(map);

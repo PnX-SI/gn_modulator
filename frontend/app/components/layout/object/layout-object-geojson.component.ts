@@ -81,7 +81,6 @@ export class ModulesLayoutObjectGeoJSONComponent
 
       const layerStyle =
         this.computedLayout.style || this.objectConfig()?.map?.style || this.context.map?.style;
-      const paneName = this.computedLayout.pane || this.context.map?.pane || `P1`;
       const bZoom = this.computedLayout.zoom || this.context.map?.zoom;
       const bTooltipPermanent = this.computedLayout.tooltip_permanent;
       const bring_to_front = this.computedLayout.bring_to_front || this.context.map?.bring_to_front;
@@ -89,7 +88,6 @@ export class ModulesLayoutObjectGeoJSONComponent
         geojson,
         layerOptions: {
           bring_to_front,
-          pane: paneName,
           zoom: bZoom,
           key: this.computedLayout.key,
           deflate: this.computedLayout.deflate,

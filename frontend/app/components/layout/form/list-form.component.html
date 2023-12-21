@@ -15,13 +15,18 @@
     >
       <mat-option>
         <ngx-mat-select-search
-          [placeholderLabel]="listFormOptions.reload_on_search ? 'Saisir pour lancer la recherche' : 'Saisir pour filtrer'"
+          [placeholderLabel]="
+            listFormOptions.reload_on_search
+              ? 'Saisir pour lancer la recherche'
+              : 'Saisir pour filtrer'
+          "
+          ngDefaultControl
           [ngModel]="search"
           (ngModelChange)="searchChanged($event)"
           [searching]="isLoading"
           [clearSearchInput]="false"
           noEntriesFoundLabel="Pas de données"
-        ></ngx-mat-select-search>
+          ></ngx-mat-select-search>
       </mat-option>
       <ng-template ngFor let-item [ngForOf]="items">
         <mat-option

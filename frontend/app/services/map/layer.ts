@@ -262,8 +262,6 @@ export default {
       (layer as any).addTo(layerGroup);
     }
 
-    // mise à jour des layer existants ?????
-
     // onLayersAdded : action effectuée après l'ajout des layers
     if (layerOptions.onLayersAdded) {
       setTimeout(() => {
@@ -314,12 +312,10 @@ export default {
       type = null,
       pk_field_name = 'id',
       key = null,
-      pane = null,
       bring_to_front = null,
     } = {},
   ): any {
     const geojsonLayer = this.L.geoJSON(geojson, {
-      pane,
       style: (feature) => {
         switch (feature.geometry.type) {
           // No color nor opacity for linestrings
@@ -343,9 +339,9 @@ export default {
       },
       pointToLayer: (feature, latlng) => {
         if (type == 'marker') {
-          return this.L.marker(latlng, { pane });
+          return this.L.marker(latlng);
         }
-        return this.L.circleMarker(latlng, { pane });
+        return this.L.circleMarker(latlng);
       },
       onEachFeature: (feature, layer) => {
         layer.id = feature.properties[pk_field_name];
