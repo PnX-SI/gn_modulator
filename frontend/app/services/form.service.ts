@@ -208,10 +208,12 @@ export class ModulesFormService {
       context,
     });
     control.setValidators(this.formValidators(computedLayout, context));
-    if (computedLayout.disabled) {
-      control.disable();
-    } else {
-      control.enable();
+    if ('disabled' in computedLayout) {
+      if (computedLayout.disabled && !control.disabled) {
+        control.disable();
+      } else if (!computedLayout.disabled && control.disabled) {
+        control.enable();
+      }
     }
 
     // control pour object

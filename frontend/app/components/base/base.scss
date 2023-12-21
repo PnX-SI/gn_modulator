@@ -149,7 +149,7 @@ div.layout-items > div {
   padding: 0 5px !important;
 }
 
-:host ::ng-deep fieldset.fieldset.disabled {
+:host ::ng-deep .layout-array-disabled {
   color: grey;
   border-color: lightgray !important;
 }

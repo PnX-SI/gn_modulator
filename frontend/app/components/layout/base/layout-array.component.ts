@@ -48,7 +48,6 @@ export class ModulesLayoutArrayComponent extends ModulesLayoutComponent implemen
     )) {
       arrayItemContext[key] = this.context[key];
     }
-
     return arrayItemContext;
   }
 

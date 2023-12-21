@@ -94,7 +94,7 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     }
   }
 
-  postProcessContext(): void {
+  preProcessContext(): void {
     this.context.map_id = this.mapId;
   }
 

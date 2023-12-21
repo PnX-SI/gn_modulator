@@ -5,7 +5,7 @@
       [color]="computedLayout.color"
       mat-raised-button
       (click)="openInputFile()"
-      [disabled]="computedLayout.disabled"
+      [disabled]="formControl.disabled"
     >
       {{ computedLayout.title || elementKey }}
     </button>
@@ -23,7 +23,7 @@
       [attr.id]="_id + '_inputfile'"
       type="file"
       hidden
-      [disabled]="computedLayout.disabled"
+      [disabled]="formControl.disabled"
       (change)="fileChange($event.target.files)"
       />
   </ng-container>

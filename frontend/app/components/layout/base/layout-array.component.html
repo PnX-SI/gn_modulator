@@ -1,10 +1,10 @@
 <!-- array -->
 <!-- array fieldset -->
 <ng-container *ngIf="!!arrayItemsContext">
-  <ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple">
-    <fieldset class="fieldset" [ngClass]="{'disabled': !!computedLayout.disabled}">
+  <ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple" >
+    <fieldset class="fieldset" [ngClass]="{'layout-array-disabled': !!formControl?.disabled}">
       <legend *ngIf="computedLayout.title">
-        {{ computedLayout.title }} ({{ data && data[layout.key]?.length }})
+        {{ computedLayout.title || computedLayout.key }} ({{ data && data[layout.key]?.length }})
       </legend>
       <div
         [ngClass]="{
@@ -32,9 +32,8 @@
             mat-mini-fab
             color="primary"
             class="array-button"
-            aria-label="Example icon button with a menu icon"
             [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
-            [disabled]="!formControl?.valid"
+            [disabled]="!formControl?.valid "
             (click)="addArrayElement()"
             (onAction)="processAction($event)"
           >
@@ -48,11 +47,13 @@
   <!-- array normal -->
   <ng-template #layoutArraySimple>
     <ng-container>
-      <h3>{{ computedLayout.title }} ({{ data && data[layout.key]?.length }})</h3>
+      <h3 [ngClass]="{'layout-array-disabled': !!formControl?.disabled}">{{ computedLayout.title || computedLayout.key }} ({{ data && data[layout.key]?.length }})</h3>
       <div
+        class="layout-array"
         [ngClass]="{
           'layout-row': computedLayout.direction == 'row',
-          'layout-items': true
+          'layout-items': true,
+          'layout-array-disabled': !!formControl?.disabled
         }"
         [attr.id]="_id"
       >
@@ -61,6 +62,7 @@
           *ngFor="let elem of elementData || []; let index = index"
         >
           <modules-layout
+            *ngIf="!!arrayItemsContext[index]"
             [data]="data"
             [layout]="computedLayout.items"
             [parentContext]="arrayItemsContext[index]"
@@ -69,15 +71,14 @@
         </div>
         <div style="flex: 0">
           <button
-            type="button
-            "
+            type="button"
             *ngIf="!!context.form_group_id"
             mat-mini-fab
             color="primary"
-            aria-label="Example icon button with a menu icon"
             [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
             (click)="addArrayElement()"
             (onAction)="processAction($event)"
+            [disabled]="formControl?.disabled"
           >
             <mat-icon>add</mat-icon>
           </button>

@@ -1,0 +1,39 @@
+type: layout
+code: test_array_disabled
+title: test_array_disabled
+description: test pour le composant d'import
+
+layout:
+  type: form
+  items:
+    - type: string
+      key: a
+      flex: "0"
+    - type: array
+      disabled: __f__data.a == 'a'
+      key: b
+      items:
+        direction: row
+        items:
+          - type: string
+            key: a
+    - type: array
+      disabled: __f__data.a == 'a'
+      key: c
+      items:
+        direction: row
+        items:
+          - type: string
+            key: a
+    - direction: row
+      items:
+        - type: message
+          json: __f__data
+        - type: message
+          json: __f__formGroup.value
+
+
+data:
+  a: a
+  b: [ { a: a } ]
+  c: []

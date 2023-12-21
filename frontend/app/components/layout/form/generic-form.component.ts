@@ -56,7 +56,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     }
 
     // pour ne pas casser la référence à data
-    this._formService.updateData(this.data, this.formGroup.value);
+    this._formService.updateData(this.data, this.formGroup.getRawValue());
     this.updateForm();
     this.emitAction({ type: 'data-change' });
     this._mLayout.reComputeLayout('form');

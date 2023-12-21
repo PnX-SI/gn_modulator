@@ -10,7 +10,8 @@
           class="array-button"
           mat-mini-fab
           color="clear"
-          [matTooltip]="layout.delete_one_title || 'Supprimer l\'élément'"
+          [matTooltip]="computedLayout.delete_one_title || 'Supprimer l\'élément'"
+          [disabled]="formControl.disabled"
           (click)="
             this.emitAction({
               type: 'remove-array-element',

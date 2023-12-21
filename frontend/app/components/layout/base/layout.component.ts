@@ -250,7 +250,7 @@ export class ModulesLayoutComponent implements OnInit {
     // dataKeys
 
     this.context.data_keys = utils.copy(this.parentContext.data_keys) || [];
-    this.postProcessContext();
+    this.preProcessContext();
 
     this.localData = this.getLocalData();
 
@@ -276,6 +276,8 @@ export class ModulesLayoutComponent implements OnInit {
       }
     }
 
+    this.postProcessContext();
+
     // ici pour filter value, etc....
     // 1 depuis moduleConfig
     // 2 depuis context
@@ -292,6 +294,8 @@ export class ModulesLayoutComponent implements OnInit {
    * - data_keys etc...
    **/
   postProcessContext() {}
+
+  preProcessContext() {}
 
   processElementData() {
     if (!(this.computedLayout && this.context.data_keys)) {
@@ -345,7 +349,8 @@ export class ModulesLayoutComponent implements OnInit {
     // récupération des données associées à this.computedLayout.key
 
     for (const key of ['filters', 'prefilters', 'value', 'nb_filtered', 'nb_total']) {
-      this.context[key] = (this.computedLayout && this.computedLayout[key]) || this.context[key];
+      const computedValue = this.computedLayout && this.computedLayout[key];
+      this.context[key] = computedValue != null ? computedValue : this.context[key];
     }
 
     if (this.context.form_group_id) {
@@ -354,8 +359,6 @@ export class ModulesLayoutComponent implements OnInit {
 
     this.processElementData();
 
-    // pour l'affichage du debug
-    // if (this.debug) {
     this.processDebugData();
 
     // }
@@ -452,6 +455,9 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   processParentsHeightChange() {
+    if (this.context.debug) {
+      return;
+    }
     if (this.computedLayout.overflow) {
       this.processHeightOverflow();
     }
@@ -612,21 +618,8 @@ export class ModulesLayoutComponent implements OnInit {
     const elementDataDebug = this.elementData;
     const localDataDebug = this.localData;
 
-    const contextDebug = {
-      module_code: this.context.module_code,
-      page_code: this.context.page_code,
-      object_code: this.context.object_code,
-      data_keys: this.context.data_keys,
-      index: this.context.index,
-      map_id: this.context.map_id,
-      params: this.context.params,
-      value: this.context.value,
-      filters: this.context.filters,
-      prefilters: this.context.prefilters,
-      form_group_id: this.context.form_group_id,
-      debug: this.context.debug,
-      hidden_options: this.context.hidden_options,
-    };
+    const contextDebug = { ...this.context };
+    delete contextDebug.current_user;
 
     const prettyLayout = this.prettyTitleObjForDebug('layout', this.layout);
     const prettyComputedLayout = this.prettyTitleObjForDebug(

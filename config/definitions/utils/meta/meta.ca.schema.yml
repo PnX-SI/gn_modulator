@@ -6,7 +6,7 @@ description: Définition du schema des cadres d'acquistion
 meta:
   schema_code: meta.ca
   unique:
-    - acquisition_framework_name
+    - unique_acquisition_framework_id
   model: geonature.core.gn_meta.models.TAcquisitionFramework
   label: "cadre d'acquisition"
   labels: "cadre d'acquistion"

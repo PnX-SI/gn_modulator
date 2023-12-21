@@ -70,7 +70,7 @@ export class ModulesLayoutObjectComponent extends ModulesLayoutComponent impleme
     return this.processObject();
   }
 
-  postProcessContext(): void {
+  preProcessContext(): void {
     if (this._name == 'layout-object' && this.layout.key) {
       utils.addKey(this.context.data_keys, this.layout.key);
     }

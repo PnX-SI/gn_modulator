@@ -18,6 +18,7 @@ export class ModulesFormElementComponent
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'form_element';
+    this.bPostComputeLayout = true;
   }
 
   postProcessLayout(): void {
@@ -34,6 +35,8 @@ export class ModulesFormElementComponent
       }
     }
   }
+
+  postComputeLayout(dataChanged: any, layoutChanged: any, contextChanged: any): void {}
 
   onCheckboxChange(event) {
     this.formControl.patchValue(event);

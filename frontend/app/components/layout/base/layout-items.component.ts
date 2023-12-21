@@ -11,7 +11,7 @@ export class ModulesLayoutItemsComponent extends ModulesLayoutComponent implemen
     this._name = 'layout-items';
   }
 
-  postProcessContext(): void {
+  preProcessContext(): void {
     this.context.index = null;
   }
 

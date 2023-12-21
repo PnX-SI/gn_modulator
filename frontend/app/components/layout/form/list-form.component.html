@@ -13,7 +13,6 @@
       [compareWith]="compareFn"
       (selectionChange)="inputChange($event)"
     >
-      <!-- [disabled]="computedLayout.disabled" -->
       <mat-option>
         <ngx-mat-select-search
           [placeholderLabel]="listFormOptions.reload_on_search ? 'Saisir pour lancer la recherche' : 'Saisir pour filtrer'"
@@ -51,7 +50,7 @@
     <div matSuffix>
       <div>
         <button
-          [disabled]="computedLayout.disabled"
+          [disabled]="formControl.disabled"
           mat-icon-button
           class="erase_button"
           matTooltip="Effacer la selection"
