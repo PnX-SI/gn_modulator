@@ -151,7 +151,12 @@ class SchemaSerializers:
         exclude = relation.excluded_relations(self.opposite_relation_def(relation_def))
 
         relation_serializer = fields.Nested(
-            relation.marshmallow_schema_code(), **{"exclude": exclude, "dump_default": None}
+            relation.marshmallow_schema_code(),
+            **{
+                "exclude": exclude,
+                "dump_default": None,
+                "allow_none": not self.is_required(relation_key),
+            },
         )
 
         if relation_def["relation_type"] == "n-1":
@@ -194,7 +199,6 @@ class SchemaSerializers:
             # enleve les clés si non dans only
             for k in list(data.keys()):
                 if self_marshmallow.only and k not in self_marshmallow.only:
-                    print(self, "pop not in only", k)
                     data.pop(k)
 
             # # pour les champs null avec default d
@@ -204,24 +208,22 @@ class SchemaSerializers:
             #     if key in data and data[key] is None and column_def.get('default'):
             #         data.pop(key, None)
 
-            # pour les nested non required
-            for relation_key, relation_def in self.relationships().items():
-                # TODO test required
-                if (
-                    relation_key in data
-                    and data[relation_key] is None
-                    and not self.is_required(key)
-                ):
-                    data.pop(relation_key)
+            # # pour les nested non required
+            # # pourquoi ????????
+            # for relation_key, relation_def in self.relationships().items():
+            #     # TODO test required
+            #     if (
+            #         relation_key in data
+            #         and data[relation_key] is None
+            #         and not self.is_required(key)
+            #     ):
+            #         data.pop(relation_key)
 
             # clean data
+
             for k in [k for k in data.keys()]:
                 if self.has_property(k):
-                    property = self.property(k)
-                    # test if array
-                    if property.get("relation_type") in ["n-1", "n-n"] and data[k] is None:
-                        data.pop(k)
-                # rem ove extra items
+                    pass
                 else:
                     data.pop(k)
 

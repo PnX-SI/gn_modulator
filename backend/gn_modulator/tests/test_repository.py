@@ -11,7 +11,7 @@ import pytest
 from .utils.repository import test_schema_repository
 from .data import commons as data_commons
 from .data import meta as data_meta
-from gn_modulator import SchemaMethods
+from gn_modulator import SchemaMethods, ModuleMethods
 from .fixtures import passages_faune_with_diagnostic
 from geonature.tests.fixtures import *
 from geonature.tests.test_permissions import g_permissions
@@ -103,6 +103,67 @@ class TestRepository:
 
         assert len(res) == 2
 
+    def test_repo_pf_nomenclature_spe(self):
+        smNom = SchemaMethods("ref_nom.nomenclature")
+        authorized_fields_write = ModuleMethods.get_autorized_fields("m_sipaf", "site", "write")
+        id_nom_mix = smNom.get_row_as_dict(
+            ["PF_OUVRAGE_SPECIFICITE", "MIX"], ["nomenclature_type.mnemonique", "cd_nomenclature"]
+        )["id_nomenclature"]
+        id_nom_spe = smNom.get_row_as_dict(
+            ["PF_OUVRAGE_SPECIFICITE", "SPE"], ["nomenclature_type.mnemonique", "cd_nomenclature"]
+        )["id_nomenclature"]
+        sm = SchemaMethods("m_sipaf.pf")
+        uuid_pf = "1b1edbc2-48ab-4eec-8991-07236b175ca4"
+        sm.insert_row(
+            {
+                "uuid_passage_faune": uuid_pf,
+                "geom": {"type": "Point", "coordinates": [45, 0]},
+                "nomenclature_ouvrage_specificite": {"id_nomenclature": id_nom_mix},
+            },
+            authorized_write_fields=authorized_fields_write,
+            commit=False,
+        )
+
+        res = sm.get_row_as_dict(
+            uuid_pf,
+            "uuid_passage_faune",
+            fields=["nomenclature_ouvrage_specificite.cd_nomenclature"],
+        )
+        res_nom = res["nomenclature_ouvrage_specificite"]["cd_nomenclature"]
+        assert res_nom == "MIX"
+
+        # changer nomenclature_ouvrage_specificite à SPE
+        sm.update_row(
+            uuid_pf,
+            {"nomenclature_ouvrage_specificite": {"id_nomenclature": id_nom_spe}},
+            "uuid_passage_faune",
+            authorized_write_fields=authorized_fields_write,
+            commit=False,
+        )
+        res = sm.get_row_as_dict(
+            uuid_pf,
+            "uuid_passage_faune",
+            fields=["nomenclature_ouvrage_specificite.cd_nomenclature"],
+        )
+        res_nom = res["nomenclature_ouvrage_specificite"]["cd_nomenclature"]
+        assert res_nom == "SPE"
+
+        # changer nomenclature_ouvrage_specificite à None
+        sm.update_row(
+            uuid_pf,
+            {"nomenclature_ouvrage_specificite": None},
+            "uuid_passage_faune",
+            authorized_write_fields=authorized_fields_write,
+            commit=False,
+        )
+        res = sm.get_row_as_dict(
+            uuid_pf,
+            "uuid_passage_faune",
+            fields=["nomenclature_ouvrage_specificite.cd_nomenclature"],
+        )
+        res_nom = res["nomenclature_ouvrage_specificite"]
+        assert res_nom is None
+
     def test_repo_pf_cruved(self, passages_faune_with_diagnostic, users):
         sm = SchemaMethods("m_sipaf.pf")
         uuids_filter_value = ";".join(
@@ -145,6 +206,7 @@ class TestRepository:
         self, passages_faune_with_diagnostic, synthese_data, users, g_permissions
     ):
         sm = SchemaMethods("syn.synthese")
+
         q = sm.Model().query.query_list(
             "SYNTHESE",
             "R",
