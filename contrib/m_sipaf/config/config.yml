@@ -261,12 +261,6 @@ site_details_fields:
           items:
             - direction: row
               items:
-                - nomenclature_ouvrage_specificite.label_fr
-                - key: nomenclature_ouvrage_specificite.cd_nomenclature
-                  hidden: true
-                - nomenclatures_ouvrage_materiaux.label_fr
-            - direction: row
-              items:
                 - nomenclatures_ouvrage_type.label_fr
                 - key: nomenclatures_ouvrage_type.cd_nomenclature
                   hidden: true
@@ -276,6 +270,12 @@ site_details_fields:
               items:
                 - pi_ou_ps
                 - ouvrage_hydrau
+            - direction: row
+              items:
+                - nomenclature_ouvrage_specificite.label_fr
+                - key: nomenclature_ouvrage_specificite.cd_nomenclature
+                  hidden: true
+                - nomenclatures_ouvrage_materiaux.label_fr
         - display: fieldset
           key: usages
           hidden: __f__data.nomenclature_ouvrage_specificite?.cd_nomenclature == "SPE"
@@ -440,7 +440,7 @@ site_form_fields:
                   multiple: true
                   return_object: true
         - title: Usages
-          disabled: __f__data.nomenclature_ouvrage_specificite?.cd_nomenclature == "SPE"
+          disabled: __f__! data.nomenclature_ouvrage_specificite || data.nomenclature_ouvrage_specificite?.cd_nomenclature == "SPE"
           type: array
           key: usages
           display: fieldset
