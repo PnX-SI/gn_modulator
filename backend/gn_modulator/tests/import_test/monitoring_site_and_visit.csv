@@ -1,0 +1,4 @@
+uuid_base_site;base_site_name;geom;id_nomenclature_type_site;t_base_visits.visit_date_min;t_base_visits.id_module;t_base_visits.observers;t_base_visits.id_dataset
+ccbf5d60-704b-46f5-8a5d-6bf1ddd55a12;Site 1; POINT (45 0);1; "2017-01-08 20:00:00.000";monitornig_test;admin,user;8199b7d4-a888-4dbc-9979-9fb308318587
+ccbf5d60-704b-46f5-8a5d-6bf1ddd55a12;Site 1; POINT (45 0);1; "2018-01-08 20:00:00.000";monitornig_test;admin,user;8199b7d4-a888-4dbc-9979-9fb308318587
+94d5a9a1-c1c5-45e8-9465-a11e6ee8055e;Site 2; POINT (45 1);CHI;;;;

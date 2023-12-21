@@ -290,8 +290,12 @@ GROUP BY {view_params['txt_group_by']}
             # ????????
             # t correspond à la table raw, ou les champs à résoudre sont très certainement en varchar ?????
             # ????????
-            if var_key.startswith("t."):
-                cast = f"::{k_unique_type}" if k_unique_type in ["UUID", "INTEGER"] else ""
+            if (
+                var_key.startswith("t.")
+                or var_key.startswith("SPLIT_PART(t.")
+                and k_unique_type in ["UUID", "INTEGER", "TIMESTAMP"]
+            ):
+                cast = f"::{k_unique_type}"
 
             # condition de jointure
             # - "{alias_join}.{k_unique} = {var_key}"

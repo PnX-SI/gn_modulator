@@ -60,6 +60,7 @@ class ImportMixin(
             db.session.commit()
 
     def process_step(self, step):
+        print(self.schema_code, step)
         action = f"process_step_{step}"
         action_start = time.time()
         getattr(self, action)()

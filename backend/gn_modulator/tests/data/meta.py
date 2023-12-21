@@ -25,6 +25,7 @@ def ca():
         "acquisition_framework_name": "test pytest",
         "acquisition_framework_desc": "test pytest",
         "acquisition_framework_start_date": "2018-10-13",
+        "unique_acquisition_framework_id": "49fe2295-133e-4e8f-87d6-92827b110b20",
     }
 
 
@@ -35,6 +36,7 @@ def ca_update():
 def jdd():
     return {
         "id_acquisition_framework": get_acquisition_framework_id(),
+        "unique_dataset_id": "33f1b228-c97a-4a9d-8c7e-2a694c6cf34c",
         "dataset_shortname": "truc",
         "dataset_desc": "truc",
         "dataset_name": "muche",

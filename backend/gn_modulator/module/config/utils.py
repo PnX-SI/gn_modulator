@@ -382,6 +382,8 @@ class ModuleConfigUtils:
                 key_add += layout["additional_fields"]
             if key_add:
                 cls.get_layout_keys(key_add, params, {**context, "data_keys": []})
+
+            # ????
             if (
                 layout.get("return_object")
                 and layout.get("additional_fields")
@@ -391,6 +393,14 @@ class ModuleConfigUtils:
                     map(lambda x: f"{layout['key']}.{x}", layout["additional_fields"])
                 )
                 cls.get_layout_keys(additional_keys, params, context)
+
+            # fix bug null value non prise en compte
+            # if (
+            #     layout.get("return_object")
+            #     and context.get("form")
+            #     and not layout.get('multiple')
+            # ):
+            #     cls.add_key(context ,layout['key'])
 
         if layout.get("code"):
             template_params = {**params, **layout.get("template_params", {})}
@@ -443,5 +453,6 @@ class ModuleConfigUtils:
         return keys
 
     @classmethod
-    def get_autorized_fields(cls, module_code, object_code, write=False):
-        return get_global_cache(["keys", module_code, object_code, "write" if write else "read"])
+    def get_autorized_fields(cls, module_code, object_code, key):
+        # key = "write" or "read"
+        return get_global_cache(["keys", module_code, object_code, key])

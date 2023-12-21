@@ -109,7 +109,7 @@ class TestRest:
         """
         ModuleMethods.add_actions("MODULATOR", "commons.module", "U")
         autorized_fields = ModuleMethods.get_autorized_fields(
-            "MODULATOR", "commons.module", write=True
+            "MODULATOR", "commons.module", "write"
         )
         autorized_fields.append("module_label")
 

@@ -23,6 +23,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
 
         # boucle sur les relations n-n
         for relation_key in self.get_n_n_relations():
+            print(self.schema_code, "relation_key_nn", relation_key)
             self.process_relation_n_n_views(relation_key)
 
         # boucle sur les relations 1-n
@@ -35,10 +36,9 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
         """
 
         relations_1_n = []
-        for key in self.get_table_columns(self.tables["raw"]):
+        for key in self.get_table_columns(self.tables["data"]):
             if "." not in key:
                 continue
-
             relation_key = key.split(".")[0]
             if (
                 self.Model().is_relation_1_n(relation_key)
@@ -56,7 +56,7 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
 
         return list(
             filter(
-                lambda x: self.Model().is_relation_n_n(x),
+                lambda x: self.Model().is_relation_n_n(x) and x.count(".") == 0,
                 self.get_table_columns(self.tables["raw"]),
             )
         )
@@ -177,7 +177,7 @@ SELECT
         sql_rel["import_view"] = self.sql_process_import_view(
             self.tables["raw"], tables_rel["process"], relation_key=relation_key
         )
-
+        (sql_rel["import_view"])
         try:
             SchemaMethods.c_sql_exec_txt(sql_rel["import_view"])
         except Exception as e:

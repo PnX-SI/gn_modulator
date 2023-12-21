@@ -75,6 +75,16 @@ class ImportMixinRaw(ImportMixinUtils):
         # - typage
         # - geometry
         v_txt_columns = list(map(lambda x: self.process_raw_import_column(x), columns))
+        conditions = ""
+
+        # remove empty columns for child import
+        if self.parent:
+            """"""
+            skip_cols = self.parent.sm().Model().property(self.relation_key).property.local_columns
+            skip_keys = ["id_import"] + [c.name for c in skip_cols] + self.Model().pk_field_names()
+            condition_columns = [f"{c} is NULL" for c in columns if c not in skip_keys]
+            condition_columns_txt = "\n    AND ".join(condition_columns)
+            conditions = f"\nWHERE  NOT (\n    {condition_columns_txt}\n)"
 
         # traitement de la geometrie en x y
         # si des champs x et y sont présents
@@ -98,7 +108,7 @@ class ImportMixinRaw(ImportMixinUtils):
 CREATE VIEW {dest_table} AS
 SELECT
     {txt_columns}
-FROM {from_table} t{txt_limit};
+FROM {from_table} t{txt_limit}{conditions}
 """
 
     def txt_geom_xy(self):
@@ -171,7 +181,7 @@ FROM {from_table} t{txt_limit};
         - traitement de la geometrie
         """
 
-        propper_column_name = self.propper_column_name(key)
+        clean_column_name = self.clean_column_name(key)
 
         # colonnes de la liste ["id_import", "x", "y"]
         if key in ["id_import", "x", "y"] and not self.Model().has_property(key):
@@ -193,7 +203,7 @@ FROM {from_table} t{txt_limit};
 
         # clé étrangère ou relation n-n : on renvoie tel quel
         if self.Model().is_foreign_key(key) or self.Model().is_relation_n_n(key):
-            return f"t.{propper_column_name}"
+            return f"t.{clean_column_name}"
 
         sql_type = str(self.Model().sql_type(key))
 
@@ -204,7 +214,7 @@ FROM {from_table} t{txt_limit};
         # pour tous les cas suivants
         # typage sql
         if sql_type == "VARCHAR":
-            return f"{propper_column_name}"
+            return f"{clean_column_name}"
 
         else:
-            return f"{propper_column_name}::{sql_type}"
+            return f"{clean_column_name}::{sql_type}"

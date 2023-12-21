@@ -7,8 +7,8 @@ from sqlalchemy import func
 from geonature.utils.env import db
 from pypnnomenclature.repository import get_nomenclature_id_term
 from pypnusershub.db.models import Organisme
-from pypnusershub.db.models import Organisme
-
+from geonature.core.gn_commons.models import TModules
+from geonature.core.gn_meta.models import TDatasets, TAcquisitionFramework
 from m_sipaf.models import PassageFaune, Diagnostic, Actor
 from gn_modulator.imports.models import TMappingField, TMappingValue
 
@@ -40,6 +40,45 @@ def passages_faune_with_diagnostic(users):
                 )
             passages_faune.append(pf)
     return passages_faune
+
+
+@pytest.fixture
+def monitoring():
+    monitoring_fixture = {}
+    with db.session.begin_nested():
+        module = TModules(
+            module_code="monitornig_test",
+            module_label="monitoring module",
+            active_frontend=True,
+            active_backend=True,
+            module_path="monitoring_test",
+        )
+        db.session.add(module)
+
+        af = TAcquisitionFramework(
+            acquisition_framework_name="monitornig_test",
+            acquisition_framework_desc="monitornig_test",
+            unique_acquisition_framework_id="3767fcd3-e152-49f5-aaa3-8710e4d8152b",
+        )
+
+        db.session.add(af)
+
+        jdd = TDatasets(
+            dataset_name="monitoring_test",
+            unique_dataset_id="8199b7d4-a888-4dbc-9979-9fb308318587",
+            dataset_shortname="monitoring_test",
+            dataset_desc="monitoring_test",
+            marine_domain=True,
+            terrestrial_domain=True,
+            acquisition_framework=af,
+        )
+        db.session.add(jdd)
+
+        monitoring_fixture["module"] = module
+        monitoring_fixture["jdd"] = jdd
+        monitoring_fixture["af"] = af
+
+    return monitoring_fixture
 
 
 @pytest.fixture

@@ -48,7 +48,7 @@ SELECT
     area_code,
     ST_MULTI(ST_SETSRID(ST_FORCE2D(geom::GEOMETRY), 2154)) AS geom,
     CONCAT(t.id_type, '|', t.area_code) AS id_area
-FROM gn_modulator_import.t_xxx_data t;
+FROM gn_modulator_import.t_xxx_data t
 
 
 -- Vue d'import
@@ -64,7 +64,7 @@ SELECT
     j_pk.id_area
 FROM gn_modulator_import.v_xxx_raw_ref_geo_area t
 LEFT JOIN ref_geo.bib_areas_types j_0
-    ON j_0.type_code = t.id_type
+    ON j_0.type_code = t.id_type::VARCHAR
 LEFT JOIN ref_geo.l_areas j_pk
     ON j_pk.id_type = j_0.id_type
     AND (j_pk.area_code = SPLIT_PART(t.id_area, '|', 2)

@@ -110,9 +110,7 @@ def patch_rest(module_code, object_code, value):
     data = request.get_json()
     params = parse_request_args(object_definition)
 
-    authorized_write_fields = ModuleMethods.get_autorized_fields(
-        module_code, object_code, write=True
-    )
+    authorized_write_fields = ModuleMethods.get_autorized_fields(module_code, object_code, "write")
 
     try:
         m, _ = sm.update_row(

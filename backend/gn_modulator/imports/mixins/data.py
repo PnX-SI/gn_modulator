@@ -57,7 +57,7 @@ class ImportMixinData(ImportMixinUtils):
                 lambda x: f"{x}=NULLIF({x}, '')",
                 filter(
                     lambda x: x != "id_import",
-                    self.propper_column_names(self.get_table_columns(self.tables["data"])),
+                    self.clean_column_names(self.get_table_columns(self.tables["data"])),
                 ),
             )
         )
@@ -131,7 +131,7 @@ class ImportMixinData(ImportMixinUtils):
         """
 
         # la liste des colonne à copier
-        columns_fields = ",\n    ".join(self.propper_column_names(table_columns))
+        columns_fields = ",\n    ".join(self.clean_column_names(table_columns))
 
         # instruction de copie des données depuis STDIN
         self.sql[
@@ -163,7 +163,7 @@ QUOTE '"' CSV
         (sert principalement pour les test, COPY est sensé être plus rapide pour les grands fichiers)
         """
 
-        sql_columns_fields = ", ".join(self.propper_column_names(table_columns))
+        sql_columns_fields = ", ".join(self.clean_column_names(table_columns))
 
         values = []
 
@@ -204,7 +204,7 @@ QUOTE '"' CSV
 
         # déclaration des colonnes de la table
         columns_sql = "\n    ".join(
-            map(lambda x: f"{x} VARCHAR,", self.propper_column_names(table_columns))
+            map(lambda x: f"{x} VARCHAR,", self.clean_column_names(table_columns))
         )
 
         # contrainte de clé primaire pour id_import

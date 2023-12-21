@@ -116,6 +116,7 @@ class ImportMixinCheck(ImportMixinUtils):
         ):
             # récupération du type SQL de la colonne
             sql_type = self.Model().sql_type(key)
+            clean_key = self.clean_column_name(key)
 
             # la fonction gn_modulator.check_value_for_type
             # renvoie faux pour les colonnes ou le format ne correspond pas
@@ -127,12 +128,12 @@ class ImportMixinCheck(ImportMixinUtils):
             SELECT
               COUNT(*),
               ARRAY_AGG(id_import),
-              ARRAY_AGG({key})
+              ARRAY_AGG({clean_key})
             FROM {table_test}
             WHERE NOT (
-                {key} is NULL
+                {clean_key} is NULL
                 OR
-                gn_modulator.check_value_for_type('{sql_type}', {key}::VARCHAR)
+                gn_modulator.check_value_for_type('{sql_type}', {clean_key}::VARCHAR)
             )
             GROUP BY id_import
             ORDER BY id_import

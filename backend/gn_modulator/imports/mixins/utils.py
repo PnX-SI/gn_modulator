@@ -65,10 +65,17 @@ class ImportMixinUtils:
         )
         if not self.schema_code:
             self.add_error(
-                error_code="ERR_IMPORT_SCHEMA_CODE_NOT_FOND",
+                error_code="ERR_IMPORT_SCHEMA_CODE_NOT_FOUND",
                 error_msg=f"Il n'y a pas de schema pour module_code={self.module_code}, object_code={self.object_code}",
             )
+            return
 
+        if not self.sm().definition:
+            self.add_error(
+                error_code="ERR_IMPORT_SCHEMA_CODE_NOT_VALID",
+                error_msg=f"Il n'y a pas de schema {self.schema_code}",
+            )
+            return
         # Creation du schema d'import s'il n'existe pas
         SchemaMethods.c_sql_exec_txt(f"CREATE SCHEMA IF NOT EXISTS {schema_import}")
 
@@ -169,11 +176,11 @@ class ImportMixinUtils:
             if SchemaMethods(self.schema_code).has_property(key):
                 return key
 
-    def propper_column_name(self, x):
+    def clean_column_name(self, x):
         return f'"{x}"' if "." in x else x
 
-    def propper_column_names(self, x):
-        return map(lambda y: self.propper_column_name(y), x)
+    def clean_column_names(self, x):
+        return map(lambda y: self.clean_column_name(y), x)
 
     def sm(self):
         return SchemaMethods(self.schema_code)

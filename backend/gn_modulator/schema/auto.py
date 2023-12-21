@@ -222,10 +222,9 @@ class SchemaAuto:
                 f"{sql_schema_name}.{sql_table_name}.{column.key} : Le type sql {column.type} n'a pas de correspondance"
             )
 
-        property = {
-            "type": schema_type["type"],
-            # "title": column.key
-        }
+        property = {**property_from_definition}
+
+        property["type"] = property.get("type", schema_type["type"])
 
         if schema_type["type"] == "geometry":
             if schema_type["srid"] == -1:
@@ -240,6 +239,18 @@ class SchemaAuto:
 
         if column.primary_key:
             property["primary_key"] = True
+
+        # patch pourris id_nomenclature_type_site id_module monitoring TBaseSites
+        if property.get("foreign_key") and not column.foreign_keys:
+            setattr(column, "foreign_key", True)
+
+            if property.get("schema_code") == "ref_nom.nomenclature":
+                nomenclature_type = property_from_definition.get(
+                    "nomenclature_type"
+                ) or self.reflect_nomenclature_type(sql_schema_name, sql_table_name, column.key)
+
+                property["nomenclature_type"] = nomenclature_type
+                column.nomenclature_type = nomenclature_type
 
         # foreign_keys
 

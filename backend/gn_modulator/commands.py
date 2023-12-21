@@ -128,8 +128,9 @@ def cmd_doc_schema(schema_code, doc_type, file_path=None, exclude=""):
 
 
 @click.command("import")
-@click.option("-o", "object_code", required=True, help="code de l'object")
-@click.option("-m", "module_code", required=True, help="code du module")
+@click.option("-o", "--object-code", help="code de l'object")
+@click.option("-m", "--module-code", help="code du module")
+@click.option("-s", "--schema-code", help="schema_code")
 @click.option(
     "-d",
     "data_file_path",
@@ -144,9 +145,10 @@ def cmd_doc_schema(schema_code, doc_type, file_path=None, exclude=""):
 @click.option("--sql", is_flag=True, default=False, help="Affiche les requete sql")
 @with_appcontext
 def cmd_import_bulk_data(
-    module_code,
-    object_code,
     data_file_path,
+    schema_code=None,
+    module_code=None,
+    object_code=None,
     no_commit=False,
     mapping_value_code=False,
     mapping_field_code=False,
@@ -174,6 +176,7 @@ def cmd_import_bulk_data(
     impt = TImport(
         module_code=module_code,
         object_code=object_code,
+        schema_code=schema_code,
         id_mapping_value=id_mapping_value,
         id_mapping_field=id_mapping_field,
         data_file_path=data_file_path,

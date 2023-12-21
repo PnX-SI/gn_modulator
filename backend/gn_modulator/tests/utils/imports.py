@@ -7,10 +7,12 @@ from gn_modulator import SchemaMethods
 
 @pytest.mark.skip()
 def test_import_data_file(
-    module_code,
-    object_code,
-    data_file_path=None,
+    data_file_path,
+    schema_code=None,
+    module_code=None,
+    object_code=None,
     id_mapping_field=None,
+    id_mapping_value=None,
     expected_infos={},
     options={},
 ):
@@ -21,14 +23,18 @@ def test_import_data_file(
         impt = TImport(
             module_code=module_code,
             object_code=object_code,
+            schema_code=schema_code,
             data_file_path=str(data_file_path),
             id_mapping_field=id_mapping_field,
+            id_mapping_value=id_mapping_value,
             options={"no_commit": True, "insert_data": True, **options},
         )
         db.session.add(impt)
     assert impt.id_import is not None
 
     impt.process_import_schema()
+
+    print(impt.pretty_infos_txt())
 
     import_infos = SchemaMethods("modules.import").serialize(
         impt, fields=["errors", "res", "status", "id_import", "data_type", "csv_delimiter"]
