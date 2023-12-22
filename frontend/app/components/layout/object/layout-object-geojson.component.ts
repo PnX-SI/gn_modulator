@@ -209,6 +209,7 @@ export class ModulesLayoutObjectGeoJSONComponent
     const value = layer.feature.properties[this.pkFieldName()];
     const fields = this.popupFields().map((f) => f.key || f);
     fields.push('scope');
+    layer.setPopupContent('chargement ...');
     this._mData
       .getOne(this.moduleCode(), this.objectCode(), value, { fields })
       .subscribe((data) => {
