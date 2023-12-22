@@ -34,6 +34,7 @@ layout:
           display: geojson
           object_code: ref_geo.point
           title: PK / PR
+          activate: false
           module_code: MODULATOR
           zoom_min: 12
           popup_fields:

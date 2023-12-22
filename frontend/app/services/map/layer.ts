@@ -204,7 +204,6 @@ export default {
     layerOptions.key = key;
 
     let layerGroup = this.getLayerData(mapId, key);
-
     if (!layerGroup) {
       layerGroup = layerOptions?.deflate
         ? this.L.deflate({
@@ -212,7 +211,6 @@ export default {
             markerType: this.L.circleMarker,
           })
         : new this.L.FeatureGroup();
-      layerGroup.addTo(map);
 
       if (layerOptions.title) {
         const controlTitle = `<span class="fa fa-circle-o" style="color: ${
@@ -222,6 +220,10 @@ export default {
       }
 
       this.setLayerData(mapId, key, layerGroup);
+    }
+
+    if (layerOptions.activate !== false) {
+      layerGroup.addTo(map);
     }
 
     // ids présentes dans le GeoJSON

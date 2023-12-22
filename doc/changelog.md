@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.0 (unreleased)
+
+:santa: :christmas_tree: :gift:
+
+**🚀 Nouveautés**
+
+- [FRONTEND-MAP] possibilité de désactiver les couches par default dans les contrôles (par exemple pour les `PK / PR`)
+
+
 ## 1.2.1 (2023-10-12)
 
 **🐛 Corrections**

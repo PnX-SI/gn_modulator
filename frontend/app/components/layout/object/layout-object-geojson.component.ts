@@ -91,6 +91,7 @@ export class ModulesLayoutObjectGeoJSONComponent
           zoom: bZoom,
           key: this.computedLayout.key,
           deflate: this.computedLayout.deflate,
+          activate: this.computedLayout.activate,
           add_control: this.computedLayout.add_control,
           pk_field_name,
           title: utils.capitalize(this.computedLayout.title || this.objectConfig().display.labels),
