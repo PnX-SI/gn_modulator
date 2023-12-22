@@ -33,6 +33,9 @@ export class ModulesMapService {
   /** layerDataCache */
   _layersData = {};
 
+  /** pour garder en memoire le centre/zoom de la carte */
+  _mapSettingsSave = {};
+
   /** Leaflet */
   L = L;
 

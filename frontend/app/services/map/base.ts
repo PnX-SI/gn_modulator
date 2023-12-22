@@ -41,6 +41,12 @@ export default {
           ? this.L.latLng(center[0], center[1])
           : this.computeGeometryCenter(center);
     }
+
+    // centre dpuis le
+    if (this._mapSettingsSave.center) {
+      return this._mapSettingsSave.center;
+    }
+
     computedCenter =
       computedCenter ||
       this.L.latLng(
@@ -70,14 +76,14 @@ export default {
   },
 
   computeZoom(zoom = null) {
-    return zoom || this._mConfig.appConfig().MAPCONFIG.ZOOM_LEVEL;
+    return zoom || this._mapSettingsSave.zoom || this._mConfig.appConfig().MAPCONFIG.ZOOM_LEVEL;
   },
 
   setCenter(mapId, center: any = null) {
     if (!this.getMap(mapId)) {
       return;
     }
-    this.getMap(mapId).panTo(this.computeCenter(center));
+    this.getMap(mapId).panTo();
   },
 
   setZoom(mapId, zoom = null) {
@@ -170,6 +176,10 @@ export default {
           const fnMapZoomMoveEnd = () => {
             const zoomLevel = this.getZoom(mapId);
             const mapBounds = this.getMapBounds(mapId);
+            const center = this.getCenter(mapId);
+            this._mapSettingsSave.zoom = zoomLevel;
+            this._mapSettingsSave.center = center;
+
             this._mLayout.reComputeLayout('map zoom end');
             map.eachLayer((l) => {
               l.onZoomMoveEnd && l.onZoomMoveEnd(zoomLevel, mapBounds);

@@ -37,20 +37,18 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     this._mapService.waitForMap(this.mapId).then((map) => {
       map.on('moveend', () => this.$onMapChanged.next());
       map.on('zoomend', () => this.$onMapChanged.next());
+      this._subs['onMapChangedZoomContext'] = this.$onMapChanged
+        .pipe(debounceTime(1000))
+        .subscribe(() => {
+          this.context.map_params = this.context.map_params || {};
+          this.context.map_params.bounds_filter_value = this._mapService.getMapBoundsFilterValue(
+            this.context.map_id,
+          );
+          this.context.map_params.zoom = this._mapService.getZoom(this.context.map_id);
+          this._mLayout.reComputeLayout('onMapChanged');
+        });
+      [100, 200, 500, 1000].forEach((t) => setTimeout(() => map.invalidateSize(), t));
     });
-    this._subs['onMapChangedInvalidate'] = this.$onMapChanged.subscribe(() => {
-      this._map.invalidateSize();
-    });
-    this._subs['onMapChangedZoomContext'] = this.$onMapChanged
-      .pipe(debounceTime(1000))
-      .subscribe(() => {
-        this.context.map_params = this.context.map_params || {};
-        this.context.map_params.bounds_filter_value = this._mapService.getMapBoundsFilterValue(
-          this.context.map_id,
-        );
-        this.context.map_params.zoom = this._mapService.getZoom(this.context.map_id);
-        this._mLayout.reComputeLayout('onMapChanged');
-      });
   }
 
   /**
