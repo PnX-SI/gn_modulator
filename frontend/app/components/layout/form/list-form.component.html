@@ -20,13 +20,11 @@
               ? 'Saisir pour lancer la recherche'
               : 'Saisir pour filtrer'
           "
-          ngDefaultControl
-          [ngModel]="search"
-          (ngModelChange)="searchChanged($event)"
+          [formControl]="search"
           [searching]="isLoading"
           [clearSearchInput]="false"
           noEntriesFoundLabel="Pas de données"
-          ></ngx-mat-select-search>
+        ></ngx-mat-select-search>
       </mat-option>
       <ng-template ngFor let-item [ngForOf]="items">
         <mat-option

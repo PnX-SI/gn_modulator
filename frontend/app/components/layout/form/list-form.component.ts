@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Injector } from '@angular/core';
 import { ListFormService } from '../../../services/list-form.service';
 import { ModulesLayoutComponent } from '../base/layout.component';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, FormControl } from '@angular/forms';
 
 import { debounceTime, distinctUntilChanged, mergeMap } from '@librairies/rxjs/operators';
 import { Subject, of, Observable } from '@librairies/rxjs';
@@ -21,6 +21,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
     super(_injector);
     this._name = 'list_form';
     this.bPostComputeLayout = true;
+    this.search = new FormControl();
   }
 
   // la liste
@@ -43,10 +44,8 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
   /** fonction de comparaison pour mat-select */
   compareFn = (a, b) => a == b;
 
-  // pour les recheches
-  search = '';
-  searchSubject: Subject<string>;
-  searchSubscription = null;
+  // recherche dans la liste
+  search: FormControl;
 
   // chargement en cours
   isLoading = false;
@@ -199,25 +198,16 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
 
   // pour la recherche
   initSearch() {
-    // sujet
-    this.searchSubject = this.searchSubject || new Subject();
-
-    // unsubscribe si besoin
-    this.searchSubscription && this.searchSubscription.unsubscribe();
-
     // debounce time dans le cas autocomplete (reload on search)
     const dt = this.listFormOptions.reload_on_search ? 400 : 0;
 
-    this.searchSubscription = this.searchSubject
-      .pipe(distinctUntilChanged(), debounceTime(dt))
-      .subscribe((search) => {
-        this.processSearchChanged(search);
-      });
-  }
-
-  /** action lorsque le champs de recherche change */
-  searchChanged(event) {
-    this.searchSubject.next(event);
+    if (!this._subs['search']) {
+      this._subs['search'] = this.search.valueChanges
+        .pipe(distinctUntilChanged(), debounceTime(dt))
+        .subscribe((search) => {
+          this.processSearchChanged(search);
+        });
+    }
   }
 
   /** processus de recherche dans les items */
