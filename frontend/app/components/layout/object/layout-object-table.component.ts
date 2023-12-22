@@ -234,18 +234,19 @@ export class ModulesLayoutObjectTableComponent
   }
 
   processConfig() {
-    this.reDrawTable();
+    this.reDrawTable(true);
   }
 
   processFilters() {
-    this.reDrawTable();
+    console.log('processFilters');
+    this.reDrawTable(true);
   }
 
   processPreFilters() {
-    this.reDrawTable();
+    this.reDrawTable(true);
   }
 
-  reDrawTable() {
+  reDrawTable(force = false) {
     const elem = document.getElementById(this._id);
     if (!elem) {
       return;
@@ -261,11 +262,12 @@ export class ModulesLayoutObjectTableComponent
     const nbTotal = this._mObject.objectConfigContext(this.context).nb_total;
 
     if (
-      !this.computedLayout.page_size &&
-      this.pageSize != pageSize &&
-      nbTotal > pageSize &&
-      pageSize > 1 &&
-      !this.context.debug
+      (!this.computedLayout.page_size &&
+        this.pageSize != pageSize &&
+        nbTotal > pageSize &&
+        pageSize > 1 &&
+        !this.context.debug) ||
+      force
     ) {
       this.pageSize = pageSize;
       this.drawTable();
