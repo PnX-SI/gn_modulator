@@ -51,7 +51,7 @@ class TestRepository:
             id_role=users["admin_user"].id_role,
         )
 
-        m_list = db.session.execute(q)
+        m_list = q.all()
         res = sm.serialize_list(m_list, fields)
         assert True
 
@@ -120,7 +120,7 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        m_list = db.session.execute(q).unique().all()
+        m_list = q.all()
         res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 2
@@ -206,7 +206,7 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        m_list = db.session.execute(q)
+        m_list = q.all()
         res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 2
@@ -219,7 +219,7 @@ class TestRepository:
             "select",
             id_role=users["user"].id_role,
         )
-        m_list = db.session.execute(q)
+        m_list = q.all()
         res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 1
@@ -247,7 +247,7 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        m_list = db.session.execute(q).unique().all()
+        m_list = q.all()
         res = sm.serialize_list(m_list, fields)
         assert len(res) == 2
 
@@ -267,7 +267,7 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        m_list = db.session.execute(q).unique().all()
+        m_list = q.all()
         res = sm.serialize_list(m_list, fields=["id_synthese"])
 
         assert len(res) == 4
@@ -291,7 +291,7 @@ class TestRepository:
                 id_role=users[user].id_role,
             )
 
-            m_list = db.session.execute(q)
+            m_list = q.all()
             res[user] = sm.serialize_list(m_list, fields=fields)
 
             if user in ["admin_user", "user", "self_user"]:
@@ -322,7 +322,7 @@ class TestRepository:
                 "select",
                 id_role=users[user].id_role,
             )
-            m_list = db.session.execute(q)
+            m_list = q.all()
             res[user] = sm.serialize_list(m_list, fields=fields)
 
         for user in users:

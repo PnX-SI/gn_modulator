@@ -39,7 +39,7 @@ class ModuleBreadCrumbs:
                 q = sm.get_row(
                     data[sm.Model().pk_field_name()], module_code=module_code, params={}
                 )
-                m = db.session.execute(q).scalar_one()
+                m = q.one()
                 data_label = sm.serialize(m, fields=[sm.label_field_name()])
                 # label_page = f"{sm.label()} {data_label[sm.label_field_name()]}"
                 label_page = f"{sm.label()} {getAttr(data_label, sm.label_field_name())}"
@@ -63,7 +63,7 @@ class ModuleBreadCrumbs:
             if ":" in parent_page_url and data.get(sm.Model().pk_field_name()):
                 data_parent_key = parent_page_url.split(":")[1]
                 q = sm.get_row(data[sm.Model().pk_field_name()], params={})
-                m = db.session.execute(q).scalar_one()
+                m = q.one()
 
                 data_parent = sm.serialize(m, fields=[data_parent_key])
             else:

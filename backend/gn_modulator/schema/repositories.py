@@ -187,8 +187,7 @@ class SchemaRepositories:
             query_type="update",
         )
 
-        m = db.session.execute(q).unique().scalar_one()
-
+        m = q.one()
         if not self.is_new_data(m, data):
             return m, False
 
@@ -219,48 +218,27 @@ class SchemaRepositories:
             action="D",
             params=params,
             query_type="delete",
-        ).cte("pre_delete")
-
-        Model = self.Model()
-        table = Model.__table__
-        q_delete = sa.delete(table).where(
-            sa.and_(
-                *map(
-                    lambda x: getattr(table.c, x) == getattr(subquery_delete.c, x),
-                    Model.pk_field_names(),
-                )
-            )
         )
 
-        # patch pourris pourquoi sql ne met pas USING PDBDMSRMLGP???
-        propper_sql_delete = str(q_delete.compile(compile_kwargs={"literal_binds": True})).replace(
-            ", pre_delete", "USING pre_delete"
-        )
-
-        db.session.execute(
-            sa.text(propper_sql_delete), execution_options={"synchronize_session": False}
-        )
         # https://stackoverflow.com/questions/49794899/flask-sqlalchemy-delete-query-failing-with-could-not-evaluate-current-criteria?noredirect=1&lq=1
-        # db.session.execute(q)
-        # m.delete(synchronize_session=False)
-        # db.session.flush()
+        if not multiple:
+            subquery_delete.one()
+        subquery_delete.delete(synchronize_session=False)
+        db.session.flush()
 
         if commit:
             db.session.commit()
         return None
 
     def get_query_infos(self, module_code=MODULE_CODE, action="R", params={}, url=None):
-
         subquery_count_total = query_list(
             self.Model(),
             module_code=module_code,
             action=action,
             params=params,
             query_type="total",
-        ).cte("count_total")
-        count_total = db.session.execute(
-            sa.select(sa.func.count()).select_from(subquery_count_total)
-        ).scalar_one()
+        )
+        count_total = subquery_count_total.count()
 
         if params.get("filters"):
             subquery_count_filtered = query_list(
@@ -269,11 +247,9 @@ class SchemaRepositories:
                 action=action,
                 params=params,
                 query_type="filtered",
-            ).cte("count_filtered")
+            )
 
-            count_total = db.session.execute(
-                sa.select(sa.func.count()).select_from(subquery_count_filtered)
-            ).scalar_one()
+            count_filtered = subquery_count_filtered.count()
         else:
             count_filtered = count_total
 

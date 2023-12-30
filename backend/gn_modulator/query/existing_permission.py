@@ -58,37 +58,39 @@ def synthese_subquery_scope(cls, id_role):
     scope_expression = db.session.query(Synthese).with_entities(
         Synthese.id_synthese,
         sa.case(
-            (
-                sa.or_(
-                    Synthese.id_digitiser == id_role,
-                    sa.exists().where(
-                        sa.and_(
-                            pre_scope.c.id_synthese == Synthese.id_synthese,
-                            sa.or_(
-                                pre_scope.c.id_role_obs == pre_scope.c.id_role_cur,
-                                pre_scope.c.id_role_jdd == pre_scope.c.id_role_cur,
-                                pre_scope.c.id_role_af == pre_scope.c.id_role_cur,
-                            ),
-                        )
+            [
+                (
+                    sa.or_(
+                        Synthese.id_digitiser == id_role,
+                        sa.exists().where(
+                            sa.and_(
+                                pre_scope.c.id_synthese == Synthese.id_synthese,
+                                sa.or_(
+                                    pre_scope.c.id_role_obs == pre_scope.c.id_role_cur,
+                                    pre_scope.c.id_role_jdd == pre_scope.c.id_role_cur,
+                                    pre_scope.c.id_role_af == pre_scope.c.id_role_cur,
+                                ),
+                            )
+                        ),
                     ),
+                    1,
                 ),
-                1,
-            ),
-            (
-                sa.or_(
-                    sa.exists().where(
-                        sa.and_(
-                            pre_scope.c.id_synthese == Synthese.id_synthese,
-                            sa.or_(
-                                pre_scope.c.id_organisme_obs == pre_scope.c.id_organisme_cur,
-                                pre_scope.c.id_organisme_jdd == pre_scope.c.id_organisme_cur,
-                                pre_scope.c.id_organisme_af == pre_scope.c.id_organisme_cur,
-                            ),
-                        )
+                (
+                    sa.or_(
+                        sa.exists().where(
+                            sa.and_(
+                                pre_scope.c.id_synthese == Synthese.id_synthese,
+                                sa.or_(
+                                    pre_scope.c.id_organisme_obs == pre_scope.c.id_organisme_cur,
+                                    pre_scope.c.id_organisme_jdd == pre_scope.c.id_organisme_cur,
+                                    pre_scope.c.id_organisme_af == pre_scope.c.id_organisme_cur,
+                                ),
+                            )
+                        ),
                     ),
+                    2,
                 ),
-                2,
-            ),
+            ],
             else_=3,
         ).label("scope"),
     )

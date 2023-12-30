@@ -172,7 +172,6 @@ class PassageFaune(db.Model):
         foreign_keys=[TMedias.uuid_attached_row],
         cascade="all",
         lazy="select",
-        overlaps="medias",
     )
 
     # actors
@@ -186,19 +185,16 @@ class PassageFaune(db.Model):
     geom_text = column_property(sa.func.st_astext(geom))
 
     label_infrastructures = column_property(
-        sa.select(sa.func.string_agg(LLinears.linear_name, sa.literal_column("', '")))
-        .where(
+        sa.select([sa.func.string_agg(LLinears.linear_name, sa.literal_column("', '"))]).where(
             sa.and_(
                 CorPfLinear.id_passage_faune == id_passage_faune,
                 CorPfLinear.id_linear == LLinears.id_linear,
             )
         )
-        .scalar_subquery()
     )
 
     label_communes = column_property(
-        sa.select(sa.func.string_agg(LAreas.area_name, sa.literal_column("', '")))
-        .where(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -206,12 +202,10 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "COM",
             )
         )
-        .scalar_subquery()
     )
 
     label_departements = column_property(
-        sa.select(sa.func.string_agg(LAreas.area_name, sa.literal_column("', '")))
-        .where(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -219,12 +213,10 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "DEP",
             )
         )
-        .scalar_subquery()
     )
 
     label_regions = column_property(
-        sa.select(sa.func.string_agg(LAreas.area_name, sa.literal_column("', '")))
-        .where(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -232,7 +224,6 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "REG",
             )
         )
-        .scalar_subquery()
     )
 
 

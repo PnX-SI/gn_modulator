@@ -7,7 +7,7 @@ from .filters import process_filters
 
 
 def query_list(Model, module_code, action, params, query_type, id_role=None):
-    query = sa.select(Model)
+    query = Model.query
 
     model_pk_fields = [getattr(Model, pk_field_name) for pk_field_name in Model.pk_field_names()]
 

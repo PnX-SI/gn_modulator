@@ -46,7 +46,7 @@ def process_filters(Model, query, filters):
     filters_processed, query = process_filter_array(Model, query, filters)
 
     if filters_processed is not None:
-        query = query.where(filters_processed)
+        query = query.filter(filters_processed)
 
     return query
 

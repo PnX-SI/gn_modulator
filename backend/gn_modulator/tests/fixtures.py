@@ -20,9 +20,7 @@ def passages_faune_with_diagnostic(users):
     uuids = ["0c92af92-000b-401c-9994-f2c12470493a", "0c92af92-000b-401c-9994-f2c12470493b"]
     passages_faune = []
 
-    organisme = db.session.execute(
-        sa.select(Organisme).filter_by(nom_organisme="ALL")
-    ).scalar_one()
+    organisme = Organisme.query.filter_by(nom_organisme="ALL").one()
 
     with db.session.begin_nested():
         for uuid in uuids:
