@@ -41,6 +41,7 @@ class TestRest:
             "site",
             data_commons.pf(),
             data_commons.pf_update(),
+            breadcrumbs_page_code="site_details",
         )
 
     def test_valid_fields(self, client, users):

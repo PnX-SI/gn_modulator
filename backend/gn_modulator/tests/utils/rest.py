@@ -7,7 +7,7 @@ from pypnusershub.tests.utils import set_logged_user_cookie, unset_logged_user_c
 
 @pytest.mark.skip()
 def test_schema_rest(
-    client, user, module_code, object_code, data_post, data_update, breacrumbs=None
+    client, user, module_code, object_code, data_post, data_update, breadcrumbs_page_code=None
 ):
     """
     Test chainage sur les api rest
@@ -90,6 +90,20 @@ def test_schema_rest(
     assert r.status_code == 200, "Erreur avec PATCH"
     data_from_patch = r.json
     assert all(data_update[k] == data_from_patch[k] for k in list(data_update.keys()))
+
+    # BREADCRUMBs
+    if breadcrumbs_page_code:
+        r = client.get(
+            url_for(
+                "modulator.api_breadcrumbs",
+                module_code=module_code,
+                page_code=breadcrumbs_page_code,
+                **data_from_post
+            ),
+            data=data_update,
+        )
+
+        assert r.status_code == 200, "Erreur avec BREADCRUMB"
 
     # DELETE
     r = client.delete(
