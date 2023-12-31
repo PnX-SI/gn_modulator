@@ -28,7 +28,7 @@ properties:
   id_passage_faune:
       title: ID
   uuid_passage_faune:
-      title: UUID
+      title: Identifiant UUID
       description: Identifiant universel unique au format UUID (uuid_pf)
   id_digitiser:
       title: Numérisateur

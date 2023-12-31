@@ -7,7 +7,8 @@ meta:
   model: m_sipaf.models.Diagnostic
   module_code: m_sipaf
   genre: M
-  label: diagnostic
+  label: diagnostic de fontionalité
+  labels: diagnostics de fontionalité
   label_field_name: date_diagnostic
   unique:
     - id_passage_faune
