@@ -75,6 +75,18 @@ def test_schema_rest(
     )
     assert r.status_code == 200, "Erreur avec GET"
 
+    r = client.get(
+        url_for(
+            "modulator.api_rest_get_page_number_and_list",
+            value=id,
+            module_code=module_code,
+            object_code=object_code,
+            page_size=10,
+            fields="id_passage_faune"
+        )
+    )
+    assert r.status_code == 200, "Erreur avec GET PAGE NUMBER"
+
     # PATCH
     r = client.patch(
         url_for(

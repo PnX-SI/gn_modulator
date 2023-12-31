@@ -303,10 +303,7 @@ class SchemaRepositories:
 
         sub_query_list = query_list(
             self.Model(), module_code, action, params, "page_number"
-        ).sub_query()
-
-        # value_filters = self.value_filters(value, params.get('field_name'))
-        # filters, sub_query = self.process_filters(self.Model(), value_filters, sub_query)
+        ).subquery()
 
         row_number = (
             db.session.query(sub_query_list.c.row_number)
