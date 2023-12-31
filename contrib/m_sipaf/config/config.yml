@@ -8,7 +8,9 @@ site_filters_fields:
       items:
         - uuid_passage_faune
         - nom_usuel_passage_faune
-        - nomenclature_ouvrage_specificite
+        - key: id_nomenclature_ouvrage_specificite
+          multiple: true
+          type: list_form
         - nomenclatures_ouvrage_materiaux
         - key: pi_ou_ps
           title: Passage inférieur / supérieur
@@ -182,9 +184,6 @@ site_filters_defs:
     field: linears.type.id_type
   nomenclatures_ouvrage_materiaux:
     field: nomenclatures_ouvrage_materiaux.id_nomenclature
-    key: id_nomenclature
-  nomenclatures_ouvrage_specificite:
-    field: nomenclatures_ouvrage_specificite.id_nomenclature
     key: id_nomenclature
   diagnostics:
     type: any
