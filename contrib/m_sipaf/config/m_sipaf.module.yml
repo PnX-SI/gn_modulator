@@ -29,8 +29,8 @@ objects:
   synthese:
     schema_code: syn.synthese
     permission_module_code: SYNTHESE
-    label: observation
-    labels: observations
+    label: observation (<1km)
+    labels: observations (<1km)
     cruved: R
     map:
       style:
