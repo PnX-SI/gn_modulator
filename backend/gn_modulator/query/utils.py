@@ -26,7 +26,11 @@ def get_sorter(Model, query, sorter):
     orders_by = []
     sort_dir = "-" if "-" in sorter else "+"
     sort_spe = "str_num" if "*" in sorter else "num_str" if "%" in sorter else None
-    sort_field = re.sub(r"[+-\\*%]", "", sorter)
+    sort_field = sorter
+    for c in '+-%*':
+        sort_field = sort_field.replace(c, '')
+
+    print(sorter, sort_field)
 
     model_attribute, query = getModelAttr(Model, query, sort_field)
 
