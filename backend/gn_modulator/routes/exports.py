@@ -1,3 +1,4 @@
+from flask import g
 from gn_modulator import DefinitionMethods, ModuleMethods, SchemaMethods
 from gn_modulator.blueprint import blueprint
 from .utils.decorators import check_module_object_route
@@ -42,7 +43,14 @@ def api_export(module_code, object_code, export_code):
     action = params.get("action") or "R"
 
     # recupération de la liste
-    q = query_list(sm.Model(), module_code=module_code, action=action, params=params)
+    q = query_list(
+        sm.Model(),
+        module_code=module_code,
+        action=action,
+        params=params,
+        query_type="select",
+        id_role=g.current_user.id_role,
+    )
 
     # on assume qu'il n'y que des export csv
     # TODO ajouter query param export_type (csv, shape, geosjon, etc) et traiter les différents cas
