@@ -32,11 +32,11 @@ def get_list_rest(module_code, object_code, additional_params={}):
 
     if params.get("sql"):
         # test si droit admin
-        # if not has_any_permissions("R", g.current_user.id_role, "MODULATOR", "ADMIN"):
-        #     return (
-        #         "Vous n'avez pas les droit pour effectuer des actions d'admin pour le module MODULATOR",
-        #         403,
-        #     )
+        if not has_any_permissions("R", g.current_user.id_role, "MODULATOR", "ADMIN"):
+            return (
+                "Vous n'avez pas les droit pour effectuer des actions d'admin pour le module MODULATOR",
+                403,
+            )
         response = make_response(
             pretty_sql(q_list),
             200,

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ModulesContextService } from '../../services/context.service';
+import { ModulesObjectService } from '../../services/object.service';
 import { ModulesConfigService } from '../../services/config.service';
 import utils from '../../utils';
 @Component({
@@ -40,10 +41,14 @@ export class TestLayoutComponent implements OnInit {
     private _route: ActivatedRoute,
     private _mContext: ModulesContextService,
     private _mConfig: ModulesConfigService,
+    private _mObject: ModulesObjectService,
   ) {}
 
   ngOnInit() {
     this._mConfig.init().subscribe(() => {
+      if (!this._mObject.hasPermission('MODULATOR', 'ADMIN', 'R')) {
+        return;
+      }
       this._route.queryParams.subscribe((params) => {
         this.debug = ![undefined, false, 'false'].includes(params.debug);
         this.layoutCode = params.layout_code;

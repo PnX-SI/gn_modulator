@@ -238,15 +238,19 @@ export class ModulesObjectService {
     return objectTabLabel;
   }
 
-  hasPermission({ context }, action) {
-    const permissionObjectCode = context.permission_object_code || 'ALL';
-    const moduleCode = context.module_code || 'MODULATOR';
+  hasPermission(moduleCode, permissionObjectCode, action) {
     const module = this._gnModule.getModule(moduleCode);
     const cruved =
       permissionObjectCode == 'ALL'
         ? module.cruved
         : module.module_objects[permissionObjectCode]?.cruved;
-    return !!cruved[action];
+    return !!cruved?.[action];
+  }
+
+  hasPermissionInContext({ context }, action) {
+    const permissionObjectCode = context.permission_object_code || 'ALL';
+    const moduleCode = context.module_code || 'MODULATOR';
+    return this.hasPermission(moduleCode, permissionObjectCode, action);
   }
 
   isActionAllowed({ context, data }, action) {
@@ -419,7 +423,7 @@ export class ModulesObjectService {
       label_edit: this.labelEdit.bind(this),
       label_create: this.labelCreate.bind(this),
       is_action_allowed: this.isActionAllowed.bind(this),
-      has_permission: this.hasPermission.bind(this),
+      has_permission: this.hasPermissionInContext.bind(this),
       geometry_field_name: this.geometryFieldName.bind(this),
       geometry_type: this.geometryType.bind(this),
       object: this.objectConfigLayout.bind(this),
