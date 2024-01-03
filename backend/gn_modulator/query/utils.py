@@ -30,8 +30,6 @@ def get_sorter(Model, query, sorter):
     for c in "+-%*":
         sort_field = sort_field.replace(c, "")
 
-    print(sorter, sort_field)
-
     model_attribute, query = getModelAttr(Model, query, sort_field)
 
     if model_attribute is None:
