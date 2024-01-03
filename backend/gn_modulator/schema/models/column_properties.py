@@ -10,7 +10,7 @@ class SchemaModelColumnProperties:
     """ """
 
     def process_column_property_model(self, key, column_property_def):
-        return column_property(self.cp_select(key, column_property_def))
+        return column_property(self.cp_select(key, column_property_def).label(key))
 
     def cp_select(self, key, column_property_def):
         column_property_type = column_property_def.get("column_property")

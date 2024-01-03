@@ -180,21 +180,24 @@ class PassageFaune(db.Model):
     )
 
     # columns properties
-    geom_x = column_property(sa.func.st_x(sa.func.st_centroid(geom)))
-    geom_y = column_property(sa.func.st_y(sa.func.st_centroid(geom)))
-    geom_text = column_property(sa.func.st_astext(geom))
+    geom_x = column_property(sa.func.st_x(sa.func.st_centroid(geom)).label("geom_x"))
+    geom_y = column_property(sa.func.st_y(sa.func.st_centroid(geom)).label("geom_y"))
+    geom_text = column_property(sa.func.st_astext(geom).label("geom_text"))
 
     label_infrastructures = column_property(
-        sa.select([sa.func.string_agg(LLinears.linear_name, sa.literal_column("', '"))]).where(
+        sa.select([sa.func.string_agg(LLinears.linear_name, sa.literal_column("', '"))])
+        .where(
             sa.and_(
                 CorPfLinear.id_passage_faune == id_passage_faune,
                 CorPfLinear.id_linear == LLinears.id_linear,
             )
         )
+        .label("label_infrastructures")
     )
 
     label_communes = column_property(
-        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))])
+        .where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -202,10 +205,12 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "COM",
             )
         )
+        .label("label_communes")
     )
 
     label_departements = column_property(
-        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))])
+        .where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -213,10 +218,12 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "DEP",
             )
         )
+        .label("label_departements")
     )
 
     label_regions = column_property(
-        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))]).where(
+        sa.select([sa.func.string_agg(LAreas.area_name, sa.literal_column("', '"))])
+        .where(
             sa.and_(
                 CorPfArea.id_passage_faune == id_passage_faune,
                 CorPfArea.id_area == LAreas.id_area,
@@ -224,6 +231,7 @@ class PassageFaune(db.Model):
                 BibAreasTypes.type_code == "REG",
             )
         )
+        .label("label_regions")
     )
 
 

@@ -67,7 +67,9 @@ def getModelAttr(Model, query, field_name, only_fields="", index=0, condition=No
         if not hasattr(res["relation_model"], "is_schematisable"):
             res["relation_model"] = schematisable(res["relation_model"])
         res["relation_alias"] = (
-            sa.orm.aliased(res["relation_model"]) if query is not None else res["relation_model"]
+            sa.orm.aliased(res["relation_model"], name=cache_key)
+            if query is not None
+            else res["relation_model"]
         )
         res["val_of_type"] = res["val"].of_type(res["relation_alias"])
         if hasattr(query, "join"):
