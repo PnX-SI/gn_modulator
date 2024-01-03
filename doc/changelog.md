@@ -10,6 +10,7 @@
 - [FRONTEND-MAP] affichage plus fluide lors du chargement des données lors de l'ouverture d'une popup
 
 - [M_SIPAF-EXPORT] ajout des champs acteurs, objectifs et usages
+- [M_SIPAF-EXPORT] possibilité de voir le select de l'export (aide pour faire une vue à destination du module d'import)
 
 
 ## 1.2.1 (2023-10-12)

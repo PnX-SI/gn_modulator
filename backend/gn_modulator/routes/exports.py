@@ -33,7 +33,7 @@ def api_export(module_code, object_code, export_code):
 
     sm = SchemaMethods(schema_code)
 
-    _, fields = sm.process_export_fields(export_definition["fields"])
+    headers, fields = sm.process_export_fields(export_definition["fields"])
     params["fields"] = fields
     #   - TODO autres paramètres ????
 
@@ -51,6 +51,9 @@ def api_export(module_code, object_code, export_code):
         query_type="select",
         id_role=g.current_user.id_role,
     )
+
+    if params.get("sql"):
+        return sm.process_export_csv_sql(q, params)
 
     # on assume qu'il n'y que des export csv
     # TODO ajouter query param export_type (csv, shape, geosjon, etc) et traiter les différents cas
