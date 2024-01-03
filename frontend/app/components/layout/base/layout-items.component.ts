@@ -14,5 +14,4 @@ export class ModulesLayoutItemsComponent extends ModulesLayoutComponent implemen
   preProcessContext(): void {
     this.context.index = null;
   }
-
 }

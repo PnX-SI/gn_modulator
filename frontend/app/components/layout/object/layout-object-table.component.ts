@@ -23,6 +23,8 @@ export class ModulesLayoutObjectTableComponent
   tab = document.createElement('div'); // element
   tableHeight; // hauteur de la table
 
+  initCount;
+
   pageSize;
   apiParams;
   modalDeleteLayout = {
@@ -177,6 +179,7 @@ export class ModulesLayoutObjectTableComponent
   setCount() {
     utils.waitForElement('counter', document.querySelector(`#${this.tableId}`)).then(
       (counterElement) => {
+        this.initCount = true;
         // (counterElement as any).innerHTML = `Nombre de données filtrées / total : <b>${res.filtered} /  ${res.total}</b>`;
         (counterElement as any).innerHTML = `<b>${this.context.nb_filtered || 0} /  ${
           this.context.nb_total || 0
@@ -238,7 +241,6 @@ export class ModulesLayoutObjectTableComponent
   }
 
   processFilters() {
-    console.log('processFilters');
     this.reDrawTable(true);
   }
 
@@ -249,6 +251,11 @@ export class ModulesLayoutObjectTableComponent
   reDrawTable(force = false) {
     const elem = document.getElementById(this._id);
     if (!elem) {
+      // on peut quand même récupérer les données (pour les label des tabs par exemple)
+      if (!this.initCount) {
+        this.initCount = true;
+        this.processObject();
+      }
       return;
     }
     if (!this.table) {
@@ -291,7 +298,12 @@ export class ModulesLayoutObjectTableComponent
   }
 
   getData(): Observable<any> {
-    return of(true);
+    return this._mData.getList(this.moduleCode(), this.objectCode(), {
+      fields: [this.pkFieldName()],
+      only_info: true,
+      filters: this.context.filters,
+      prefilters: this.context.prefilters,
+    });
   }
 
   refreshData(objectCode: any): void {
