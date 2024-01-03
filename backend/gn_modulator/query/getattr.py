@@ -41,7 +41,9 @@ def getModelAttr(Model, query, field_name, only_fields="", index=0, condition=No
     res = get_query_cache(query, cache_key)
 
     if res:
-        return process_getattr_res(Model, query, res, field_name, index, only_fields=only_fields)
+        return process_getattr_res(
+            Model, query, res, field_name, index, only_fields=only_fields, condition=condition
+        )
     # si non en cache
     # on le calcule
 
@@ -98,11 +100,11 @@ def process_getattr_res(Model, query, res, field_name, index, only_fields=[], co
         # on ne peut pas avoir de field apres une propriété
         if not is_last_field:
             raise Exception(f"pb fields {field_name}, il ne devrait plus rester de champs")
-        return res["val"], query
+        return res["val"], query if query is not None else condition
 
     if not is_last_field:
         if condition is not None:
-            condition = sa.orm.and_(condition, res["val"].expression)
+            condition = sa.and_(condition, res["val"].expression)
 
         return getModelAttr(
             Model,

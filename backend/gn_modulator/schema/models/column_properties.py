@@ -9,41 +9,11 @@ from .. import errors
 class SchemaModelColumnProperties:
     """ """
 
-    def column_property_relation_x_n(self, key, column_property_def, Model):
-        # a passer en argument
-        cp_query = cp_select = self.cp_select(key, column_property_def, Model)
-        if column_property_def.get("relation_key"):
-            cp_where_conditions = self.column_property_util_relation_where_conditions(
-                key, column_property_def, Model
-            )
-            cp_query = cp_select.where(cp_where_conditions)
+    def process_column_property_model(self, key, column_property_def):
+        return column_property(self.cp_select(key, column_property_def))
 
-        return column_property(cp_query)
-
-    def cp_select(self, key, column_property_def, Model):
+    def cp_select(self, key, column_property_def):
         column_property_type = column_property_def.get("column_property")
-        if column_property_type == "nb":
-            return select([func.count("*")])
-
-        if column_property_type == "has":
-            return exists()
-
-        if column_property_type == "label":
-            # TODO communes <area_name> (<area_code[:2]>) ??
-            # relation = getattr(Model, column_property_def['relation_key'])
-            # relation_entity = relation.mapper.entity
-            label_key = ".".join(
-                [column_property_def["relation_key"], column_property_def["label_key"]]
-            )
-            relation_label, _ = getModelAttr(self.Model(), None, label_key)
-            return select(
-                [func.string_agg(cast(relation_label, db.String), literal_column("', '"))]
-            )
-
-        if column_property_type in ["st_x", "st_y"]:
-            return getattr(func, column_property_type)(
-                func.st_centroid(getattr(Model, column_property_def["key"]))
-            )
 
         if column_property_type == "concat":
             # label = '<area_code> <area_name>'
@@ -63,7 +33,10 @@ class SchemaModelColumnProperties:
                         items2.append(txt)
                         txt = ""
                 elif label[index] == ">":
-                    model_attribute, condition = getModelAttr(self.Model(), None, txt)
+                    condition = "." in txt or None
+                    model_attribute, condition = getModelAttr(
+                        self.Model(), None, txt, condition=condition
+                    )
                     if condition is not None:
                         conditions.append(condition)
                     items2.append(txt)
@@ -77,33 +50,6 @@ class SchemaModelColumnProperties:
                 cp = select([cp]).where(and_(*conditions))
             return cp
 
-        if column_property_type in ["st_astext"]:
-            return func.st_astext(getattr(Model, column_property_def["key"]))
-
-        if column_property_type in ["min", "max"]:
-            field_key = ".".join([column_property_def["relation_key"], column_property_def["key"]])
-            relation_field, _ = getModelAttr(self.Model(), None, field_key)
-            func_min_max = getattr(func, column_property_type)
-            return select([func_min_max(relation_field)])
-
         raise errors.SchemaModelColumnPropertyError(
             f"La column_property {self.schema_code()} {key} est mal définie"
         )
-
-    def column_property_util_relation_where_conditions(self, key, column_property_def, Model):
-        relation, _ = getModelAttr(Model, None, column_property_def["relation_key"])
-        rel = self.cls(self.property(column_property_def["relation_key"])["schema_code"])
-        conditions = relation
-        if column_property_def.get("filters") is not None:
-            condition_filters, conditions = rel.process_filter_array(
-                relation.mapper.entity,
-                parse_filters(column_property_def.get("filters")),
-                query=conditions,
-                condition=True,
-            )
-            conditions = and_(conditions, condition_filters)
-
-        return conditions
-
-    def process_column_property_model(self, key, column_property_def, Model):
-        return self.column_property_relation_x_n(key, column_property_def, Model)
