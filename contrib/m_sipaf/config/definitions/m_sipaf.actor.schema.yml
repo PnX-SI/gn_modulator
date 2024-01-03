@@ -27,3 +27,8 @@ properties:
         title: "Type d'acteur"
     organisme:
         title: Organisme
+    label_acteur:
+      type: string
+      column_property: concat
+      title: acteur
+      label: '<organisme.nom_organisme>/<nomenclature_type_actor.label_fr>'

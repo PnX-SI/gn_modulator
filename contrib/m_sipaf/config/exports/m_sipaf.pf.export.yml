@@ -26,6 +26,7 @@ fields:
   - nomenclatures_ouvrage_type.label_fr
   - nomenclatures_ouvrage_materiaux.label_fr
   - nomenclature_ouvrage_specificite.label_fr
+  - nomenclatures_ouvrage_categorie.label_fr
   - source
   - ouvrage_hydrau
   - ouvrag_hydrau_tirant_air
@@ -36,3 +37,5 @@ fields:
   - label_departements
   - label_infrastructures
   - label_regions
+  - actors.label_acteur
+  - usages.nomenclature_usage_type.label_fr

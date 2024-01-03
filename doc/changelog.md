@@ -9,6 +9,8 @@
 - [FRONTEND-MAP] possibilité de désactiver les couches par default dans les contrôles (par exemple pour les `PK / PR`)
 - [FRONTEND-MAP] affichage plus fluide lors du chargement des données lors de l'ouverture d'une popup
 
+- [M_SIPAF-EXPORT] ajout des champs acteurs, objectifs et usages
+
 
 ## 1.2.1 (2023-10-12)
 
