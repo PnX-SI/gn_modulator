@@ -77,6 +77,7 @@ site_filters_fields:
               object_code: ref_geo.area
               module_code: __REF_MODULE_CODE__
               reload_on_search: true
+              min_search_length: 1
               multiple: true
               title: Commune(s)
               type: list_form

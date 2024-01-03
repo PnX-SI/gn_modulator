@@ -23,7 +23,7 @@
           [formControl]="search"
           [searching]="isLoading"
           [clearSearchInput]="false"
-          noEntriesFoundLabel="Pas de données"
+          [noEntriesFoundLabel]="isLoading ? 'chargement en cours' : 'Pas de données'"
         ></ngx-mat-select-search>
       </mat-option>
       <ng-template ngFor let-item [ngForOf]="items">

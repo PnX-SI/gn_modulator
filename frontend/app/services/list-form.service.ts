@@ -240,7 +240,7 @@ export class ListFormService {
     // TODO gestion des paramètres objects etc ...???
 
     // paramètre queryParams pour l'api
-    const params = options.params || {};
+    const params = utils.copy(options.params) || {};
 
     // ajout des filtres ?
     // TODO à gérer différemment
@@ -257,8 +257,13 @@ export class ListFormService {
       params.sort = params.sort || options.sort;
 
       // ajout d'un filtre pour la recherche
-      if (options.reload_on_search && options.search) {
-        params.filters.push(`${options.label_field_name} ~ ${options.search}`);
+      if (options.reload_on_search) {
+        options.search = options.search || '';
+        if (options.min_search_length && options.search?.length < options.min_search_length) {
+          params.only_info = true;
+        } else if (options.search.length) {
+          params.filters.push(`${options.label_field_name} ~ ${options.search}`);
+        }
       }
     }
 

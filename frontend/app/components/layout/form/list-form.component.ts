@@ -4,7 +4,8 @@ import { ModulesLayoutComponent } from '../base/layout.component';
 import { AbstractControl, FormControl } from '@angular/forms';
 
 import { debounceTime, distinctUntilChanged, mergeMap } from '@librairies/rxjs/operators';
-import { Subject, of, Observable } from '@librairies/rxjs';
+import { of } from '@librairies/rxjs';
+import { tap } from '@librairies/rxjs/operators';
 
 import utils from '../../../utils';
 
@@ -21,7 +22,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
     super(_injector);
     this._name = 'list_form';
     this.bPostComputeLayout = true;
-    this.search = new FormControl();
+    this.search = new FormControl('');
   }
 
   // la liste
@@ -203,7 +204,13 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
 
     if (!this._subs['search']) {
       this._subs['search'] = this.search.valueChanges
-        .pipe(distinctUntilChanged(), debounceTime(dt))
+        .pipe(
+          tap(() => {
+            this.isLoading = true;
+          }),
+          distinctUntilChanged(),
+          debounceTime(dt),
+        )
         .subscribe((search) => {
           this.processSearchChanged(search);
         });
@@ -227,7 +234,7 @@ export class ModulesListFormComponent extends ModulesLayoutComponent implements 
   /** Server Side Search */
   remoteSearch(search) {
     // option de recherhe
-    this.listFormOptions.search = search;
+    this.listFormOptions.search = search || '';
 
     // chargement en cours
     this.isLoading = true;
