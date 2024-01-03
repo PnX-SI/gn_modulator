@@ -10,8 +10,6 @@ import utils from '../../../utils';
   styleUrls: ['../../base/base.scss', 'layout-section.component.scss'],
 })
 export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implements OnInit {
-  selectedIndex;
-
   constructor(_injector: Injector) {
     super(_injector);
     this._name = 'layout-section';
@@ -21,41 +19,5 @@ export class ModulesLayoutSectionComponent extends ModulesLayoutComponent implem
     if (this.layout.key) {
       utils.addKey(this.context.data_keys, this.layout.key);
     }
-  }
-
-  processItems() {
-    const items = this.layoutType == 'items' ? this.layout : this.layout.items || [];
-
-    this.computedItems = items.map
-      ? items.map((item) => {
-          if (!utils.isObject(item)) {
-            return item;
-          }
-          const computedItem = {};
-          for (const key of ['label', 'hidden', 'disabled', 'lazy_loading']) {
-            computedItem[key] = this._mLayout.evalLayoutElement({
-              element: item[key],
-              layout: item,
-              data: this.data,
-              context: {
-                ...this.context,
-                object_code: item.object_code,
-              },
-            });
-          }
-          return computedItem;
-        })
-      : [];
-
-    // pour les tabs
-    // - si computedLayout.tab
-    //    alors on choisi cet onglet par defaut
-    setTimeout(() => {
-      if (this.computedLayout.display == 'tabs' && this.computedLayout.selected_tab) {
-        this.selectedIndex = this.computedItems.findIndex(
-          (i) => i.label == this.computedLayout.selected_tab,
-        );
-      }
-    }, 100);
   }
 }

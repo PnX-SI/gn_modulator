@@ -240,6 +240,9 @@ export class ModulesObjectService {
 
   hasPermission(moduleCode, permissionObjectCode, action) {
     const module = this._gnModule.getModule(moduleCode);
+    if (!module) {
+      return false;
+    }
     const cruved =
       permissionObjectCode == 'ALL'
         ? module.cruved

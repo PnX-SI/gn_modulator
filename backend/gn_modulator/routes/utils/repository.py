@@ -14,7 +14,7 @@ def get_list_rest(module_code, object_code, additional_params={}):
     sm = SchemaMethods(schema_code)
 
     # on peut redéfinir le module_code pour le choix des droits
-    permission_module_code = object_definition.get("permission_module_code", module_code)
+    permission_module_code = object_definition.get("module_code", module_code)
     params = {**parse_request_args(object_definition), **additional_params}
 
     action = params.get("action") or "R"
@@ -69,7 +69,7 @@ def get_one_rest(module_code, object_code, value):
 
     params = parse_request_args(object_definition)
 
-    permission_module_code = object_definition.get("permission_module_code", module_code)
+    permission_module_code = object_definition.get("module_code", module_code)
 
     try:
         q = sm.get_row(
@@ -116,7 +116,7 @@ def patch_rest(module_code, object_code, value):
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
 
-    permission_module_code = object_definition.get("permission_module_code", module_code)
+    permission_module_code = object_definition.get("module_code", module_code)
 
     data = request.get_json()
     params = parse_request_args(object_definition)
@@ -146,7 +146,7 @@ def delete_rest(module_code, object_code, value):
     object_definition = ModuleMethods.object_config(module_code, object_code)
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
-    permission_module_code = object_definition.get("permission_module_code", module_code)
+    permission_module_code = object_definition.get("module_code", module_code)
 
     params = parse_request_args(object_definition)
 
@@ -176,7 +176,7 @@ def get_page_number_and_list(module_code, object_code, value):
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
 
-    permission_module_code = object_definition.get("permission_module_code", module_code)
+    permission_module_code = object_definition.get("module_code", module_code)
 
     params = parse_request_args(object_definition)
     page_number = sm.get_page_number(

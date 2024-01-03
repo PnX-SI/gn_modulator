@@ -33,9 +33,9 @@ layout:
           hidden: __f__!context.map_params?.bounds_filter_value
           display: geojson
           object_code: ref_geo.point
+          module_code: MODULATOR
           title: PK / PR
           activate: false
-          module_code: MODULATOR
           zoom_min: 12
           popup_fields:
             - point_code

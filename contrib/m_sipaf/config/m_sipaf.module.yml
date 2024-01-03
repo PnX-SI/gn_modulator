@@ -28,7 +28,7 @@ objects:
     cruved: CRUD
   synthese:
     schema_code: syn.synthese
-    permission_module_code: SYNTHESE
+    module_code: SYNTHESE
     label: observation faune (<1km)
     labels: observations faune (<1km)
     cruved: R

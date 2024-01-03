@@ -124,6 +124,9 @@ export class ModulesLayoutComponent implements OnInit {
   computedItems;
   itemsContext;
 
+  // for tabs
+  selectedIndex;
+
   actionProcessing; // pour les spinners
 
   utils; // pour acceder à utils dans les templates
@@ -428,8 +431,6 @@ export class ModulesLayoutComponent implements OnInit {
     this.contextSave = contextCopy;
   }
 
-  processItems() {}
-
   initCheckParentsHeight() {
     const elem = document.getElementById(this._id);
     if (!elem || this.parentResizeObserver) {
@@ -691,6 +692,59 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   refreshData(objectCode) {}
+
+  checkObjectPermission(context) {
+    const objectConfig = this._mObject.objectConfigContext(context);
+    if (objectConfig.permission_object_code || objectConfig.module_code) {
+      const permissionModuleCode = objectConfig.module_code || this.context.module_code;
+      const permissionObjectCode = objectConfig.permission_object_code || 'ALL';
+      const res = this._mObject.hasPermission(permissionModuleCode, permissionObjectCode, 'R');
+      return res;
+    }
+    return true;
+  }
+
+  processItems() {
+    const items = this.layoutType == 'items' ? this.layout : this.layout.items || [];
+
+    this.computedItems = items.map
+      ? items.map((item) => {
+          if (!utils.isObject(item)) {
+            return item;
+          }
+          const computedItem = {};
+          const itemContext = {
+            ...this.context,
+            object_code: item.object_code || this.context.object_code,
+            module_code: item.module_code || this.context.module_code,
+          };
+          for (const key of ['label', 'hidden', 'disabled', 'lazy_loading']) {
+            computedItem[key] = this._mLayout.evalLayoutElement({
+              element: item[key],
+              layout: item,
+              data: this.data,
+              context: itemContext,
+            });
+          }
+          // checkItemPermission
+          if (item.object_code && !this.checkObjectPermission(itemContext)) {
+            computedItem['hidden'] = true;
+          }
+          return computedItem;
+        })
+      : [];
+
+    // pour les tabs
+    // - si computedLayout.tab
+    //    alors on choisi cet onglet par defaut
+    setTimeout(() => {
+      if (this.computedLayout.display == 'tabs' && this.computedLayout.selected_tab) {
+        this.selectedIndex = this.computedItems.findIndex(
+          (i) => i.label == this.computedLayout.selected_tab,
+        );
+      }
+    }, 100);
+  }
 
   onDestroy() {}
 
