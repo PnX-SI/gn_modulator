@@ -18,8 +18,12 @@ def get_list_rest(module_code, object_code, additional_params={}):
     params = {**parse_request_args(object_definition), **additional_params}
 
     action = params.get("action") or "R"
-    query_infos = sm.get_query_infos(
-        module_code=permission_module_code, action=action, params=params, url=request.url
+    query_infos = (
+        {}
+        if params.get("no_info")
+        else sm.get_query_infos(
+            module_code=permission_module_code, action=action, params=params, url=request.url
+        )
     )
 
     q_list = query_list(
@@ -44,7 +48,7 @@ def get_list_rest(module_code, object_code, additional_params={}):
         response.mimetype = "text/plain"
         return response
 
-    res_list = q_list.all()
+    res_list = [] if params.get("only_info") else q_list.all()
 
     out = {
         **query_infos,

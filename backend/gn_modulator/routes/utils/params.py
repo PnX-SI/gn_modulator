@@ -6,6 +6,7 @@ from gn_modulator.utils.filters import parse_filters
 def parse_request_args(object_definition={}):
     params = {
         "no_info": load_param(request.args.get("no_info", "false")),
+        "only_info": load_param(request.args.get("only_info", "false")),
         "as_geojson": load_param(request.args.get("as_geojson", "false")),
         "flat_keys": load_param(request.args.get("flat_keys", "false")),
         "compress": load_param(request.args.get("compress", "false")),
