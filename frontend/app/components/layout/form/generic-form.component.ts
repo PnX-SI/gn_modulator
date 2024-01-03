@@ -41,22 +41,19 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
   }
 
   onFormGroupChange() {
-    if (
-      !this.data ||
-      !this.listenToChanges ||
-      this._formService.isEqual(this.formGroup.value, this.data)
-    ) {
+    const formValue = this.formGroup.getRawValue();
+    if (!this.data || !this.listenToChanges || this._formService.isEqual(formValue, this.data)) {
       return;
     }
     const dataChanged = {};
-    for (let key of Object.keys(this.formGroup.value)) {
-      if (!this._formService.isEqual(this.formGroup.value[key], this.data[key])) {
-        dataChanged[key] = this.formGroup.value[key];
+    for (let key of Object.keys(formValue)) {
+      if (!this._formService.isEqual(formValue[key], this.data[key])) {
+        dataChanged[key] = formValue[key];
       }
     }
 
     // pour ne pas casser la référence à data
-    this._formService.updateData(this.data, this.formGroup.getRawValue());
+    this._formService.updateData(this.data, formValue);
     this.updateForm();
     this.emitAction({ type: 'data-change' });
     this._mLayout.reComputeLayout('form');
@@ -85,7 +82,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     this.context.appearance = this.layout.appearance;
     this.context.skip_required = this.layout.skip_required;
     this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
-    this._formService.updateData(this.data, this.formGroup.value);
+    this._formService.updateData(this.data, this.formGroup.getRawValue());
     this.formGroup.valueChanges.subscribe((value) => {
       this.onFormGroupChange();
     });
