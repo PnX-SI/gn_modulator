@@ -82,7 +82,7 @@ def test_schema_rest(
             module_code=module_code,
             object_code=object_code,
             page_size=10,
-            fields="id_passage_faune"
+            fields="id_passage_faune",
         )
     )
     assert r.status_code == 200, "Erreur avec GET PAGE NUMBER"

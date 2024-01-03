@@ -27,8 +27,8 @@ def get_sorter(Model, query, sorter):
     sort_dir = "-" if "-" in sorter else "+"
     sort_spe = "str_num" if "*" in sorter else "num_str" if "%" in sorter else None
     sort_field = sorter
-    for c in '+-%*':
-        sort_field = sort_field.replace(c, '')
+    for c in "+-%*":
+        sort_field = sort_field.replace(c, "")
 
     print(sorter, sort_field)
 

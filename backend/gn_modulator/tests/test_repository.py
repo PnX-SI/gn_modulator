@@ -26,8 +26,8 @@ class TestRepository:
     from flask import g
 
     def test_pretty_sql(self):
-        sm = SchemaMethods('m_sipaf.pf')
-        q = query_list(sm.Model(), 'm_sipaf', 'R', {}, 'select')
+        sm = SchemaMethods("m_sipaf.pf")
+        q = query_list(sm.Model(), "m_sipaf", "R", {}, "select")
         pretty_sql(q)
 
     def test_repo_gn_commons_module(self):
