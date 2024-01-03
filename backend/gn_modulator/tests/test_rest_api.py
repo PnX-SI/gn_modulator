@@ -44,6 +44,19 @@ class TestRest:
             breadcrumbs_page_code="site_details",
         )
 
+    def test_api_export(self, client, users):
+        set_logged_user_cookie(client, users["admin_user"])
+        r = client.get(
+            url_for(
+                "modulator.api_export",
+                module_code="m_sipaf",
+                object_code="site",
+                export_code="m_sipaf.pf",
+            )
+        )
+        assert r.status_code == 200
+        unset_logged_user_cookie(client)
+
     def test_valid_fields(self, client, users):
         """
         test fields valide avec espaces au milieu
