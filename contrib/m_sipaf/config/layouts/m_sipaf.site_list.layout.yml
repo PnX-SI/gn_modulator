@@ -18,11 +18,12 @@ layout:
       flex: 2
       skip_ref_layers: __SKIP_REF_LAYERS__
       items:
-        type: object
-        display: geojson
-        deflate: true
-        open_popup: true
-        popup_fields: __SITE_MAP_POPUP_FIELDS__
+        - type: object
+          display: geojson
+          deflate: true
+          open_popup: true
+          popup_fields: __SITE_MAP_POPUP_FIELDS__
+        - code: m_sipaf.geojson_pkpr
 
     - flex: 2
       items:

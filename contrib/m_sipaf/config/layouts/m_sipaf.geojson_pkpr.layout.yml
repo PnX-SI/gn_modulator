@@ -1,0 +1,35 @@
+type: layout
+code: m_sipaf.geojson_pkpr
+title: geojson pk/pr
+description: geojson pour afficher les pk/pr
+
+layout:
+  - type: object
+    hidden: __f__!context.map_params?.bounds_filter_value
+    display: geojson
+    object_code: ref_geo.point
+    module_code: MODULATOR
+    title: PK / PR
+    activate: false
+    zoom_min: 12
+    popup_fields:
+      - point_code
+      - point_name
+      - type.type_name
+      - key: additional_data.route_dept
+        title: axe
+      - key: additional_data.gestion
+        title: gestion
+      - key: additional_data.id_section
+        title: section
+      - key: additional_data.numero
+        title: numero
+      - key: additional_data.abscisse
+        title: abscisse
+    prefilters: |
+      __f__{
+        const mapBoxFilterValue = context.map_params?.bounds_filter_value;
+        return mapBoxFilterValue && `geom_4326 bbox ${mapBoxFilterValue}`;
+      }
+    style:
+      color: orange

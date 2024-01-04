@@ -4,8 +4,10 @@ title: Formulaire pour un object (avec carte)
 args:
   object_code: object concerné par le Formulaire
   layout: layout des champs du formulaire
-
-# TODO
+  geojsons: éléments additionels pour la carte
+  zoom: "zoom"
+  skip_ref_layout: code des ref_layers à ne pas afficher
+  # TODO
 # - paramètres de carte
 #   - geometry_field_name (par defaut)
 #   - edit, gps, zoom
@@ -24,7 +26,7 @@ layout:
         gps: true
         zoom: __ZOOM__
         skip_ref_layers: __SKIP_REF_LAYERS__
-
+        items: __GEOJSONS__
       - items:
         - type: breadcrumbs
           flex: "0"
@@ -33,3 +35,5 @@ layout:
         - items: __LAYOUT__
         - code: utils.buttons_form
           flex: '0'
+defaults:
+  geojson: []

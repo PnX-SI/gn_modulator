@@ -11,7 +11,7 @@
 
 - [M_SIPAF-EXPORT] ajout des champs acteurs, objectifs et usages
 - [M_SIPAF-EXPORT] possibilité de voir le select de l'export (aide pour faire une vue à destination du module d'import)
-
+- [M_SIPAF-MAP] ajout des pk/pr sur toutes les cartes + non actifs par défault
 
 ## 1.2.1 (2023-10-12)
 

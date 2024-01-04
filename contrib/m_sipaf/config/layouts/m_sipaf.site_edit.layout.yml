@@ -12,3 +12,5 @@ layout:
       layout: __SITE_FORM_FIELDS__
       zoom: "__f__o.value(x) ? 12 : null"
       skip_ref_layers: __SKIP_REF_LAYERS__
+      geojsons:
+        - code: m_sipaf.geojson_pkpr
