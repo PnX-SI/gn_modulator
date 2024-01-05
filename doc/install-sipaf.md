@@ -7,11 +7,11 @@ Préalable :
 ```
 source <GeoNature>/backend/venv/bin/activate
 
-# Installation du module geonature gn_modulator
+# Installation du module Modulator
 geonature install-gn-module ~/gn_modulator MODULATOR
 
 # Installation du sous-module SIPAF
-geonature modulator install m_sipaf
+geonature modulator install -p ./contrib/m_sipaf
 
 # Import du ref_geo linéaire des routes
 geonature modulator import -i ref_geo.route -d  <data_dir_path>
