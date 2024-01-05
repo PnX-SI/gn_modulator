@@ -6,19 +6,43 @@
 
 **🚀 Nouveautés**
 
-- [FRONTEND-MAP] possibilité de désactiver les couches par default dans les contrôles (par exemple pour les `PK / PR`)
-- [FRONTEND-MAP] affichage plus fluide lors du chargement des données lors de l'ouverture d'une popup
+- [FRONTEND-MAP] Possibilité de désactiver des couches par défaut dans les contrôles (par exemple pour les PK et PR de SIPAF)
+- [FRONTEND-MAP] Possibilité de désactiver des couches additionnelles définies dans la configuration globale de GeoNature (#64)
+- [FRONTEND-MAP] Affichage plus fluide lors du chargement des données lors de l'ouverture d'une popup
+- [FRONTEND-MAP] Ajout du composant Nominatim sur les cartes, permettant de rechercher un lieu et de se centrer dessus
+- [FRONTEND-MAP] Conservation du zoom et de l'étendue de la carte quand on change de page (#63)
+  TODO : Conservation du zoom de la carte de la page de recherche quand on créé un nouvel objet (#63)
+- [FRONTEND-MAP] Affichage des petits polygones et lignes sous forme de point à large échelle pour en améliorer la visibilité (#65)
+- [SIPAF-EXPORT] ajout des champs acteurs, objectifs et usages
+- [SIPAF-EXPORT] possibilité de voir le select de l'export (aide pour faire une vue à destination du module Export)
+- [SIPAF] Ajout d'un exemple de vue d'export (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/config/exports/m_sipaf.pf.export.sql) + des commandes d'aide ???
+- [SIPAF-MAP] Ajout des pk/pr sur toutes les cartes, en les désactivant par défaut
+- [SIPAF] Suppression de la possibilité de mettre une personne en tant qu'acteur des PAF, pour se limiter aux organismes
+- [SIPAF] Suppression des "Espèces ciblées" au niveau des objectifs des PAF
+- [SIPAF] Champs "Usages" désactivé quand le PAF est de type spécifique (#66)
+- [SIPAF] Intégration des voies navigables métropolitaines à partir de la BD TOPO de l'IGN
+- [SIPAF] Ajout d'un filtre des PAF possédant un diagnostic
+- [SIPAF] Ne pas afficher les observateurs dans la liste des observations autour d'un PAF
+- [SIPAF] Application des permissions de la Synthèse (portée et sensibilité) quand on récupère la liste des observations autour d'un PAF
+- [SIPAF] Application des portées des permissions sur les diagnostics
+- [IMPORT] Gestion des relations multiples pour les acteurs ou les usages des PAF par exemple (#58)
+- [IMPORT] Exécution des taches en asynchrone avec Celery
+- Améliorations, nettoyage et corrections diverses du code source
+- Améliorations et compléments des tests automatisés
+- Ajout d'un script permettant de traiter les extractions INPN (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/data/scripts/process_sinp.sh)
+  TODO : Fichier à renommer de SINP à INPN.
 
-- [M_SIPAF-EXPORT] ajout des champs acteurs, objectifs et usages
-- [M_SIPAF-EXPORT] possibilité de voir le select de l'export (aide pour faire une vue à destination du module d'import)
-- [M_SIPAF-MAP] ajout des pk/pr sur toutes les cartes + non actifs par défault
+**🐛 Corrections**
+
+- Correction du filtrage des objets sur la carte qui ne prenaient pas en compte les filtres appliqués
+- Correction de la mise à jour des géométries de type Polygone
 
 ## 1.2.1 (2023-10-12)
 
 **🐛 Corrections**
 
-- [FRONTEND] Correction du compteur de nombre d'éléments dans les listes déroulantes quand celles-ci sont filtrés par une recherche textuelle
-- [FRONTEND] Correction de la gestion des colonnes des tableaux.
+- [FRONTEND] Correction du compteur de nombre d'éléments dans les listes déroulantes quand celles-ci sont filtrées par une recherche textuelle
+- [FRONTEND] Correction de la gestion des colonnes des tableaux
 - [FRONTEND] Correction du fichier `frontend/package-lock.json` qui n'était pas à jour avec le fichier `package.json`
 
 ## 1.2.0 (2023-10-09)
