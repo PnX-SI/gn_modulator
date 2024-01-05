@@ -7,8 +7,8 @@ meta:
   model: m_sipaf.models.DiagnosticVegetationTablier
   module_code: m_sipaf
   genre: M
-  label: Diagnostic de vegetation tablier
-  labels: Diagnostics de vegetation tablier
+  label: Diagnostic de végétation tablier
+  labels: Diagnostics de végétation tablier
   label_field_name: id_diagnostic
   unique:
     - id_diagnostic
@@ -21,4 +21,4 @@ properties:
     description: Type de végétation présente sur le tablier
   id_nomenclature_vegetation_couvert:
     title: Couverture végétale
-    description: Couverture végétale pour ce type de végétationd
+    description: Couverture végétale pour ce type de végétation
