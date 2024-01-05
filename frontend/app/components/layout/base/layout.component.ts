@@ -151,7 +151,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     // subscription pour recalculer le layout
     this._subs['reComputeLayout'] = this._mLayout.$reComputeLayout
-      .pipe(debounceTime(100))
+      .pipe(debounceTime(50))
       .subscribe(() => {
         this.computeLayout();
       });
@@ -437,7 +437,7 @@ export class ModulesLayoutComponent implements OnInit {
       return;
     }
     this.$parentsHeight = new Subject();
-    this.$parentsHeight.pipe(debounceTime(100)).subscribe(() => {
+    this.$parentsHeight.pipe(debounceTime(50)).subscribe(() => {
       this.processParentsHeightChange();
     });
     this.parentResizeObserver = new ResizeObserver(() => this.$parentsHeight.next(true));
@@ -480,16 +480,18 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   setStyleOverFlow(height: any = null) {
+    let styleHeight;
+    const isTabs = this.computedLayout.display == 'tabs';
     if (!height) {
-      height = 50;
+      styleHeight = 50;
     } else {
       this.heightOverflowSave = height;
+      styleHeight = isTabs ? height - 50 : height;
     }
-    const isTabs = this.computedLayout.display == 'tabs';
+
     const style = {};
 
-    style['height'] = isTabs ? `${height - 50}px` : `${height}px`;
-
+    style['height'] = `${styleHeight}px`;
     if (!isTabs) {
       style['overflow-y'] = 'scroll';
     }
