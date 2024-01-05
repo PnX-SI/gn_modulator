@@ -132,7 +132,7 @@ class SchemaExport:
         return keep_columns
 
     def parse_sql(self, q):
-        """pour generer une vue destinée au module d'import"""
+        """Pour générer une vue destinée au module Export"""
         txt = pretty_sql(q)
 
         txt = txt.replace("\n", " ")
