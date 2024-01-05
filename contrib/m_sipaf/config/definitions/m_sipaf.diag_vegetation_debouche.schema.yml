@@ -7,8 +7,8 @@ meta:
   model: m_sipaf.models.DiagnosticVegetationDebouche
   module_code: m_sipaf
   genre: M
-  label: Diagnostic de vegetation débouchés
-  labels: Diagnostics de vegetation débouchés
+  label: Diagnostic de végétation débouchés
+  labels: Diagnostics de végétation débouchés
   label_field_name: id_diagnostic
   unique:
     - id_diagnostic
@@ -18,7 +18,7 @@ meta:
 properties:
   id_nomenclature_vegetation_type:
     title: Type de végétation
-    description: Type de végétation présente sur aux débouchés de l'ouvrage
+    description: Type de végétation présente aux débouchés de l'ouvrage
   id_nomenclature_vegetation_couvert:
     title: Couverture végétale
     description: Couverture végétale pour ce type de végétation
