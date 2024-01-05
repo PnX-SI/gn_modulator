@@ -45,46 +45,52 @@ deactivate
 
 ### Installation de sous-modules
 
-La commande suivante permet d'installer des sous-modules
+La commande suivante permet d'installer un sous-module :
 
 ```bash
-geonature modulator install <module_code>
+geonature modulator install -p <chemin_du_module>
+sudo systemctl restart geonature
 ```
 
-Il faut au préalable placer la configuration du sous-module dans le
-dossier `<gn_modulator>/config/modules`
+Cette commande : 
+- installe le module python
+- le module dans la base de données
+- fait les migrations
+- copie le dossier de configuration du sous-module dans le dossier `/backend/media/modulator/config` de GeoNature
 
-- idéalement dans le dossier `<gn_modulator>/config/modules/externals`
-  pour les sous-modules externes
-- cela peut être une copie ou un lien symbolique vers le dossier
-- le formalisme pour les codes des sous-modules est le suivante :   
-   - en minuscule
-   - prefixé par `m_`
-   - par exemple `m_sipaf`, `m_monitoring`, `m_protocol_test`
+Pour mettre à jour un sous-module, il faut relancer sa commande d'installation.
+
+Le formalisme pour les codes des sous-modules est le suivante :   
+- en minuscule
+- prefixé par `m_`
+- par exemple `m_sipaf`, `m_monitoring`, `m_protocol_test`
 
 Des sous-modules sont déjà présents dans le dossier
-`<gn_modulator>/config/modules/contrib` :
+`/config/modules/contrib` :
+
+- Le module SIPAF (passages à faune) :   
+   - `geonature modulator install -p ./contrib/m_sipaf`
 
 - Le module gestionnaire de sites :   
-   - `geonature modulator install m_monitoring`
-   - Défini les tables suivantes :
+   - `geonature modulator install -p ./contrib/m_monitoring`
+   - Définit les tables suivantes :
       - site
       - groupe de sites
       - visite
       - observation
-   - les api (liste, get, post, patch, delete) associées
-   - Les pages associées au module suivent la hierachie:
+   - Les API (liste, get, post, patch, delete) associées
+   - Les pages associées au module suivent la hiérarchie:
       - site -> visite -> observation
-   - des données d'exemples peuvent être ajoutées avec la commande
+   - Des données d'exemples peuvent être ajoutées avec la commande
      `geonature modulator features m_monitoring.exemples`
 
-- Un protocole de test pour le module monitoring : 
+- Un protocole de test pour le module Monitoring : 
    - Il faut avoir installé au préalable le sous-module
      `m_monitoring`
    - Puis installer le protocole de test : 
-     `geonature modulator install m_protocol_test` : 
+     `geonature modulator install -p ./contrib/m_protocol_test` : 
       - module (protocole) -> site -> visite -> observation
-   - des données d'exemple peuvent être ajoutées avec la commande
+   - Des données d'exemple peuvent être ajoutées avec la commande
      `geonature modulator features m_monitoring.exemples`
 
 ## Développement
