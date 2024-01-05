@@ -46,6 +46,14 @@ class TestRest:
 
     def test_api_export(self, client, users):
         set_logged_user_cookie(client, users["admin_user"])
+        print(
+            url_for(
+                "modulator.api_export",
+                module_code="m_sipaf",
+                object_code="site",
+                export_code="m_sipaf.pf",
+            )
+        )
         r = client.get(
             url_for(
                 "modulator.api_export",
