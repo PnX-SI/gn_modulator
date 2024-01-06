@@ -19,6 +19,7 @@ from pypnusershub.tests.utils import set_logged_user_cookie, unset_logged_user_c
 from gn_modulator import ModuleMethods
 from .utils.rest import test_schema_rest
 from .data import commons as data_commons
+from .fixtures import passages_faune_with_diagnostic
 
 
 @pytest.mark.usefixtures("client_class", "temporary_transaction")
@@ -44,7 +45,7 @@ class TestRest:
             breadcrumbs_page_code="site_details",
         )
 
-    def test_api_export(self, client, users):
+    def test_api_export(self, client, users, passages_faune_with_diagnostic):
         set_logged_user_cookie(client, users["admin_user"])
         r = client.get(
             url_for(
