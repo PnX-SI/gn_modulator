@@ -28,6 +28,5 @@ geonature modulator import -m MODULATOR -o ref_geo.linear -d ${data_path}/linear
 # Corrélation entre passages à faune et ref_geo
 
 ```
-SELECT pr_sipaf.process_all_cor_area_pf();
 SELECT pr_sipaf.process_all_cor_linear_pf();
 ```
