@@ -80,7 +80,46 @@ par exemple pour le module `m_sipaf`
 geonature modulator install -p <chemin vers gn_modulator>/contrib/m_sipaf
 ```
 
+### Mise à jour
 
+#### Modulator
+
+-   Téléchargez la nouvelle version du module
+
+    ```
+    wget https://github.com/PnX-SI/gn_modulator/archive/X.Y.Z.zip
+    unzip X.Y.Z.zip
+    rm X.Y.Z.zip
+    ```
+
+-   Renommez l'ancien et le nouveau répertoire
+
+    ```
+    mv ~/gn_modulator ~/gn_modulator_old
+    mv ~/gn_modulator-X.Y.Z ~/gn_modulator
+    ```
+
+-   Si vous avez encore votre configuration du module dans le dossier `config` du module, copiez le vers le dossier de configuration centralisée de GeoNature :
+
+    ```
+    cp ~/gn_modulator_old/config/conf_gn_module.toml  ~/geonature/config/import_config.toml
+    ```
+
+-   Lancez la mise à jour du module
+
+    ```
+    source ~/geonature/backend/venv/bin/activate
+    geonature install-gn-module ~/gn_modulator MODULATOR
+    sudo systemctl restart geonature
+    ```
+
+#### Sous-module
+
+Relancer la commande d'installation du module
+
+```
+geonature modulator install -p <chemin vers le sous-module> <CODE_DU_SOUS_MODULE>
+```
 
 ## Développement
 
