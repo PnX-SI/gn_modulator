@@ -108,8 +108,6 @@ export class ModulesLayoutComponent implements OnInit {
 
   // pour les éléments avec overflow = true
   parentResizeObserver;
-  parentsHeightSave;
-  parentsHeight;
   parentsElement;
   heightOverflowSave;
 
@@ -460,7 +458,9 @@ export class ModulesLayoutComponent implements OnInit {
       return;
     }
     if (this.computedLayout.overflow) {
+      // setTimeout(() => {
       this.processHeightOverflow();
+      // });
     }
     this.customParentsHeightChange();
   }
@@ -469,19 +469,31 @@ export class ModulesLayoutComponent implements OnInit {
 
   // pour gérer les composant avec overflow = true
   processHeightOverflow() {
-    setTimeout(() => {
-      if (
-        !this.heightOverflowSave ||
-        this.parentsElement[0].clientHeight < this.heightOverflowSave
-      ) {
-        this.setStyleOverFlow();
-        setTimeout(() => {
-          this.setStyleOverFlow(this.parentsElement[0].clientHeight);
-        }, 10);
-      } else {
+    const condNothing =
+      this.heightOverflowSave &&
+      this.docHeightSave &&
+      document.body.clientHeight == this.docHeightSave &&
+      document.body.clientHeight == this.docHeightSave;
+
+    if (condNothing) {
+      return;
+    }
+
+    const condUp =
+      !(this.heightOverflowSave && this.docHeightSave) ||
+      document.body.clientHeight < this.docHeightSave ||
+      this.parentsElement[0].clientHeight < this.heightOverflowSave;
+
+    let direction = condUp ? 'up' : 'down';
+
+    if (direction == 'up') {
+      this.setStyleOverFlow();
+      setTimeout(() => {
         this.setStyleOverFlow(this.parentsElement[0].clientHeight);
-      }
-    });
+      }, 10);
+    } else if (direction == 'down') {
+      this.setStyleOverFlow(this.parentsElement[0].clientHeight);
+    }
   }
 
   setStyleOverFlow(height: any = null) {
@@ -491,9 +503,12 @@ export class ModulesLayoutComponent implements OnInit {
       styleHeight = 50;
     } else {
       this.heightOverflowSave = height;
-      styleHeight = isTabs ? height - 50 : height;
+      this.docHeightSave = document.body.clientHeight;
+      // styleHeight = isTabs ? height - 50 : height;
+      styleHeight = isTabs ? height - 65 : height;
     }
 
+    // styleHeight = 50
     const style = {};
 
     style['height'] = `${styleHeight}px`;
