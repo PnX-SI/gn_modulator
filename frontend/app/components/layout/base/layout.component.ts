@@ -76,6 +76,7 @@ export class ModulesLayoutComponent implements OnInit {
 
   /** pour l'affichage du debug */
   debugData;
+  isDebugAllowed = false;
 
   // données associées à layout.key
   elementData;
@@ -168,6 +169,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     // lorque une postInitialisation est nécessaire
     this.postInit();
+    this.isDebugAllowed = this._mObject.hasPermission('MODULATOR', 'ADMINATOR', 'R');
   }
 
   onRedrawElem() {}
@@ -635,7 +637,7 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   processDebugData() {
-    if (!this.layout) {
+    if (!(this.layout && this.isDebugAllowed)) {
       return;
     }
 
