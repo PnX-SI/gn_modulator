@@ -8,7 +8,7 @@
 
 ## Configuration d'un sous-module
 
-Pour ce qui va suivre nous nous baserons sur le module de passage à faune (m_sipaf)[../contrib/m_sipaf]
+Nous prenons comme exemple le seul et unique module `m_sipaf`
 
 ### Structure
 
@@ -61,7 +61,7 @@ La structure du dossier de la configuration du module est la suivante :
          - m_sipaf.site_list.yml
 
    ######################################################
-   optionel
+   optionnel
 
    # pour documenter des traitement de données annexes
    # par exemple bd_topo, données sinp etc....
@@ -192,3 +192,5 @@ layout:
       geojsons:
         - code: m_sipaf.geojson_pkpr
 ```
+
+## Layout
