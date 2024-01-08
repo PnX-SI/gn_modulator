@@ -154,10 +154,9 @@ export class ModulesLayoutMapComponent extends ModulesLayoutComponent implements
     if (utils.fastDeepEqual(this.data[this.computedLayout.key], dataGeom)) {
       return;
     }
-    // console.log('edit geom changed', this.dataSave[this.computedLayout.key])
 
     this.data[this.computedLayout.key] = dataGeom;
-    // this._mLayout.reComputeLayout('map');
+    this._mLayout.reComputeLayout('map');
   }
 
   customParentsHeightChange(): void {
