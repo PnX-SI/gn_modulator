@@ -318,6 +318,7 @@ def cmd_check():
 
     print()
 
+
 commands = [
     cmd_check,
     cmd_test_grammar,
