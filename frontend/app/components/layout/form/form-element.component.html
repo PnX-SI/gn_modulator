@@ -25,7 +25,7 @@
       hidden
       [disabled]="formControl.disabled"
       (change)="fileChange($event.target.files)"
-      />
+    />
   </ng-container>
 
   <ng-container
@@ -48,18 +48,17 @@
         [max]="computedLayout.max"
         (change)="onInputChange()"
         [errorStateMatcher]="_mForm.matcher"
-        />
-        <!-- [required]="computedLayout.required && !context.skip_required" -->
+      />
 
       <input
         *ngIf="'uuid' == computedLayout.type"
         matInput
-        type="text"
         [placeholder]="computedLayout.placeholder"
         [formControl]="formControl"
         [required]="computedLayout.required"
-        (change)="onInputChange()"
-        />
+        (change)="onUUIDChange()"
+        (keyup)="onUUIDChange()"
+      />
 
       <input
         *ngIf="'integer' == computedLayout.type"
@@ -72,7 +71,7 @@
         [min]="computedLayout.min"
         [max]="computedLayout.max"
         (change)="onInputChange()"
-        />
+      />
 
       <textarea
         *ngIf="['textarea', 'json'].includes(computedLayout.type)"
@@ -85,7 +84,7 @@
         [required]="computedLayout.required"
         (change)="onInputChange()"
         style="white-space: pre"
-        ></textarea>
+      ></textarea>
 
       <mat-hint>{{ computedLayout.hint }}</mat-hint>
 
@@ -111,6 +110,10 @@
       <!-- integer -->
       <mat-error *ngIf="formControl.errors && formControl.errors.integer">
         La valeur doit être un nombre entier
+      </mat-error>
+
+      <mat-error *ngIf="formControl.errors && formControl.errors.uuid">
+        La valeur doit être au format uuid
       </mat-error>
 
       <mat-icon

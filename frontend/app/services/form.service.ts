@@ -16,6 +16,9 @@ import { MediaService } from '@geonature_common/service/media.service';
 
 import utils from '../utils';
 
+const regexExpUUID =
+  /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -61,6 +64,10 @@ export class ModulesFormService {
     if (layout.type == 'integer') {
       validators.push(this.integerValidator());
     }
+    if (layout.type == 'uuid') {
+      validators.push(this.uuidValidator());
+    }
+
     if (layout.type_widget == 'medias') {
       validators.push(this._mediaService.mediasValidator());
     }
@@ -351,6 +358,13 @@ export class ModulesFormService {
     return (control: AbstractControl): ValidationErrors | null => {
       return control.value && parseInt(control.value) != control.value
         ? { integer: { value: control.value } }
+        : null;
+    };
+  }
+  uuidValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      return control.value && !regexExpUUID.test(control.value)
+        ? { uuid: { value: control.value } }
         : null;
     };
   }

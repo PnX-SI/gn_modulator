@@ -363,6 +363,12 @@ site_form_fields:
   items:
     - label: Propriétés
       items:
+        # - direction: row
+        #   items:
+        #     - type: message
+        #       json: __f__formGroup.value
+        #     - type: message
+        #       json: __f__data
         - type: message
           hidden: __f__(data && data[o.geometry_field_name(x)])
           html: Veuillez saisir une géométrie sur la carte

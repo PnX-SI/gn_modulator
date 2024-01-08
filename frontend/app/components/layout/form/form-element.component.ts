@@ -42,6 +42,13 @@ export class ModulesFormElementComponent
     this.formControl.patchValue(event);
   }
 
+  onUUIDChange() {
+    if (this.formControl.value == '') {
+      this.formControl.setValue(null);
+      this.data[this.computedLayout.key] = null;
+    }
+  }
+
   onInputChange() {
     if (this.computedLayout.type == 'number') {
       this.formControl.patchValue(parseFloat(this.formControl.value));
