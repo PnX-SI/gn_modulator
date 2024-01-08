@@ -7,8 +7,8 @@ meta:
   model: m_sipaf.models.Diagnostic
   module_code: m_sipaf
   genre: M
-  label: diagnostic de fontionalité
-  labels: diagnostics de fontionalité
+  label: diagnostic de fonctionnalité
+  labels: diagnostics de fonctionnalité
   label_field_name: date_diagnostic
   unique:
     - id_passage_faune
@@ -21,7 +21,7 @@ properties:
     title: Passage faune
   date_diagnostic:
     title: Date
-    description: Date d'établissemnt du diagnostic de fonctionalité
+    description: Date d'établissemnt du diagnostic de fonctionnalité
   id_role:
     title: Responsable du suivi
     description: Personne en charge du suivi
@@ -30,20 +30,20 @@ properties:
     description: Organisme en charge du suivi
   commentaire_diagnostic:
     title: Commentaire (diagnostic)
-    description: champs libre pour information complémentaire indicatives
+    description: champs libre pour information complémentaire indicative
 
   # obstacles
   commentaire_perturbation_obstacle:
     title: Commentaire (perturbation / obstacle)
-    description: champs libre pour information complémentaire indicatives
+    description: champs libre pour information complémentaire indicative
   nomenclatures_diagnostic_obstacle:
     title: Obstacle(s)
-    description: Obstacles aux déplacement pouvant affecter la fonctionalité d'n ouvrage
+    description: Obstacles aux déplacementx pouvant affecter la fonctionnalité d'un ouvrage
   obstacle_autre:
     title: Obstacle autre
   nomenclatures_diagnostic_perturbation:
     title: Perturbation(s)
-    description: Éléments pouvant perturber la fonctionalité d'un ouvrage
+    description: Éléments pouvant perturber la fonctionnalité d'un ouvrage
   perturbation_autre:
     title: Perturbation autre
   nomenclatures_diagnostic_ouvrage_hydrau_etat_berge:
@@ -70,10 +70,10 @@ properties:
     description: Végétation présente sur le tablier
   vegetation_debouche:
     title: Vegetation (débouchés)
-    description: Végétation présente sur aux débouchés de l'ouvrage
+    description: Végétation présente aux débouchés de l'ouvrage
   commentaire_amenagement:
     title: Commentaire (aménagement)
-    description: champs libre pour information complémentaire indicatives
+    description: champs libre pour information complémentaire indicative
 
   # synthese
   id_nomenclature_franchissabilite:
@@ -81,14 +81,14 @@ properties:
     description: Estimation de la franchissabilité de l'ouvrage pour les animaux
   id_nomenclature_interet_petite_faune:
     title: Intérêt petite_faune
-    description: Intérêt pour la petite_faune
+    description: Intérêt pour la petite faune
   id_nomenclature_interet_grande_faune:
     title: Intérêt grande_faune
-    description: Intérêt pour la grande_faune
+    description: Intérêt pour la grande faune
   commentaire_synthese:
     title: Commentaire (synthèse)
-    description: champs libre pour information complémentaire indicatives
+    description: champs libre pour information complémentaire indicative
 
   amenagement_faire:
     title: Aménagements à faire
-    description: Détails aménagements ou autres mesures à réaliser pour rendre l'ouvrage plus fonctionel
+    description: Détails aménagements ou autres mesures à réaliser pour rendre l'ouvrage plus fonctionnel
