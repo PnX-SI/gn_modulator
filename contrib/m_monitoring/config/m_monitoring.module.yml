@@ -1,9 +1,0 @@
-type: module
-code: m_monitoring
-title: "Module monitoring"
-description: "Module monitoring, apporte les schemas des sites, visites, etc..."
-
-template_code: m_monitoring.site_template
-template_params:
-  module_label: Sites
-  module_desc: Gestionnaire de sites
