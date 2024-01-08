@@ -469,14 +469,19 @@ export class ModulesLayoutComponent implements OnInit {
 
   // pour gérer les composant avec overflow = true
   processHeightOverflow() {
-    if (!this.heightOverflowSave || this.parentsElement[0].clientHeight < this.heightOverflowSave) {
-      this.setStyleOverFlow();
-      setTimeout(() => {
+    setTimeout(() => {
+      if (
+        !this.heightOverflowSave ||
+        this.parentsElement[0].clientHeight < this.heightOverflowSave
+      ) {
+        this.setStyleOverFlow();
+        setTimeout(() => {
+          this.setStyleOverFlow(this.parentsElement[0].clientHeight);
+        }, 10);
+      } else {
         this.setStyleOverFlow(this.parentsElement[0].clientHeight);
-      }, 10);
-    } else {
-      this.setStyleOverFlow(this.parentsElement[0].clientHeight);
-    }
+      }
+    });
   }
 
   setStyleOverFlow(height: any = null) {
@@ -492,6 +497,7 @@ export class ModulesLayoutComponent implements OnInit {
     const style = {};
 
     style['height'] = `${styleHeight}px`;
+    // style['background-color'] = 'red';
     if (!isTabs) {
       style['overflow-y'] = 'scroll';
     }
