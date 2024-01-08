@@ -1,26 +1,26 @@
-DROP VIEW IF EXISTS import_sinp_sipaf.v_sinp;
+DROP VIEW IF EXISTS import_inpn_sipaf.v_inpn;
 
-CREATE VIEW import_sinp_sipaf.v_sinp AS WITH geom AS (
+CREATE VIEW import_inpn_sipaf.v_inpn AS WITH geom AS (
     SELECT
         geom,
         cleobjet AS cleobjet,
         CASE WHEN x_prec is NULL THEN NULL ELSE ROUND(x_prec::NUMERIC) END AS x_prec
     FROM
-        import_sinp_sipaf.point
+        import_inpn_sipaf.point
     UNION
     SELECT
         geom,
         cleobjet AS cleobjet,
         CASE WHEN x_prec is NULL THEN NULL ELSE ROUND(x_prec::NUMERIC) END AS x_prec
     FROM
-        import_sinp_sipaf.ligne
+        import_inpn_sipaf.ligne
     UNION
     SELECT
         geom,
         cleobjet AS cleobjet,
         CASE WHEN x_prec is NULL THEN NULL ELSE ROUND(x_prec::NUMERIC) END AS x_prec
     FROM
-        import_sinp_sipaf.polygone
+        import_inpn_sipaf.polygone
 ),
 num AS (
     SELECT
@@ -33,7 +33,7 @@ num AS (
     CASE WHEN profmoy is NULL THEN NULL ELSE ROUND(profmoy::NUMERIC) END AS profmoy,
     CASE WHEN denbrmax is NULL THEN NULL ELSE ROUND(denbrmax::NUMERIC) END AS denbrmax,
     CASE WHEN denbrmin is NULL THEN NULL ELSE ROUND(denbrmin::NUMERIC) END AS denbrmin
-    FROM import_sinp_sipaf.st_principal p
+    FROM import_inpn_sipaf.st_principal p
 )
 SELECT
     COALESCE(n.altmax, n.altmoy) AS altmax,
@@ -85,9 +85,10 @@ SELECT
     -- urpreuvnum,
     -- uttaiech,
 FROM
-    import_sinp_sipaf.st_principal p
+    import_inpn_sipaf.st_principal p
     JOIN geom g ON g.cleobjet = p.cleobjet
     JOIN num n ON n.cleobs = p.cleobs
-    LEFT JOIN import_sinp_sipaf.st_descr d ON d.cleobs = p.cleobs
-    LEFT JOIN import_sinp_sipaf.st_regrp r ON r.clegrp = substring(p.clegrp, 0, strpos(p.clegrp, '.'))
+    LEFT JOIN import_inpn_sipaf.st_descr d ON d.cleobs = p.cleobs
+    LEFT JOIN import_inpn_sipaf.st_regrp r ON r.clegrp = substring(p.clegrp, 0, strpos(p.clegrp, '.'))
+    WHERE sensiniveau = '0'
     ;
