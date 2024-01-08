@@ -1,4 +1,5 @@
 import sys
+import logging
 from flask import Blueprint, request, g, current_app
 from .commands import commands
 from .schema import SchemaMethods
@@ -19,6 +20,8 @@ from gn_modulator.routes.rest import *  # noqa
 from gn_modulator.routes.exports import *  # noqa
 from gn_modulator.routes.imports import *  # noqa
 
+log = logging.getLogger()
+
 # Creation des commandes pour modules
 blueprint.cli.short_help = "Commandes pour l' administration du module MODULES"
 for cmd in commands:
@@ -37,7 +40,7 @@ def set_current_module(endpoint, values):
 if test_is_app_running():
     init_gn_modulator()
     if get_errors():
-        print(f"\n{errors_txt()}")
+        log.error(f"\n{errors_txt()}")
 
 
 @blueprint.route("/config/<path:config_path>", methods=["GET"])
