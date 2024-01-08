@@ -30,17 +30,17 @@ Voir le fichier [maj-bd_topo-sipaf_1.3.0](./maj-bd_topo-sipaf_1.3.0.md)
 
 ## A faire sur GeoNature
 
-- Installer le module IMPORT
-- Revoir les permissions des groupes d'utilisateurs
-- Passer le paramètre `AUTO_DATASET_CREATION` à `False` pour ne plus créer automatiquement un CA et JDD à chaque fois qu'un utilisateur créé un compte + Supprimer les CA et JDD individuels créés automatiquement jusque là
-- Revoir la conf du formulaire de création de compte ? A vérifier avec CEREMA
-- Mettre à jour la charte d'utilisation ? A vérifier avec CEREMA
-- Basculer sur BBOX mondiale pour inclure les DOM - Conf GN globale
+- [ ] Installer le module IMPORT
+- [ ] Revoir les permissions des groupes d'utilisateurs
+- [ ] Passer le paramètre `AUTO_DATASET_CREATION` à `False` pour ne plus créer automatiquement un CA et JDD à chaque fois qu'un utilisateur créé un compte + Supprimer les CA et JDD individuels créés automatiquement jusque là
+- [ ] Revoir la conf du formulaire de création de compte ? A vérifier avec CEREMA
+- [ ] Mettre à jour la charte d'utilisation ? A vérifier avec CEREMA
+- [ ] Basculer sur BBOX mondiale pour inclure les DOM - Conf GN globale
   - choix de `MAP_CONFIG` `zoom_level` dans `geonature_config.toml`
-- Ajouter vue d'export des PAF dans schéma gn_imports
-- Intégrer canaux dans Ref_Geo (cf ci-dessus)
-- Importer extraction INPN (données non sensibles uniquement) - PNE avec module IMPORT après MEP
-- Modifier la conf GN pour ajouter la couche additionnelle des PAF dans les autres modules :
+- [ ] Ajouter vue d'export des PAF dans schéma gn_exports.v_paf (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/config/exports/m_sipaf.pf.export.sql)
+- [ ] Intégrer canaux dans Ref_Geo (cf ci-dessus)
+- [ ] Importer extraction INPN (données non sensibles uniquement) - PNE avec module IMPORT après MEP
+- [ ] Modifier la conf GN pour ajouter la couche additionnelle des PAF dans les autres modules :
 ```
 [[MAPCONFIG.REF_LAYERS]]
    code = "passages_faune"
@@ -50,5 +50,5 @@ Voir le fichier [maj-bd_topo-sipaf_1.3.0](./maj-bd_topo-sipaf_1.3.0.md)
    activate = true
    style = { color = "red"}
 ```
-- Revoir des nomenclatures - Relancer l'installation du module (cf ci-dessus)
-- Plus tard : étudier le changement de projection de la BDD...
+- [ ] Revoir des nomenclatures - Relancer l'installation du module (cf ci-dessus)
+- [ ] Plus tard : étudier le changement de projection de la BDD...
