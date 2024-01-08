@@ -1,8 +1,6 @@
 # Changelog
 
-## 1.3.0 (unreleased)
-
-:santa: :christmas_tree: :gift:
+## 1.3.0 (8/01/2024)
 
 **🚀 Nouveautés**
 
