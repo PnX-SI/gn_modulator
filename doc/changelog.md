@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.3.0 (8/01/2024)
+## 1.3.0 (2024-01-08)
 
 **🚀 Nouveautés**
 
@@ -8,12 +8,11 @@
 - [FRONTEND-MAP] Possibilité de désactiver des couches additionnelles définies dans la configuration globale de GeoNature (#64)
 - [FRONTEND-MAP] Affichage plus fluide lors du chargement des données lors de l'ouverture d'une popup
 - [FRONTEND-MAP] Ajout du composant Nominatim sur les cartes, permettant de rechercher un lieu et de se centrer dessus
-- [FRONTEND-MAP] Conservation du zoom et de l'étendue de la carte quand on change de page (#63)
-  TODO : Conservation du zoom de la carte de la page de recherche quand on créé un nouvel objet (#63)
+- [FRONTEND-MAP] Conservation du zoom de la carte de la page de recherche quand on créé un nouvel objet (#63)
 - [FRONTEND-MAP] Affichage des petits polygones et lignes sous forme de point à large échelle pour en améliorer la visibilité (#65)
 - [SIPAF-EXPORT] ajout des champs acteurs, objectifs et usages
 - [SIPAF-EXPORT] possibilité de voir le select de l'export (aide pour faire une vue à destination du module Export)
-- [SIPAF] Ajout d'un exemple de vue d'export (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/config/exports/m_sipaf.pf.export.sql) + des commandes d'aide ???
+- [SIPAF] Ajout d'un exemple de vue d'export (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/config/exports/m_sipaf.pf.export.sql)
 - [SIPAF-MAP] Ajout des pk/pr sur toutes les cartes, en les désactivant par défaut
 - [SIPAF] Suppression de la possibilité de mettre une personne en tant qu'acteur des PAF, pour se limiter aux organismes
 - [SIPAF] Suppression des "Espèces ciblées" au niveau des objectifs des PAF
@@ -27,8 +26,7 @@
 - [IMPORT] Exécution des taches en asynchrone avec Celery
 - Améliorations, nettoyage et corrections diverses du code source
 - Améliorations et compléments des tests automatisés
-- Ajout d'un script permettant de traiter les extractions INPN (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/data/scripts/process_sinp.sh)
-  TODO : Fichier à renommer de SINP à INPN.
+- Ajout d'un script permettant de traiter les extractions INPN (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/data/scripts/process_inpn.sh)
 
 **🐛 Corrections**
 
