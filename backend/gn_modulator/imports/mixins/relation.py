@@ -23,7 +23,6 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
 
         # boucle sur les relations n-n
         for relation_key in self.get_n_n_relations():
-            print(self.schema_code, "relation_key_nn", relation_key)
             self.process_relation_n_n_views(relation_key)
 
         # boucle sur les relations 1-n
@@ -112,7 +111,6 @@ class ImportMixinRelation(ImportMixinInsert, ImportMixinProcess, ImportMixinRaw,
         try:
             SchemaMethods.c_sql_exec_txt(sql_delete)
         except Exception as e:
-            print(e)
             self.add_error(
                 error_code="ERR_IMPORT_RELATION_DELETE",
                 error_msg=f"Erreur dans la suppression pour la relation {relation_key}: {str(e)}",
