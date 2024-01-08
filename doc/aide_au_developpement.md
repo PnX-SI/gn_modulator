@@ -58,6 +58,8 @@ could not find expected ':'
 
 ## Frontend
 
+Ces fonctionalités ne sont accessible pour les utilisateurs possédant des droit pour le module `MODULATOR` et l'object `ADMIN` pour l'action de lecture `R`.
+
 ### Paramètre `debug`
 
 L'ajout du paramètre de route `?debug` à l'url courante permet d'afficher certaines informations sur les différents composants de la page.
@@ -80,3 +82,15 @@ Pour chaque élément on peut voir des informations sur le type de composant et 
 Sur la page `/#/modulator/test_layout`, il y a la possibilité de créer, éditer et tester les differents  layout.
 
 ![Image bac à sable layout](./images/bac_a_sable_layout.png)
+
+
+depuis cette page on peut
+
+- choisir un layout présent dans les définitions depuis la liste, le tester et l'éditer
+- ajouter un code de layout directement dans l'url (avec `?layout_code=test_import`) (effetue automatiquement le choix dans le `select` précédent)
+
+- créer un layour de zéro, pour cela il faudrait éditer un dictionnaire au format `yml` avec les clé suivantes
+  - `layout`: configuration du layout
+  - `data` (optionnel): données associées à ce layout
+  - `context` (optionnel): contexte associé à ce layout
+
