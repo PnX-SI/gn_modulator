@@ -311,14 +311,4 @@ export class ModulesLayoutObjectTableComponent
       this.reDrawTable();
     }
   }
-
-  processItems() {
-    this.computedItems = this.layout.items.map((item) =>
-      this._mLayout.computeLayout({
-        layout: item,
-        data: this.data,
-        context: this.context,
-      }),
-    );
-  }
 }
