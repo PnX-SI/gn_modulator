@@ -1,5 +1,8 @@
 # Changelog
 
+
+## 1.3.1 (unreleased)
+
 ## 1.3.0 (2024-01-08)
 
 **🚀 Nouveautés**
