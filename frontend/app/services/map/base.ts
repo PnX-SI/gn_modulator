@@ -33,27 +33,21 @@ export default {
     return this._maps[mapId];
   },
 
-  computeCenter(center: any = null) {
-    let computedCenter;
-    if (!!center) {
-      computedCenter =
-        Array.isArray(center) && center.length == 2
-          ? this.L.latLng(center[0], center[1])
-          : this.computeGeometryCenter(center);
-    }
-
-    // centre dpuis le
-    if (this._mapSettingsSave.center) {
+  computeCenter(center: any = null, keep_zoom_center = false) {
+    if (this._mapSettingsSave.center && keep_zoom_center) {
       return this._mapSettingsSave.center;
     }
 
-    computedCenter =
-      computedCenter ||
-      this.L.latLng(
-        this._mConfig.appConfig().MAPCONFIG.CENTER[0],
-        this._mConfig.appConfig().MAPCONFIG.CENTER[1],
-      );
-    return computedCenter;
+    if (!!center) {
+      return Array.isArray(center) && center.length == 2
+        ? this.L.latLng(center[0], center[1])
+        : this.computeGeometryCenter(center);
+    }
+
+    return this.L.latLng(
+      this._mConfig.appConfig().MAPCONFIG.CENTER[0],
+      this._mConfig.appConfig().MAPCONFIG.CENTER[1],
+    );
   },
 
   computeGeometryCenter(geom) {
@@ -75,22 +69,28 @@ export default {
     );
   },
 
-  computeZoom(zoom = null) {
-    return zoom || this._mapSettingsSave.zoom || this._mConfig.appConfig().MAPCONFIG.ZOOM_LEVEL;
+  computeZoom(zoom = null, keep_zoom_center = false) {
+    if (zoom) {
+      return zoom;
+    }
+    if (keep_zoom_center && this._mapSettingsSave.zoom) {
+      return this._mapSettingsSave.zoom;
+    }
+    return this._mConfig.appConfig().MAPCONFIG.ZOOM_LEVEL;
   },
 
-  setCenter(mapId, center: any = null) {
+  setCenter(mapId, center: any = null, keep_zoom_center = false) {
     if (!this.getMap(mapId)) {
       return;
     }
-    this.getMap(mapId).panTo();
+    this.getMap(mapId).panTo(this.computeCenter(center, keep_zoom_center));
   },
 
-  setZoom(mapId, zoom = null) {
+  setZoom(mapId, zoom = null, keep_zoom_center = false) {
     if (!this.getMap(mapId)) {
       return;
     }
-    this.getMap(mapId).setZoom(this.computeZoom());
+    this.getMap(mapId).setZoom(this.computeZoom(zoom, keep_zoom_center));
   },
 
   setView(mapId, center = null, zoom = null) {
@@ -144,7 +144,14 @@ export default {
 
   initMap(
     mapId,
-    { zoom = null, center = null, bEdit = null, drawOptions = null, skip_ref_layers = [] } = {},
+    {
+      zoom = null,
+      center = null,
+      bEdit = null,
+      drawOptions = null,
+      skip_ref_layers = [],
+      keep_zoom_center = false,
+    } = {},
   ) {
     if (this._pendingMaps[mapId]) {
       return this.waitForMap(mapId);
@@ -156,8 +163,8 @@ export default {
         const map = this.L.map(document.getElementById(mapId), {
           zoomControl: false,
           preferCanvas: true,
-          center: this.computeCenter(center),
-          zoom: this.computeZoom(zoom),
+          center: this.computeCenter(center, keep_zoom_center),
+          zoom: this.computeZoom(zoom, keep_zoom_center),
           zoomSnap: 0.1,
         });
         this.setMap(mapId, map);

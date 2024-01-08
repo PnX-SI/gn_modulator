@@ -27,6 +27,7 @@ layout:
         zoom: __ZOOM__
         skip_ref_layers: __SKIP_REF_LAYERS__
         items: __GEOJSONS__
+        keep_zoom_center: __KEEP_ZOOM_CENTER__
       - items:
         - type: breadcrumbs
           flex: "0"
@@ -37,3 +38,4 @@ layout:
           flex: '0'
 defaults:
   geojson: []
+  keep_zoom_center: false
