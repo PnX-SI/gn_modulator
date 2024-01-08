@@ -92,8 +92,9 @@ def test_is_app_running():
         - pytest
         - flask run
         - geonature run
+        - geonature dev-back
     """
 
     return any(sys.argv[0].endswith(x) for x in ["gunicorn", "celery", "pytest"]) or (
-        len(sys.argv) >= 2 and sys.argv[1] == "run"
+        len(sys.argv) >= 2 and sys.argv[1] in ["run", "dev-back"]
     )
