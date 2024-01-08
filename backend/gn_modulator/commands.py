@@ -307,8 +307,16 @@ def cmd_check():
     print()
     print("Vérification des définitions de gn_modulator.\n")
     print(errors_txt())
-    return not get_errors()
 
+    print()
+    print("Définitions chargées:")
+
+    for definition_type in ["module", "schema", "layout"]:
+        print(
+            f"  - {definition_type}: {len(DefinitionMethods.definition_codes_for_type(definition_type))}"
+        )
+
+    print()
 
 commands = [
     cmd_check,
