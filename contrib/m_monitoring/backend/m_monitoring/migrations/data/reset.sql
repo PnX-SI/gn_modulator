@@ -1,1 +1,0 @@
-DROP SCHEMA IF EXISTS pr_monitoring CASCADE;
