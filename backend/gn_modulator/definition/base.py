@@ -119,7 +119,7 @@ class DefinitionBase:
 
         cls.local_check_definition_reference(definition_type, definition_code)
 
-        if definition_type in ["layout", "schema"]:
+        if definition_type in ["layout", "schema", "module"]:
             cls.check_definition_dynamic_layout(definition_type, definition_code, definition)
 
         # suppression en cache de la definition si erreur locale
@@ -415,18 +415,37 @@ class DefinitionBase:
             raise Exception("yakou!!", definition_type, definition_code)
 
         schema_codes = cls.definition_codes_for_type("schema")
+
+        # test sur les schema_code
         missing_schema_codes = cls.check_definition_element_in_list(
             definition, "schema_code", schema_codes + get_global_cache(["uninstalled_schema"])
         )
 
         if missing_schema_codes:
-            missings_schema_code_txt = ", ".join(map(lambda x: f"'{x}'", missing_schema_codes))
+            missing_schema_codes_txt = ", ".join(map(lambda x: f"'{x}'", missing_schema_codes))
             add_error(
                 definition_code=definition_code,
                 definition_type=definition_type,
                 error_code="ERR_GLOBAL_CHECK_MISSING_SCHEMA",
-                error_msg=f"Le ou les schémas suivants ne sont pas présents dans les définitions : {missings_schema_code_txt}",
+                error_msg=f"Le ou les schémas suivants ne sont pas présents dans les définitions : {missing_schema_codes_txt}",
             )
+
+        # test sur les features (pour les modules)
+        if definition_type == "module":
+            missing_features = [
+                feature_code
+                for feature_code in definition.get("features", [])
+                if feature_code not in cls.definition_codes_for_type("data")
+            ]
+
+            if missing_features:
+                missing_features_txt = ", ".join(map(lambda x: f"'{x}'", missing_features))
+                add_error(
+                    definition_code=definition_code,
+                    definition_type=definition_type,
+                    error_code="ERR_GLOBAL_CHECK_MISSING_FEATURES",
+                    error_msg=f"Le ou les features (données) suivantes ne sont pas présentes dans les définitions : {missing_features_txt}",
+                )
 
         # dépendancies
         dependencies = definition_type not in ["template", "use_template"] and definition.get(
