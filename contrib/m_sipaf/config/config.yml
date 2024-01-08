@@ -278,7 +278,7 @@ site_details_fields:
                 - nomenclatures_ouvrage_materiaux.label_fr
         - display: fieldset
           key: usages
-          hidden: __f__data.nomenclature_ouvrage_specificite?.cd_nomenclature == "SPE"
+          hidden: __f__data?.nomenclature_ouvrage_specificite?.cd_nomenclature == "SPE"
           type: array
           items:
             direction: row
