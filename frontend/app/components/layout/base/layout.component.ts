@@ -169,7 +169,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     // lorque une postInitialisation est nécessaire
     this.postInit();
-    this.isDebugAllowed = this._mObject.hasPermission('MODULATOR', 'ADMINATOR', 'R');
+    this.isDebugAllowed = this._mObject.hasPermission('MODULATOR', 'ADMIN', 'R');
   }
 
   onRedrawElem() {}
