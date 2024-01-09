@@ -99,12 +99,6 @@ geonature modulator install -p <chemin vers gn_modulator>/contrib/m_sipaf
     mv ~/gn_modulator-X.Y.Z ~/gn_modulator
     ```
 
--   Si vous avez encore votre configuration du module dans le dossier `config` du module, copiez le vers le dossier de configuration centralisée de GeoNature :
-
-    ```
-    cp ~/gn_modulator_old/config/conf_gn_module.toml  ~/geonature/config/import_config.toml
-    ```
-
 -   Lancez la mise à jour du module
 
     ```
@@ -118,8 +112,7 @@ geonature modulator install -p <chemin vers gn_modulator>/contrib/m_sipaf
 Relancer la commande d'installation du module
 
 ```
-geonature modulator install -p <chemin vers le sous-module> <CODE_DU_SOUS_MODULE>
-```
+geonature modulator install -p <chemin vers le sous-module>
 
 ## Développement
 
