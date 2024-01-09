@@ -180,7 +180,7 @@
   - *champ(s)* : `cd_nomenclature`
   - *valeurs* :
     - **PRO** *Propriétaire*
-    - **CON** *Concessionaire*
+    - **CON** *Concessionnaire*
     - **INT** *Intervenant*
     - **GES** *Gestionnaire*
     - **ETA** *État*
