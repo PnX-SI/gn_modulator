@@ -39,3 +39,4 @@ fields:
   - label_regions
   - actors.label_acteur
   - usages.nomenclature_usage_type.label_fr
+  - commentaires

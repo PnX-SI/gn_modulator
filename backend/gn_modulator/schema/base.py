@@ -290,7 +290,7 @@ class SchemaBase:
 
     def process_csv_keys(self, keys):
         return [
-            self.property(key.split(".")[0])["title"]
+            self.property(key.split(".")[0]).get("title", key)
             if self.has_property(key.split(".")[0])
             else key
             for key in keys

@@ -160,6 +160,8 @@ class PassageFaune(db.Model):
 
     source = db.Column(db.Unicode)
 
+    commentaires = db.Column(db.Unicode)
+
     meta_create_date = db.Column(db.DateTime)
     meta_update_date = db.Column(db.DateTime)
 

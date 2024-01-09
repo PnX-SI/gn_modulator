@@ -1,3 +1,3 @@
-uuid_passage_faune;nom_usuel_passage_faune;x;Y;actors.id_organism;actors.id_nomenclature_type_actor;nomenclatures_ouvrage_materiaux
-74fbe089-46d1-420f-a336-6177141d622e;TEST_ACTORS;0;45;ALL;PRO;BET,MET
-74fbe089-46d1-420f-a336-6177141d622e;TEST_ACTORS;0;45;Autre;PRO;BET,MET
+uuid_passage_faune;nom_usuel_passage_faune;x;Y;actors.id_organism;actors.id_nomenclature_type_actor;nomenclatures_ouvrage_materiaux;commentaires
+74fbe089-46d1-420f-a336-6177141d622e;TEST_ACTORS;0;45;ALL;PRO;BET,MET;"Ceci n'est pas un passage à faune"
+74fbe089-46d1-420f-a336-6177141d622e;TEST_ACTORS;0;45;Autre;PRO;BET,MET;"Ceci n'est pas un passage à faune"

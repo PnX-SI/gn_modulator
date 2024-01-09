@@ -1,5 +1,6 @@
 from pathlib import Path
 from .utils import ImportMixinUtils
+import sqlalchemy as sa
 from gn_modulator.schema import SchemaMethods
 from geonature.utils.env import db
 import csv
@@ -172,7 +173,7 @@ QUOTE '"' CSV
 
         # creation de VALUES
         for row in csvreader:
-            data = ",".join(map(lambda x: f"'{x}'", row))
+            data = ",".join(map(lambda x: f"""'{x.replace("'", "''")}'""", row))
             values.append(f"({data})")
         if not values:
             return

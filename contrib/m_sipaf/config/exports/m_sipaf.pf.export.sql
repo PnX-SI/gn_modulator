@@ -62,6 +62,7 @@ WITH pre AS
           pr_sipaf.t_passages_faune.ouvrage_hydrau AS ouvrage_hydrau,
           pr_sipaf.t_passages_faune.pi_ou_ps AS pi_ou_ps,
           pr_sipaf.t_passages_faune.source AS source,
+          pr_sipaf.t_passages_faune.commentaires AS commentaires,
           "usages.nomenclature_usage_type".label_fr AS "usages.nomenclature_usage_type.label_fr",
           pr_sipaf.t_passages_faune.uuid_passage_faune AS uuid_passage_faune
    FROM pr_sipaf.t_passages_faune
@@ -106,6 +107,7 @@ SELECT STRING_AGG(DISTINCT "actors.label_acteur", ', ') AS "Acteurs",
        ouvrag_hydrau_tirant_air AS "Tirant d'air banquette (m)",
        ouvrage_hydrau AS "Ouvrage hydraulique",
        pi_ou_ps AS "Positionnement",
+       commentaires AS "Commentaires",
        source AS "Source",
                  STRING_AGG(DISTINCT "usages.nomenclature_usage_type.label_fr", ', ') AS "Usages",
                  uuid_passage_faune AS "Identifiant UUID"

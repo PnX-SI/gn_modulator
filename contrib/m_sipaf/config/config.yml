@@ -225,6 +225,7 @@ site_details_fields:
                 - date_requalification_ouvrage
                 - key: digitiser.nom_complet
                   title: Numerisateur
+            - commentaires
         - display: fieldset
           key: actors
           type: array
@@ -363,12 +364,6 @@ site_form_fields:
   items:
     - label: Propriétés
       items:
-        # - direction: row
-        #   items:
-        #     - type: message
-        #       json: __f__formGroup.value
-        #     - type: message
-        #       json: __f__data
         - type: message
           hidden: __f__(data && data[o.geometry_field_name(x)])
           html: Veuillez saisir une géométrie sur la carte
@@ -393,6 +388,8 @@ site_form_fields:
                 - date_creation_ouvrage
                 - issu_requalification
                 - date_requalification_ouvrage
+            - key: commentaires
+              type: textarea
         - title: Acteurs
           type: array
           key: actors

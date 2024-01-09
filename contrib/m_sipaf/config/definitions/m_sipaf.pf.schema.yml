@@ -142,6 +142,9 @@ properties:
   ouvrag_hydrau_tirant_air:
       title: "Tirant d'air banquette (m)"
       description: " Tirant d'air existant entre la banquette et le plafond de l'ouvrage, en mètre"
+  commentaires:
+    title: Commentaires
+    description: Commentaires sur le passage à faune
   source:
       title: Source
       description: Source de la donnée
