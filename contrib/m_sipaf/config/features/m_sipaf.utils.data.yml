@@ -23,9 +23,9 @@ items:
       source: SIPAF
     items:
       - [PF_OUVRAGE_MATERIAUX, Matériaux, "Matériaux composant l'ouvrage"]
-      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, OH Position, "Position de l'ouvrage hydrolique"]
+      - [PF_OUVRAGE_HYDRAULIQUE_POSITION, OH Position, "Position de l'ouvrage hydraulique"]
       - [PF_OUVRAGE_HYDRAULIQUE_BANQ_CARACT, OH Caractérisation banquette, Caractérisation de la banquette pour un ouvrage hydraulique]
-      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, OH Type de banquette, Type de banquette pour un ouvrage hydrolique]
+      - [PF_OUVRAGE_HYDRAULIQUE_BANQ_TYPE, OH Type de banquette, Type de banquette pour un ouvrage hydraulique]
       - [PF_INFRASTRUCTURE_TYPE, "Type d'infrastructure", "Type d'infrastructure pour les passages à faune"]
       - [PF_OUVRAGE_SPECIFICITE, Spécificité, Exclusivité du passage pour le passage de la faune]
       - [PF_OUVRAGE_TYPE, "Type d'ouvrage", "Type d'ouvrage d'art pour le passage faune"]
@@ -41,7 +41,7 @@ items:
       - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, État des clôtures, État des clôtures pouvant guider les animaux vers le passage]
       - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, Type de végétation, Type de végétation présente]
       - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, Couverture végétale (%), Couverture végétale (%)]
-      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, Entretient dispositif et végétation, Entretient dispositif et végétation]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, Entretien dispositif et végétation, Entretien dispositif et végétation]
       - [PF_DIAG_FRANCHISSABILITE, Franchissabilité, Estimation de la franchissabilité de l'ouvrage pour les animaux]
       - [PF_DIAG_INTERET_FAUNE, Intérêt pour les espèces cibles, Intérêt pour les espèces cibles]
       - [PF_USAGE_CATEGORIE, Catégorie d'usage, Attribut définissant le type d'usage en dehors du passage de la faune (type de mixité)]
@@ -79,7 +79,7 @@ items:
       - [PF_INFRASTRUCTURE_TYPE, RN, R. N., Route Nationale, Route Nationale]
       - [PF_INFRASTRUCTURE_TYPE, RD, R. D., Route Départementale, Route Départementale]
       - [PF_INFRASTRUCTURE_TYPE, VF, V. F., Voie ferrée, Voie ferrée]
-      - [PF_INFRASTRUCTURE_TYPE, CA, Ca., Canal / Rivère navigable, Canal / Rivère navigable]
+      - [PF_INFRASTRUCTURE_TYPE, CA, Ca., Canal / Rivière navigable, Canal / Rivière navigable]
 
       - [PF_OUVRAGE_SPECIFICITE, MIX, Mixt., Mixte, Ouvrage mixte construit pour le passage des animaux concomitamment à un ou plusieurs autres usages]
       - [PF_OUVRAGE_SPECIFICITE, ND, Non déd., Non dédié, Ouvrage non dédié au passage de la faune mais pouvant servir à cet usage]
@@ -111,7 +111,7 @@ items:
       - [PF_OUVRAGE_CATEGORIE, SPE_CANOP, Spé. Canop., "Ouvrage spécifique: passage canopée", "Ouvrage spécifique: passage canopée"]
 
       - [PF_TYPE_ACTOR, PRO, Prop., Propriétaire, Propriétaire]
-      - [PF_TYPE_ACTOR, CON, Conc., Concessionaire, Concessionnaire]
+      - [PF_TYPE_ACTOR, CON, Conc., Concessionnaire, Concessionnaire]
       - [PF_TYPE_ACTOR, INT, Int., Intervenant, Intervenant sur ce passage faune]
       - [PF_TYPE_ACTOR, GES, Ges., Gestionnaire, Gestionnaire du passage faune]
       - [PF_TYPE_ACTOR, ETA, État, État, État]
@@ -183,12 +183,12 @@ items:
 
       - [PF_DIAG_AMENAGEMENT_ENTRETIENT, BON, Bon., Bonne, Bonne]
       - [PF_DIAG_AMENAGEMENT_ENTRETIENT, MOY, Moy., Moyenne, Moyenne]
-      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, OCC, Occ., Occasionelle, Occasionelle]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, OCC, Occ., Occasionnelle, Occasionnelle]
       - [PF_DIAG_AMENAGEMENT_ENTRETIENT, NUL, Nul., Nulle, Nulle]
 
       - [PF_DIAG_FRANCHISSABILITE, BON, Bon., Bonne, Bonne]
       - [PF_DIAG_FRANCHISSABILITE, MOY, Moy., Moyenne, Moyenne]
-      - [PF_DIAG_FRANCHISSABILITE, OCC, Occ., Occasionelle, Occasionelle]
+      - [PF_DIAG_FRANCHISSABILITE, OCC, Occ., Occasionnelle, Occasionnelle]
       - [PF_DIAG_FRANCHISSABILITE, NUL, Nul., Nulle, Nulle]
 
       - [PF_DIAG_INTERET_FAUNE, FAI, Fai., Faible, Faible]
