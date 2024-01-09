@@ -71,7 +71,7 @@ où `pre_process` est une vue qui va transformer les colonnes du fichier csv en 
 SELECT
 	uuid_pf AS id_passage_faune,
 	CASE
-		WHEN type_role_org = 'Concessionaire' THEN 'CON'
+		WHEN type_role_org = 'Concessionnaire' THEN 'CON'
 		WHEN type_role_org = 'ETAT' THEN 'ETA'
 		WHEN type_role_org = 'Département' THEN 'DEP'
 		WHEN type_role_org = 'Gestionnaire' THEN 'GES'
