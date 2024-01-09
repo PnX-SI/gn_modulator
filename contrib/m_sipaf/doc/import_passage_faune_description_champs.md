@@ -174,7 +174,7 @@
 
 
 
-### Acteurs`
+### Acteurs
 
 ##### actors.id_nomenclature_type_actor
  - *champ d'unicité*, *obligatoire*
@@ -188,14 +188,22 @@
     - **PRO** *Propriétaire*
     - **INT** *Intervenant*
     - **ETA** *État*
+<<<<<<< HEAD
+=======
+    - **DEP** *Département*
+
+>>>>>>> Doc import - Remove id_role
 ##### actors.id_organism
  - *champ d'unicité*, *obligatoire*
   - *type* : `clé simple`
   - *référence* : `organismes`
   - *champ(s)* : `nom_organisme`
+<<<<<<< HEAD
 
+=======
+>>>>>>> Doc import - Remove id_role
 
-### Usages`
+### Usages
 
 ##### usages.id_nomenclature_usage_type
  - *champ d'unicité*, *obligatoire*
