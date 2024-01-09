@@ -71,6 +71,8 @@ properties:
   vegetation_debouche:
     title: Vegetation (débouchés)
     description: Végétation présente aux débouchés de l'ouvrage
+  id_nomenclature_amenagement_entretien:
+    title: Entretien dispositif et végétation
   commentaire_amenagement:
     title: Commentaire (aménagement)
     description: champs libre pour information complémentaire indicative

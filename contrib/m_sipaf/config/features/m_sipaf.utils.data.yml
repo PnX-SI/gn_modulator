@@ -41,7 +41,7 @@ items:
       - [PF_DIAG_CLOTURES_GUIDAGE_ETAT, État des clôtures, État des clôtures pouvant guider les animaux vers le passage]
       - [PF_DIAG_AMENAGEMENT_VEGETATION_TYPE, Type de végétation, Type de végétation présente]
       - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, Couverture végétale (%), Couverture végétale (%)]
-      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, Entretien dispositif et végétation, Entretien dispositif et végétation]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIEN, Entretien dispositif et végétation, Entretien dispositif et végétation]
       - [PF_DIAG_FRANCHISSABILITE, Franchissabilité, Estimation de la franchissabilité de l'ouvrage pour les animaux]
       - [PF_DIAG_INTERET_FAUNE, Intérêt pour les espèces cibles, Intérêt pour les espèces cibles]
       - [PF_USAGE_CATEGORIE, Catégorie d'usage, Attribut définissant le type d'usage en dehors du passage de la faune (type de mixité)]
@@ -181,10 +181,10 @@ items:
       - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "3", 50-75, 50-75 %, 50-75 %]
       - [PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT, "4", 75-100, 75-100 %, 75-100 %]
 
-      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, BON, Bon., Bonne, Bonne]
-      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, MOY, Moy., Moyenne, Moyenne]
-      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, OCC, Occ., Occasionnelle, Occasionnelle]
-      - [PF_DIAG_AMENAGEMENT_ENTRETIENT, NUL, Nul., Nulle, Nulle]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIEN, BON, Bon., Bonne, Bonne]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIEN, MOY, Moy., Moyenne, Moyenne]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIEN, OCC, Occ., Occasionnelle, Occasionnelle]
+      - [PF_DIAG_AMENAGEMENT_ENTRETIEN, NUL, Nul., Nulle, Nulle]
 
       - [PF_DIAG_FRANCHISSABILITE, BON, Bon., Bonne, Bonne]
       - [PF_DIAG_FRANCHISSABILITE, MOY, Moy., Moyenne, Moyenne]
