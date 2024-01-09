@@ -6,32 +6,33 @@ demo
 
 ## Configuration
 
-### Structure du module
+### Structure du module `m_sipaf`
 
 ```
-- setup.py
+- m_sipaf/
+    - setup.py
 
-# modeles, migration, routes
-- backend/ 
+    # modeles, migration, routes
+    - backend/
 
-- config/
-    - m_sipaf.module.yml
+    - config/
+        - m_sipaf.module.yml
 
-    # informations sur les tables
-    - definitions/
-        - m_sipaf.pf.schema.yml
-        - ...
+        # informations sur les tables
+        - definitions/
+            - m_sipaf.pf.schema.yml
+            - ...
 
-    # données pour le module (nomenclature, permission etc..)
-    - features/
-        - m_sipaf.utils.data
+        # données pour le module (nomenclature, permission etc..)
+        - features/
+            - m_sipaf.utils.data
 
-    # frontend
-    -layout/
-        - m_sipaf.site_list
-        - m_sipaf.site_edit
-        - m_sipaf.site_details
-        - ....
+        # frontend
+        -layout/
+            - m_sipaf.site_list
+            - m_sipaf.site_edit
+            - m_sipaf.site_details
+            - ....
 ```
 
 ### Fichier *module* `m_sipaf.module.yml`
@@ -64,7 +65,11 @@ Permet d'accéder à l'api générique `/modulator/rest/<module_code>/<object_co
 - `/modulator/rest/m_sipaf/site`
 - `/modulator/rest/m_sipaf/diagnostic`
 
+- `I` pour import (test des droits sur `C`)
+
 #### Arborescence du module
+
+- Essentiellement pour la gérération des breadcrumbs
 
 ```
 tree:
@@ -86,6 +91,9 @@ pages_definition:
     details:
 ```
 
+- object de module: `site`, `diagnostic`, etc..
+- type de page: `list`, `edit`, `details`, `create`
+
 - `url`: `modulator/<module_code>/<object_code>_<page_type>/<value>`
 - `layout_code`: `<module_code>.<object_code>_<page_type>`
 
@@ -103,6 +111,12 @@ pages_definition:
 
 
 #### Schema informations sur les tables
+
+Information sur les tables.
+
+- génération des titres pour les pages
+- generation des labels dans les formulaires
+- tableaux, popup carte
 
 ```
 meta:
@@ -128,6 +142,7 @@ properties:
   nomenclatures_ouvrage_type:
       title: "Type d'ouvrage"
       description: "Type d'ouvrage d'art (lb_type_ouvrage)"
+  ...
 ```
 
 #### Features
@@ -179,9 +194,9 @@ properties:
 
 ### Procédure de création d'un requête
 
-- gestion des champs demandés
+- gestion des champs demandés (`fields`)
    - `jointures` + `load_only`
-- prefiltrage
+- prefiltrage 
   - permission, scope et +
   - `prefilters`
 - calcul nombre de lignes total
@@ -189,6 +204,7 @@ properties:
 - calcul nombre de lignes filtrée
 - tri, pagination...
 - `raiseload`
+- exécution de la requête pour obtenir la liste
 
 ### Retour:
 - liste
@@ -214,7 +230,9 @@ properties:
 
 - champs autorisés
   - ceux qui sont dans les définitions du frontend
-  - formulaires -> autorisés en édition
+  - ceux définis dans les schemas, `geom_field_name`, `label_field_name`, `title_field_name`
+  - les clé primaires
+  - champs présent dans les formulaires -> autorisés pour les routes `POST` `PATCH`
   - vérification dans les décorateurs de route
 
 #### `filters` `prefilters`
