@@ -117,6 +117,7 @@ class SchemaRepositories:
                     continue
                 fields = [key]
                 if self.is_relation_1_n(key) or self.is_relation_n_n(key):
+                    fields = []
                     for item in data_value:
                         for k in item:
                             kk = f"{key}.{k}"

@@ -27,11 +27,12 @@ def passages_faune_with_diagnostic(users):
             pf = PassageFaune(geom=geom, uuid_passage_faune=uuid)
             db.session.add(pf)
 
-            pf.diagnostics.append(
-                Diagnostic(
-                    id_organisme=organisme.id_organisme, date_diagnostic="2017-01-08 20:00:00.000"
-                )
+            diag = Diagnostic(
+                id_organisme=organisme.id_organisme,
+                date_diagnostic="2017-01-08 20:00:00.000",
             )
+
+            pf.diagnostics.append(diag)
             if uuid == "0c92af92-000b-401c-9994-f2c12470493a":
                 pf.actors.append(
                     Actor(

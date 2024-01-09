@@ -58,7 +58,66 @@ class TestRepository:
 
         m_list = q.all()
         res = sm.serialize_list(m_list, fields)
+
         assert True
+
+    def test_repo_diag_cloture(self, passages_faune_with_diagnostic):
+        sm = SchemaMethods("m_sipaf.diag")
+        sm_org = SchemaMethods("user.organisme")
+        sm_nom = SchemaMethods("ref_nom.nomenclature")
+        organisme = sm_org.get_row_as_dict("ALL", "nom_organisme", fields=["id_organisme"])
+        id_nomenclature_clotures_guidage_etat = sm_nom.get_row_as_dict(
+            ["PF_DIAG_CLOTURES_GUIDAGE_ETAT", "BON"],
+            ["nomenclature_type.mnemonique", "cd_nomenclature"],
+            fields=["id_nomenclature"],
+        )["id_nomenclature"]
+        id_nomenclature_clotures_guidage_type = sm_nom.get_row_as_dict(
+            ["PF_DIAG_CLOTURES_GUIDAGE_TYPE", "GFS"],
+            ["nomenclature_type.mnemonique", "cd_nomenclature"],
+            fields=["id_nomenclature"],
+        )["id_nomenclature"]
+        id_nomenclature_vegetation_type = sm_nom.get_row_as_dict(
+            ["PF_DIAG_AMENAGEMENT_VEGETATION_TYPE", "NU"],
+            ["nomenclature_type.mnemonique", "cd_nomenclature"],
+            fields=["id_nomenclature"],
+        )["id_nomenclature"]
+        id_nomenclature_vegetation_couvert = sm_nom.get_row_as_dict(
+            ["PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT", "1"],
+            ["nomenclature_type.mnemonique", "cd_nomenclature"],
+            fields=["id_nomenclature"],
+        )["id_nomenclature"]
+
+        id_nomenclature_vegetation_couvert_2 = sm_nom.get_row_as_dict(
+            ["PF_DIAG_AMENAGEMENT_VEGETATION_COUVERT", "2"],
+            ["nomenclature_type.mnemonique", "cd_nomenclature"],
+            fields=["id_nomenclature"],
+        )["id_nomenclature"]
+
+        data = {
+            "id_passage_faune": passages_faune_with_diagnostic[0].id_passage_faune,
+            "id_organisme": organisme["id_organisme"],
+            "date_diagnostic": "2017-01-08",
+            "clotures": [
+                {
+                    "id_nomenclature_clotures_guidage_etat": id_nomenclature_clotures_guidage_etat,
+                    "id_nomenclature_clotures_guidage_type": id_nomenclature_clotures_guidage_type,
+                }
+            ],
+            "vegetation_tablier": [
+                {
+                    "id_nomenclature_vegetation_couvert": id_nomenclature_vegetation_couvert,
+                    "id_nomenclature_vegetation_type": id_nomenclature_vegetation_type,
+                }
+            ],
+        }
+
+        m = sm.insert_row(data)
+        assert not sm.is_new_data(m, data)
+        data["vegetation_tablier"][0][
+            "id_nomenclature_vegetation_couvert"
+        ] = id_nomenclature_vegetation_couvert_2
+        assert sm.is_new_data(m, data)
+        sm.update_row(m.id_diagnostic, data)
 
     def test_repo_pf_rel(self, passages_faune_with_diagnostic, users):
         sm = SchemaMethods("m_sipaf.pf")
