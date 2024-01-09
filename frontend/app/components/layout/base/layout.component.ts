@@ -160,6 +160,7 @@ export class ModulesLayoutComponent implements OnInit {
 
     this._subs['redrawElem'] = this._mLayout.$reDrawElem.subscribe(() => {
       this.onRedrawElem();
+      this._mLayout.reComputeLayout('redraw');
     });
 
     this._mLayout.$stopActionProcessing.subscribe(() => {
@@ -430,27 +431,29 @@ export class ModulesLayoutComponent implements OnInit {
   }
 
   initCheckParentsHeight() {
-    const elem = document.getElementById(this._id);
-    if (!elem || this.parentResizeObserver) {
-      return;
-    }
-    this.$parentsHeight = new Subject();
-    this.$parentsHeight.pipe(debounceTime(50)).subscribe(() => {
-      this.processParentsHeightChange();
+    utils.waitForElement(this._id).then((elem) => {
+      if (!elem || this.parentResizeObserver) {
+        return;
+      }
+
+      this.$parentsHeight = new Subject();
+      this.$parentsHeight.pipe(debounceTime(50)).subscribe(() => {
+        this.processParentsHeightChange();
+      });
+      this.parentResizeObserver = new ResizeObserver(() => this.$parentsHeight.next(true));
+
+      this.parentsElement = [];
+      let p = (elem as any).parentElement?.closest('div.layout-item');
+
+      while (p) {
+        // this.parentsElement.push(p.id as never);
+        this.parentsElement.push(p as never);
+        p = p.parentElement?.closest('div.layout-item');
+      }
+      this.parentResizeObserver.observe(...this.parentsElement, document.body);
+      this.$parentsHeight.next(true);
+      window.addEventListener('resize', () => this.$parentsHeight.next(true));
     });
-    this.parentResizeObserver = new ResizeObserver(() => this.$parentsHeight.next(true));
-
-    this.parentsElement = [];
-    let p = elem.parentElement?.closest('div.layout-item');
-
-    while (p) {
-      // this.parentsElement.push(p.id as never);
-      this.parentsElement.push(p as never);
-      p = p.parentElement?.closest('div.layout-item');
-    }
-    this.parentResizeObserver.observe(...this.parentsElement, document.body);
-    this.$parentsHeight.next(true);
-    window.addEventListener('resize', () => this.$parentsHeight.next(true));
   }
 
   processParentsHeightChange() {
@@ -741,7 +744,7 @@ export class ModulesLayoutComponent implements OnInit {
             object_code: item.object_code || this.context.object_code,
             module_code: item.module_code || this.context.module_code,
           };
-          for (const key of ['label', 'hidden', 'disabled', 'lazy_loading']) {
+          for (const key of ['label', 'hidden', 'disabled', 'lazy_loading', 'overflow']) {
             computedItem[key] = this._mLayout.evalLayoutElement({
               element: item[key],
               layout: item,
