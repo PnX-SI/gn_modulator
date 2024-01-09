@@ -92,6 +92,7 @@ aliases:
         items:
           - id_nomenclature_vegetation_type
           - id_nomenclature_vegetation_couvert
+    - id_nomenclature_amenagement_entretien
     - key: commentaire_amenagement
       type: textarea
 

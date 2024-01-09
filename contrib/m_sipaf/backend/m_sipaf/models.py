@@ -399,11 +399,11 @@ class Diagnostic(db.Model):
         TNomenclatures, secondary=CorDiagAmenagementBiodiv.__table__
     )
 
-    id_nomenclature_amenagement_entretient = db.Column(
+    id_nomenclature_amenagement_entretien = db.Column(
         db.Integer, db.ForeignKey("ref_nomenclatures.t_nomenclatures.id_nomenclature")
     )
-    nomenclature_amenagement_entretient = db.relationship(
-        TNomenclatures, foreign_keys=[id_nomenclature_amenagement_entretient]
+    nomenclature_amenagement_entretien = db.relationship(
+        TNomenclatures, foreign_keys=[id_nomenclature_amenagement_entretien]
     )
 
     commentaire_amenagement = db.Column(db.Unicode)
