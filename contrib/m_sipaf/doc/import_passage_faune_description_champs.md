@@ -171,7 +171,7 @@
 
 
 
-### Acteurs`
+### Acteurs
 
 ##### actors.id_nomenclature_type_actor
  - *champ d'unicité*, *obligatoire*
@@ -185,19 +185,14 @@
     - **GES** *Gestionnaire*
     - **ETA** *État*
     - **DEP** *Département*
+
 ##### actors.id_organism
  - *champ d'unicité*
   - *type* : `clé simple`
   - *référence* : `organismes`
   - *champ(s)* : `nom_organisme`
-##### actors.id_role
- - *champ d'unicité*
-  - *type* : `clé simple`
-  - *référence* : `utilisateurs`
-  - *champ(s)* : `identifiant`
 
-
-### Usages`
+### Usages
 
 ##### usages.id_nomenclature_usage_type
  - *champ d'unicité*, *obligatoire*
