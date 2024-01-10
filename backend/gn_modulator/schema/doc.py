@@ -171,7 +171,7 @@ class SchemaDoc:
             txt += f"\n\n# Import des {self.labels()}\n\n"
             txt += "\n\n### Champs\n\n"
         else:
-            txt += f"\n\n### {self.labels().capitalize()}`\n\n"
+            txt += f"\n\n### {self.labels().capitalize()}\n\n"
 
         # txt += "\n\n#### Champs d'unicité\n\n"
 

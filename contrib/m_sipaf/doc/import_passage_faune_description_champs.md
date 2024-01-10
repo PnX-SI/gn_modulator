@@ -188,20 +188,12 @@
     - **PRO** *Propriétaire*
     - **INT** *Intervenant*
     - **ETA** *État*
-<<<<<<< HEAD
-=======
-    - **DEP** *Département*
-
->>>>>>> Doc import - Remove id_role
 ##### actors.id_organism
  - *champ d'unicité*, *obligatoire*
   - *type* : `clé simple`
   - *référence* : `organismes`
   - *champ(s)* : `nom_organisme`
-<<<<<<< HEAD
 
-=======
->>>>>>> Doc import - Remove id_role
 
 ### Usages
 
