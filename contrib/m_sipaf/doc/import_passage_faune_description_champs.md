@@ -9,7 +9,7 @@
 ##### uuid_passage_faune
  - *champ d'unicité*
   - *type* : `uuid`
-  - *définition* : Identifiant universel unique au format UUID (uuid_pf)
+  - *définition* : Identifiant universel unique au format UUID (uuid_pf). Généré automatiquement si non renseigné.
   - champ autogénéré pour les lignes où il est de valeur nulle
 ##### geom
  - *obligatoire*
@@ -22,6 +22,9 @@
 ##### code_ouvrage_gestionnaire
   - *type* : `string`
   - *définition* : Code de l’ouvrage (pour le gestionnaire)
+##### commentaires
+  - *type* : `string`
+  - *définition* : Commentaires sur le passage à faune
 ##### date_creation_ouvrage
   - *type* : `date`
   - *format* : `YYYY-MM-DD` (par ex. `2023-03-31`)
@@ -95,18 +98,18 @@
   - *définition* : Type de la banquette dans le cas d'un ouvrage hydraulique (ouvrage_hydrau_type_banquette)
   - *valeurs* :
     - **NAT** *Banquette naturelle*
-    - **BET** *Banquette béton*
     - **ECB** *Encorbellement*
-    - **POF** *Ponton flottant*
     - **AUT** *Autre*
+    - **BET** *Banquette béton*
+    - **POF** *Ponton flottant*
 ##### id_nomenclature_ouvrage_hydrau_position
   - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
   - *définition* : Ouvrage hydraulique Position (ouvrage_hydrau_position)
   - *valeurs* :
-    - **RD** *Rive Droite*
     - **RG** *Rive Gauche*
+    - **RD** *Rive Droite*
     - **RGD** *Rive gauche et rive droite*
 ##### id_nomenclature_ouvrage_specificite
   - *type* : `clé simple`
@@ -115,8 +118,8 @@
   - *définition* : Exclusivité pour le passage faune (specificite)
   - *valeurs* :
     - **SPE** *Spécifique*
-    - **MIX** *Mixte*
     - **ND** *Non dédié*
+    - **MIX** *Mixte*
 ##### nomenclatures_ouvrage_categorie
   - *type* : `clé simple`
   - *référence* : `nomenclatures`
@@ -124,12 +127,12 @@
   - *définition* : Catégorie d'ouvrage d'art (utilisation)
   - *valeurs* :
     - **VIA** *Viaduc*
-    - **TF** *Toute faune*
     - **PF** *Petite faune*
-    - **GF** *Grande faune*
     - **SPE_CHI** *Ouvrage spécifique: chiroptéroduc*
-    - **SPE_BAT** *Ouvrage spécifique: batracoduc*
     - **SPE_CANOP** *Ouvrage spécifique: passage canopée*
+    - **TF** *Toute faune*
+    - **GF** *Grande faune*
+    - **SPE_BAT** *Ouvrage spécifique: batracoduc*
 ##### nomenclatures_ouvrage_materiaux
   - *type* : `clé simple`
   - *référence* : `nomenclatures`
@@ -137,34 +140,34 @@
   - *définition* : Matériaux composants l'ouvrage d'art (lb_materiaux)
   - *valeurs* :
     - **BET** *Béton*
-    - **MET** *Métal*
     - **PLT** *Plastique*
-    - **BOI** *Bois*
     - **MAC** *Maçonnerie*
-    - **AUT** *Autre*
     - **IND** *Indéterminé*
+    - **MET** *Métal*
+    - **BOI** *Bois*
+    - **AUT** *Autre*
 ##### nomenclatures_ouvrage_type
   - *type* : `clé simple`
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
   - *définition* : Type d'ouvrage d'art (lb_type_ouvrage)
   - *valeurs* :
-    - **BUS** *Buse*
     - **CAD** *Cadre*
-    - **VOU+R** *Voûte avec radier*
     - **AUT** *Autre (préciser)*
-    - **POR** *Portique*
     - **VOU** *Voûte sans radier*
-    - **DAL+P** *Dalle et palpaplanche*
     - **DAL** *Dalle*
-    - **ARC** *Arc*
     - **VIA** *Viaduc*
-    - **PON** *Pont*
     - **CAN** *Canalisation*
-    - **DALO** *Dalot*
     - **DIAB** *Diabolo*
-    - **TRA** *Tranchée*
     - **TUN** *Tunnel*
+    - **BUS** *Buse*
+    - **VOU+R** *Voûte avec radier*
+    - **POR** *Portique*
+    - **DAL+P** *Dalle et palpaplanche*
+    - **ARC** *Arc*
+    - **PON** *Pont*
+    - **DALO** *Dalot*
+    - **TRA** *Tranchée*
 
 
 ## Relations
@@ -179,22 +182,17 @@
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
   - *valeurs* :
-    - **PRO** *Propriétaire*
     - **CON** *Concessionnaire*
-    - **INT** *Intervenant*
     - **GES** *Gestionnaire*
-    - **ETA** *État*
     - **DEP** *Département*
+    - **PRO** *Propriétaire*
+    - **INT** *Intervenant*
+    - **ETA** *État*
 ##### actors.id_organism
- - *champ d'unicité*
+ - *champ d'unicité*, *obligatoire*
   - *type* : `clé simple`
   - *référence* : `organismes`
   - *champ(s)* : `nom_organisme`
-##### actors.id_role
- - *champ d'unicité*
-  - *type* : `clé simple`
-  - *référence* : `utilisateurs`
-  - *champ(s)* : `identifiant`
 
 
 ### Usages`
@@ -205,12 +203,12 @@
   - *référence* : `nomenclatures`
   - *champ(s)* : `cd_nomenclature`
   - *valeurs* :
-    - **H** *Hydraulique*
     - **A** *Agricole*
-    - **F** *Forestier*
     - **R** *Routier*
-    - **P** *Piétonnier*
     - **D** *Défense*
+    - **H** *Hydraulique*
+    - **F** *Forestier*
+    - **P** *Piétonnier*
 ##### usages.commentaire
   - *type* : `string`
 ##### usages.detail_usage

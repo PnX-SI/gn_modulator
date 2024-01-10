@@ -141,7 +141,7 @@ class SchemaBase:
         return (
             self.has_property(key)
             and (self.property(key).get("type") in column_types + ["relation"])
-            and self.property(key).get("column_property")
+            and (self.property(key).get("column_property"))
         )
 
     def is_relationship(self, key):

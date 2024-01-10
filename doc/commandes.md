@@ -8,7 +8,7 @@ commandes
 ### Description champs import
 
 ```
-geonature modulator doc m_sipaf.pf import  > contrib/m_sipaf/doc/import_description_champs.md
+geonature modulator doc m_sipaf.pf import  > contrib/m_sipaf/doc/import_passage_faune_description_champs.md
 ```
 ## Gestion des modules
 

@@ -24,31 +24,6 @@ class SchemaDoc:
         if doc_type == "table":
             return self.doc_table(exclude)
 
-        if doc_type == "csv":
-            return self.doc_csv(file_path)
-
-    def doc_csv(self, file_path):
-        with open(file_path) as f:
-            data = yaml.load(f, YmlLoader)
-            txt = ";".join(data[0].keys()) + "\n"
-            for d in data:
-                txt += ";".join(map(lambda x: str(x), d.values()))
-            return txt
-
-    def doc_table(self, exclude=[]):
-        txt = ""
-
-        txt += f"### Table `{self.sql_schema_dot_table()}`\n"
-        txt += "\n"
-
-        for key, property_def in self.columns().items():
-            txt += f"- `{key}`\n"
-            txt += f"  - *type* : `{property_def['type']}`\n"
-            if property_def.get("description"):
-                txt += f"  - *définition* : {property_def['description']}\n"
-
-        return txt
-
     def doc_import_key(self, key, unique=False, relation_key=None):
         txt = ""
 
@@ -126,10 +101,13 @@ class SchemaDoc:
         sm_nom = self.cls("ref_nom.nomenclature")
         res = query_list(
             sm_nom.Model(),
-            params={
+            "MODULATOR",
+            "R",
+            {
                 "fields": ["label_fr", "cd_nomenclature"],
                 "filters": [f"nomenclature_type.mnemonique = {nomenclature_type}"],
             },
+            "select",
         ).all()
         values = sm_nom.serialize_list(res, ["label_fr", "cd_nomenclature"])
 
@@ -148,7 +126,7 @@ class SchemaDoc:
                         and self.property(x)["relation_type"] != "n-n"
                     )
                     and (not self.property(x).get("primary_key"))
-                    and (not self.property(x).get("is_column_property"))
+                    and (not (self.is_column_property(x)))
                     and (x not in exclude)
                 ),
                 self.properties(),

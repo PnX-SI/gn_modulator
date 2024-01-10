@@ -52,6 +52,8 @@ class SchemaModelExisting:
 
         # process column properties
         for key, column_property_def in self.column_properties().items():
+            if column_property_def["column_property"] == True:
+                continue
             setattr(Model, key, self.process_column_property_model(key, column_property_def))
 
         return Model

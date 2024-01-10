@@ -121,7 +121,7 @@ class SchemaAuto:
             col = getattr(Model, k)
             if (not isinstance(col.property, ColumnProperty)) or (k in columns):
                 continue
-            properties[k] = {"type": "string", "is_column_property": True}
+            properties[k] = {"type": "string", "column_property": True}
 
         # relationships
         for relation_key, relation in inspect(Model).relationships.items():
