@@ -48,7 +48,7 @@ def test_import_data_file(
         # on teste si on rencontre bien les erreurs attendues parmi les erreurs rencontrées
         assert len(expected_errors) == len(
             import_infos["errors"]
-        ), f"expected {len(expected_errors)} nb_error {len(import_infos['errors'])} {impt.pretty_errors_txt()}"
+        ), f"expected {len(expected_errors)} nb_error {len(import_infos['errors'])}\n{impt.pretty_errors_txt()}"
         for expected_error in expected_errors:
             assert (
                 len(
@@ -59,7 +59,7 @@ def test_import_data_file(
                     ]
                 )
                 > 0
-            ), f"L'erreur de code {expected_error['error_code']} n'a pas été trouvée"
+            ), f"L'erreur de code {expected_error['error_code']} n'a pas été trouvée\n{impt.pretty_errors_txt()}"
 
     expected_nb_errors = []
     for key in expected_infos:

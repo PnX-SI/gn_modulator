@@ -65,9 +65,10 @@ class ImportMixinCheck(ImportMixinUtils):
             res.append(rr)
 
         if res:
+            # TODO ajouter lines
             self.add_error(
                 error_code="ERR_IMPORT_UNIQUE_DOUBLON",
-                error_msg=f"Import {self.schema_code}, doublons trouvés pour les champs d'unicités   {unique_columns}",
+                error_msg=f"Doublons trouvés pour les champs d'unicités {unique_columns}",
             )
 
     def check_unique_missing(self):
@@ -95,7 +96,7 @@ class ImportMixinCheck(ImportMixinUtils):
         if missing_unique:
             self.add_error(
                 error_code="ERR_IMPORT_MISSING_UNIQUE",
-                error_msg=f"Import {self.schema_code}, il manque des champs d'unicité : {', '.join(missing_unique) }",
+                error_msg=f"Champs d'unicité non présents : {', '.join(missing_unique) }",
             )
 
     def check_types(self):
@@ -126,37 +127,39 @@ class ImportMixinCheck(ImportMixinUtils):
             # pour une colonne donnée
             sql_check_type_for_column = f"""
             SELECT
-              COUNT(*),
-              ARRAY_AGG(id_import),
-              ARRAY_AGG({clean_key})
+              COUNT(*) as nb_lines,
+              ARRAY_AGG(id_import) as lines,
+              {clean_key} AS value
             FROM {table_test}
             WHERE NOT (
                 {clean_key} is NULL
                 OR
                 gn_modulator.check_value_for_type('{sql_type}', {clean_key}::VARCHAR)
             )
-            GROUP BY id_import
-            ORDER BY id_import
+            GROUP BY {clean_key}
+            ORDER BY COUNT(*) DESC
         """
-            res = SchemaMethods.c_sql_exec_txt(sql_check_type_for_column).fetchone()
+            res = SchemaMethods.c_sql_exec_txt(sql_check_type_for_column).fetchall()
+
+            error_infos = []
 
             # s'il n'y a pas d'erreur on passe à la colonne suivante
-            if res is None:
-                continue
+            for r in res:
+                error_infos.append(
+                    {
+                        "value": r["value"],
+                        "lines": r["lines"][:5],
+                        "nb_lines": r["nb_lines"],
+                    }
+                )
 
-            # Ajout d'une erreur qui référence les lignes concernées
-            nb_lines = res[0]
-            lines = res[1]
-            error_values = res[2]
-            # str_lines = lines and ", ".join(map(lambda x: str(x), lines)) or ""
-            if nb_lines == 0:
+            if not error_infos:
                 continue
             self.add_error(
                 error_code="ERR_IMPORT_INVALID_VALUE_FOR_TYPE",
                 key=key,
-                lines=lines,
-                error_values=error_values,
-                error_msg=f"Valeurs invalides pour `{key}` ({sql_type}).",
+                error_infos=error_infos,
+                error_msg=f"valeur invalide ({sql_type})",
             )
 
     def check_required(self):
@@ -191,12 +194,14 @@ SELECT
             if nb_lines == 0:
                 continue
 
+            error_infos = [{"lines": lines[:5], "nb_lines": nb_lines}]
+
             # sinon on ajoute une erreur qui référence les lignes concernées
             self.add_error(
                 error_code="ERR_IMPORT_REQUIRED",
                 key=key,
-                lines=lines,
-                error_msg=f"Champs {key} obligatoire et de valeur nulle",
+                error_infos=error_infos,
+                error_msg=f"champs obligatoire",
             )
 
         return
@@ -224,26 +229,34 @@ SELECT
             # - non nulles dans 'raw'
             # - et nulles dans 'process
             txt_check_resolve_keys = f"""
-SELECT COUNT(*), ARRAY_AGG(r.id_import), ARRAY_AGG(r.{key})
+SELECT
+    COUNT(*)  AS nb_lines,
+    ARRAY_AGG(r.id_import ORDER BY r.id_import) AS lines,
+    r.{key} AS value
 FROM {raw_table} r
 JOIN {process_table} p
-    ON r.id_import = p.id_import
+    ON r.id_import = ANY(p.ids_import)
 WHERE
     p.{key} is NULL and r.{key} is NOT NULL
+GROUP BY r.{key}
+ORDER BY count(*) DESC
             """
 
-            res = SchemaMethods.c_sql_exec_txt(txt_check_resolve_keys).fetchone()
-            nb_lines = res[0]
-            lines = res[1]
-            error_values = res[2]
+            res = SchemaMethods.c_sql_exec_txt(txt_check_resolve_keys).fetchall()
+
+            error_infos = []
+
+            for r in res:
+                error_infos.append(
+                    {"nb_lines": r["nb_lines"], "lines": r["lines"][:5], "value": r["value"]}
+                )
 
             # s'il n'y a pas de résultat, on passe à la colonne suivante
-            if nb_lines == 0:
+            if len(error_infos) == 0:
                 continue
             # sinon on ajoute une erreur référençant les lignes concernée
 
             valid_values = None
-
             # Dans le cas des nomenclatures on peut faire remonter les valeurs possible ??
             code_type = self.Model().get_nomenclature_type(key)
             if code_type:
@@ -259,8 +272,7 @@ WHERE
             self.add_error(
                 error_code="ERR_IMPORT_UNRESOLVED",
                 key=key,
-                lines=lines,
-                error_msg=f"Clé étrangère '{key}' non résolue ",
+                error_msg=f"pas de correspondance",
                 valid_values=valid_values,
-                error_values=error_values,
+                error_infos=error_infos,
             )

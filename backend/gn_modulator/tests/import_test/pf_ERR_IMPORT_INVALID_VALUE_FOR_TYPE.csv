@@ -1,0 +1,2 @@
+code_ouvrage_gestionnaire,uuid_pf,pi_ou_ps,PK,PR,PR_abs,nom_usuel_passage_faune,date_creation_ouvrage,largeur_ouvrage,hauteur_ouvrage,longueur_franchissement,id_nomenclature_ouvrage_specificite,nomenclature_ouvrage_type,OH,commentaire,actors.id_nomenclature_type_actor,actors.id_organism,Y,X,geom,source
+,,,198.82,198,820,,,11.7,,600,MIX,VIA,,,CON,ALL,"49,8591660562261","2,36781997099458",Pointage (2.36781997 49.85916606),cerema hdf

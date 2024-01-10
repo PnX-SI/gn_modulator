@@ -1,0 +1,4 @@
+code_ouvrage_gestionnaire,uuid_pf,pi_ou_ps,PK,PR,PR_abs,nom_usuel_passage_faune,date_creation_ouvrage,largeur_ouvrage,hauteur_ouvrage,longueur_franchissement,id_nomenclature_ouvrage_specificite,nomenclature_ouvrage_type,OH,commentaire,actors.id_nomenclature_type_actor,actors.id_organism,Y,X,geom,source
+229 (OI18),,f,37.2,37,200,PI 35,1963-01-01,15.1,,50.66,MIX,DAL,,carrefour des Gens d'Armes / Vieille route,concessionnaire,ALL,"49,1610271191157","2,59652302008907",Point (2.59652302 49.16102712),cerema hdf
+Oi20,,t,37.762,37,762,PS36,1963-01-01,6,,63.5,MIX,DAL,,carrefour du Cormier,concessionnaire,ALL,"49,1656801473743","2,59912026178488",Point (2.59912026 49.16568015),cerema hdf
+Oi21,,t,38.521,38,521,PS37,1963-01-01,6,,63.25,MIX,DAL,,Poteau du Chêne,proprietaire,ALL,"49,1724441210475","2,60002547844811",Point (2.60002548 49.17244412),cerema hdf

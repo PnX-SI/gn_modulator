@@ -1,28 +1,6 @@
 <div class="import">
   <h1>Importer des données</h1>
 
-  <!-- Etapes -->
-  <mat-stepper linear #stepper>
-    <mat-step
-      ngClass="{'step-selected': step==0}"
-      [editable]="editableStep"
-      [completed]="step > 0"
-      label="Transférer / Verifier le fichier de données"
-    ></mat-step>
-    <mat-step
-      ngClass="{'step-selected': step==0}"
-      [editable]="editableStep"
-      [completed]="step > 1"
-      label="Insérer les données"
-    ></mat-step>
-    <mat-step
-      ngClass="{'step-selected': step==0}"
-      [editable]="editableStep"
-      [completed]="step > 1"
-      label="Fin"
-    ></mat-step>
-  </mat-stepper>
-
   <div>
     <modules-layout
       [data]="importData"

@@ -26,20 +26,6 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
 
   importMsg: any = {};
 
-  importDataTest = {
-    status: 'DONE',
-    res: {
-      nb_data: 367,
-      nb_insert: 0,
-      nb_process: 367,
-      nb_raw: 367,
-      nb_unchanged: 367,
-      nb_update: 0,
-    },
-    id_import: 1,
-    options: {},
-  };
-
   // @ViewChild('stepper') stepper: MatStepper;
 
   constructor(_injector: Injector) {
@@ -63,14 +49,12 @@ export class ModulesLayoutImportComponent extends ModulesLayoutComponent impleme
       code: 'utils.import',
     };
     // this._mLayout.getFormControl('form_import')?.reset()
-    this.importData = this.computedLayout.test_import ? utils.copy(this.importDataTest) : {};
+    this.importData = this.computedLayout.test_error ? this._mImport.importDataTestError : {};
     this.setStep();
   }
 
   setStep() {
     this.importData.importMsg = this._mImport.processMessage(this.importData);
-    this.importData.errorMsgType = this._mImport.processErrorsType(this.importData);
-    this.importData.errorMsgLine = this._mImport.processErrorsLine(this.importData);
   }
 
   apiFields = ['res', 'status', 'id_import', 'errors'];

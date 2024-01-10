@@ -40,6 +40,13 @@ export class ModulesImportService {
       };
     }
 
+    if (data.status == 'ERROR') {
+      return {
+        html: this.processErrorsHTML(data),
+        class: 'error',
+      };
+    }
+
     if (data.status == 'STARTING') {
       let html = `
       <h4>Import en attente de démarrage</h4>
@@ -130,66 +137,97 @@ export class ModulesImportService {
     </ul>`.replace(/_/g, '&nbsp;');
   }
 
-  processErrorsLine(data) {
-    if (!data.errors?.length) {
-      return '';
-    }
-
-    const lines = {};
-    for (const error of data.errors) {
-      for (const line of error.lines || []) {
-        lines[line] = lines[line] || {};
-        lines[line][error.error_code] = lines[line][error.error_code] || {
-          error_msg: error.error_msg,
-          keys: [],
-        };
-        lines[line][error.error_code].keys.push(error.key);
-      }
-    }
-    let errorHTML = `<h4>${Object.keys(lines).length} ligne${
-      Object.keys(lines).length > 1 ? 's' : ''
-    } en erreur</h4>`;
-
-    for (const line of Object.keys(lines)
-      .map((l) => parseInt(l))
-      .sort()) {
-      errorHTML += `- <b>${line}</b><br>`;
-      for (const errorCode of Object.keys(lines[line]).sort()) {
-        errorHTML += `&nbsp;&nbsp;&nbsp;&nbsp;${lines[line][errorCode].error_msg}:<br>`;
-        errorHTML += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>${lines[line][errorCode].keys.join(
-          ', ',
-        )}</i><br>`;
-      }
-    }
-    return errorHTML;
-  }
-
-  processErrorsType(data) {
+  // pour l'affichage des erreurs
+  processErrorsHTML(data) {
     if (!data.errors?.length) {
       return '';
     }
 
     let errorHTML = `<h4>${data.errors.length} erreurs</h4>`;
 
-    const errors = {};
     for (const error of data.errors) {
-      errors[error.error_code] = errors[error.error_code] || { error_msg: error.error_msg };
-    }
-
-    for (const errorType of Object.keys(errors)) {
-      const errorsOfType = data.errors.filter((e) => e.error_code == errorType);
-      errorHTML += `<h5>${errorsOfType[0].error_msg}</h5>`;
-      errors[errorType].keys = {};
-      for (let error of errorsOfType) {
-        if (error.key) {
-          errors[errorType].keys[error.key] = { lines: error.lines };
-
-          for (const [i, line] of error.lines.entries()) {
-            errorHTML += `- [ligne ${line}] : ${error.error_values[i]}<br>`;
-          }
-        }
+      const keyTxt =
+        error.key && error.relation_key
+          ? `<code>${error.relation_key}.${error.key}</code> : `
+          : error.key
+            ? `<code>${error.key}</code> : `
+            : '';
+      errorHTML += `<div class="import_error">\n`;
+      errorHTML += `<span class="import_error_msg">- ${keyTxt}<b>${error.error_msg}</b></span><br>\n`;
+      for (const info of error.error_infos || []) {
+        const nbLinesTxt = info.nb_lines > info.lines.length ? `... (${info.nb_lines} lignes)` : '';
+        const txtValue = info.value != null ? `<code>${info.value}</code> ` : '';
+        let infoHTML = `&nbsp&nbsp- ${txtValue}<i>ligne${
+          info.lines.length > 1 ? 's' : ''
+        } ${info.lines.join(', ')}${nbLinesTxt}`;
+        infoHTML += '</i><br>\n';
+        errorHTML += infoHTML;
       }
+      errorHTML += '</div>';
     }
     return errorHTML;
   }
+
+  // pour les tests d'affichage (avec erreurs et sans erreur)
+  importDataTestError = {
+    errors: [
+      {
+        error_code: 'ERR_IMPORT_INVALID_VALUE_FOR_TYPE',
+        error_msg: "'valeur invalide (GEOMETRY)",
+        key: 'geom',
+        valid_values: null,
+        error_infos: [{ value: 'Pointage (2.36781997 49.85916606)', lines: [1], nb_lines: 1 }],
+        relation_key: null,
+      },
+
+      {
+        key: 'id_organism',
+        error_msg: 'champs obligatoire',
+        error_code: 'ERR_IMPORT_REQUIRED',
+        error_infos: [{ lines: [1], nb_lines: 1 }],
+        relation_key: 'actors',
+        valid_values: null,
+      },
+      {
+        key: 'id_nomenclature_type_actor',
+        error_msg: 'pas de correspondance',
+        error_code: 'ERR_IMPORT_UNRESOLVED',
+        error_infos: [
+          { lines: [1, 2], value: 'concessionnaire', nb_lines: 2 },
+          { lines: [3], value: 'proprietaire', nb_lines: 1 },
+        ],
+        relation_key: 'actors',
+        valid_values: [
+          { label_fr: 'Concessionnaire', cd_nomenclature: 'CON' },
+          { label_fr: 'Gestionnaire', cd_nomenclature: 'GES' },
+          { label_fr: 'Département', cd_nomenclature: 'DEP' },
+          { label_fr: 'Propriétaire', cd_nomenclature: 'PRO' },
+          { label_fr: 'Intervenant', cd_nomenclature: 'INT' },
+          { label_fr: 'État', cd_nomenclature: 'ETA' },
+        ],
+      },
+    ],
+
+    id_import: 1774,
+    res: {
+      nb_data: 117,
+      nb_process: 117,
+      nb_raw: 117,
+    },
+    status: 'ERROR',
+  };
+
+  importDataTest = {
+    status: 'DONE',
+    res: {
+      nb_data: 367,
+      nb_insert: 0,
+      nb_process: 367,
+      nb_raw: 367,
+      nb_unchanged: 367,
+      nb_update: 0,
+    },
+    id_import: 1,
+    options: {},
+  };
 }

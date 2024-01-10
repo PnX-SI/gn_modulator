@@ -11,6 +11,7 @@ from .relation import ImportMixinRelation
 from .update import ImportMixinUpdate
 from .utils import ImportMixinUtils
 from .log import ImportMixinLog
+from celery.utils.log import get_task_logger
 
 
 class ImportMixin(
@@ -38,8 +39,10 @@ class ImportMixin(
         for step in self.remaining_import_steps():
             self.process_step(step)
             if self.has_errors():
-                errors = self.errors
+                # pour pouvoir récupérer les erreurs des import des relations
+                errors = self.all_errors()
                 steps = self.steps
+                self.status = "ERROR"
                 try:
                     self.flush_or_commit()
                 except:

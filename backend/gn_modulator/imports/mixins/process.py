@@ -193,6 +193,7 @@ JOIN remove_doublons r ON r.id_import = t.id_import
 CREATE VIEW {view_params['dest_table']} AS
 SELECT
     min(id_import) AS id_import,
+    array_agg(id_import) AS ids_import,
     {view_params['txt_id_digitiser']}{view_params['txt_columns']}
 FROM {view_params['from_table']} t
 {view_params['txt_joins']}

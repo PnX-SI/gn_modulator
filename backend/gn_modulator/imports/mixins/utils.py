@@ -1,3 +1,4 @@
+import copy
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.env import schema_import
 from gn_modulator import ModuleMethods
@@ -135,9 +136,8 @@ class ImportMixinUtils:
         error_code=None,
         error_msg=None,
         key=None,
-        lines=None,
         valid_values=None,
-        error_values=None,
+        error_infos=None,
     ):
         """
         ajout d'une erreur lorsque qu'elle est rencontrée
@@ -147,9 +147,9 @@ class ImportMixinUtils:
                 "error_code": error_code,
                 "error_msg": error_msg,
                 "key": key,
-                "lines": lines,
                 "valid_values": valid_values,
-                "error_values": error_values,
+                "error_infos": error_infos,
+                "relation_key": self.relation_key,
             }
         )
         self.status = "ERROR"
@@ -194,6 +194,12 @@ class ImportMixinUtils:
 
     def has_errors(self):
         return len(self.errors) > 0 or any(child.has_errors() for child in self.imports_1_n)
+
+    def all_errors(self):
+        all_errors = self.errors
+        for child in self.imports_1_n:
+            all_errors += child.all_errors()
+        return all_errors
 
     def Model(self):
         return self.sm().Model()

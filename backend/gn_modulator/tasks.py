@@ -8,10 +8,8 @@ logger = get_task_logger(__name__)
 
 @celery_app.task(bind=True)
 def process_import(self, id_import):
-    logger.info("process_import task")
     self.update_state(state="PROGRESS")
-    logger.info(db.engine.url)
-    logger.info(f"process_import task init {id_import}")
     req = db.session.query(TImport).filter(TImport.id_import == id_import)
     impt = req.one()
+    impt._logger = logger
     impt.process_import_schema()

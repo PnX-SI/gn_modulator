@@ -2,15 +2,46 @@ import re
 from pathlib import Path
 from gn_modulator.utils.commons import getAttr
 from .utils import ImportMixinUtils
+import logging
 
 
 class ImportMixinLog(ImportMixinUtils):
+    def getLogger(self):
+        if hasattr(self, "_logger"):
+            return self._logger
+        return logging.getLogger()
+
     def pretty_errors_txt(self):
+        """
+        affichage des erreurs de manière lisible
+        """
         txt = ""
         for error in self.errors:
-            relation_key = f"({self.relation_key}) " if self.relation_key else ""
-            txt += f"- {relation_key}{error['error_code']} :\n"
-            txt += f"    {error['error_msg']}"
+            if (
+                error.get("relation_key") is not None
+                and error.get("relation_key") != self.relation_key
+            ):
+                continue
+            key = error.get("key")
+            relation_key = self.relation_key
+            key_txt = (
+                f"'{relation_key}.{key}' : "
+                if key and relation_key
+                else f"'{key}' : "
+                if key
+                else ""
+            )
+            txt = f"- {key_txt}{error['error_msg']}\n"
+            for info in error.get("error_infos", []):
+                lines_txt = ", ".join(map(lambda x: str(x), info["lines"]))
+                txt_value = f"{info['value']} :" if info.get("value") else ""
+                txt_info = (
+                    f"""  - {txt_value} : ligne{'s' if len(info['lines']) else ""} {lines_txt}"""
+                )
+                if info["nb_lines"] > len(info["lines"]):
+                    txt_info += f"... ({info['nb_lines']} lignes)"
+                txt_info += "\n"
+                txt += txt_info
 
         for import_relation in self.imports_1_n:
             txt += import_relation.pretty_errors_txt()

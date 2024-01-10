@@ -57,6 +57,7 @@ DROP VIEW IF EXISTS gn_modulator_import.v_xxx_process_ref_geo_area CASCADE;
 CREATE VIEW gn_modulator_import.v_xxx_process_ref_geo_area AS
 SELECT
     min(id_import) AS id_import,
+    array_agg(id_import) AS ids_import,
     j_0.id_type AS id_type,
     t.area_name,
     t.area_code,

@@ -23,8 +23,9 @@ layout:
         object_code: __f__data.object_code
         type: import
         admin: true
+        test_error: true
         hidden_options:
           - enable_update
 data:
-  module_code: MODULATOR
-  object_code: syn.synthese
+  module_code: m_sipaf
+  object_code: site

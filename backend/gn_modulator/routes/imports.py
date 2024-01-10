@@ -1,4 +1,5 @@
 import json, yaml
+import logging
 from flask import request, jsonify
 
 from sqlalchemy import orm
@@ -12,6 +13,8 @@ from gn_modulator.imports.files import upload_import_file
 from gn_modulator.imports.models import TImport
 from gn_modulator.tasks import process_import
 from gn_modulator import SchemaMethods
+
+log = logging.getLogger()
 
 
 @permissions.check_cruved_scope("R", module_code="MODULATOR", object_code="ADMIN")

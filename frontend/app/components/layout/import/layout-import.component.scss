@@ -2,13 +2,13 @@
     width: 1000px
 }
 
-.import-msg {
-    height: 200px;
-    overflow-y: scroll;
+:host ::ng-deep .import_error {
+    margin-bottom: 5px
 }
-:host ::ng-deep .mat-step-header[aria-selected="true"] {
-    background-color: #c8adf0;
-    border-radius: 20px;
-    margin: 10px;
-    
+:host ::ng-deep .import_error_msg {
+    font-size: 1.2em;
+}
+
+:host ::ng-deep code {
+    color: black
 }

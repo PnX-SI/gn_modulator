@@ -6,8 +6,7 @@ layout:
   type: form
   form_group_id: form_import
   items:
-    - display: tabs
-      items:
+    - items:
         - label: Import
           items:
             - hidden: true
@@ -19,8 +18,10 @@ layout:
                 - key: errors
                 - key: status
             - type: message
+              overflow: true
               html: __f__data.importMsg.html
               class: __f__data.importMsg.class
+
             - display: fieldset
               title: Fichier d'import
               items:
@@ -55,24 +56,6 @@ layout:
                   title: SRID
                   description: SRID des données fournies
                   type: string
-        - label: __f__`Erreurs (${data.errors?.length || 0})`
-          disabled: __f__!data.errors?.length
-          items:
-            - key: error_display_line
-              title: Afficher les erreurs en ligne
-              type: boolean
-            - style:
-                max-height: 400px
-                overflow-y: scroll
-              items:
-                - type: message
-                  html: __f__data.errorMsgType
-                  class: error
-                  hidden: __f__!!data.error_display_line
-                - type: message
-                  html: __f__data.errorMsgLine
-                  class: error
-                  hidden: __f__!data.error_display_line
 
     - direction: row
       items:

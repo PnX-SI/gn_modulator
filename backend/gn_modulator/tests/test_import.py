@@ -266,7 +266,7 @@ class TestImport:
             expected_infos=expected_infos,
         )
 
-    def test_sipaf_missing_uuid(self):
+    def test_import_sipaf_error_missing_uuid(self):
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_missing_uuid.csv"
@@ -284,7 +284,7 @@ class TestImport:
             expected_infos=expected_infos,
         )
 
-    def test_sipaf_exemple_complet(self):
+    def test_import_sipaf_exemple_complet(self):
         if not ModuleMethods.module_config("m_sipaf")["registred"]:
             return
 
@@ -299,7 +299,7 @@ class TestImport:
             expected_infos=expected_infos,
         )
 
-    def test_sipaf_update(self):
+    def test_import_sipaf_update(self):
         if not ModuleMethods.module_config("m_sipaf")["registred"]:
             return
 
@@ -323,7 +323,7 @@ class TestImport:
             expected_infos=expected_infos,
         )
 
-    def test_sipaf_actors(self):
+    def test_import_sipaf_actors(self):
         module_code = "m_sipaf"
         object_code = "site"
         data_file_path = import_test_dir / "pf_actors.csv"
@@ -354,7 +354,7 @@ class TestImport:
 
     # Test remontées d'erreurs
 
-    def test_error_ERR_IMPORT_INVALID_VALUE_FOR_TYPE(self):
+    def test_import_error_ERR_IMPORT_INVALID_VALUE_FOR_TYPE(self):
         module_code = "MODULATOR"
         object_code = "syn.synthese"
         data_file_path = import_test_dir / "synthese_ERR_IMPORT_INVALID_VALUE_FOR_TYPE.csv"
@@ -365,3 +365,47 @@ class TestImport:
             object_code=object_code,
             expected_infos=expected_infos,
         )
+
+    def test_import_error_ERR_IMPORT_UNRESOLVED(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_ERR_IMPORT_UNRESOLVED.csv"
+        expected_infos = {"errors": [{"error_code": "ERR_IMPORT_UNRESOLVED"}]}
+        impt = test_import_data_file(
+            data_file_path,
+            module_code=module_code,
+            object_code=object_code,
+            expected_infos=expected_infos,
+        )
+        print(impt.pretty_errors_txt())
+
+        assert (
+            ", ".join(map(lambda x: x["value"], impt.errors[0]["error_infos"]))
+            == "concessionnaire, proprietaire"
+        )
+
+    def test_import_error_ERR_IMPORT_REQUIRED(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_ERR_IMPORT_REQUIRED.csv"
+        expected_infos = {"errors": [{"error_code": "ERR_IMPORT_REQUIRED"}]}
+        impt = test_import_data_file(
+            data_file_path,
+            module_code=module_code,
+            object_code=object_code,
+            expected_infos=expected_infos,
+        )
+        print(impt.pretty_errors_txt())
+
+    def test_import_error_ERR_IMPORT_INVALID_VALUE_FOR_TYPE(self):
+        module_code = "m_sipaf"
+        object_code = "site"
+        data_file_path = import_test_dir / "pf_ERR_IMPORT_INVALID_VALUE_FOR_TYPE.csv"
+        expected_infos = {"errors": [{"error_code": "ERR_IMPORT_INVALID_VALUE_FOR_TYPE"}]}
+        impt = test_import_data_file(
+            data_file_path,
+            module_code=module_code,
+            object_code=object_code,
+            expected_infos=expected_infos,
+        )
+        print(impt.pretty_errors_txt())
