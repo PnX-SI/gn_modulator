@@ -1,4 +1,5 @@
-SELECT
+WITH pre AS (
+     SELECT
      (
           SELECT
                concat(
