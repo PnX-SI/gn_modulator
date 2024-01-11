@@ -90,5 +90,5 @@ FROM
     JOIN num n ON n.cleobs = p.cleobs
     LEFT JOIN import_inpn_sipaf.st_descr d ON d.cleobs = p.cleobs
     LEFT JOIN import_inpn_sipaf.st_regrp r ON r.clegrp = substring(p.clegrp, 0, strpos(p.clegrp, '.'))
-    WHERE sensiniveau = '0'
+    WHERE sensiniveau IS NULL OR sensiniveau = '0' -- supprimer ou changer cette ligne pour ajouter les données sensibles
     ;
