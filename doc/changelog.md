@@ -1,7 +1,18 @@
 # Changelog
 
+## 1.3.1 (2024-01-11)
 
-## 1.3.1 (unreleased)
+**🚀 Nouveautés**
+
+- [SIPAF] Ajout d'un champs "Commentaires" sur les PAF (saisie, import, export)
+- [IMPORT] Amélioration de la gestion des erreurs (#70)
+- Compléments et mise à jour de la documentation
+
+**🐛 Corrections**
+
+- [SIPAF] Correction de l'affichage des formulaires et de la mise à jour des diagnostics fonctionnels
+- [SIPAF] Correction de quelques noms de champs
+- Correction de la vérification des permissions pour afficher les outils de debug
 
 ## 1.3.0 (2024-01-08)
 
@@ -13,8 +24,8 @@
 - [FRONTEND-MAP] Ajout du composant Nominatim sur les cartes, permettant de rechercher un lieu et de se centrer dessus
 - [FRONTEND-MAP] Conservation du zoom de la carte de la page de recherche quand on créé un nouvel objet (#63)
 - [FRONTEND-MAP] Affichage des petits polygones et lignes sous forme de point à large échelle pour en améliorer la visibilité (#65)
-- [SIPAF-EXPORT] ajout des champs acteurs, objectifs et usages
-- [SIPAF-EXPORT] possibilité de voir le select de l'export (aide pour faire une vue à destination du module Export)
+- [SIPAF-EXPORT] Ajout des champs acteurs, objectifs et usages
+- [SIPAF-EXPORT] Possibilité de voir le select de l'export (aide pour faire une vue à destination du module Export)
 - [SIPAF] Ajout d'un exemple de vue d'export (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/config/exports/m_sipaf.pf.export.sql)
 - [SIPAF-MAP] Ajout des pk/pr sur toutes les cartes, en les désactivant par défaut
 - [SIPAF] Suppression de la possibilité de mettre une personne en tant qu'acteur des PAF, pour se limiter aux organismes
