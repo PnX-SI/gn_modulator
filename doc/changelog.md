@@ -1,6 +1,15 @@
 # Changelog
 
-## 1.3.2 (unreleased)
+## 1.3.2 (2024-01-11)
+
+**🚀 Nouveautés**
+
+[SIPAF]: doc traitement vues inpn
+
+**🐛 Corrections**
+
+[FRONTEND]: calcul des champs des tableaux
+[SIPAF]: correction vue export (destinée au module d'export)
 
 ## 1.3.1 (2024-01-11)
 
