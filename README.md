@@ -2,14 +2,13 @@
 
 ## Présentation
 
-Ce module donne accès à des outils qui permettent de créer des sous-module geonature.
-
+Ce module donne accès à des outils qui permettent de créer des sous-module GeoNature.
 
 Les modules sont listés sur la page d'accueil du module `modulator`.
 
-Un exemple de sous-module est le module `m_sipaf` pour les passage à faune:
+Un exemple de sous-module est le module `m_sipaf` pour les passages à faune :
 
-- page d'accueil du module `m_sipaf` avec une carte, liste et filtres les objets du sous-module :
+- page d'accueil du module `m_sipaf` avec une carte, liste et filtres des objets du sous-module :
 
 ![image](https://user-images.githubusercontent.com/4418840/217202599-44988f09-2651-49b4-966a-623d7abdcab9.png)
 
@@ -19,7 +18,7 @@ Un exemple de sous-module est le module `m_sipaf` pour les passage à faune:
 
 ## Installation
 
-Compatible avec la version 2.13.0 (et plus) de GeoNature.
+Compatible avec la version 2.13 de GeoNature.
 
 - Téléchargez le module dans ``/home/<myuser>/``, en remplacant ``X.Y.Z`` par la version souhaitée
 
@@ -58,7 +57,7 @@ sudo systemctl restart geonature
 Cette commande : 
 - installe le module python
 - le module dans la base de données
-- fait les migrations
+- applique les migrations
 - copie le dossier de configuration du sous-module dans le dossier `/backend/media/modulator/config` de GeoNature
 
 Pour mettre à jour un sous-module, il faut relancer sa commande d'installation.
@@ -68,17 +67,13 @@ Le formalisme pour les codes des sous-modules est le suivante :
 - prefixé par `m_`
 - par exemple `m_sipaf`
 
-Des sous-modules sont déjà présents dans le dossier
-`/config/modules/contrib` :
+Des sous-modules sont déjà présents dans le dossier `/config/modules/contrib` :
 
-- Le module SIPAF (passages à faune) :   
-   - `geonature modulator install -p ./contrib/m_sipaf`
-
-par exemple pour le module `m_sipaf`
-
-```bash
-geonature modulator install -p <chemin vers gn_modulator>/contrib/m_sipaf
-```
+- Installation du module SIPAF (passages à faune) :
+  
+  ```bash
+  geonature modulator install -p <chemin vers gn_modulator>/contrib/m_sipaf
+  ```
 
 ### Mise à jour
 
@@ -113,9 +108,10 @@ Relancer la commande d'installation du module
 
 ```
 geonature modulator install -p <chemin vers le sous-module>
+```
 
 ## Développement
 
 ## Création d'un sous-module
 
-[Documentation sur la création de sous module](./doc/creation_module.md)
+[Documentation sur la création d'un sous-module](./doc/creation_module.md)
