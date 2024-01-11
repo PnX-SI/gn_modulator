@@ -4,12 +4,12 @@
 
 **🚀 Nouveautés**
 
-[SIPAF]: doc traitement vues inpn
+- [SIPAF] Documentation du traitement des fichiers INPN
 
 **🐛 Corrections**
 
-[FRONTEND]: calcul des champs des tableaux
-[SIPAF]: correction vue export (destinée au module d'export)
+- [FRONTEND] Calcul des champs des tableaux
+- [SIPAF] Correction de la vue d'export (destinée au module Export)
 
 ## 1.3.1 (2024-01-11)
 
