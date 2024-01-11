@@ -2,7 +2,7 @@
 
 ## Définition des champs
 
-[Définition des champs](./import_description_champs.md)
+[Définition des champs](./import_passage_faune_description_champs.md)
 
 Le champs `uuid_passage_faune` permet d'identifier de maniere unique un passage à faune.  
 La colonne `uuid_passage_faune` doit être présente dans le fichier d'import même si les valeurs ne sont pas renseignées.
@@ -10,6 +10,8 @@ La colonne `uuid_passage_faune` doit être présente dans le fichier d'import m�
 Si la valeur est nulle, une valeur sera générée par défaut. Cependant il sera plus difficile de faire le lien avec la base de donnée source, ou de faire des mises à jour de ces données (en utilisant la fonctionalité de mise à jour lors d'un import).
 
 Il est donc conseillé de fournir une valeur pour ce champs.
+
+Pour les champs avec des relations multiples (un PAF peut avoir plusieurs acteurs, un PAF peut avoir plusieurs usages), il est possible d'importer ces informations. Pour cela, il faut dupliquer les lignes des PAF concernés en modifiant uniquement ce champs. Par exemple, si un PAF a 2 acteurs, alors ce PAF sera présent 2 fois dans le fichier importé avec un acteur différent à chacune des 2 lignes.
 
 ## Exemples de fichiers
 
@@ -62,7 +64,7 @@ Il faudra revoir et corriger les données pour pouvoir reprocéder à l'import.
 
 ![Validation de l'import](img/erreur_import.png)
 
-### Options additionelles
+### Options additionnelles
 
 - `Verifier avant insertion`
   - décocher pour passer à l'étape de vérification des données et ne plus avoir à valider une fois le fichier chargé
@@ -70,5 +72,5 @@ Il faudra revoir et corriger les données pour pouvoir reprocéder à l'import.
   - par défaut les mises à jour ne sont pas autorisées
   - appuyer sur cette case pour pouvoir mettre à jour des données à partir de leur UUID
 - `SRID`
-  - par défaut le SRID (système de projection des coordonées) est `4326`
+  - par défaut le SRID (système de projection des coordonnées) est `4326`
     - vous pouvez préciser un SRID différent pour le fichier
