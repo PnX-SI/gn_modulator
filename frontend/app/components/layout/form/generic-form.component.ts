@@ -36,6 +36,7 @@ export class ModulesGenericFormComponent extends ModulesLayoutComponent implemen
     }
     this.listenToChanges = false;
     this._formService.setControls({ context: this.context, layout: this.layout, data: this.data });
+    // this.formGroup.updateValueAndValidity();
     this.listenToChanges = true;
     // test du change ici ???
   }

@@ -169,8 +169,8 @@ export class ModulesFormService {
     if (localData) {
       formControl.patchValue(localData);
     } else {
-      formControl.updateValueAndValidity();
     }
+    formControl.updateValueAndValidity();
   }
 
   getFormControl(formControl, key) {
@@ -363,9 +363,10 @@ export class ModulesFormService {
   }
   uuidValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      return control.value && !regexExpUUID.test(control.value)
-        ? { uuid: { value: control.value } }
-        : null;
+      const testNull = [null, undefined, ''].includes(control.value);
+      const testValidUuid = regexExpUUID.test(control.value);
+      const testValid = testNull || testValidUuid;
+      return testValid ? null : { uuid: { value: control.value } };
     };
   }
 }
