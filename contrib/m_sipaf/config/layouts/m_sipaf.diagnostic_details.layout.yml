@@ -10,6 +10,7 @@ aliases:
         - id_diagnostic
         - key: id_passage_faune
           default: __f__context.params.id_passage_faune
+        - scope
     - display: row
       items:
         - passage_faune.uuid_passage_faune
