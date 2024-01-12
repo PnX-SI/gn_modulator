@@ -1,5 +1,6 @@
 from geonature.utils.env import db
 
+
 class Author(db.Model):
     ___tablename__ = "author"
     __table_args__ = {"schema": "{{cookiecutter.db_schema_name}}"}
@@ -18,6 +19,8 @@ class Post(db.Model):
     post_title = db.Column(db.String)
     post_content = db.Column(db.String)
     id_author = db.Column(
-        db.Integer, db.ForeignKey("{{cookiecutter.db_schema_name}}.author.id_author"), nullable=False
+        db.Integer,
+        db.ForeignKey("{{cookiecutter.db_schema_name}}.author.id_author"),
+        nullable=False,
     )
     author = db.relationship(Author, back_populates="posts")

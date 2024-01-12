@@ -8,7 +8,7 @@ from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision = "dfsdgf45sdf1"# TODO : Change it !!!
+revision = "dfsdgf45sdf1"  # TODO : Change it !!!
 down_revision = None
 branch_labels = "{{cookiecutter.module_name}}"
 depends_on = "modulator"
@@ -29,7 +29,11 @@ def upgrade():
         sa.Column("id_post", sa.Integer, primary_key=True),
         sa.Column("post_title", sa.String),
         sa.Column("post_content", sa.String),
-        sa.Column("id_author", sa.Integer, sa.ForeignKey("{{cookiecutter.db_schema_name}}.author.id_author")),
+        sa.Column(
+            "id_author",
+            sa.Integer,
+            sa.ForeignKey("{{cookiecutter.db_schema_name}}.author.id_author"),
+        ),
         schema="{{cookiecutter.db_schema_name}}",
     )
 
