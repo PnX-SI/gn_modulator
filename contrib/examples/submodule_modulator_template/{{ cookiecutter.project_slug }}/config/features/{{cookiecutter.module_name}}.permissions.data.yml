@@ -1,0 +1,15 @@
+type: data
+code: {{cookiecutter.module_name}}.permissions
+title: Data permissions {{cookiecutter.module_name}}
+description: Permissions disponibles pour le module {{cookiecutter.module_name}}
+items:
+  - schema_code: perm.perm_dispo
+    defaults:
+      id_module: {{cookiecutter.module_name}}
+    keys: [id_object, id_action, scope_filter, label]
+    items:
+      - [ALL, C, true, "Créer et importer des posts/auteurs"]
+      - [ALL, R, true, "Voir les posts/auteurs"]
+      - [ALL, U, true, "Modifier les posts/auteurs"]
+      - [ALL, D, true, "Supprimer des posts/auteurs"]
+      - [ALL, E, true, "Exporter les posts/auteurs"]

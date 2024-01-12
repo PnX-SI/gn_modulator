@@ -1,0 +1,35 @@
+type: module
+code: {{cookiecutter.module_name}}
+title: Module de test
+description: Module de test
+
+module:
+  module_label: {{cookiecutter.project_name}}
+  module_desc: {{cookiecutter.project_description}}
+  module_picto: {{cookiecutter.module_picto}}
+  active_frontend: true
+
+features:
+  - {{cookiecutter.module_name}}.permissions
+  - {{cookiecutter.module_name}}.fake_author
+  - {{cookiecutter.module_name}}.fake_post
+
+objects:
+  post:
+    schema_code: {{cookiecutter.module_name}}.post
+    cruved: "CRUD"
+  author:
+    schema_code: {{cookiecutter.module_name}}.author
+    cruved: "CRUD"
+
+tree:
+  author:
+    post:
+
+pages_definition:
+  author:
+    list:
+      root: true
+  post:
+    list:
+    details:

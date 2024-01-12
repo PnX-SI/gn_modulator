@@ -1,0 +1,15 @@
+type: layout
+code: {{cookiecutter.module_name}}.post_details
+title: Layout post list
+description: Layout pour la liste de posts
+
+layout:
+  direction: row
+  items:
+    - type: section
+      items:
+        - code: utils.object_details
+          template_params:
+            object_code: post
+            layout: [post_title, post_content, id_author]
+  
