@@ -210,6 +210,9 @@ site_details_fields:
   items:
     - label: Propriétés
       items:
+        - hidden: true
+          items:
+            - scope
         - title: Informations
           display: fieldset
           items:

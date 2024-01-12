@@ -261,6 +261,7 @@ export class ModulesObjectService {
       return false;
     }
     const checkAction = this.checkAction(context, action, data?.scope);
+
     return checkAction.actionAllowed;
   }
 
@@ -323,6 +324,7 @@ export class ModulesObjectService {
       };
       const pageCode = `${context.object_code}_${pageCodeAction[action]}`;
       const pageExists = moduleConfig.pages && Object.keys(moduleConfig.pages).includes(pageCode);
+
       if (!pageExists) {
         return {
           actionAllowed: null,
@@ -372,7 +374,6 @@ export class ModulesObjectService {
     } else {
       testUserCruved = moduleCruvedAction >= scope;
     }
-
     if (!testUserCruved) {
       const msgDroitsInsuffisants = {
         C: `Droits insuffisants pour créer ${objectConfig.display.un_nouveau_label}`,
