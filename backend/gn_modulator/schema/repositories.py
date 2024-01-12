@@ -115,14 +115,16 @@ class SchemaRepositories:
             for key, data_value in data.items():
                 if not hasattr(model, key):
                     continue
-                fields = [key]
+                fields = []
                 if self.is_relation_1_n(key) or self.is_relation_n_n(key):
-                    fields = []
                     for item in data_value:
                         for k in item:
                             kk = f"{key}.{k}"
                             if kk not in fields and self.has_property(kk):
                                 fields.append(kk)
+                if len(fields) == 0:
+                    fields = [key]
+
                 m_ = self.serialize(model, fields=fields)
                 m = m_[key]
                 if self.is_new_data(m, data_value):

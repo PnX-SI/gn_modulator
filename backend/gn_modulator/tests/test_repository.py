@@ -61,6 +61,17 @@ class TestRepository:
 
         assert True
 
+    def test_repo_pf_update(self, passages_faune_with_diagnostic):
+        sm = SchemaMethods("m_sipaf.pf")
+
+        uuid_pf = passages_faune_with_diagnostic[0].uuid_passage_faune
+        fields = ["id_passage_faune", "uuid_passage_faune", "medias"]
+        q = sm.get_row(uuid_pf, "uuid_passage_faune", "R", params={"fields": fields})
+        m = q.one()
+        data = sm.serialize(m, fields)
+        assert sm.is_new_data(m, data) is False
+        sm.update_row(uuid_pf, data, "uuid_passage_faune", "m_sipaf")
+
     def test_repo_diag_cloture(self, passages_faune_with_diagnostic):
         sm = SchemaMethods("m_sipaf.diag")
         sm_org = SchemaMethods("user.organisme")
