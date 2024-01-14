@@ -1,5 +1,17 @@
 # Changelog
 
+
+## 1.3.3 (2024-01-15)
+
+**🚀 Nouveautés**
+
+- Ajout de tests sur les features
+
+**🐛 Corrections**
+
+- [BACKEND]: Correction de la fonction is_new_data
+- [FRONTEND]: Correction du validateur d'input UUID
+- [SIPAF]: Correction du layout d'édition des diagnostics
 ## 1.3.2 (2024-01-12)
 
 **🚀 Nouveautés**
