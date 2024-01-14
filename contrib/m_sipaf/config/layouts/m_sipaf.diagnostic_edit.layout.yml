@@ -106,22 +106,24 @@ aliases:
       type: textarea
 layout:
   height_auto: true
+  type: object
   object_code: diagnostic
-  type: form
   items:
-    - type: breadcrumbs
-      flex: "0"
-    - overflow: true
-      display: tabs
-      lazy_loading: true
-      items:
-        - label: Champs communs
-          items: *diag_commons
-        - label: Perturbations / Obstacles
-          items: *diag_perturbation_obstacle
-        - label: Aménagement
-          items: *diag_amenagement
-        - label: Synthese
-          items: *diag_synthese
-    - code: utils.buttons_form
-      flex: "0"
+    type: form
+    items:
+      - type: breadcrumbs
+        flex: "0"
+      - overflow: true
+        display: tabs
+        lazy_loading: true
+        items:
+          - label: Champs communs
+            items: *diag_commons
+          - label: Perturbations / Obstacles
+            items: *diag_perturbation_obstacle
+          - label: Aménagement
+            items: *diag_amenagement
+          - label: Synthese
+            items: *diag_synthese
+      - code: utils.buttons_form
+        flex: "0"
