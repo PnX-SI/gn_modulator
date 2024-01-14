@@ -31,6 +31,9 @@ class SchemaModelBase:
 
         kwargs = {}
 
+        if relationship_def.get("overlaps"):
+            kwargs["overlaps"] = relationship_def["overlaps"]
+
         if relationship_def.get("relation_type") == "1-1":
             kwargs["uselist"] = False
 

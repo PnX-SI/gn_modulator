@@ -58,7 +58,7 @@ def get_schematisable_decorator():
                 sql_type = "VARCHAR"
             if sql_type == "DATETIME":
                 sql_type = "TIMESTAMP"
-            if "GEOMETRY" in sql_type:
+            if "GEOMETRY" in sql_type.upper():
                 sql_type = "GEOMETRY"
 
             return sql_type

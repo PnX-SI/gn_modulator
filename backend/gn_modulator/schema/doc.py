@@ -1,4 +1,4 @@
-import yaml
+from geonature.utils.env import db
 from gn_modulator.utils.yaml import YmlLoader
 from gn_modulator.query.repository import query_list
 
@@ -99,17 +99,20 @@ class SchemaDoc:
         nomenclature_type = property_def["nomenclature_type"]
         txt += "  - *valeurs* :\n"
         sm_nom = self.cls("ref_nom.nomenclature")
-        res = query_list(
+
+        fields = ["label_fr", "cd_nomenclature"]
+        q = query_list(
             sm_nom.Model(),
             "MODULATOR",
             "R",
             {
-                "fields": ["label_fr", "cd_nomenclature"],
+                "fields": fields,
                 "filters": [f"nomenclature_type.mnemonique = {nomenclature_type}"],
             },
             "select",
-        ).all()
-        values = sm_nom.serialize_list(res, ["label_fr", "cd_nomenclature"])
+        )
+        m_list = db.session.execute(q)
+        values = sm_nom.serialize_list(m_list, fields)
 
         for v in values:
             txt += f"    - **{v['cd_nomenclature']}** *{v['label_fr']}*\n"

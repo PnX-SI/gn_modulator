@@ -26,18 +26,16 @@ def passage_faune_subquery_scope(cls, id_role):
     scope_expression = db.session.query(PassageFaune).with_entities(
         PassageFaune.id_passage_faune,
         sa.case(
-            [
-                (PassageFaune.id_digitiser == id_role, 1),
-                (
-                    sa.exists().where(
-                        sa.and_(
-                            pre_scope.c.id_passage_faune == PassageFaune.id_passage_faune,
-                            pre_scope.c.id_organisme_acteur == pre_scope.c.id_organisme_cur,
-                        )
-                    ),
-                    2,
+            (PassageFaune.id_digitiser == id_role, 1),
+            (
+                sa.exists().where(
+                    sa.and_(
+                        pre_scope.c.id_passage_faune == PassageFaune.id_passage_faune,
+                        pre_scope.c.id_organisme_acteur == pre_scope.c.id_organisme_cur,
+                    )
                 ),
-            ],
+                2,
+            ),
             else_=3,
         ).label("scope"),
     )

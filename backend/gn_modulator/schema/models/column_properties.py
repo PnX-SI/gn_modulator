@@ -47,7 +47,7 @@ class SchemaModelColumnProperties:
                 index += 1
             cp = func.concat(*items)
             if conditions:
-                cp = select([cp]).where(and_(*conditions))
+                cp = select(cp).where(and_(*conditions))
             return cp
 
         raise errors.SchemaModelColumnPropertyError(

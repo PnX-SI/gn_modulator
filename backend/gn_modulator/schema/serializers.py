@@ -336,7 +336,7 @@ class SchemaSerializers:
             return data
 
     def is_res_multiple_columns(self, m):
-        return isinstance(m, tuple)
+        return isinstance(m, sa.engine.row.Row)
 
     def get_res_model(self, m):
         return m[0] if self.is_res_multiple_columns(m) else m
@@ -365,7 +365,7 @@ class SchemaSerializers:
                 params={"fields": fields},
                 query_type=query_type,
             )
-            m = q.one()
+            m = db.session.execute(q).one()
 
         except sa.orm.exc.NoResultFound:
             return None
