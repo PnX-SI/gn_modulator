@@ -32,8 +32,9 @@ for cmd in commands:
 def set_current_module(endpoint, values):
     requested_module = values.get("module_code") or MODULE_CODE
 
-    g.current_module = TModules.query.filter_by(module_code=requested_module).first_or_404(
-        f"No module name {requested_module} {endpoint}"
+    g.current_module = db.first_or_404(
+        select(TModules).filter_by(module_code=requested_module),
+        description=f"No module name {requested_module} {endpoint}",
     )
 
 

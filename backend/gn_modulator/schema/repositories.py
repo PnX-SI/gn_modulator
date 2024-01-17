@@ -331,11 +331,11 @@ class SchemaRepositories:
             self.Model(), module_code, action, params, "page_number"
         ).subquery()
 
-        row_number = (
-            db.session.query(sub_query_list.c.row_number)
-            .filter(getattr(sub_query_list.c, self.Model().pk_field_name()) == value)
-            .one()[0]
-        )
+        row_number = db.session.execute(
+            sa.select(sub_query_list.c.row_number).where(
+                getattr(sub_query_list.c, self.Model().pk_field_name()) == value
+            )
+        ).scalar_one()
 
         page_number = math.ceil(row_number / params.get("page_size"))
 

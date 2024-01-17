@@ -5,12 +5,14 @@ import json
 import jsonschema
 
 from geonature.core.gn_commons.models import TModules
+from geonature.utils.env import db
 
 from gn_modulator.utils.env import config_dir
 from gn_modulator.utils.cache import set_global_cache, get_global_cache
 from gn_modulator.utils.errors import add_error, get_errors
 from gn_modulator.utils.commons import get_class_from_path
 from gn_modulator.schematisable import schematisable
+from sqlalchemy import select
 
 
 class DefinitionBase:
@@ -29,7 +31,9 @@ class DefinitionBase:
     @classmethod
     def module_in_db(cls, module_code):
         try:
-            TModules.query().filter_by(module_code=module_code).one()
+            return db.session.execute(
+                select(TModules).filter_by(module_code=module_code)
+            ).scalar_one()
         except Exception:
             return False
 

@@ -35,14 +35,14 @@ def synthese_subquery_scope(cls, id_role):
     CurrentUser = sa.orm.aliased(User)
 
     pre_scope = (
-        db.session.query(Synthese)
+        sa.select(Synthese)
         .join(CurrentUser, CurrentUser.id_role == id_role)
         .join(Observers, Synthese.cor_observers, isouter=True)
         .join(TDatasets, Synthese.dataset, isouter=True)
         .join(TDatasets.cor_dataset_actor, isouter=True)
         .join(TAcquisitionFramework, TDatasets.acquisition_framework, isouter=True)
         .join(TAcquisitionFramework.cor_af_actor, isouter=True)
-        .with_entities(
+        .with_only_columns(
             Synthese.id_synthese,
             Observers.id_role.label("id_role_obs"),
             Observers.id_organisme.label("id_organisme_obs"),
@@ -55,7 +55,7 @@ def synthese_subquery_scope(cls, id_role):
         )
     ).cte("pre_scope")
 
-    scope_expression = db.session.query(Synthese).with_entities(
+    scope_expression = sa.select(Synthese).with_only_columns(
         Synthese.id_synthese,
         sa.case(
             (
