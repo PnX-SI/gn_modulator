@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 1.3.4 (unreleased)
+
+**💫 Nouveautés**
+
+- Mise à jours de la version de SQLAlchemy 1.3 vers 1.4 et de Flask 2.2 vers 3.x
+- Compatible avec GeoNature 2.14 (develop)
+
+  **🐛 Corrections**
+
+- [FRONTEND] [BACKEND] [SIPAF] Les listes dans les `prefilters` sont maintenant séparées par un pipe ("|") au lieu d'un point-virgule. C'est une des conséquences de la mise à jour de Flask en 3.0
+  dans Geonature.
 
 ## 1.3.3 (2024-01-15)
 
@@ -12,6 +23,7 @@
 - [BACKEND]: Correction de la fonction is_new_data
 - [FRONTEND]: Correction du validateur d'input UUID
 - [SIPAF]: Correction du layout d'édition des diagnostics
+
 ## 1.3.2 (2024-01-12)
 
 **🚀 Nouveautés**
@@ -150,10 +162,10 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
   - écriture : si un champs demandé n'est pas dans la config -> erreur 403
   - lecture : ce champs n'est pas pris en compte (utilisation de `only` dans l'initialisation des champs marshmallow)
 - Requêtes SQL (fonction `query_list`)
-    - chargement des relations et des champs pour les requêtes
-    - pour éviter les chargements n+1 (1 requête supplémentaire par relation)
-    - utilisation de `raise_load`
-    - on charge le minimum de champs possibles
+  - chargement des relations et des champs pour les requêtes
+  - pour éviter les chargements n+1 (1 requête supplémentaire par relation)
+  - utilisation de `raise_load`
+  - on charge le minimum de champs possibles
 - Déplacement des configurations dans le dossier `media/modulator/config` de GeoNature
 - Changement de nom `ownership` -> `scope`
 - Amélioration du composant list_form
