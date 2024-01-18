@@ -3,6 +3,7 @@ import sqlparse
 import csv
 import datetime
 from gn_modulator.query.utils import pretty_sql
+from geonature.utils.env import db
 
 
 class Line(object):
@@ -227,7 +228,7 @@ class SchemaExport:
             params.get("fields"), params.get("process_field_name")
         )
 
-        res_list = self.serialize_list(q.all(), fields=fields)
+        res_list = self.serialize_list(db.session.execute(q).unique().all(), fields=fields)
 
         if not res_list:
             return jsonify([]), 404

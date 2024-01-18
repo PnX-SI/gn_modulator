@@ -139,7 +139,7 @@ export default {
 
   getMapBoundsFilterValue(mapId) {
     const boundsArray = this.getMapBoundsArray(mapId);
-    return boundsArray && boundsArray.join(';');
+    return boundsArray && boundsArray.join('|');
   },
 
   initMap(

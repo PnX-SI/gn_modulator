@@ -10,6 +10,7 @@ import marshmallow
 from sqlalchemy.orm.exc import NoResultFound
 from .. import errors
 from gn_modulator.utils.cache import get_global_cache, clear_global_cache, set_global_cache
+from geonature.utils.env import db
 
 
 class SchemaBaseFeatures:
@@ -77,11 +78,12 @@ class SchemaBaseFeatures:
             return None
 
         try:
-            m = sm_rel.get_row(
+            q = sm_rel.get_row(
                 rel_test_values,
                 rel_test_keys,
                 params={},  # sinon bug et utilise un param précédent ????
-            ).one()
+            )
+            m = db.session.execute(q).scalar_one()
             pk = getattr(m, sm_rel.Model().pk_field_name())
             set_global_cache(["import_pk_keys", self.schema_code(), cache_key], pk)
             return pk

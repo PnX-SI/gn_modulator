@@ -46,7 +46,7 @@ def process_filters(Model, query, filters):
     filters_processed, query = process_filter_array(Model, query, filters)
 
     if filters_processed is not None:
-        query = query.filter(filters_processed)
+        query = query.where(filters_processed)
 
     return query
 
@@ -224,7 +224,7 @@ def get_filter(Model, query, filter):
     # - y_min(max) : lattitude min(max) de la fenetre
 
     elif filter_type == "bbox":
-        x_min, y_min, x_max, y_max = filter_value.split(";")
+        x_min, y_min, x_max, y_max = filter_value.split("|")
         geo_filter = sa.func.ST_Intersects(
             model_attribute,
             sa.func.ST_SetSRID(sa.func.ST_MakeEnvelope(x_min, y_min, x_max, y_max), 4326),

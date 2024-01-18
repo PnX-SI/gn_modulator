@@ -48,7 +48,7 @@ def get_list_rest(module_code, object_code, additional_params={}):
         response.mimetype = "text/plain"
         return response
 
-    res_list = [] if params.get("only_info") else q_list.all()
+    res_list = [] if params.get("only_info") else db.session.execute(q_list).all()
 
     out = {
         **query_infos,
@@ -84,7 +84,7 @@ def get_one_rest(module_code, object_code, value):
             params=params,
         )
 
-        m = q.one()
+        m = db.session.execute(q).unique().one()
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
         return f"Erreur Cruved : {str(e)}", 403
 
@@ -154,13 +154,16 @@ def delete_rest(module_code, object_code, value):
 
     params = parse_request_args(object_definition)
 
-    dict_out = sm.get_row_as_dict(
+    q = sm.get_row(
         value,
         field_name=params.get("field_name"),
         module_code=permission_module_code,
         action="D",
-        fields=params.get("fields"),
+        params=params,
     )
+    m = db.session.execute(q).scalar_one()
+
+    dict_out = sm.serialize(m, fields=params.get("fields"), as_geojson=params.get("as_geojson"))
 
     try:
         sm.delete_row(

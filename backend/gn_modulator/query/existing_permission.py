@@ -35,14 +35,14 @@ def synthese_subquery_scope(cls, id_role):
     CurrentUser = sa.orm.aliased(User)
 
     pre_scope = (
-        db.session.query(Synthese)
+        sa.select(Synthese)
         .join(CurrentUser, CurrentUser.id_role == id_role)
         .join(Observers, Synthese.cor_observers, isouter=True)
         .join(TDatasets, Synthese.dataset, isouter=True)
         .join(TDatasets.cor_dataset_actor, isouter=True)
         .join(TAcquisitionFramework, TDatasets.acquisition_framework, isouter=True)
         .join(TAcquisitionFramework.cor_af_actor, isouter=True)
-        .with_entities(
+        .with_only_columns(
             Synthese.id_synthese,
             Observers.id_role.label("id_role_obs"),
             Observers.id_organisme.label("id_organisme_obs"),
@@ -55,42 +55,40 @@ def synthese_subquery_scope(cls, id_role):
         )
     ).cte("pre_scope")
 
-    scope_expression = db.session.query(Synthese).with_entities(
+    scope_expression = sa.select(Synthese).with_only_columns(
         Synthese.id_synthese,
         sa.case(
-            [
-                (
-                    sa.or_(
-                        Synthese.id_digitiser == id_role,
-                        sa.exists().where(
-                            sa.and_(
-                                pre_scope.c.id_synthese == Synthese.id_synthese,
-                                sa.or_(
-                                    pre_scope.c.id_role_obs == pre_scope.c.id_role_cur,
-                                    pre_scope.c.id_role_jdd == pre_scope.c.id_role_cur,
-                                    pre_scope.c.id_role_af == pre_scope.c.id_role_cur,
-                                ),
-                            )
-                        ),
+            (
+                sa.or_(
+                    Synthese.id_digitiser == id_role,
+                    sa.exists().where(
+                        sa.and_(
+                            pre_scope.c.id_synthese == Synthese.id_synthese,
+                            sa.or_(
+                                pre_scope.c.id_role_obs == pre_scope.c.id_role_cur,
+                                pre_scope.c.id_role_jdd == pre_scope.c.id_role_cur,
+                                pre_scope.c.id_role_af == pre_scope.c.id_role_cur,
+                            ),
+                        )
                     ),
-                    1,
                 ),
-                (
-                    sa.or_(
-                        sa.exists().where(
-                            sa.and_(
-                                pre_scope.c.id_synthese == Synthese.id_synthese,
-                                sa.or_(
-                                    pre_scope.c.id_organisme_obs == pre_scope.c.id_organisme_cur,
-                                    pre_scope.c.id_organisme_jdd == pre_scope.c.id_organisme_cur,
-                                    pre_scope.c.id_organisme_af == pre_scope.c.id_organisme_cur,
-                                ),
-                            )
-                        ),
+                1,
+            ),
+            (
+                sa.or_(
+                    sa.exists().where(
+                        sa.and_(
+                            pre_scope.c.id_synthese == Synthese.id_synthese,
+                            sa.or_(
+                                pre_scope.c.id_organisme_obs == pre_scope.c.id_organisme_cur,
+                                pre_scope.c.id_organisme_jdd == pre_scope.c.id_organisme_cur,
+                                pre_scope.c.id_organisme_af == pre_scope.c.id_organisme_cur,
+                            ),
+                        )
                     ),
-                    2,
                 ),
-            ],
+                2,
+            ),
             else_=3,
         ).label("scope"),
     )

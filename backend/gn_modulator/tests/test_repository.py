@@ -56,7 +56,7 @@ class TestRepository:
             id_role=users["admin_user"].id_role,
         )
 
-        m_list = q.all()
+        m_list = db.session.execute(q)
         res = sm.serialize_list(m_list, fields)
 
         assert True
@@ -67,7 +67,7 @@ class TestRepository:
         uuid_pf = passages_faune_with_diagnostic[0].uuid_passage_faune
         fields = ["id_passage_faune", "uuid_passage_faune", "medias"]
         q = sm.get_row(uuid_pf, "uuid_passage_faune", "R", params={"fields": fields})
-        m = q.one()
+        m = db.session.execute(q).unique().scalar_one()
         data = sm.serialize(m, fields)
         assert sm.is_new_data(m, data) is False
         sm.update_row(uuid_pf, data, "uuid_passage_faune", "m_sipaf")
@@ -195,7 +195,7 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        m_list = q.all()
+        m_list = db.session.execute(q).unique().all()
         res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 2
@@ -281,7 +281,7 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        m_list = q.all()
+        m_list = db.session.execute(q)
         res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 2
@@ -294,7 +294,7 @@ class TestRepository:
             "select",
             id_role=users["user"].id_role,
         )
-        m_list = q.all()
+        m_list = db.session.execute(q)
         res = sm.serialize_list(m_list, fields)
 
         assert len(res) == 1
@@ -322,7 +322,7 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        m_list = q.all()
+        m_list = db.session.execute(q).unique().all()
         res = sm.serialize_list(m_list, fields)
         assert len(res) == 2
 
@@ -342,7 +342,7 @@ class TestRepository:
             "select",
             id_role=users["admin_user"].id_role,
         )
-        m_list = q.all()
+        m_list = db.session.execute(q).unique().all()
         res = sm.serialize_list(m_list, fields=["id_synthese"])
 
         assert len(res) == 4
@@ -366,7 +366,7 @@ class TestRepository:
                 id_role=users[user].id_role,
             )
 
-            m_list = q.all()
+            m_list = db.session.execute(q)
             res[user] = sm.serialize_list(m_list, fields=fields)
 
             if user in ["admin_user", "user", "self_user"]:
@@ -397,7 +397,7 @@ class TestRepository:
                 "select",
                 id_role=users[user].id_role,
             )
-            m_list = q.all()
+            m_list = db.session.execute(q)
             res[user] = sm.serialize_list(m_list, fields=fields)
 
         for user in users:

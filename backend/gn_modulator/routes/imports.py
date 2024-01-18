@@ -2,7 +2,7 @@ import json, yaml
 import logging
 from flask import request, jsonify
 
-from sqlalchemy import orm
+from sqlalchemy import orm, select
 from gn_modulator.routes.utils.decorators import check_module_object_route
 from geonature.utils.env import db
 from geonature.core.gn_permissions import decorators as permissions
@@ -63,7 +63,7 @@ def f_api_import_async(module_code, object_code, id_import):
 
     if id_import:
         try:
-            impt = TImport.query.filter_by(id_import=id_import).one()
+            impt = db.session.execute(select(TImport).filter_by(id_import=id_import)).scalar_one()
         except orm.exc.NoResultFound:
             return f"Pas d'import trouvé pour id_import={id_import}", 404
     else:

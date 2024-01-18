@@ -6,7 +6,7 @@ import sqlparse
 
 
 def pretty_sql(query):
-    txt = str(query.statement.compile(compile_kwargs={"literal_binds": True}))
+    txt = str(query.compile(compile_kwargs={"literal_binds": True}))
     txt = txt.replace("%%", "%")
     txt = sqlparse.format(txt, reindent=True, keywordcase="upper")
     return txt

@@ -21,5 +21,5 @@ class TestRepository:
             {"fields": ["id_passage_faune", "nomenclatures_ouvrage_type.label_fr"]},
             "select",
         )
-        res = q.all()
+        res = db.session.execute(q).unique()
         sm.serialize_list(res, fields=["nomenclatures_ouvrage_type.label_fr"])
