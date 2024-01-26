@@ -36,9 +36,11 @@ class SchemaDoc:
         type = (
             "clé simple"
             if property_def.get("schema_code")
-            else "liste de clés séparées par une virgule"
-            if property_def.get("relation_type") == "n-n"
-            else property_def["type"]
+            else (
+                "liste de clés séparées par une virgule"
+                if property_def.get("relation_type") == "n-n"
+                else property_def["type"]
+            )
         )
 
         column_default = self.property(key).get("default") or (

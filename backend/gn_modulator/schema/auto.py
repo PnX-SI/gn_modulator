@@ -1,6 +1,7 @@
 """
     AutoSchemas
 """
+
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.properties import ColumnProperty
 from geonature.utils.env import db
@@ -148,9 +149,7 @@ class SchemaAuto:
             "relation_type": (
                 "n-1"
                 if relation.direction.name == "MANYTOONE"
-                else "1-n"
-                if relation.direction.name == "ONETOMANY"
-                else "n-n"
+                else "1-n" if relation.direction.name == "ONETOMANY" else "n-n"
             ),
             "schema_code": schema_code,
             # "title": relation_key,

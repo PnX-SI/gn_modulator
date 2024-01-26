@@ -5,6 +5,7 @@ Revises: ec6ebeb214b1
 Create Date: 2023-03-21 22:36:24.415201
 
 """
+
 from alembic import op
 import sqlalchemy as sa
 import pkg_resources

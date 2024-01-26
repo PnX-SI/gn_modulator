@@ -2,7 +2,6 @@
     utils, patch, etc...
 """
 
-
 import unicodedata
 import sys
 from importlib import import_module

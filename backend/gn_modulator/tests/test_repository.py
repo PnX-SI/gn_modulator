@@ -144,7 +144,7 @@ class TestRepository:
             # "date_requalification_ouvrage",
             # "digitiser.nom_complet",
             "actors.organisme.nom_organisme",
-            "linears.additional_data.largeur"
+            "linears.additional_data.largeur",
             # "actors.nomenclature_type_actor.label_fr",
             # "label_infrastructures",
             # "linears.additional_data.largeur",

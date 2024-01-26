@@ -27,9 +27,7 @@ class ImportMixinLog(ImportMixinUtils):
             key_txt = (
                 f"'{relation_key}.{key}' : "
                 if key and relation_key
-                else f"'{key}' : "
-                if key
-                else ""
+                else f"'{key}' : " if key else ""
             )
             txt = f"- {key_txt}{error['error_msg']}\n"
             for info in error.get("error_infos", []):

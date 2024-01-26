@@ -225,11 +225,15 @@ class SchemaBase:
         relation_type = (
             "n-1"
             if relation_def.get("local_key") and not relation_def.get("foreign_key")
-            else "1-n"
-            if relation_def.get("foreign_key") and not relation_def.get("local_key")
-            else "n-n"
-            if relation_def.get("foreign_key") and relation_def.get("local_key")
-            else None
+            else (
+                "1-n"
+                if relation_def.get("foreign_key") and not relation_def.get("local_key")
+                else (
+                    "n-n"
+                    if relation_def.get("foreign_key") and relation_def.get("local_key")
+                    else None
+                )
+            )
         )
 
         if relation_type is None:
@@ -290,9 +294,11 @@ class SchemaBase:
 
     def process_csv_keys(self, keys):
         return [
-            self.property(key.split(".")[0]).get("title", key)
-            if self.has_property(key.split(".")[0])
-            else key
+            (
+                self.property(key.split(".")[0]).get("title", key)
+                if self.has_property(key.split(".")[0])
+                else key
+            )
             for key in keys
         ]
 
