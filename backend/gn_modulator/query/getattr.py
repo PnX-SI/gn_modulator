@@ -54,9 +54,11 @@ def getModelAttr(Model, query, field_name, only_fields="", index=0, condition=No
     current_Model = (
         get_query_cache(query, current_relation_cache_key)["relation_alias"]
         if query is not None and current_relation_cache_key
-        else Model.relation_Model(current_relation_cache_key)
-        if current_relation_cache_key
-        else Model
+        else (
+            Model.relation_Model(current_relation_cache_key)
+            if current_relation_cache_key
+            else Model
+        )
     )
 
     res = {"val": getattr(current_Model, current_field)}

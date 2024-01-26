@@ -5,6 +5,7 @@ Revises: 3920371728d8
 Create Date: 2023-06-20 15:19:21.097194
 
 """
+
 from alembic import op
 import sqlalchemy as sa
 from gn_modulator import MODULE_CODE

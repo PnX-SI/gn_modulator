@@ -128,9 +128,11 @@ class SchemaBaseFeatures:
         items = (
             data_item["items"]
             if "items" in data_item
-            else cls.get_data_items_from_file(Path(file_path).parent / data_item["file"])
-            if "file" in data_item
-            else []
+            else (
+                cls.get_data_items_from_file(Path(file_path).parent / data_item["file"])
+                if "file" in data_item
+                else []
+            )
         )
 
         if data_item.get("keys"):

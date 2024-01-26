@@ -64,25 +64,27 @@ class ImportMixinProcess(ImportMixinUtils):
         columns = (
             [relation_key]
             if relation_key and self.Model().is_relation_n_n(relation_key)
-            else list(
-                filter(
-                    lambda x: (
-                        self.Model().is_column(x)
-                        and x.startswith(f"{relation_key}.")
-                        and not x == self.Model().pk_field_name()
-                    ),
-                    from_table_columns,
+            else (
+                list(
+                    filter(
+                        lambda x: (
+                            self.Model().is_column(x)
+                            and x.startswith(f"{relation_key}.")
+                            and not x == self.Model().pk_field_name()
+                        ),
+                        from_table_columns,
+                    )
                 )
-            )
-            if relation_key and self.Model().is_relation_1_n(relation_key)
-            else list(
-                filter(
-                    lambda x: (
-                        self.Model().is_column(x)
-                        and "." not in x
-                        and not x == self.Model().pk_field_name()
-                    ),
-                    from_table_columns,
+                if relation_key and self.Model().is_relation_1_n(relation_key)
+                else list(
+                    filter(
+                        lambda x: (
+                            self.Model().is_column(x)
+                            and "." not in x
+                            and not x == self.Model().pk_field_name()
+                        ),
+                        from_table_columns,
+                    )
                 )
             )
         )
@@ -271,9 +273,9 @@ GROUP BY {view_params['txt_group_by']}
                     v_join += v_join_inter
 
                     # clarifier link oin
-                    link_joins[
-                        k_unique
-                    ] = f"{alias_join}_{index_unique}.{SchemaMethods(rel_schema_code).Model().pk_field_name()}"
+                    link_joins[k_unique] = (
+                        f"{alias_join}_{index_unique}.{SchemaMethods(rel_schema_code).Model().pk_field_name()}"
+                    )
 
         # conditions de jointures
         v_join_on = []
