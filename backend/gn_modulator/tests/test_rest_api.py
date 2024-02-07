@@ -34,13 +34,26 @@ class TestRest:
     #         data_commons.module_update(),
     #     )
 
-    def test_m_sipaf_pf(self, client, users):
+    def test_rest_m_sipaf_pf_admin(self, client, users):
+        user = users["admin_user"]
         test_schema_rest(
             client,
-            users["admin_user"],
+            user,
             "m_sipaf",
             "site",
-            data_commons.pf(),
+            data_commons.pf(user),
+            data_commons.pf_update(),
+            breadcrumbs_page_code="site_details",
+        )
+
+    def test_rest_m_sipaf_pf_user(self, client, users):
+        user = users["user"]
+        test_schema_rest(
+            client,
+            user,
+            "m_sipaf",
+            "site",
+            data_commons.pf(user),
             data_commons.pf_update(),
             breadcrumbs_page_code="site_details",
         )

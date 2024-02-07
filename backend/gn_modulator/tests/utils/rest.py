@@ -5,6 +5,21 @@ from gn_modulator import SchemaMethods, ModuleMethods
 from pypnusershub.tests.utils import set_logged_user_cookie, unset_logged_user_cookie
 
 
+def get_fields(data_post):
+    """TODO à ajouter aux SchemaMethods ?"""
+    fields = []
+    for key, value in data_post.items():
+        if not isinstance(value, list):
+            fields.append(key)
+            continue
+        for item in value:
+            for item_key in item.keys():
+                whole_key = f"{key}.{item_key}"
+                if whole_key not in fields:
+                    fields.append(whole_key)
+    return fields
+
+
 @pytest.mark.skip()
 def test_schema_rest(
     client, user, module_code, object_code, data_post, data_update, breadcrumbs_page_code=None
@@ -43,7 +58,7 @@ def test_schema_rest(
     assert r.status_code == 404, "La donnée ne devrait pas exister"
 
     # POST
-    fields = list(data_post.keys())
+    fields = get_fields(data_post)
     fields.append(sm.Model().pk_field_name())
 
     r = client.post(
@@ -56,7 +71,7 @@ def test_schema_rest(
         data=data_post,
     )
 
-    assert r.status_code == 200, "Erreur avec POST"
+    assert r.status_code == 200, f"Erreur avec POST : {r.status_code} {r.response}"
 
     data_from_post = r.json
     assert all(data_post[k] == data_from_post[k] for k in list(data_post.keys()))
@@ -110,7 +125,7 @@ def test_schema_rest(
                 "modulator.api_breadcrumbs",
                 module_code=module_code,
                 page_code=breadcrumbs_page_code,
-                **data_from_post
+                **data_from_post,
             ),
             data=data_update,
         )

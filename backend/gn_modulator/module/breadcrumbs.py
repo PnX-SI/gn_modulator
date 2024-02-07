@@ -1,4 +1,4 @@
-from geonature.utils.env import db
+from sqlalchemy.orm.exc import NoResultFound
 from gn_modulator.schema import SchemaMethods
 from gn_modulator.utils.commons import getAttr
 from gn_modulator import MODULE_CODE
@@ -39,7 +39,12 @@ class ModuleBreadCrumbs:
                 q = sm.get_row(
                     data[sm.Model().pk_field_name()], module_code=module_code, params={}
                 )
-                m = q.one()
+                # patch apres delete...
+                try:
+                    m = q.one()
+                except NoResultFound:
+                    return parent_breadcrumbs
+
                 data_label = sm.serialize(m, fields=[sm.label_field_name()])
                 # label_page = f"{sm.label()} {data_label[sm.label_field_name()]}"
                 label_page = f"{sm.label()} {getAttr(data_label, sm.label_field_name())}"

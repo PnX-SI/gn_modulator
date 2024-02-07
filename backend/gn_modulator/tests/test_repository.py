@@ -7,6 +7,7 @@
     - list ??
 """
 
+import os
 import pytest
 from .utils.repository import test_schema_repository
 from .data import commons as data_commons
@@ -41,6 +42,7 @@ class TestRepository:
     def test_repo_gn_meta_jdd(self):
         test_schema_repository("meta.jdd", data_meta.jdd(), data_meta.jdd_update())
 
+    # @pytest.mark.skip()
     def test_repo_diag(self, users, passages_faune_with_diagnostic):
         sm = SchemaMethods("m_sipaf.diag")
         fields = ["scope", "id_diagnostic"]
@@ -61,6 +63,7 @@ class TestRepository:
 
         assert True
 
+    # @pytest.mark.skip()
     def test_repo_pf_update(self, passages_faune_with_diagnostic):
         sm = SchemaMethods("m_sipaf.pf")
 
@@ -72,6 +75,7 @@ class TestRepository:
         assert sm.is_new_data(m, data) is False
         sm.update_row(uuid_pf, data, "uuid_passage_faune", "m_sipaf")
 
+    # @pytest.mark.skip()
     def test_repo_diag_cloture(self, passages_faune_with_diagnostic):
         sm = SchemaMethods("m_sipaf.diag")
         sm_org = SchemaMethods("user.organisme")
@@ -130,6 +134,7 @@ class TestRepository:
         assert sm.is_new_data(m, data)
         sm.update_row(m.id_diagnostic, data)
 
+    # @pytest.mark.skip()
     def test_repo_pf_rel(self, passages_faune_with_diagnostic, users):
         sm = SchemaMethods("m_sipaf.pf")
         uuids_filter_value = ";".join(
@@ -261,6 +266,7 @@ class TestRepository:
         res_nom = res["nomenclature_ouvrage_specificite"]
         assert res_nom is None
 
+    # @pytest.mark.skip()
     def test_repo_pf_cruved(self, passages_faune_with_diagnostic, users):
         sm = SchemaMethods("m_sipaf.pf")
         uuids_filter_value = ";".join(
@@ -326,6 +332,7 @@ class TestRepository:
         res = sm.serialize_list(m_list, fields)
         assert len(res) == 2
 
+    # @pytest.mark.skip()
     def test_repo_synthese_d_within(
         self, passages_faune_with_diagnostic, synthese_data, users, g_permissions
     ):
@@ -377,6 +384,7 @@ class TestRepository:
                 assert len(res[user]) == 9
                 assert all(r["scope"] == 2 for r in res[user])
 
+    # @pytest.mark.skip()
     def test_repo_synthese_permission(self, synthese_sensitive_data, users, g_permissions):
         for key in synthese_sensitive_data:
             s = synthese_sensitive_data[key]
