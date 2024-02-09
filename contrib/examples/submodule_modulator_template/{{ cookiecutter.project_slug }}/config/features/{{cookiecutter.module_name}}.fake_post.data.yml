@@ -1,0 +1,16 @@
+type: data
+code: {{cookiecutter.module_name}}.fake_post
+title: Données de remplissages
+description: Ajout de posts bidons
+items:
+  - schema_code: {{cookiecutter.module_name}}.post
+    defaults:
+      id_module: {{cookiecutter.module_name}}
+    keys: [post_title, post_content, id_author]
+    items:
+      - ["Un raton laveur au lavoir", "lorem ipsum", "bob.fokes@example.com"]
+      - ["La rondeur du mystère", "lorem ipsum", "anonymusse@example.com"]
+      - ["La peur de l'erreur: Il hésite", "lorem ipsum", "jp@example.com"]
+      - ["Le festin d'un volcan : un gout de brulé", "lorem ipsum", "f.elicia05@example.com"]
+      - ["L'entreprise de minuit : sonnez les cloches", "lorem ipsum", "fer.zorro50@example.com"]
+      - ["Les derniers mots des fourmis: Oh un Pied !", "lorem ipsum", "fer.zorro50@example.com"]

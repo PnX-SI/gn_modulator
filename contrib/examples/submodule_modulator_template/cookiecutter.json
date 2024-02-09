@@ -1,0 +1,13 @@
+{
+    "project_name": "Minimum template for Modulator submodule",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+    "project_description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "module_name":"m_test",
+    "module_desc":"Module de test",
+    "module_picto": "fa-road",
+    "active_frontend":true,
+    "db_schema_name":"pr_test",
+    "author": "Anonymous",
+    "author_email": "anonym@example.com",
+    "version":"0.0.1"
+  }
