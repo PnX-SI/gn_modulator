@@ -13,6 +13,8 @@ def get_list_rest(module_code, object_code, additional_params={}):
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
 
+    id_role = g.current_user.id_role
+
     # on peut redéfinir le module_code pour le choix des droits
     permission_module_code = object_definition.get("module_code", module_code)
     params = {**parse_request_args(object_definition), **additional_params}
@@ -22,7 +24,11 @@ def get_list_rest(module_code, object_code, additional_params={}):
         {}
         if params.get("no_info")
         else sm.get_query_infos(
-            module_code=permission_module_code, action=action, params=params, url=request.url
+            module_code=permission_module_code,
+            action=action,
+            params=params,
+            url=request.url,
+            id_role=id_role,
         )
     )
 
@@ -32,11 +38,12 @@ def get_list_rest(module_code, object_code, additional_params={}):
         action=action,
         params=params,
         query_type="select",
+        id_role=id_role,
     )
 
     if params.get("sql"):
         # test si droit admin
-        if not has_any_permissions("R", g.current_user.id_role, "MODULATOR", "ADMIN"):
+        if not has_any_permissions("R", id_role, "MODULATOR", "ADMIN"):
             return (
                 "Vous n'avez pas les droit pour effectuer des actions d'admin pour le module MODULATOR",
                 403,
@@ -70,7 +77,7 @@ def get_one_rest(module_code, object_code, value):
     object_definition = ModuleMethods.object_config(module_code, object_code)
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
-
+    id_role = g.current_user.id_role
     params = parse_request_args(object_definition)
 
     permission_module_code = object_definition.get("module_code", module_code)
@@ -82,6 +89,7 @@ def get_one_rest(module_code, object_code, value):
             module_code=permission_module_code,
             action="R",
             params=params,
+            id_role=id_role,
         )
 
         m = q.one()
@@ -119,6 +127,7 @@ def patch_rest(module_code, object_code, value):
     object_definition = ModuleMethods.object_config(module_code, object_code)
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
+    id_role = g.current_user.id_role
 
     permission_module_code = object_definition.get("module_code", module_code)
 
@@ -136,6 +145,7 @@ def patch_rest(module_code, object_code, value):
             params=params,
             authorized_write_fields=authorized_write_fields,
             commit=True,
+            id_role=id_role,
         )
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
@@ -150,6 +160,8 @@ def delete_rest(module_code, object_code, value):
     object_definition = ModuleMethods.object_config(module_code, object_code)
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
+    id_role = g.current_user.id_role
+
     permission_module_code = object_definition.get("module_code", module_code)
 
     params = parse_request_args(object_definition)
@@ -164,7 +176,11 @@ def delete_rest(module_code, object_code, value):
 
     try:
         sm.delete_row(
-            value, module_code=module_code, field_name=params.get("field_name"), commit=True
+            value,
+            module_code=module_code,
+            field_name=params.get("field_name"),
+            commit=True,
+            id_role=id_role,
         )
 
     except sm.errors.SchemaUnsufficientCruvedRigth as e:
@@ -172,19 +188,21 @@ def delete_rest(module_code, object_code, value):
 
     return dict_out
 
-    pass
-
 
 def get_page_number_and_list(module_code, object_code, value):
     object_definition = ModuleMethods.object_config(module_code, object_code)
     schema_code = ModuleMethods.schema_code(module_code, object_code)
     sm = SchemaMethods(schema_code)
-
+    id_role = g.current_user.id_role
     permission_module_code = object_definition.get("module_code", module_code)
 
     params = parse_request_args(object_definition)
     page_number = sm.get_page_number(
-        value, permission_module_code, params.get("action") or "R", params
+        value,
+        permission_module_code,
+        params.get("action") or "R",
+        params,
+        id_role=id_role,
     )
 
     return get_list_rest(module_code, object_code, additional_params={"page": page_number})
