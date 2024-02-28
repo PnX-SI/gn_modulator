@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.3.4 (unreleased)
+## 1.3.4 (2024-02-29)
 
 **🐛 Corrections**
 
