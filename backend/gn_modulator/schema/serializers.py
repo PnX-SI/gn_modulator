@@ -103,11 +103,11 @@ class SchemaSerializers:
             "relation_type": (
                 "n-1"
                 if relation_def["relation_type"] == "1-n"
-                else "1-n"
-                if relation_def["relation_type"] == "n-1"
-                else "1-1"
-                if relation_def["relation_type"] == "1-1"
-                else "n-n"
+                else (
+                    "1-n"
+                    if relation_def["relation_type"] == "n-1"
+                    else "1-1" if relation_def["relation_type"] == "1-1" else "n-n"
+                )
             ),
             "schema_code": self.schema_code(),
             "title": self.attr("meta.label"),

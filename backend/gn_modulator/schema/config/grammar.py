@@ -48,9 +48,11 @@ class SchemaConfigGrammar:
         return (
             "nouvelle"
             if self.genre(object_definition) == "F"
-            else "nouvel"
-            if self.is_first_letter_vowel(self.label(object_definition))
-            else "nouveau"
+            else (
+                "nouvel"
+                if self.is_first_letter_vowel(self.label(object_definition))
+                else "nouveau"
+            )
         )
 
     def news(self, object_definition={}):
@@ -90,9 +92,7 @@ class SchemaConfigGrammar:
         return (
             "l'"
             if self.is_first_letter_vowel(self.label(object_definition))
-            else "la "
-            if self.genre(object_definition) == "F"
-            else "le "
+            else "la " if self.genre(object_definition) == "F" else "le "
         )
 
     def article_undef(self, object_definition={}):
@@ -111,9 +111,7 @@ class SchemaConfigGrammar:
         return (
             "de l'"
             if self.is_first_letter_vowel(self.label(object_definition)) and check_voyel
-            else "de la "
-            if self.genre(object_definition) == "F"
-            else "du "
+            else "de la " if self.genre(object_definition) == "F" else "du "
         )
 
     def le_label(self, object_definition={}):

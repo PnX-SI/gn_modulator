@@ -49,6 +49,7 @@ class SchemaRepositories:
         action="R",
         params={},
         query_type="all",
+        id_role=None,
     ):
         """
         return query get one row (Model.<field_name> == value)
@@ -76,6 +77,7 @@ class SchemaRepositories:
             action=action,
             params=params_query,
             query_type=query_type,
+            id_role=id_role,
         )
 
         return query
@@ -173,6 +175,7 @@ class SchemaRepositories:
         params={},
         authorized_write_fields=None,
         commit=True,
+        id_role=None,
     ):
         """
         update row (Model.<field_name> == value) with data
@@ -188,6 +191,7 @@ class SchemaRepositories:
             action="U",
             params=params,
             query_type="update",
+            id_role=id_role,
         )
 
         m = q.one()
@@ -210,6 +214,7 @@ class SchemaRepositories:
         params={},
         commit=True,
         multiple=False,
+        id_role=None,
     ):
         """
         delete row (Model.<field_name> == value)
@@ -221,25 +226,47 @@ class SchemaRepositories:
             action="D",
             params=params,
             query_type="delete",
+            id_role=id_role,
         )
 
         # https://stackoverflow.com/questions/49794899/flask-sqlalchemy-delete-query-failing-with-could-not-evaluate-current-criteria?noredirect=1&lq=1
         if not multiple:
             subquery_delete.one()
-        subquery_delete.delete(synchronize_session=False)
+
+        res = subquery_delete.all()
+
+        if not res:
+            return
+
+        Model = self.Model()
+
+        q_delete = Model.query
+        ors = []
+        for r in res:
+            ands = []
+            for pk_field_name in Model.pk_field_names():
+                f = getattr(Model, pk_field_name) == getattr(r, pk_field_name)
+                ands.append(f)
+            ors.append(f)
+
+        q_delete = q_delete.filter(sa.or_(*ors))
+        q_delete.delete(synchronize_session=False)
         db.session.flush()
 
         if commit:
             db.session.commit()
         return None
 
-    def get_query_infos(self, module_code=MODULE_CODE, action="R", params={}, url=None):
+    def get_query_infos(
+        self, module_code=MODULE_CODE, action="R", params={}, url=None, id_role=None
+    ):
         subquery_count_total = query_list(
             self.Model(),
             module_code=module_code,
             action=action,
             params=params,
             query_type="total",
+            id_role=id_role,
         )
         count_total = subquery_count_total.count()
 
@@ -250,6 +277,7 @@ class SchemaRepositories:
                 action=action,
                 params=params,
                 query_type="filtered",
+                id_role=id_role,
             )
 
             count_filtered = subquery_count_filtered.count()
@@ -301,11 +329,11 @@ class SchemaRepositories:
 
         return query_infos
 
-    def get_page_number(self, value, module_code, action, params):
+    def get_page_number(self, value, module_code, action, params, id_role):
         params["fields"] = ["row_number"]
 
         sub_query_list = query_list(
-            self.Model(), module_code, action, params, "page_number"
+            self.Model(), module_code, action, params, "page_number", id_role=id_role
         ).subquery()
 
         row_number = (
