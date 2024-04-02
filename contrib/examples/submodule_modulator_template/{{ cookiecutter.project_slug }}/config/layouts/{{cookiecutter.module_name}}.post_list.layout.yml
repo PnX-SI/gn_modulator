@@ -1,0 +1,29 @@
+type: layout
+code: {{cookiecutter.module_name}}.post_list
+title: Layout post list
+description: Layout pour la liste de posts
+
+layout:
+  height_auto: true
+  direction: row
+  items:
+    - type: section
+      title: test
+      items:
+        - type: message
+          html: <b>hello word</b>
+    - type: object
+      object_code: post
+      items:
+        type: form
+        title: "ddd"
+        items:
+          - overflow: true
+            items: [post_title, post_content, id_author]
+          - code: utils.buttons_form
+    - object_code: post
+      label: "TEST"
+      items:
+        - type: object
+          display: table
+          items: [post_title, post_content, id_author]
