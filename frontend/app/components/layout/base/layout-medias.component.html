@@ -1,10 +1,9 @@
-<ng-container *ngFor="let media of data && data[computedLayout.key] || []; index as i">
+<ng-container *ngFor="let media of (data && data[computedLayout.key]) || []; index as i">
   <div class="medias-tab">
     <div [matTooltip]="ms.toString(media)">
       <a [href]="ms.href(media)" target="_blank">{{ media.title_fr }}</a>
       <i>
-        ({{ ms.typeMedia(media)
-        }}<span *ngIf="media.author"> par {{ media.author }}</span
+        ({{ ms.typeMedia(media) }}<span *ngIf="media.author"> par {{ media.author }}</span
         >)
       </i>
     </div>

@@ -1,7 +1,7 @@
 """
-    SchemaMethods : SQL
+SchemaMethods : SQL
 
-    SQL text production methods for schema
+SQL text production methods for schema
 """
 
 import sqlparse

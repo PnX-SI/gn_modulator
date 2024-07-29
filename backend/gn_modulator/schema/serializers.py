@@ -1,7 +1,7 @@
 """
-    SchemaMethods : serializers
+SchemaMethods : serializers
 
-    Utilisation de marshmallow
+Utilisation de marshmallow
 """
 
 import sqlalchemy as sa

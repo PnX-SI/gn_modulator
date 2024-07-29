@@ -1,5 +1,5 @@
 """
-    SchemaMethods : sqlalchemy queries processing
+SchemaMethods : sqlalchemy queries processing
 """
 
 import math

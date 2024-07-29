@@ -1,5 +1,5 @@
 """
-    AutoSchemas
+AutoSchemas
 """
 
 from sqlalchemy.inspection import inspect

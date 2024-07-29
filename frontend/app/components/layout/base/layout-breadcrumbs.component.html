@@ -3,12 +3,7 @@
   <!-- on affiche les élements de la liste
     des breadcrub de la page (ou du contexte courant)-->
   <ng-container
-    *ngFor="
-      let breadcrumb of breadcrumbs;
-      let index = index;
-      let first = first;
-      let last = last
-    "
+    *ngFor="let breadcrumb of breadcrumbs; let index = index; let first = first; let last = last"
   >
     <!-- premier element -> icone 'home' -->
     <ng-container *ngIf="first">

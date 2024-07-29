@@ -1,10 +1,10 @@
 """
-    Test pour valider les fonctionalité repository
-    - get_one
-    - insert
-    - update
-    - delete
-    - list ??
+Test pour valider les fonctionalité repository
+- get_one
+- insert
+- update
+- delete
+- list ??
 """
 
 import os

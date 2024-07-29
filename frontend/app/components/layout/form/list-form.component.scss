@@ -1,15 +1,14 @@
 .reset-list-form-button {
-    // font-size: 1.2em;
-    color: gray;
+  // font-size: 1.2em;
+  color: gray;
 }
 
 :host ::ng-deep .mdc-text-field--disabled .reset-list-form-button {
-    // font-size: 1.2em;
-    color: lightgrey;
+  // font-size: 1.2em;
+  color: lightgrey;
 }
 
-
 :host ::ng-deep body .mat-select-panel {
-    max-height: 500px !important;
-    background-color: red;
+  max-height: 500px !important;
+  background-color: red;
 }

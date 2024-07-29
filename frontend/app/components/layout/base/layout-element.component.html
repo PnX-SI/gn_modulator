@@ -24,7 +24,11 @@
         </mat-icon>
       </div>
       <div class="layout-key-value">
-        <ng-container *ngIf="[null, undefined].includes(elementData) || elementData.length == 0; else displayValue"
+        <ng-container
+          *ngIf="
+            [null, undefined].includes(elementData) || elementData.length == 0;
+            else displayValue
+          "
           >...</ng-container
         >
         <ng-template #displayValue>

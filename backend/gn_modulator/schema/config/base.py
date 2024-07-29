@@ -1,8 +1,8 @@
 """
-    SchemaMethods : config processing
-    - schema
-    - display
-    - util
+SchemaMethods : config processing
+- schema
+- display
+- util
 """
 
 import copy
