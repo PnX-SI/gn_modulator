@@ -109,21 +109,30 @@ layout:
   type: object
   object_code: diagnostic
   items:
+    style:
+      padding: 0px 20px
     type: form
     items:
       - type: breadcrumbs
         flex: "0"
-      - overflow: true
-        display: tabs
+      - display: tabs
         lazy_loading: true
         items:
           - label: Champs communs
             items: *diag_commons
+            style:
+              padding: 10px 0
           - label: Perturbations / Obstacles
             items: *diag_perturbation_obstacle
+            style:
+              padding: 10px 0
           - label: Aménagement
             items: *diag_amenagement
+            style:
+              padding: 10px 0
           - label: Synthese
             items: *diag_synthese
+            style:
+              padding: 10px 0
       - code: utils.buttons_form
         flex: "0"
