@@ -1,5 +1,5 @@
 """
-    SchemaMethods : static methods for cmd
+SchemaMethods : static methods for cmd
 """
 
 

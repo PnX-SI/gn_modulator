@@ -1,19 +1,18 @@
 .test-form-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    background-color: white;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: white;
 }
 
 .layout-rendu {
-     width: 60%
+  width: 60%;
 }
 
 .layout-def {
   width: 40%;
   background-color: lightgray;
 }
-
 
 :host ::ng-deep json-editor,
 :host ::ng-deep json-editor .jsoneditor,
@@ -22,5 +21,4 @@
   height: 300px;
   width: 100%;
   display: inline-block;
-
 }

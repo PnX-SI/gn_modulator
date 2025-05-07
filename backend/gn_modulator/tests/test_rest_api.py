@@ -1,13 +1,13 @@
 """
-    Test pour valider les fonctionalité repository
-    - get_one
-    - insert
-    - update
-    - delete
-    TODO
+Test pour valider les fonctionalité repository
+- get_one
+- insert
+- update
+- delete
+TODO
 
-    - fields
-    - list && cruved??
+- fields
+- list && cruved??
 """
 
 import pytest

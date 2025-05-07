@@ -1,5 +1,5 @@
 """
-    classe pour gérer la configuration des modules
+classe pour gérer la configuration des modules
 """
 
 import copy

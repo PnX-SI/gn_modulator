@@ -1,5 +1,5 @@
 """
-    Exceptions for schemas
+Exceptions for schemas
 """
 
 

@@ -1,5 +1,5 @@
 """
-    fonctions pour les test sur les définitions
+fonctions pour les test sur les définitions
 """
 
 from gn_modulator.utils.errors import get_errors, clear_errors, errors_txt

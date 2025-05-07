@@ -1,7 +1,7 @@
 """
-    SchemaMethod : methods for schema processing
+SchemaMethod : methods for schema processing
 
-    class gathering methods from mixins
+class gathering methods from mixins
 """
 
 from .auto import SchemaAuto

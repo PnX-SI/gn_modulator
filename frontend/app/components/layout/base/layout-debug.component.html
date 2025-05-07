@@ -1,5 +1,8 @@
 <div *ngIf="debugData" class="debug-container">
-  <div class="debug" [ngStyle]="{ 'margin-left': (debugData.debug || 0) * 2 + 'px', 'color': debugData.color }">
+  <div
+    class="debug"
+    [ngStyle]="{ 'margin-left': (debugData.debug || 0) * 2 + 'px', color: debugData.color }"
+  >
     <b>{{ debugData.layoutType }}</b>
     <i *ngIf="debugData.layoutType == 'code'">&nbsp;{{ debugData.code }}&nbsp;</i>
     <i *ngIf="debugData.display">&nbsp;{{ debugData.display }}&nbsp;</i>
