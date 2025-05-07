@@ -1,6 +1,6 @@
 """
-    objectData methode pour gerer les données depuis des fichiers .yml
-    par exemple la nomenclature
+objectData methode pour gerer les données depuis des fichiers .yml
+par exemple la nomenclature
 """
 
 import copy

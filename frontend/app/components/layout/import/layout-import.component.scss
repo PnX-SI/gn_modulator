@@ -1,14 +1,14 @@
 .import {
-    width: 1000px
+  width: 1000px;
 }
 
 :host ::ng-deep .import_error {
-    margin-bottom: 5px
+  margin-bottom: 5px;
 }
 :host ::ng-deep .import_error_msg {
-    font-size: 1.2em;
+  font-size: 1.2em;
 }
 
 :host ::ng-deep code {
-    color: black
+  color: black;
 }

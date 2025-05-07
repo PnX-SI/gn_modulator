@@ -1,5 +1,5 @@
 """
-    methodes pour la grammaire
+methodes pour la grammaire
 """
 
 from gn_modulator.utils.commons import unaccent

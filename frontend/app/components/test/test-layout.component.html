@@ -9,11 +9,7 @@
         ></modules-layout>
       </div>
       <div class="layout-rendu" *ngIf="!!(layout && data)">
-        <modules-layout
-        [layout]="layout"
-        [data]="data"
-        [debug]="rawLayout.debug"
-        > </modules-layout>
+        <modules-layout [layout]="layout" [data]="data" [debug]="rawLayout.debug"> </modules-layout>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 """
-    MODULES commands
+MODULES commands
 
-    init : initialize module (data/sql and migrations)
+init : initialize module (data/sql and migrations)
 """
 
 import click

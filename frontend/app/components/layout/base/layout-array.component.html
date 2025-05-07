@@ -1,8 +1,8 @@
 <!-- array -->
 <!-- array fieldset -->
 <ng-container *ngIf="!!arrayItemsContext">
-  <ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple" >
-    <fieldset class="fieldset" [ngClass]="{'layout-array-disabled': !!formControl?.disabled}">
+  <ng-container *ngIf="computedLayout.display == 'fieldset'; else layoutArraySimple">
+    <fieldset class="fieldset" [ngClass]="{ 'layout-array-disabled': !!formControl?.disabled }">
       <legend *ngIf="computedLayout.title">
         {{ computedLayout.title || computedLayout.key }} ({{ data && data[layout.key]?.length }})
       </legend>
@@ -33,7 +33,7 @@
             color="primary"
             class="array-button"
             [matTooltip]="computedLayout.add_title || 'Ajouter un élément'"
-            [disabled]="!formControl?.valid "
+            [disabled]="!formControl?.valid"
             (click)="addArrayElement()"
             (onAction)="processAction($event)"
           >
@@ -47,7 +47,9 @@
   <!-- array normal -->
   <ng-template #layoutArraySimple>
     <ng-container>
-      <h3 [ngClass]="{'layout-array-disabled': !!formControl?.disabled}">{{ computedLayout.title || computedLayout.key }} ({{ data && data[layout.key]?.length }})</h3>
+      <h3 [ngClass]="{ 'layout-array-disabled': !!formControl?.disabled }">
+        {{ computedLayout.title || computedLayout.key }} ({{ data && data[layout.key]?.length }})
+      </h3>
       <div
         class="layout-array"
         [ngClass]="{

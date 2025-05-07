@@ -1,4 +1,4 @@
-""" gn_modulator init
+"""gn_modulator init
 
 Revision ID: d3f266c7b1b6
 Revises:

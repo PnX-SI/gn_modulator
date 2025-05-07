@@ -1,8 +1,8 @@
 """
-    SchemaMethods : base methods for schemas
+SchemaMethods : base methods for schemas
 
-    - setters, getters
-    - utils - schema parser
+- setters, getters
+- utils - schema parser
 
 """
 

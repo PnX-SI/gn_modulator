@@ -1,5 +1,5 @@
 """
-    methodes pour les layout ajsf du frontend
+methodes pour les layout ajsf du frontend
 """
 
 from gn_modulator.definition import DefinitionMethods

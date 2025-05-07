@@ -1,5 +1,5 @@
 """
-    Données exemples pour les test
+Données exemples pour les test
 """
 
 from gn_modulator.schema import SchemaMethods

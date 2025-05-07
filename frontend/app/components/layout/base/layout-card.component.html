@@ -4,24 +4,15 @@
   <mat-card [ngClass]="computedLayout && computedLayout.class">
     <mat-card-content class="card-content">
       <a [routerLink]="computedLayout.href">
-      <img
-        mat-card-image
-        class="card-image"
-        [src]="computedLayout.img"
-        alt="img"
-      />
-    </a>
-      <mat-card-title class="card-title">{{
-        computedLayout.title
-      }}</mat-card-title>
+        <img mat-card-image class="card-image" [src]="computedLayout.img" alt="img" />
+      </a>
+      <mat-card-title class="card-title">{{ computedLayout.title }}</mat-card-title>
       <p>
         {{ computedLayout.description }}
       </p>
     </mat-card-content>
     <mat-card-footer class="card-footer">
-      <button mat-raised-button primary [routerLink]="computedLayout.href">
-        Accéder
-      </button>
+      <button mat-raised-button primary [routerLink]="computedLayout.href">Accéder</button>
     </mat-card-footer>
   </mat-card>
 </ng-template>
