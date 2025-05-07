@@ -1,6 +1,18 @@
 # Changelog
 
-## 1.3.4 (2024-02-29)
+## 1.3.5 (2025-05-07)
+
+**🐛 Corrections**
+
+- Correction de l'affichage de la fenêtre "Création diagnostic de fonctionnalité"
+
+**💻 Développement**
+
+- Add codebase linter to match configuration
+- Fix ci: force ubuntu to 22.04 to keep python 3.7 compatibility
+- Fix ci: adjust linting jobs
+
+## 1.3.4 (2024-02-29)💻 Développement
 
 **🐛 Corrections**
 
