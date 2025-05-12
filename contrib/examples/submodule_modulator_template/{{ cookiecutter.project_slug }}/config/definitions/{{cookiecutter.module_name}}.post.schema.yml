@@ -1,0 +1,20 @@
+type: schema
+code: {{cookiecutter.module_name}}.post
+title: schema acteur site
+description: Définition du schema pour les acteurs liés aux sites
+meta:
+  model: {{cookiecutter.module_name}}.models.Post
+  module_code: {{cookiecutter.module_name}}
+  genre: M
+  label: Post
+  label_field_name: post_title
+  unique:
+    - id_post
+  sql_processing: true
+properties:
+  id_post:
+    title: ID post
+  post_title:
+    title: Titre
+  post_content:
+    title: Contenu

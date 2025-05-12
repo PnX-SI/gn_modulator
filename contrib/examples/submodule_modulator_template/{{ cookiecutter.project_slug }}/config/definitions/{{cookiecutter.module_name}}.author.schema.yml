@@ -1,0 +1,22 @@
+type: schema
+code: {{cookiecutter.module_name}}.author
+title: schema auteur
+description: Définition du schema pour les auteurs liés aux posts
+meta:
+  model: {{cookiecutter.module_name}}.models.Author
+  module_code: {{cookiecutter.module_name}}
+  genre: M
+  label: Auteur
+  label_field_name: first_name
+  unique:
+    - email_address
+  sql_processing: true
+properties:
+  id_author:
+    title: ID auteur
+  first_name:
+    title: Prénom
+  last_name:
+    title: Nom de Famille
+  email_address:
+    title: "Adresse E-Mail"

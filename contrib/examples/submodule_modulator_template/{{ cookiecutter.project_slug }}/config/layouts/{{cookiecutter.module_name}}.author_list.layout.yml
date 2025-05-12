@@ -1,0 +1,28 @@
+type: layout
+code: {{cookiecutter.module_name}}.author_list
+title: Layout site list
+description: Layout pour la liste de auteurs
+
+layout:
+  height_auto: true
+  items:
+    - type: section
+      title: test
+      items:
+        - type: message
+          html: <b>hello word</b>
+    - type: object
+      object_code: author
+      items:
+        type: form
+        title: "ddd"
+        items:
+          - overflow: true
+            items: [last_name, first_name, email_address]
+          - code: utils.buttons_form
+    - object_code: author
+      label: "TEST"
+      items:
+        - type: object
+          display: table
+          items: [last_name, first_name, email_address]

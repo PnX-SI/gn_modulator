@@ -1,0 +1,15 @@
+type: data
+code: {{cookiecutter.module_name}}.fake_author
+title: Données de remplissages
+description: Ajout d'auteurs bidons
+items:
+  - schema_code: {{cookiecutter.module_name}}.author
+    defaults:
+      id_module: {{cookiecutter.module_name}}
+    keys: [first_name, last_name, email_address]
+    items:
+      - [Bob, "Fokes", "bob.fokes@example.com"]
+      - [Anne, "Onyme", "anonymusse@example.com"]
+      - [Jean, "Peste", "jp@example.com"]
+      - [Felicia, "A", "f.elicia05@example.com"]
+      - [Fernando, "Zorro", "fer.zorro50@example.com"]
