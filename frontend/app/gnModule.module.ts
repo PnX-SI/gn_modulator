@@ -12,6 +12,7 @@ import ModulesServices from './services/';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AngularResizeEventModule } from 'angular-resize-event';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 const routes: Routes = [
   { path: '', component: ModulesIndexComponent },
@@ -32,9 +33,10 @@ const routes: Routes = [
     CommonModule,
     MatTableModule,
     MatCheckboxModule,
+    NgxMatSelectSearchModule,
     AngularResizeEventModule,
   ],
-  exports: [...layoutComponents],
+  exports: [...layoutComponents, NgxMatSelectSearchModule],
   providers: [...ModulesServices],
   bootstrap: [],
   entryComponents: [PageComponent],
