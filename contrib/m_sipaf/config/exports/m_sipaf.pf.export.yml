@@ -16,10 +16,10 @@ fields:
   - geom_x
   - geom_y
   - geom_text
-  - longueur_franchissement
+  - largeur_ouvrage
   - largeur_dispo_faune
   - hauteur_dispo_faune
-  - largeur_ouvrage
+  - longueur_traversee
   - diametre
   - date_creation_ouvrage
   - date_requalification_ouvrage

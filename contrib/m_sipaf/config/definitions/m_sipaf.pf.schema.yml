@@ -78,17 +78,17 @@ properties:
   date_requalification_ouvrage:
       title: Date de requalification
       description: "Date de la requalification de l'ouvrage"
-  largeur_ouvrage:
-      title: Largeur ouvrage (m)
-      description: "Largeur de l'ouvrage en mètre"
+  longueur_traversee:
+      title: Longueur de traversée (par l'animal) (m)
+      description: "Longueur de traversée de l'ouvrage par l'animal en mètre"
       min: 0
   hauteur_ouvrage:
       title: Hauteur ouvrage (m)
       description: "Hauteur de l'ouvrage en mètre"
       min: 0
-  longueur_franchissement:
-      title: Longueur de franchissement (m)
-      description: "Longueur de franchissement de l'ouvrage en mètres (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)"
+  largeur_ouvrage:
+      title: Largeur ouvrage (m)
+      description: "Largeur de l'ouvrage en mètre (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)"
       min: 0
   diametre:
       title: Diamètre (m)

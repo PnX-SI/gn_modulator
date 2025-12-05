@@ -9,8 +9,8 @@
   hauteur_ouvrage: 4.6
   issu_requalification: true
   largeur_dispo_faune: 1.5
-  largeur_ouvrage: 2.5
-  longueur_franchissement: 10.5
+  longueur_traversee: 2.5
+  largeur_ouvrage: 10.5
   ouvrag_hydrau_tirant_air: 5
   ouvrage_hydrau: true
   ouvrage_type_autre: Autre type spécifique

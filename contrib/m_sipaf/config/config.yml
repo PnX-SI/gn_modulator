@@ -305,7 +305,7 @@ site_details_fields:
               items:
                 - largeur_ouvrage
                 - hauteur_ouvrage
-                - longueur_franchissement
+                - longueur_traversee
             - direction: row
               items:
                 - largeur_dispo_faune
@@ -479,7 +479,7 @@ site_form_fields:
               items:
                 - largeur_ouvrage
                 - hauteur_ouvrage
-                - longueur_franchissement
+                - longueur_traversee
             - direction: row
               items:
                 - largeur_dispo_faune

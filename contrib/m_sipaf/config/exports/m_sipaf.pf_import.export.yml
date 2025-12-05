@@ -14,10 +14,10 @@ fields:
   - pi_ou_ps
   - geom_x,x
   - geom_y,y
-  - longueur_franchissement
+  - largeur_ouvrage
   - largeur_dispo_faune
   - hauteur_dispo_faune
-  - largeur_ouvrage
+  - longueur_traversee
   - diametre
   - date_creation_ouvrage
   - date_requalification_ouvrage
