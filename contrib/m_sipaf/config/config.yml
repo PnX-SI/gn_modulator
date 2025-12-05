@@ -301,14 +301,19 @@ site_details_fields:
         - title: Dimensions
           display: fieldset
           items:
+            - type: message
+              html: ATTENTION (!) voir Notice p.11 au sujet des champs "Longueur de traversée" et "Largeur ouvrage"
+              class: error
+              text: true
             - direction: row
               items:
-                - largeur_ouvrage
-                - hauteur_ouvrage
                 - longueur_traversee
+                - hauteur_ouvrage
+                - largeur_ouvrage
             - direction: row
               items:
-                - largeur_dispo_faune
+                - key: largeur_dispo_faune
+                  hint: "(*) voir définition dans Notice p1"
                 - hauteur_dispo_faune
                 - diametre
         - title: Banquette (Ouvrages hydrauliques)
@@ -475,14 +480,19 @@ site_form_fields:
         - title: Dimensions
           display: fieldset
           items:
+            - type: message
+              html: ATTENTION (!) voir Notice p.11 avant de saisir "Longueur de traversée" et "Largeur ouvrage"
+              class: warning
+              text: true
             - direction: row
               items:
-                - largeur_ouvrage
-                - hauteur_ouvrage
                 - longueur_traversee
+                - hauteur_ouvrage
+                - largeur_ouvrage
             - direction: row
               items:
-                - largeur_dispo_faune
+                - key: largeur_dispo_faune
+                  hint: "(*) voir définition dans Notice p1"
                 - hauteur_dispo_faune
                 - diametre
         - title: Banquette
