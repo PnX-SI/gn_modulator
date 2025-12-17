@@ -106,9 +106,9 @@ class PassageFaune(db.Model):
     date_creation_ouvrage = db.Column(db.Date)
     date_requalification_ouvrage = db.Column(db.Date)
 
-    largeur_ouvrage = db.Column(db.Float)
+    longueur_traversee = db.Column(db.Float)
     hauteur_ouvrage = db.Column(db.Float)
-    longueur_franchissement = db.Column(db.Float)
+    largeur_ouvrage = db.Column(db.Float)
     diametre = db.Column(db.Float)
     largeur_dispo_faune = db.Column(db.Float)
     hauteur_dispo_faune = db.Column(db.Float)

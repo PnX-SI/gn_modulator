@@ -178,6 +178,7 @@
       <div
         [ngClass]="{
           'layout-message': true,
+          text: computedLayout.text,
           error: computedLayout.class == 'error',
           info: computedLayout.class == 'info',
           warning: computedLayout.class == 'warning',

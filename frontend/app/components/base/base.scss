@@ -235,6 +235,12 @@ div.layout-items > div {
   background-color: lightblue;
 }
 
+.layout-message.text {
+  background-color: transparent;
+  padding: 0.5rem;
+  margin: 0;
+}
+
 :host ::ng-deep .module-card {
   width: 400px;
   margin: 5px;

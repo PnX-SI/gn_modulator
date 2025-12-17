@@ -49,12 +49,12 @@
 ##### largeur_dispo_faune
   - *type* : `number`
   - *définition* : Largeur de l'ouvrage effectivement disponible pour la faune en mètre
+##### longueur_traversee
+  - *type* : `number`
+  - *définition* : Longueur de traversée de l'ouvrage par l'animal en mètre
 ##### largeur_ouvrage
   - *type* : `number`
-  - *définition* : Largeur de l'ouvrage en mètre
-##### longueur_franchissement
-  - *type* : `number`
-  - *définition* : Longueur de franchissement de l'ouvrage en mètres (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)
+  - *définition* : Largeur de l'ouvrage en mètre (ne prend pas en compte l'épaisseur des matériaux et éventuels obstacles)
 ##### nom_usuel_passage_faune
   - *type* : `string`
   - *définition* : Nom usuel utilisé pour dénommer l'ouvrage (nom_usuel_pf)
@@ -213,4 +213,3 @@
   - *type* : `string`
 ##### usages.detail_usage
   - *type* : `string`
-

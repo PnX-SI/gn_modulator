@@ -301,11 +301,15 @@ site_details_fields:
         - title: Dimensions
           display: fieldset
           items:
+            - type: message
+              html: ATTENTION (!) voir Notice Chapitre 2.2 au sujet des champs "Longueur de traversée", "Largeur ouvrage"
+              class: error
+              text: true
             - direction: row
               items:
-                - largeur_ouvrage
+                - longueur_traversee
                 - hauteur_ouvrage
-                - longueur_franchissement
+                - largeur_ouvrage
             - direction: row
               items:
                 - largeur_dispo_faune
@@ -475,11 +479,15 @@ site_form_fields:
         - title: Dimensions
           display: fieldset
           items:
+            - type: message
+              html: ATTENTION (!) voir Notice Chapitre 2.2 au sujet des champs "Longueur de traversée", "Largeur ouvrage"
+              class: warning
+              text: true
             - direction: row
               items:
-                - largeur_ouvrage
+                - longueur_traversee
                 - hauteur_ouvrage
-                - longueur_franchissement
+                - largeur_ouvrage
             - direction: row
               items:
                 - largeur_dispo_faune
