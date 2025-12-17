@@ -49,7 +49,7 @@
 ##### largeur_dispo_faune
   - *type* : `number`
   - *définition* : Largeur de l'ouvrage effectivement disponible pour la faune en mètre
-##### longueur_traverse
+##### longueur_traversee
   - *type* : `number`
   - *définition* : Longueur de traversée de l'ouvrage par l'animal en mètre
 ##### largeur_ouvrage
@@ -213,4 +213,3 @@
   - *type* : `string`
 ##### usages.detail_usage
   - *type* : `string`
-
