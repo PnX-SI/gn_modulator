@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.6 (2024-07-09)
+
+**🚀 Nouveautés / améliorations**
+
+- [FRONT] Style dédié pour les messages de layout en mode texte
+- [SIPAF] Renommage des dimensions des passages à faune : `longueur_franchissement` devient `longueur_traversee`, `largeur_ouvrage` conserve sa sémantique, alignement modèle/définitions/exports/imports/tests
+- [SIPAF] Message d'avertissement dans les formulaires et fiches au sujet de l'interprétation des champs "Longueur de traversée" et "Largeur ouvrage" (cf. notice chapitre 2.2)
+- [SIPAF] Mises à jour des exports/imports CSV et de la documentation associée pour refléter les nouveaux noms et l'ordre des champs
+
+**⚠️ Notes de version**
+
+- Régénérer/recharger les exports et imports PF pour prendre en compte les nouveaux noms de champs
+
 ## 1.3.5 (2025-05-07)
 
 **🐛 Corrections**
@@ -67,7 +80,7 @@
 - [FRONTEND-MAP] Affichage des petits polygones et lignes sous forme de point à large échelle pour en améliorer la visibilité (#65)
 - [SIPAF-EXPORT] Ajout des champs acteurs, objectifs et usages
 - [SIPAF-EXPORT] Possibilité de voir le select de l'export (aide pour faire une vue à destination du module Export)
-- [SIPAF] Ajout d'un exemple de vue d'export (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/config/exports/m_sipaf.pf.export.sql)
+- [SIPAF] Ajout d'un exemple de vue d'export (<https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/config/exports/m_sipaf.pf.export.sql>)
 - [SIPAF-MAP] Ajout des pk/pr sur toutes les cartes, en les désactivant par défaut
 - [SIPAF] Suppression de la possibilité de mettre une personne en tant qu'acteur des PAF, pour se limiter aux organismes
 - [SIPAF] Suppression des "Espèces ciblées" au niveau des objectifs des PAF
@@ -81,7 +94,7 @@
 - [IMPORT] Exécution des taches en asynchrone avec Celery
 - Améliorations, nettoyage et corrections diverses du code source
 - Améliorations et compléments des tests automatisés
-- Ajout d'un script permettant de traiter les extractions INPN (https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/data/scripts/process_inpn.sh)
+- Ajout d'un script permettant de traiter les extractions INPN (<https://github.com/PnX-SI/gn_modulator/blob/develop/contrib/m_sipaf/data/scripts/process_inpn.sh>)
 
 **🐛 Corrections**
 
@@ -123,14 +136,18 @@ Nécessite la version 2.13.1 (ou plus) de GeoNature.
 - Mettez à jour le module Modulator avec la procédure classique
 - Pour mettre à jour le sous-module SIPAF :
   - lancez les mises à jour de la BDD
+
     ```
     geonature db autoupgrade
     geonature db status
     ```
+
   - mettez à jour les données et nomenclatures
+
     ```
     geonature modulator features m_sipaf.utils
     ```
+
   - Mettez à jour le référentiel géographique des routes, voies ferrées et points de repère en suivant la documentation dédiée (`contrib/m_sipaf/doc/maj-bd_topo-sipaf_1.2.0.md`)
 
 ## 1.1.1 (2023-06-29)
@@ -168,10 +185,10 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
   - écriture : si un champs demandé n'est pas dans la config -> erreur 403
   - lecture : ce champs n'est pas pris en compte (utilisation de `only` dans l'initialisation des champs marshmallow)
 - Requêtes SQL (fonction `query_list`)
-    - chargement des relations et des champs pour les requêtes
-    - pour éviter les chargements n+1 (1 requête supplémentaire par relation)
-    - utilisation de `raise_load`
-    - on charge le minimum de champs possibles
+  - chargement des relations et des champs pour les requêtes
+  - pour éviter les chargements n+1 (1 requête supplémentaire par relation)
+  - utilisation de `raise_load`
+  - on charge le minimum de champs possibles
 - Déplacement des configurations dans le dossier `media/modulator/config` de GeoNature
 - Changement de nom `ownership` -> `scope`
 - Amélioration du composant list_form
@@ -185,9 +202,11 @@ Nécessite la version 2.13.0 (ou plus) de GeoNature.
 Si vous mettez à jour le module :
 
 - Mettre à jour le module SIPAF
+
   ```
   geonature modulator install m_sipaf
   ```
+
   - Cette commande va effectuer les actions suivantes :
     - créer le dossier `<GN>/backend/media/modulator`
     - déplacer la config du sous-module dans le dossier `<GN>/backend/media/modulator/config`
